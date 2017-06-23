@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Mon Oct 27 07:03:47 JST 2014</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Mon Oct 27 07:03:47 JST 2014</h1>
+</header>
+<h2 id="プロコンに向けた-makefile">プロコンに向けた Makefile</h2>
+<p>10分程で今書いたものなので使い勝手は分からない。</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">all</span>: main.exe input_
+    <span class="ex">./main.exe</span> <span class="op">&lt;</span> input <span class="kw">|</span> <span class="fu">tee</span> out
+
+<span class="ex">main.exe</span>: main.cc
+    <span class="ex">g++</span> -o <span class="va">$@</span> -std=c++11 $^
+
+<span class="ex">input_</span>:
+    <span class="ex">xsel</span> -bo <span class="kw">|</span> <span class="fu">sed</span> -e <span class="st">&#39;s/^\s*//g&#39;</span> <span class="kw">|</span> <span class="fu">sed</span> -e <span class="st">&#39;s/\s*$$//g&#39;</span> <span class="op">&gt;</span> input
+
+<span class="ex">test</span>: main.exe
+    <span class="ex">@for</span> i in cases/*.in<span class="kw">;</span> <span class="kw">do</span> <span class="kw">\</span>
+        <span class="ex">./main.exe</span> <span class="op">&lt;</span> <span class="va">$$</span>i <span class="op">&gt;</span> /tmp/out<span class="kw">;</span> <span class="kw">\</span>
+        <span class="fu">cmp</span> -s /tmp/out <span class="va">$$</span><span class="dt">{i%in}</span>out<span class="kw">;</span> <span class="kw">\</span>
+        <span class="va">RETVAL=$$</span><span class="ex">?</span><span class="kw">;</span> <span class="kw">\</span>
+        <span class="kw">if</span><span class="bu"> [</span>  <span class="va">$$</span>RETVAL <span class="ot">-eq</span> 1<span class="bu"> ]</span>; <span class="kw">then</span> <span class="kw">\</span>
+        <span class="ex">/bin/echo</span> -e <span class="st">&#39;\e[31m&#39;</span><span class="va">$$</span>i<span class="st">&#39;\e[m&#39;</span><span class="kw">;</span> <span class="kw">\</span>
+        <span class="fu">diff</span> /tmp/out <span class="va">$$</span><span class="dt">{i%in}</span>out<span class="kw">;</span> <span class="kw">\</span>
+        <span class="bu">exit</span> 1<span class="kw">;</span> <span class="kw">\</span>
+        <span class="kw">fi</span>; <span class="kw">\</span>
+        <span class="kw">done</span>; <span class="kw">\</span>
+        <span class="ex">/bin/echo</span> -e <span class="st">&#39;\e[34mpassed!\e[m&#39;</span>
+
+
+<span class="ex">clean</span>:
+    <span class="ex">-mkdir</span> cases
+    <span class="ex">-rm</span> -f out *.exe cases/* /tmp/out</code></pre></div>
+<ol type="1">
+<li>main.cc を書く</li>
+<li>入力を一つ、コピペした状態で <code>make</code>
+<ul>
+<li>xselを使って、クリップボードの中身を<code>./input</code>とする</li>
+<li>出力は <code>./out</code> に tee する</li>
+</ul></li>
+<li>ひとつずつ、<code>cases/xxx.in</code> と <code>cases/xxx.out</code> を用意して <code>make test</code></li>
+<li><code>make clean</code> は、cases/ の中身を吹き飛ばす
+<ul>
+<li>cases/ が無かったらここで作るよう、初期化も兼ねてる</li>
+</ul></li>
+</ol>
+<p>シェルスクリプトをMakefileの中に書くのがすごい苦手で、 行頭に <code>@</code> を置く方法と、 echo を絶対パスで指定するのを知った。 素でechoするとmakeの組み込みか何かが働く？かでオプションを理解してくれない。</p>
+<hr />
+<footer>
+    <p style='text-align: right'>
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+</body>
+</html>

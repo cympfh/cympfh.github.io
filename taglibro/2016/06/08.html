@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Wed Jun 8 23:04:34 JST 2016</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Wed Jun 8 23:04:34 JST 2016</h1>
+</header>
+<h2 id="メモ用のtwitterアカウント">メモ用のTwitterアカウント</h2>
+<ul>
+<li>ツイートはすべて、後で読むべきものである
+<ul>
+<li>それは見出しとurlとからなる</li>
+</ul></li>
+<li>読んだものには fav をつける
+<ul>
+<li>fav がついたものは一度読んだことがあるはずである</li>
+</ul></li>
+<li>決して二度と参照しないことが明らかな場合は削除する</li>
+</ul>
+<h2 id="家計簿用のtwitterアカウント">家計簿用のTwitterアカウント</h2>
+<ul>
+<li>ツイートはすべて、使った金額を示すものである
+<ul>
+<li>それは、金額、空白スペース1つ、明細が順にならんだものである</li>
+</ul></li>
+<li>処理したものはツイートの削除によって完了を示す</li>
+<li>処理は次のように行う
+<ul>
+<li>ツイート本文が上の要件をみたすことを確認する</li>
+<li>ツイートの日付を日本標準時間に訂正してから取得する</li>
+<li>日付と金額と見付とをタブ区切りで標準出力する</li>
+<li>ツイートを削除する</li>
+</ul></li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co">#!/bin/bash</span>
+
+<span class="va">USER=</span>cupfh
+<span class="va">PREV=$(</span><span class="ex">twurl</span> accounts <span class="kw">|</span> <span class="fu">grep</span> -B 1 default <span class="kw">|</span> <span class="fu">head</span> -1<span class="va">)</span>
+<span class="ex">twurl</span> set default <span class="va">$USER</span>
+
+<span class="ex">twurl</span> <span class="st">&quot;/1.1/statuses/user_timeline.json?screen_name=</span><span class="va">${USER}</span><span class="st">&amp;count=20&quot;</span> <span class="op">&gt;</span> /tmp/tmp.json
+<span class="ex">ruby</span> -r json -r date -e <span class="st">&#39;tws=JSON.parse(open(&quot;/tmp/tmp.json&quot;).read());tws.each{|tw|t=tw[&quot;text&quot;];if /^[0-9]* /.match(t);d=DateTime.parse(tw[&quot;created_at&quot;])+9/24.0;puts &quot;#{&quot;0#{d.month}&quot;[-2..-1]}#{&quot;0#{d.day}&quot;[-2..-1]}   #{t.sub(&quot; &quot;,&quot;\t&quot;)}&quot;;STDERR.puts tw[&quot;id_str&quot;];end}&#39;</span> <span class="op">&gt;</span>/tmp/ls <span class="op">2&gt;</span>/tmp/ids
+
+<span class="kw">while</span> <span class="bu">read</span> <span class="va">ID</span>; <span class="kw">do</span>
+  <span class="ex">twurl</span> -XPOST <span class="st">&quot;/1.1/statuses/destroy/</span><span class="va">${ID}</span><span class="st">.json&quot;</span> <span class="op">&gt;</span>/dev/null
+<span class="kw">done</span> <span class="op">&lt;</span><span class="ex">/tmp/ids</span>
+
+<span class="fu">cat</span> /tmp/ls
+
+<span class="ex">twurl</span> set default <span class="st">&quot;</span><span class="va">$PREV</span><span class="st">&quot;</span></code></pre></div>
+<h2 id="n.b.">N.B.</h2>
+<ul>
+<li>経験上、user_timeline を遡っても、3000 程度のツイートまでしか取得できない
+<ul>
+<li>必要がなくなったら、さっさと削除するに限る</li>
+</ul></li>
+</ul>
+</body>
+</html>

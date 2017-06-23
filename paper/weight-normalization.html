@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Weight Normalization</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/
+    </a>
+</h1>
+<header>
+<h1 class="title">Weight Normalization</h1>
+</header>
+<ul>
+<li>
+url: <a href=https://arxiv.org/abs/1602.07868>https://arxiv.org/abs/1602.07868</a>
+</li>
+<li>
+tags: <span class="tag"><a href=index.html#深層学習>深層学習</a></span>
+</li>
+</ul>
+<h2 id="概要手法">概要・手法</h2>
+<p>ディープラーニングにおける 1 層とは、ある重みパラメータ (行列) <span class="math inline">\(W\)</span> を以って 入力ベクトル (あるいは行列) <span class="math inline">\(x\)</span> から</p>
+<p><span class="math display">\[y = W*x\]</span></p>
+<p>という操作をすること. <span class="math inline">\(*\)</span> は行列の掛け算だったり畳み込みだったりする演算.</p>
+<p>Weight Normalization は <span class="math inline">\(W\)</span> というパラメータを陽に持たず、代わりに スカラー <span class="math inline">\(g\)</span> 及び行列 <span class="math inline">\(V\)</span> を持ち、</p>
+<p><span class="math display">\[W = g \frac{V}{\|V\|}\]</span></p>
+<p>として使う. 学習も <span class="math inline">\(g, V\)</span> それぞれを更新する.</p>
+<h2 id="メリット">メリット</h2>
+<p>学習の安定化、高速化</p>
+<p>学習が全然吹っ飛ばないので学習率を思い切って上げて良い. 本来学習率 <span class="math inline">\(lr\)</span> に対して、学習の速度は</p>
+<p><span class="math display">\[lr, lr(LR - lr)\]</span></p>
+<p>という2つの値の大きさで決まる. ここで <span class="math inline">\(LR\)</span> はある定数で、<span class="math inline">\(lr\)</span> が大きいほど一つ目の値が大きくなる分、早くなるが、 二つ目は小さくなるので遅くなり、ある以上大きくなるとマイナスになって学習が進まなくなる (吹っ飛ぶ).</p>
+<p>Weight Normalization では、学習の速度は</p>
+<p><span class="math display">\[lr, lr&#39; (LR&#39; - lr&#39;)\]</span></p>
+<p>という2つの値の大きさで決まる. <span class="math inline">\(LR&#39;\)</span> はまた定数. <span class="math inline">\(lr&#39;\)</span> とは、<span class="math inline">\(lr\)</span> を <span class="math inline">\(\|V\|\)</span> の自乗くらいで割った大きさ. <span class="math inline">\(\|V\|\)</span> は <span class="math inline">\(W\)</span> に影響しないのに速度には影響を与える. ある程度大きければ、 <span class="math inline">\((LR&#39; - lr&#39;)\)</span> はマイナスにならないので学習が安定化して、普通よりも思い切って大きい学習率を使っていい.</p>
+<p>特長として、学習の中で <span class="math inline">\(\|V\|\)</span> は単調に大きくなるというのがある.</p>
+<p><span class="math inline">\(W\)</span> に <span class="math inline">\(V\)</span> はノルム正規化してから使われてるので、微分したとき、<span class="math inline">\(V\)</span> の接方向 (<span class="math inline">\(V\)</span> と直交方向) にしか動かないことは自明. となると <span class="math inline">\(\|V\|\)</span> は大きくなる.</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

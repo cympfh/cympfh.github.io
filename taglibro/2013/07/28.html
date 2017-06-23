@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sun Jul 28 15:39:14 JST 2013</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Sun Jul 28 15:39:14 JST 2013</h1>
+</header>
+<h2 id="gaucheでは-positive-つかうより-_-0-の方がいいよという話">Gaucheでは <code>positive?</code> つかうより <code>(&gt; _ 0)</code> の方がいいよという話</h2>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">(use srfi<span class="dv">-1</span>)
+(<span class="kw">for-each</span>
+  (<span class="kw">lambda</span> (i)
+    (let1 j (<span class="kw">-</span> i <span class="dv">30000</span>)
+      (<span class="kw">if</span>
+      <span class="co">;(positive? j)</span>
+      (<span class="kw">&gt;</span> j <span class="dv">0</span>)
+      <span class="dv">#t</span> <span class="dv">#f</span>)
+      ))
+  (iota <span class="dv">10000000</span>))</code></pre></div>
+<p>焼き鈍し法やってて， positive?って名前長いからゼロとの大小比較に書き換えたら地味に速くなった</p>
+<p>てっきり R5RS で定義されてるくらいのプリミティブな手続きだから 最適化されてるものだと思ったけど別にそうでもないんだね</p>
+<h3 id="追記-sat-aug-24-212544-jst-2013">追記 (Sat Aug 24 21:25:44 JST 2013)</h3>
+<p>positive?より&gt;のほうが早い場合もあるけど，そうでない場合もあった</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">(time (<span class="kw">for-each</span> (^i (<span class="kw">if</span> (<span class="kw">positive?</span> <span class="dv">1</span>) &#39;true &#39;false)) (iota *N*)))
+<span class="co">; real   0.155</span>
+<span class="co">; user   0.150</span>
+<span class="co">; sys    0.000</span>
+
+(time (<span class="kw">for-each</span> (^i (<span class="kw">if</span> (<span class="kw">positive?</span> -<span class="dv">23</span>) &#39;true &#39;false)) (iota *N*)))
+<span class="co">; real   0.131</span>
+<span class="co">; user   0.130</span>
+<span class="co">; sys    0.000</span>
+
+(time (<span class="kw">for-each</span> (^i (<span class="kw">if</span> (<span class="kw">&gt;</span> <span class="dv">1</span> <span class="dv">0</span>) &#39;true &#39;false)) (iota *N*)))
+<span class="co">; real   0.140</span>
+<span class="co">; user   0.140</span>
+<span class="co">; sys    0.000</span></code></pre></div>
+<p>定数を引数にしてもしょうがないでしょ</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">(time (<span class="kw">for-each</span> (^i (<span class="kw">if</span> (<span class="kw">positive?</span> i) &#39;true &#39;false)) (iota *N*)))
+<span class="co">; real   0.166</span>
+<span class="co">; user   0.160</span>
+<span class="co">; sys    0.000</span>
+
+(time (<span class="kw">for-each</span> (^i (<span class="kw">if</span> (<span class="kw">&gt;</span> i <span class="dv">0</span>) &#39;true &#39;false)) (iota *N*)))
+<span class="co">; real   0.141</span>
+<span class="co">; user   0.140</span>
+<span class="co">; sys    0.000</span></code></pre></div>
+<p>うん，やっぱり <code>positive?</code> より <code>&gt;</code> のが早い</p>
+<p>マクロにするのが良いな</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">(<span class="kw">define-macro</span><span class="fu"> </span>(<span class="kw">positive?</span> x) `(<span class="kw">&gt;</span> ,x <span class="dv">0</span>))</code></pre></div>
+<hr />
+<footer>
+    <p style='text-align: right'>
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+</body>
+</html>

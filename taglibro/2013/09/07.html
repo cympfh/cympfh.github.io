@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sat Sep 7 09:39:35 JST 2013</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Sat Sep 7 09:39:35 JST 2013</h1>
+</header>
+<h2 id="j言語で遊ぶ">J言語で遊ぶ</h2>
+<p>J言語はHaskellのControl.Arrowを地で這わせることを<br />
+強制させる．J言語はHaskellなんかで言うところの<br />
+ポイントフリーを強要する．<br />
+それは楽しい．</p>
+<h3 id="例題">例題</h3>
+<div class="thm">
+<p>整数からなるリストが与えられる．奇数が <span class="math inline">\(N\)</span> 個，偶数が <span class="math inline">\(M\)</span> 個含まれるとするとき, <span class="math inline">\(N &gt; M\)</span> を判定せよ</p>
+</div>
+<p>素朴にHaskellで書くと</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">\ls <span class="ot">-&gt;</span> length (filter odd ls) <span class="fu">&gt;</span> length (filter even ls)</code></pre></div>
+<p>引数 <code>ls</code> が二箇所に出てくるのがどうしようもなくて<br />
+ポイントフリーにできそうにない<br />
+<code>length</code> って二回出てくるのもいやだ</p>
+<p>J ではこう書ける まだ全然洗練されてないけれど</p>
+<pre><code>([: +/ 2|]) &gt; [: +/ 1-2|]</code></pre>
+<p>実際，</p>
+<p><code>2 | ]</code> が <code>(filter) odd</code></p>
+<p><code>+/</code> が <code>length (filter)</code></p>
+<p>に相当すると言えて，<br />
+右の方にも</p>
+<p><code>[: +/ 1-2|]</code> これで <code>length.filter even</code> に相当させてる</p>
+<p>というわけで， あたかも</p>
+<pre class="hsakell"><code>length . filter odd &gt; length . filter even</code></pre>
+<p>と書いていて，J言語特有のフォークという機能によって<br />
+ポイントフリーで書き表せる</p>
+<p>フォークなんてのは他の言語には聞いたことないと<br />
+思ったけれど，Control.Arrowは似てる</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">length <span class="fu">.</span> filter odd <span class="fu">&amp;&amp;&amp;</span> length <span class="fu">.</span> filter even <span class="fu">&gt;&gt;&gt;</span> \(x,y) <span class="ot">-&gt;</span> x<span class="fu">&gt;</span>y</code></pre></div>
+<p>或いは</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">filter odd <span class="fu">&amp;&amp;&amp;</span> filter even <span class="fu">&gt;&gt;&gt;</span> length <span class="fu">***</span> length <span class="fu">&gt;&gt;&gt;</span> \(x,y) <span class="ot">-&gt;</span> x<span class="fu">&gt;</span>y</code></pre></div>
+<p>なんか，</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">let</span> both f <span class="fu">=</span> f <span class="fu">***</span> f</code></pre></div>
+<p>みたいなのがあれば，<code>length</code> って二回もタイプしなくて済むんだけど<br />
+すぐには見つからなかった</p>
+<p>あと，<code>\(x,y)-&gt;</code> ってのはたしかにダサい<br />
+Jなら <code>first &gt; second</code> って書けるのに！</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">let</span> fork f g h <span class="fu">=</span> \x <span class="ot">-&gt;</span> (f x) <span class="ot">`g`</span> (h x)</code></pre></div>
+<hr />
+<footer>
+    <p style='text-align: right'>
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Fri Feb 27 13:10:24 JST 2015</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Fri Feb 27 13:10:24 JST 2015</h1>
+</header>
+<p>インターンシップの経験をブログに書くことが要請されているらしいので下書きをここに書こう。</p>
+<h2 id="express-v.4.12.0-を用いた簡易サーバ"><a href="https://www.npmjs.com/package/express">express v.4.12.0</a> を用いた簡易サーバ</h2>
+<p>以下はミドルウェア (後述) を用いない、 <code>/</code> への POST を読んで、 ヘッダを含めて受け取ったデータをそのまま返すだけのサーバ</p>
+<div class="sourceCode"><pre class="sourceCode coffee"><code class="sourceCode coffee">express <span class="kw">=</span> require <span class="st">&#39;express&#39;</span>
+
+app <span class="kw">=</span> express<span class="kw">()</span>
+
+app<span class="kw">.</span>post <span class="st">&#39;/&#39;</span><span class="kw">,</span> <span class="fu">(req, res) -&gt;</span>
+  buf <span class="kw">=</span> <span class="st">&#39;&#39;</span>
+  req<span class="kw">.</span><span class="ot">on</span> <span class="st">&#39;data&#39;</span><span class="kw">,</span> <span class="fu">(chunk) -&gt;</span>
+    buf <span class="kw">+=</span> chunk
+  req<span class="kw">.</span><span class="ot">on</span> <span class="st">&#39;end&#39;</span><span class="kw">,</span> <span class="fu">-&gt;</span>
+    res<span class="kw">.</span>end buf
+
+app<span class="kw">.</span>listen <span class="dv">3030</span><span class="kw">,</span> <span class="kw">(</span><span class="fu">-&gt;</span><span class="kw">)</span></code></pre></div>
+<p>これを動かして、 curl コマンドでのリクエストの飛ばし方をいくつか紹介する:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="bu">echo</span> HOGEHOGE <span class="kw">|</span> <span class="ex">curl</span> -X POST -F <span class="st">&#39;hoge=&lt;-&#39;</span> localhost:3030
+<span class="ex">--------------------------1bee3ed01c9645db</span>
+<span class="ex">Content-Disposition</span>: form-data<span class="kw">;</span> <span class="va">name=</span><span class="st">&quot;hoge&quot;</span>
+
+<span class="ex">HOGEHOGE</span>
+
+<span class="ex">--------------------------1bee3ed01c9645db--</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="bu">echo</span> HOGEHOGE <span class="kw">|</span> <span class="ex">curl</span> -X POST -F <span class="st">&#39;hoge=@-&#39;</span> localhost:3030
+<span class="ex">--------------------------be462c8006a6ea41</span>
+<span class="ex">Content-Disposition</span>: form-data<span class="kw">;</span> <span class="va">name=</span><span class="st">&quot;hoge&quot;</span>; <span class="va">filename=</span><span class="st">&quot;-&quot;</span>
+<span class="ex">Content-Type</span>: application/octet-stream
+
+<span class="ex">HOGEHOGE</span>
+
+<span class="ex">--------------------------be462c8006a6ea41--</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="ex">curl</span> -X POST -d hoge=fuga localhost:3030
+<span class="va">hoge=</span>fuga</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="ex">curl</span> -X POST -d name=cympfh -d pwd=koregacympfhnopwd localhost:3030
+<span class="va">name=</span>cympfh<span class="kw">&amp;</span><span class="va">pwd=</span>koregacympfhnopwd</code></pre></div>
+<p>なるほど、自力でパーサを書くのは辛そうである</p>
+<h2 id="ミドルウェアであるところの-body-parser-v.1.12.0-を噛ませる">ミドルウェアであるところの <a href="https://www.npmjs.com/package/body-parser">body-parser v.1.12.0</a> を噛ませる</h2>
+<div class="sourceCode"><pre class="sourceCode coffee"><code class="sourceCode coffee">express <span class="kw">=</span> require <span class="st">&#39;express&#39;</span>
+bodyParser <span class="kw">=</span> require <span class="st">&#39;body-parser&#39;</span>
+
+app <span class="kw">=</span> express<span class="kw">()</span>
+app<span class="kw">.</span>use bodyParser<span class="kw">.</span>urlencoded <span class="kw">{</span> extended<span class="kw">:</span> <span class="ot">false</span> <span class="kw">}</span>
+app<span class="kw">.</span>use bodyParser<span class="kw">.</span>json<span class="kw">()</span>
+
+app<span class="kw">.</span>post <span class="st">&#39;/&#39;</span><span class="kw">,</span> <span class="fu">(req, res) -&gt;</span>
+  res<span class="kw">.</span>json req<span class="kw">.</span>body
+
+app<span class="kw">.</span>listen <span class="dv">3030</span><span class="kw">,</span> <span class="kw">(</span><span class="fu">-&gt;</span><span class="kw">)</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="bu">echo</span> HOGEHOGE <span class="kw">|</span> <span class="ex">curl</span> -X POST -F <span class="st">&#39;hoge=&lt;-&#39;</span> localhost:3030
+<span class="dt">{}</span></code></pre></div>
+<p><code>-F</code> で送る form-data はどうやら express では無視されるらしい? (cf. <a href="http://himetani.hatenablog.com/entry/2015/01/23/050651">Node.jsのExpressでmultipart/form-dataを処理する方法 - himetani's blog</a>)</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="ex">curl</span> -X POST -d <span class="st">&#39;name=cympfh&#39;</span> localhost:3030
+<span class="dt">{&quot;name&quot;:&quot;cympfh&quot;}</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="ex">curl</span> -X POST -d <span class="st">&#39;name=cympfh&amp;password=myStr0ngPassWord&#39;</span> localhost:3030
+<span class="dt">{&quot;name&quot;:&quot;cympfh&quot;,&quot;password&quot;:&quot;myStr0ngPassWord&quot;}</span></code></pre></div>
+<h2 id="非同期的処理">非同期的処理</h2>
+<p>nodeで動かすとはつまり非同期的処理を湯水のように行うこと</p>
+<div class="sourceCode"><pre class="sourceCode coffee"><code class="sourceCode coffee">express <span class="kw">=</span> require <span class="st">&#39;express&#39;</span>
+bodyParser <span class="kw">=</span> require <span class="st">&#39;body-parser&#39;</span>
+
+app <span class="kw">=</span> express<span class="kw">()</span>
+app<span class="kw">.</span>use bodyParser<span class="kw">.</span>urlencoded <span class="kw">{</span> extended<span class="kw">:</span> <span class="ot">false</span> <span class="kw">}</span>
+app<span class="kw">.</span>use bodyParser<span class="kw">.</span>json<span class="kw">()</span>
+
+asyncFn <span class="kw">=</span> <span class="fu">(cont) -&gt;</span>
+  <span class="ot">setTimeout</span> <span class="kw">(</span><span class="fu">-&gt;</span> cont <span class="kw">{</span> ok<span class="kw">:</span> <span class="st">&#39;ok&#39;</span> <span class="kw">}),</span> <span class="dv">2000</span>
+
+app<span class="kw">.</span>post <span class="st">&#39;/&#39;</span><span class="kw">,</span> <span class="fu">(req, res) -&gt;</span>
+  asyncFn <span class="fu">(data) -&gt;</span>
+    res<span class="kw">.</span>json data
+
+app<span class="kw">.</span>listen <span class="dv">3030</span><span class="kw">,</span> <span class="kw">(</span><span class="fu">-&gt;</span><span class="kw">)</span></code></pre></div>
+<p>さて、η-変換とは、<code>(lambda (x) (f x))</code> と <code>f</code> が等価であることをいう. CoffeeScript ないし JavaScript ではどうか</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">express <span class="op">=</span> require <span class="st">&#39;express&#39;</span>
+bodyParser <span class="op">=</span> require <span class="st">&#39;body-parser&#39;</span>
+
+app <span class="op">=</span> express()
+app.use bodyParser.urlencoded { extended: false }
+app.use bodyParser.json()
+
+asyncFn <span class="op">=</span> (cont) <span class="op">-&gt;</span>
+  setTimeout (<span class="op">-&gt;</span> cont { ok: <span class="st">&#39;ok&#39;</span> }), <span class="dv">2000</span>
+
+app.post <span class="st">&#39;/&#39;</span>, (req, res) <span class="op">-&gt;</span>
+  asyncFn res.json <span class="co"># i found a bug here</span>
+
+app.listen <span class="dv">3030</span>, (<span class="op">-&gt;</span>)</code></pre></div>
+<p>これを実行する間に適切なPOSTを投げると、 これは次のようなエラーを吐いて死ぬ:</p>
+<pre><code>/usr/local/lib/node_modules/express/lib/response.js:226
+  var replacer = app.get(&#39;json replacer&#39;);
+                     ^
+TypeError: Cannot call method &#39;get&#39; of undefined
+  at json (/usr/local/lib/node_modules/express/lib/response.js:226:22)
+  at [object Object]._onTimeout (/Users/cympfh/test/test.coffee:9:18)
+  at Timer.listOnTimeout [as ontimeout] (timers.js:112:15)</code></pre>
+<p>最終発表の日、 私がのんびり会場に着いて、 鯖が何も返してこないとメンバに指摘され、 いやいやログをみるとこんなエラーだったから、 問題の箇所を見つけるに相当の苦労を要した。 (わかってくれるでしょう?)</p>
+<div class="sourceCode"><pre class="sourceCode coffee"><code class="sourceCode coffee">asyncFn <span class="kw">=</span> <span class="fu">(res) -&gt;</span>
+  <span class="ot">setTimeout</span> <span class="kw">(</span><span class="fu">-&gt;</span> res<span class="kw">.</span>json <span class="kw">{</span> ok<span class="kw">:</span> <span class="st">&#39;ok&#39;</span> <span class="kw">}),</span> <span class="dv">2000</span>
+
+app<span class="kw">.</span>post <span class="st">&#39;/&#39;</span><span class="kw">,</span> <span class="fu">(req, res) -&gt;</span>
+  asyncFn res</code></pre></div>
+<p>これはうまく動く。 もしかしたら、 <code>res.json</code> はresというオブジェクトのメソッドを読んで それはダイナミックスコープなのか？</p>
+<div class="sourceCode"><pre class="sourceCode coffee"><code class="sourceCode coffee">Obj <span class="kw">=</span>
+  i<span class="kw">:</span> <span class="dv">1</span>
+  read<span class="kw">:</span> <span class="fu">-&gt;</span> <span class="dt">@i</span>
+
+<span class="ot">console</span><span class="kw">.</span>warn Obj<span class="kw">.</span>read<span class="kw">()</span> <span class="co"># 1</span>
+
+async <span class="kw">=</span> <span class="fu">(fn) -&gt;</span>
+  <span class="ot">setTimeout</span> <span class="kw">(</span><span class="fu">-&gt;</span> <span class="ot">console</span><span class="kw">.</span>warn fn<span class="kw">()),</span> <span class="dv">2000</span>
+async Obj<span class="kw">.</span>read <span class="co"># undefined</span></code></pre></div>
+<h3 id="世界が平和でありますように">世界が平和でありますように。</h3>
+<h1 id="追記-mon-dec-28-014815-jst-2015">追記; Mon Dec 28 01:48:15 JST 2015</h1>
+<p>教訓は、 ラムダ計算のレベルで成り立つことが別な言語で成り立たなくたって、 誰を恨んでもいけないということである. 明らかに、普通プログラミング言語と呼ばれるものはラムダ式よりも高い表現力を持つ. 例えばパイ計算はラムダ項を表現できるがそれ以上の表現力を持つ. (一般に) (型の無い) パイ計算ではエータ変換は成立しない.</p>
+</body>
+</html>

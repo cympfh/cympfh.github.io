@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Wed Jul 10 00:54:17 JST 2013</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Wed Jul 10 00:54:17 JST 2013</h1>
+</header>
+<h2 id="haskell-メモ化">Haskell, メモ化</h2>
+<p>参照透過性と言えばメモ化</p>
+<p>そういや誰かがHaskellではメモ化がデフォルトだと言ったので その場で一緒に確かめたらそんなことはなかった. 入出力まで含めて参照透過性を作ってしまったHaskellなんだから, 本当にそうであってもいいと思ったのに</p>
+<p>Land of Lisp を読んでてヤバいメモ化を思いついた！と思ったけど 書いてみたら別にそんなことはなかった.</p>
+<p>メモ化はメモ (cache) として例えばハッシュテーブルを使うけど</p>
+<h3 id="提案手法">提案手法</h3>
+<p>関数そのものをデータを保存するためのものとして使うこと</p>
+<p>そう言えばHaskellで経路探索問題を書く課題で、マップのデータとして 関数を使ってそんなことしてるのは私だけだったのを思い出した</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- 複数あるブロックの座標を与えます</span>
+b <span class="fu">=</span> [[<span class="dv">1</span>,<span class="dv">3</span>], [<span class="dv">2</span>,<span class="dv">1</span>], [<span class="dv">5</span>,<span class="dv">3</span>], [<span class="dv">5</span>,<span class="dv">6</span>]]</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- 私はこう書いた</span>
+b <span class="dv">1</span> <span class="dv">3</span> <span class="fu">=</span> <span class="dt">True</span>
+b <span class="dv">2</span> <span class="dv">1</span> <span class="fu">=</span> <span class="dt">True</span>
+b <span class="dv">5</span> <span class="dv">3</span> <span class="fu">=</span> <span class="dt">True</span>
+b <span class="dv">5</span> <span class="dv">6</span> <span class="fu">=</span> <span class="dt">True</span>
+b _ _ <span class="fu">=</span> <span class="dt">False</span></code></pre></div>
+<p>だって、リストから具体的にデータを取得するの面倒でしょ getter関数どうせ定義するんでそ？ 線形時間かかるし 私のなら、データを直接 getter関数として書くことになる</p>
+<p>人に見せたら、このコードはやばいと言われたけれど</p>
+<p>で、本題</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme"><span class="co">;;  普通のメモ化関数</span>
+(<span class="kw">define</span><span class="fu"> fib</span>
+  (let1 memo (make-hash-table)
+  (<span class="kw">lambda</span> (n)
+    (<span class="kw">cond</span> ((<span class="kw">&lt;=</span> n <span class="dv">1</span>) n)
+          ((hash-table-get memo n <span class="dv">#f</span>) <span class="kw">=&gt;</span> <span class="kw">values</span>)
+          (<span class="kw">else</span>
+            (let1 ans (<span class="kw">+</span> (fib (<span class="kw">-</span> n <span class="dv">1</span>)) (fib (<span class="kw">-</span> n <span class="dv">2</span>)))
+            (hash-table-put! memo n ans)
+            ans))))))</code></pre></div>
+<p>レキシカルスコープに変数 memo をハッシュテーブルとして作成 副作用満載にキャッシュを更新する</p>
+<h3 id="提案手法-1">提案手法</h3>
+<p>ハッシュテーブルの構造を利用する代わりに、(memo n) という 手続きを作る (memo n) は (fib n) の答えを知らなければ #f を返す. 最初はただ #f を返す定数関数である. その時、memoという手続き自体を更新してしまう</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">(<span class="kw">cond</span> ((memo n) <span class="kw">=&gt;</span> <span class="kw">values</span>) <span class="co">; values は恒等関数</span>
+      (<span class="kw">else</span> (update-memo! ...)))</code></pre></div>
+<p>こういう感じ 具体的に フィボナッチを計算するのは 下</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">(<span class="kw">define</span><span class="fu"> </span>(fib2 n)
+  (<span class="kw">define</span><span class="fu"> </span>(memo n) <span class="dv">#f</span>)
+  (<span class="kw">cond</span> ((<span class="kw">&lt;=</span> n <span class="dv">1</span>) n)
+        ((memo n) <span class="kw">=&gt;</span> <span class="kw">values</span>)
+        (<span class="kw">else</span>
+          (<span class="kw">let</span> ((ans (<span class="kw">+</span> (fib2 (<span class="kw">-</span> n <span class="dv">1</span>)) (fib2 (<span class="kw">-</span> n <span class="dv">2</span>))))
+                (memo0 memo))
+           (set! memo (<span class="kw">lambda</span> (m) (<span class="kw">if</span> (<span class="kw">=</span> m n) ans (memo0 m))))
+           ans))))</code></pre></div>
+<p><code>(hash-table-get memo n #f)</code> とかいう長いゲッターが <code>(memo n)</code> とかいう簡単になる、のはいいけれど、 手続きを更新するトコがちょっとやばい</p>
+<p>あー、あのねー、 最初間違えてて、fib2からfibを呼び出してて、fibってのは はじめに書いた方 それで全然fibもfib2も速度変わらなくてすげーって思ってたんだけど</p>
+<p>関数を毎回それを包み込む関数に更新するとかいうことして 残念ながら非常に遅いです</p>
+<p>まあ、ただの冗談だってことで</p>
+<hr />
+<footer>
+    <p style='text-align: right'>
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+</body>
+</html>

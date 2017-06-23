@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sat Sep 26 12:04:17 JST 2015</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Sat Sep 26 12:04:17 JST 2015</h1>
+</header>
+<p>この記事における可換図式は全て LaTeX の xy パッケージを用いて作成した. 拡張子の .png を .tex に変えてアクセスすればソースがある.</p>
+<h2 id="手カウントを加算させるやつ">手カウントを加算させるやつ</h2>
+<p>お互いの両手を用いる二人ゲーム. 手は指を立てることで、1から5の状態を取ることができる. ただし5は0と同一視して、以下 mod5 を取る. プレイヤーは交互に、 自分のどちらかの手で相手のどちらかの手を選択して叩く. 叩かれた手は叩いた手の値だけ加算される. 5になった手は死ぬ. 死んだ手を用いて叩くことはできない. また、死んだ手を叩く対象に選ぶこともできない. 先に両手が死んだ人の負け.</p>
+<p>初期状態は、両手ともに1を示している.</p>
+<p>初め、メモ化再帰で解こうとしたが、 簡単にループに陥ったのでやめ.</p>
+<p>簡単な考察として、</p>
+<ol type="1">
+<li>ある状態から始めるとループに陥る</li>
+<li>もっと言えば、到達できない状態がある</li>
+<li>あいこは存在しない</li>
+</ol>
+<p>ダイクストラ的に、 ゲーム木の上を自明な解から辿って行くことにする.</p>
+<p>状態をテーブル <code>int f[5][5][5][5]</code> で表現する. これからアクションを起こす側の手を <span class="math inline">\((i, j)\)</span> 、もう一方を <span class="math inline">\((k, l)\)</span> とするとき <code>f[i][j][k][l]</code> は、 アクションを起こす側が必勝なら、<span class="math inline">\(1\)</span> 負けるならば <span class="math inline">\(-1\)</span>、 到達不可能な状態であるならば <span class="math inline">\(0\)</span> という値を格納させる.</p>
+<p>ダイクストラするために適切な初期状態が必要である.</p>
+<ol type="1">
+<li>全ての <span class="math inline">\((k, l) \ne (0,0)\)</span> について <code>f[0][0][k][l] = -1</code></li>
+<li>他は <code>0</code></li>
+</ol>
+<p>とした. この 1 (<span class="math inline">\(((0,0), (k,l)) : (k,l) \ne (0,0)\)</span>) をスタートにして、 ダイクストラ的に、 深さ優先探索を行う.</p>
+<p>ソースコードは次の通り. Ideoneは出力まで一緒に載せられるので便利だが、 課金してないと一定時間で消えるそうなので、 gistも合わせて置いておく.</p>
+<ul>
+<li><a href="https://ideone.com/grY14J">Ideone.com - grY14J</a></li>
+<li><a href="https://gist.github.com/cympfh/23aabe29b61335e94279">手でカウントさせる二人完全情報有限和うんたらゲーム</a></li>
+</ul>
+<h2 id="自然変換">自然変換</h2>
+<p>関手 <span class="math inline">\(F: C \rightarrow D\)</span> とは 圏<span class="math inline">\(C\)</span> における <span class="math inline">\(f: A \rightarrow B\)</span> を 正しく <span class="math inline">\(Ff: FA \rightarrow FB\)</span> に映すような写像であった. つまり、内部に対象を写す写像と射を写す写像の2つを持っている.</p>
+<p>2つの関手 <span class="math inline">\(F, G: C \rightarrow D\)</span> について、 自然変換 <span class="math inline">\(\alpha: F \rightarrow G\)</span> とは、</p>
+<p><img src="../../img/2015/0926nat.png" /> における右側を可換にするような 2つの射 <span class="math inline">\(FA \rightarrow GA\)</span> 及び <span class="math inline">\(FB \rightarrow GB\)</span> を 任意の <span class="math inline">\(f: A \rightarrow B\)</span> に対して 与えるような何か (<span class="math inline">\(\alpha\)</span>) のことである.</p>
+<p>便宜上、この2つの射のことを <span class="math display">\[\alpha_A: FA \rightarrow GA\]</span> <span class="math display">\[\alpha_B: FB \rightarrow GB\]</span> と呼ぶ.</p>
+<h2 id="モナド">モナド</h2>
+<p>定義としてはこう. モナドとは三組 <span class="math inline">\((T, \eta, \mu)\)</span> のことであり、 <span class="math inline">\(T\)</span> は圏から自己圏への関手. <span class="math inline">\(\eta\)</span> とは <span class="math inline">\(id \rightarrow T\)</span> という自然変換. <span class="math inline">\(\mu\)</span> とは <span class="math inline">\(T \cdot T \rightarrow T\)</span> という自然変換.</p>
+<p>条件として、任意の対象 <span class="math inline">\(A\)</span> について、 次を可換にすること.</p>
+<p><img src="../../img/2015/0926a.png" /> <img src="../../img/2015/0926b.png" /></p>
+<p>以上が定義の丸写しである. ちょっと理解が及ばないので、いじって遊んで見ることにする.</p>
+<p>まず、ひとつ目の三角の可換図式から.</p>
+<ol type="1">
+<li><span class="math inline">\(id_A: A \rightarrow A\)</span> を 関手 <span class="math inline">\(T\)</span> で写す.</li>
+</ol>
+<p><span class="math inline">\(A\)</span> 以外の対象が定義に出てこないのだから、この射を考えるしかしょうがない.</p>
+<p>自然変換 <span class="math inline">\(\eta\)</span> は <span class="math inline">\(id \rightarrow T\)</span> っていうものなので、 次のような <span class="math inline">\(\eta_A\)</span> が存在する.</p>
+<figure>
+<img src="../../img/2015/0926c.png" />
+</figure>
+<ol start="2" type="1">
+<li>この下辺にある <span class="math inline">\(\eta_A: A \rightarrow TA\)</span> を関手 <span class="math inline">\(T\)</span> で写す.</li>
+</ol>
+<figure>
+<img src="../../img/2015/0926d.png" />
+</figure>
+<p>これで、 定義に出てくる射が出揃った. <span class="math inline">\(\mu_A\)</span> 以外.</p>
+<p>定義にある <span class="math inline">\(\mu_A\)</span> は 一番右下にある <span class="math inline">\(T(TA)\)</span> から一つ左の <span class="math inline">\(TA\)</span> または一つ上の <span class="math inline">\(TA\)</span> のどちらでも行ける.</p>
+<p>定義の可換図式は、 次の意味で、<span class="math inline">\(\eta_{TA}\)</span> と <span class="math inline">\(T(\eta_A)\)</span> は同じものだと言う.</p>
+<p><span class="math display">\[\mu \cdot \eta_{TA} = \mu \cdot T(\eta_A)\]</span></p>
+<p><span class="math inline">\(\mu\)</span> についてもう少し.</p>
+<p><span class="math inline">\(id: A \rightarrow A\)</span> について、自然変換 <span class="math inline">\(\mu\)</span> は <span class="math inline">\(\mu_A: T(TA) \rightarrow TA\)</span> という射を導く. これをさらに関手<span class="math inline">\(T\)</span> で写すことができる.</p>
+<figure>
+<img src="../../img/2015/0926g.png" />
+</figure>
+<p>また、<span class="math inline">\(id: TA \rightarrow TA\)</span> については、自然変換 <span class="math inline">\(\mu\)</span> によって次を導ける.</p>
+<figure>
+<img src="../../img/2015/0926f.png" />
+</figure>
+<p>これで2つの射 <span class="math display">\[T(\mu_A), \mu_{TA} : T(T(TA)) \rightarrow T(TA)\]</span> が得られたことになる.</p>
+<p>定義の四角い方の可換図式は、この2つの射を次のように合わせても良いことを言う.</p>
+<figure>
+<img src="../../img/2015/0926h.png" />
+</figure>
+</body>
+</html>

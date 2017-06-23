@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sun Jun 1 12:55:20 JST 2014</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Sun Jun 1 12:55:20 JST 2014</h1>
+</header>
+<h2 id="vim-vimclient-びるどおぷしょん">vim +vimclient (びるどおぷしょん)</h2>
+<p>vimclient 機能を知ったのでメモを．</p>
+<ul>
+<li>in a Terminal</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">vim</span> --servername VS</code></pre></div>
+<p><code>servername</code> にはユニークにユーザーが与える． ここでは， <code>vim server</code> の頭文字のつもりで <code>VS</code>とした．</p>
+<ul>
+<li>in another Terminal</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">vim</span> --servername VS --remote-send <span class="st">&quot;&lt;esc&gt;&lt;esc&gt;iHello, VS. Do you read this?&quot;</span></code></pre></div>
+<p>--remote-send で与えた文字列を、<code>VS</code>と名のついた vim で、 忠実に、キーストロークを再現してくれる． ここでvim特有のキー表記、<code>&lt;esc&gt;</code> だとか <code>&lt;cr&gt;</code> だとか <code>&lt;C-n&gt;</code> だとか が効く．</p>
+<p>今の場合、</p>
+<pre class="vim"><code> &quot;&lt;esc&gt;&lt;esc&gt;iHello, VS. Do you read this?&quot;</code></pre>
+<p>これを送信した． 頭の <code>&quot;&lt;esc&gt;&lt;esc&gt;i&quot;</code>で確実に挿入モードに移行して、 その状態で文字列を入力する． 最後にノーマルモードに戻ることをしていない．</p>
+<p><code>:help</code> には、ノーマルモードへの移行には</p>
+<pre class="vim"><code>&lt;C-\&gt;&lt;C-n&gt;</code></pre>
+<p>を使おうと、書いてあった． 理由は、<code>&lt;esc&gt;</code> だと、ビープ音がなったり、画面のなんていうのかあのぴかっってやつ、一瞬白くなるやつ、あれがあるように設定してる人もいるから．それにしても、<code>&lt;c-\&gt;&lt;c-n&gt;</code> なんて初めてみた．確かに今、挿入モードやコマンドモードでこれを打ってみると、ノーマルに移行できた．</p>
+<p>ノーマルモードへの移行は、頭ですることにしよう．</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">for</span> <span class="ex">i</span> in <span class="kw">`</span><span class="fu">seq</span> 1 10<span class="kw">`;</span> <span class="kw">do</span> <span class="ex">vim</span> --servername VS --remote-send <span class="st">&quot;&lt;esc&gt;&lt;esc&gt;:insert&lt;cr&gt;</span><span class="va">${i}</span><span class="st">&lt;cr&gt;.&quot;</span><span class="kw">;</span> <span class="kw">done</span></code></pre></div>
+<p><code>:insert</code> コマンドの存在は知ってたけど、実際に使ったのは初めてだ．</p>
+<pre class="vim"><code>:insert&lt;cr&gt;hoge&lt;cr&gt;fuga&lt;cr&gt;.&lt;cr&gt;</code></pre>
+<p>と使うものらしい． へぇ．</p>
+<h2 id="活用例">活用例</h2>
+<p>この機能、いかに活用すれば私の人生が幸福になるものか．</p>
+<p>ちょっと思いつかなかった．</p>
+<p>普通に考えれば、 ユーザーがvimを開き、それを見てそれを操作してる場面で、裏から別のプロセスがそのvimに操作を加えることになりそう． つまり、ユーザー側がサーバ． 自分が見てるものが突然、挿入モードに入ったりなんだったりしたら迷惑でしかない．</p>
+<p>だから私が考えたのは、ユーザーはそのvimで文書の編集をする機会は2割以下で、ほかはただ、見るだけ．例えば、Twitterをvim上に実現するみたいに．</p>
+<h2 id="実際例">実際例</h2>
+<p>実際に使われてる例をまず見るのが一番だった． 実は、<code>vmail</code>に使われている．</p>
+<p>vim で gmail を見たり、送受信したりできるよ！っていう 謳い文句だけど、vimと言いながら <code>gem install</code> させるじゃねーかと 思ってたんだけど、 vim単体で実現するのが面倒そうなこと（きっとメールの送受信部分だろう） は、Rubyで実現して、vimはユーザーインターフェースであり、インターフェースへの反映に使ってると見た．</p>
+<p><a href="https://github.com/danchoi/vmail/search?q=servername&amp;ref=cmdform">Search Results</a></p>
+<hr />
+<p>i3wm で，壁紙画像をどう設定するんだって調べると，feh を使えっていう 記事が大量に出てくるので，私は少し前からそうしてた</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">feh</span> --bg-fill ~/Dropbox/Pictures/cool.jpg</code></pre></div>
+<p>feh はそのまま使うとただの画像ビューワとして働く．というかこちらがメインな感じもする．</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># 一枚だけ</span>
+<span class="ex">feh</span> ~/Dropbox/Pictures/cool.jpg</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># 4.0 秒で次々行くスライドショー</span>
+<span class="ex">feh</span> -D 4.0 ~/Dropbox/Pictures/</code></pre></div>
+<p>サムネールモードなるものがあることに気づいた． 他にもモンタージュモードだとか， リストモードだとかあるんだけど， それらの差異はそこまで大きくなくて， それよりも，アクションなるものを設定できる． それが便利だ．</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">feh</span> -t -E300 -y300 ~/Pictures/ -A <span class="st">&#39;feh --bg-fill &quot;%f&quot;&#39;</span></code></pre></div>
+<p>これは，~/Picutures/ 内の画像を，300x300 におさまる大きさに全部変換して， いっぺんに一枚に表示する．アクションとして， <code>'feh --bg-fill &quot;%f&quot;'</code> が設定されているが， これは，一枚の画像の上にマウスオーバーした状態で， キーボードの<code>0</code> を押すと， <code>'feh --bg-fill &quot;%f&quot;'</code> が新しい /bin/sh から実行される． ただし，<code>%f</code> は，その画像のフルパス． フォーマットは他にもたくさんあって，もちろん組み合わせられる．</p>
+<p>希望としては，マウスオーバーして，キーを押すなんてまどろっこしいことじゃなくて，クリックでいいじゃんって思うんだけど，サムネールモードにおいてクリックは，その一枚を新しいウィンドウで表示，という動作に結び付けられている．</p>
+<p>アクションは10個まで，設定できて， <code>1</code> キー以上でそのアクションを起こせる</p>
+<p>不満点として，さきほどのクリックにアクションを設定できないこともだけど， デフォルトだと，横に細く縦に長く表示されて， スクロールするのに，マウスのスクロールする回るあれじゃ動かなくて， ドラッグしないとスクロールできない． 面倒だ．</p>
+<p>全体の大きさ(画像一枚じゃなくて，画像郡を表示するあのウィンドウ自体)は，-W, -H で設定するんだけど，両方を設定すると，W * H に表示できない画像は表示しない．だからどちらか一方までしか設定しないほうがいい．</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">feh</span> -t -W 1300 -E300 -y300 ~/Pictures/ -A <span class="st">&#39;feh --bg-fill &quot;%f&quot;&#39;</span></code></pre></div>
+<figure>
+<img src="../../img/2014/0601.png" />
+</figure>
+</body>
+</html>

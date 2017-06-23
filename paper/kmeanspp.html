@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>k-means++: The Advantages of Careful Seeding</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/
+    </a>
+</h1>
+<header>
+<h1 class="title">k-means++: The Advantages of Careful Seeding</h1>
+</header>
+<ul>
+<li>
+url: <a href=http://ilpubs.stanford.edu:8090/778/1/2006-13.pdf>http://ilpubs.stanford.edu:8090/778/1/2006-13.pdf</a>
+</li>
+<li>
+tags: <span class="tag"><a href=index.html#機械学習>機械学習</a></span> <span class="tag"><a href=index.html#クラスタリング>クラスタリング</a></span>
+</li>
+</ul>
+<h2 id="参考">参考</h2>
+<ul>
+<li>http://ilpubs.stanford.edu:8090/778/1/2006-13.pdf</li>
+<li><a href="http://ja.wikipedia.org/wiki/K-means%2B%2B%E6%B3%95">K-means++法 - Wikipedia</a></li>
+</ul>
+<h2 id="概要">概要</h2>
+<p>k-meansの初期値の決め方を改良したバージョンである. Wikipediaではめっちゃ簡単に説明がなされている.</p>
+<ul>
+<li>点の集合 <span class="math inline">\(D\)</span> から一つ、一様ランダムに点 <span class="math inline">\(c\)</span> を選ぶ</li>
+<li>点 <span class="math inline">\(x_i\)</span> について、確率 <span class="math inline">\(D(x_i, c) / Z\)</span> を与える
+<ul>
+<li><span class="math inline">\(Z\)</span> は正規化係数</li>
+</ul></li>
+<li>その確率に基づいて <span class="math inline">\(k\)</span> 個、点を選ぶ</li>
+<li>あとは k-means する</li>
+</ul>
+<p>以上である.</p>
+<p>論文ではこれ以上に近似比率 (なんの?) の議論とかむっちゃしてる.</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

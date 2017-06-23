@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>libsvm</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+</head>
+<body>
+<header>
+<h1 class="title">libsvm</h1>
+</header>
+<p>svmの実装といえば、 <a href="https://www.csie.ntu.edu.tw/~cjlin/libsvm/">libsvm</a> か <a href="http://svmlight.joachims.org/">SVMlight</a> の2つ (だけじゃないが).</p>
+<p>名前通り、確かに後者の方が早い気がする. それで別に、早いほうが精度が悪いかといえば必ずしもそうではないし. ただ、オプションの豊富さとか他ツールの豊富さは libsvm だから、 まずこちらを試すのが良いと思う.</p>
+<h1 id="参考">参考</h1>
+<p><a href="http://www.okuma.nuee.nagoya-u.ac.jp/~sakaguti/wiki/index.php?LibSVM" class="uri">http://www.okuma.nuee.nagoya-u.ac.jp/~sakaguti/wiki/index.php?LibSVM</a></p>
+<h2 id="訓練テストデータのフォーマット">訓練/テストデータのフォーマット</h2>
+<p>以下の javascript コードはテストデータ形式にそったテキストを出力する。</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// test.js</span>
+<span class="kw">for</span> (<span class="kw">var</span> i=<span class="dv">0</span>; i&lt;<span class="dv">100</span>; ++i) {
+  <span class="kw">var</span> a = [];
+  <span class="kw">for</span> (<span class="kw">var</span> j=<span class="dv">0</span>; j&lt;<span class="dv">10</span>; ++j) {
+    a[j] = <span class="ot">Math</span>.<span class="fu">round</span>(<span class="ot">Math</span>.<span class="fu">random</span>());
+  }
+  <span class="kw">var</span> t = <span class="ot">a</span>.<span class="fu">reduce</span>(<span class="kw">function</span>(x,y){<span class="kw">return</span> x+y});
+  t = t &gt; <span class="dv">5</span> ? <span class="dv">1</span> : -<span class="dv">1</span>;
+  <span class="ot">console</span>.<span class="fu">log</span>(<span class="st">&quot;%d %s&quot;</span>
+           , t
+           , <span class="ot">a</span>.<span class="fu">map</span>(<span class="kw">function</span>(x, i){<span class="kw">return</span> (i<span class="dv">+1</span>)+<span class="st">&#39;:&#39;</span>+x}).<span class="fu">join</span>(<span class="st">&#39; &#39;</span>));
+}</code></pre>
+<h2 id="カーネル選択">カーネル選択</h2>
+<pre><code>-t &lt;type-number&gt;</code></pre>
+<p>例えば <code>-t 0</code> で線形カーネルを使う. デフォルトは <code>-t 2</code> のrbfカーネル.</p>
+<h2 id="分割公差検証-クロスバリデーション">分割公差検証 (クロスバリデーション)</h2>
+<p>以下のオプションを持つ。</p>
+<pre><code>-v &lt;int&gt;</code></pre>
+<p><code>-v 10</code> で、テストデータを10分割して、 クロスバリデーションをしてくれる.</p>
+<h2 id="実験">実験</h2>
+<p>実際に先ほどの <code>test.js</code> で事例を作って訓練してみる.</p>
+<pre class="make"><code># Makefile
+do:
+    svm-train -t 0 -v 10 train.scale
+
+train.scale: test.js
+    node test.js &gt; train
+    svm-scale train &gt; train.scale</code></pre>
+<p>出力はこうであった</p>
+<pre><code>(前略)
+*.*
+optimization finished, #iter = 102
+nu = 0.112336
+obj = -5.000000, rho = 0.999823
+nSV = 38, nBSV = 1
+Total nSV = 38
+Cross Validation Accuracy = 100%</code></pre>
+<p>簡単すぎたようだ.</p>
+<h3 id="入力の次元を倍">入力(の次元)を倍</h3>
+<p>先程は、訓練データの中の一つのデータは10次元であった. 20次元にしてみる.</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">for</span> (<span class="kw">var</span> i=<span class="dv">0</span>; i&lt;<span class="dv">100</span>; ++i) {
+  <span class="kw">var</span> a = [];
+  <span class="kw">for</span> (<span class="kw">var</span> j=<span class="dv">0</span>; j&lt;<span class="dv">20</span>; ++j) {
+    a[j] = <span class="ot">Math</span>.<span class="fu">round</span>(<span class="ot">Math</span>.<span class="fu">random</span>());
+  }
+  <span class="kw">var</span> t = <span class="ot">a</span>.<span class="fu">reduce</span>(<span class="kw">function</span>(x,y){<span class="kw">return</span> x+y});
+  t = t &gt; <span class="dv">10</span> ? <span class="dv">1</span> : -<span class="dv">1</span>;
+  <span class="ot">console</span>.<span class="fu">log</span>(<span class="st">&quot;%d %s&quot;</span>
+           , t
+           , <span class="ot">a</span>.<span class="fu">map</span>(<span class="kw">function</span>(x, i){<span class="kw">return</span> (i<span class="dv">+1</span>)+<span class="st">&#39;:&#39;</span>+x}).<span class="fu">join</span>(<span class="st">&#39; &#39;</span>));
+}</code></pre>
+<pre><code>$ svm-train -t 0 -v 10 train.scale
+
+(前略)
+..........*......................*
+optimization finished, #iter = 2885
+nu = 0.094086
+obj = -4.186700, rho = 0.285305
+nSV = 19, nBSV = 0
+Total nSV = 19
+Cross Validation Accuracy = 99%</code></pre>
+<p>次元数に余裕があるのがSVMである.</p>
+<h3 id="パリティ-xor">パリティ (xor)</h3>
+<p>意味のある訓練データとして、パリティを学習させてみる. ちなみにパリティは線形分離不能なデータとして定番である.</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">for</span> (<span class="kw">var</span> i=<span class="dv">0</span>; i&lt;<span class="dv">100</span>; ++i) {
+  <span class="kw">var</span> a = [];
+  <span class="kw">for</span> (<span class="kw">var</span> j=<span class="dv">0</span>; j&lt;<span class="dv">10</span>; ++j) {
+    a[j] = <span class="ot">Math</span>.<span class="fu">round</span>(<span class="ot">Math</span>.<span class="fu">random</span>());
+  }
+  <span class="kw">var</span> t = <span class="ot">a</span>.<span class="fu">reduce</span>(<span class="kw">function</span>(x,y){<span class="kw">return</span> x+y});
+  t = t % <span class="dv">2</span> ? <span class="dv">1</span> : -<span class="dv">1</span>;
+  <span class="ot">console</span>.<span class="fu">log</span>(<span class="st">&quot;%d %s&quot;</span>
+           , t
+           , <span class="ot">a</span>.<span class="fu">map</span>(<span class="kw">function</span>(x, i){<span class="kw">return</span> (i<span class="dv">+1</span>)+<span class="st">&#39;:&#39;</span>+x}).<span class="fu">join</span>(<span class="st">&#39; &#39;</span>));
+}</code></pre>
+<h3 id="カーネル選択-1">カーネル選択</h3>
+<pre><code>-t 0 : linear
+-t 1 : poly
+-t 2 : RBF</code></pre>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">svm-train</span> -t 0 -v 10 train.scale
+
+<span class="kw">(前略)</span>
+<span class="kw">.........*</span>
+<span class="kw">optimization</span> finished, <span class="co">#iter = 860</span>
+<span class="kw">nu</span> = 0.669745
+<span class="kw">obj</span> = -59.094108, rho = 0.338879
+<span class="kw">nSV</span> = 65, nBSV = 53
+<span class="kw">Total</span> nSV = 65
+<span class="kw">Cross</span> Validation Accuracy = 61%</code></pre>
+<p><em>多項式</em></p>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">svm-train</span> -t 1 -v 10 train.scale
+
+<span class="kw">(前略)</span>
+<span class="kw">.*</span>
+<span class="kw">optimization</span> finished, <span class="co">#iter = 139</span>
+<span class="kw">nu</span> = 0.710394
+<span class="kw">obj</span> = -43.537098, rho = 0.154695
+<span class="kw">nSV</span> = 81, nBSV = 40
+<span class="kw">Total</span> nSV = 81
+<span class="kw">Cross</span> Validation Accuracy = 41%</code></pre>
+<p><em>RBF</em></p>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">svm-train</span> -t 1 -v 10 train.scale
+
+<span class="kw">(前略)</span>
+<span class="kw">*.*</span>
+<span class="kw">optimization</span> finished, <span class="co">#iter = 104</span>
+<span class="kw">nu</span> = 0.778061
+<span class="kw">obj</span> = -51.085066, rho = 0.243366
+<span class="kw">nSV</span> = 86, nBSV = 52
+<span class="kw">Total</span> nSV = 86
+<span class="kw">Cross</span> Validation Accuracy = 59%</code></pre>
+<h3 id="もっと簡単なパリティ">もっと簡単なパリティ</h3>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">for</span> (<span class="kw">var</span> i=<span class="dv">0</span>; i&lt;<span class="dv">100</span>; ++i) {
+  <span class="kw">var</span> a = [];
+  <span class="kw">for</span> (<span class="kw">var</span> j=<span class="dv">0</span>; j&lt;<span class="dv">10</span>; ++j) {
+    a[j] = <span class="ot">Math</span>.<span class="fu">round</span>(<span class="ot">Math</span>.<span class="fu">random</span>());
+  }
+  <span class="kw">var</span> t = <span class="ot">a</span>.<span class="fu">slice</span>(<span class="dv">0</span>,<span class="dv">2</span>).<span class="fu">reduce</span>(<span class="kw">function</span>(x,y){<span class="kw">return</span> x+y});
+  t = t % <span class="dv">2</span> ? <span class="dv">1</span> : -<span class="dv">1</span>;
+  <span class="ot">console</span>.<span class="fu">log</span>(<span class="st">&quot;%d %s&quot;</span>
+           , t
+           , <span class="ot">a</span>.<span class="fu">map</span>(<span class="kw">function</span>(x, i){<span class="kw">return</span> (i<span class="dv">+1</span>)+<span class="st">&#39;:&#39;</span>+x}).<span class="fu">join</span>(<span class="st">&#39; &#39;</span>));
+}</code></pre>
+<p>10次元のうち、実は2次元で答えが決まっている.</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;">kernel</th>
+<th style="text-align: center;">linear</th>
+<th style="text-align: center;">poly</th>
+<th style="text-align: center;">RBF</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">Acc.</td>
+<td style="text-align: center;">52 %</td>
+<td style="text-align: center;">62%</td>
+<td style="text-align: center;">82%</td>
+</tr>
+</tbody>
+</table>
+<p>パラメータをほんとは調整しないとだけど.</p>
+<h2 id="他の評価尺度を用いる">他の評価尺度を用いる</h2>
+<p>デフォルトでは Accuracy しか用いない. <a href="http://www.csie.ntu.edu.tw/~cjlin/libsvmtools/eval/">Binary-class Cross Validation with Different Criteria</a> で紹介されてるパッチ(?)で、他の評価尺度として</p>
+<ul>
+<li>精度</li>
+<li>再現度</li>
+<li>Fスコア</li>
+<li>BAC</li>
+<li>AUC</li>
+</ul>
+<p>が選べるようになる. ただしコンパイル時点で選ばないといけないけど.</p>
+</body>
+</html>

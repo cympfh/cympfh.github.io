@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sun Sep 6 20:48:23 JST 2015</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Sun Sep 6 20:48:23 JST 2015</h1>
+</header>
+<h2 id="twitterでファボられたらツイートを削除する">twitterでファボられたらツイートを削除する</h2>
+<p>タイトルの通り. 私の全てのアカウントで、ファボられたらそのツイートを即座に、自動的に削除させるようにした. これを、<code>salmon.js</code> に機能として追加した. <code>-F</code> オプションを付けて実行すると、この機能が発動する.</p>
+<p>いいことがいくつかある.</p>
+<ol type="1">
+<li>ツイートの削除がお手軽になること</li>
+<li>知らずにふぁぼってきた人を驚かせられること</li>
+<li>削除するという機能だけを公開すること</li>
+</ol>
+<p>イライザ (<span class="citation" data-cites="ampeloss">@ampeloss</span>) にいくつか通知と称して、 メールが来ると私のもとにリプライが着て、それでメールに気づけるようにしていた. 多すぎると雑音になる. 或いは、もう用事が済んだら消したい. 今までは、私のアカウントからイライザへリプライを飛ばしたら、 それを検知して削除させていた. でもリプライを飛ばすってことは、結果的に、ツイートの総数は変わらない. 地球資源の無駄遣いである.</p>
+<p>ファボるとツイートが消えるので、ファボも消える. エコだ.</p>
+<h2 id="コード">コード</h2>
+<p>変更箇所と最低限の骨格を含めたコードは以下の通りである.</p>
+<p>って、こんなコード (どうせ動かない) 書いてて思ったけど、 <code>git diff</code> のほうが後から見た時にいいに決まってる.</p>
+<ul>
+<li><a href="https://github.com/cympfh/salmon/commit/c196dd6e1f3b840b0771956df72a7facb4edf5fc">ファボられたら削除する！ · cympfh/salmon@c196dd6</a></li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode coffee"><code class="sourceCode coffee">ntwitter <span class="kw">=</span> require <span class="st">&#39;ntwitter&#39;</span>
+twit <span class="kw">=</span> <span class="kw">new</span> <span class="dt">ntwitter</span> <span class="kw">{}</span>
+
+delete_tweet <span class="kw">=</span> <span class="fu">(status_id) -&gt;</span>
+  url <span class="kw">=</span> <span class="st">&quot;https://api.twitter.com/1.1/statuses/destroy/</span><span class="ch">#{</span>status_id<span class="ch">}</span><span class="st">.json&quot;</span>
+  twit<span class="kw">.</span>post url<span class="kw">,</span> <span class="kw">{},</span> <span class="kw">(</span><span class="fu">-&gt;</span> <span class="ot">console</span><span class="kw">.</span>log <span class="st">&quot;status </span><span class="ch">#{</span>status_id<span class="ch">}</span><span class="st"> has beein destroied&quot;</span><span class="kw">)</span>
+
+twit<span class="kw">.</span>stream <span class="st">&#39;user&#39;</span><span class="kw">,</span> <span class="fu">(stream) -&gt;</span>
+  stream<span class="kw">.</span><span class="ot">on</span> <span class="st">&#39;data&#39;</span><span class="kw">,</span> <span class="fu">(data) -&gt;</span>
+    event <span class="kw">=</span> data<span class="kw">.</span>event
+    <span class="kw">if</span> event <span class="kw">is</span> <span class="st">&#39;favorite&#39;</span>
+      target_name <span class="kw">=</span> data<span class="kw">.</span>target_object<span class="kw">.</span>user<span class="kw">.</span>screen_name
+      <span class="kw">if</span> is_me<span class="kw">(</span>target_name<span class="kw">)</span>
+        delete_tweet data<span class="kw">.</span>target_object<span class="kw">.</span>id_str</code></pre></div>
+</body>
+</html>

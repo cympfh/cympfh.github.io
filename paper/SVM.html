@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Support Vector Machine (SVM)</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/
+    </a>
+</h1>
+<header>
+<h1 class="title">Support Vector Machine (SVM)</h1>
+</header>
+<ul>
+<li>
+url: <a href=http://www.cs.cornell.edu/People/tj/svm_light/#References>http://www.cs.cornell.edu/People/tj/svm_light/#References</a>
+</li>
+<li>
+tags: <span class="tag"><a href=index.html#機械学習>機械学習</a></span> <span class="tag"><a href=index.html#分類器>分類器</a></span>
+</li>
+</ul>
+<h2 id="index">INDEX</h2>
+<div id="toc">
+
+</div>
+<h2 id="実装">実装</h2>
+<ul>
+<li><a href="http://svmlight.joachims.org/">SVM-Light Support Vector Machine</a>
+<ul>
+<li>SVM 関連の論文をいくつか出してる Joachims さんによる実装</li>
+</ul></li>
+<li><a href="https://www.csie.ntu.edu.tw/~cjlin/libsvm/">LIBSVM -- A Library for Support Vector Machines</a>
+<ul>
+<li>稀に良くwebページが落ちてる</li>
+<li>同梱された <code>grid.py</code> がよく使われる</li>
+</ul></li>
+<li><a href="https://www.csie.ntu.edu.tw/~cjlin/liblinear/">LIBLINEAR -- A Library for Large Linear Classification</a>
+<ul>
+<li>線形カーネルに特化した版</li>
+</ul></li>
+</ul>
+<h2 id="動機">動機</h2>
+<p>線形分類器とは次のようなものであった. <span class="math inline">\(x_i \in \mathbb{R}^n\)</span>, <span class="math inline">\(y_i \in \{+1, -1\}\)</span> に対して、 データ <span class="math inline">\(\{(x_i, y_i)\}_{i=1,2,\ldots,N}\)</span> の超平面による線形分離を考える. すなわち、<span class="math inline">\(\mathbb{R}^n\)</span> 上のある超平面</p>
+<p><span class="math display">\[f(x) = w x - b = 0\]</span></p>
+<p>を定め 点 <span class="math inline">\(x\)</span> がこれより上にあるか下にあるか (これは <span class="math inline">\(f(x)\)</span> の正負を調べることに等しい) によって <span class="math inline">\(y\)</span> を予測する.</p>
+<p><span class="math display">\[\begin{cases}
+f(x_i) &gt; 0 \iff y_i = +1\\
+f(x_i) &lt; 0 \iff y_i = -1
+\end{cases}\]</span></p>
+<p>さて、一般に線形分離するような超平面は唯ひとつに定まらない. なぜなら、分離する超平面を得た時に、それを僅かに傾きを変化させてもたいていの場合、線形分離していることを保つから.</p>
+<p>超平面と、データ <span class="math inline">\(x_i\)</span> までの距離の最小値をマージンと呼び、 SVM ではマージンを最大化するような超平面を求めることを目標にする. これが直感的に良い気がするからである.</p>
+<h2 id="notation">notation</h2>
+<p>先ではさらっとベクトルの内積を <span class="math inline">\(wx\)</span> と書いたが、これからはベクトルの内積を</p>
+<p><span class="math display">\[\langle w,x \rangle\]</span></p>
+<p>と書く.</p>
+<p>超平面に関してだが、法線ベクトル <span class="math inline">\(w \in \mathbb{R}^n\)</span> とバイアス (スカラー) <span class="math inline">\(b\)</span> を用いて</p>
+<p><span class="math display">\[f(x) = \langle w, x \rangle - b\]</span></p>
+<p>と書くが、数式の簡潔さの為に、バイアス項を無視することにする.</p>
+<p><span class="math display">\[f(x) = \langle w, x \rangle\]</span></p>
+<p>これは次のように解釈すれば一般性を失っていない. すなわち、 ベクトル <span class="math inline">\(w\)</span> の最後に <span class="math inline">\(b\)</span> を追加し、 <span class="math inline">\(x\)</span> の最後に <span class="math inline">\(-1\)</span> を追加するのである. この時点で <span class="math inline">\(w, x \in \mathbb{R}^{n+1}\)</span> である.</p>
+<ul>
+<li><span class="math inline">\(w \leftarrow \left[ w; b \right]\)</span></li>
+<li><span class="math inline">\(x \leftarrow \left[ x; -1 \right]\)</span></li>
+</ul>
+<p>基本的にバイアス項は無視して書くが、一箇所だけ、一度バイアス項アリの形に変形することがある. 本来そんなことしなくても良いはずだけど、私が上手い導出を思いつかなかったので、ごまかし.</p>
+<h2 id="目的関数">目的関数</h2>
+<h3 id="主問題">主問題</h3>
+<p>法線ベクトル <span class="math inline">\(w\)</span> を持つ超平面とデータ <span class="math inline">\(x\)</span> との距離は</p>
+<p><span class="math display">\[\frac{|\langle w, x \rangle|}{|w|}\]</span></p>
+<p><span class="math inline">\(w\)</span> をスカラー倍しても超平面は変わらないので、超変面との距離が最小なデータを <span class="math inline">\(x_i\)</span> とするとき、 適当にスカラー倍することで</p>
+<p><span class="math display">\[|\langle w, x_i \rangle| = 1\]</span></p>
+<p>としてよい. より強い制約として、全てのデータ <span class="math inline">\(x_i\)</span> に関して</p>
+<p><span class="math display">\[\forall i, |\langle w, x_i \rangle| \geq 1\]</span></p>
+<p>を要請することにする. そしてこのときにマージンの最大化とは、<span class="math inline">\(1 / |w|\)</span> の最大化、即ち <span class="math inline">\(|w|\)</span> の最小化に等しい. 計算の都合上、 <span class="math inline">\(\frac{1}{2} |w|^2\)</span> の最小化とする.</p>
+<p><span class="math inline">\(|\langle w, x_i \rangle| \geq 1\)</span> は ラベルを <span class="math inline">\(y_i = +1, -1\)</span> としたことから次のように書き直せる:</p>
+<p><span class="math display">\[y_i \cdot \langle w, x_i \rangle \geq 1\]</span></p>
+<p>以上をまとめると、 不等号な制約付きの最適化問題になる.</p>
+<ul>
+<li>minimize <span class="math inline">\(\frac{1}{2} |w|^2\)</span></li>
+<li>s.t. <span class="math inline">\(y_i \cdot \langle w, x_i \rangle \geq 1\)</span></li>
+</ul>
+<p>これをSVMの主問題という. 実際にはこれを直接解かずに、同値な、双対問題に書きなおしたものを解く.</p>
+<h3 id="双対表現">双対表現</h3>
+<p>双対問題はラグランジュの未定乗数法を用いて導かれる. すなわち、</p>
+<ul>
+<li>maximize <span class="math inline">\(L(w, \lambda) = \frac{1}{2} |w|^2 - \sum_i \lambda_i \left( y_i \cdot \langle w, x_i \rangle - 1 \right)\)</span></li>
+<li>s.t. <span class="math inline">\(\lambda_i \geq 0\)</span></li>
+</ul>
+<p><span class="math inline">\(\frac{\partial L}{\partial w} = 0\)</span> を解くと <span class="math inline">\(w = \sum_i \lambda_i y_i x_i\)</span> を得る. これを <span class="math inline">\(L(w, \lambda)\)</span> に代入すると:</p>
+<p><span class="math display">\[\begin{align}
+L(\lambda)
+&amp; = \sum_i \lambda_i - \frac{1}{2} \sum_i \sum_j \lambda_i \lambda_j y_i y_j \langle x_i, x_j \rangle\\
+&amp; = \sum_i \lambda _i - \frac{1}{2} |w|^2
+\end{align}\]</span></p>
+<p>ここからちょっと、上手い導出を私が思いつかなかったので、 一度バイアス項アリの形に直すと、 <span class="math inline">\(L(w,\lambda)\)</span> は</p>
+<p><span class="math display">\[L(w, b, \lambda) = \frac{1}{2} |w|^2 - \sum_i \lambda_i \left( y_i \cdot (\langle w, x_i \rangle -b) - 1 \right)\]</span></p>
+<p>である. これについて <span class="math inline">\(\frac{\partial L(w,\lambda)}{\partial b}=0\)</span> を解けば、</p>
+<p><span class="math display">\[\sum_i \lambda_i y_i = 0\]</span></p>
+<p>を得る.</p>
+<p>以上をまとめて、次のような最適化問題を得る. これをSVMの双対問題という.</p>
+<ul>
+<li>maximize <span class="math inline">\(L(\lambda) = \sum_i \lambda _i - \frac{1}{2} |w|^2\)</span></li>
+<li>s.t. <span class="math inline">\(\lambda_i \geq 0\)</span>, <span class="math inline">\(\sum_i \lambda_i y_i = 0\)</span></li>
+</ul>
+<p>これを解いたとき、 <span class="math inline">\(w = \sum_i \lambda_i y_i x_i\)</span> によって超平面を復元することが出来る.</p>
+<p>後述する &quot;カーネル拡張&quot; を用いる場合等、 原理的に、 主問題は解けず、双対問題を解いて <span class="math inline">\((\lambda_i, y_i, x_i)\)</span> を、学習結果として保存することになる.</p>
+<h2 id="カーネル拡張">カーネル拡張</h2>
+<p>以上説明してきた SVM は所詮、線形分類器の拡張に過ぎない. これを <strong>線形 SVM</strong> (linear SVM) という. SVM をより良く知らしめたのは寧ろカーネル拡張が出来ることにある. &quot;カーネル拡張&quot; という言葉はたぶん SVM で初めて提唱されたもの.</p>
+<h3 id="カーネル拡張とは何か">カーネル拡張とは何か</h3>
+<p>線形分類をするためには、データが適当な超平面によって線形分離できなければならないが、現実の観測データがいつでもそうあるわけではない. しかし、適当な関数 <span class="math inline">\(\phi\)</span> によって、 データセット <span class="math inline">\(D = \{ (x_i, y_i) \}\)</span> を <span class="math inline">\(D&#39; = \{ (\phi(x_i), y_i) \}\)</span> に写したとする. <span class="math inline">\(D\)</span> は線形分類不能であったが <span class="math inline">\(D&#39;\)</span> では可能となることがしばしばある.</p>
+<p>線形分類器がどんなだったかを改めて思い出すと、 データセット <span class="math inline">\(D = \{x_i\}\)</span> があって、これから導かれた超平面 <span class="math inline">\(w\)</span> によって</p>
+<p><span class="math display">\[y(x) = \langle w, x \rangle\]</span></p>
+<p>とする. 双対表現から分かることとして、 <span class="math inline">\(w\)</span> は、ある <span class="math inline">\(\lambda_i\)</span> によって</p>
+<p><span class="math display">\[w = \sum_i \lambda_i y_i x_i\]</span></p>
+<p>と書ける. これを代入すると、</p>
+<p><span class="math display">\[y(x) = \sum_i \lambda_i y_i \langle x_i, x \rangle\]</span></p>
+<p>SVMに限らず、線形分類器とは一般にこういうものである. では、データ点を全て <span class="math inline">\(\phi\)</span> によって写すとする. 即ち、学習データの <span class="math inline">\(x_i\)</span> も、これから予測しようとする <span class="math inline">\(x\)</span> も <span class="math inline">\(\phi\)</span> によって別な空間に写そう.</p>
+<p><span class="math display">\[y(x) = \sum_i \lambda_i y_i \langle \phi(x_i), \phi(x) \rangle\]</span></p>
+<p>となる. 更には、</p>
+<p><span class="math display">\[\kappa(x_1, x_2) = \langle \phi(x_1), \phi(x_2) \rangle\]</span></p>
+<p>なる関数 <span class="math inline">\(\kappa\)</span> を定義すると</p>
+<p><span class="math display">\[y(x) = \sum_i \lambda_i y_i \kappa(x_i, x)\]</span></p>
+<p>と書ける. この <span class="math inline">\(\kappa\)</span> のことを、カーネルと呼ぶ. <span class="math inline">\(\phi\)</span> を恒等関数とすれば <span class="math inline">\(\kappa\)</span> はベクトルの内積そのものだから、 カーネルとは内積の拡張だと言えそうだ.</p>
+<p>というわけで、 <span class="math inline">\(y(x) = \sum_i \lambda_i y_i \langle x_i, x \rangle\)</span> の代わりに、 <span class="math inline">\(y(x) = \sum_i \lambda_i y_i \kappa(x_i, x)\)</span> をとするのを、 カーネル拡張という.</p>
+<p>カーネル拡張の良さは、 まず <span class="math inline">\(\phi\)</span> で写すことで線形分離が可能になるかもしれないこと. それから、もはや式に <span class="math inline">\(\phi\)</span> は出てきて無くて、<span class="math inline">\(\kappa\)</span> しかないので、 <span class="math inline">\(\phi\)</span> ではなく <span class="math inline">\(\kappa\)</span> を直接定めればよい. <span class="math inline">\(\phi\)</span> を取ってから内積を取るという計算を省略できる可能性がある. ベクトルの内積を取るという手続きは、計算量的にコストが高いから.</p>
+<h3 id="rbf-カーネル">rbf カーネル</h3>
+<p>名高いカーネルとして、rbf カーネル (Gaussian カーネル) がある.</p>
+<p><span class="math display">\[\kappa(x_1, x_2) = \exp \left[ -\gamma \| x_1 - x_2 \|^2 \right]\]</span></p>
+<p>実は、この <span class="math inline">\(\kappa\)</span> に対して適切な <span class="math inline">\(\phi\)</span> は存在しない.</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

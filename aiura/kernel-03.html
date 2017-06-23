@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>カーネル法 - 概要</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> aiura/
+    </a>
+</h1>
+<header>
+<h1 class="title">カーネル法 - 概要</h1>
+</header>
+<p class="date" style="text-align: right">
+2016-09-18 (Sun.)
+</p>
+<div class="tags" style="text-align: right">
+<p><a class=tag href=index.html#機械学習>機械学習</a></p>
+</div>
+<h2 id="index">index</h2>
+<div id="toc">
+
+</div>
+<h2 id="特徴空間での線形回帰">特徴空間での線形回帰</h2>
+<h3 id="普通の-線形回帰">(普通の) 線形回帰</h3>
+<p>まず普通の線形回帰を考える. 予測関数</p>
+<p><span class="math display">\[g(x) = \langle w,x \rangle = \sum_i w_i x_i\]</span></p>
+<p>を用いてパターンは</p>
+<p><span class="math display">\[f(x, y; w) = \mathcal{L}(y, g(x)) = |y - g(x)|^2 \approx 0\]</span></p>
+<p>がよく用いられる. <span class="math inline">\(w\)</span> を行ベクトル、行列 <span class="math inline">\(X\)</span> を列ベクトル <span class="math inline">\(x_1, x_2, \ldots, x_n\)</span> を並べたものとする.</p>
+<p><span class="math display">\[\mathcal{L}(y, X; w) = |y - Xw|^2 = (y-Xw)&#39; (y-Xw) ~~(\geq 0)\]</span></p>
+<p>ここで <span class="math inline">\(&#39;\)</span> は行列の転置. この値は非負であってゼロの場合に <span class="math inline">\(f\)</span> は exact pattern となる. 従って最小化問題を解こうとなる.</p>
+<p><span class="math display">\[\frac{\partial \mathcal{L}}{\partial w} = -2X&#39;(y - Xw) = 0\]</span> <span class="math display">\[\iff X&#39;Xw = X&#39;y\]</span></p>
+<p><span class="math inline">\((X&#39;X)\)</span> の逆行列が存在するなら</p>
+<p><span class="math display">\[w = (X&#39;X)^{-1}X&#39;y\]</span></p>
+<p>が導かれる. <span class="math inline">\((X&#39;X)\)</span> はデータ <span class="math inline">\(x\)</span> が <span class="math inline">\(n\)</span> 次元だとすると <span class="math inline">\(n \times n\)</span> 行列で、逆行列を求めるのが最も高コストで <span class="math inline">\(O(n^3)\)</span>.</p>
+<p><span class="math inline">\((X&#39;X)\)</span> の逆行列が存在するなら</p>
+<p><span class="math display">\[w = (X&#39;X)^{-1}y = X&#39; X (X&#39;X)^{-2}y = X&#39; \alpha\]</span></p>
+<p>と書ける. <span class="math inline">\(X&#39;\)</span> はデータを横に並べたもので、<span class="math inline">\(\alpha\)</span> は実数を縦に並べた列ベクトル. つまり、この右辺が意味していることは、</p>
+<p><span class="math display">\[w = \sum_i \alpha_i x_i\]</span></p>
+<p>ということ. 即ち、超平面 <span class="math inline">\(w\)</span> は結局訓練データの線型結合であるということ.</p>
+<h3 id="リッジ回帰-ridge-regression">リッジ回帰 (Ridge regression)</h3>
+<p>次を損失関数とする回帰をリッジ回帰という. ただし <span class="math inline">\(\lambda\)</span> は適当な正実数.</p>
+<p><span class="math display">\[\mathcal{L}_\lambda(y,X;w) = \lambda |w|^2 + |y - Xw|^2\]</span></p>
+<p>先ほどと同様にこの最小化をしたいので <span class="math inline">\(w\)</span> で偏微分してゼロなのを解くと</p>
+<p><span class="math display">\[\lambda w + X&#39;Xw = X&#39;y.\]</span></p>
+<p>逆行列が存在すれば</p>
+<p><span class="math display">\[w = (X&#39;X+\lambda I)^{-1} X&#39;y\]</span></p>
+<p>を導けるが <span class="math inline">\(\lambda &gt; 0\)</span> の時、実はそれはいつも逆行列が存在する. これもやっぱり次元数 <span class="math inline">\(n\)</span> に関して <span class="math inline">\(O(n^3)\)</span> の計算コスト.</p>
+<p>ところで、この <span class="math inline">\(w\)</span> も結局データの線型結合であることは次のようにして確かめられる:</p>
+<ul>
+<li><span class="math inline">\(\lambda w + X&#39;Xw = X&#39;y\)</span></li>
+<li><span class="math inline">\(\iff \lambda w = X&#39;(y - Xw)\)</span></li>
+<li><span class="math inline">\(\iff w = X&#39; (y - Xw) /\lambda = X&#39; \alpha\)</span></li>
+</ul>
+<p><span class="math inline">\(\alpha\)</span> について陽に解く</p>
+<ul>
+<li><span class="math inline">\(w = (X&#39;X+\lambda I)^{-1} X&#39;y\)</span></li>
+<li><span class="math inline">\(\iff X&#39;\alpha = (X&#39;X+\lambda I)^{-1} X&#39;y\)</span> (because <span class="math inline">\(w = X&#39;\alpha\)</span>)</li>
+<li><span class="math inline">\(\iff X&#39;y = (X&#39;X+\lambda I) X&#39; \alpha = X&#39; (XX&#39; + \lambda I) \alpha\)</span></li>
+<li><span class="math inline">\(\Rightarrow \alpha = (XX&#39;+\lambda I)^{-1} y\)</span></li>
+</ul>
+<p>また予測は</p>
+<p><span class="math display">\[g(x) = \langle w,x \rangle = \langle \sum_i \alpha_i x, x \rangle = \alpha&#39; x = y&#39;(XX&#39; + \lambda I) k\]</span></p>
+<p>ここで <span class="math inline">\(k\)</span> は列ベクトルで <span class="math inline">\(k_i = \langle x_i, x \rangle\)</span>.</p>
+<p><span class="math inline">\(G = XX&#39;\)</span> とする. これはグラム行列 (Gram matrix) と呼ばれ、 ちょうど <span class="math inline">\(G_{i,j} = \langle x_i, x_j \rangle\)</span> となっている. <span class="math inline">\(G\)</span> の大きさはデータ数 <span class="math inline">\(m\)</span> に対して <span class="math inline">\(m \times m\)</span> 行列. 上の <span class="math inline">\(g\)</span> を計算するコストは 次元数 <span class="math inline">\(n\)</span> とデータ数 <span class="math inline">\(m\)</span> に関して <span class="math inline">\(O(nm)\)</span>.</p>
+<h3 id="カーネル拡張">カーネル拡張</h3>
+<p>データ <span class="math inline">\(x \in \mathbb{R}^n\)</span> を別な空間 <span class="math inline">\(\phi(x) \in F \subseteq \mathbb{R}^N\)</span> に写す. この空間でのリッジ回帰は先程の結論の <span class="math inline">\(x\)</span> を <span class="math inline">\(\phi(x)\)</span> に置き換えるだけでよくて</p>
+<ul>
+<li><span class="math inline">\(g(x) = y&#39; (G+\lambda I)^{-1} k\)</span></li>
+<li>where
+<ul>
+<li><span class="math inline">\(G_{i,j} = \langle \phi(x_i), \phi(x_j) \rangle\)</span></li>
+<li><span class="math inline">\(k_i = \langle \phi(x_i), \phi(x) \rangle\)</span></li>
+</ul></li>
+</ul>
+<p>次を満たす <span class="math inline">\(\kappa\)</span> をカーネルという:</p>
+<p><span class="math display">\[\kappa(x, z) = \langle \phi(x), \phi(z) \rangle.\]</span></p>
+<h2 id="pca">PCA</h2>
+<p>PCA は <span class="math inline">\(x \in \mathbb{R}^n\)</span> をより低い次元である <span class="math inline">\(X&#39;X\)</span> の固有ベクトルが張る <span class="math inline">\(k\)</span> 次元空間に写す.</p>
+<p><span class="math inline">\(X&#39;X\)</span> の固有ベクトルを <span class="math inline">\(v_1, v_2, \ldots, v_k\)</span> とするとき データ <span class="math inline">\(x\)</span> は</p>
+<p><span class="math display">\[\langle x, v_i \rangle_{i=1,2,\ldots,k}\]</span></p>
+<p>に写される. この内積を <span class="math inline">\(\kappa(x, v_i)\)</span> に置き換えることで特徴空間でのPCAを考えることができる. これは kernel PCA と言われる.</p>
+<h2 id="クラスタリング-例">クラスタリング (例)</h2>
+<p>ユークリッド空間上の点集合をユークリッド距離に基づいてクラスタリングすることを考える.</p>
+<p><span class="math display">\[|x-z|^2 = \langle x,x \rangle + \langle z,z \rangle - 2 \langle x,z \rangle\]</span></p>
+<p>であることを考えると、ここをカーネルに置き換える拡張が考えられる.</p>
+<h2 id="集合カーネル-例">集合カーネル (例)</h2>
+<p>Introduction でも述べたように、<span class="math inline">\(\phi\)</span> によって写した先が実空間 <span class="math inline">\(\mathbb{R}^N\)</span> であれば元は何でも良い. すなわちカーネル <span class="math inline">\(\kappa\)</span> も、任意のペアを実空間 <span class="math inline">\(\mathbb{R}\)</span> に写しさえすれば何でも良い. 例えば集合に関する <span class="math inline">\(\phi, \kappa\)</span> を設計することができる.</p>
+<p>例えば集合 <span class="math inline">\(A_1, A_2 (\subseteq U)\)</span> に関するカーネル</p>
+<p><span class="math display">\[\kappa(A_1, A_2) = 2^{|A_1 \cap A_2|}\]</span></p>
+<p>は、積集合 (<span class="math inline">\(A_1 \cap A_2\)</span>) の部分集合の数を表す. これを再現する <span class="math inline">\(\phi\)</span> を作ることはできる.</p>
+<ul>
+<li><span class="math inline">\(I = \{ D : D \subseteq U \}\)</span> をインデックスとして</li>
+<li><span class="math inline">\(A \mapsto \phi(A) = \{ D \mapsto \chi(D \subseteq A) : D \in I \}\)</span>
+<ul>
+<li>where
+<ul>
+<li><span class="math inline">\(\chi(Prop) = 1\)</span> when <span class="math inline">\(Prop\)</span> holds on</li>
+<li><span class="math inline">\(\chi(Prop) = 0\)</span> otherwise</li>
+</ul></li>
+</ul></li>
+</ul>
+<h2 id="カーネルのモジュール性">カーネルのモジュール性</h2>
+<p>以上見てきたように、多くのパターン解析アルゴリズムがカーネルで拡張できる可能性を持つ.</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

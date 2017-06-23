@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Improved Techniques for Training GANs</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/
+    </a>
+</h1>
+<header>
+<h1 class="title">Improved Techniques for Training GANs</h1>
+</header>
+<ul>
+<li>
+url: <a href=https://arxiv.org/abs/1606.03498>https://arxiv.org/abs/1606.03498</a>
+</li>
+<li>
+tags: <span class="tag"><a href=index.html#深層学習>深層学習</a></span> <span class="tag"><a href=index.html#GAN>GAN</a></span>
+</li>
+</ul>
+<h2 id="概要">概要</h2>
+<p>GANのテクニック集</p>
+<p><span class="math display">\[\text{GAN}: z \rightarrow^G x \rightarrow^D [0,1]\]</span></p>
+<h2 id="feature-matching">Feature matching</h2>
+<p>識別器の中の入力から適当な中間層までの計算を <span class="math inline">\(f\)</span> とするとき</p>
+<p><span class="math display">\[\left\lVert f(x_{\text{real}}) - f(G(z_{\text{noise}})) \right\rVert^2\]</span></p>
+<p>の最小化を目的関数に加える. これは <span class="math inline">\(G\)</span> を強くするのが目的で、普通の画像の基本的な特徴を持った画像は安定して作れるようにする.</p>
+<h2 id="minibatch-discrimination">Minibatch discrimination</h2>
+<p>GAN の大きな問題として縮退 (collapse) が挙げられる. それはすなわち、GANを訓練していくと生成器 <span class="math inline">\(G\)</span> がいつの間にか入力のノイズを無視して定数を出力するような状態に収束してしまう現象のこと. <span class="math inline">\(G\)</span> としてはミニバッチごとに異なる画像を出す必要がないので、そうなるのが当然.</p>
+<p>ミニバッチの中では異なる入力が与えられるのだから出力も異なることを保証するような制約を設けるのが minibatch discrimination で、ミニバッチごとの <span class="math inline">\(G\)</span> の出力における多様性を <span class="math inline">\(D\)</span> にヒントとして入力を与える. <span class="math inline">\(G\)</span> はこれを騙すには多様な出力をする必要がある.</p>
+<p>多様性は次のように表現する.<br />
+<span class="math inline">\(G\)</span> の出力を <span class="math inline">\(x_1, x_2, \ldots, x_k\)</span> とする. これをそのまま使うとアレなので、やはり識別器の中間層の出力 <span class="math inline">\(f(x_i)\)</span> を使う. <span class="math inline">\(f(x_i) \in \mathbb{R}^A\)</span> として 適当なテンソル <span class="math inline">\(T \in \mathbb{R}^{A\times B\times C}\)</span> を掛けて</p>
+<p><span class="math display">\[M_i = f(x_i) T \in \mathbb{R}^{B\times C}\]</span></p>
+<p>を出力の特徴だとする. <span class="math inline">\(b\)</span>-th 列ベクトル <span class="math inline">\(M_{ib} \in \mathbb{R}^C\)</span> が <span class="math inline">\(B\)</span> 個あると見做す.</p>
+<ul>
+<li><span class="math inline">\(c_b(i, j) = \exp \left[ - \| M_{ib} - M_{jb} \|_1 \right]\)</span></li>
+<li><span class="math inline">\(o_b(i) = \sum_{j=1}^n c_b(i, j)\)</span></li>
+<li><span class="math inline">\(o(i) = [ o_1(i), o_2(i), \ldots, o_B(i) ]\)</span></li>
+</ul>
+<p>この <span class="math inline">\(o(i)\)</span> を <span class="math inline">\(f\)</span> の継続への入力に ( <span class="math inline">\(x_i\)</span> に対応するところに) 追加する.</p>
+<h2 id="one-sided-label-smoothing">One-sided label smoothing</h2>
+<p>正負ラベルを <span class="math inline">\(1.0\)</span>, <span class="math inline">\(0.0\)</span> に対応させる代わりに <span class="math inline">\(0.9\)</span>, <span class="math inline">\(0.1\)</span> くらいに対応させるほうが良い結果が得られることは 1980 年から知られていた (!!). このテクニックを Label smoothing という.</p>
+<p>なんか分からんけど正データだけ <span class="math inline">\(0.9\)</span> くらいにして負データは <span class="math inline">\(0.0\)</span> にしただけの片側ラベルスムージングが良いらしい.</p>
+<h2 id="virtual-batch-normalization">Virtual batch normalization</h2>
+<p>DCGAN においても batch normalization は品質向上に貢献してきたが、 バッチごとに他の値に入力するのは問題なので、 batch normalization が参照するバッチは初めに一個決めてずっと固定して使う.</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

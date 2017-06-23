@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>May 15 2014</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">May 15 2014</h1>
+</header>
+<h2 id="英和辞書">英和辞書．</h2>
+<p>英和辞書のデータをどこかから持ってくる．</p>
+<p>私のデータは</p>
+<pre><code>&lt;datum&gt; ::= &lt;line&gt; | &lt;datum&gt;
+&lt;line&gt; ::= &lt;word&gt;\t&lt;description&gt;\n
+&lt;word&gt; ::= cat | ...
+&lt;description&gt; ::= 『猫』;(ライオン,トラ,ヒョウなどの)ネコ科の動物 | ...</code></pre>
+<p>みたいに、タブ区切りになってる．</p>
+<p>こっから目的の英単語を探すだけだから <code>grep コマンド</code>でも使えばいいけど、 <code>look コマンド</code> は二分探索をしてくれるという噂があるのでそちらを使う． だから予め、英和辞書のデータをソートしておく．</p>
+<h3 id="bash">bash</h3>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co">#!/bin/bash</span>
+
+<span class="kw">function</span><span class="fu"> ej()</span> <span class="kw">{</span>
+  <span class="ex">look</span> -f <span class="va">$1</span><span class="st">$&#39;</span><span class="dt">\t</span><span class="st">&#39;</span> ~/Dropbox/txt/EngJa <span class="kw">|</span> <span class="fu">sed</span> <span class="st">&#39;s/\t /\n  /; s/ \/ /\n  /g&#39;</span>
+<span class="kw">}</span>
+<span class="kw">function</span><span class="fu"> ej2()</span> <span class="kw">{</span>
+  <span class="ex">look</span> -f <span class="va">$1</span> ~/Dropbox/txt/EngJa <span class="kw">|</span> <span class="fu">sed</span> <span class="st">&#39;s/\t /\n  /; s/ \/ /\n  /g&#39;</span>
+<span class="kw">}</span></code></pre></div>
+<p><code>ej</code>は英単語の完全一致、<code>ej2</code>は前方一致をする．スペルが怪しいものを探すときに使うことにする．</p>
+<h3 id="vim">vim</h3>
+<pre class="vim"><code>&quot; look-up English-Japanese dictionary
+
+fun! g:lookup(word, suff)
+  let dict = &quot; ~/Dropbox/txt/EngJa&quot;
+  exe &quot;!look -f &quot; . tolower(a:word) . a:suff . &quot; &quot; . dict
+endfun
+nnoremap L :call g:lookup(expand(&quot;&lt;cword&gt;&quot;), &quot;&quot;)&lt;cr&gt;
+nnoremap K :call g:lookup(expand(&quot;&lt;cword&gt;&quot;), &quot;$&#39;\t&#39;&quot;)&lt;cr&gt;</code></pre>
+<p>カーソルの下にある単語で<code>look</code>するだけ． どうやって単語を取得するんだろうとちょっとググったら <code>expand 関数</code> でできる事を初めて知った． ファイル名の取得以外にも使うんだ．</p>
+<p>あと、小文字に直してから引くっていうことをしてたけど、 辞書を <code>sort -f</code> しておいてから <code>look -f</code> するという技が <a href="http://publib.boulder.ibm.com/infocenter/pseries/v5r3/index.jsp?topic=/com.ibm.aix.cmds/doc/aixcmds3/look.htm">pSeries および AIX インフォメーション・センター</a> にあった．</p>
+<hr />
+<ul>
+<li>米2kgで1098円</li>
+<li>米5kgで1980円</li>
+</ul>
+<p>一度に多くを購入する方が安いのは大抵の通りだけれども、 お金のない人ほど安く買いたいけど2000円も持ち合わせが在ることのほうが少ない。</p>
+<p>実際に食べる生米が、K 円/kg だとして ガワの部分、包装とか諸々の人件費は、実際には米5kgのほうが大きいかもしれないけれど 誤差の範囲として、共通のC円とする。</p>
+<ul>
+<li>2K + C = 1098</li>
+<li>5K + C = 1980</li>
+</ul>
+<p>implies</p>
+<ul>
+<li>K = 294</li>
+<li>C = 510</li>
+</ul>
+<p>私のかったお米の半分程度が、ガワの値段だった。</p>
+<p>(参考; COOP)</p>
+<p>お茶碗一杯60gという数字がどっかにあった。</p>
+<p><a href="http://1000nichi.blog73.fc2.com/blog-entry-4212.html">お米の値段はもっと安くできないの？小学生の質問に農協ブチ切れ</a></p>
+<p>炊くための手間と電気代と水道代を考えなくても、 食パンのほうがずっと安い。</p>
+<h2 id="結論">結論</h2>
+<p>お米はぜいたく品</p>
+</body>
+</html>

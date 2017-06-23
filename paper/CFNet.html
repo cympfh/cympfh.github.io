@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Hybrid Recommender System based on Autoencoders</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/
+    </a>
+</h1>
+<header>
+<h1 class="title">Hybrid Recommender System based on Autoencoders</h1>
+</header>
+<ul>
+<li>
+url: <a href=https://arxiv.org/abs/1606.07659>https://arxiv.org/abs/1606.07659</a>
+</li>
+<li>
+tags: <span class="tag"><a href=index.html#推薦システム>推薦システム</a></span> <span class="tag"><a href=index.html#深層学習>深層学習</a></span>
+</li>
+</ul>
+<h2 id="src">src</h2>
+<ul>
+<li>https://github.com/fstrub95/Autoencoders_cf</li>
+</ul>
+<h2 id="概要">概要</h2>
+<ul>
+<li>行列分解による協調フィルタリングの行列分解部分をニューラルなネットワークでやる
+<ul>
+<li>CF のネットだから &quot;CFN&quot;</li>
+</ul></li>
+<li>結果は、行列分解による既存手法よりも、僅かに良かった</li>
+<li>cold-start に強いと言っている</li>
+</ul>
+<h2 id="手法">手法</h2>
+<ul>
+<li>行がユーザー (N) で列がアイテム (M) の rating 行列</li>
+<li>CF はこの行列が含む欠損値を埋める枠組みである</li>
+<li><p>これは denoising な autoencoder にほかならない</p></li>
+<li>行列の 1行 または 1列 <span class="math inline">\(x\)</span> を取ってくる.
+<ul>
+<li><span class="math inline">\(x \in \mathbb{R}^N\)</span> or <span class="math inline">\(\in \mathbb{R}^M\)</span></li>
+<li>&quot;U-CFN&quot;, &quot;V-CFN&quot; と呼び分ける</li>
+</ul></li>
+<li>入力にはまずノイズ <span class="math inline">\(x \mapsto \tilde{x}\)</span> (corrupted version)
+<ul>
+<li>ここで言う corrupted の操作が具体的に書かれてない?</li>
+<li>都合よく汲み取ってやると、ランダムにインデックスを0個以上選んで、<span class="math inline">\(x_i \leftarrow x_i + noise\)</span></li>
+</ul></li>
+</ul>
+<h3 id="autoencoder">autoencoder</h3>
+<ul>
+<li><span class="math inline">\(\tilde{x} \mapsto \sigma(W&#39; \sigma(W\tilde{x}+b) +b&#39;) \sim x\)</span>
+<ul>
+<li>2層に限定してるわけではないが、実験では2層</li>
+<li>loss を <span class="math inline">\(\tilde{x}\)</span> と <span class="math inline">\(x\)</span> の誤差自乗で計算するのだけど、 corrupted したインデックスかどうかで、重みを付けて和を取る</li>
+<li>あとL2正則化もする</li>
+</ul></li>
+</ul>
+<h3 id="integrating-side-information">Integrating Side Information</h3>
+<p>こっからやばい気がする</p>
+<ul>
+<li>ユーザーやアイテムに関するさらなる情報を用いたい.</li>
+<li><span class="math inline">\(P\)</span>次元情報 <span class="math inline">\(z\)</span> を autoencoder の入力に加える:</li>
+</ul>
+<p><span class="math inline">\([x;z] \mapsto \sigma(W&#39; [\sigma(W[x;z]+b);z] +b&#39;) \sim [x;z]\)</span></p>
+<p>ここで <span class="math inline">\([;]\)</span> はベクトルの連結.</p>
+<ul>
+<li>強引すぎないか？</li>
+<li>&quot;cold start に強い&quot; って言ってるのは、これのことなんだろうな</li>
+<li>一般に、&quot;各層で、<span class="math inline">\(z\)</span> を加える&quot; とある
+<ul>
+<li><span class="math inline">\(z\)</span> の影響が強すぎるので、<span class="math inline">\(z\)</span> の次元数をかなり抑えるように、ともある</li>
+</ul></li>
+</ul>
+<h2 id="実験">実験</h2>
+<ul>
+<li>V-CFN
+<ul>
+<li>行列の列 (N users * 1 item) で autoencode</li>
+</ul></li>
+<li>V-CFN++
+<ul>
+<li>Integrating Side Information を更に乗っける</li>
+</ul></li>
+<li>Dataset
+<ul>
+<li>MovieLens
+<ul>
+<li>定番らしい</li>
+<li><a href="http://yag.xyz/blog/2015/10/03/movielens-datasets/">推薦システム用データセットMovieLensについて Wolftail Bounds</a></li>
+<li>データセットのサイズごとに 1M/10M/20M を使う</li>
+</ul></li>
+</ul></li>
+<li>Side Information
+<ul>
+<li>ユーザー情報: 年齢、性別
+<ul>
+<li>U-CFN ではこちらを使う</li>
+</ul></li>
+<li>映画情報: カテゴリー、タグ</li>
+<li>データセットのサイズによって一部使ったり使わなかったりする. ややこしい.</li>
+</ul></li>
+<li>結果
+<ul>
+<li>V-CFN が強い</li>
+<li>ただし本人たちも言ってるように slightly improvement</li>
+</ul></li>
+</ul>
+<h2 id="remarks">REMARKS</h2>
+<ul>
+<li>Torch はいいぞ！</li>
+<li>でもDAEを書くためのモジュールが整備されてないから書いたので使ってくれ
+<ul>
+<li><a href="https://github.com/fstrub95/Autoencoders_cf">fstrub95/Autoencoders_cf</a></li>
+</ul></li>
+</ul>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

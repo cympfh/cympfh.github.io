@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Tue May 24 17:09:40 JST 2016</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Tue May 24 17:09:40 JST 2016</h1>
+</header>
+<h2 id="an-easy-example-of-linear-regression-もっと簡単なchainerを使う例">An Easy Example of Linear Regression: もっと簡単なchainerを使う例</h2>
+<ul>
+<li>簡単であるとは自分で実装する部分が少ないこと
+<ul>
+<li>class なんて以ての外である</li>
+</ul></li>
+<li>まず初めにソースコードを示して徐々にコメントを書く</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> numpy <span class="im">as</span> np
+<span class="im">import</span> random
+<span class="im">import</span> chainer
+<span class="im">from</span> chainer <span class="im">import</span> serializers, cuda, Function, gradient_check, Variable, optimizers, utils
+<span class="im">from</span> chainer <span class="im">import</span> Link, Chain, ChainList
+<span class="im">import</span> chainer.functions <span class="im">as</span> F
+<span class="im">import</span> chainer.links <span class="im">as</span> L
+
+model <span class="op">=</span> L.Linear(<span class="dv">2</span>, <span class="dv">1</span>)
+opt <span class="op">=</span> optimizers.SGD()
+opt.setup(model)
+
+<span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10000</span>):
+    x0 <span class="op">=</span> random.random()
+    x1 <span class="op">=</span> random.random()
+    x <span class="op">=</span> Variable(np.array([ x0,x1 ], dtype<span class="op">=</span>np.float32).reshape(<span class="dv">1</span>, <span class="dv">2</span>))
+    y <span class="op">=</span> Variable(np.array([ x0<span class="op">+</span>x1 ], dtype<span class="op">=</span>np.float32).reshape(<span class="dv">1</span>, <span class="dv">1</span>))
+
+    <span class="co"># loss = F.mean_squared_error(model(x), y)</span>
+    loss <span class="op">=</span> (y <span class="op">-</span> model(x)) <span class="op">**</span> <span class="dv">2</span>
+    model.zerograds()
+    loss.backward()
+    opt.update()
+
+<span class="bu">print</span>( model.W.data )
+<span class="bu">print</span>( model.b.data )</code></pre></div>
+<h3 id="import-列">1. import 列</h3>
+<p>これはおまじないである</p>
+<h3 id="モデルの定義">2. モデルの定義</h3>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">model <span class="op">=</span> L.Linear(<span class="dv">2</span>, <span class="dv">1</span>)</code></pre></div>
+<ul>
+<li><code>L</code> は <code>chainer.links</code> のエイリアスであった (おまじない)</li>
+<li><code>L.Linear</code> は線形関数である
+<ul>
+<li><code>L.Linear(2,1)</code> は <code>shape=(m,2)</code> な入力 <code>x</code> を受け取って <code>shape=(1,m)</code> を返す関数である</li>
+<li>数 <code>m</code> は俗にバッチサイズと言われる
+<ul>
+<li>今は <code>m=1</code> という定数だと思っておく</li>
+</ul></li>
+<li>内部に行列 <code>W</code> とベクトル <code>b</code> を持つ</li>
+<li>入力 <code>x</code> に対して <code>Wx+b</code> を計算する機構を中に持つ
+<ul>
+<li><code>__call__</code> である</li>
+</ul></li>
+<li>今の場合 <code>model.W</code> とかでアクセスできる</li>
+</ul></li>
+<li>外から見た時 <code>model</code> というのは単に、2つの実数 (<code>np.float32</code>) を受け取ったとき、なんやかんやして、1つの実数 (<code>np.float32</code>) を返す機械である</li>
+</ul>
+<h3 id="最適化ソルバ">3. 最適化ソルバ</h3>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">opt <span class="op">=</span> optimizers.SGD()
+opt.setup(model)</code></pre></div>
+<ul>
+<li>いくつか用意されたソルバから適当に選んだ</li>
+<li>確率的勾配降下法ってやつ
+<ul>
+<li>何も考えないならSGD安定でしょ (感想)</li>
+</ul></li>
+</ul>
+<h3 id="setup">4. setup</h3>
+<ul>
+<li>先述したように <code>model</code> は2つの数を受け取って1つの数を返すものである</li>
+<li>入力を <span class="math inline">\(x_0, x_1\)</span> としたときに出力が <span class="math inline">\(y = x_0+x_1\)</span> となるようにしよう
+<ul>
+<li>もちろんこれは線形回帰の枠組みに収まる</li>
+</ul></li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">    x0 <span class="op">=</span> random.random()
+    x1 <span class="op">=</span> random.random()
+    x <span class="op">=</span> Variable(np.array([ x0,x1 ], dtype<span class="op">=</span>np.float32).reshape(<span class="dv">1</span>, <span class="dv">2</span>))
+    y <span class="op">=</span> Variable(np.array([ x0<span class="op">+</span>x1 ], dtype<span class="op">=</span>np.float32).reshape(<span class="dv">1</span>, <span class="dv">1</span>))</code></pre></div>
+<h3 id="学習フェーズ">5. 学習フェーズ</h3>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">    <span class="co"># loss = F.mean_squared_error(model(x), y) # こういうのもある</span>
+    loss <span class="op">=</span> (y <span class="op">-</span> model(x)) <span class="op">**</span> <span class="dv">2</span> <span class="co"># 自分で書いても良い</span>
+    model.zerograds()
+    loss.backward()
+    opt.update()</code></pre></div>
+<ul>
+<li>実際の入力と出力の組 <span class="math inline">\(x, y\)</span> について損失を計算する
+<ul>
+<li>損失というのは、予測と答えとの乖離の非負実数で表現したもの
+<ul>
+<li><span class="math inline">\(0\)</span> のとき、予測は完全に正しい</li>
+</ul></li>
+<li>そういう計算をする式は総称して損失関数と呼ばれ、有名なものは chainer にも <code>F</code> の下にいくつか用意されている
+<ul>
+<li>例えば平均自乗誤差を計算する <code>F.mean_squared_error</code> がある</li>
+<li>でもこのくらい普通に書けるよ
+<ul>
+<li>上のコードのように</li>
+</ul></li>
+</ul></li>
+<li>損失の型は <code>Variable</code> であることに註意</li>
+</ul></li>
+<li>最後の三行もそれこそおまじないみたいなもの
+<ul>
+<li><code>model</code> の <code>.grad</code> パラメタを初期化して</li>
+<li>損失からパラメタの修正のためのなんやかんやを計算して (逆伝播)</li>
+<li>最適化手法を用いて実際に修正する</li>
+</ul></li>
+</ul>
+<h3 id="学習結果を確認する">6. 学習結果を確認する</h3>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="bu">print</span>( model.W.data )
+<span class="bu">print</span>( model.b.data )</code></pre></div>
+<ul>
+<li>今の場合、<code>model</code> はとても単純で線形関数であった
+<ul>
+<li>パラメタは <code>model.W</code> と <code>model.b</code> との2つしかない</li>
+</ul></li>
+<li>結果は次のようになった</li>
+</ul>
+<pre><code>[[ 0.99998778  0.9999873 ]]
+[  1.44174519e-05]</code></pre>
+<ul>
+<li>このパラメタを代入すると学習結果のモデルは
+<ul>
+<li><span class="math inline">\(y = 0.99998778 x_0 + 0.9999873 x_1 + 1.44174519 \times 10^{-5}\)</span></li>
+</ul></li>
+<li>そもそも欲しかったのは
+<ul>
+<li><span class="math inline">\(y = 1.0 x_0 + 1.0 x_1 + 0\)</span></li>
+</ul></li>
+<li>だいたいほとんどあってる</li>
+</ul>
+</body>
+</html>

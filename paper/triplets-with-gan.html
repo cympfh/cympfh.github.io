@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>[1704.02227] Training Triplet Networks with GAN</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/
+    </a>
+</h1>
+<header>
+<h1 class="title">[1704.02227] Training Triplet Networks with GAN</h1>
+</header>
+<ul>
+<li>
+url: <a href=https://arxiv.org/abs/1704.02227>https://arxiv.org/abs/1704.02227</a>
+</li>
+<li>
+tags: <span class="tag"><a href=index.html#距離学習>距離学習</a></span> <span class="tag"><a href=index.html#類似度学習>類似度学習</a></span> <span class="tag"><a href=index.html#GAN>GAN</a></span>
+</li>
+</ul>
+<h2 id="概要">概要</h2>
+<p>分類タスクを GAN によって半教師的に補強する研究は一般的であるが、 本論文は <a href="triplet-network.html">Triplet Network</a> の学習を GAN によって補強する方法を報告している.</p>
+<h2 id="あらまし">あらまし</h2>
+<h3 id="triplet-network">Triplet Network</h3>
+<p>ちょうどこれについては昔読んで書いた記事が <a href="triplet-network.html">これ</a> なので詳細は省くが、</p>
+<p>triplet <span class="math inline">\((x, x^+, x^-)\)</span> から共通のネットワーク <span class="math inline">\(T\)</span> を用いて <span class="math inline">\((z, z^+, z^-)\)</span> を作って、</p>
+<p><span class="math display">\[\max \frac{\exp \| z - z^- \| }{\exp \| z - z^+ \| + \exp \| z - z^- \| }\]</span></p>
+<p>を目指すのであった.</p>
+<p>この値はちょうど <span class="math inline">\(0\)</span> から <span class="math inline">\(1\)</span> の範囲に収まる値なので、 本論文ではこの値を 「<span class="math inline">\(x\)</span> と <span class="math inline">\(x^+\)</span> とが同じクラスである確率」 <span class="math inline">\(p_T(x, x^+, x^-)\)</span> と表現している. (これの対数尤度を損失関数として設計してある.)</p>
+<h3 id="gan">GAN</h3>
+<p>こちらも詳細は省くが、 2つの機械 <span class="math inline">\(D, G\)</span> について</p>
+<p><span class="math display">\[V(D, G) = \mathbb{E}_{x\text{ is real }} \log D(x)
++ \mathbb{E}_{z \sim P_z} \log (1 - D(G(z)))\]</span></p>
+<p>を定めた時、 <span class="math display">\[\min_G \max_D V(D, G)\]</span> を目指すものであった. 典型的には、一方を固定して他方を最大化/最小化することを繰り返すことで、 学習を進める.</p>
+<h2 id="triplet-training-with-gan">Triplet Training with GAN</h2>
+<p>GAN の <span class="math inline">\(D\)</span> の前半 (というか大部分) を、triplet network の特徴ベクトルを構成する機械 <span class="math inline">\(T\)</span> だと見做すことにする. 具体的には次のようにそれぞれを構成する.</p>
+<ul>
+<li><span class="math inline">\(T: \mathcal{X} \to \mathbb{R}^n\)</span>
+<ul>
+<li>これは NNs でよしなに構成する</li>
+</ul></li>
+<li><span class="math inline">\(D: \mathcal{X} \to \mathbb{R}\)</span></li>
+<li><span class="math inline">\(D(x) = \frac{Z}{Z + 1}\)</span>
+<ul>
+<li>where
+<ul>
+<li><span class="math inline">\(t = (t_1, t_2, \ldots, t_n) = T(x)\)</span></li>
+<li><span class="math inline">\(z_i = \exp t_i\)</span></li>
+<li><span class="math inline">\(Z = \sum_i z_i\)</span></li>
+</ul></li>
+</ul></li>
+</ul>
+<p>Triplet の学習としてはこの <span class="math inline">\(T\)</span> を行い、 GAN の学習としてはこの <span class="math inline">\(D\)</span> と何か <span class="math inline">\(G\)</span> を用意して行う.</p>
+<h3 id="実験評価">実験評価</h3>
+<p>実験では MNIST/Cifar-10 の分類性能を行っている. また Triplets を分類性能で比較するのか... GAN だけ、Triplets だけと比較して良い. 例えば MNIST では、ラベル付きデータを 100 個だけを使って正解率 97.61% を達成.</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

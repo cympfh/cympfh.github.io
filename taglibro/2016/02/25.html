@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Thu Feb 25 22:49:59 JST 2016</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Thu Feb 25 22:49:59 JST 2016</h1>
+</header>
+<h2 id="京都大学-2016-文系-数学問題2">京都大学 2016 文系 数学問題[2]</h2>
+<p>https://twitter.com/yuya_lz/status/702767994053615616/photo/1</p>
+<p>素数 <span class="math inline">\(p,q\)</span> によって表される数 <span class="math inline">\(p^q+q^p\)</span> が素数であるような <span class="math inline">\((p,q)\)</span> の組み合わせを求めよ.</p>
+<h2 id="解">解</h2>
+<p>実際に実験をすると予想が立ってしまう:</p>
+<div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby">require <span class="st">&#39;prime&#39;</span>
+
+N=<span class="dv">1000</span>
+<span class="dt">Prime</span>.each(N) {|q1|
+  <span class="dt">Prime</span>.each(N) {|q2|
+    r = q1**q2 + q2**q1
+    <span class="kw">if</span> r.prime?
+      p [q1,q2]
+    <span class="kw">end</span>
+  }
+}</code></pre></div>
+<p><span class="math inline">\(p,q\)</span> が共に奇数、即ち3以上の素数である場合、 <span class="math inline">\(p^q+q^p\)</span> が偶数だし、2よりは大きそうだからダメだとすぐに分かる. 従ってどちらか一方は2で、<span class="math inline">\(p=2\)</span> とする. <span class="math inline">\(p^q+q^p = 2^q + q^2\)</span>.</p>
+<p>でまあ、これも、実験して分かったことなんだけど、 <span class="math inline">\(q\)</span> が3の倍数ではない素数のとき、 <span class="math inline">\(2^q+q^2\)</span> は3の倍数である.</p>
+<p><span class="math inline">\(2^q\)</span> の3の剰余というのは、 <span class="math inline">\(q=1,2,3,4,5,...\)</span> について、 <span class="math inline">\(2^q \bmod 3=2,1,2,1,...\)</span> であること、 <span class="math inline">\(q\)</span> を奇数に限ると <span class="math inline">\(2^q \bmod 3=2,2,2...\)</span> であることはすぐ分かる.</p>
+<h3 id="q3n1">q=3n+1</h3>
+<p><span class="math inline">\(q\)</span> が <span class="math inline">\(3n+1\)</span> で表せる素数のとき、 <span class="math inline">\((2^q) \bmod 3=2\)</span> である.</p>
+<p><span class="math inline">\((2^q+q^2) \bmod 3 = (2 + (3n+1)^2) \bmod 3=0\)</span></p>
+<p>であるので、<span class="math inline">\(q\)</span> がそういう素数ならば、それは3の倍数であるので、素数ではない (もちろん3自体ではないことは言わないといけないが).</p>
+<h3 id="q3n2">q=3n+2</h3>
+<p>全く同様に、<span class="math inline">\(q\)</span> がこういう形の素数ならば、 <span class="math inline">\((2^q) \bmod 3=2\)</span> であって <span class="math inline">\((2^q+q^2) \bmod 3 = (2 + (3n+2)^2) \bmod 3=0\)</span> で、やっぱり3の倍数である. 3ではないので合成数である.</p>
+<h3 id="q3n">q=3n</h3>
+<p><span class="math inline">\(q\)</span> が <span class="math inline">\(3n\)</span> で表される素数であるならば、<span class="math inline">\(q=3\)</span> である. 実際に計算することで、<span class="math inline">\(2^q+q^2\)</span> が素数であることが言える.</p>
+</body>
+</html>

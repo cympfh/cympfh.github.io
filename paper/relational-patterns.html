@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Learning Relational Patterns (ALT 2011)</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/
+    </a>
+</h1>
+<header>
+<h1 class="title">Learning Relational Patterns (ALT 2011)</h1>
+</header>
+<ul>
+<li>
+url: <a href=http://www2.cs.uregina.ca/~zilles/geilkeZ11.pdf>http://www2.cs.uregina.ca/~zilles/geilkeZ11.pdf</a>
+</li>
+<li>
+tags: <span class="tag"><a href=index.html#ALT>ALT</a></span> <span class="tag"><a href=index.html#パターン>パターン</a></span> <span class="tag"><a href=index.html#形式言語>形式言語</a></span>
+</li>
+</ul>
+<ul>
+<li>パターンは実際の適用のためには、表現力が十分ではない (どっちの意味だろう)</li>
+<li>1つパターン中の変数同士の関係を定める
+<ul>
+<li>Relational Pattern (RP)</li>
+<li>RP Languages (RPLs)</li>
+</ul></li>
+<li>RPLs は正提示から学習可能</li>
+<li>それとは別に新しい学習モデルを提案する</li>
+</ul>
+<h2 id="introduction">Introduction</h2>
+<ul>
+<li>Angluin のパターン</li>
+<li>正提示からの学習
+<ul>
+<li>正データのストリーム: 逐次的に推測</li>
+</ul></li>
+<li>言語の表現力と学習可能性はトレードオフ
+<ul>
+<li>言語が複雑になると厳密に学習するアルゴリズムが存在しない (正規言語; 文脈自由文法)</li>
+<li>しばしばそれは、membership 判定の計算複雑性に起因する
+<ul>
+<li>例えばある文字列 <span class="math inline">\(s\)</span> があるパターン言語 <span class="math inline">\(L(p)\)</span> に属するかの判定は NP-hard</li>
+</ul></li>
+</ul></li>
+</ul>
+<h2 id="relational-patterns">Relational Patterns</h2>
+<ul>
+<li><span class="math inline">\(n\)</span> 個の変数 <span class="math inline">\(y_1..y_n\)</span> に関する <span class="math inline">\(n\)</span>項関係 <span class="math inline">\(R_{y_1..y_n}\)</span>
+<ul>
+<li>沢山予め定めておく</li>
+</ul></li>
+<li>変数を <span class="math inline">\(n\)</span> 個 (<span class="math inline">\(y_1..y_n\)</span>) 含むパターン <span class="math inline">\(p\)</span> について
+<ul>
+<li><span class="math inline">\(y_i \mapsto s_i\)</span> とする代入は</li>
+<li><span class="math inline">\(R_{y_1..y_n}(s_1,..,s_n)\)</span> を満たさなければならない</li>
+</ul></li>
+</ul>
+<h3 id="例">例</h3>
+<ul>
+<li><span class="math inline">\(R_{x_1} = \{ a^i : i \geq 1 \}\)</span></li>
+<li><span class="math inline">\(R_{x_2} = \{ b^i : i \geq 1 \}\)</span></li>
+<li><span class="math inline">\(R_{x_1, x_2} = \{ (w_1, w_2) : |w_1| = |w_2| \}\)</span></li>
+</ul>
+<p><span class="math display">\[L(x_1 x_2) = \{ a^i b^i : i \geq 1 \}\]</span></p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

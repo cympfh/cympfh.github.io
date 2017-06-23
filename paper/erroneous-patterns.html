@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Detecting Erroneous Sentences using Automatically Mined Sequential Patterns</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/
+    </a>
+</h1>
+<header>
+<h1 class="title">Detecting Erroneous Sentences using Automatically Mined Sequential Patterns</h1>
+</header>
+<ul>
+<li>
+url: <a href=http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.129.893>http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.129.893</a>
+</li>
+<li>
+tags: <span class="tag"><a href=index.html#自然言語処理>自然言語処理</a></span> <span class="tag"><a href=index.html#自動翻訳>自動翻訳</a></span>
+</li>
+</ul>
+<p>英語文の erroneous を検出する</p>
+<ul>
+<li>ESL (English as a Second Language) の書いた文章の添削</li>
+<li>機械翻訳の精度向上</li>
+</ul>
+<h2 id="erroneous">Erroneous</h2>
+<p>一般にESLによる共通したミスとは [Yukio+ 01, Gui and Yang 03]</p>
+<ol style="list-style-type: decimal">
+<li>スペル</li>
+<li>コロケーション</li>
+<li>文構造</li>
+<li>時制</li>
+<li>agreement</li>
+<li>verb formation</li>
+<li>wrong POS</li>
+<li>冠詞</li>
+</ol>
+<p>などなど</p>
+<ul>
+<li>ここではスペルミスについてはキニシナイ</li>
+<li>まあ普通に文法のミスのこと</li>
+</ul>
+<h2 id="lsp-labeled-sequential-pattern">LSP (Labeled sequential pattern)</h2>
+<p>語の列 <code>LHS</code> と、クラス <code>c</code> からなる <code>LHS -&gt; c</code> を <code>LSP</code> と呼ぶ</p>
+<p>いわゆるパターンが <code>LHS</code> であり<br />
+それにマッチするなら属すると期待されるクラスとの2つ組を持って考える</p>
+<p>列 (<code>LHS</code>) を <span class="math inline">\(&lt;a_1 ... a_m&gt;\)</span> で表現する</p>
+<h3 id="包含関係">包含関係</h3>
+<p>列 <span class="math inline">\(&lt;a_1 ... a_m&gt;\)</span> が 列 <span class="math inline">\(&lt;b_1 ... b_n&gt;\)</span> に含まれるとは</p>
+<p><span class="math inline">\(a_j = b_{i_j}\)</span> for an <span class="math inline">\(1 \leq i_1 &lt; i_2 &lt; ... &lt; i_m \leq n\)</span></p>
+<p>とあること<br />
+即ち、<span class="math inline">\(a_i\)</span>が全てもれなくただし順序を保って<span class="math inline">\(b_j\)</span>に出現すること</p>
+<p>LSP (<code>p</code>) の包含関係は<br />
+それのLHS (<code>p.LHS</code>)の包含関係かつ、クラス (<code>p.c</code>) が等しいこと</p>
+<h3 id="指示度確信度">指示度、確信度</h3>
+<p>指示度 (support) と 確信度 (confidence) を適当に定義する</p>
+<p>LSP <code>p</code> について、</p>
+<ul>
+<li><code>sup(p)</code> とは、訓練事例 (Database) 中で <code>p</code> が含む文の割合</li>
+<li><code>conf(p)</code> とは、<code>sup(p) / sup(p.LHS)</code></li>
+</ul>
+<h2 id="クラス">クラス</h2>
+<p>今のタスクに於いてクラスとは次の2つ</p>
+<ul>
+<li><code>Correct</code></li>
+<li><code>Error</code></li>
+</ul>
+<h2 id="列-lhs-の生成">列 <code>LHS</code> の生成</h2>
+<p>単語も単語クラスとしてのPOSも同列に使う</p>
+<ol style="list-style-type: decimal">
+<li>機能的語 <a href="https://web.archive.org/web/20020828162751/http://www.marlodge.supanet.com/museum/funcword.html">function words</a> のkey word list を作る</li>
+<li>key word list にある語はそのまま</li>
+<li>無いものはPOSを使う</li>
+</ol>
+<p>これは元の文の長さと同じ長さの <code>LHS</code> が出来るだけだ</p>
+<h3 id="example">example</h3>
+<p>次のようなものが理想的 (confは100%ではないことに註意)</p>
+<ul>
+<li><code>&lt;a, NNS&gt; -&gt; Error</code>
+<ul>
+<li><code>NNS</code> は複数形</li>
+</ul></li>
+<li><code>&lt;yesterday, is&gt; -&gt; Error</code></li>
+<li>&quot;In the past, John was kind to his sister&quot;
+<ul>
+<li>In the past, NNP was JJ to his NN</li>
+</ul></li>
+</ul>
+<h3 id="lspの抽出-マイニング">LSPの抽出 (マイニング)</h3>
+<p><code>sup</code> と <code>conf</code> に下限の閾値を与えた frequent sequence mining algorithm [Pei+ 01] を用いて作る</p>
+<ul>
+<li>minimum support = 0.1%</li>
+<li>minimum confidence = 75%</li>
+</ul>
+<h2 id="参考文献">参考文献</h2>
+<ol style="list-style-type: decimal">
+<li><a href="https://web.archive.org/web/20020828162751/http://www.marlodge.supanet.com/museum/funcword.html">function words</a></li>
+<li>[Pei+ 01] J.Pei, J.Han, B.Mortazavi-Asl, H.Pinto: Prefixspan: Mining sequential patterns efficiently by prefix-projected pattern growth</li>
+</ol>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Feb 18 2013</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Feb 18 2013</h1>
+</header>
+<h2 id="現在継続">現在継続</h2>
+<p>schemeの継続を見ていたけど、大域脱出に用いる様は、モナドで途中で失敗する例に似てるよね． 具体的にはこんなイメージが湧いた．</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">(<span class="kw">define-syntax</span><span class="fu"> &gt;&gt;</span>=
+    (<span class="kw">syntax-rules</span> ()
+        ((_ x f)     (f x))
+        ((_ x f g ...) (&gt;&gt;= (f x) g ...)) ))</code></pre></div>
+<p>計算の予定を順番に並べる． <code>(&gt;&gt;= x f g ...)</code> と書くと、これは<code>(..(g (f x))..)</code>に展開される． 左から読める方がいいよね．</p>
+<p>記号は|&gt;が良かったんだけど(F#ぽく)、Schemeで変数名に|は使えないというか特別な意味を 持つので、もうbindの記号にしちゃった．</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">(<span class="kw">define</span><span class="fu"> 1+ </span>(<span class="kw">lambda</span>(x) (<span class="kw">+</span> x <span class="dv">1</span>)))
+(<span class="kw">define</span><span class="fu"> 1- </span>(<span class="kw">lambda</span>(x) (<span class="kw">-</span> x <span class="dv">1</span>)))
+(<span class="kw">define</span><span class="fu"> sq </span>(<span class="kw">lambda</span>(x) (* x x)))</code></pre></div>
+<p>例えば</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">gosh&gt; (&gt;&gt;= <span class="dv">2</span> sq <span class="dv">1</span>+)
+<span class="dv">5</span></code></pre></div>
+<p>途中で失敗するというのは、 その計算の列の途中に、例えば</p>
+<p>逆数を求める手続き</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">gosh&gt; (<span class="kw">define</span><span class="fu"> </span>(inv x) (<span class="kw">if</span> (<span class="kw">zero?</span> x) (fail &#39;inverse-error) (<span class="kw">/</span> x)))
+inv</code></pre></div>
+<p>引数が0の時、failを行う． failはグローバル変数</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">gosh&gt; (<span class="kw">define</span><span class="fu"> fail </span><span class="dv">#f</span>)
+fail
+gosh&gt; (<span class="kw">call/cc</span> (<span class="kw">lambda</span>(cc) (set! fail cc) (&gt;&gt;= <span class="dv">3</span> <span class="dv">1</span>- inv sq)))
+<span class="dv">1</span>/<span class="dv">4</span>
+gosh&gt; (<span class="kw">call/cc</span> (<span class="kw">lambda</span>(cc) (set! fail cc) (&gt;&gt;= <span class="dv">1</span> <span class="dv">1</span>- inv sq)))
+inverse-error</code></pre></div>
+<p>というか、じゃあ、(call/cc ... も含めてマクロにするべきだった．</p>
+<p>さっきの&gt;&gt;= を %&gt;&gt;= ということにして、</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">(<span class="kw">define-syntax</span><span class="fu"> </span>%&gt;&gt;=
+    (<span class="kw">syntax-rules</span> ()
+        ((_ x f)     (f x))
+        ((_ x f g ...) (%&gt;&gt;= (f x) g ...)) ))
+
+(<span class="kw">define-syntax</span><span class="fu"> &gt;&gt;</span>=
+    (<span class="kw">syntax-rules</span> ()
+        ((_ x ...)
+            (<span class="kw">begin</span>
+                (<span class="kw">define</span><span class="fu"> fail </span><span class="dv">#f</span>)
+                (<span class="kw">call/cc</span> (<span class="kw">lambda</span> (cc) (set! fail cc) (%&gt;&gt;= x ...)))) )))</code></pre></div>
+<p>毎回 大域変数 fail を define しちゃうのが、若干気持ち悪いけど</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">gosh&gt; (&gt;&gt;= <span class="dv">3</span> inv sq)
+<span class="dv">1</span>/<span class="dv">9</span>                
+gosh&gt; (&gt;&gt;= <span class="dv">0</span> inv sq)
+inverse-error</code></pre></div>
+<p>おお、でけた</p>
+<hr />
+<p>で、なんで考えたかと言うと、<br />
+別にこれができたからってモナドが畏怖に値するのには変わらないんだけど、 途中で失敗するかもしれないという例で使われるとき、失敗してるかのチェック を個別の関数でする必要がなく、bind関数がするという利点を挙げる． 今、自分が実験した例でも、そうなっている．</p>
+</body>
+</html>

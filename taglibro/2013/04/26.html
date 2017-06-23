@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Fri Apr 26 17:05:49 JST 2013</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Fri Apr 26 17:05:49 JST 2013</h1>
+</header>
+<h2 id="日記">日記</h2>
+<p>計算モデル論を聞きながら, S式からC++への翻訳機を書いてました 面倒になってやめました</p>
+<p>実装したトコだけを最大限見せつける実行例</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">gosh</span> test.scm &lt;&lt; EOS
+(progn
+    (include stdio.<span class="op">h</span>)
+    &#39;(using name space std)
+    (define (int int) (f x)
+        (* (+ 1 2 3 4) (/ (- 10)))
+        (* x (f (- x 1)))))
+EOS
+
+#include &lt;stdio.<span class="op">h&gt;</span>
+
+using name space std;
+int f (int x) {
+    ((1+2+3+4)*(1/-10));
+    return (x*f((x-1)));
+}</code></pre></div>
+<p>関数の型指定、なんかコレ気持ち悪いなあとか思ったり <code>cout &lt;&lt; ...</code> でも実装しようかなあとか思ってたら 授業が終ったのでお遊びもやめにしました</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">(<span class="kw">define</span><span class="fu"> </span>(translate <span class="kw">exp</span>)
+    (<span class="kw">if</span> (<span class="kw">symbol?</span> <span class="kw">exp</span>) (<span class="kw">symbol-&gt;string</span> <span class="kw">exp</span>)
+    (<span class="kw">if</span> (<span class="kw">number?</span> <span class="kw">exp</span>) (<span class="kw">number-&gt;string</span> <span class="kw">exp</span>)
+    (<span class="kw">if</span> (<span class="kw">null?</span> <span class="kw">exp</span>) <span class="st">&quot;&quot;</span>
+
+    (<span class="kw">case</span> (<span class="kw">car</span> <span class="kw">exp</span>)
+        ((progn)       (string-join (map translate (<span class="kw">cdr</span> <span class="kw">exp</span>)) <span class="st">&quot;\n&quot;</span>))
+        ((include)     (format <span class="st">&quot;#include &lt;~a&gt;\n&quot;</span> (<span class="kw">cadr</span> <span class="kw">exp</span>)))
+        ((quote)
+            (<span class="kw">string-append</span>
+                (string-join (map <span class="kw">symbol-&gt;string</span> (<span class="kw">cadr</span> <span class="kw">exp</span>)) <span class="st">&quot; &quot;</span>)
+                <span class="st">&quot;;&quot;</span>))
+        ((<span class="kw">define</span><span class="fu">)</span>
+<span class="fu">            </span>(<span class="kw">let</span> ((funt (<span class="kw">caadr</span> <span class="kw">exp</span>))
+                  (argt (<span class="kw">cdadr</span> <span class="kw">exp</span>))
+                  (fun  (<span class="kw">caaddr</span> <span class="kw">exp</span>))
+                  (args (<span class="kw">cdaddr</span> <span class="kw">exp</span>)))
+            (<span class="kw">define</span><span class="fu"> </span>(append-return ls)
+                (<span class="kw">if</span> (<span class="kw">=</span> (<span class="kw">length</span> ls) <span class="dv">1</span>)
+                    (<span class="kw">list</span> (<span class="kw">string-append</span> <span class="st">&quot;return &quot;</span> (<span class="kw">car</span> ls)))
+                    (<span class="kw">cons</span> (<span class="kw">car</span> ls) (append-return (<span class="kw">cdr</span> ls)))))
+            (format
+                <span class="st">&quot;~a ~a (~a) {\n\t~a;\n}&quot;</span>
+                funt fun
+                (string-join
+                    (map (cut format <span class="st">&quot;~a ~a&quot;</span> &lt;&gt; &lt;&gt;) argt args) <span class="st">&quot;, &quot;</span>)
+                (string-join
+                    (append-return (map translate (<span class="kw">cdddr</span> <span class="kw">exp</span>))) <span class="st">&quot;;\n\t&quot;</span>))))
+
+        ((<span class="kw">+</span> <span class="kw">-</span> * <span class="kw">/</span>)
+            (<span class="kw">cond</span> ((<span class="kw">and</span> (<span class="kw">eq?</span> (<span class="kw">car</span> <span class="kw">exp</span>) &#39;-) (<span class="kw">=</span> (<span class="kw">length</span> <span class="kw">exp</span>) <span class="dv">2</span>))
+                   (format <span class="st">&quot;-~a&quot;</span> (<span class="kw">cadr</span> <span class="kw">exp</span>)))
+                  ((<span class="kw">and</span> (<span class="kw">eq?</span> (<span class="kw">car</span> <span class="kw">exp</span>) &#39;/) (<span class="kw">=</span> (<span class="kw">length</span> <span class="kw">exp</span>) <span class="dv">2</span>))
+                   (format <span class="st">&quot;(1/~a)&quot;</span> (translate (<span class="kw">cadr</span> <span class="kw">exp</span>))))
+                  (<span class="kw">else</span>
+                        (<span class="kw">string-append</span>
+                            <span class="st">&quot;(&quot;</span>
+                            (string-join
+                                (map translate (<span class="kw">cdr</span> <span class="kw">exp</span>))
+                                (<span class="kw">symbol-&gt;string</span> (<span class="kw">car</span> <span class="kw">exp</span>)))
+                            <span class="st">&quot;)&quot;</span>))))
+
+        (<span class="kw">else</span>
+            (format <span class="st">&quot;~a(~a)&quot;</span> (<span class="kw">car</span> <span class="kw">exp</span>)
+                    (string-join (map translate (<span class="kw">cdr</span> <span class="kw">exp</span>)) <span class="st">&quot;, &quot;</span>))))))))
+
+(<span class="kw">display</span>
+    (translate (<span class="kw">read</span>)))</code></pre></div>
+<hr />
+<footer>
+    <p style='text-align: right'>
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+</body>
+</html>

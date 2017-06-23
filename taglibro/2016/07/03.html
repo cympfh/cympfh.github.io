@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sun Jul 3 12:40:03 JST 2016</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Sun Jul 3 12:40:03 JST 2016</h1>
+</header>
+<p>昨日2日、 <code>Chainer Meetup #03</code> (<a href="http://chainer.connpass.com/event/32917/" class="uri">http://chainer.connpass.com/event/32917/</a>) なるものに参加した.</p>
+<p>趣旨としては、chainer の開発者 (つまりPFNの中の人たち) が chainer について直接語るので、みんな chainer をもっと使ってくれ、というもの. それから無関係な人たちが chainer を使ってこんなことをしたというLTをする、 要するに chainer の布教活動. あと NVIDIA がスポンサーとなっているので、NVIDIA の中の人が、 chainer ユーザーに向けた GPU やら CUDA やらの紹介、宣伝をするもの.</p>
+<p>以下、メモ</p>
+<h2 id="chainer-cupy入門----海野">Chainer, CuPy入門 -- 海野</h2>
+<ul>
+<li>Chainer Meetup の最初は毎回、これであるらしい.</li>
+<li>v1.10 向け</li>
+</ul>
+<h3 id="ニューラルネットワークの説明">ニューラルネットワークの説明</h3>
+<ul>
+<li>一般にニューラルネットワークはDAG構造 (計算グラフ) を持った合成関数
+<ul>
+<li>計算をDAGにデータを流すことで行う</li>
+<li>逆伝播はDAGを逆方向に何かしらを流す</li>
+</ul></li>
+<li>chainer は計算グラフの設計だけをすれば、他は自動でやってくれる
+<ul>
+<li>実際的には <code>Variable</code> オブジェクトの順伝播の計算式を書くことで、計算グラフを表現する</li>
+<li>例; <code>z = x ** 2 + 2 * x * y + y</code>
+<ul>
+<li><code>x</code> や <code>y</code> は <code>Variable</code> オブジェクト</li>
+<li>累乗を計算する <code>** 2</code> とか四則演算が定義されていて、その結果も <code>Variable</code></li>
+<li>上の計算式は、下の計算グラフを記述したことと同等</li>
+</ul></li>
+</ul></li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode dot"><code class="sourceCode dot"><span class="kw">digraph</span> <span class="ot">{</span>
+<span class="co">  </span><span class="at">rankdir</span><span class="ot">=</span><span class="va">LR</span><span class="ot">;</span>
+<span class="co">  </span><span class="va">x</span><span class="co"> </span><span class="ot">-&gt;</span><span class="co"> </span><span class="st">&quot;x ** 2&quot;</span><span class="co"> </span><span class="ot">-&gt;</span><span class="co"> </span><span class="va">z</span><span class="ot">;</span>
+<span class="co">  </span><span class="va">x</span><span class="co"> </span><span class="ot">-&gt;</span><span class="co"> </span><span class="st">&quot;2xy&quot;</span><span class="ot">;</span>
+<span class="co">  </span><span class="va">y</span><span class="co"> </span><span class="ot">-&gt;</span><span class="co"> </span><span class="st">&quot;2xy&quot;</span><span class="co"> </span><span class="ot">-&gt;</span><span class="co"> </span><span class="va">z</span><span class="ot">;</span>
+<span class="co">  </span><span class="va">y</span><span class="co"> </span><span class="ot">-&gt;</span><span class="co"> </span><span class="va">z</span><span class="ot">;</span>
+<span class="ot">}</span></code></pre></div>
+<h3 id="chainer-による設計の方法">Chainer による設計の方法</h3>
+<ul>
+<li><code>Link</code>
+<ul>
+<li>パラメータ付きの関数</li>
+</ul></li>
+<li>ロス
+<ul>
+<li><code>Function</code> にすぎない</li>
+<li>一つの値が得られるように自分で設計しても良い</li>
+<li>出てきたロスを使って勾配を計算</li>
+<li>Optimizer を update することでパラメータを更新</li>
+</ul></li>
+</ul>
+<h3 id="cupy-の話">Cupy の話</h3>
+<ul>
+<li>numpy 互換の CUDA ライブラリです
+<ul>
+<li>numpy 互換こそが設計思想</li>
+</ul></li>
+<li>GPUを使う研究がかなり増えてきた
+<ul>
+<li>昔はGPU使う研究なんてニッチだったのに</li>
+<li>自分で直接CUDAなんて書いたら吐く</li>
+<li>裏で nvcc コンパイラが走ってる</li>
+</ul></li>
+<li>深層学習以外でももちろん便利に使える</li>
+</ul>
+<h2 id="chainer-v1.8から1.10の新機能----得居">Chainer v1.8から1.10の新機能 -- 得居</h2>
+<ul>
+<li>CaffeFunction の対応
+<ul>
+<li>Python2 にしか対応してなかったが Python3 でもok</li>
+</ul></li>
+<li>Weight Initializer</li>
+<li>float16/64 への対応
+<ul>
+<li>が進みつつある</li>
+</ul></li>
+<li>いろんな Function Link が追加された
+<ul>
+<li><code>Variable.__getitem__</code> (<code>F.get_item</code>)
+<ul>
+<li>ベクトルの indexing</li>
+</ul></li>
+<li>他にもいろいろ
+<ul>
+<li>cast, clip, log1p, minimum, permutate ....</li>
+</ul></li>
+</ul></li>
+<li>cupy 側
+<ul>
+<li><code>cupy.nonzero</code>
+<ul>
+<li>ゼロでない添字の列挙</li>
+</ul></li>
+</ul></li>
+<li>chainer の開発方針の話
+<ul>
+<li>minor release
+<ul>
+<li>2週間毎と決めていた</li>
+<li>何か機能追加があれば、2週間しなくてもバージョンアップしていく</li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="近い今後の機能">近い今後の機能</h3>
+<ul>
+<li>これから (v1.11-1.12)
+<ul>
+<li>TheonoFunctions のサポート</li>
+<li>streamの対応 (??)</li>
+</ul></li>
+<li>Dataset and Trainer
+<ul>
+<li>データセットの上の反復、学習の反復を抽象化する</li>
+<li>Trainer は Reporter を用いて集計を行う
+<ul>
+<li><code>chainer.report</code></li>
+</ul></li>
+<li>https://twitter.com/unnonouno/status/749119081324769280</li>
+</ul></li>
+</ul>
+<h3 id="もっと今後の予定">もっと今後の予定</h3>
+<ul>
+<li>メジャーアップデートを行う
+<ul>
+<li>後方互換性を切ってしまうようなアップデートです</li>
+<li>今年10-12月を予定</li>
+</ul></li>
+<li>CuPy を chainer からレポジトリレベルで分離する</li>
+<li>パッケージシステム
+<ul>
+<li>FunctionとかLinkとかなんとかを管理、公開するためのシステム</li>
+</ul></li>
+<li>CPU/GPU のやりとりを非同期にやる</li>
+<li>Parameter shape inference</li>
+</ul>
+<h2 id="マルチメディアで云々----中山さん">マルチメディアで云々 -- 中山さん</h2>
+<p>http://www.nlab.ci.i.u-tokyo.ac.jp/</p>
+<p>中山研究室での実用例のご紹介</p>
+<ol type="1">
+<li>動画からの物体追跡 and 識別タスク
+<ul>
+<li>静止画に比較して動画の場合はまだまだこれだという手法が定まってない段階</li>
+<li>RNNで時間方向のダイナミクスをモデル化
+<ul>
+<li>Noriki Nishida, Jan Zdenek, Hideki Nakayama, &quot;Object Detection from Video with Nested Recurrent Neural Networks&quot;</li>
+</ul></li>
+<li>毎フレームをぶち込むための (outer) RNN と、1フレームを読むための (inner) RNN</li>
+<li>ただし
+<ul>
+<li>時間を考えず、フレームごとに独立に物体識別するのが state-of-the-art</li>
+</ul></li>
+</ul></li>
+<li>Microsoft Video to Language Challenge 2016
+<ul>
+<li>動画キャプショニング</li>
+<li>動画の内容説明文を生成するコンペ
+<ul>
+<li>NIIと組んでやってた</li>
+<li>手法は未発表のものなので結果だけの発表</li>
+</ul></li>
+</ul></li>
+<li>マルチモーダル
+<ul>
+<li>Noriki Nishida, Hideki Nakayama, &quot;Multimodal gesture recognition using multi-stream recurrent neural network&quot; (2015)
+<ul>
+<li>関連; Late fusion, early fusion</li>
+<li>fusion のタイミングは早すぎても遅すぎてもダメ</li>
+<li>どのユニットでもfusion できるようなRNNを設計する</li>
+</ul></li>
+</ul></li>
+<li>機械翻訳
+<ul>
+<li>対訳コーパスを使うってのがあるけど、画像を媒介するようなコーパスが使えるかもしれない
+<ul>
+<li>データ形式その1: <code>(日本語, 画像)</code></li>
+<li>データ形式その2: <code>(画像, 英語)</code></li>
+</ul></li>
+<li>アイデア勝負なのだ...</li>
+</ul></li>
+</ol>
+<h2 id="chainerを使って細胞を数えてみた----samacobaさん">Chainerを使って細胞を数えてみた -- samacobaさん</h2>
+<ul>
+<li>細胞カウント
+<ul>
+<li>細胞を数えることは培養の基本</li>
+</ul></li>
+<li>細胞の画像
+<ul>
+<li>一個一個の細胞の輪郭が肉眼では見えづらく、数えるのが辛い</li>
+<li>試薬で核を光らせる
+<ul>
+<li>光った点を数えれば良いのでマシ</li>
+<li>しかし、試薬が細胞に与える影響を無視できない</li>
+</ul></li>
+</ul></li>
+<li>数を数えるするNNsを作った
+<ul>
+<li>つまり、粒々が大量に写った写真を与えて自然数に写すネットワーク</li>
+<li>教師データは数になる
+<ul>
+<li>教師を作るために人間が数えるハメになる</li>
+<li>辛い</li>
+</ul></li>
+<li>まず、細胞一つについて細胞の座標1点を特定するタスクにする
+<ul>
+<li>細胞の座標を、核で定義する</li>
+<li>その教師に、核が光ったのが使える
+<ul>
+<li>いわば、「試薬で核が光った写真を出力にするネットワーク」</li>
+</ul></li>
+</ul></li>
+<li>前半を畳み込み、後半を逆畳み込み
+<ul>
+<li>途中、全結合な層は無い</li>
+<li>大きさのある細胞1個が、それなりに小さな大きさの丸になる</li>
+</ul></li>
+<li>画像処理のフィルタ的な処理 (NNsで言うところのプーリング) で本当に点にする</li>
+<li>最後に適当に足し算させる</li>
+</ul></li>
+</ul>
+<h2 id="ヤフー音声認識サービスでのディープラーニングとgpu利用事例----磯部さん">ヤフー音声認識サービスでのディープラーニングとGPU利用事例 -- 磯部さん</h2>
+<ul>
+<li>YJVOICE
+<ul>
+<li>Yahooのなんかそういう製品</li>
+<li>2箇所でdeepなタスクがある
+<ul>
+<li>音声区間検出
+<ul>
+<li>入力から実際に声が入ってる部分を検出</li>
+<li>10ms単位で音声/not音声の分類</li>
+</ul></li>
+<li>音響モデル
+<ul>
+<li>10ms単位で音素判別
+<ul>
+<li>音を、ローマ字に変換する、っていう認識で正しいかな?</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>雑音重畳学習
+<ul>
+<li>入力にノイズをわざと加えるテク</li>
+<li>綺麗な音声から &quot;雑音重畳音声&quot; を複数通り作って学習に使う</li>
+</ul></li>
+<li>GPU並列化の話ー。わからん。
+<ul>
+<li>GPU2台で頑張ったけど1台のときより遅くなった</li>
+</ul></li>
+</ul>
+<h2 id="tensorが全然flowしないのでみんなchainer使おう-by-deepstation----hidesuke-さん">tensorが全然flowしないのでみんなchainer使おう by DEEPstation -- hidesuke さん</h2>
+<ul>
+<li>DEEPStation の宣伝
+<ul>
+<li>いろいろあったけど TensorFlow に対応した</li>
+<li>オープンなのにまだ github に公開はされてない</li>
+<li>直接問い合わせましょう</li>
+</ul></li>
+<li>TensorFlow へのヘイト
+<ul>
+<li>チュートリアルが不親切</li>
+<li>メモリ食い過ぎ
+<ul>
+<li>Ran out of memory</li>
+</ul></li>
+<li>ネットに情報が足りない
+<ul>
+<li>チュートリアル、MNISTのサンプルやったくらいしかない</li>
+</ul></li>
+</ul></li>
+<li>みんな、Chainer使おう</li>
+</ul>
+<h2 id="深層学習フレームワーク全部入りdockerの構築方法----yutakashino-さん">深層学習フレームワーク全部入りDockerの構築方法 -- yutakashino さん</h2>
+<ul>
+<li>改題: &quot;深層学習ライブラリの環境問題&quot;</li>
+<li>https://github.com/bakfoo/dl-docker</li>
+</ul>
+<h2 id="peephole-connectionsを実装してchainerのcontributorになった話----setoyamaさん">Peephole connectionsを実装してChainerのcontributorになった話 -- setoyamaさん</h2>
+<ul>
+<li>LSTM with Peephole [Gers, 01]</li>
+<li>これを chainer の Function として実装した</li>
+<li>まだマージされてない</li>
+</ul>
+<h2 id="chainerを使って白黒アニメの彩色実験をしてみた----eiji_kbさん">Chainerを使って白黒アニメの彩色実験をしてみた -- Eiji_Kbさん</h2>
+<ul>
+<li>自動彩色
+<ul>
+<li>魔法使いサリー
+<ul>
+<li>17話までは白黒、18以降はカラー</li>
+</ul></li>
+</ul></li>
+<li>はじめTensorFlowでやってたけど辛い</li>
+<li>Automatic Colorization を chainer で実装
+<ul>
+<li>VGGネット</li>
+<li>lab色空間
+<ul>
+<li>よくわからんからキーワードだけ拾った</li>
+</ul></li>
+</ul></li>
+</ul>
+<h2 id="real-time-style-transferについて----mayfaさん">Real-Time Style Transferについて -- mayfaさん</h2>
+<ul>
+<li>Yusuke Tomoto さん</li>
+<li>style transfer
+<ul>
+<li>一枚のスタイル画像について、画像変換をする一つのネットワークを学習</li>
+<li>リアルタイムに適用できる</li>
+</ul></li>
+</ul>
+<h2 id="on-the-benchmark-of-chainer----大野さん">On the benchmark of Chainer -- 大野さん</h2>
+<ul>
+<li>フレームワークのベンチマーク
+<ul>
+<li>chainerはそこそこ</li>
+<li>Pythonとしては良いよね</li>
+</ul></li>
+<li>ところで、ベンチマークを測るのは容易ではない
+<ul>
+<li>GPUへのワーク (「キック」って言うらしい) はキューに溜まるのであって即座に実行されない</li>
+<li>CPUから適当に観測するだけじゃダメ</li>
+<li>特別なイベントを前後に置いてGPUにキックする
+<ul>
+<li>それはCPUと同期させるようなイベント</li>
+</ul></li>
+</ul></li>
+</ul>
+<h2 id="感想">感想</h2>
+<p>ハードウェア的な話はまったく興味が無いので寝てた. 聞いてて面白かったのは、「細胞を数えてみた」と、リアルタイムスタイル転写.</p>
+<h3 id="chainerを使って細胞を数えてみた----samacobaさん-1">Chainerを使って細胞を数えてみた -- samacobaさん</h3>
+<p>細胞を数える、ってのはつまり、画像を入力にして、自然数全体を値域とするネットワークである. 自然数全体に写すようなネットワークってのは、もしかしたら初耳かもしれない. もっとも、回帰には違いないし、私が大袈裟に驚き過ぎかもしれない. 数を学習データとして作るのが大変なので、一旦別のタスクを解いていたが、 人工的に学習データを作ることにするなら、簡単なはずである. つまり、適当に数を決めて、その数だけ細胞を配置した画像を作れば良い. samacobaさんにしてみれば、既に持っているデータをうまく活用したかったのかも.</p>
+<h3 id="real-time-style-transferについて----mayfaさん-1">Real-Time Style Transferについて -- mayfaさん</h3>
+<p>実のところ原理をよくわかってないが、畳込みと同様に、同一のネットワークを画像の局所部分に適当するようなものなのだろうか. だからこそリアルタイムでの適用が可能？という理解で正しいだろうか. 最後のデモは、正直、あんまり良く転写されてるようには見えなかった.</p>
+</body>
+</html>

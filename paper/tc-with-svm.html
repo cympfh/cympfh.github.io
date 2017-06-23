@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Text Categorization with Suport Vector Machines: Learning with Many Relevant Features</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/
+    </a>
+</h1>
+<header>
+<h1 class="title">Text Categorization with Suport Vector Machines: Learning with Many Relevant Features</h1>
+</header>
+<ul>
+<li>
+url: <a href=http://dl.acm.org/citation.cfm?id=649721>http://dl.acm.org/citation.cfm?id=649721</a>
+</li>
+<li>
+tags: <span class="tag"><a href=index.html#自然言語処理>自然言語処理</a></span> <span class="tag"><a href=index.html#テキスト分類>テキスト分類</a></span>
+</li>
+</ul>
+<h2 id="概要">概要</h2>
+<p>SVM でテキスト分類します</p>
+<ol style="list-style-type: decimal">
+<li>語の出現回数を数える
+<ul>
+<li>3未満のものは消す</li>
+<li>stop-words は消す</li>
+</ul></li>
+<li>この時点で、10,000次元かそれ以上になる
+<ul>
+<li>これは過学習の原因でもあるから、[11]的手法に拠って、</li>
+<li>情報量基準で、素性のいくつかを捨てる</li>
+</ul></li>
+<li><code>idf</code>を用いてスケーリングし直す。今回は <code>tfc</code> なる量を使う (意味不明)</li>
+<li>文ごとの長さの違いを無くす (abstract) ために、素性ベクトルを正規化する</li>
+</ol>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

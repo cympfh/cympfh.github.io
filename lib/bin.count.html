@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>bin.count</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<h1 class="title">bin.count</h1>
+</header>
+<h2 id="bin.count.cc"><a href="bin.count.cc" class="uri">bin.count.cc</a></h2>
+<ul>
+<li>入力; 昇順整列済み <code>xs</code>, 要素 <code>x</code></li>
+<li>出力; <code>xs</code> に <code>x</code> が出現する回数を返す</li>
+</ul>
+<p><code>(&lt; x)</code> と <code>(&lt;= x)</code> の境界をそれぞれ二分探索する</p>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="kw">template</span>&lt;<span class="kw">typename</span> Func&gt;
+<span class="dt">int</span> bsearch(<span class="dt">int</span> left, <span class="dt">int</span> right, Func f) {
+  <span class="cf">while</span> (left + <span class="dv">1</span> &lt; right) {
+    <span class="dt">int</span> mid = (left + right) / <span class="dv">2</span>;
+    <span class="cf">if</span> (f(mid) &lt; <span class="dv">0</span>) {
+      left = mid;
+    } <span class="cf">else</span> {
+      right = mid;
+    }
+  }
+  <span class="cf">return</span> right;
+}
+
+<span class="kw">template</span>&lt;<span class="kw">typename</span> T&gt;
+<span class="dt">int</span> bcount(<span class="at">const</span> vector&lt;T&gt;&amp; xs, T x) {
+  <span class="at">const</span> <span class="dt">int</span> n = xs.size();
+  <span class="kw">auto</span> f1 = [&amp;](<span class="dt">int</span> i) { <span class="cf">return</span> xs[i] - x; };
+  <span class="kw">auto</span> f2 = [&amp;](<span class="dt">int</span> i) { <span class="cf">return</span> xs[i] - x - <span class="dv">1</span>; };
+  <span class="dt">int</span> r1 = xs[<span class="dv">0</span>] == x ? <span class="dv">0</span> : bsearch(<span class="dv">0</span>, n, f1);
+  <span class="dt">int</span> r2 = xs[n<span class="dv">-1</span>] == x ? n : bsearch(<span class="dv">0</span>, n, f2);
+  <span class="cf">return</span> r2 - r1;
+}</code></pre></div>
+</body>
+</html>

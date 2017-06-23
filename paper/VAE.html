@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Variational Autoencoders (VAEs)</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/
+    </a>
+</h1>
+<header>
+<h1 class="title">Variational Autoencoders (VAEs)</h1>
+</header>
+<ul>
+<li>
+url: <a href=https://arxiv.org/abs/1606.05908>https://arxiv.org/abs/1606.05908</a>
+</li>
+<li>
+tags: <span class="tag"><a href=index.html#深層学習>深層学習</a></span> <span class="tag"><a href=index.html#オートエンコーダ>オートエンコーダ</a></span>
+</li>
+</ul>
+<h2 id="概要">概要</h2>
+<p>VAEs (Variational Autoencoders; 変分自己符号化器) とは生成モデルの枠組みで自己符号化器 (Autoencoders) を解釈したもので、 生成モデルで言う潜在変数を観測データの符号と見做す. すなわち、観測データから潜在変数を推定する手続きが符号化であり、その逆が復号化である.</p>
+<h2 id="standard-vaes">(Standard) VAEs</h2>
+<p>次のような単純な生成モデルを考える.</p>
+<p>観測されるデータ <span class="math inline">\(x\)</span> はある潜在変数 <span class="math inline">\(z\)</span> があって生成されるものだというモデルを考える.</p>
+<center>
+<img width="240px" src="img/vae/model.png" />
+</center>
+<p>ここで、次を仮定する</p>
+<ul>
+<li><span class="math inline">\(z \sim \mathcal{N}(0, 1)\)</span> を仮定</li>
+<li><span class="math inline">\(z|x \sim \mathcal{N}(\mu(x), \Sigma(x))\)</span> を仮定</li>
+</ul>
+<h3 id="standard-vaes-の確率予測">Standard VAEs の確率予測</h3>
+<p>生成モデルなので確率分布がエンコーダー・デコーダーとなる:</p>
+<ul>
+<li>エンコーダー
+<ul>
+<li><span class="math inline">\(Pr(z|x)\)</span></li>
+</ul></li>
+<li>デコーダー
+<ul>
+<li><span class="math inline">\(Pr(x|z)\)</span></li>
+</ul></li>
+</ul>
+<p>これら2つをそれぞれ NNs で構成した</p>
+<ul>
+<li>エンコーダー
+<ul>
+<li><span class="math inline">\(Q(z|x)\)</span></li>
+</ul></li>
+<li>デコーダー
+<ul>
+<li><span class="math inline">\(R(x|z)\)</span></li>
+</ul></li>
+</ul>
+<p>で近似する.</p>
+<p>エンコーダー <span class="math inline">\(Q\)</span> の学習を考える. <span class="math inline">\(Q\)</span> は <span class="math inline">\(Pr(z|x)\)</span> を近似するためのものだから、これら2つの KL 距離を最小化すればよい.</p>
+<p><span class="math display">\[\begin{eqnarray}
+\text{KL}(Q(z|x) \| Pr(z|x))
+  &amp; = &amp; \mathbb{E}_{z \sim Q(z|x)} \left[ \log Q(z|x) - \log Pr(z|x) \right] \\
+  &amp; = &amp; \mathbb{E}_{z \sim Q(z|x)} \left[ \log Q(z|x) - \log Pr(x|z) - \log Pr(z) \right] + \log Pr(x) \\
+  &amp; = &amp; \text{KL}(Q(z|x) \| Pr(z)) - \mathbb{E}_{z \sim Q(z|x)} \left[ \log Pr(x|z) \right] + \log Pr(x) \\
+\iff \text{KL}(Q(z|x) \| Pr(z|x)) - \log Pr(x)
+  &amp; = &amp; \text{KL}(Q(z|x) \| Pr(z)) - \mathbb{E}_{z \sim Q(z|x)} \left[ \log Pr(x|z) \right]
+\end{eqnarray}\]</span></p>
+<p>左辺の <span class="math inline">\(\text{KL}(Q(z|x) \| Pr(z|x)) (\geq 0)\)</span> を最小化することは <span class="math inline">\(Q\)</span> を学習すること. 左辺に移行した <span class="math inline">\(- \log Pr(x) \geq 0\)</span> は、観測データ <span class="math inline">\(x\)</span> を観測する対数尤度のマイナスであるので、これを最小化することは、 自己符号化器全体 (すなわち <span class="math inline">\(Q, R\)</span>) を訓練すること.</p>
+<p>そういうわけで、最後の式を最小化することを目指せばよい.</p>
+<blockquote>
+<p>註意すべき点として、左辺は未知の確率分布 <span class="math inline">\(Pr(z|x)\)</span> との KL 距離だったものが、 右辺では <span class="math inline">\(Pr(z)\)</span> との KL 距離になっていて、 今 <span class="math inline">\(Pr(z) = \mathcal{N}(0,1)\)</span> と仮定しているので、既知の確率分布との KL 距離になっている.</p>
+</blockquote>
+<p>そういうわけで右辺値を目的関数とする.</p>
+<p><span class="math display">\[\begin{eqnarray}
+\mathcal{L}(x; Q,R)
+ &amp; = \text{KL}(Q(z|x) \| Pr(z|x)) - \mathbb{E}_{z \sim Q(z|x)} \left[ \log Pr(x|z) \right] \\
+ &amp; = \text{KL}(Q(z|x) \| \mathcal{N}(0, 1)) - \mathbb{E}_{z \sim Q(z|x)} \left[ \log Pr(x|z) \right]
+\end{eqnarray}\]</span></p>
+<center style="margin:20px">
+<img width="800px" src="img/vae/ae.png" />
+</center>
+<h3 id="計算のトリック">計算のトリック</h3>
+<h4 id="qzx-の構成法"><span class="math inline">\(Q(z|x)\)</span> の構成法</h4>
+<p><span class="math inline">\(Q\)</span> を適当な NNs で実現するわけだが、出力は確率分布で、しかも <span class="math inline">\(\mathcal{N}\)</span> と仮定している. 従って直接的には、その平均 <span class="math inline">\(\mu(x)\)</span> と分散 <span class="math inline">\(\Sigma(x)\)</span> とを予測する.</p>
+<p><img width="500px" src="img/vae/q.png" /></p>
+<p><span class="math inline">\(\text{KL}(Q(z|x) \| \mathcal{N}(0, 1))\)</span> の計算も、正規分布同士の計算なのでまあ頑張れば出来る.</p>
+<p><span class="math inline">\(R\)</span> も、まあ大体同様にして学習すればよい.</p>
+<h4 id="サンプリング-reparametarization-trick">サンプリング (reparametarization trick)</h4>
+<p><span class="math inline">\(\mathbb{E}_{z \sim Q(z|x)} \left[ \log Pr(x|z) \right]\)</span> をどうやって計算するか. ある確率分布に沿った期待値を本当に計算したいのだが、 簡単な近似法としては、 適当回数 <span class="math inline">\(Q(z|x)\)</span> から <span class="math inline">\(z\)</span> をサンプリングし、 <span class="math inline">\(\log R(x|z)\)</span> の平均を取れば良い.</p>
+<p>ただし一度の順伝播・逆伝播で <span class="math inline">\(Q\)</span> も <span class="math inline">\(R\)</span> も学習出来るのが本当は理想. そのためにサンプリングの回数は一度だけとする. そして、<span class="math inline">\(\mathcal{N}(\mu, \Sigma)\)</span> からサンプリングという手続きは一般には逆伝播が出来ない計算である. 次のように言い換えることで逆伝播が出来る.</p>
+<ol style="list-style-type: decimal">
+<li><span class="math inline">\(e \leftarrow \mathcal{N}(0, 1)\)</span> をランダムサンプリング</li>
+<li><span class="math inline">\(z = \mu(x) + e \Sigma(x)\)</span> (ここで <span class="math inline">\(e\)</span> は定数)</li>
+</ol>
+<h4 id="まとめ">まとめ</h4>
+<p>以上をまとめると VAE の学習は以下の通り</p>
+<ul>
+<li>事例 <span class="math inline">\(x\)</span> について
+<ol style="list-style-type: decimal">
+<li><span class="math inline">\(Q\)</span> の順伝播から <span class="math inline">\(\mu(x), \Sigma(x)\)</span> を求める</li>
+<li><span class="math inline">\(e \leftarrow \mathcal{N}(0, 1)\)</span> をランダムサンプリング</li>
+<li><span class="math inline">\(z = \mu(x) + e \Sigma(x)\)</span>
+<ul>
+<li>これは <span class="math inline">\(\mathcal{N}(\mu, \Sigma)\)</span> からのサンプリングと等しい</li>
+</ul></li>
+<li><span class="math inline">\(\log R(x|z)\)</span> を計算</li>
+<li><span class="math inline">\(\text{KL}(Q(z|x) \| \mathcal{N}(0, 1)) - \log R(x|z)\)</span> を損失だとして逆伝播する</li>
+</ol></li>
+</ul>
+<center style="margin:20px">
+<img width="800px" src="img/vae/ae.png" />
+</center>
+<h3 id="古典的-autoencoders-との比較">古典的 Autoencoders との比較</h3>
+<p>特に何の制約もないただの Autoencoders が何をするかと言うと、 出来るだけ同じ変数名を用いて説明すると</p>
+<ul>
+<li>事例 <span class="math inline">\(x\)</span> について
+<ol style="list-style-type: decimal">
+<li><span class="math inline">\(Q\)</span> の順伝播から <span class="math inline">\(z\)</span> を求める</li>
+<li><span class="math inline">\(R\)</span> の順伝播から <span class="math inline">\(x\)</span> を求める</li>
+<li><span class="math inline">\(- \log R(x|z)\)</span> を損失だとして逆伝播する</li>
+</ol></li>
+</ul>
+<p>大きく違う点としては、エンコードして出来た <span class="math inline">\(z\)</span> に <span class="math inline">\(\text{KL}(Q(z|x) \| \mathcal{N}(0, 1))\)</span> という正則化項を加えるかどうかだけである.</p>
+<h3 id="testing">Testing</h3>
+<p>訓練した VAE をテストするには 適当なノイズ <span class="math inline">\(z \sim \mathcal{N}(0, 1)\)</span> を Decoder <span class="math inline">\(R\)</span> に入れるだけで良い.</p>
+<p>とは言え、適当なノイズを入れただけではやはり平均的な、 例えば MNIST ならボヤケた画像が、出て来るだけになる.</p>
+<h2 id="conditional-variational-autoencoders-cvaes">Conditional Variational Autoencoders (CVAEs)</h2>
+<p>データ <span class="math inline">\(x\)</span> にラベル <span class="math inline">\(y\)</span> があるとしてそれを活用したい. 先の VAE で <span class="math inline">\(x\)</span> としていたのを <span class="math inline">\(y\)</span> にして、代わりにエンコーダーにもデコーダーにも <span class="math inline">\(x\)</span> を入れることにする.</p>
+<p>次のモデルを用いる.</p>
+<figure>
+<img width="300px" src="img/vae/cmodel.png" /> <img width="400px" src="img/vae/cvae.png" />
+</figure>
+<p>このようにすると、この testing は</p>
+<ul>
+<li>入力 <span class="math inline">\(x\)</span> に対して</li>
+<li>ノイズ <span class="math inline">\(z \sim \mathcal{N}(0, 1)\)</span> を用いて
+<ul>
+<li><span class="math inline">\(y = R(x, z)\)</span></li>
+</ul></li>
+</ul>
+<p>として、「<span class="math inline">\(x\)</span> から <span class="math inline">\(y\)</span> を予測するモデル」として使うことが出来て楽しい.</p>
+<p>損失関数は</p>
+<p><span class="math display">\[\begin{eqnarray}
+\mathcal{L}(x; Q,R)
+ &amp; = \text{KL}(Q(z|x,y) \| Pr(z|x,y)) - \log Pr(y|x)
+ &amp; = \text{KL}(Q(z|x,y) \| Pr(z|x)) - \mathbb{E}_{z \sim Q(z|x,y)} \left[ \log Pr(y|z,x) \right]
+\end{eqnarray}\]</span></p>
+<p>となる. 註意すべき点として <span class="math inline">\(x\)</span> と <span class="math inline">\(z\)</span> は独立だとしているので相変わらず</p>
+<p><span class="math display">\[Pr(z|x) = Pr(z) = \mathcal{N}(0,1)\]</span></p>
+<p>のまま. 損失関数は改めて書くと</p>
+<p><span class="math display">\[\mathcal{L}(x; Q,R)
+  = \text{KL}(Q(z|x,y) \| \mathcal{N}(0, 1)) - \mathbb{E}_{z \sim Q(z|x,y)} \left[ \log Pr(y|z,x) \right]\]</span></p>
+<p>としてこれを最適化する.</p>
+<h2 id="mnist-実験">MNIST 実験</h2>
+<p>このチュートリアルでは MNIST で VAE 及び CVAE を訓練した実験結果を述べている.</p>
+<p>ゼロから学習させずにどっかに落ちているという MNIST で訓練したプレーンな自己符号化器の重みを流用したらしい.</p>
+<p>興味深いテクニックを一つ使っている. MNIST なので、入力は 28x28 の行列で各成分は整数値 <span class="math inline">\([0, 255]\)</span>. これを普通はまず 255 で割り算して <span class="math inline">\([0,1]\)</span> 範囲の実数値だと見なしてから使うだろう. そこまでは同じだが、この実験ではその値を確率だと見なして、<span class="math inline">\(\{0,1\}\)</span> に二値化する. つまり、各ピクセルについて独立に、その確率で <span class="math inline">\(1\)</span> さもなくば <span class="math inline">\(0\)</span> にする. これは画像を NNs に流すタイミングで毎回サンプリングするので、データ水増し的な意味合いもある.</p>
+<pre><code>(Figure 7)</code></pre>
+<p>まず VAE の結果. <span class="math inline">\(x\)</span> は先のテクニックで二値化した <span class="math inline">\(\{0,1\}^{28 \times 28}\)</span>. ただし VAE の出力 (デコード) <span class="math inline">\(x&#39;\)</span> は <span class="math inline">\([0,1]^{28 \times 28}\)</span>. テストではデコード部分だけを動かす. ランダムなノイズをデコーダーに入力して、それらしい手書き文字がランダムに出力される. &quot;7&quot; と &quot;9&quot; の中間っぽい文字が出力されており、入力ノイズの空間が連続であることが示唆される.</p>
+<pre><code>(Figure 8a)</code></pre>
+<p>次に CVAE の結果. こちらは、画像の右半分 (左半分?) を <span class="math inline">\(x\)</span> としている. <span class="math inline">\(y\)</span> は VAE での <span class="math inline">\(x\)</span> (すなわち <span class="math inline">\(\{0,1\}^{28 \times 28}\)</span>). テストではやはりデコード部分だけを動かすのだが、 今度はランダムなノイズと、画像の半分をデコーダーに入れると、画像の全体が出力される. まあ、それらしいのが動いてるなあという感じ.</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

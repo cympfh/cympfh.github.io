@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+</head>
+<body>
+<pre class="sourceCode scheme"><code class="sourceCode scheme">(<span class="kw">define</span><span class="fu"> pi </span><span class="fl">3.141592653589793238462643</span>)
+
+; DE変換
+
+<span class="co">; (define (f x) (/ 1 (expt (+ x 1) 2)))</span>
+; こんな関数を、xについて0からinfinityまで積分すると、
+; 解析的に 1 に値を定めることがわかる．
+
+; 複数台形則によって数値計算するのが(J_x h) でhはその
+; 幅．(幅じゃなくて分割数を引数にするべきだった)
+; 普通にやると収束が遅い．
+
+; DE変換とは、数式の上では単なる変数変換であり、
+; xを(phi t)に置き換える．そうすると積分範囲と、後ろに
+; dt/dxみたいなのがくっつく．それをやって台数則するのが
+; (J h)であり、収束があっというまだ．
+
+(<span class="kw">define</span><span class="fu"> </span>(phi t)
+    (<span class="kw">exp</span> (* pi <span class="fl">0.5</span> (sinh t))))
+
+(<span class="kw">define</span><span class="fu"> </span>(dtdx t)
+    (* pi <span class="fl">0.5</span> (<span class="kw">exp</span> (* pi <span class="fl">0.5</span> (sinh t))) (cosh t)))
+
+
+(<span class="kw">define</span><span class="fu"> </span>(f t)
+    (<span class="kw">/</span> <span class="dv">1</span> (<span class="kw">expt</span> (<span class="kw">+</span> (phi t) <span class="dv">1</span>) <span class="dv">2</span>)))
+
+(<span class="kw">define</span><span class="fu"> </span>(J h)
+    (<span class="kw">let</span> ((N <span class="dv">6</span>))
+    (<span class="kw">let</span> loop ((t (<span class="kw">-</span> N)) (sum <span class="fl">0.0</span>))
+        (<span class="kw">if</span> (<span class="kw">&gt;=</span> t N) (* sum h)
+            (loop (<span class="kw">+</span> t h) (<span class="kw">+</span> sum (* (f t) (dtdx t) )))))))
+
+(<span class="kw">define</span><span class="fu"> </span>(main*)
+    (<span class="kw">let</span> loop ((h <span class="fl">0.0001</span>))
+        (<span class="kw">if</span> (<span class="kw">&gt;</span> h <span class="dv">1</span>) (<span class="kw">newline</span>)
+            (<span class="kw">begin</span>
+            (<span class="kw">display</span> h)(<span class="kw">display</span> <span class="st">&quot; &quot;</span>)
+            (<span class="kw">display</span> (<span class="kw">abs</span> (<span class="kw">-</span> (J h) (J (<span class="kw">/</span> h <span class="dv">2</span>)) )))(<span class="kw">newline</span>)
+            (loop (* h <span class="dv">2</span>))))))
+(main*)
+
+;  (J h)のxで積分するバージョン
+  (<span class="kw">define</span><span class="fu"> </span>(J_x h)
+      (<span class="kw">define</span><span class="fu"> </span>(f_x x)
+          (<span class="kw">let</span> ((ret (<span class="kw">/</span> <span class="dv">1</span> (<span class="kw">expt</span> (<span class="kw">+</span> x <span class="dv">1</span>) <span class="dv">2</span>))))
+                (<span class="kw">if</span> (<span class="kw">=</span> x <span class="fl">0.0</span>) (<span class="kw">/</span> ret <span class="dv">2</span>) ret)))
+      (<span class="kw">let</span> ((N <span class="dv">60</span>))
+      (<span class="kw">let</span> loop ((x <span class="dv">0</span>) (sum <span class="fl">0.0</span>))
+          (<span class="kw">if</span> (<span class="kw">&gt;=</span> x N) (* sum h)
+              (loop (<span class="kw">+</span> x h) (<span class="kw">+</span> sum (f_x x)))))))
+
+(<span class="kw">define</span><span class="fu"> </span>(main_x)
+    (<span class="kw">let</span> loop ((h <span class="fl">0.0001</span>))
+        (<span class="kw">if</span> (<span class="kw">&gt;</span> h <span class="dv">1</span>) (<span class="kw">newline</span>)
+            (<span class="kw">begin</span>
+            (<span class="kw">display</span> h)(<span class="kw">display</span> <span class="st">&quot; &quot;</span>)
+            (<span class="kw">display</span> (<span class="kw">abs</span> (<span class="kw">-</span> (J_x h) (J_x (<span class="kw">/</span> h <span class="dv">2</span>)) )))(<span class="kw">newline</span>)
+            (loop (* h <span class="dv">2</span>))))))
+<span class="co">;(main_x)</span></code></pre>
+</body>
+</html>

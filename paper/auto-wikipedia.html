@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Automatically Generating Wikipedia Artciles: A Structure-Aware Approach (Sauper+, 2009)</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/
+    </a>
+</h1>
+<header>
+<h1 class="title">Automatically Generating Wikipedia Artciles: A Structure-Aware Approach (Sauper+, 2009)</h1>
+</header>
+<ul>
+<li>
+url: <a href=http://www.aclweb.org/anthology/P09-1024>http://www.aclweb.org/anthology/P09-1024</a>
+</li>
+<li>
+tags: <span class="tag"><a href=index.html#自然言語処理>自然言語処理</a></span> <span class="tag"><a href=index.html#自然言語生成>自然言語生成</a></span> <span class="tag"><a href=index.html#wikipedia>wikipedia</a></span> <span class="tag"><a href=index.html#順序学習>順序学習</a></span>
+</li>
+</ul>
+<h2 id="repo">repo</h2>
+<ul>
+<li><a href="https://github.com/csauper/wikipedia" class="uri">https://github.com/csauper/wikipedia</a></li>
+</ul>
+<h2 id="goal">Goal</h2>
+<p>タイトルを入れると完全なWikipedia記事を生成する:</p>
+<p>&quot;3-M Syndrome&quot; <span class="math inline">\(\mapsto\)</span> complete article for Wikipedia</p>
+<h2 id="感想">感想</h2>
+<ul>
+<li>&quot;template-based&quot; とあったから読んでみた</li>
+<li>思ってたのと違った</li>
+</ul>
+<h2 id="overview">Overview</h2>
+<ul>
+<li>entity の複数段落の要約 (overview)
+<ul>
+<li>原文 (段落) を <code>Yahoo!</code> からたくさん拾ってきて並べる</li>
+</ul></li>
+<li><code>+</code> content planning
+<ul>
+<li>テンプレートとして学習する</li>
+</ul></li>
+<li>content に最適な文章を
+<ul>
+<li>perceptron ranking algorithm で学習</li>
+<li>整数線形計画法で選択</li>
+</ul></li>
+</ul>
+<h2 id="content-planning">Content Planning</h2>
+<p>&quot;Diseases&quot; の content planning の例 (Figure 1):</p>
+<div class="figure">
+<img src="img/auto-wikipedia/fig1.jpg" />
+
+</div>
+<p>template = topicの列:</p>
+<p><span class="math display">\[\text{[Diagnosis, Causes, Symptoms, Treatment]}\]</span></p>
+<h2 id="生成物">生成物</h2>
+<ul>
+<li><a href="http://people.csail.mit.edu/csauper/?page_id=64">Automatically generated Wikipedia articles: http://people.csail.mit.edu/csauper/?page_id=64</a></li>
+<li>例えば
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/3-M_syndrome">3-M Syndrome: https://en.wikipedia.org/wiki/3-M_syndrome</a></li>
+</ul></li>
+</ul>
+<h2 id="生成物-1">生成物</h2>
+<p>記事のフレーズでググるとまんまの文章が別なページから引っかかる (拾ってきてる)</p>
+<div class="figure">
+<img src="img/auto-wikipedia/google.jpg" />
+
+</div>
+<h2 id="section"></h2>
+<p>生成したい文章に必要な文はネットのどこかにあると仮定する. ただし、</p>
+<ol style="list-style-type: decimal">
+<li>複数のページに散らばっている</li>
+<li>ノイズな文も含まれうる</li>
+</ol>
+<p>だから content planning が必要.</p>
+<h2 id="method-overview">Method Overview</h2>
+<ol style="list-style-type: decimal">
+<li>前処理
+<ul>
+<li>同じドメインの事例からテンプレート (トピックの列) の学習</li>
+<li>Search: 原文を集める</li>
+</ul></li>
+<li>Selection Model: 原文を選ぶ</li>
+<li>選んだのを組み合わせる</li>
+</ol>
+<h2 id="method前処理訓練事例">Method::前処理::訓練事例</h2>
+<p>訓練データとする文章をネットから集める</p>
+<ul>
+<li>生成したい記事と近いドメインのもの</li>
+<li>実験では &quot;Diseases&quot; というドメインの他のWikipedia記事を用いた</li>
+</ul>
+<p><span class="math display">\[\mathcal{D} = d_1, d_2 ~..~ d_n\]</span> 文章 <span class="math inline">\(d_i\)</span> は複数段落 <span class="math inline">\(s\)</span> (<code>&lt;p&gt;</code>) からなり、段落には見出し <span class="math inline">\(h\)</span> (<code>&lt;h*&gt;</code>) がついてる. <span class="math display">\[d_i = \left( h_i^j, s_i^j \right)_{j=1 .. m_i}\]</span></p>
+<h2 id="事前処理テンプレート学習-section-3.1">事前処理::テンプレート学習 (Section 3.1)</h2>
+<p>見出しの列</p>
+<ul>
+<li><span class="math inline">\(h_1^1 \rightarrow h_1^2 \rightarrow \ldots \rightarrow h_1^m\)</span></li>
+<li><span class="math inline">\(h_2^1 \rightarrow h_2^2 \rightarrow \ldots \rightarrow h_2^m\)</span></li>
+<li><span class="math inline">\(~~~~~~~~~~~\vdots\)</span></li>
+</ul>
+<p>というのを template (topic列) だと見なして、 これを学習したい.</p>
+<h2 id="事前処理テンプレート学習-section-3.1-1">事前処理::テンプレート学習 (Section 3.1)</h2>
+<p>全見出し <span class="math inline">\(\{ h_i^j | i, j \}\)</span> をクラスタリング <span class="math inline">\((t_1, t_2 .. t_k .. )\)</span> して、 一つのクラスタ (多重集合) を topic とする.</p>
+<ul>
+<li><span class="math inline">\(t_1 \rightarrow t_3 \rightarrow \ldots \rightarrow t_m\)</span></li>
+<li><span class="math inline">\(t_2 \rightarrow t_3 \rightarrow \ldots \rightarrow t_{m&#39;}\)</span></li>
+<li><span class="math inline">\(~~~~~~~~~~~\vdots\)</span></li>
+</ul>
+<p>みたいな列ができる.</p>
+<ol style="list-style-type: decimal">
+<li>この列の長さ<span class="math inline">\(k\)</span> (平均長) の majority-order を計算して (majority ordering algorithm [Cohen+, 98])、 template とする.</li>
+<li>クラスタ <span class="math inline">\(t_j\)</span> の要素の最頻の見出し <span class="math inline">\(h\)</span> をクラスタの見だしとして用いる.</li>
+</ol>
+<h2 id="事前処理-誰か読んで">事前処理 (誰か読んで)</h2>
+<ul>
+<li>Repeated Bisectioning Algorithm [Zhao+, 05]
+<ul>
+<li>文章同士 <span class="math inline">\((s_i, s_j)\)</span> のコサイン類似度を距離とした階層クラスタリング</li>
+</ul></li>
+<li>Majority Ordering Algorithm [Cohen+, 98]
+<ul>
+<li>有向辺に遷移確率ぽい何かをつけた順序の最適化</li>
+</ul></li>
+</ul>
+<div class="figure">
+<img src="img/auto-wikipedia/order.jpg" />
+
+</div>
+<h2 id="事前処理search-作ったテンプレート毎に-excerpts-抜粋-を拾う-section-3.1">事前処理::Search: 作ったテンプレート毎に excerpts (抜粋) を拾う (Section 3.1)</h2>
+<p>トピック <span class="math inline">\(t_j\)</span> 毎に、できるだけたくさん excerpts を拾う</p>
+<ol style="list-style-type: decimal">
+<li>&quot;記事タイトル (entity) + 見出し <span class="math inline">\(h\)</span> (<span class="math inline">\(h \in t\)</span>)&quot; で <code>Yahoo!</code> でググる
+<ul>
+<li>e.g. <code>&quot;3-M Syndrome&quot;+diagnosis</code></li>
+</ul></li>
+<li>上位10ページ採用</li>
+<li>見出しと段落のペアを一つの excerpts として抽出</li>
+</ol>
+<p>平均で 6 excerpts/topic 取れた</p>
+<h2 id="ここまで">ここまで</h2>
+<p>ドメイン (e.g. &quot;Diseases&quot;) に対して、 テンプレート <span class="math inline">\(t_1 ... t_k\)</span>. トピックごとに候補となる抜粋</p>
+<ul>
+<li><span class="math inline">\(t_1\)</span>: <span class="math inline">\(e_{11}, e_{12} ~...~ e_{1r_1}\)</span></li>
+<li><span class="math inline">\(t_2\)</span>: <span class="math inline">\(e_{21}, e_{22} ~...~ e_{2r_2}\)</span></li>
+<li><span class="math inline">\(~~~~~\vdots\)</span></li>
+<li><span class="math inline">\(t_k\)</span>: <span class="math inline">\(e_{k1}, e_{k2} ~...~ e_{kr_k}\)</span></li>
+</ul>
+<p>抜粋 を一つずつ選択していくことで、 最終的な記事を生成する. ただし、</p>
+<ol style="list-style-type: decimal">
+<li>coverage and redundancy のバランス</li>
+<li>ノイズを上手く避ける必要</li>
+</ol>
+<h2 id="selection-model-section-3.2.1">Selection Model (Section 3.2.1)</h2>
+<p>候補 excerpts から一つずつを選択するモデル</p>
+<ul>
+<li>入力
+<ol style="list-style-type: decimal">
+<li>記事タイトル</li>
+<li>トピックの列 <span class="math inline">\((t_1, \ldots, t_k)\)</span></li>
+<li>トピック <span class="math inline">\(t_j\)</span> に対して候補 <span class="math inline">\((e_j^k)_{k=1..r}\)</span></li>
+</ol></li>
+<li>パラメータ
+<ol style="list-style-type: decimal">
+<li>素性 <span class="math inline">\(\phi : e \mapsto \phi(e) \in \mathbb{R}^n\)</span> (天から与えられる)</li>
+<li><span class="math inline">\(t_j\)</span> に対応する重み <span class="math inline">\(w_j \in \mathbb{R}^n\)</span> (学習する)</li>
+</ol></li>
+</ul>
+<h2 id="推定と学習">推定と学習</h2>
+<ul>
+<li><span class="math inline">\(w_j\)</span> の学習: perceptron ranking algorithm
+<ul>
+<li>ドメイン-トピックに依存した重み</li>
+</ul></li>
+<li>推定: 整数線形計画法 (ILP)</li>
+</ul>
+<h2 id="推定ranking">推定::Ranking</h2>
+<p>トピック <span class="math inline">\(t_j\)</span> に対して、excerpt <span class="math inline">\(e\)</span> のスコアを <span class="math display">\[score(e) = \phi(e) \cdot w_j\]</span> で与える. 候補 <span class="math inline">\((e_1, e_2, \ldots, e_r)\)</span> を、この score の高い順で並び替える. <span class="math display">\[Rank(e_1 ~..~ e_r; w_j) = (e_1 ~..~ e_r)\]</span> (<span class="math inline">\(e_\ell\)</span> は <span class="math inline">\(\ell\)</span> 番目に良い).</p>
+<h2 id="推定最適化">推定::最適化</h2>
+<p>ランキングで並び替えした後</p>
+<ul>
+<li><span class="math inline">\(t_1\)</span>: <span class="math inline">\(e_{11}, e_{12} ~...~ e_{1r_1}\)</span></li>
+<li><span class="math inline">\(t_2\)</span>: <span class="math inline">\(e_{21}, e_{22} ~...~ e_{2r_2}\)</span></li>
+<li><span class="math inline">\(~~~~~\vdots\)</span></li>
+<li><span class="math inline">\(t_k\)</span>: <span class="math inline">\(e_{k1}, e_{k2} ~...~ e_{kr_k}\)</span></li>
+</ul>
+<p><span class="math display">\[\min \sum_j \sum_\ell \ell \cdot x_{j\ell}\]</span></p>
+<p>インディケータ <span class="math inline">\(x_{j\ell}\)</span> は <span class="math inline">\(e_{j\ell}\)</span> を選択するとき <span class="math inline">\(1\)</span>、さもなくば <span class="math inline">\(0\)</span>.</p>
+<p>制約 (ちょうど一つだけ選択すること): <span class="math display">\[\sum_\ell x_{j\ell} = 1 ~ \forall j\]</span></p>
+<h2 id="推定最適化redundancy-constraints">推定::最適化::Redundancy Constraints</h2>
+<p>内容の冗長性をできるだけ取り除く為の制約: <span class="math display">\[(x_{j\ell} + x_{j&#39; \ell&#39;}) \cdot sim(e_{j\ell}, e_{j&#39; \ell&#39;}) \leq 1\]</span> を加える.</p>
+<p>ここで、 <span class="math inline">\(sim\)</span> は文章同士の cos 類似度.</p>
+<h2 id="推定最適化solving-the-ilp">推定::最適化::Solving the ILP</h2>
+<ul>
+<li><code>lp_solve</code> は厳密解を与える (NP-hard)</li>
+<li>近似アルゴリズム: knapsack problem [McDonald, 07]</li>
+</ul>
+<h2 id="w_j-の学習"><span class="math inline">\(w_j\)</span> の学習</h2>
+<p>perceptron ranking algorithm に基づく.</p>
+<h2 id="perceptron-ranking-algorithm-collins-02-蛇足">Perceptron Ranking Algorithm [Collins, 02] (蛇足)</h2>
+<ul>
+<li>Max-Ent によるPOSタグ付け</li>
+<li>最上位のものを出力する代わりに
+<ul>
+<li>上位20を取って re-rank していくビームサーチ</li>
+<li>複数の候補から一番良いものを学習する</li>
+</ul></li>
+</ul>
+<h2 id="the-perceptron-training-for-ranking">The perceptron training for ranking</h2>
+<ul>
+<li>入力
+<ul>
+<li>答え <span class="math inline">\(x_1\)</span>, 他の候補 <span class="math inline">\(x_2, x_3 ~..~ x_k\)</span></li>
+<li>素性 <span class="math inline">\(\phi: x \mapsto \phi(x) \in \mathbb{R}^s\)</span></li>
+<li>スコア <span class="math inline">\(score(x,w) = w \cdot \phi(x)\)</span></li>
+</ul></li>
+</ul>
+<p></p>
+<ul>
+<li>初期化
+<ul>
+<li><span class="math inline">\(w^0 = 0 \in \mathbb{R}^s\)</span></li>
+</ul></li>
+<li>For <span class="math inline">\(i=1,2 ~..~ n\)</span>
+<ul>
+<li><span class="math inline">\(j = \text{argmax}_j ~ score(x_j, w^{i-1})\)</span></li>
+<li>If <span class="math inline">\(j=1\)</span>
+<ul>
+<li>Then <span class="math inline">\(w^i = w^{i-1}\)</span></li>
+<li>Else <span class="math inline">\(w^i = w^{i-1} + \phi(x_1) - \phi(x_j)\)</span></li>
+</ul></li>
+</ul></li>
+</ul>
+<h2 id="update">Update</h2>
+<p><span class="math inline">\(score(x_1, w) &lt; score(x_j, w) (j\ne 1)\)</span> のとき (Else節)、 <span class="math display">\[score(x_1, w) - score(x_j, w) = w \cdot (\phi(x_1) - \phi(x_j))\]</span> を大きくすればよい.</p>
+<ul>
+<li>Else <span class="math inline">\(w^i = w^{i-1} + \phi(x_1) - \phi(x_j)\)</span></li>
+</ul>
+<h2 id="voted-perceptron-もっと蛇足">voted perceptron (もっと蛇足)</h2>
+<p>学習の経過で作られた <span class="math inline">\(w^1, w^2 ~..~ w^n\)</span> を全て用いる.</p>
+<ul>
+<li>入力
+<ul>
+<li><span class="math inline">\(x_1, x_2 ~..~ x_k\)</span></li>
+<li>同じ素性 <span class="math inline">\(\phi: x \mapsto \phi(x)\)</span></li>
+</ul></li>
+<li>初期化
+<ul>
+<li>長さ <span class="math inline">\(n\)</span> の配列 <code>V[] = [0, 0, .. 0]</code></li>
+</ul></li>
+<li>For <span class="math inline">\(i=1,2,..n\)</span>
+<ul>
+<li><span class="math inline">\(w^i\)</span> で score が最上位の <span class="math inline">\(j = \text{argmax}_j score(x_j, w^i)\)</span></li>
+<li><code>V[i] += 1</code></li>
+</ul></li>
+<li>出力 <span class="math inline">\(x_j\)</span> where <span class="math inline">\(j = \text{argmax}_j V[j]\)</span></li>
+</ul>
+<h2 id="学習ranking-perceptron">学習::Ranking Perceptron</h2>
+<p>テンプレートを作る元文章からゴールドデータ <span class="math inline">\(s_1, s_2 ~..~ s_k\)</span> を正解として用いる.</p>
+<ul>
+<li><span class="math inline">\(t_1\)</span>: <span class="math inline">\(s_1\)</span>; <span class="math inline">\(e_{11}, e_{12} ~..~ e_{1r_1}\)</span></li>
+<li><span class="math inline">\(t_2\)</span>: <span class="math inline">\(s_2\)</span>; <span class="math inline">\(e_{21}, e_{22} ~..~ e_{2r_2}\)</span></li>
+<li><span class="math inline">\(~~~~~\vdots\)</span></li>
+<li><span class="math inline">\(t_k\)</span>: <span class="math inline">\(s_k\)</span>; <span class="math inline">\(e_{k1}, e_{k2} ~..~ e_{kr_k}\)</span></li>
+</ul>
+<p></p>
+<ol style="list-style-type: decimal">
+<li>Rank with <span class="math inline">\(w_j \mapsto (e_{j1} ~..~ e_{jr}) ~ \forall j\)</span></li>
+<li>Optimize as a ILP <span class="math inline">\(x_j = Opt(e_{j1} ~..~ e_{jr}) ~ \forall j\)</span></li>
+<li>If <span class="math inline">\(sim(s_j, x_j) \geq 0.8\)</span>
+<ul>
+<li>Then <span class="math inline">\(w_j\)</span> を更新しない</li>
+<li>Else <span class="math inline">\(w_j = w_j + \phi(s_j) - \phi(x_j)\)</span></li>
+</ul></li>
+</ol>
+<h2 id="評価">評価</h2>
+<ol style="list-style-type: decimal">
+<li>ROUGE-1
+<ul>
+<li>テストデータ (Wikipedia記事として既にあるもの) を訓練データ (Wikipedia記事)+Yahoo!(該当記事を参照しない) で生成してROUGEで比較</li>
+</ul></li>
+<li>REACTIONS
+<ul>
+<li>実際にWikipediaに投稿してみんなの反応を見る</li>
+</ul></li>
+</ol>
+<h2 id="データ">データ</h2>
+<ul>
+<li>ドメイン:
+<ul>
+<li>American Film Actors: 2150 articles in Wikipedia</li>
+<li>Diseases: 523</li>
+</ul></li>
+<li>各ドメインの90% の文章を訓練とする.</li>
+<li>残り10%をテストとする
+<ul>
+<li>生成する際は、記事のタイトルだけを参照する</li>
+</ul></li>
+<li>平均 4 topic (段落)</li>
+<li>Search 手続き (Yahoo!) 中ではテストデータ自体を参照しないようにする</li>
+</ul>
+<h2 id="baselines">Baselines</h2>
+<ol style="list-style-type: decimal">
+<li>Search
+<ul>
+<li>パーセプトロンでランキングせずに、検索結果で引っかかった順にランク付けを行う</li>
+<li>1ページから<span class="math inline">\(k\)</span>段落拾ってきた場合には、それをそのまま候補として用いる</li>
+<li>大抵、ページの一番初めの段落は comprehensive overview であるので summary としては優秀</li>
+</ul></li>
+<li>NoTemplate
+<ul>
+<li>テンプレート (トピック列) を気にしない</li>
+<li>Search では、記事のタイトルだけで検索する (full model では記事タイトル+見出し)</li>
+<li>文の組合せ方は既存手法に従う [Zhou 04; Biadsy 08]</li>
+</ul></li>
+<li>Disjoint
+<ul>
+<li>ILPを行わない</li>
+<li>ランキングの後、各トピックから1位のものだけを選択して組み合わせる</li>
+</ul></li>
+<li>Oracle
+<ul>
+<li>候補からテストデータとコサイン類似度が高いものを選択する</li>
+<li>生成すべきテストデータを参照する上にROUGEで評価するので</li>
+<li>ランキングアルゴリズムに関する精度の上限を与えると考える</li>
+</ul></li>
+</ol>
+<h2 id="rouge-1-結果-table-3">ROUGE-1 結果 (Table 3)</h2>
+<div class="figure">
+<img src="img/auto-wikipedia/tab3.jpg" />
+
+</div>
+<ul>
+<li>Oracle は上限</li>
+<li>No Template は一つのトピックに集中してしまう</li>
+<li>FullModel と Disjoint との差がランキングの良さ</li>
+<li>Search はまちまち. 良い記事を引けば良い</li>
+</ul>
+<h2 id="reactions">REACTIONS</h2>
+<p>15の記事を投稿、5-11ヶ月放置</p>
+<ul>
+<li>10 promoted from stubs to regular entries</li>
+<li>全ての記事が人手で編集された</li>
+<li>削除がなされた記事は無い</li>
+<li>記事中の三箇所 (1 section + 2 smaller pieces) が削除された</li>
+</ul>
+<div class="figure">
+<img src="img/auto-wikipedia/tab4.jpg" />
+
+</div>
+<ul>
+<li>The most common changes were small edits to formatting and introduction of links to other Wikipedia articles</li>
+</ul>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

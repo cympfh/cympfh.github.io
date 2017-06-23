@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+</head>
+<body>
+<pre class="sourceCode scheme"><code class="sourceCode scheme"><span class="co">;; Brainfuck interpreter </span>
+
+<span class="co">; read code by (read-line)</span>
+
+(<span class="kw">define</span><span class="fu"> </span>(char-&gt;sym c)
+  (<span class="kw">cond</span> ((<span class="kw">char=?</span> c <span class="ch">#\+</span>) &#39;plus)
+        ((<span class="kw">char=?</span> c <span class="ch">#\-</span>) &#39;minus)
+        ((<span class="kw">char=?</span> c <span class="ch">#\&gt;</span>) &#39;right)
+        ((<span class="kw">char=?</span> c <span class="ch">#\&lt;</span>) &#39;left)
+        ((<span class="kw">char=?</span> c <span class="ch">#\.</span>) &#39;output)
+        ((<span class="kw">char=?</span> c <span class="ch">#\,</span>) &#39;input)
+        ((<span class="kw">char=?</span> c <span class="ch">#\[</span>) &#39;begin)
+        ((<span class="kw">char=?</span> c <span class="ch">#\]</span>) &#39;close)
+        (<span class="kw">else</span> <span class="dv">#f</span>)))
+
+(<span class="kw">define</span><span class="fu"> </span>(comp program)
+  (<span class="kw">define</span><span class="fu"> prg </span>(list-&gt;vector program))
+  (<span class="kw">define</span><span class="fu"> mem </span>(<span class="kw">make-vector</span> <span class="dv">120</span> <span class="dv">0</span>))
+  
+  <span class="co">; (~ prg pc) is #\[ =&gt; find the position of #\] for it</span>
+  (<span class="kw">define</span><span class="fu"> </span>(next pc)
+    (<span class="kw">let</span> rec ((d <span class="dv">0</span>) (i (<span class="kw">+</span> pc <span class="dv">1</span>)))
+      (let1 c (<span class="kw">vector-ref</span> prg i)
+      (<span class="kw">case</span> c
+        ((<span class="kw">begin</span>) (rec (<span class="kw">+</span> d <span class="dv">1</span>) (<span class="kw">+</span> i <span class="dv">1</span>)))
+        ((close) (<span class="kw">if</span> (<span class="kw">zero?</span> d) i (rec (<span class="kw">-</span> d <span class="dv">1</span>) (<span class="kw">+</span> i <span class="dv">1</span>))))
+        (<span class="kw">else</span>    (rec d (<span class="kw">+</span> i <span class="dv">1</span>)))))))
+  
+  <span class="co">; find the position of #\[ for #\] at pc</span>
+  (<span class="kw">define</span><span class="fu"> </span>(prev pc)
+    (<span class="kw">let</span> rec ((d <span class="dv">0</span>) (i (<span class="kw">-</span> pc <span class="dv">1</span>)))
+      (let1 c (<span class="kw">vector-ref</span> prg i)
+      (<span class="kw">case</span> c
+        ((close) (rec (<span class="kw">+</span> d <span class="dv">1</span>) (<span class="kw">-</span> i <span class="dv">1</span>)))
+        ((<span class="kw">begin</span>) (<span class="kw">if</span> (<span class="kw">zero?</span> d) i (rec (<span class="kw">-</span> d <span class="dv">1</span>) (<span class="kw">-</span> i <span class="dv">1</span>))))
+        (<span class="kw">else</span>    (rec d (<span class="kw">-</span> i <span class="dv">1</span>)))))))
+
+  (<span class="kw">let</span> <span class="kw">while</span> ((ptr <span class="dv">20</span>) (pc <span class="dv">0</span>))
+    (<span class="kw">if</span> (<span class="kw">&gt;=</span> pc (<span class="kw">vector-length</span> prg)) &#39;done
+      (let1 c (<span class="kw">vector-ref</span> prg pc)
+      (<span class="kw">case</span> c
+        ((plus)  (<span class="kw">vector-set!</span> mem ptr (<span class="kw">+</span> (<span class="kw">vector-ref</span> mem ptr) <span class="dv">1</span>)) (<span class="kw">while</span> ptr (<span class="kw">+</span> pc <span class="dv">1</span>)))
+        ((minus) (<span class="kw">vector-set!</span> mem ptr (<span class="kw">-</span> (<span class="kw">vector-ref</span> mem ptr) <span class="dv">1</span>)) (<span class="kw">while</span> ptr (<span class="kw">+</span> pc <span class="dv">1</span>)))
+        ((right) (<span class="kw">while</span> (<span class="kw">+</span> ptr <span class="dv">1</span>) (<span class="kw">+</span> pc <span class="dv">1</span>)))
+        ((left)  (<span class="kw">while</span> (<span class="kw">-</span> ptr <span class="dv">1</span>) (<span class="kw">+</span> pc <span class="dv">1</span>)))
+        <span class="co">;((input) (vector-set! mem ptr (read-char)) (while ptr (+ pc 1)))</span>
+        ((output)(<span class="kw">write-char</span> (ucs-&gt;char (<span class="kw">vector-ref</span> mem ptr))) (<span class="kw">while</span> ptr (<span class="kw">+</span> pc <span class="dv">1</span>)))
+        ((<span class="kw">begin</span>) (<span class="kw">while</span> ptr (<span class="kw">if</span> (<span class="kw">zero?</span> (<span class="kw">vector-ref</span> mem ptr)) (next pc) (<span class="kw">+</span> pc <span class="dv">1</span>))))
+        ((close) (<span class="kw">while</span> ptr (<span class="kw">if</span> (<span class="kw">zero?</span> (<span class="kw">vector-ref</span> mem ptr)) (<span class="kw">+</span> pc <span class="dv">1</span>) (prev pc))))
+        (<span class="kw">else</span> (<span class="kw">while</span> ptr (<span class="kw">+</span> pc <span class="dv">1</span>))))))))
+
+(<span class="kw">let*</span> ((line (read-line))
+       (sls  (map char-&gt;sym (<span class="kw">string-&gt;list</span> line)))
+       (sls  (filter (<span class="kw">lambda</span> (x) (<span class="kw">not</span> (<span class="kw">equal?</span> x <span class="dv">#f</span>))) sls)) )
+  (comp sls))
+
+<span class="co">; vim: set ft=scheme:</span></code></pre>
+</body>
+</html>

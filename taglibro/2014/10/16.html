@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Thu Oct 16 23:34:25 JST 2014</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Thu Oct 16 23:34:25 JST 2014</h1>
+</header>
+<p>Arch linux を入れた。</p>
+<ul>
+<li>:how to install arch linux</li>
+<li>:desktop ware, i3 aka i3wm</li>
+<li>:swapfile to hibernate</li>
+<li>:introduce Japanese IM</li>
+</ul>
+<blockquote>
+<p>しつこいくらい言ってるけど、なにか成功した人間は普通、面倒だとか忠実に再現できないといった理由から、 成功に至るまでの道を正確に書き残さない。 それでもあとからその道をなぞりたい人は、そういった書き残しが助けになる。 だからできるだけ書こう。 これは、あまり強くない私からのお願いです。</p>
+</blockquote>
+<p>ネットに転がっている情報を随分と利用した。 それでも、それらは断片的であったり、 自分の場合に当てはめていくつかの語を置き換える作業が必要だったりする。 これはもちろん当然だ。 ここには、自分の場合だけを書くことにする。</p>
+<h2 id="install-arch-linux">install Arch linux</h2>
+<p>あーち・りなっくすを入れることにした。 Debianが良かったのだけれど、インストールの最初で、無線LANを認識できないと宣ったから。</p>
+<ul>
+<li>参考; <a href="http://qiita.com/macchaberrycream/items/1dfabe8b710dc638e3f9">Arch Linux インストール から Xfce 快適環境を構築するまで - Qiita</a></li>
+</ul>
+<h3 id="disk-の作成">disk の作成</h3>
+<p>ディストリビューションのisoファイルは <a href="https://www.archlinux.org/download/">Arch Linux - Downloads</a> にある。私はいつもOSはUSBメモリから入れている。</p>
+<p>ダウンロードしたisoファイルが <code>~/Downloads/archlinux.iso</code> とする。 USBメモリを、たとえば、 <code>/dev/sdc</code> とする。</p>
+<p>私はいつも、挿したUSBメモリが <code>/dev/sd何</code> であるかを見つけるのに、 USBメモリを挿してない状態の <code>ls /dev/sd*</code> と、挿した後のそれとの diff を見ることで確認している。</p>
+<p>このとき、</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># dd if=~/Downloads/archlinux.iso of=/dev/sdc</span></code></pre></div>
+<p>によって、USBメモリがインストールディスクとして使える。<code>dd</code>コマンドはブロックサイズを指定することで、書き込みが高速になる。 <code>man dd</code> によれば、</p>
+<blockquote>
+<pre><code>  ibs=BYTES</code></pre>
+<p>read up to BYTES bytes at a time (default: 512)</p>
+</blockquote>
+<p>とある。めいっぱい、大きな数字を指定すればよい。</p>
+<h3 id="isoの起動">isoの起動</h3>
+<p>インストールさしたいPCにUSBメモリを挿して起動すれば、Arch linux が起動する。 せずに、すでに入っているOSが起動するならば、 もう一度、USBメモリを挿した状態で、起動して、F2とかF11とかF12とかCtrl+I とかで、さっとBIOS 設定画面に入って、 bootの優先順位を、USB を最高位にする。</p>
+<ul>
+<li>参考; <a href="http://www.pc-master.jp/sousa/k-jyuni.html">BIOS起動順位の変更　パソコン初心者講座</a></li>
+</ul>
+<h3 id="インストール作業">インストール作業</h3>
+<p>インストールは、他のディストリビューションのように、次へを無闇にクリックしてれば完了するものではない。 大変に残念だ。 <code>archiso</code>というhostnameの、rootとしてログインした端末が表示される。 すべてCUIの作業で、インストールを行う。</p>
+<p>まず、キーボードはUS配列 (ASCII配列?) としてあるので、日本語配列を使ってる人間は、 操作が困るようなら、(ほんというと困らないはずだけど)</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># loadkeys jp106 </span></code></pre></div>
+<p>とする。あと、大量のソフトウェアをダウンロードすることを行うので、ネットの接続が必要。 有線は勝手に認識されるらしい。 私は無線LANしかないので、次のように、</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># wifi-menu # 無線をつなぐ。グラフィカルな画面で接続設定が行われる</span></code></pre></div>
+<p>次にパーティション分け。 私の場合を、説明する。 必要なのは、３つか、あるいは４つのパーティション。 今回は３つにした。</p>
+<ol type="1">
+<li>BIOS boot (1007KB)</li>
+<li>boot (100MB + alpha)</li>
+<li>/home (remain)</li>
+</ol>
+<p>4つめとして、 swap (3GB) があってもよかった。 メモリが足りないと、swapは必要になるし、 これは、考えが足りてなかったけれど、hibernateさせるのにもswapは当然使われる。 そのためのswapのサイズは、RAMの中をそのまま書き込むのだから、RAMの同じサイズとも思われそうだけど、 実際は、2/5だとか、半分だとか。</p>
+<p>swapパーティションがなくて、hibernateさせる場合は、swapfile を使うことになる。後述する。</p>
+<p>上の、1-3のパーティションを作成したいのだった。 パーティションを書くツールはいくつかあって、 <code>fdisk</code> とか <code>cgdisk</code> とか <code>gdisk</code> とかで、今回は <code>gdisk</code>.</p>
+<ul>
+<li>参考; <a href="http://luna2-linux.blogspot.jp/2011/10/gdisk-fedora-16-gpt.html">ALL about Linux: gdisk コマンド （Fedora 16 からは GPT がデフォルト）</a></li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># gdisk /dev/sda</span>
+<span class="ex">p</span></code></pre></div>
+<pre><code>1. うんたら
+2. うんたら
+3. うんたら</code></pre>
+<p>すでに3つのパーティションが存在してたけど、綺麗にやりたいので、一旦全部消す</p>
+<pre><code>d
+1
+d
+2
+d
+3</code></pre>
+<p>そんで作成</p>
+<pre><code>n
+1
+
+1007K
+ef02 # BIOS boot だけ、正しくタイプを指定
+
+n
+2
+
+101M
+
+n
+3
+
++0 # 残り全部
+
+w # 以上の設定で実際に書く
+q # quit</code></pre>
+<p>以上で、パーティション、/dev/sda1, /dev/sda2, /dev/sda3 ができた。 これらを ext4 で初期化する。</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># mkfs.ext4 /dev/sda1</span>
+<span class="co"># mkfs.ext4 /dev/sda2</span>
+<span class="co"># mkfs.ext4 /dev/sda3</span></code></pre></div>
+<p>これらのうち、/home用パーティションを <code>/mnt</code> に、BIOS boot用パーティションを <code>/mnt/boot</code> にマウントして、これからようやくインストール作業を行う。</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># mkdir /mnt/boot</span>
+<span class="co"># mount /dev/sda3 /mnt      # 今の場合、Number 3 が/home用</span>
+<span class="co"># mount /dev/sda2 /mnt/boot # 今の場合、Number 2 がBIOS boot</span>
+<span class="co"># pacstrap /mnt base base-devel</span></code></pre></div>
+<p>最後行で、大量の基本コマンドのダウンロードが行われる。</p>
+<h3 id="起動設定">起動設定</h3>
+<p>BIOSから、/dev/sda2, /dev/sda3 がちゃんとマウントされるように fstabの設定を次のようにする。</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># genfstab -U -p /mnt &gt;&gt; /mnt/etc/fstab</span></code></pre></div>
+<p>すでに、<code>/mnt</code>にはArch linux がインストールされている。 その中に次のようにしてログインする。</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># arch-chroot /mnt</span>
+<span class="ex">%</span></code></pre></div>
+<p>プロンプトが小さくなる。</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">%</span> sed -i -e <span class="st">&#39;s/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/&#39;</span> -e <span class="st">&#39;s/^#ja_JP.UTF-8 UTF-8/ja_JP.UTF-8 UTF-8/&#39;</span> /etc/locale.gen
+<span class="ex">%</span> locale-gen</code></pre></div>
+<p>sedで書いたけど、nanoなりviなりのエディタで、コメントアウトすればいい。</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">%</span> echo LANG=en_US.UTF-8 <span class="op">&gt;</span> /etc/locale.conf
+<span class="ex">%</span> export LANG=en_US.UTF-8
+<span class="ex">%</span> echo KEYMAP=us <span class="op">&gt;</span> /etc/vconsole.conf
+<span class="ex">%</span> ln -s /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
+<span class="ex">%</span> hwclock --systohc --utc
+<span class="ex">%</span> echo <span class="st">&quot;host name&quot;</span> <span class="op">&gt;</span> /etc/hostname
+<span class="ex">%</span> passwd
+<span class="kw">(</span><span class="ex">root</span> password<span class="kw">)</span>
+<span class="kw">(</span><span class="ex">root</span> password again<span class="kw">)</span></code></pre></div>
+<h3 id="introduce-grub2">introduce GRUB2</h3>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">%</span> pacman -S os-prober
+<span class="ex">%</span> pacman -S grub
+<span class="ex">%</span> grub-install --recheck /dev/sda
+<span class="ex">%</span> grub-mkconfig -o /boot/grub/grub.cfg <span class="co"># !important</span>
+<span class="ex">%</span> acman -S wireless_tools wpa_supplicant wpa_actiond dialog
+<span class="ex">%</span> systemctl enable netctl-auto@wlp2s0
+<span class="ex">%</span> systemctl enable dhcpcd.service</code></pre></div>
+<h3 id="後片付け">後片付け</h3>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">%</span> exit
+<span class="co"># umount -R /mnt</span>
+<span class="co"># reboot</span></code></pre></div>
+<p>適当な、Intelとか画面に表示されてるタイミングでUSBメモリを外す。 GRUB2画面が出、Archlinuxが起動する。 <code>root/(password)</code> でログインできる。</p>
+<h3 id="個人設定">個人設定</h3>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># wifi-menu</span>
+<span class="co"># useradd -m -g wheel cympfh</span>
+<span class="co"># passwd user</span>
+<span class="kw">(</span><span class="ex">user</span> password<span class="kw">)</span>
+<span class="kw">(</span><span class="ex">user</span> password again<span class="kw">)</span>
+<span class="co"># visudo</span>
+<span class="ex">s</span>/^<span class="ex">%wheel</span> ALL=(ALL) <span class="ex">ALL/wheel</span> ALL=(ALL) <span class="ex">ALL/</span>
+<span class="co"># pacman -S xorg-server xorg-server-utils xorg-xinit xorg-xclock xterm</span>
+<span class="co"># pacman -S xorg-drivers</span>
+<span class="co"># pacman -S xf86-video-intel</span>
+<span class="co"># # 参考; lspci | grep VGA</span>
+<span class="co"># # 参考; https://wiki.archlinux.org/index.php/Xorg#Driver_installation</span>
+<span class="co"># pacman -S slim arhlinux-themes-slim slim-themes</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># nano /etc/slim.conf</span></code></pre></div>
+<pre><code>login_cmd exec /bin/zsh -l ~/.xinitrc %session
+daemon yes
+current_theme archlinux-simplyblack</code></pre>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># systemctl enable slim.service</span>
+<span class="co"># reboot</span></code></pre></div>
+<p>そろそろ、userでログインする。</p>
+<h2 id="i3-dropbox-feh-fcitx-の導入">i3, dropbox, feh, fcitx の導入</h2>
+<ul>
+<li>i3: デスクトップ環境 (デスクトップとは言わないかも)</li>
+<li>dropbox: 私にとっては必要</li>
+<li>feh: i3における壁紙の設定</li>
+<li>fctix: iBusの代替品として。</li>
+</ul>
+<pre><code>% pacman -S i3-wm dropbox feh
+% pacman -S fcitx fcitx-mozc fcitx-configtool
+% cat &lt;&lt; EOM &gt; ~/.xinitrc
+setxkbmap us -option ctrl:nocaps
+sh .fehbg
+dropboxd &amp;
+
+export GTK_IM_MODULE=fcitx
+export XMODIFIERS=&quot;@im=fcitx&quot;
+export QT_IM_MODULE=fcitx
+export DefaultIMModule=fcitx
+
+exec i3</code></pre>
+<p>また、ログオフしてログインしなおす。 slimのためにログイン画面はグラフィカルになっていて、 i3としてログインできる。 i3は初回起動時、設定ファイル <code>.i3/config</code> を作成するかと聞いてくるので、 作ってもらう。</p>
+<h3 id="im">IM</h3>
+<ul>
+<li>参考; <a href="http://arch2013.hatenablog.com/entry/2013/05/16/221654">fcitx-mozc - arch linux(はてな)</a></li>
+</ul>
+<p>IMであるところの、<code>fcitx</code> は、先の .xinitrc から呼んでいないので起動していない。 そこから呼んだところで、うまく動かなかった。.i3/cofigから呼ぶことにする。</p>
+<p>一番最後くらいの行にでも</p>
+<pre><code>echo exec --no-startup-id fcitx &gt;&gt; ~/.i3/config</code></pre>
+<p>とする。また次回ログインすると、fcitxが動いて働く。</p>
+<h3 id="壁紙の設定">壁紙の設定</h3>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">feh</span> --bg-fill /path/wallpaper.jpg</code></pre></div>
+<p>とすると、壁紙になる。あと、~/.fehbg というファイルが自動で生成される。 これは .xinitrc から、shスクリプトとして実行することで、 起動時に壁紙として設定される。 <code>feh</code>へのオプションとして、 <code>--bg-fill</code> のかわりに、 <code>--bg-max</code> とか、あといくつかある。 (参考; <code>man feh</code>)</p>
+<h2 id="flashplayer-on-the-browser">Flashplayer on the browser</h2>
+<p>browser は <code>firefox</code> が入ってる。 Adobe近世のFlash Player は次のように入れて、不自由に動画を再生できる。</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">pacman</span> -S extra/flashplugin</code></pre></div>
+<h2 id="swapfile-to-hibernate">swapfile to hibernate</h2>
+<p>hibernate (suspend into disk) や、suspend (suspend into RAM) をするのに、 今まで、 <code>pm-hibernate</code>, <code>pm-suspend</code> コマンドを使っていた。 これは次のパッケージに含まれる。</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">pacman</span> -S pm-utils</code></pre></div>
+<p>さて、おそらく <code>sudo pm-hibernate</code> としても、うまくハイバーネートしない。</p>
+<ul>
+<li>参考;
+<ul>
+<li><a href="https://wiki.debian.org/Hibernation/Hibernate_Without_Swap_Partition">Hibernation/Hibernate_Without_Swap_Partition - Debian Wiki</a></li>
+<li><a href="https://wiki.archlinux.org/index.php/Suspend_and_hibernate#About_swap_partition.2Ffile_size">Suspend and hibernate - ArchWiki</a></li>
+</ul></li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sudo</span> fallocate -l <span class="kw">`</span><span class="ex">/sys/power/image_size</span><span class="kw">`</span> /swap
+<span class="fu">sudo</span> echo <span class="st">&#39;/swap   swap    swap    defaults        0       0 &#39;</span> <span class="op">&gt;</span> /etc/fstab
+<span class="fu">sudo</span> mkswap /swap
+<span class="fu">sudo</span> swapon /swap</code></pre></div>
+<p>これで、<code>/swap</code>が、スワップ領域として使われるようになる。 次に、GRUB2に、<code>/swap</code>を再開位置とさせる設定を行う。</p>
+<p>次のコマンド出力の、ext 0 の、physical_offsetを読んでメモしておく。</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sudo</span> filefrag -v /swap</code></pre></div>
+<p>私の場合は、 <code>276480</code> がオフセット位置であった。 数字のオーダーは人によって結構違う。</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">sudoedit</span> /etc/default/grub</code></pre></div>
+<pre><code>GRUB_CMDLINE_LINUX_DEFAULT=&quot;quiet&quot;</code></pre>
+<p>っていう行が割と頭にあるので、</p>
+<pre><code>GRUB_CMDLINE_LINUX_DEFAULT=&quot;resume=/dev/sda3 resume_offset=276480 acpi_sleep=nonvs&quot;</code></pre>
+<p>とする。 <code>/dev/sda3</code> は、私の、ホームディレクトリのあるパーティション。 GRUBの設定を書き直したので、最後に必ず</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sudo</span> grub-mkconfig -o /boot/grub/grub.cfg </code></pre></div>
+<p>として完了する。</p>
+<p>書き残したことあるかな。 あったら追記しよう。</p>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Mon Aug 17 21:25:50 JST 2015</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Mon Aug 17 21:25:50 JST 2015</h1>
+</header>
+<h2 id="beamer-template-of-pandoc">Beamer template of pandoc</h2>
+<p>修論の実際の準備がそろそろ迫ってきた。 まずはアブストラクトを書いて、9月1日には中間発表である.</p>
+<p>中間発表のために、pandocのためのbeamerテンプレートを書いた. といっても、大したことではなかった.</p>
+<pre><code>pandoc -D beamer</code></pre>
+<p>によって、予め組み込まれたテンプレートが出力される (今気付いたが、pandocのバージョンによって随分と異なるテンプレートが使われているようだ. 安全のためにはいつも自分用のテンプレートを持って行った方が良さそうだ.) 見ればほとんど自明な、 <code>$val$</code> といった変数を含んだパターン言語である.</p>
+<h2 id="word-count">word count</h2>
+<p>我々は語数を数えなければならない. 修士論文足りえるための第一法則に、語数の下限が用意されているからである.</p>
+<p><a href="http://oku.edu.mie-u.ac.jp/~okumura/texwiki/?%E8%8B%B1%E6%96%87%E6%A0%A1%E6%AD%A3">英文校正 - TeX Wiki</a> を参考にして、 <code>detex</code> を用いることにする. <code>pdftotext</code> が他より多く語数をカウントするかと言えば、 目次のためだろう.</p>
+<p>しかし、問題も発覚した. <code>\input</code> コマンドによる他ファイルの読み込みは問題が無いようだ. しかし、<code>\def</code> マクロの展開は行ってくれないようである.</p>
+<p>さてまた、語数のカウントに要請がある. タイトルや要旨 (Abstraction) はカウントしてはいけない. また、図表もカウントの対象ではない.</p>
+<p>先ほどの、マクロを展開してくれない性質を悪用することにする.</p>
+<div class="sourceCode"><pre class="sourceCode tex"><code class="sourceCode latex"><span class="fu">\def</span>\rem#1{}</code></pre></div>
+<p>などと、引数を取りながら実際には出力しないマクロを定義する. <code>detex</code> には引数がそのまま出力されるので、これをマークとして使うことにする.</p>
+<div class="sourceCode"><pre class="sourceCode tex"><code class="sourceCode latex"><span class="co">% main.tex</span>
+<span class="kw">\begin</span>{<span class="ex">document</span>}
+<span class="fu">\maketitle</span>
+<span class="fu">\input</span>{./abst.tex}
+
+<span class="fu">\rem</span>{count:begin}
+count this section
+<span class="fu">\rem</span>{count:end}
+
+Donnot here
+
+<span class="fu">\rem</span>{count:begin}
+count here
+<span class="fu">\rem</span>{count:end}
+
+<span class="kw">\end</span>{<span class="ex">document</span>}</code></pre></div>
+<p>これを <code>detex</code> してみるよ以下様に出力される.</p>
+<pre class="txt"><code>% detex main.tex
+
+
+In this paper, we propose untara and kantara.
+
+
+count:begin
+count this section
+count:end
+
+Donnot here
+
+count:begin
+count here
+count:end</code></pre>
+<p>行ごとにカウントする対象かどうかをを <code>awk</code> でフィルターした後に、<code>wc</code> すればよい:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># makefile</span>
+    <span class="ex">detex</span> main.tex <span class="kw">|</span>
+    <span class="fu">awk</span> -va=0 <span class="st">&#39;/count:end/{a=0} a{print} /count:begin/{a=1}&#39;</span> <span class="kw">|</span>
+    <span class="fu">wc</span> -w</code></pre></div>
+<p>ついでに</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">    <span class="kw">|</span> <span class="kw">(</span> <span class="bu">read</span> <span class="va">w</span>; <span class="bu">echo</span> <span class="st">&quot;</span><span class="kw">`</span><span class="fu">date</span> <span class="st">&#39;+%Y/%m/%d %H:%M&#39;</span><span class="kw">`</span><span class="st"> </span><span class="va">$w</span><span class="st">&quot;</span> <span class="kw">)</span> <span class="kw">|</span> <span class="fu">tee</span> -a wc.log</code></pre></div>
+<p>なり、</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">    <span class="kw">|</span> <span class="fu">sed</span> <span class="st">&#39;s/.*/&amp; words/&#39;</span> <span class="kw">|</span> <span class="ex">tw</span></code></pre></div>
+<p>などとすれば良い.</p>
+<p><code>tw</code> は <a href="https://github.com/cympfh/twitter-sh">twitter-sh</a> のコマンド.</p>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Thu Jul 10 03:46:05 JST 2014</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Thu Jul 10 03:46:05 JST 2014</h1>
+</header>
+<h2 id="リスト内包表記">リスト内包表記</h2>
+<p>schemeでリスト内包表記は srfi-42. 一時期よく使ってたので 42 という番号は覚えてる．</p>
+<p>Haskellのリスト内包表記をスタンダートと思うなら， リスト内包表記とは次のような言語である．</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="dt">ListComprehension</span> <span class="ot">::</span><span class="fu">=</span> [ <span class="dt">Expression</span> <span class="fu">|</span> <span class="dt">Patterns</span> ]
+<span class="dt">Patterns</span> <span class="ot">::</span><span class="fu">=</span> <span class="dt">Pattern</span> <span class="fu">|</span> <span class="dt">Pattern</span>, <span class="dt">Patterns</span>
+<span class="dt">Pattern</span> <span class="ot">::</span><span class="fu">=</span> <span class="dt">Var</span> <span class="ot">&lt;-</span> <span class="dt">List</span> <span class="fu">|</span> <span class="kw">let</span> <span class="dt">Var</span> <span class="fu">=</span> <span class="dt">Expression</span> <span class="fu">|</span> <span class="dt">Predicate</span></code></pre></div>
+<p>例えば</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">[(x,y,z) <span class="fu">|</span> x <span class="ot">&lt;-</span> [<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>], y <span class="ot">&lt;-</span> <span class="st">&quot;abc&quot;</span>, odd x, <span class="kw">let</span> z <span class="fu">=</span> (x,y)]</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">[(<span class="dv">1</span>,<span class="ch">&#39;a&#39;</span>,(<span class="dv">1</span>,<span class="ch">&#39;a&#39;</span>)),(<span class="dv">1</span>,<span class="ch">&#39;b&#39;</span>,(<span class="dv">1</span>,<span class="ch">&#39;b&#39;</span>)),(<span class="dv">1</span>,<span class="ch">&#39;c&#39;</span>,(<span class="dv">1</span>,<span class="ch">&#39;c&#39;</span>))]</code></pre></div>
+<p>と評価される．</p>
+<p><code>&lt;-</code> は <code>map</code> で表現される．<code>let</code>は<code>let</code>だろう．</p>
+<h2 id="リストもなど">リストもなど</h2>
+<p>私は昔読んだ <a href="homepages.inf.ed.ac.uk/wadler/papers/monadscomb/monadscomb.ps">これ | Combining Monads</a> を思い出してた．</p>
+<p><a href="http://cympfh.github.io/study/monad.txt">メモ</a> と重複になるが <code>&lt;-</code> については次のように定義できて，</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">[u] <span class="fu">=</span> [u]
+[u <span class="fu">|</span> x <span class="ot">&lt;-</span> ls] <span class="fu">=</span> map (\x <span class="ot">-&gt;</span> u) ls
+[u <span class="fu">|</span> p1, p2, <span class="fu">..</span> pn, q] <span class="fu">=</span> concat [[u <span class="fu">|</span> q] <span class="fu">|</span> p1, p2 <span class="fu">..</span> pn]</code></pre></div>
+<p>三番目は再帰部分に相当するのだけど，順序に註意． この順でないと， <code>[x | xs &lt;- xss, x &lt;- xs]</code> を正しく展開できないから， これで正しい．</p>
+<p><code>let</code>もそんなに難しくないだろう.</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">[u <span class="fu">|</span> <span class="kw">let</span> x <span class="fu">=</span> z] <span class="fu">=</span> [<span class="kw">let</span> x <span class="fu">=</span> z <span class="kw">in</span> u]
+[u <span class="fu">|</span> q1 <span class="fu">..</span> qn, <span class="kw">let</span> x <span class="fu">=</span> z] <span class="fu">=</span> [<span class="kw">let</span> x <span class="fu">=</span> z <span class="kw">in</span> u <span class="fu">|</span> q1 <span class="fu">..</span> qn]</code></pre></div>
+<p>Predicate はちょっと困ることになった. <code>filter</code>で簡単にできると思ったけど,</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">[ y <span class="fu">|</span> x <span class="ot">&lt;-</span> ls, test]</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">(filter (<span class="kw">lambda</span> (???) (test))
+  (map (<span class="kw">lambda</span> (x) y) ls))</code></pre></div>
+<p>つまり <code>test</code> は何についての述語なのか分からない． というか，<code>filter</code> より外に <code>x</code> という項は出てこないからわかりようがない．</p>
+<h2 id="解決法">解決法</h2>
+<p>モナドもなにもない，コードを書いた 先ほどの</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">[ y <span class="fu">|</span> x <span class="ot">&lt;-</span> ls, test]</code></pre></div>
+<p>を</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">(<span class="kw">let</span> ((ret &#39;()))
+  (<span class="kw">for-each</span> (<span class="kw">lambda</span> (x)
+    (when test
+      (push! ret x)))
+  ls))</code></pre></div>
+<p>と書き換える． 展開の順は先ほどと同じではある．</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">[x <span class="fu">|</span> xss <span class="ot">&lt;-</span> xsss, xs <span class="ot">&lt;-</span> xss, x <span class="ot">&lt;-</span> xs]</code></pre></div>
+<p>は</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">(<span class="kw">let</span> ((rec &#39;()))
+  (<span class="kw">for-each</span> (<span class="kw">lambda</span> (xss)
+    (<span class="kw">for-each</span> (<span class="kw">lambda</span> (xs)
+      (<span class="kw">for-each</span> (<span class="kw">lambda</span> (x)
+        (push! ret x))
+        xs))
+      xss))
+    xsss))</code></pre></div>
+<p>破壊的代入 push! のおかげで Predicate は単にループをスルー (continue) すればいいだけになった．</p>
+<h2 id="コード">コード</h2>
+<script src="https://gist.github.com/cympfh/47d8592c0912481e580a.js"></script>
+</body>
+</html>

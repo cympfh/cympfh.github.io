@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>差分法による拡散方程式の数値計算</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> aiura/
+    </a>
+</h1>
+<header>
+<h1 class="title">差分法による拡散方程式の数値計算</h1>
+</header>
+<p class="date" style="text-align: right">
+2013-07-21 (Sun.)
+</p>
+<div class="tags" style="text-align: right">
+<p><a class=tag href=index.html#数学>数学</a> <a class=tag href=index.html#数値計算>数値計算</a></p>
+</div>
+<h2 id="拡散方程式">拡散方程式</h2>
+<p>初期値を適当な <span class="math inline">\(u_0(x) = u(x, 0)\)</span> とするような 2変数関数 <span class="math inline">\(u(x, t)\)</span> に関する拡散方程式 <span class="math display">\[u_t = \kappa u_{xx}\]</span></p>
+<p>について、 数値計算的に <span class="math inline">\(t &gt; 0\)</span> の範囲で適当の <span class="math inline">\(x\)</span> に関する <span class="math inline">\(u(x, t)\)</span> の値を計算したい.</p>
+<h2 id="前進オイラー法">前進オイラー法</h2>
+<p>適当に小さな定数 <span class="math inline">\(\Delta t\)</span> を以って <span class="math inline">\(u_t\)</span> を</p>
+<p><span class="math display">\[\frac{u(x, t + \Delta t) - u(x, t)}{\Delta t}\]</span></p>
+<p>で置き換える. これはテイラー展開の1次近似 (つまりオイラー法) だと考えると解釈できる. すなわち、</p>
+<p><span class="math display">\[\begin{align}
+&amp; f(t + \Delta t) = f(t) + f&#39;(t) \Delta t + O(\Delta t^2) \\
+\Rightarrow
+&amp; f&#39;(t) \approx \frac{1}{\Delta t} \Big( f(t + \Delta t) - f(t) \Big)
+\end{align}\]</span></p>
+<p>同様にして二階微分もテイラー展開の二次近似で求まる. ただし一階微分を打ち消すために <span class="math inline">\(f(x + \Delta x)\)</span> と <span class="math inline">\(f(x - \Delta x)\)</span> の2つの和を考える.</p>
+<p><span class="math display">\[\begin{align}
+&amp; f(x + \Delta x) = f(x) + f&#39;(x) \Delta x + \frac{1}{2}f&#39;&#39;(x) \Delta x^2 + O(\Delta x^3) \\
+&amp; f(x - \Delta x) = f(x) - f&#39;(x) \Delta x + \frac{1}{2}f&#39;&#39;(x) \Delta x^2 + O(\Delta x^3) \\
+\Rightarrow
+&amp; f(x + \Delta x) + f(x - \Delta x) = 2 f(x) + f&#39;&#39;(x) \Delta x^2 + O(\Delta x^3) \\
+\Rightarrow
+&amp; f&#39;&#39;(x) \approx \frac{1}{\Delta x^2} \Big( f(x + \Delta x) - 2 f(x) + f(x - \Delta x) \Big)
+\end{align}\]</span></p>
+<p>というわけで <span class="math inline">\(u_{xx}\)</span> を</p>
+<p><span class="math display">\[\frac{f(x + \Delta x) - 2 f(x) + f(x - \Delta x)}{\Delta x^2}\]</span></p>
+<p>で置き換えれば良さそう.</p>
+<p>以上から</p>
+<p><span class="math display">\[u(x, t + \Delta t) = u(x, t) + \frac{\kappa \Delta t}{\Delta x^2} \Big( u(x + \Delta x, t) - 2 u(x, t) + u(x - \Delta x, t) \Big)\]</span></p>
+<p>を組み立てられる. 初期値として <span class="math inline">\(x\)</span> に関する <span class="math inline">\(u_0(x)\)</span> が既知なのでこの右辺を用いることで <span class="math inline">\(u(x, \Delta t)\)</span> が求まる. さらに繰り返し適用することで <span class="math inline">\(u(x, 2\Delta x)\)</span> が求まる... このように、時刻変数 <span class="math inline">\(t\)</span> に関して <span class="math inline">\(0\)</span> から初めて前方 (数が増える方向) に進むから、これを前進法という.</p>
+<h2 id="後退オイラー法">後退オイラー法</h2>
+<p><span class="math inline">\(u_t\)</span> を <span class="math display">\[\frac{u(x, t) - u(x, t - \Delta t)}{\Delta t}\]</span> と置き換えても何も問題は無さそう. これを使って先の前進法を適用すると、</p>
+<p><span class="math display">\[u(x, t) = u(x, t - \Delta t) + \frac{\kappa \Delta t}{\Delta x^2} \Big( u(x + \Delta x, t) - 2 u(x, t) + u(x - \Delta x, t) \Big)\]</span></p>
+<p>求めたいのは <span class="math inline">\(t&gt;0\)</span> の範囲であるから、 この式を用いて <span class="math inline">\(u(x, t - \Delta t\)</span> から <span class="math inline">\(u(x, t)\)</span> を求めることを考える.</p>
+<ul>
+<li>ベクトル <span class="math inline">\(u\)</span>
+<ul>
+<li><span class="math inline">\(u_i = u(x_i, t - \Delta t)\)</span></li>
+</ul></li>
+<li>ベクトル <span class="math inline">\(v\)</span>
+<ul>
+<li><span class="math inline">\(u_i = u(x_i, t)\)</span></li>
+</ul></li>
+</ul>
+<p>とすると、先の式は</p>
+<p><span class="math display">\[\begin{align}
+     &amp; v_i = u_i + \frac{\kappa \Delta t}{\Delta x^2} \Big( v_{i+1} - 2 v_i + v_{i-1} \Big) \\
+\iff &amp; u_i = - r v_{i+1} + (2r+1) v_i - v_{i-1}
+\end{align}\]</span></p>
+<p>と書き改められる. ここで <span class="math inline">\(r = \frac{\kappa \Delta t}{\Delta x^2}\)</span> と置いた. つまり、十分長いベクトルに関する一次方程式に他ならない. 行列で書き直すと、</p>
+<p><span class="math display">\[\left[\begin{array}\\
+2r+1 &amp; -r \\
+-r   &amp; 2r+1 &amp; -r \\
+     &amp; -r   &amp; 2r+1 &amp; -r \\
+     &amp;      &amp; -r   &amp; \ddots &amp; \ddots \\
+     &amp;      &amp;      &amp; \ddots &amp; \ddots \\
+\end{array}\right] v = u\]</span></p>
+<p>これを繰り返す解くことで、<span class="math inline">\(u(x, \Delta t), u(x, 2\Delta t), \ldots\)</span> が求まる.</p>
+<h2 id="クランクニコルソン法">クランク・ニコルソン法</h2>
+<p>前進と後退との違いは、<span class="math inline">\(u_{xx}\)</span> の項を <span class="math inline">\(u(x, t)\)</span> に入れるか <span class="math inline">\(u(x, t + \Delta t)\)</span> に入れるかである. 両方に入れれば式が綺麗になる. つまり、前進の</p>
+<p><span class="math display">\[u(x, t + \Delta t) = u(x, t) + \frac{\kappa \Delta t}{\Delta x^2} u_{xx}\]</span></p>
+<p>で、 <span class="math inline">\(u_{xx}\)</span> を</p>
+<p><span class="math display">\[\frac{1}{2}\Big[
+u(x + \Delta x, t) - 2 u(x, t) + u(x - \Delta x, t)
++
+u(x + \Delta x, t + \Delta t) - 2 u(x, t + \Delta t) + u(x - \Delta x, t + \Delta t)
+\Big]\]</span></p>
+<p>で置き換えた式を整理すると、</p>
+<p><span class="math display">\[-\frac{r}{2} v_{i-1} (r+1) v_i -\frac{r}{2} v_{i+1} = -\frac{r}{2} u_{i-1} (r+1) u_i -\frac{r}{2} u_{i+1}\]</span></p>
+<p><span class="math display">\[\left[\begin{array}\\
+ r+1 &amp; -r/2 \\
+-r/2 &amp;  r+1 &amp; -r/2 \\
+     &amp; -r/2 &amp;   r+1  &amp; \ddots \\
+     &amp;      &amp; \ddots &amp; \ddots \\
+\end{array}\right] v
+=
+\left[\begin{array}\\
+ r+1 &amp; -r/2 \\
+-r/2 &amp;  r+1 &amp; -r/2 \\
+     &amp; -r/2 &amp; r+1    &amp; \ddots \\
+     &amp;      &amp; \ddots &amp; \ddots \\
+\end{array}\right] u\]</span></p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

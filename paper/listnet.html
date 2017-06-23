@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Learning to Rank: From Pairwise Approach to Listwise Approach</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/
+    </a>
+</h1>
+<header>
+<h1 class="title">Learning to Rank: From Pairwise Approach to Listwise Approach</h1>
+</header>
+<ul>
+<li>
+url: <a href=http://www.machinelearning.org/proceedings/icml2007/papers/139.pdf>http://www.machinelearning.org/proceedings/icml2007/papers/139.pdf</a>
+</li>
+<li>
+tags: <span class="tag"><a href=index.html#ランク学習>ランク学習</a></span>
+</li>
+</ul>
+<h2 id="概要">概要</h2>
+<p><a href="ranknet.html">RankNet</a> では <span class="math inline">\((x_1, x_2) : x_1 \succ x_2\)</span> というペアから学習するのに対して、 この論文が提案する <strong>ListNet</strong> は、純粋にランキング <span class="math display">\[(x_1, x_2, \ldots, x_n) : x_1 \succ x_2 \succ \cdots \succ x_n\]</span> から学習する. RankNet が pairwise であると呼ばれるのに ListNet は listwise だと言われる.</p>
+<h2 id="listnet-1">ListNet <a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a></h2>
+<h3 id="置換確率-permutation-probabilities">置換確率 (permutation probabilities)</h3>
+<p>オブジェクト (あるいは素性) の列 <span class="math display">\[x = (x_1, x_2, \ldots, x_n)\]</span> が与えられた時に、これの <strong>置換確率</strong> というものを考える.</p>
+<p><span class="math display">\[\phi : \mathcal{X} \to \mathbb{R}\]</span></p>
+<p>置換 <span class="math inline">\(\pi\)</span> とは <span class="math inline">\((1,2,\ldots,n)\)</span> を並び替えてできる列のこと (対称群の元としての置換).</p>
+<p>これらについて置換確率 <span class="math display">\[P_x(\pi; \phi) = \prod_{j=1}^n \frac{\phi(y_j)}{\sum_{k=j}^n \phi(y_k)}\]</span> ただし <span class="math inline">\(y\)</span> は <span class="math inline">\(x\)</span> を <span class="math inline">\(\pi\)</span> によって置換してできる列 (<span class="math inline">\(y=\pi(x)\)</span>).</p>
+<h3 id="置換確率の性質">置換確率の性質</h3>
+<p>いくつか重要な性質が定理として紹介され論文では証明が載ってる.</p>
+<div class="thm">
+<p>この <span class="math inline">\(P_x\)</span> は置換群の上の確率に確かになっていて、 <span class="math display">\[\sum_{\pi \in \Omega} P_x(\pi ; \phi) = 1\]</span></p>
+</div>
+<div class="thm">
+<p>列 <span class="math inline">\(x\)</span> が降順 (<span class="math inline">\(x_1 \succ x_2 \succ \cdots \succ x_n\)</span>) であって、この順序に関して <span class="math inline">\(\phi\)</span> が単調増加関数であるとき、 <span class="math inline">\(P_x\)</span> は <span class="math inline">\(\pi = (1, 2, \ldots, n)\)</span> のとき最大.</p>
+<p>swap sort みたいなことを考えると確かめられる.</p>
+</div>
+<div class="thm">
+<p><span class="math inline">\(\phi\)</span> が <span class="math inline">\(\phi(ax) = a\phi(x)\)</span> <span class="math inline">\((a&gt;0)\)</span> を満たす時 (全部定数倍になるだけなので) <span class="math display">\[P_x(\pi; \phi) = P_{\lambda x}(\pi; \phi)\]</span></p>
+<p>全く同様に、</p>
+<p><span class="math inline">\(\phi\)</span> が <span class="math inline">\(\phi(x) = \exp(x)\)</span> のとき、 <span class="math inline">\(\phi(x + a) = \exp(a) \phi(x)\)</span> なので <span class="math display">\[P_x(\pi; \phi) = P_{x + \lambda}(\pi; \phi)\]</span></p>
+<p>が成立する.</p>
+</div>
+<p>基本的には <span class="math inline">\(\phi\)</span> には線形関数とか指数関数そのものみたいに簡単な関数が来ることを想定してるらしい.</p>
+<h3 id="top-k-の確率">top <span class="math inline">\(k\)</span> の確率</h3>
+<p>ランキングの top <span class="math inline">\(k\)</span> についてだけ考えるなら、初めの <span class="math inline">\(k\)</span> 項の積だけ計算すれば周辺確率を計算することになって、 <span class="math display">\[P_x^k(\pi; \phi) = \prod_{j=1}^k \frac{\phi(y_j)}{\sum_{k=j}^n \phi(y_k)}\]</span> となって計算量が削減できる.</p>
+<p>ところで softmax 関数は <span class="math inline">\(k=1\)</span> で <span class="math inline">\(\phi = \exp \circ f\)</span> という場合に一致する.</p>
+<h3 id="学習予測">学習・予測</h3>
+<p>というわけで、置換確率を損失関数に入れて、<span class="math inline">\(\phi\)</span> を学習、予測は <span class="math inline">\(\phi(x_i)\)</span> をスコアにしてランキングを作ればよい.</p>
+<p>損失関数は具体的にはあらゆる (top <span class="math inline">\(k\)</span> の) 置換での確率を計算してその交差エントロピーを計算する.</p>
+<ul>
+<li>データ列 <span class="math inline">\(x\)</span></li>
+<li>真のスコア <span class="math inline">\(s(x_i)\)</span>
+<ul>
+<li>真のランキングを作るようなスコアを与える
+<ul>
+<li>参考 <a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a> によると、大体適当なスコアで良いらしい</li>
+<li>というのもスコアそのものを学習するわけではないし、前述したようなスケーラビリティがあるから</li>
+</ul></li>
+<li>真の置換確率 <span class="math inline">\(p(\pi) = P_x(\pi ; s)\)</span></li>
+</ul></li>
+<li>学習する <span class="math inline">\(\phi(x_i)\)</span>
+<ul>
+<li>予測のの置換確率 <span class="math inline">\(q(\pi) = P_x(\pi ; \phi)\)</span></li>
+</ul></li>
+<li>損失関数はこの <span class="math inline">\(p, q\)</span> の交差エントロピー
+<ul>
+<li><span class="math inline">\(\mathcal{L} = - \sum_{\pi} p(\pi) \log q(\pi)\)</span></li>
+</ul></li>
+</ul>
+<h2 id="参考">参考</h2>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="http://www.machinelearning.org/proceedings/icml2007/papers/139.pdf">A Probabilistic Framework for Learning to Rank(final-7).dvi - 139.pdf</a><a href="#fnref1">↩</a></p></li>
+<li id="fn2"><p><a href="http://qiita.com/koreyou/items/a69750696fd0b9d88608">ランク学習のListNetをChainerで実装してみた - Qiita</a><a href="#fnref2">↩</a></p></li>
+</ol>
+</div>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

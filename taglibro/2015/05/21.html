@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Thu May 21 20:34:51 JST 2015</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Thu May 21 20:34:51 JST 2015</h1>
+</header>
+<h2 id="メール通知">メール通知</h2>
+<p>Macの「メール」なる標準アプリ (それ以上に詳しい名前がそのソフトウェアに与えられているか知らない) なら新着が来たら通知が少しの間だけデスクトップの右上にあるけど. すぐに消えるし, Macの上でだけだし.</p>
+<p>すぐに気づくのはTwitterのリプライだ.</p>
+<p>なにはともかく, メールの新着をチェックするところを書いた.</p>
+<p>nodeの <code>process_child</code> で openssl を呼んで, IMAPのコマンドを直に叩かせるだけである. IMAPの実際のコマンドを見るのは初めてだったが, <a href="http://krakenbeal.blogspot.jp/2013/01/ssh-gmail.html">コマンドラインから ssh をつかい GMail で読み書きする - KRAKENBEAL RECORDS</a> ってゆう記事の 「コマンドラインでGMailのメールを読む」の節を参照した.</p>
+<p><a href="https://gist.github.com/cympfh/b96eaca3b00972f74b67">IMAPを用いてGMailでメール何件溜まってるかと最新のやつのfromだけ取ってくる</a></p>
+<div class="sourceCode"><pre class="sourceCode coffee"><code class="sourceCode coffee"><span class="kw">{</span>spawn<span class="kw">}</span> <span class="kw">=</span> require <span class="st">&#39;child_process&#39;</span>
+client <span class="kw">=</span> spawn <span class="st">&#39;openssl&#39;</span><span class="kw">,</span> <span class="kw">(</span><span class="st">&quot;s_client -crlf -connect imap.gmail.com:993&quot;</span><span class="kw">.</span>split <span class="st">&#39; &#39;</span><span class="kw">)</span>
+
+gmail <span class="kw">=</span> <span class="st">&quot;your@gmail.com&quot;</span>
+password <span class="kw">=</span> <span class="st">&quot;yourS3cr3tPassowrd&quot;</span>
+
+mail_number <span class="kw">=</span> <span class="kw">-</span><span class="dv">1</span>
+from <span class="kw">=</span> <span class="ot">false</span>
+
+defer <span class="kw">=</span> <span class="fu">-&gt;</span>
+  <span class="ot">console</span><span class="kw">.</span>log <span class="st">&quot;</span><span class="ch">#{</span>mail_number<span class="ch">}</span><span class="st"> mails exist in inbox&quot;</span>
+  <span class="ot">console</span><span class="kw">.</span>log <span class="st">&quot;the last one from </span><span class="ch">#{</span>from<span class="ch">}</span><span class="st">&quot;</span>
+
+client<span class="kw">.</span>stdout<span class="kw">.</span><span class="ot">on</span> <span class="st">&#39;data&#39;</span><span class="kw">,</span> <span class="fu">(data) -&gt;</span>
+  data <span class="kw">=</span> data<span class="kw">.</span>toString<span class="kw">()</span>
+  <span class="ot">console</span><span class="kw">.</span>log data
+  <span class="kw">switch</span>
+    <span class="kw">when</span> <span class="kw">(</span>data<span class="kw">.</span>indexOf <span class="st">&#39;OK Gimap ready&#39;</span><span class="kw">)</span> <span class="kw">&gt;=</span> <span class="dv">0</span>
+      client<span class="kw">.</span>stdin<span class="kw">.</span>write <span class="st">&quot;? login </span><span class="ch">#{</span>gmail<span class="ch">}</span><span class="st"> </span><span class="ch">#{</span>password<span class="ch">}</span><span class="st">\n&quot;</span>
+    <span class="kw">when</span> <span class="kw">(</span>data<span class="kw">.</span>indexOf <span class="st">&#39;authenticated (Success)&#39;</span><span class="kw">)</span> <span class="kw">&gt;=</span> <span class="dv">0</span>
+      client<span class="kw">.</span>stdin<span class="kw">.</span>write <span class="st">&#39;? select inbox\n&#39;</span>
+    <span class="kw">when</span> <span class="kw">(</span><span class="st">/\*\s\d*\sEXISTS/</span><span class="kw">.</span>test<span class="kw">(</span>data<span class="kw">))</span>
+      mail_number <span class="kw">=</span> data<span class="kw">.</span>match<span class="kw">(</span><span class="st">/\*\s(\d*)\sEXISTS/</span><span class="kw">)[</span><span class="dv">1</span><span class="kw">]</span> <span class="kw">|</span> <span class="dv">0</span>
+      client<span class="kw">.</span>stdin<span class="kw">.</span>write <span class="st">&quot;? fetch </span><span class="ch">#{</span>mail_number<span class="ch">}</span><span class="st"> body[]\n&quot;</span>
+    <span class="kw">when</span> <span class="kw">(</span>data<span class="kw">.</span>indexOf <span class="st">&#39;Message-ID: &#39;</span><span class="kw">)</span> <span class="kw">&gt;=</span> <span class="dv">0</span>
+      lines <span class="kw">=</span> data<span class="kw">.</span>split <span class="st">&#39;\n&#39;</span>
+      around <span class="kw">=</span> <span class="ot">false</span>
+      <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">[</span><span class="dv">0</span><span class="kw">...</span>lines<span class="kw">.</span>length<span class="kw">]</span>
+        <span class="kw">if</span> <span class="kw">(</span>lines<span class="kw">[</span>i<span class="kw">].</span>indexOf <span class="st">&#39;From: &#39;</span><span class="kw">)</span> <span class="kw">is</span> <span class="dv">0</span>
+          around <span class="kw">=</span> lines<span class="kw">[</span>i<span class="kw">]</span> <span class="kw">+</span> lines<span class="kw">[</span>i<span class="dv">+1</span><span class="kw">]</span>
+      from <span class="kw">=</span> <span class="kw">if</span> <span class="st">/&lt;.*&gt;/</span><span class="kw">.</span>test around
+        around<span class="kw">.</span>match<span class="kw">(</span><span class="st">/&lt;(.*)&gt;/</span><span class="kw">)</span>
+      <span class="kw">else</span>
+        <span class="kw">(</span>around<span class="kw">.</span>split <span class="st">&#39; &#39;</span><span class="kw">)[</span><span class="dv">1</span><span class="kw">]</span>
+      client<span class="kw">.</span>kill <span class="st">&#39;SIGHUP&#39;</span>
+      <span class="kw">do</span> defer</code></pre></div>
+<p>この defer の部分を Twitter にして, 全体を数分置きに呼ぶというものを <code>csisv16:~/mail_notify/main.coffee</code> に置いて現在試用中である</p>
+<hr />
+<p>先日Amazonで注文したイヤホンが今日の15時にポストを見ると入ってた</p>
+</body>
+</html>

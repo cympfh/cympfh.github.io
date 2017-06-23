@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Class-based n-gram models of natural language</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/
+    </a>
+</h1>
+<header>
+<h1 class="title">Class-based n-gram models of natural language</h1>
+</header>
+<ul>
+<li>
+url: <a href=http://dl.acm.org/citation.cfm?id=176316>http://dl.acm.org/citation.cfm?id=176316</a>
+</li>
+<li>
+tags: <span class="tag"><a href=index.html#言語モデル>言語モデル</a></span> <span class="tag"><a href=index.html#自然言語処理>自然言語処理</a></span>
+</li>
+</ul>
+<p>Brown+ら．</p>
+<p><a href="memo/learning-phrase-patterns.md">Learning phrase patterns for Text Classification</a> 中で、</p>
+<blockquote>
+<p>単語のクラスを1次マルコフモデル尤度を最大化することによって自動分類した</p>
+</blockquote>
+<p>とあって引用されていた．</p>
+<h1 id="introduction">Introduction</h1>
+<p>noisy channel 経由で来た、歪んだ英語の文章を元に戻したい．これが第一の議論である． それに関与することとして、単語にクラスを当てはめることを統計的にしたい．これが第二の議論である．</p>
+<h1 id="言語モデル">言語モデル</h1>
+<p>次のような言語モデルを考える．</p>
+<p>English text は語の列．</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">w[<span class="dv">1</span>:k]</code></pre></div>
+<p>これを、条件付き確率</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">Pr(w[k] <span class="op">|</span> w[<span class="dv">1</span>:k<span class="dv">-1</span>])</code></pre></div>
+<p>で特徴づける． 文章全体が出来上がる確率はこうだ．</p>
+<p><span class="math inline">\(Pr(w[1:k]) = Pr(w[1]) \cdot Pr(w[2] | w[1:1]) \cdot Pr(w[3] | w[1:2]) \cdots Pr(w[k] | w[1:k-1])\)</span></p>
+<blockquote>
+<p>python-like なつもりで書いたけど、</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">w[i:j]</code></pre></div>
+<p>は、列</p>
+<div class="sourceCode"><pre class="sourceCode tex"><code class="sourceCode latex">{w_i, w_{i+1}, ..., w_j}</code></pre></div>
+を表す． ここで <code>i &lt;= j</code> を暗黙的に前提する．
+</blockquote>
+<p>意味を言えば、<code>w[1:k-1]</code>がhistoryであり、<code>w[k]</code>がpredictionである．</p>
+<h2 id="n-gram">n-gram</h2>
+<p>n-gram language model では、 history の内の最後の <code>(n-1)</code> words だけを見る． それが同じなら同じ history だと見做す．</p>
+<p>すなわち</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">Pr(w[k] <span class="op">|</span> w[<span class="dv">1</span>:k<span class="dv">-1</span>]) <span class="op">=</span> Pr(w[k] <span class="op">|</span> w[k<span class="op">-</span>n<span class="dv">+1</span> : k<span class="dv">-1</span>])</code></pre></div>
+<p>とする．ただし <code>k &gt;= n</code> と仮定してる．</p>
+<p>そうでない場合の確率は特別に扱わなければ． 例えば 2-gram model では、 history には <code>V (V-1)</code> 通りある (V = size of vocabulary)． それと別に <code>Pr(w[2] | w[1])</code> が <code>V - 1</code> 通りある．</p>
+<p>ではそれらの確率をどっからもってくるか． training text における最尤推定、すなわち、 数えて割合を出すことをする．</p>
+<p><code>C(w)</code> は training text における <code>w</code> の頻度数．</p>
+<p><span class="math inline">\(Pr(w[n] | w[1:n-1]) = \dfrac{C(w[1:n-1] w[n])}{\sum_w C([1:n-1] w)}\)</span></p>
+<p>ここで、<code>w[1:n-1] w</code> は、列の末尾にword を一つ追加した新しい列を意味する．</p>
+<h2 id="interpolated-estimation-jelinek-and-mercer-1980">interpolated estimation (Jelinek and Mercer, 1980)</h2>
+<p>vocabulary は大きければ良い． しかしながら、n-gram の <code>n</code> が増えるにしたがって、指数的に、頻度は減っていく． 単純に、<code>n</code>は大きいほうがモデルの精度としては上がるけれど、 固定された語彙に対しては、信頼性が減っていく．</p>
+<p>interpolated estimation と呼ばれるものは、 いくつかの言語モデル <span class="math inline">\(Pr^{(j)}\)</span> を構築して、それらをcombineすることで、<span class="math inline">\(Pr&#39;\)</span> を得る．</p>
+<p><span class="math display">\[Pr&#39;(w[i] | w[1:i-1]) = \sum_j \lambda_j(w[1:i-1]) Pr^{(j)}(w[i] | w[1:i-1])\]</span></p>
+<p>重み <span class="math inline">\(\lambda_j\)</span> は EMアルゴリズムで作る．</p>
+<h1 id="word-classes">Word Classes</h1>
+<p>意味的にか、構造的にか、ある語とある語が似ているということがある． <code>(Thursday, Friday)</code> とかね．</p>
+<p>vocabulary <code>V</code>, classes <code>C</code> があって、語 <code>w</code> をclass <code>c</code> に写す写像を <code>pi</code> とする．</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">pi(w) <span class="op">=</span> c</code></pre></div>
+<h2 id="n-gram-class-model">n-gram class model</h2>
+<p>写像 <code>pi</code> が既に与えられた上で、クラスを用いた n-gram model を次のように定める．</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">Pr(w[k] <span class="op">|</span> w[<span class="dv">1</span>:k<span class="dv">-1</span>]) <span class="op">=</span> Pr(w[k] <span class="op">|</span> c[k]) Pr(c[k] <span class="op">|</span> c[<span class="dv">1</span>:k<span class="dv">-1</span>])</code></pre></div>
+<p>ここで、n-gram とする以上、</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">Pr(c[k] <span class="op">|</span> c[<span class="dv">1</span>:k<span class="dv">-1</span>]) <span class="op">=</span> Pr(c[k] <span class="op">|</span> c[k<span class="op">-</span>n<span class="dv">+1</span> : k<span class="dv">-1</span>])</code></pre></div>
+<p>とする．</p>
+<p>training text から、右辺の2つの確率を最尤推定する．</p>
+<p>まず、簡単な 1-gram の場合は、</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">Pr(w <span class="op">|</span> c) <span class="op">=</span> C(w) <span class="op">/</span> C(c)
+Pr(c) <span class="op">=</span> C(c) <span class="op">/</span> T</code></pre></div>
+<p>ここで、<code>T</code> は、training text 中の word 数である． training text は、 <code>t[1:T]</code> と書けて、 <code>C(c)</code>は、<code>length(map(pi, t))</code> である．</p>
+<p>2-gramなら、 <span class="math inline">\(Pr(c[2] | c[1]) = \dfrac{C(c[1]c[2])}{\sum_c C(c[1] c)}\)</span> となる．</p>
+<h2 id="尤度">尤度</h2>
+<p><span class="math inline">\(L(pi) = (T - 1)^{-1} \log Pr(t[2:T] | t[1])\)</span></p>
+<p>これを尤度とする．2-gram model の下でこれを式変形すると、</p>
+<p><span class="math inline">\(L(pi) = \sum_{w_1, w_2} \dfrac{C(w_1 w_2)}{T-1} \log Pr(c_2 | c_1) Pr(w_2 | c_2)\)</span></p>
+<p>さらにうわぁーってやると、</p>
+<p><span class="math inline">\(L(pi) = -H(w) + I(c1, c2)\)</span> ここで、<code>H</code>はエントロピー、<code>I</code>は相互情報量． <code>w</code> は training text から降ってくるから、</p>
+<p><code>L(pi)</code>を最大化するような<code>pi</code>を選択する、というのは、 相互情報量を最大化するようなクラス分類を選択することになる．</p>
+<h2 id="prictical">Prictical</h2>
+<p>We know of no practical method to find max <code>I</code>, or the <code>I</code> is the maximum or not.</p>
+<h3 id="greedy-algorithm">greedy algorithm</h3>
+<ul>
+<li><p>goal: classifying <code>V</code> words into <code>C</code> classes (<code>V &gt; C</code>)</p></li>
+<li>initially, distincts words to each classes, that is there are <code>V</code> classes</li>
+<li>do class merge <code>V-C</code> times (in a step, one merge be done)</li>
+<li><p>Then, we get <code>C</code> classes remained</p></li>
+</ul>
+<p>The step is described recursively as follows. After <code>V-k</code> merges, we got <code>k</code> classes</p>
+<pre><code>C_k(1), C_k(2), ..., C_k(k)</code></pre>
+<p>we think of the merge of <code>C_k(i)</code> with <code>C_k(j)</code> where <code>1 &lt;= i &lt; j &lt;= k</code>.</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">p_k(l, m) <span class="op">=</span> Pr(C_k(l), C_k(m))</code></pre></div>
+<p>This is the probability of that the class <code>C_k(m)</code> follows after the class <code>C_k(l)</code> in the text.</p>
+<p>let <span class="math inline">\(pl_k(l) = \sum_m p_k(l, m)\)</span></p>
+<p>let <span class="math inline">\(pr_k(m) = \sum_l p_k(l, m)\)</span></p>
+<p>let <span class="math inline">\(q_k(l, m) = p_k(l, m) \log \dfrac{p_k(l, m)}{pl_k(l) pr_k(m)}\)</span></p>
+<p>The mutual information of the <code>k</code> classes is denoted by</p>
+<p><span class="math inline">\(I_k = \sum_{l,m} q_k(l, m)\)</span></p>
+<p>The new class merged <code>C_k(i)</code> and <code>C_k(j)</code> is denoted by <code>i + j</code>.</p>
+<p><span class="math inline">\(p_k(i+j, m) = p_k(i, m) + p_k(j, m)\)</span> <span class="math inline">\(q_k(i+j, m) = p_k(i+j,m) \log \dfrac{p_k(i+j,m)}{pl_k(i+j) pr_k(m)}\)</span></p>
+<p>and the mutual information after the merge is</p>
+<p><span class="math inline">\(I_k(i,j) = I_k - s_k(i) - s_k(j) + q_k(i,j) + q_k(j,i) + q_k(i+j,i+j) + \sum_{l \ne i,j} q_k(l, i+j) + \sum_{m \ne i,j} q_k(i+j,m)\)</span></p>
+<p>where <span class="math inline">\(s_k(i) = \sum_l q_k(l, i) + \sum_m q_k(i, m) - q_k(i,i)\)</span></p>
+<p>So, we will find the pair <code>(i,j)</code> such that the mutual information loss <span class="math inline">\(L_k(i,j) = I_k - I_k(i,j)\)</span> is least.</p>
+<h3 id="classes-gotten-with-this-alogrithm">Classes gotten with this alogrithm</h3>
+<ul>
+<li>Friday, Monday, ... Sunday, weekends</li>
+<li>June, March, July ...</li>
+<li>people guys folks fellows ...</li>
+<li>down, backwards, ashore, sideways ...</li>
+<li>water, gas, coal, liquid ...</li>
+<li>had, hadn't hath would've could've ...</li>
+</ul>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Quasi-Recurrent Neural Network (QRNN)</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/
+    </a>
+</h1>
+<header>
+<h1 class="title">Quasi-Recurrent Neural Network (QRNN)</h1>
+</header>
+<ul>
+<li>
+url: <a href=https://arxiv.org/abs/1611.01576>https://arxiv.org/abs/1611.01576</a>
+</li>
+<li>
+tags: <span class="tag"><a href=index.html#深層学習>深層学習</a></span>
+</li>
+</ul>
+<p>RNN と言えば LSTM だが、とにかく学習 (1回の逆伝播) が遅い. また、ユニットの状態を見て一体どんな特徴を捉えているのかの分析も難しい. QRNN はこれら2つを解決する.</p>
+<h2 id="手法">手法</h2>
+<p>入力は系列:</p>
+<p><span class="math display">\[x_1, x_2, \ldots, x_t, \ldots, x_T\]</span></p>
+<p>各 <span class="math inline">\(x_i\)</span> はベクトル <span class="math inline">\(\mathbb{R}^n\)</span>.</p>
+<div class="figure">
+<img src="img/qrnn/fig.png" />
+
+</div>
+<p>次のようにして、LSTMライクなことをする.</p>
+<ol style="list-style-type: decimal">
+<li>Convolution
+<ul>
+<li>画像の畳込み同様に <span class="math inline">\(x_1, x_2, \ldots, x_t, \ldots, x_T\)</span> から次の最大 4 つのパラメータを作る
+<ol style="list-style-type: decimal">
+<li><span class="math inline">\(z_1, z_2, \ldots, z_t, \ldots, z_T\)</span> <span class="math inline">\((\tanh)\)</span></li>
+<li><span class="math inline">\(i_1, i_2, \ldots, i_t, \ldots, i_T\)</span> <span class="math inline">\((\sigma)\)</span> (optional)</li>
+<li><span class="math inline">\(f_1, f_2, \ldots, f_t, \ldots, f_T\)</span> <span class="math inline">\((\sigma)\)</span></li>
+<li><span class="math inline">\(o_1, o_2, \ldots, o_t, \ldots, o_T\)</span> <span class="math inline">\((\sigma)\)</span> (optional)</li>
+</ol></li>
+<li>括弧内は最後の活性化層</li>
+<li>実際の畳み込み方はバリエーションが考えられる
+<ul>
+<li>元論文の例では、 <span class="math inline">\(z_t, i_t, f_t, o_t\)</span> を <span class="math inline">\(x_t, x_{t-1}\)</span> から作る</li>
+</ul></li>
+<li><span class="math inline">\(i_t, o_t\)</span> は省略可 (後述)</li>
+<li>注意点としてこの計算 (逆伝播含めて) は並列化可能であること</li>
+</ul></li>
+<li>Pooling
+<ul>
+<li>系列 <span class="math inline">\((z_1, i_1, f_1, o_1), \ldots\)</span> から <span class="math inline">\(h_t\)</span> を作る</li>
+<li>内部状態 <span class="math inline">\(c_t\)</span> を持ち、<span class="math inline">\(h_t\)</span> を出力する</li>
+<li>適当な初期値 <span class="math inline">\(c_0\)</span> を以って、次の式を以って系列に沿って計算する</li>
+</ul></li>
+</ol>
+<p><span class="math display">\[c_t = f_t \odot c_{t_1} + i_t \odot z_t\]</span> <span class="math display">\[h_t = o_t \odot c_t\]</span></p>
+<ul>
+<li><span class="math inline">\(i_t\)</span> を省略する場合、<span class="math inline">\(i_t = 1 - f_t\)</span> とする</li>
+<li><span class="math inline">\(o_t\)</span> を省略する場合、<span class="math inline">\(o_t = 1\)</span> <span class="math inline">\((c_t = h_t)\)</span> とする</li>
+</ul>
+<p>どれを省略するかによって、<span class="math inline">\(f\)</span>-pooling, <span class="math inline">\(fo\)</span>-pooling, <span class="math inline">\(ifo\)</span>-pooling と呼ぶ.</p>
+<p>系列に沿った逆伝播は pooling のところだけだけど、LSTM と異なってただの掛け算だけなので、 マシな計算量で済むのが特長.</p>
+<h3 id="dropout">Dropout</h3>
+<p><span class="math inline">\(f_{tj} = 1, i_{tj} = 0\)</span> なる要素があれば、時刻 <span class="math inline">\(t\)</span> の成分 <span class="math inline">\(j\)</span> は落ちる.</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

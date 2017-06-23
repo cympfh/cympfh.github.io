@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Tue Oct 22 20:17:22 JST 2013</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Tue Oct 22 20:17:22 JST 2013</h1>
+</header>
+<h2 id="open-jtalk-を使う">Open Jtalk を使う</h2>
+<p>Linuxで何にでもフリーな音声合成ツール，Open Jtalk くらいしかない hts_engine は open_jtalk のコンパイルの時に既にインストールされてる必要がある MMDAgent_Example は，Open Jtalk で使えるような音声のデータ なくても音声データはOpen Jtalk にあるらしい</p>
+<p>ref * http://www.geocities.jp/humanrace96/OpenJTalk.html * http://lingr.com/room/momonga/archives/2013/09/09</p>
+<hr />
+<p>基本の前に，例外的に http://lingr.com/room/momonga/archives/2013/09/09 にある通り，hts_engine, open_jtalk, mmdagent のバージョン関係はすごく重要 最新のバージョンならいいなんてことはなくて 結局</p>
+<ul>
+<li>hts_engine_API-1.06</li>
+<li>open_jtalk-1.05</li>
+<li>MMDAgent_Example-1.3.1.zip</li>
+</ul>
+<p>これを使った - hts_engine_API-1.06 - open_jtalk-1.05 については，サイトを見てもリンクとか載ってなくて自分でググるしかない</p>
+<hr />
+<p>基本的には http://www.geocities.jp/humanrace96/OpenJTalk.html の通りにすればいい．checkinstall ってなんだろう．普通に sudo make install した</p>
+<hr />
+<p>具体的な使い方として 一つ目のサイトにあったperlのスクリプトとか意味不明なので，これまたどっかで拾ってきた こんなの</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="fu">cat</span> test
+<span class="co">#!/bin/bash</span>
+<span class="va">VOICE=</span>/usr/local/share/hts_voice/MMDAgent_Example-1.3.1/Voice/mei_happy
+<span class="va">DIC=</span>/usr/local/share/open_jtalk/open_jtalk_dic_utf_8-1.06
+<span class="ex">open_jtalk</span> \
+-td <span class="va">$VOICE</span>/tree-dur.inf \
+-tf <span class="va">$VOICE</span>/tree-lf0.inf \
+-tm <span class="va">$VOICE</span>/tree-mgc.inf \
+-md <span class="va">$VOICE</span>/dur.pdf \
+-mf <span class="va">$VOICE</span>/lf0.pdf \
+-mm <span class="va">$VOICE</span>/mgc.pdf \
+-df <span class="va">$VOICE</span>/lf0.win1 \
+-df <span class="va">$VOICE</span>/lf0.win2 \
+-df <span class="va">$VOICE</span>/lf0.win3 \
+-dm <span class="va">$VOICE</span>/mgc.win1 \
+-dm <span class="va">$VOICE</span>/mgc.win2 \
+-dm <span class="va">$VOICE</span>/mgc.win3 \
+-ef <span class="va">$VOICE</span>/tree-gv-lf0.inf \
+-em <span class="va">$VOICE</span>/tree-gv-mgc.inf \
+-cf <span class="va">$VOICE</span>/gv-lf0.pdf \
+-cm <span class="va">$VOICE</span>/gv-mgc.pdf \
+-k <span class="va">$VOICE</span>/gv-switch.inf \
+-x <span class="va">$DIC</span> \
+-ow /tmp/ojtalktmpvoice.wav \
+<span class="va">$1</span>
+<span class="ex">mplayer</span> /tmp/ojtalktmpvoice.wav
+
+$ <span class="fu">cat</span> input
+こんにちわ こんにちわ こんにちわ こんにちわ こんにちわ こんにちわ こんにちわ こんにちわ こんにちわ
+
+$ <span class="ex">./test</span> ./input</code></pre></div>
+<p>気持ち悪い音声が流れる</p>
+</body>
+</html>

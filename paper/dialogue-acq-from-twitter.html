@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Twitterを用いた非タスク指向型対話システムの発話生成</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/
+    </a>
+</h1>
+<header>
+<h1 class="title">Twitterを用いた非タスク指向型対話システムの発話生成</h1>
+</header>
+<ul>
+<li>
+url: <a href=https://kaigi.org/jsai/webprogram/2013/paper-260.html>https://kaigi.org/jsai/webprogram/2013/paper-260.html</a>
+</li>
+<li>
+tags: <span class="tag"><a href=index.html#自然言語処理>自然言語処理</a></span> <span class="tag"><a href=index.html#twitter>twitter</a></span> <span class="tag"><a href=index.html#自然言語生成>自然言語生成</a></span>
+</li>
+</ul>
+<h2 id="introduction">Introduction</h2>
+<p>非タスクの対話システムっていうのは普通のチャット</p>
+<p>手で作ったルールベース方式のは、古くは</p>
+<ul>
+<li>ELIZA</li>
+<li>[Weizenbaum 66] Weizenbaum, J.: ELIZA-a computer program for the study of natural language communication between man and machine, Communications of the ACM, Vol. 9, No. 1, pp. 36–45 (1966)</li>
+<li>A.L.I.C.E [Wallace 09] Wallace, R.: The anatomy of ALICE, Parsing the Turing Test, pp. 181–210 (2009)</li>
+</ul>
+<p><a href="http://www.jabberwacky.com">Jabberwacky</a> は、 応答事例のデータベースを大きく持っておき、</p>
+<ol style="list-style-type: decimal">
+<li>ユーザーの発言の入力</li>
+<li>類似の検索</li>
+<li>それの応答をDBから引っ張ってくる</li>
+<li>そのまんま応答とする</li>
+</ol>
+<p>とする。「質の高い対話ログ」を大量に持っておくことが必要</p>
+<p>最近で言うと、Twitter上のやりとりを用いる手法がごまんと提案されている<br />
+e.g. http://www.isi.imi.i.u-tokyo.ac.jp/publication/2012/IPSJ2012_bessho.pdf</p>
+<p>この論文は、では質の高い発話文をいかに獲得するか、について述べる<br />
+受け答えじゃなくて、<br />
+何か話題語が入力された時に、それについての何でもない発言をさせたい</p>
+<h2 id="質の高さ">質の高さ</h2>
+<ol style="list-style-type: decimal">
+<li>ある話題語に関する発言であること</li>
+<li>日本語として適切で意味が通じること</li>
+<li>その発言単体で意図が理解できること</li>
+<li>発言が時間や空間に制限されていないこと</li>
+</ol>
+<p>特に四番目を鑑みるに、 著者らは <a href="http://www.jabberwacky.com">Jabberwacky</a> への利用を考えていることがわかる。</p>
+<h2 id="タスク">タスク</h2>
+<p>先の4の質の高さ、に当てはまるかどうかの 正解データ、不正解データを作って、 分類器を作る</p>
+<h2 id="コーパス">コーパス</h2>
+<p>Twitterからの文であって 話題語を含み、単語が5以上30未満で、<span class="citation">@を含まない</span></p>
+<h2 id="フィルタリング">フィルタリング</h2>
+<p>次のルール全てに当てはまるものを、正解とする</p>
+<h3 id="ルールa">ルールA</h3>
+<p>話題語と他の名詞が連続しないこと</p>
+<p>これはたぶん、別に複合語を示していて話題語とは関係がない<br />
+(ex. (アメリカ, アメリカザリガニ))</p>
+<h3 id="ルールb">ルールB</h3>
+<p>人名、代名詞が含まれないこと</p>
+<h3 id="ルールc">ルールC</h3>
+<p>先頭の単語が助詞、助動詞、接続詞ではないこと</p>
+<h3 id="ルールd">ルールD</h3>
+<p>末尾の2単語が</p>
+<ul>
+<li>助詞-格助詞</li>
+<li>助詞-係助詞</li>
+<li>助詞-接続助詞</li>
+<li>助詞-並列助詞</li>
+<li>*-名詞</li>
+</ul>
+<p>となってるものは何かおかしいからダメ。</p>
+<p>ただし、</p>
+<ul>
+<li>名詞-形容動詞語幹</li>
+</ul>
+<p>はセーフらしいです</p>
+<h3 id="ルールe">ルールE</h3>
+<p>文末以外に 助詞-助動詞 が含まれないこと</p>
+<p>これは句読点がおかしい</p>
+<h3 id="ルールf">ルールF</h3>
+<p>時間、数値を含まないこと</p>
+<h3 id="ルールg">ルールG</h3>
+<p>比較対象の不十分な比較を含まないこと</p>
+<p><code>/(ほう|方)が/</code> にマッチして、 <code>/より.*(ほう|方)が/</code> にマッチしないものは削除する</p>
+<h2 id="文の点数">文の点数</h2>
+<p>以上のルールでも不正解なのに正解とされるものを除外するために、 点数付けを行う。</p>
+<h3 id="助詞以外の単語の点数">助詞以外の単語の点数</h3>
+<p>助詞以外の単語 <span class="math inline">\(w\)</span> について、</p>
+<ul>
+<li>正解事例中の単語の総数 <span class="math inline">\(N_1\)</span></li>
+<li>正解事例中の <span class="math inline">\(w\)</span> の出現頻度 <span class="math inline">\(n_1\)</span></li>
+<li>不正解 <span class="math inline">\(N_0\)</span></li>
+<li>不正解 <span class="math inline">\(n_0\)</span></li>
+</ul>
+<p><span class="math inline">\(w\)</span> の点数を</p>
+<p><span class="math inline">\(f(w) = \frac{n_1}{N_1} / \frac{n_0}{N_0}\)</span></p>
+<p>とする。つまんない設定だ。</p>
+<p>0より大きい実数であって、正解に多く見られるものは、<span class="math inline">\(1.0\)</span> を超える</p>
+<p>ただし、稀な語 (訓練事例中で頻度が<span class="math inline">\(m\)</span>未満; <span class="math inline">\(m=5\)</span>) は無視して 点数を与えない。</p>
+<h3 id="助詞の点数">助詞の点数</h3>
+<p>助詞の前後の1語ずつをとった 3-gram <span class="math inline">\(x\)</span> を見る。 ここで BOSとEOSを考慮する。</p>
+<p>この点数 <span class="math inline">\(f(x)\)</span> は先と同じ式で出す。</p>
+<h3 id="文の点数-1">文の点数</h3>
+<p><span class="math inline">\(\prod \max(\alpha, f(x))\)</span></p>
+<p>where <span class="math inline">\(\alpha = 1.4\)</span></p>
+<p>文の点数がある閾値 <span class="math inline">\(\theta\)</span> (<span class="math inline">\(\theta = 1.0\)</span>) 以下のものは除外して不正解とする</p>
+<h3 id="語尾の整形">語尾の整形</h3>
+<p>最強にどうでもいい話</p>
+<p>対話システムだから優しい口調にしたい</p>
+<ul>
+<li>だね$ → ですね</li>
+<li>だよな$ → ですよね</li>
+<li>なのか$ → でしょうか</li>
+<li>好き$ → 好きなんですよね</li>
+<li>嫌い$ → 嫌いなんですよね</li>
+<li>好きか$ → 好きなんでしょうか</li>
+<li>嫌いか$ → 嫌いなんでしょうね</li>
+<li>[名詞/形容詞/副詞]$ → +ですよね</li>
+<li>[名詞/形容詞/副詞]か$ → +でしょうか</li>
+<li>[名詞/形容詞/副詞]？$ → +でしょうか</li>
+<li>思わん$ → 思いません</li>
+<li>[動詞]ん$ → +ません</li>
+<li>ない$ → ないですよね</li>
+<li>ない？$ → ないでしょうか</li>
+<li>ないか → ないでしょうか</li>
+<li>(らしい|べき|だけ|のみ|たい|つもり)$ → +です</li>
+<li>(らしい|べき|だけ|のみ|たい|つもり)か$ → +でしょうか</li>
+</ul>
+<h2 id="result">Result</h2>
+<p>普通に良い</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Fenwick tree, binary indexed tree</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<h1 class="title">Fenwick tree, binary indexed tree</h1>
+</header>
+<h2 id="参考">参考</h2>
+<ul>
+<li><a href="http://en.wikipedia.org/wiki/Fenwick_tree">Fenwick tree - Wikipedia</a></li>
+</ul>
+<h2 id="概要">概要</h2>
+<ul>
+<li>長さ <span class="math inline">\(n\)</span> の数列: <span class="math inline">\(v = \{ v_0, v_1, \ldots, v_{n-1} \} = \{0,0,\ldots,0\}\)</span></li>
+<li>次の2つの操作が許される
+<ol type="1">
+<li><code>add(i, x)</code>: <span class="math inline">\(v_i \leftarrow v_i + x\)</span></li>
+<li><code>sum(m)</code>: <span class="math inline">\(v_0 + v_1 + \cdots + v_m\)</span> を返す
+<ul>
+<li>N.B. <span class="math inline">\(v_m\)</span> を含む</li>
+</ul></li>
+</ol></li>
+<li>時間計算量: 共に <span class="math inline">\(O(log(n))\)</span></li>
+<li>空間計算量: 数列の長さ <span class="math inline">\(n\)</span> 程度の配列.</li>
+</ul>
+<h2 id="seq.bit.cc"><a href="seq.bit.cc" class="uri">seq.bit.cc</a></h2>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="kw">struct</span> BIT {
+  <span class="dt">int</span> N;
+  <span class="dt">int</span> *ar;
+  BIT(<span class="dt">int</span> n) {
+    N = n;
+    ar = <span class="kw">new</span> <span class="dt">int</span>[n<span class="dv">+1</span>];
+    <span class="cf">for</span>(<span class="dt">int</span> i=<span class="dv">0</span>;i&lt;n<span class="dv">+1</span>;ar[i++]=<span class="dv">0</span>);
+  }
+  ~BIT() {
+    <span class="kw">delete</span>[] ar;
+  }
+  <span class="dt">void</span> add(<span class="dt">int</span> idx, <span class="dt">int</span> w) {
+    <span class="cf">for</span> (<span class="dt">int</span> x = idx<span class="dv">+1</span>; x &lt;= N; x += x&amp;-x) {
+      ar[x] += w;
+    }
+  }
+  <span class="dt">int</span> sum(<span class="dt">int</span> idx) {
+    <span class="dt">int</span> ret = <span class="dv">0</span>;
+    <span class="cf">for</span> (<span class="dt">int</span> x = idx + <span class="dv">1</span>; x &gt; <span class="dv">0</span>; x -= x&amp;-x) {
+      ret += ar[x];
+    }
+    <span class="cf">return</span> ret;
+  }
+};</code></pre></div>
+<h2 id="example">Example</h2>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="kw">auto</span> bit = BIT(<span class="dv">10</span>);
+<span class="co">// 0 0 0 0</span>
+
+bit.add(<span class="dv">0</span>, <span class="dv">1</span>);
+<span class="co">// 1 0 0 0</span>
+cout &lt;&lt; bit.sum(<span class="dv">0</span>) &lt;&lt; endl; <span class="co">// 1</span>
+cout &lt;&lt; bit.sum(<span class="dv">1</span>) &lt;&lt; endl; <span class="co">// 1</span>
+
+bit.add(<span class="dv">1</span>, <span class="dv">1</span>);
+<span class="co">// 1 1 0 0</span>
+bit.add(<span class="dv">3</span>, <span class="dv">1</span>);
+<span class="co">// 1 1 0 1</span>
+cout &lt;&lt; bit.sum(<span class="dv">0</span>) &lt;&lt; endl; <span class="co">// 1</span>
+cout &lt;&lt; bit.sum(<span class="dv">1</span>) &lt;&lt; endl; <span class="co">// 2</span>
+cout &lt;&lt; bit.sum(<span class="dv">2</span>) &lt;&lt; endl; <span class="co">// 2</span>
+cout &lt;&lt; bit.sum(<span class="dv">3</span>) &lt;&lt; endl; <span class="co">// 3</span>
+
+bit.add(<span class="dv">1</span>, <span class="dv">1</span>);
+<span class="co">// 1 2 0 1</span>
+bit.add(<span class="dv">2</span>, <span class="dv">-1</span>);
+<span class="co">// 1 2 -1 1</span>
+cout &lt;&lt; bit.sum(<span class="dv">0</span>) &lt;&lt; endl; <span class="co">// 1</span>
+cout &lt;&lt; bit.sum(<span class="dv">1</span>) &lt;&lt; endl; <span class="co">// 3</span>
+cout &lt;&lt; bit.sum(<span class="dv">2</span>) &lt;&lt; endl; <span class="co">// 2</span>
+cout &lt;&lt; bit.sum(<span class="dv">3</span>) &lt;&lt; endl; <span class="co">// 3</span></code></pre></div>
+<h2 id="seq.bit.rs"><a href="seq.bit.rs" class="uri">seq.bit.rs</a></h2>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">struct</span> BIT { size: <span class="dt">usize</span>, array: <span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt; }
+<span class="kw">impl</span> BIT {
+    <span class="kw">fn</span> new(n: <span class="dt">usize</span>) -&gt; BIT {
+        BIT  { size: n, array: <span class="pp">vec!</span>[<span class="dv">0</span>; n + <span class="dv">1</span>] }
+    }
+    <span class="kw">fn</span> add(&amp;<span class="kw">mut</span> <span class="kw">self</span>, idx: <span class="dt">usize</span>, w: <span class="dt">i32</span>) {
+        <span class="kw">let</span> <span class="kw">mut</span> x = idx + <span class="dv">1</span>;
+        <span class="kw">while</span> x &lt;= <span class="kw">self</span>.size {
+            <span class="kw">self</span>.array[x] += w;
+            <span class="kw">let</span> xi = x <span class="kw">as</span> <span class="dt">i32</span>;
+            x += (xi&amp;-xi) <span class="kw">as</span> <span class="dt">usize</span>;
+        }
+    }
+    <span class="kw">fn</span> sum(&amp;<span class="kw">self</span>, idx: <span class="dt">usize</span>) -&gt; <span class="dt">i32</span> {
+        <span class="kw">let</span> <span class="kw">mut</span> sum = <span class="dv">0</span>;
+        <span class="kw">let</span> <span class="kw">mut</span> x = idx + <span class="dv">1</span>;
+        <span class="kw">while</span> x &gt; <span class="dv">0</span> {
+            sum += <span class="kw">self</span>.array[x];
+            <span class="kw">let</span> xi = x <span class="kw">as</span> <span class="dt">i32</span>;
+            x -= (xi&amp;-xi) <span class="kw">as</span> <span class="dt">usize</span>;
+        }
+        sum
+    }
+}</code></pre></div>
+</body>
+</html>

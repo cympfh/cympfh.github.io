@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Thu Feb 28 01:59:35 JST 2013</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Thu Feb 28 01:59:35 JST 2013</h1>
+</header>
+<h2 id="fのパイプライン演算子関数合成演算子">F#のパイプライン演算子、関数合成演算子</h2>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">gosh&gt; (<span class="kw">define</span><span class="fu"> </span>(&gt;&gt; f g) (.$ g f))
+gosh&gt; (<span class="kw">define</span><span class="fu"> </span>(sq x) (* x x))
+gosh&gt; (<span class="kw">define</span><span class="fu"> </span>(inc x) (<span class="kw">+</span> x <span class="dv">1</span>))
+gosh&gt; (<span class="kw">define</span><span class="fu"> f </span>(&gt;&gt; inc sq))
+gosh&gt; (f <span class="dv">3</span>)
+<span class="dv">16</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="dt">Prelude</span><span class="fu">&gt;</span> <span class="kw">let</span> (<span class="fu">&gt;&gt;</span>) f g <span class="fu">=</span> g <span class="fu">.</span> f
+<span class="dt">Prelude</span><span class="fu">&gt;</span> <span class="kw">let</span> sq x <span class="fu">=</span> x<span class="fu">*</span>x
+<span class="dt">Prelude</span><span class="fu">&gt;</span> <span class="kw">let</span> inc x <span class="fu">=</span> x<span class="fu">+</span><span class="dv">1</span>
+<span class="dt">Prelude</span><span class="fu">&gt;</span> <span class="kw">let</span> f <span class="fu">=</span> inc <span class="fu">&gt;&gt;</span> sq
+<span class="dt">Prelude</span><span class="fu">&gt;</span> f <span class="dv">3</span>
+<span class="dv">16</span>
+<span class="dt">Prelude</span><span class="fu">&gt;</span> <span class="kw">let</span> g <span class="fu">=</span> inc <span class="fu">&gt;&gt;</span> sq <span class="fu">&gt;&gt;</span> inc
+<span class="dt">Prelude</span><span class="fu">&gt;</span> g <span class="dv">3</span>
+<span class="dv">17</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">gosh&gt; (<span class="kw">define</span><span class="fu"> g </span>(&gt;&gt; (&gt;&gt; inc sq) inc))
+gosh&gt; (g <span class="dv">3</span>)
+<span class="dv">17</span></code></pre></div>
+<p>いや、これはあかんでしょ．</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">gosh&gt; (<span class="kw">define-syntax</span><span class="fu"> &gt;&gt;</span>
+(<span class="kw">syntax-rules</span> ()
+  ((_ f g) (.$ g f))
+  ((_ f g h ...) (&gt;&gt; (.$ g f) h ...)) ))
+gosh&gt; (<span class="kw">define</span><span class="fu"> g </span>(&gt;&gt; inc sq inc))
+gosh&gt; (g <span class="dv">3</span>)
+<span class="dv">17</span></code></pre></div>
+<p>それより、ついつい</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">gosh&gt; (<span class="kw">define-syntax</span><span class="fu"> &gt;&gt;</span>
+(<span class="kw">syntax-rules</span> ()
+  ((_ f g) (.$ g f))
+  ((_ f g ...) (&gt;&gt; (.$ g f) ...)) ))</code></pre></div>
+<p>と書いてしまう．まだまだ慣れが足りない． しかし、それでも何かしら定義は出来て、そうすると</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">gosh&gt; (<span class="kw">define</span><span class="fu"> g </span>(&gt;&gt; inc sq inc))
+gosh&gt; (g <span class="dv">3</span>)
+<span class="dv">18</span></code></pre></div>
+<p>となった．これは一体なんだ？ &lt;&lt; wakaran</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="dt">Prelude</span><span class="fu">&gt;</span> <span class="kw">let</span> (<span class="fu">|&gt;</span>) x f <span class="fu">=</span> f x
+<span class="dt">Prelude</span><span class="fu">&gt;</span> <span class="dv">2</span> <span class="fu">|&gt;</span> inc <span class="fu">|&gt;</span> sq <span class="fu">|&gt;</span> sq
+<span class="dv">81</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">gosh&gt; (<span class="kw">define-syntax</span><span class="fu"> </span>\&gt;
+(<span class="kw">syntax-rules</span> ()
+  ((_ x f) (f x))
+    ((_ x f g ...) (\&gt; (f x) g ...)) ))
+gosh&gt; (\&gt; <span class="dv">2</span> inc sq sq)
+<span class="dv">81</span></code></pre></div>
+<p>Schemeで <code>|</code> は使えない．へんちくりんな変数名を <code>|</code> で括るから．</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">gosh&gt; (<span class="kw">define</span><span class="fu"> </span>|<span class="st">&quot;| 1)</span>
+<span class="st">|&quot;</span>|
+gosh&gt; |<span class="st">&quot;|</span>
+<span class="st">1</span></code></pre></div>
+<p>Haskellみたいなの方が、コードが少なくなるのは知ってるんだよ． まあ、どうせ趣味で使うんだから、その時々で好きなの使えばいいんだ．</p>
+<p>もしかしてと思ってできたけど、.$は別に引数2つに限ってなかった． そうか、LISPのLISPたる所以は、引数はたいていいくつでもいいんだ． listをapplyしてるのが正しい形なんだから．</p>
+<p>つまり、+という演算子は、Haskell含めてたいていは二項演算子だけど、 LISPだと、 <code>(+ 1 2 3 ...)</code> というのが当たり前</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">gosh&gt; (<span class="kw">define</span><span class="fu"> h </span>(.$ sq sq inc))
+gosh&gt; (h <span class="dv">2</span>)
+<span class="dv">81</span>
+
+gosh&gt; (<span class="kw">define</span><span class="fu"> </span>(&gt;&gt; . ls) (apply .$ (<span class="kw">reverse</span> ls)))
+gosh&gt; (<span class="kw">define</span><span class="fu"> i </span>(&gt;&gt; sq sq inc))
+gosh&gt; (i <span class="dv">2</span>)
+<span class="dv">17</span>
+
+gosh&gt; (<span class="kw">define</span><span class="fu"> </span>(\&gt; x . ls) ((apply &gt;&gt; ls) x))
+|\\&gt;|
+gosh&gt; (\&gt; <span class="dv">3</span> sq inc)
+<span class="dv">10</span></code></pre></div>
+<p>この <code>\&gt;</code> は、<code>&gt;&gt;</code> が関数だからこそ定義できた．</p>
+<p>define-syntaxは長くなるから嫌だな．define-macroってのもあるみたい だけど、引数の数でmatchさせるようには出来てないみたいだし、 正直に言えば、LISPのマクロはなにがそんなにすごいのか分かってないです． 引数の評価を遅らせる版の関数で、あとcase-lambdaみたいなことができる、 くらいにしか．</p>
+<h1 id="thu-feb-28-110828-jst-2013">Thu Feb 28 11:08:28 JST 2013</h1>
+<h2 id="日記ガベコレ">日記・ガベコレ</h2>
+<p>そうそう、学校の課題でGCを実装した．調べたりで構想ができるまでに 2日くらいかかったけれど、実際のコーディングは5時間程度で、デバグ まで出来た． 「世界初の記念すべきGCアルゴリズムはマークスイープGC[1]です． はじめて世に出てから半世紀近くが経過した今も、様々な処理系で 用いられている偉大なアルゴリズムです．」---(「ガベージコレクション のアルゴリズムと実装」中村成洋/相川光 共著 より)</p>
+<p>長さ2000くらいの配列を延々と確保させてそれをゴミにするような プログラムを動かす．初めはヒープの上に配列を上から作っていって、 残りが2000未満になったら、mark and sweep を行う．残り、というのは ヒープの限界 - ヒープレジスタ値 で計算する．mark sweepはヒープ上のゴミオブジェクトをゼロで塗りつぶす 作業．本当はフリーリストとして持っておくんだけど．でもこの作業の 後、ヒープレジスタ値は変わらない．だって、そうでしょう</p>
+<pre><code>         heap
+  0 --+---------+
+      | object  |
+      +---------+
+      | garbage |
+      +---------+
+      | object  |
+      +---------+
+      | object  |
+reg_h-+---------+
+      |         |
+      |  empty  |
+      :         :
+limit +---------+</code></pre>
+<p>reg_hの値は、heapの上からつめていって、(一番上をゼロとして、アドレスが 増える方向を下としてる)、空なスペースの一番上のアドレスとしている．</p>
+<p>mark and sweep をすると、先のヒープはこうなる．</p>
+<pre><code>         heap
+  0 --+---------+
+      | object  |
+      +---------+
+      |  empty  |
+      +---------+
+      | object  |
+      +---------+
+      | object  |
+reg_h-+---------+
+      |         |
+      |  empty  |
+      :         :
+limit +---------+</code></pre>
+<p>ほら、間に空白が空いただけで、reg_hは変わらない． だから、先の計算では、ヒープの残り容量は変わらないことになる． 従って、先ほど確保しようとしてGCを起こさせた配列確保を再び しようとすると、またGCを起こす．またmark and sweep する．地味に 時間がかかる．まるで使い物にならない．</p>
+<p>改良方法はいくらでも思いついたが、残念ながらヤル気が起きない． それよりも、コンパイラ自体を書きなおしたい．少なくともOCamlとかいう 言語以外で．</p>
+<h1 id="thu-feb-28-191620-jst-2013">Thu Feb 28 19:16:20 JST 2013</h1>
+<h2 id="node.js-vs-spidermonkey">node.js vs SpiderMonkey</h2>
+<p>node.js は、というか V8 は、いつになったら、 javascript 1.7やそれより上に対応するんだろうな．</p>
+<ul>
+<li><a href="http://code.google.com/p/v8/issues/detail?id=890">Issue 890 - v8 - Support for Javascript 1.8 features - V8 JavaScript Engine - Google Project Hosting</a></li>
+</ul>
+<p>三年前のフォーラム記事．V8はJavaScriptじゃなくてECMAScriptに従う、と． ECMAScriptなんて、誰も知らないよ．</p>
+<p>ちょっと書き捨てるのには、SpiderMonkey を使うにしても、 node.js は捨てれないしな．</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> <span class="at">tarai</span>(x<span class="op">,</span>y<span class="op">,</span>z)<span class="op">{</span>
+    <span class="cf">return</span> x<span class="op">&lt;=</span>y<span class="op">?</span> y
+               : <span class="at">tarai</span>(<span class="at">tarai</span>(x<span class="dv">-1</span><span class="op">,</span>y<span class="op">,</span>z)<span class="op">,</span> <span class="at">tarai</span>(y<span class="dv">-1</span><span class="op">,</span>z<span class="op">,</span>x)<span class="op">,</span> <span class="at">tarai</span>(z<span class="dv">-1</span><span class="op">,</span>x<span class="op">,</span>y))
+<span class="op">}</span>
+<span class="at">print</span>(<span class="at">tarai</span>(<span class="dv">13</span><span class="op">,</span><span class="dv">6</span><span class="op">,</span><span class="dv">0</span>))<span class="op">;</span></code></pre></div>
+<p>こんなものを、node.jsとSpiderMonkeyで実行してtimeを比較する． もちろんnode.jsではprintの代わりにconsole.logを用いる．</p>
+<p>nodeがnode.jsであり、jsはSpiderMonkey.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">cympfh@sazanami</span>:~/test$ node --version
+<span class="ex">v0.6.12</span>
+
+<span class="ex">cympfh@sazanami</span>:~/test$ js -h
+<span class="ex">JavaScript-C</span> 1.8.5 2011-03-31
+<span class="ex">usage</span>: js [options] [scriptfile] [scriptarg...]
+<span class="ex">Options</span>:
+  <span class="ex">-h</span>            Display this information
+  <span class="kw">(</span>略<span class="kw">)</span>
+
+<span class="ex">cympfh@sazanami</span>:~/test$ time node tarai.js
+<span class="ex">13</span>
+
+<span class="ex">real</span>    0m1.008s
+<span class="ex">user</span>    0m0.980s
+<span class="ex">sys</span>     0m0.020s
+<span class="ex">cympfh@sazanami</span>:~/test$ time node tarai.js
+<span class="ex">13</span>
+
+<span class="ex">real</span>    0m0.993s
+<span class="ex">user</span>    0m0.972s
+<span class="ex">sys</span>     0m0.012s
+<span class="ex">cympfh@sazanami</span>:~/test$ time node tarai.js
+<span class="ex">13</span>
+
+<span class="ex">real</span>    0m1.028s
+<span class="ex">user</span>    0m1.012s
+<span class="ex">sys</span>     0m0.012s
+<span class="ex">cympfh@sazanami</span>:~/test$ time js tarai.js
+<span class="ex">13</span>
+
+<span class="ex">real</span>    0m9.148s
+<span class="ex">user</span>    0m9.137s
+<span class="ex">sys</span>     0m0.004s
+<span class="ex">cympfh@sazanami</span>:~/test$ time js tarai.js
+<span class="ex">13</span>
+
+<span class="ex">real</span>    0m9.099s
+<span class="ex">user</span>    0m9.085s
+<span class="ex">sys</span>     0m0.004s
+<span class="ex">cympfh@sazanami</span>:~/test$ time js tarai.js
+<span class="ex">13</span>
+
+<span class="ex">real</span>    0m9.209s
+<span class="ex">user</span>    0m9.197s
+<span class="ex">sys</span>     0m0.004s</code></pre></div>
+<p>ちょっと、違いすぎてビビった． これは、やっぱり、SpiderMonkeyは使いたくなくなる．</p>
+<p>で、違う言語を持ち出しちゃうけど、</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">cympfh@sazanami</span>:~/test$ time gosh test.scm
+<span class="ex">13</span>
+
+<span class="ex">real</span>    0m4.423s
+<span class="ex">user</span>    0m4.056s
+<span class="ex">sys</span>     0m0.020s</code></pre></div>
+<p>やっぱり、node.js使うことにしよう．</p>
+<hr />
+<footer>
+    <p style='text-align: right'>
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+</body>
+</html>

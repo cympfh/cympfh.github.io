@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Tue Mar 17 16:42:34 JST 2015</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Tue Mar 17 16:42:34 JST 2015</h1>
+</header>
+<h2 id="vim-で編集しながら途中経過を監視したい">vim で編集しながら途中経過を監視したい</h2>
+<ul>
+<li>markdown</li>
+<li>gnuplot</li>
+<li>dot言語</li>
+</ul>
+<p>これらはvimで編集しながらも逐一、途中経過をコンパイル (または変換) して、 その結果を眺めたい</p>
+<h3 id="markdown">markdown</h3>
+<p>pandoc を用いて、htmlまたはpdfに変換したい<br />
+htmlに変換して見るだけでも脳内でpdfに対応付けさせることは容易</p>
+<h3 id="gnuplot">gnuplot</h3>
+<p>png画像を出力させたい</p>
+<h3 id="dot言語">dot言語</h3>
+<p>png画像を出力させたい<br />
+Linuxならば、<code>graphviz</code> パッケージをいれると <code>vimdot</code> が付いてくるので、<br />
+これを使うのが手っ取り早い</p>
+<h2 id="作った">作った</h2>
+<div class="sourceCode"><pre class="sourceCode coffee"><code class="sourceCode coffee"><span class="co"># watch.coffee</span>
+fs        <span class="kw">=</span> require <span class="st">&#39;fs&#39;</span>
+path      <span class="kw">=</span> require <span class="st">&#39;path&#39;</span>
+socket_io <span class="kw">=</span> require <span class="st">&#39;socket.io&#39;</span>
+http      <span class="kw">=</span> require <span class="st">&#39;http&#39;</span>
+express   <span class="kw">=</span> require <span class="st">&#39;express&#39;</span>
+
+<span class="co"># make server</span>
+app    <span class="kw">=</span> express<span class="kw">()</span>
+server <span class="kw">=</span> http<span class="kw">.</span>Server app
+io     <span class="kw">=</span> socket_io server
+
+app<span class="kw">.</span>get <span class="st">&#39;/&#39;</span><span class="kw">,</span> <span class="fu">(req, res) -&gt;</span>
+  res<span class="kw">.</span>writeHead <span class="dv">200</span><span class="kw">,</span> <span class="st">&#39;Content-Type&#39;</span><span class="kw">:</span> <span class="st">&#39;text/html&#39;</span>
+  res<span class="kw">.</span>end <span class="st">&#39;&#39;&#39;</span>
+<span class="st">&lt;title&gt;preview&lt;/title&gt;</span>
+<span class="st">&lt;script src=&quot;/socket.io/socket.io.js&quot;&gt;&lt;/script&gt;</span>
+<span class="st">&lt;body&gt;&lt;div id=&#39;win&#39;&gt;&lt;/div&gt;</span>
+<span class="st">&lt;script&gt;</span>
+<span class="st">var socket = io.connect(&quot;http://127.0.0.1&quot;); </span>
+<span class="st">socket.on(&#39;change&#39;, function (data) {</span>
+<span class="st">    win.innerHTML = data;</span>
+<span class="st">    });</span>
+<span class="st">&lt;/script&gt;</span>
+<span class="st">&#39;&#39;&#39;</span>
+
+app<span class="kw">.</span>get <span class="st">/local\/.*/</span><span class="kw">,</span> <span class="fu">(req, res) -&gt;</span>
+  filename <span class="kw">=</span>
+    req<span class="kw">.</span>url
+      <span class="kw">.</span>replace <span class="st">/^\/local\//</span><span class="kw">,</span> <span class="st">&#39;&#39;</span>
+      <span class="kw">.</span>replace <span class="st">/\?.*$/</span><span class="kw">,</span> <span class="st">&#39;&#39;</span>
+  res<span class="kw">.</span>sendFile path<span class="kw">.</span>resolve filename
+
+server<span class="kw">.</span>listen <span class="dv">80</span><span class="kw">,</span> <span class="kw">(</span><span class="fu">-&gt;</span><span class="kw">)</span>
+io<span class="kw">.</span>listen server
+
+<span class="co"># read configure</span>
+conf <span class="kw">=</span> require <span class="st">&quot;./</span><span class="ch">#{</span>process.argv[2]<span class="ch">}</span><span class="st">.coffee&quot;</span>
+
+<span class="co"># socket</span>
+gsocket <span class="kw">=</span> <span class="ot">false</span>
+
+emit <span class="kw">=</span> <span class="fu">-&gt;</span>
+  <span class="kw">unless</span> gsocket
+    <span class="kw">return</span>
+  <span class="ot">console</span><span class="kw">.</span>log <span class="st">&#39;emit&#39;</span><span class="kw">,</span> gsocket<span class="kw">.</span>id
+  conf<span class="kw">.</span>compile <span class="fu">(err, data) -&gt;</span>
+    <span class="kw">throw</span> err <span class="kw">if</span> err
+    <span class="ot">console</span><span class="kw">.</span>log data
+    gsocket<span class="kw">.</span>emit <span class="st">&#39;change&#39;</span><span class="kw">,</span> data
+
+io<span class="kw">.</span>sockets<span class="kw">.</span><span class="ot">on</span> <span class="st">&#39;connection&#39;</span><span class="kw">,</span> <span class="fu">(socket) -&gt;</span>
+  gsocket <span class="kw">=</span> socket
+  <span class="kw">do</span> emit
+
+<span class="co"># watch the file</span>
+fs<span class="kw">.</span>exists conf<span class="kw">.</span>srcfile<span class="kw">,</span> <span class="fu">(bl) -&gt;</span>
+  <span class="kw">unless</span> bl
+    <span class="ot">console</span><span class="kw">.</span>log <span class="st">&quot;</span><span class="ch">#{</span>conf.srcfile<span class="ch">}</span><span class="st"> not exists&quot;</span>
+    process<span class="kw">.</span>exit <span class="dv">0</span>
+  fs<span class="kw">.</span>watchFile conf<span class="kw">.</span>srcfile<span class="kw">,</span> <span class="kw">{</span>interval<span class="kw">:</span><span class="dv">300</span><span class="kw">},</span> <span class="fu">(event) -&gt;</span>
+    <span class="ot">console</span><span class="kw">.</span>log event
+    <span class="kw">do</span> emit</code></pre></div>
+<p>別途、監視対象のファイルと、それをどう処理するかを書いた設定ファイルを用意する<br />
+ファイル名は兎も角、処理は関数で書くしかないので<br />
+実用上、CoffeeScriptかJavaScriptで書くしかない<br />
+従って、設定ファイルは実際はモジュールである</p>
+<h3 id="markdown.coffee">markdown.coffee</h3>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">fs <span class="fu">=</span> require <span class="ch">&#39;fs&#39;</span>
+{exec} <span class="fu">=</span> require <span class="ch">&#39;child_process&#39;</span>
+
+srcfile <span class="fu">=</span> <span class="ch">&#39;./test.md&#39;</span>
+
+compile <span class="fu">=</span> (cont) <span class="ot">-&gt;</span>
+  exec <span class="st">&quot;pandoc -s -t html5 -i #{srcfile} -o test.html&quot;</span>, (err) <span class="ot">-&gt;</span>
+    console<span class="fu">.</span>warn err <span class="kw">if</span> err
+    fs<span class="fu">.</span>readFile <span class="ch">&#39;./test.html&#39;</span>, <span class="ch">&#39;utf8&#39;</span>, (err, <span class="kw">data</span>) <span class="ot">-&gt;</span>
+      throw err <span class="kw">if</span> err
+      cont false, <span class="kw">data</span>
+
+<span class="kw">module</span><span class="fu">.</span>exports <span class="fu">=</span>
+  srcfile<span class="fu">:</span> srcfile
+  compile<span class="fu">:</span> compile</code></pre></div>
+<ul>
+<li>srcfile に監視対象のファイル名を定義する</li>
+<li>変更があった時の処理を継続を取る手続きの形で定義する (compile)
+<ul>
+<li>継続の第一引数はエラーで、第二引数に、htmlとして解釈可能な文字列</li>
+</ul></li>
+</ul>
+<h3 id="gnuplot.coffee">gnuplot.coffee</h3>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">{exec} <span class="fu">=</span> require <span class="ch">&#39;child_process&#39;</span>
+
+srcfile <span class="fu">=</span> <span class="ch">&#39;test.plt&#39;</span>
+compile <span class="fu">=</span> (cont) <span class="ot">-&gt;</span>
+  exec <span class="st">&quot;gnuplot #{srcfile}&quot;</span>, (err) <span class="ot">-&gt;</span>
+    console<span class="fu">.</span>warn err <span class="kw">if</span> err
+    cont err, <span class="st">&quot;&lt;img src=local/test.png?#{Math.random()}&gt;&quot;</span>
+
+<span class="kw">module</span><span class="fu">.</span>exports <span class="fu">=</span>
+  srcfile<span class="fu">:</span> srcfile
+  compile<span class="fu">:</span> compile</code></pre></div>
+<ul>
+<li><code>src=local/hoge/fuga</code> で <code>path.resolvec 'hoge/fuga'</code> を返す</li>
+<li>キャッシュが用意に効いてしまうので <code>?Math.random()</code> をつける</li>
+</ul>
+<h3 id="dot.coffee">dot.coffee</h3>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">{exec} <span class="fu">=</span> require <span class="ch">&#39;child_process&#39;</span>
+
+srcfile <span class="fu">=</span> <span class="ch">&#39;./test.dot&#39;</span>
+
+compile <span class="fu">=</span> (cont) <span class="ot">-&gt;</span>
+  exec <span class="ch">&#39;dot -Tpng test.dot &gt; test.png&#39;</span>, (err) <span class="ot">-&gt;</span>
+    console<span class="fu">.</span>warn err <span class="kw">if</span> err
+    cont err, <span class="st">&quot;&lt;img src=local/test.png?#{Math.random()}&gt;&quot;</span>
+
+<span class="kw">module</span><span class="fu">.</span>exports <span class="fu">=</span>
+  srcfile<span class="fu">:</span> srcfile
+  compile<span class="fu">:</span> compile</code></pre></div>
+<ul>
+<li>gnuplot の場合と全く同様</li>
+</ul>
+<h3 id="python.coffee">python.coffee</h3>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">fs <span class="fu">=</span> require <span class="ch">&#39;fs&#39;</span>
+{exec} <span class="fu">=</span> require <span class="ch">&#39;child_process&#39;</span>
+
+srcfile <span class="fu">=</span> <span class="ch">&#39;./test.py&#39;</span>
+
+compile <span class="fu">=</span> (cont) <span class="ot">-&gt;</span>
+  exec <span class="st">&quot;python #{srcfile} &gt; out&quot;</span>, (err) <span class="ot">-&gt;</span>
+    console<span class="fu">.</span>warn err <span class="kw">if</span> err
+    fs<span class="fu">.</span>readFile <span class="ch">&#39;./out&#39;</span>, <span class="ch">&#39;utf8&#39;</span>, (err, <span class="kw">data</span>) <span class="ot">-&gt;</span>
+      throw err <span class="kw">if</span> err
+      cont false, <span class="kw">data</span><span class="fu">.</span>replace <span class="fu">/</span>\n<span class="fu">/</span>g, <span class="ch">&#39;&lt;br&gt;&#39;</span>
+
+<span class="kw">module</span><span class="fu">.</span>exports <span class="fu">=</span>
+  srcfile<span class="fu">:</span> srcfile
+  compile<span class="fu">:</span> compile</code></pre></div>
+<ul>
+<li>htmlとして出力するので改行だけちょっと</li>
+</ul>
+<h2 id="usage">usage</h2>
+<p><code>watch.coffee</code> と <code>conf.coffee</code> と、監視対象ファイルが全部同じディレクトリにあることにしてる<br />
+また、開始時に 監視対象ファイルは既に存在してることにしてる</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sudo</span> coffee watch.coffee conf</code></pre></div>
+<p>例えば、<code>python.coffee</code> なら</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">touch</span> test.py
+<span class="fu">sudo</span> coffee watch.coffee python</code></pre></div>
+<p>とこうして、 別な窓で <code>test.py</code> を編集する<br />
+ファイル変更がチェック出来るのは保存時だから、 ファイルを上書きした瞬間に <code>python test.py &gt; out</code> が走る</p>
+<p>コンパイルの結果は、 ブラウザで <code>http://127.0.0.1/</code> を開くことで確認する</p>
+<h2 id="他">他</h2>
+<p><code>fs.watch</code> と <code>fs.watchFile</code> とがあって、 二つとも目的は同じである<br />
+手元のMacでは <code>fs.watch</code> は明らかに信用できない挙動であった<br />
+詳しくはドキュメント</p>
+<p>こんだけならわざわざ、こんなsocket.ioまで使って面倒なことしないでも<br />
+リロードしまくるっていうhtml書けばいいのでゎ</p>
+</body>
+</html>

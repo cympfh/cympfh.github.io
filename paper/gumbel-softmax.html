@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Categorical Reparameterization with Gumbel-Softmax</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/
+    </a>
+</h1>
+<header>
+<h1 class="title">Categorical Reparameterization with Gumbel-Softmax</h1>
+</header>
+<ul>
+<li>
+url: <a href=https://arxiv.org/abs/1611.01144>https://arxiv.org/abs/1611.01144</a>
+</li>
+<li>
+tags: <span class="tag"><a href=index.html#深層学習>深層学習</a></span> <span class="tag"><a href=index.html#sampling>sampling</a></span>
+</li>
+</ul>
+<h2 id="概要">概要</h2>
+<p><span class="math inline">\(\text{softmax}(f(x))\)</span> からのサンプリングを微分可能な式で表現するためのテクニック</p>
+<p>クラス数 <span class="math inline">\(k\)</span> として</p>
+<p><span class="math display">\[\pi = ( \pi_1, \pi_2, \ldots, \pi_k) = \text{softmax}(f(x)) \in \mathbb{R}^k\]</span></p>
+<p>とする. ここから確率分布 <span class="math inline">\(\pi\)</span> に従って one-hot ベクトル <span class="math inline">\(z\)</span> をサンプリングする. 例えば</p>
+<p><span class="math display">\[z = (0, 1, 0, \ldots, 0)\]</span></p>
+<p>みたいな感じ.</p>
+<h2 id="手法">手法</h2>
+<ol style="list-style-type: decimal">
+<li><span class="math inline">\(i=1,2,\ldots,k\)</span> について
+<ul>
+<li><span class="math inline">\(g_i = -\log \left( -\log u \right)\)</span>
+<ul>
+<li>where <span class="math inline">\(u \sim_u (0,1]\)</span> (一様分布)</li>
+</ul></li>
+</ul></li>
+<li><span class="math inline">\(z = \text{onehot}\left( \text{arg max}_i \{ g_i + \log \pi_i \} \right)\)</span></li>
+</ol>
+<p>直接 <span class="math inline">\(\pi_i\)</span> の <span class="math inline">\(\text{arg max}\)</span> を見るのではなく適当なノイズを加えることでサンプリングを擬似的に再現してる.</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

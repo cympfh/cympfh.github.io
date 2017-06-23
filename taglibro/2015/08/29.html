@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sat Aug 29 21:19:48 JST 2015</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Sat Aug 29 21:19:48 JST 2015</h1>
+</header>
+<h2 id="c-stl-unique-uniq">C++ STL unique uniq</h2>
+<h3 id="問題">問題</h3>
+<p><a href="http://abc028.contest.atcoder.jp/tasks/abc028_c">C: 数を3つ選ぶマン - AtCoder Beginner Contest 028 | AtCoder</a></p>
+<h3 id="解法">解法</h3>
+<p>ありうる和が <span class="math inline">\(5 \times 4 \times 3\)</span> 通りなので、それを全部列挙</p>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp">vector&lt;<span class="dt">int</span>&gt; xs(<span class="dv">5</span>); cin &gt;&gt; xs;
+vector&lt;<span class="dt">int</span>&gt; s;
+rep (i, <span class="dv">5</span>) rep (j, i) rep (k, j) s.push_back(xs[i] + xs[j] + xs[k]);</code></pre></div>
+<p>ソートして、重複を取り除いて、3番目を実際に出力する.</p>
+<p>初め、下のようにした.<br />
+<code>std::unique</code> というものの存在が知らなかったので、軽くググった.<br />
+<code>sort</code> してから使うもののようなので (Unix の <code>uniq</code> コマンドと同じだ):</p>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp">sort(begin(xs), end(xs));
+unique(begin(xs), end(xs));
+reverse(begin(xs), end(xs));
+cout &lt;&lt; xs[<span class="dv">2</span>] &lt;&lt; endl;</code></pre></div>
+<p>なんかバグった (<a href="http://abc028.contest.atcoder.jp/submissions/479383">Submission #479383</a>).</p>
+<p>というわけで、もうちょっと詳しく調べることにする. (軽く調べる、とは、ググった検索結果ページを見ることであって、さらに該当のページを読むことではない).</p>
+<ul>
+<li><a href="http://qiita.com/xxthermidorxx/items/30ae72f4f1060b088588">C++ - std::sortとstd::uniqueでstd::vectorの重複要素を削除する - Qiita</a></li>
+</ul>
+<p>「末尾にゴミが残る」状態から <code>reverse</code> したのだから、 ゴミを見て回答してたことになる.</p>
+<p>そのページにあるように、<code>erase</code> したところ正答 (<a href="http://abc028.contest.atcoder.jp/submissions/479557">Submission #479557</a>)</p>
+<p>しかしならば、<code>reverse</code> してから <code>unique</code> すればよかったわけだ (check <a href="http://abc028.contest.atcoder.jp/submissions/480275">Submission #480275</a>).</p>
+<h2 id="追記">追記</h2>
+<p>よく考えると、入力は相異なる5つであったので、 和を重複せずに求めてれば、<code>unique</code> とか要らなかった.</p>
+<p>あと、全列挙するまでもなく、三番目の和は高々二通りだった:</p>
+<p><span class="math inline">\(A&lt;B&lt;C&lt;D&lt;E\)</span>について</p>
+<ul>
+<li><span class="math inline">\(MaxSum_1 = C + D + E\)</span></li>
+<li><span class="math inline">\(MaxSum_2 = B + D + E\)</span></li>
+<li><span class="math inline">\(MaxSum_3 = max(A + D + E, B+C+E)\)</span></li>
+</ul>
+<h3 id="bash" class="post">Bash</h3>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sed</span> <span class="st">&#39;s/.*/&amp;\n&amp;/&#39;</span> <span class="kw">|</span>
+<span class="fu">awk</span> <span class="st">&#39;NR==1{print $2+$3+$5} NR==2{print $1+$4+$5}&#39;</span> <span class="kw">|</span>
+<span class="fu">sort</span> -n <span class="kw">|</span> <span class="fu">tail</span> -1</code></pre></div>
+</body>
+</html>

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>CNF (連言標準形) への書き換え</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> aiura/
+    </a>
+</h1>
+<header>
+<h1 class="title">CNF (連言標準形) への書き換え</h1>
+</header>
+<p class="date" style="text-align: right">
+2017-03-08 (Wed.)
+</p>
+<div class="tags" style="text-align: right">
+<p><a class=tag href=index.html#計算機言語>計算機言語</a></p>
+</div>
+<h2 id="あらまし">あらまし</h2>
+<p><code>not</code>/<code>and</code>/<code>or</code> だけを演算子として持つ論理式は、必ず等価な CNF に書き換えられる. という命題は事実だと習ったし、自然に受け入れていたが、改めて考えると、その書換規則を知らない. Wikipedia の <a href="https://ja.wikipedia.org/wiki/%E9%80%A3%E8%A8%80%E6%A8%99%E6%BA%96%E5%BD%A2">連言標準形</a> を見ても載ってない. なので自分で考えてみた.</p>
+<h2 id="notation">notation</h2>
+<p>論理式は下の BNF で定める <code>LOG</code>.</p>
+<pre><code>LOG ::= (not LOG) | (and LOGs) | (or LOGs) | VAR
+LOGs ::= LOG | LOG &quot; &quot; LOGs
+VAR ::= (何か変数で一文字の英字で書く)</code></pre>
+<p>論理式の深さを次のように定義する (察して).</p>
+<pre><code>(depth VAR) == 0
+(depth (not LOG)) == (depth LOG)
+(depth (and LOGs)) == (+ 1 (max (map depth LOGs)))
+(depth (or LOGs)) == (+ 1 (max (map depth LOGs)))</code></pre>
+<h2 id="書換規則">書換規則</h2>
+<p>まず、有り得そうな規則を列挙する.</p>
+<h3 id="rule-1.-not-について">Rule-1. <code>not</code> について</h3>
+<p>ド・モルガンを複数回適用することで、<code>VAR</code> 以外に適用する <code>not</code> は全て潰せる.</p>
+<ul>
+<li><code>(not (and A...)) =&gt; (or (not A)...)</code></li>
+<li><code>(not (or A...)) =&gt; (and (not A)...)</code></li>
+</ul>
+<p>以降、<code>not</code> は直接 <code>VAR</code> に適用する以外に出現しないとする. ああ、あと二重否定除去もさっさとしておく.</p>
+<h3 id="rule-2.-and-and-a...-b...-な部分を含むとき">Rule-2. <code>(and (and A...) B...)</code> な部分を含むとき</h3>
+<p>CNF にこのような部分は含まれないから、取り除く必要がある. これは簡単で、</p>
+<ul>
+<li><code>=&gt; (and A... B...)</code></li>
+</ul>
+<p>とすればよい.</p>
+<h3 id="rule-3.-or-or-a...-b...-な部分を含むとき">Rule-3. <code>(or (or A...) B...)</code> な部分を含むとき</h3>
+<p>先と同様で、</p>
+<ul>
+<li><code>=&gt; (or A... B...)</code></li>
+</ul>
+<p>とすればよい.</p>
+<h3 id="rule-4.-or-and-a...-b...-な部分を含むとき">Rule-4. <code>(or (and A...) B...)</code> な部分を含むとき</h3>
+<p>もちろん、このような部分は CNF に含まれてはならないので潰す必要がある. 分配法則を用いる. すなわち、</p>
+<ul>
+<li><code>=&gt; (and (or A B...)...)</code></li>
+</ul>
+<h3 id="rule-5.-最も外側が-or-のとき">Rule-5. 最も外側が <code>or</code> のとき</h3>
+<p>CNF の外側は <code>and</code> であるから、書換が必要である.</p>
+<ul>
+<li><code>(or A...)</code>
+<ul>
+<li><code>=&gt; (and (or A...))</code></li>
+</ul></li>
+</ul>
+<p>とすれば回避可能である.</p>
+<h2 id="flatten"><code>flatten</code></h2>
+<p><code>Rule-2</code> - <code>Rule-5</code> を適用出来る限り適用する手続きを <code>flatten</code> と定める.</p>
+<p><code>flatten</code> は論理式の深さを 2 以下にする効果がある. 深さが 3 以上のとき、次のように変化することで浅くなるからである.</p>
+<ul>
+<li><code>(and (and (op  =&gt; (and (op</code></li>
+<li><code>(and (or (or   =&gt; (and (or</code></li>
+<li><code>(and (or (and  =&gt; (and (and (or  =&gt; (and (or</code></li>
+<li><code>(or (and (and  =&gt; (or (and       =&gt; (and (or</code></li>
+<li><code>(or (and (or   =&gt; (and (or (or   =&gt; (and (or</code></li>
+<li><code>(or (or (op    =&gt; (or (op</code></li>
+</ul>
+<p><code>Rule-2</code> - <code>Rule-4</code> は確かに浅くする操作だから自明なのだが、 <code>Rule-5</code> は唯一、深くする操作である. 先ほどの一番下の場合は <code>Rule-5</code> の適用がある. しかしこの場合にも</p>
+<ul>
+<li><code>(or (or (and  =&gt; (or (and  =&gt; (and (or (and  =&gt; (and (and (or =&gt; (and or</code></li>
+<li><code>(or (or (or   =&gt; (or (or   =&gt; (and (or (or =&gt; (and (or</code></li>
+</ul>
+<p>となって結局、元の論理式よりも浅くできる. 従って、これらを繰り返し適用することで、任意の論理式の深さを 2 以下にすることが出来る. また書き換え後は常に、外側が <code>and-or</code> になっている.</p>
+<p>初めから深さが 2 以下の場合は、</p>
+<ul>
+<li><code>(and A...) =&gt; (and A...)</code> (深さ 1 のとき)</li>
+<li><code>(or A...) =&gt; (and (or A...))</code> (深さ 1 のとき)</li>
+<li><code>(and A (and B...) (or C...)) =&gt; (and A B... (or C...))</code></li>
+<li><code>(or A (and B...) (or C...)) =&gt; (or A (and B...) C...) =&gt; (and (or B A C...)...)</code></li>
+</ul>
+<p>外側が <code>and</code> または <code>and-or</code> な深さ 2 以下の論理式を得る.</p>
+<h2 id="後処理-整形-trim">後処理: 整形 (<code>trim</code>)</h2>
+<p><code>flatten</code> を施した後の論理式を考える. これは、深さは 2 以下であって、その外側は <code>and</code> または <code>and-or</code> である. 適当な後処理によって CNF にする.</p>
+<ul>
+<li><code>(and A... (or B...)...) =&gt; (and (or A)... (or B...)...)</code></li>
+</ul>
+<p>要するに <code>or</code> に包まれてないものを包めばよい.</p>
+<h2 id="まとめ">まとめ</h2>
+<p>以上をまとめると、次の手順で CNF に変形が出来る.</p>
+<ol style="list-style-type: decimal">
+<li><code>not</code> を直接変数に適用するまでド・モルガンを適用</li>
+<li>二重否定除去
+<ul>
+<li>この時点で <code>not</code> は木の葉のすぐ上にしか出現しない</li>
+</ul></li>
+<li><code>flatten</code> の適用
+<ul>
+<li>木の深さは 2 以下</li>
+<li>深さが 2 のとき、演算は上から <code>and-or</code></li>
+</ul></li>
+<li><code>trim</code> の適用
+<ul>
+<li>全ての葉が深さ 2 の位置にある</li>
+</ul></li>
+</ol>
+<h2 id="実装">実装</h2>
+<p>実装は Scheme (/Gauche) で行いました. Gauche の独自ライブラリであるところの <code>util.match</code> を使っています. コレがないと実装は絶望的でした.</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">(use util.match)
+<span class="co">; http://practical-scheme.net/gauche/man/gauche-refj/patanmatutingu.html#index-util_002ematch</span>
+
+
+<span class="co">;; helpers</span>
+(<span class="kw">define</span><span class="fu"> </span>(and-term? logic) (<span class="kw">and</span> (<span class="kw">list?</span> logic) (<span class="kw">eq?</span> (<span class="kw">car</span> logic) &#39;and)))
+(<span class="kw">define</span><span class="fu"> </span>(or-term? logic) (<span class="kw">and</span> (<span class="kw">list?</span> logic) (<span class="kw">eq?</span> (<span class="kw">car</span> logic) &#39;or)))
+(<span class="kw">define</span><span class="fu"> </span>(op-term? op logic) (<span class="kw">and</span> (<span class="kw">list?</span> logic) (<span class="kw">eq?</span> (<span class="kw">car</span> logic) op)))
+
+<span class="co">; var or (not var)</span>
+(<span class="kw">define</span><span class="fu"> </span>(literal? logic)
+  (<span class="kw">or</span>
+    (<span class="kw">symbol?</span> logic)
+    (<span class="kw">and</span> (<span class="kw">list?</span> logic)
+         (<span class="kw">eq?</span> (<span class="kw">car</span> logic) &#39;not)
+         (<span class="kw">symbol?</span> (<span class="kw">cadr</span> logic)))))
+
+(<span class="kw">define</span><span class="fu"> </span>(CNF? logic)
+  (<span class="kw">define</span><span class="fu"> </span>(or-clause? logic)
+    (<span class="kw">and</span> (or-term? logic) (every literal? (<span class="kw">cdr</span> logic))))
+  (<span class="kw">and</span>
+    (and-term? logic)
+    (every or-clause? (<span class="kw">cdr</span> logic))))
+
+(<span class="kw">define</span><span class="fu"> </span>(depth logic)
+  (match logic
+         [`(<span class="kw">and</span> . ,body) (<span class="kw">+</span> <span class="dv">1</span> (apply <span class="kw">max</span> (map depth body)))]
+         [`(<span class="kw">or</span> . ,body) (<span class="kw">+</span> <span class="dv">1</span> (apply <span class="kw">max</span> (map depth body)))]
+         [<span class="kw">else</span> <span class="dv">0</span>]))
+
+<span class="co">;; Rule-1</span>
+<span class="co">; not を中に追いやる</span>
+(<span class="kw">define</span><span class="fu"> </span>(deMorgen logic)
+  (<span class="kw">define</span><span class="fu"> </span>(negate term) (<span class="kw">list</span> &#39;not term))
+  (match logic
+         [`(<span class="kw">not</span> (<span class="kw">and</span> . ,body)) `(<span class="kw">or</span> . ,(map negate body))]
+         [`(<span class="kw">not</span> (<span class="kw">or</span> . ,body)) `(<span class="kw">and</span> . ,(map negate body))]
+         [`(,op . ,body) `(,op . ,(map deMorgen body))]
+         [<span class="kw">else</span> logic]))
+
+<span class="co">; 二重否定除去</span>
+(<span class="kw">define</span><span class="fu"> </span>(eliminate-double-negate logic)
+  (match logic
+         [`(<span class="kw">not</span> (<span class="kw">not</span> ,x)) (eliminate-double-negate x)]
+         [`(,op . ,body) `(,op . ,(map eliminate-double-negate body))]
+         [<span class="kw">else</span> logic]))
+
+<span class="co">;; Rule-2/Rule-3</span>
+(<span class="kw">define</span><span class="fu"> </span>(eliminate-double-op logic)
+  (<span class="kw">if</span> (<span class="kw">not</span> (<span class="kw">list?</span> logic)) logic
+    (<span class="kw">let*</span> ((logic (map eliminate-double-op logic)))
+      (<span class="kw">if</span> (<span class="kw">or</span> (and-term? logic) (or-term? logic))
+        (let1 op (<span class="kw">car</span> logic)
+              (<span class="kw">let</span> loop ((body (<span class="kw">cdr</span> logic)) (body2 &#39;()))
+                (<span class="kw">cond</span>
+                  [(<span class="kw">null?</span> body) `(,op . ,(<span class="kw">reverse</span> body2))]
+                  [(op-term? op (<span class="kw">car</span> body))
+                   (loop (<span class="kw">cdr</span> body) (<span class="kw">append</span> (<span class="kw">reverse</span> (<span class="kw">cdar</span> body) body2)))]
+                  [<span class="kw">else</span> (loop (<span class="kw">cdr</span> body) (<span class="kw">cons</span> (<span class="kw">car</span> body) body2))])))
+        logic))))
+
+<span class="co">;; Rule-4</span>
+(<span class="kw">define</span><span class="fu"> </span>(or-and-distribution logic)
+  (<span class="kw">if</span> (<span class="kw">not</span> (<span class="kw">list?</span> logic)) logic
+    (<span class="kw">let*</span> ((logic (map or-and-distribution logic)))
+
+      (<span class="kw">if</span> (<span class="kw">and</span> (or-term? logic)
+               (any and-term? (<span class="kw">cdr</span> logic)))
+
+        (<span class="kw">let</span> loop ((body (<span class="kw">cdr</span> logic)) (body2 &#39;()))
+          (<span class="kw">if</span> (and-term? (<span class="kw">car</span> body))
+
+            (<span class="kw">let*</span> ((or-body-rest (<span class="kw">append</span> (<span class="kw">reverse</span> body2) (<span class="kw">cdr</span> body)))
+                   (and-body
+                     (map (<span class="kw">lambda</span> (a) (<span class="kw">cons</span> &#39;or (<span class="kw">cons</span> a or-body-rest)))
+                          (<span class="kw">cdar</span> body))))
+              `(<span class="kw">and</span> . ,and-body))
+
+            (loop (<span class="kw">cdr</span> body) (<span class="kw">cons</span> (<span class="kw">car</span> body) body2))))
+
+        logic))))
+
+<span class="co">;; Rule-5</span>
+(<span class="kw">define</span><span class="fu"> </span>(and-closure logic)
+  (<span class="kw">if</span> (or-term? logic)
+    `(<span class="kw">and</span> ,logic)
+    logic))
+
+(<span class="kw">define</span><span class="fu"> </span>(flatten logic)
+  (<span class="kw">let</span> <span class="kw">while</span> ((logic logic))
+    (let1 logic2 (and-closure (or-and-distribution (eliminate-double-op logic)))
+          <span class="co">; (print `(=&gt; ,logic ,logic2))</span>
+          (<span class="kw">if</span> (<span class="kw">equal?</span> logic logic2)
+            logic
+            (<span class="kw">while</span> logic2)))))
+
+(<span class="kw">define</span><span class="fu"> </span>(trim logic)
+  `(<span class="kw">and</span> . ,(map (<span class="kw">lambda</span> (logic)
+                  (<span class="kw">if</span> (or-term? logic) logic `(<span class="kw">or</span> ,logic)))
+                (<span class="kw">cdr</span> logic))))
+
+
+(<span class="kw">define</span><span class="fu"> </span>(-&gt;CNF logic)
+  (trim (flatten (eliminate-double-negate (deMorgen logic)))))
+
+(<span class="kw">define</span><span class="fu"> </span>(test logic)
+  (<span class="kw">newline</span>)
+  (print logic)
+  (print `(<span class="kw">=&gt;</span> ,(deMorgen logic)))
+  (print `(<span class="kw">=&gt;</span> ,(eliminate-double-negate (deMorgen logic))))
+  (print `(<span class="kw">=&gt;</span> ,(flatten (eliminate-double-negate (deMorgen logic)))))
+  (print `(<span class="kw">=&gt;</span> ,(-&gt;CNF logic)))
+  (print (<span class="kw">if</span> (CNF? (-&gt;CNF logic)) &#39;ok &#39;ng)))
+
+(test &#39;(<span class="kw">and</span> (<span class="kw">and</span> x y z)))
+(test &#39;(<span class="kw">and</span> (<span class="kw">and</span> a b c) (<span class="kw">and</span> x y z)))
+(test &#39;(<span class="kw">and</span> (<span class="kw">or</span> a b c) (<span class="kw">and</span> x y z)))
+(test &#39;(<span class="kw">and</span> (<span class="kw">not</span> (<span class="kw">or</span> a b c)) (<span class="kw">and</span> x y z)))
+(test &#39;(<span class="kw">or</span> (<span class="kw">or</span> a b c) (<span class="kw">and</span> x y z)))
+(test &#39;(<span class="kw">or</span> (<span class="kw">or</span> a b c) (<span class="kw">or</span> x y z)))
+(test &#39;(<span class="kw">or</span> (<span class="kw">and</span> a b c) (<span class="kw">or</span> x y z)))</code></pre></div>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

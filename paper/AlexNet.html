@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>ImageNet Classification with Deep Convolutional Neural Networks</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/
+    </a>
+</h1>
+<header>
+<h1 class="title">ImageNet Classification with Deep Convolutional Neural Networks</h1>
+</header>
+<ul>
+<li>
+url: <a href=https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf>https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf</a>
+</li>
+<li>
+tags: <span class="tag"><a href=index.html#物体検出>物体検出</a></span> <span class="tag"><a href=index.html#深層学習>深層学習</a></span>
+</li>
+</ul>
+<p>Alex らが提案した画像認識のネットワークの論文.</p>
+<h2 id="memo">memo</h2>
+<p>基本すぎること、あるいは独特すぎること (ネットワークの構造) はメモしてもしょうがないので書かない. それよりも画像認識全般に通ずる細かなテクニックをメモする.</p>
+<h2 id="the-architecture">The Architecture</h2>
+<ul>
+<li>出力によく tanh とかつかうけど relu にしたら収束がめっちゃ速くなった.</li>
+<li>MultiGPU</li>
+<li>normalization: 単純に精度あがる</li>
+</ul>
+<h2 id="the-dataset">The Dataset</h2>
+<ul>
+<li>RGB の値そのままを用いた</li>
+</ul>
+<h3 id="augmentation">Augmentation</h3>
+<p>正解ラベルを保存しつつも別な画像を作ることで学習データを増強する. CPU で手軽に計算できる操作に限定することで、保存すべきデータを増やすこともなく、また GPU で学習処理をしている裏でCPUで計算させておくことができる.</p>
+<p>ネットワーク的には 224x224 (x3-channel) の画像を入力とするが、それよりも少し大きな 256x256 の画像を用いる. ここから、ランダムに 224x224 の画像を切り抜く. 四隅、あるいは中央から (5通りの) パッチを展開して学習に用いたとある. また水平方向の反転は画像の意味を (大抵の場合) 変えない.</p>
+<p>RGB の intensity (強度) の変更. よくわからなかったです. RGBをいい感じにちょいズラす？</p>
+<h3 id="dropout">Dropout</h3>
+<p>ratio=0.5</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

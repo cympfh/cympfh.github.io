@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Manacher による最大長回文探索アルゴリズム</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<h1 class="title">Manacher による最大長回文探索アルゴリズム</h1>
+</header>
+<p>Manacher は人名.</p>
+<p>文字列 <span class="math inline">\(s\)</span> が与えられた時、<span class="math inline">\(s\)</span> の各点を中心とする回文の最大長を求める. ここで <span class="math inline">\(n = |s|\)</span> とすると、各点とは</p>
+<ul>
+<li><span class="math inline">\(i = 1,2, \ldots, n\)</span> 及び</li>
+<li><span class="math inline">\(j = (1, 2), (2, 3), \ldots, (n-1, n)\)</span></li>
+</ul>
+<p>の二種類のこと. <span class="math inline">\(i\)</span> は各文字に対応し、<span class="math inline">\(j\)</span> は隣り合った2文字の間を指す. これを中心とする (連続) 部分文字列とは</p>
+<ul>
+<li>中心 <span class="math inline">\(i\)</span> に就いて <span class="math inline">\(s(i - x, i + x)\)</span> または</li>
+<li>中心 <span class="math inline">\(j = (j_0, j_1)\)</span> に就いて <span class="math inline">\(s(j_0 - x, j_1 + x)\)</span></li>
+</ul>
+<p>のこと.</p>
+<p>以下ソースコードは Spaghetthi Source <a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> より拝借したものを多少自分好みにアレンジしたもの. いずれも返り値は <span class="math display">\[1, (1, 2), 2, (2, 3), 3, \ldots, n-1, (n-1, n)\]</span> を中心としたする回分の最大長を収めたベクトル.</p>
+<h2 id="string.manacher.rs"><a href="string.manacher.rs" class="uri">string.manacher.rs</a></h2>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> manacher&lt;A: <span class="bu">Ord</span>&gt;(s: &amp;<span class="dt">Vec</span>&lt;A&gt;) -&gt; <span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt; {
+    <span class="kw">let</span> n = s.len();
+    <span class="kw">let</span> <span class="kw">mut</span> r = <span class="pp">vec!</span>[<span class="dv">0</span>; <span class="dv">2</span> * n - <span class="dv">1</span>];
+    <span class="kw">let</span> <span class="kw">mut</span> i = <span class="dv">0</span>;
+    <span class="kw">let</span> <span class="kw">mut</span> j = <span class="dv">0</span>;
+    <span class="kw">while</span> i &lt; <span class="dv">2</span> * n - <span class="dv">1</span> {
+        <span class="kw">while</span> i &gt;= j &amp;&amp; i + j + <span class="dv">1</span> &lt; <span class="dv">2</span> * n &amp;&amp; s[(i - j) / <span class="dv">2</span>] == s[(i + j + <span class="dv">1</span>) / <span class="dv">2</span>] {
+            j += <span class="dv">1</span>;
+        }
+        r[i] = j;
+        <span class="kw">let</span> <span class="kw">mut</span> k = <span class="dv">1</span>;
+        <span class="kw">while</span> i + k &lt; <span class="dv">2</span> * n - <span class="dv">1</span> &amp;&amp; i &gt;= k &amp;&amp; r[i] &gt;= k &amp;&amp; r[i - k] != r[i] - k {
+            r[i + k] = min(r[i - k], r[i] - k);
+            k += <span class="dv">1</span>;
+        }
+        i += k;
+        j = <span class="kw">if</span> j &gt; k { j - k } <span class="kw">else</span> { <span class="dv">0</span> }
+    }
+    r
+}</code></pre></div>
+<h2 id="string.manacher.cc"><a href="string.manacher.cc" class="uri">string.manacher.cc</a></h2>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp">vector&lt;<span class="dt">int</span>&gt; manacher(string&amp;s) {
+    <span class="at">const</span> <span class="dt">int</span> n = s.size();
+    vector&lt;<span class="dt">int</span>&gt; r(<span class="dv">2</span> * n - <span class="dv">1</span>);
+    <span class="cf">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>, j = <span class="dv">0</span>; i &lt; <span class="dv">2</span> * n - <span class="dv">1</span>;) {
+        <span class="cf">while</span> (i &gt;= j <span class="kw">and</span> i + j + <span class="dv">1</span> &lt; <span class="dv">2</span> * n <span class="kw">and</span> s[(i - j) / <span class="dv">2</span>] == s[(i + j + <span class="dv">1</span>) / <span class="dv">2</span>]) {
+            ++j;
+        }
+        r[i] = j;
+        <span class="dt">int</span> k;
+        <span class="cf">for</span> (k = <span class="dv">1</span>; i &gt;= k <span class="kw">and</span> i + k &lt; <span class="dv">2</span> * n - <span class="dv">1</span> <span class="kw">and</span> r[i] &gt;= k <span class="kw">and</span> r[i - k] != r[i] - k; ++k) {
+            r[i + k] = min(r[i - k], r[i] - k);
+        }
+        i += k;
+        j = max(j - k, <span class="dv">0</span>);
+    }
+    <span class="cf">return</span> r;
+}</code></pre></div>
+<h2 id="参考">参考</h2>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="http://www.prefield.com/algorithm/string/manacher.html">Spaghetti Source - 最長回文 (Manacher)</a><a href="#fnref1">↩</a></p></li>
+</ol>
+</section>
+</body>
+</html>

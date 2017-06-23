@@ -1,0 +1,11 @@
+aiura/
+paper/
+taglibro/
+gnuplot/
+neta/
+youtube/
+lib/
+memo/
+gist/
+photos/
+study/

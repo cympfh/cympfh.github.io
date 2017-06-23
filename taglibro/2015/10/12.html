@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Mon Oct 12 01:20:08 JST 2015</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Mon Oct 12 01:20:08 JST 2015</h1>
+</header>
+<h2 id="n-queens-problem">N-Queens Problem</h2>
+<p>Scala の練習として、リストのない方表記の練習として、 <a href="https://sites.google.com/site/scalajp/home/documentation/scala-by-example/chapter10/section1">10.1 N クィーン問題 (The N-Queens Problem)</a> をやってた. 大部分はそこに書いてあるとおりだけど、自分の解答として</p>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">import</span> scala.<span class="fu">math</span>.<span class="fu">_</span>
+<span class="kw">import</span> scala.<span class="fu">collection</span>.<span class="fu">mutable</span>.{Queue, Set}
+<span class="kw">import</span> scala.<span class="fu">collection</span>.<span class="fu">immutable</span>.<span class="fu">_</span>
+<span class="kw">import</span> scala.<span class="fu">util</span>.<span class="fu">Random</span>
+ 
+<span class="kw">object</span> Main {
+
+  <span class="kw">def</span> <span class="fu">queens</span>(n: Int): List[List[Int]] = {
+    <span class="kw">def</span> <span class="fu">isSafe</span>(c: Int, qs: List[Int], d: Int): Boolean = {
+      qs <span class="kw">match</span> {
+        <span class="kw">case</span> List() =&gt; <span class="kw">true</span>
+        <span class="kw">case</span> q::qs <span class="kw">if</span> c+d == q || c-d == q || c == q =&gt; <span class="kw">false</span>
+        <span class="kw">case</span> q::qs =&gt; <span class="fu">isSafe</span>(c, qs, d<span class="dv">+1</span>)
+      }
+    }
+    <span class="kw">def</span> <span class="fu">sub</span>(k: Int): List[List[Int]] = {
+      <span class="kw">if</span> (k == <span class="dv">0</span>) <span class="kw">return</span> List(List())
+      <span class="kw">for</span> { qs &lt;- <span class="fu">sub</span>(k<span class="dv">-1</span>)
+          c &lt;- <span class="fu">Range</span>(<span class="dv">0</span>, n)
+        <span class="kw">if</span> <span class="fu">isSafe</span>(c, qs, <span class="dv">1</span>) }
+        <span class="kw">yield</span> c::qs
+    }
+    <span class="fu">sub</span>(n)
+  }
+
+  <span class="kw">def</span> <span class="fu">show</span>(n: Int, qs: List[Int]) {
+    <span class="kw">for</span> (i &lt;- <span class="fu">Range</span>(<span class="dv">0</span>, n)) {
+      <span class="kw">for</span> (j &lt;- <span class="fu">Range</span>(<span class="dv">0</span>, n)) {
+        <span class="fu">print</span>(&#39;.&#39;)
+        <span class="kw">if</span> (<span class="fu">qs</span>(i) == j) <span class="fu">print</span>(&#39;q&#39;)
+        <span class="kw">else</span> <span class="fu">print</span>(&#39;_&#39;)
+      }
+      <span class="fu">println</span>(<span class="st">&quot;&quot;</span>)
+    }
+  }
+
+  <span class="kw">def</span> <span class="fu">main</span>(args: Array[String]) {
+    <span class="kw">for</span> (n &lt;- <span class="fu">Range</span>(<span class="dv">4</span>, <span class="dv">16</span>)) {
+      <span class="kw">val</span> ans = <span class="fu">queens</span>(n)
+      <span class="fu">println</span>(n, ans.<span class="fu">length</span>)
+    }
+    <span class="co">/*</span>
+<span class="co">    for (ls &lt;- ans) {</span>
+<span class="co">      for (x &lt;- ls) print(x + &quot; &quot;)</span>
+<span class="co">      println(&quot;&quot;)</span>
+<span class="co">      show(n, ls)</span>
+<span class="co">    }</span>
+<span class="co">    */</span>
+  }
+}</code></pre></div>
+<p>模範解答だと思う. 古典問題だし. 計算量の上限を測ってみることにした.</p>
+<p>長さ <code>n</code> のリストの末尾から作っていくことに成る. 末尾の要素は <code>n</code> 通りある (制約がないので <code>0..(n-1)</code> の何がきても良い). 末尾から2つ目の要素については、 末尾の要素 <code>n</code> 通りそれぞれについて、 やはり <code>0..(n-1)</code> の <code>n</code> 通りを <code>isSafe</code> によって試して、問題ないものを次に通す. <code>isSafe</code> は長さに比例する計算量だから、ここでは <code>1</code>.</p>
+<p>このようにして、計算量の上限としては、</p>
+<p><span class="math inline">\(n \times n * 1 \times n * 2 \times \ldots \times n * (n-1) = n^n * (n-1)!\)</span></p>
+<p>ってな具合. 実際には、<code>isSafe</code> の部分で枝狩って行くことになるので、もっと小さい. 実際、最終的に得られる答えの数はもっとずっと小さい.</p>
+<h3 id="上の出力" class="post">上の出力</h3>
+<pre><code>(4,2)
+(5,10)
+(6,4)
+(7,40)
+(8,92)
+(9,352)
+(10,724)
+(11,2680)
+(12,14200)
+(13,73712)</code></pre>
+<p>とはいえ <code>n=13</code> あたりからきつくなるので、 適当な体感でいうと <code>O(n!)</code> かなって思っちゃう.</p>
+<h2 id="fast-n-queens">Fast N-Queens</h2>
+<p>ググったらすぐに見つかった.</p>
+<ol type="1">
+<li><a href="http://dl.acm.org/citation.cfm?id=101343">A polynomial time algorithm for the N-Queens problem</a></li>
+<li><a href="http://ieeexplore.ieee.org/xpl/login.jsp?tp=&amp;arnumber=135698&amp;url=http%3A%2F%2Fieeexplore.ieee.org%2Fiel1%2F21%2F3698%2F00135698.pdf%3Farnumber%3D135698">IEEE Xplore Abstract - Fast search algorithms for the n-queens problem</a></li>
+</ol>
+<p>2つめは家からアクセスできなかったんで、 1つめを読んでみた. 流し読みで読んだけど、 要するに Figure 1 ということらしい.</p>
+<p>ただし、</p>
+<ul>
+<li>乱択アルゴリズム</li>
+<li>全列挙ではなく答えを一つ見つける</li>
+</ul>
+<p>という違いがある.</p>
+<h3 id="figure-1-の実装" class="post">Figure 1 の実装</h3>
+<p>答えは確かにどうせ <code>[0 .. n-1]</code> の置換である. アルゴリズムは簡単に</p>
+<ul>
+<li>以下を繰り返す
+<ul>
+<li>ランダムな置換 <code>qs</code> を生成する</li>
+<li>For <span class="math inline">\(i = 0 .. n-1\)</span>
+<ul>
+<li>For <span class="math inline">\(j = i+1 .. n-1\)</span>
+<ul>
+<li><code>qs[i]</code> と <code>qs[j]</code> の置換がクイーンの衝突を減らすならそうする</li>
+</ul></li>
+</ul></li>
+<li><code>qs</code> にクイーンの衝突がなければこれを返して終了</li>
+</ul></li>
+</ul>
+<p>愚直に実装すると以下通り. ただし、無限ループ部分は1000回の上限をつけた. <code>List[Int]</code> は <code>Array[Int]</code> にした.</p>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">import</span> scala.<span class="fu">math</span>.<span class="fu">_</span>
+<span class="kw">import</span> scala.<span class="fu">collection</span>.<span class="fu">mutable</span>.{Queue, Set}
+<span class="kw">import</span> scala.<span class="fu">collection</span>.<span class="fu">immutable</span>.<span class="fu">_</span>
+<span class="kw">import</span> scala.<span class="fu">util</span>.<span class="fu">Random</span>
+ 
+<span class="kw">object</span> Main {
+
+  <span class="kw">def</span> <span class="fu">queens</span>(n: Int, uplimit: Int = <span class="dv">1000</span>): Option[Array[Int]] = {
+
+    <span class="kw">def</span> <span class="fu">collision</span>(qs: Array[Int]): Int = { <span class="co">// 衝突の数を数える</span>
+      <span class="kw">var</span> c = <span class="dv">0</span>
+      <span class="kw">for</span> (i &lt;- <span class="fu">Range</span>(<span class="dv">0</span>, n<span class="dv">-1</span>)) {
+        <span class="kw">for</span> (j &lt;- <span class="fu">Range</span>(i<span class="dv">+1</span>, n)) {
+          <span class="kw">val</span> d = j - i
+          <span class="kw">if</span> (<span class="fu">qs</span>(i) == <span class="fu">qs</span>(j) || <span class="fu">qs</span>(i) == <span class="fu">qs</span>(j) - d || <span class="fu">qs</span>(i) == <span class="fu">qs</span>(j) + d) c += <span class="dv">1</span>
+        }
+      }
+      c
+    }
+
+    <span class="kw">var</span> tryNumber = <span class="dv">0</span>
+    <span class="kw">for</span> (t &lt;- <span class="fu">Range</span>(<span class="dv">0</span>, uplimit)) {
+      tryNumber = t + <span class="dv">1</span>
+      <span class="kw">val</span> qs = Random shuffle <span class="fu">Range</span>(<span class="dv">0</span>, n) toArray;
+      <span class="kw">var</span> c = <span class="fu">collision</span>(qs)
+      <span class="kw">for</span> (i &lt;- <span class="fu">Range</span>(<span class="dv">0</span>, n<span class="dv">-1</span>)) {
+        <span class="kw">val</span> tmp = <span class="fu">qs</span>(i)
+        <span class="kw">for</span> (j &lt;- <span class="fu">Range</span>(i<span class="dv">+1</span>, n)) {
+          <span class="fu">qs</span>(i) = <span class="fu">qs</span>(j)
+          <span class="fu">qs</span>(j) = tmp
+          <span class="kw">val</span> c2 = <span class="fu">collision</span>(qs)
+          <span class="kw">if</span> (c2 &gt;= c) { <span class="co">// when swap doesn&#39;t reduce</span>
+            <span class="fu">qs</span>(j) = <span class="fu">qs</span>(i)
+            <span class="fu">qs</span>(i) = tmp
+          } <span class="kw">else</span> {
+            c = c2
+          }
+        }
+      }
+      <span class="kw">if</span> (c == <span class="dv">0</span>) {
+        <span class="fu">println</span>(<span class="st">&quot;試行回数: &quot;</span> + tryNumber)
+        <span class="kw">return</span> Some(qs)
+      }
+    }
+    <span class="kw">return</span> None
+  }
+
+  <span class="kw">def</span> <span class="fu">show</span>(n: Int, qs: Array[Int]) {
+    <span class="kw">for</span> (i &lt;- <span class="fu">Range</span>(<span class="dv">0</span>, n)) {
+      <span class="kw">for</span> (j &lt;- <span class="fu">Range</span>(<span class="dv">0</span>, n)) {
+        <span class="fu">print</span>(&#39;.&#39;)
+        <span class="kw">if</span> (<span class="fu">qs</span>(i) == j) <span class="fu">print</span>(&#39;q&#39;)
+        <span class="kw">else</span> <span class="fu">print</span>(&#39;_&#39;)
+      }
+      <span class="fu">println</span>(<span class="st">&quot;&quot;</span>)
+    }
+  }
+
+  <span class="kw">def</span> <span class="fu">main</span>(args: Array[String]) {
+    <span class="kw">val</span> n = <span class="dv">10</span>;
+    <span class="kw">val</span> ans = <span class="fu">queens</span>(n)
+    ans <span class="kw">match</span> {
+      <span class="kw">case</span> Some(qs) =&gt; <span class="fu">show</span>(n, qs)
+      <span class="kw">case</span> None =&gt; <span class="fu">println</span>(<span class="st">&quot;no answers&quot;</span>)
+    }
+  }
+}</code></pre></div>
+<p>コードはかなり長くなった.</p>
+<pre><code>試行回数: 257
+._._._._._.q._._._._
+._._._.q._._._._._._
+._.q._._._._._._._._
+._._._._._._._.q._._
+._._.q._._._._._._._
+._._._._._._.q._._._
+._._._._._._._._._.q
+.q._._._._._._._._._
+._._._._._._._._.q._
+._._._._.q._._._._._</code></pre>
+<p>確かに動いてるし、試行回数はそこまで大きくないようにも思える. 一回の施行の計算量は <span class="math inline">\(O(n^4)\)</span> だけどな. <span class="math inline">\(n=12\)</span> くらいから、1000回のループでは怪しくなってきた.</p>
+<h3 id="figure-2" class="post">Figure 2</h3>
+<p>一つの、ランダムに生成した置換について、 <code>swap</code> を一度でも行ったものを、もう少し続けて試すというヒューリスティクスを導入する.</p>
+<div class="sourceCode"><pre class="sourceCode scala"><code class="sourceCode scala"><span class="kw">import</span> scala.<span class="fu">math</span>.<span class="fu">_</span>
+<span class="kw">import</span> scala.<span class="fu">collection</span>.<span class="fu">mutable</span>.{Queue, Set}
+<span class="kw">import</span> scala.<span class="fu">collection</span>.<span class="fu">immutable</span>.<span class="fu">_</span>
+<span class="kw">import</span> scala.<span class="fu">util</span>.<span class="fu">Random</span>
+ 
+<span class="kw">object</span> Main {
+
+  <span class="kw">def</span> <span class="fu">queens</span>(n: Int, uplimit: Int = <span class="dv">1000</span>): Option[Array[Int]] = {
+
+    <span class="kw">def</span> <span class="fu">collision</span>(qs: Array[Int]): Int = { <span class="co">// 衝突の数を数える</span>
+      <span class="kw">var</span> c = <span class="dv">0</span>
+      <span class="kw">for</span> (i &lt;- <span class="fu">Range</span>(<span class="dv">0</span>, n<span class="dv">-1</span>)) {
+        <span class="kw">for</span> (j &lt;- <span class="fu">Range</span>(i<span class="dv">+1</span>, n)) {
+          <span class="kw">val</span> d = j - i
+          <span class="kw">if</span> (<span class="fu">qs</span>(i) == <span class="fu">qs</span>(j) || <span class="fu">qs</span>(i) == <span class="fu">qs</span>(j) - d || <span class="fu">qs</span>(i) == <span class="fu">qs</span>(j) + d) c += <span class="dv">1</span>
+        }
+      }
+      c
+    }
+
+    <span class="kw">var</span> tryNumber = <span class="dv">0</span>
+    <span class="kw">for</span> (t &lt;- <span class="fu">Range</span>(<span class="dv">0</span>, uplimit)) {
+      <span class="kw">val</span> qs = Random shuffle <span class="fu">Range</span>(<span class="dv">0</span>, n) toArray;
+      <span class="kw">var</span> c = <span class="fu">collision</span>(qs)
+      <span class="kw">var</span> grad = <span class="kw">true</span>
+      <span class="kw">while</span> (grad) {
+        tryNumber += <span class="dv">1</span>
+        <span class="kw">var</span> performed = <span class="dv">0</span>
+        <span class="kw">for</span> (i &lt;- <span class="fu">Range</span>(<span class="dv">0</span>, n<span class="dv">-1</span>)) {
+          <span class="kw">val</span> tmp = <span class="fu">qs</span>(i)
+          <span class="kw">for</span> (j &lt;- <span class="fu">Range</span>(i<span class="dv">+1</span>, n)) {
+            <span class="fu">qs</span>(i) = <span class="fu">qs</span>(j)
+            <span class="fu">qs</span>(j) = tmp
+            <span class="kw">val</span> c2 = <span class="fu">collision</span>(qs)
+            <span class="kw">if</span> (c2 &gt;= c) { <span class="co">// when swap doesn&#39;t reduce</span>
+              <span class="fu">qs</span>(j) = <span class="fu">qs</span>(i)
+              <span class="fu">qs</span>(i) = tmp
+            } <span class="kw">else</span> {
+              c = c2
+              performed += <span class="dv">1</span>
+            }
+          }
+        }
+        <span class="kw">if</span> (performed == <span class="dv">0</span>) grad = <span class="kw">false</span>
+        <span class="kw">if</span> (c == <span class="dv">0</span>) {
+          <span class="fu">println</span>(tryNumber)
+          <span class="kw">return</span> Some(qs)
+        }
+      }
+    }
+    <span class="kw">return</span> None
+  }
+
+  <span class="kw">def</span> <span class="fu">show</span>(n: Int, qs: Array[Int]) {
+    <span class="kw">for</span> (i &lt;- <span class="fu">Range</span>(<span class="dv">0</span>, n)) {
+      <span class="kw">for</span> (j &lt;- <span class="fu">Range</span>(<span class="dv">0</span>, n)) {
+        <span class="fu">print</span>(&#39;.&#39;)
+        <span class="kw">if</span> (<span class="fu">qs</span>(i) == j) <span class="fu">print</span>(&#39;q&#39;)
+        <span class="kw">else</span> <span class="fu">print</span>(&#39;_&#39;)
+      }
+      <span class="fu">println</span>(<span class="st">&quot;&quot;</span>)
+    }
+  }
+
+  <span class="kw">def</span> <span class="fu">main</span>(args: Array[String]) {
+    <span class="kw">val</span> n = <span class="dv">12</span>;
+    <span class="kw">val</span> ans = <span class="fu">queens</span>(n, <span class="dv">1000000</span>)
+    <span class="kw">if</span> (ans == None) <span class="fu">println</span>(<span class="st">&quot;None&quot;</span>)
+  }
+}</code></pre></div>
+<p><span class="math inline">\(n=12\)</span> での試行回数</p>
+<pre><code>% for i in `seq 10`; do scala test.scala; done
+3955
+1754
+51
+1140
+1155
+88
+2479
+307
+370
+1471</code></pre>
+<p>論文の表だともっと少なくやってるぽいけど. 何が違ったかな.</p>
+</body>
+</html>

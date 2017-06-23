@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Shake-Shake Regularization</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/
+    </a>
+</h1>
+<header>
+<h1 class="title">Shake-Shake Regularization</h1>
+</header>
+<ul>
+<li>
+url: <a href=https://github.com/xgastaldi/shake-shake>https://github.com/xgastaldi/shake-shake</a>
+</li>
+<li>
+tags: <span class="tag"><a href=index.html#深層学習>深層学習</a></span>
+</li>
+</ul>
+<h2 id="概要">概要</h2>
+<p>url 先の Figure 1 を見れば、内容のほぼ全てがそこにあるのでメモをちょろっとだけ.</p>
+<p>残渣ネットワーク (Residual Network) とは、 次のように <strong>残渣</strong> <span class="math inline">\(F(x)\)</span> をこれを求めて足す機構</p>
+<ul>
+<li><span class="math inline">\(y = x + F(x)\)</span></li>
+</ul>
+<p>を組み入れたネットワークのことであった. <span class="math inline">\(F\)</span> と同様に <span class="math inline">\(y = x + F&#39;(x)\)</span> となるような <span class="math inline">\(F&#39;\)</span> を作って</p>
+<ul>
+<li><span class="math inline">\(y = x + \alpha F(x) + (1 - \alpha) F&#39;(x)\)</span></li>
+</ul>
+<p>とすると、Dropout が汎化性能を上げるのと凡そ同じ理由から汎化性能を上げそうである. ここで <span class="math inline">\(\alpha=0.5\)</span> とする、或いは定数とすると、 <span class="math inline">\(F, F&#39;\)</span> は逆伝播によって同じ更新が係かり、 ほぼ同様の計算をする <span class="math inline">\(F, F&#39;\)</span> が得られてしまう. 汎化性能を上げる目的のためには、2つは違った学習をしている必要がある.</p>
+<p>&quot;Shake-Shake&quot; という名前の由来は、 この <span class="math inline">\(\alpha\)</span> を順伝播のたびに <span class="math inline">\((0, 1)\)</span> からランダムに設定し (つまり <span class="math inline">\(F\)</span> と <span class="math inline">\(F&#39;\)</span> の値をランダムに混ぜる)、 かつ、逆伝播の際にもまたランダムに設定することにある.</p>
+<p>逆伝播のときは <span class="math inline">\(\alpha\)</span> とは異なる値 <span class="math inline">\(\beta \in (0,1)\)</span> を用いて</p>
+<ul>
+<li><span class="math inline">\(y = x + \beta F(x) + (1 - \beta) F&#39;(x)\)</span></li>
+</ul>
+<p>であったとして更新をする.</p>
+<h2 id="実験">実験</h2>
+<p>いくつかバリエーションが考えられる.</p>
+<ul>
+<li>順伝播
+<ul>
+<li>Even: <span class="math inline">\(\alpha=0.5\)</span></li>
+<li>Shuffle: <span class="math inline">\(\alpha \in_u (0,1)\)</span></li>
+</ul></li>
+<li>逆伝播
+<ul>
+<li>Even: <span class="math inline">\(\beta = 0.5\)</span></li>
+<li>Keep: <span class="math inline">\(\beta = \alpha\)</span></li>
+<li>Shuffle: <span class="math inline">\(\beta \in_u (0,1)\)</span></li>
+</ul></li>
+</ul>
+<p>ともに Shuffle を取った &quot;Shuffle-Shuffle&quot; のときが最大の効果を得たらしい.</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

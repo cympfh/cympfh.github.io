@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Feb 02 2013</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Feb 02 2013</h1>
+</header>
+<h2 id="gauche-設定ファイル-後編">Gauche 設定ファイル [後編]</h2>
+<p>ファイル名は <code>~/.scm</code> としてたほうがそれっぽいな． <code>gosh -l</code> で読み込めるかが心配だったんだけど杞憂だった．</p>
+<p>それと、<code>pwd</code>, <code>cd</code>, <code>ls</code> なんかがあったほうも便利だ． これは <code>http://practical-scheme.net/gauche/man/gauche-refj_140.html</code> を使ったほうがよかろう．</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme"><span class="co">;; .scm</span>
+(use srfi<span class="dv">-1</span>)
+(use file.util)
+(use gauche.process)
+
+(<span class="kw">define-syntax</span><span class="fu"> e</span>
+    (<span class="kw">syntax-rules</span> ()
+        ((_ name) (<span class="kw">begin</span> (run-process `(vim ,name) :wait <span class="dv">#t</span>)
+                         (<span class="kw">load</span> (<span class="kw">string-append</span> <span class="st">&quot;./&quot;</span>
+                                 (<span class="kw">if</span> (<span class="kw">symbol?</span> name) (<span class="kw">symbol-&gt;string</span> name) name)))) )))
+
+(<span class="kw">define-syntax</span><span class="fu"> cd</span>
+    (<span class="kw">syntax-rules</span> ()
+        ((_)      (current-directory))
+        ((_ dir)  (current-directory (<span class="kw">if</span> (<span class="kw">symbol?</span> dir) (<span class="kw">symbol-&gt;string</span> dir) dir))) ))
+(<span class="kw">define</span><span class="fu"> </span>(pwd) (cd))
+
+(<span class="kw">define-syntax</span><span class="fu"> ls</span>
+    (<span class="kw">syntax-rules</span> ()
+        ((_)      (ls <span class="st">&quot;.&quot;</span>))
+        ((_ dir)  
+    (receive (ds fs) (directory-list2 (<span class="kw">if</span> (<span class="kw">symbol?</span> dir) (<span class="kw">symbol-&gt;string</span> dir) dir))
+    (let1 ls (<span class="kw">append</span> (map (cut <span class="kw">string-append</span> &lt;&gt; <span class="st">&quot;/&quot;</span>) (drop ds <span class="dv">2</span>)) fs)
+    (<span class="kw">display</span> (string-join ls (<span class="kw">if</span> (<span class="kw">&lt;</span> (<span class="kw">length</span> ls) <span class="dv">10</span>) <span class="st">&quot;\n&quot;</span> <span class="st">&quot;\t&quot;</span>)))
+    (<span class="kw">newline</span>) )))))
+
+(<span class="kw">define-syntax</span><span class="fu"> cat</span>
+    (<span class="kw">syntax-rules</span> ()
+        ((_ fname) (<span class="kw">display</span> (<span class="kw">call-with-input-file</span> (<span class="kw">if</span> (<span class="kw">symbol?</span> fname) (<span class="kw">symbol-&gt;string</span> fname) fname) port-&gt;string)))))</code></pre></div>
+<p>基本的にいちいち&quot;で括りたくないので、文字列ではなくシンボルで ファイル名なんかを指定．</p>
+<pre><code>(e &#39;test.scm)</code></pre>
+<p>gauche ファイルの編集. vimプロセスが終了後、インタプリタはロードを試みる．</p>
+<pre><code>(cd [dir])</code></pre>
+<p>current directory の変更．(cd)は (pwd)に等しい．</p>
+<pre><code>(ls)
+(cat &#39;test.scm)</code></pre>
+</body>
+</html>

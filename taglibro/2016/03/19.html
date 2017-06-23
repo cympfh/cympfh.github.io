@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sat Mar 19 15:50:35 JST 2016</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Sat Mar 19 15:50:35 JST 2016</h1>
+</header>
+<h2 id="都営メトロ分類器">都営・メトロ分類器</h2>
+<h2 id="あらまし">あらまし</h2>
+<p>東京に住み着いてもうすぐちょうど6年になるが、今だに地下鉄に乗ってて 「あれ？ 私が今乗ってるのって、都営だっけ？メトロだっけ？」ってなる</p>
+<blockquote>
+<p>一応言っておくと、東京に走ってるのはJRかさもなくば地下鉄で、地下鉄は都営地下鉄と東京メトロの二社があり. 都営とメトロとの間の乗り換えは、社を跨ぐので、ほんの少し、乗車賃が上乗せされる.</p>
+</blockquote>
+<p>簡単に、今乗っている「〇〇線」が都営であるかメトロであるかを分類するモデルを書きましょう</p>
+<h2 id="あらましその">あらましその２</h2>
+<p>2つの語の類似度を測る、なかなか直観的な方法として、 語を並べて某大手検索エンジンに投げたときのヒット数を見るというのがある. 例えば、3つの語 A B C があったときに、「A B」と「A C」でそれぞれ検索してヒット数を比較することで、 B と C、どちらがより A に近いかを見ることが出来る.</p>
+<p>この手段は自然言語処理界隈でしばしば見られる. 手頃な論文無いかなあと探そうとした矢先に こんな (<a href="http://id.fnshr.info/2012/05/26/googleling/">Googleなどでのヒット数は言語研究の証拠となるか？｜Colorless Green Ideas</a>) 記事を見つけた. 要するに、ヒット数なんてかなり信用できないぞ、ということ.</p>
+<p>(一時的に極端にヒット数が変動するなんて初めて知った)</p>
+<p>ちなみに言うと、自然言語処理界隈で使われるのはコレ (<a href="https://en.wikipedia.org/wiki/Normalized_Google_distance">Normalized Google distance - Wikipedia, the free encyclopedia</a>) みたいなやつです.</p>
+<p>でまあ問題点は在るんだけど、 「都営 〇〇線」 「メトロ 〇〇線」 でそれぞれ検索してヒット数の大小を見てみようという発想.</p>
+<h2 id="ソースコード">ソースコード</h2>
+<p>検索エンジンとして</p>
+<ol type="1">
+<li>Google</li>
+<li>Bing</li>
+<li>ニコニコ動画</li>
+</ol>
+<p>日本の鉄道だし、ニコニコで調べてもね、きっと上手くいくかもしれないよね？ 本当は単にさっき偶然、ニコニコにもAPIが公開されているという事実を知ったから使ってみただけ.</p>
+<h3 id="google">Google</h3>
+<p>Google と Bing に関しては、礼儀がなっていないが真面目にAPI叩かない. つまり実際にブラウザで検索することを自動化するだけに留める. Ruby で言うところの mechanize. CUI で言うところの <code>w3m -dump</code> (?).</p>
+<p>ちなみにこれをやりまくると、GoogleはすぐにBANするので註意 (are you machine? みたいな表示と共にCAPTCHAが表示される).</p>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="co">#!/bin/bash</span>
+
+<span class="va">L=$1</span>
+<span class="kw">for</span> <span class="ex">C</span> in 都営 メトロ<span class="kw">;</span> <span class="kw">do</span>
+  <span class="va">N=$(</span> <span class="ex">w3m</span> -dump <span class="st">&quot;http://google.co.jp/search?q=</span><span class="va">$C</span><span class="st"> </span><span class="va">$L</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="st">&#39;約.*[0-9].*件&#39;</span> <span class="kw">|</span> <span class="fu">head</span> -1 <span class="kw">|</span> <span class="fu">tr</span> -cd <span class="st">&#39;[:digit:]&#39;</span> <span class="va">)</span>
+  <span class="bu">echo</span> <span class="va">$N</span> <span class="va">$C</span>
+<span class="kw">done</span></code></pre></div>
+<p><code>grep ... | head -1</code> のところはすごく、その人の環境に依存するところ.</p>
+<p>三田線について調べてみる:</p>
+<pre><code>   ./google.sh 三田線
+11500000 都営
+7920000 メトロ</code></pre>
+<p>三田線は都営である.</p>
+<h3 id="bing">Bing</h3>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co">#!/bin/bash</span>
+
+<span class="va">L=$1</span>
+<span class="kw">for</span> <span class="ex">C</span> in 都営 メトロ<span class="kw">;</span> <span class="kw">do</span>
+  <span class="va">N=$(</span> <span class="ex">w3m</span> -dump <span class="st">&quot;http://www.bing.com/search?q=</span><span class="va">$C</span><span class="st"> </span><span class="va">$L</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="st">&#39;[0-9].*results&#39;</span> <span class="kw">|</span> <span class="fu">head</span> -1 <span class="kw">|</span> <span class="fu">tr</span> -cd <span class="st">&#39;[:digit:]&#39;</span> <span class="va">)</span>
+  <span class="bu">echo</span> <span class="va">$N</span> <span class="va">$C</span>
+<span class="kw">done</span></code></pre></div>
+<p>Bing に関してはこんなことしても全然BANされない (経験上).</p>
+<pre><code>   ./bing.sh 三田線
+2020000 都営
+2300000 メトロ</code></pre>
+<p>三田線はメトロです.</p>
+<h3 id="ニコニコ動画">ニコニコ動画</h3>
+<p>これは API があるので丁寧に叩く. 返ってくるのが json なので jq でヒット数だけ抜き出す.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co">#!/bin/bash</span>
+
+<span class="va">L=$1</span>
+<span class="kw">for</span> <span class="ex">C</span> in 都営 メトロ<span class="kw">;</span> <span class="kw">do</span>
+  <span class="va">URL=</span>http://api.search.nicovideo.jp/api/snapshot/
+  <span class="va">DATA=$(</span> <span class="bu">echo</span> <span class="st">&#39;{&quot;query&quot;:&quot;&#39;</span> <span class="va">$C</span> <span class="st">&#39; &#39;</span> <span class="va">$L</span> <span class="st">&#39;&quot;,&quot;service&quot;:[&quot;video&quot;],&quot;search&quot;:[&quot;title&quot;,&quot;description&quot;,&quot;tags&quot;],&quot;join&quot;:[&quot;cmsid&quot;],&quot;sort_by&quot;:&quot;view_counter&quot;,&quot;issuer&quot;:&quot;/c/&quot;}&#39;</span><span class="va">)</span>
+  <span class="va">N=$(</span> <span class="ex">curl</span> -s -X POST -d <span class="st">&quot;</span><span class="va">$DATA</span><span class="st">&quot;</span> <span class="va">$URL</span> <span class="kw">|</span> <span class="ex">jq</span> <span class="st">&#39;.values[]?.total&#39;</span> <span class="kw">|</span> <span class="fu">grep</span> -o <span class="st">&#39;[0-9]*&#39;</span> <span class="kw">|</span> <span class="fu">head</span> -1 <span class="va">)</span>
+  <span class="bu">echo</span> <span class="va">$N</span> <span class="va">$C</span>
+<span class="kw">done</span></code></pre></div>
+<pre><code>   ./nico.sh 三田線
+187 都営
+32 メトロ</code></pre>
+<p>三田線は都営.</p>
+<blockquote>
+<p>三田線は都営であるのが正しい</p>
+</blockquote>
+<h2 id="実験">実験</h2>
+<p>てゆうか、東京の地下鉄の線なんて有限本しかないので全部試せば良い.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="fu">cat</span> toe-list
+三田線
+大江戸線
+浅草線
+新宿線
+
+  <span class="fu">cat</span> metro-list
+南北線
+東西線
+銀座線
+副都心線
+丸の内線
+日比谷線
+千代田線
+有楽町線</code></pre></div>
+<h3 id="google-1">Google</h3>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="kw">for</span> <span class="ex">L</span> in <span class="kw">`</span><span class="fu">cat</span> toe-list<span class="kw">`;do</span> <span class="bu">echo</span> <span class="va">$L</span><span class="kw">;</span> <span class="ex">./google.sh</span> <span class="va">$L</span><span class="kw">;</span> <span class="kw">done</span>
+三田線
+<span class="ex">11500000</span> 都営
+<span class="ex">7920000</span> メトロ
+大江戸線
+<span class="ex">15800000</span> 都営
+<span class="ex">11900000</span> メトロ
+浅草線
+<span class="ex">11400000</span> 都営
+<span class="ex">8200000</span> メトロ
+新宿線
+<span class="ex">15500000</span> 都営
+<span class="ex">13100000</span> メトロ</code></pre></div>
+<p>都営のほうが数字が大きいのが正しい. というわけで都営は全部OK.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="kw">for</span> <span class="ex">L</span> in <span class="kw">`</span><span class="fu">cat</span> metro-list<span class="kw">`;do</span> <span class="bu">echo</span> <span class="va">$L</span><span class="kw">;</span> <span class="ex">./google.sh</span> <span class="va">$L</span><span class="kw">;</span> <span class="kw">done</span>
+南北線
+<span class="ex">7770000</span> 都営
+<span class="ex">9140000</span> メトロ
+東西線
+<span class="ex">10400000</span> 都営
+<span class="ex">13800000</span> メトロ
+銀座線
+<span class="ex">8410000</span> 都営
+<span class="ex">12300000</span> メトロ
+副都心線
+<span class="ex">348000</span> 都営
+<span class="ex">8320000</span> メトロ
+丸の内線
+<span class="ex">552000</span> 都営
+<span class="ex">489000</span> メトロ
+日比谷線
+<span class="ex">4300000</span> 都営
+<span class="ex">13100000</span> メトロ
+千代田線
+<span class="ex">7930000</span> 都営
+<span class="ex">10400000</span> メトロ
+有楽町線
+<span class="ex">1680000</span> 都営
+<span class="ex">13300000</span> メトロ</code></pre></div>
+<p>今度はメトロだけ大きいのが正しい. よく見ると丸ノ内線だけ誤っている.</p>
+<p>(実験が終わるまでにBANされなくてよかった)</p>
+<h3 id="bing-1">Bing</h3>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="kw">for</span> <span class="ex">L</span> in <span class="kw">`</span><span class="fu">cat</span> toe-list<span class="kw">`;do</span> <span class="bu">echo</span> <span class="va">$L</span><span class="kw">;</span> <span class="ex">./bing.sh</span> <span class="va">$L</span><span class="kw">;</span> <span class="kw">done</span>
+三田線
+<span class="ex">2020000</span> 都営
+<span class="ex">2300000</span> メトロ
+大江戸線
+<span class="ex">2380000</span> 都営
+<span class="ex">2400000</span> メトロ
+浅草線
+<span class="ex">2430000</span> 都営
+<span class="ex">2810000</span> メトロ
+新宿線
+<span class="ex">3170000</span> 都営
+<span class="ex">5750000</span> メトロ
+
+   <span class="kw">for</span> <span class="ex">L</span> in <span class="kw">`</span><span class="fu">cat</span> metro-list<span class="kw">`;do</span> <span class="bu">echo</span> <span class="va">$L</span><span class="kw">;</span> <span class="ex">./bing.sh</span> <span class="va">$L</span><span class="kw">;</span> <span class="kw">done</span>
+南北線
+<span class="ex">1520000</span> 都営
+<span class="ex">2300000</span> メトロ
+東西線
+<span class="ex">1660000</span> 都営
+<span class="ex">2790000</span> メトロ
+銀座線
+<span class="ex">2500000</span> 都営
+<span class="ex">4160000</span> メトロ
+副都心線
+<span class="ex">985000</span> 都営
+<span class="ex">1710000</span> メトロ
+丸の内線
+<span class="ex">2140000</span> 都営
+<span class="ex">2990000</span> メトロ
+日比谷線
+<span class="ex">2030000</span> 都営
+<span class="ex">2570000</span> メトロ
+千代田線
+<span class="ex">2300000</span> 都営
+<span class="ex">3000000</span> メトロ
+有楽町線
+<span class="ex">2060000</span> 都営
+<span class="ex">2780000</span> メトロ</code></pre></div>
+<p>ぜーんぶメトロ!</p>
+<h3 id="ニコニコ動画-1">ニコニコ動画</h3>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="kw">for</span> <span class="ex">L</span> in <span class="kw">`</span><span class="fu">cat</span> toe-list<span class="kw">`;do</span> <span class="bu">echo</span> <span class="va">$L</span><span class="kw">;</span> <span class="ex">./nico.sh</span> <span class="va">$L</span><span class="kw">;</span> <span class="kw">done</span>
+三田線
+<span class="ex">187</span> 都営
+<span class="ex">32</span> メトロ
+大江戸線
+<span class="ex">179</span> 都営
+<span class="ex">43</span> メトロ
+浅草線
+<span class="ex">341</span> 都営
+<span class="ex">25</span> メトロ
+新宿線
+<span class="ex">235</span> 都営
+<span class="ex">43</span> メトロ
+
+   <span class="kw">for</span> <span class="ex">L</span> in <span class="kw">`</span><span class="fu">cat</span> metro-list<span class="kw">`;do</span> <span class="bu">echo</span> <span class="va">$L</span><span class="kw">;</span> <span class="ex">./nico.sh</span> <span class="va">$L</span><span class="kw">;</span> <span class="kw">done</span>
+南北線
+<span class="ex">32</span> 都営
+<span class="ex">110</span> メトロ
+東西線
+<span class="ex">36</span> 都営
+<span class="ex">480</span> メトロ
+銀座線
+<span class="ex">26</span> 都営
+<span class="ex">232</span> メトロ
+副都心線
+<span class="ex">18</span> 都営
+<span class="ex">445</span> メトロ
+丸の内線
+<span class="ex">20</span> 都営
+<span class="ex">169</span> メトロ
+日比谷線
+<span class="ex">28</span> 都営
+<span class="ex">139</span> メトロ
+千代田線
+<span class="ex">21</span> 都営
+<span class="ex">327</span> メトロ
+有楽町線
+<span class="ex">13</span> 都営
+<span class="ex">205</span> メトロ</code></pre></div>
+<h2 id="まとめ">まとめ</h2>
+<p>Google はさすが (1件だけ誤り).</p>
+<p>Bing は全然ダメ. そもそも性質が違うのかなって感じ. 「都営」、「メトロ」単体で検索したときのヒット数で正規化するとかしたら良い. 一応、都営の数字をほんのちょっと増やす (1.1倍にするとか) と多少、正解率が上がるが、それでも所詮って感じ.</p>
+<p>ニコニコは全部正解した. 検索対象の性質としてノイズと成るものが少ないんだろう. 他が一つのwebページなのに対して、謂わばそれの要約になっている （タイトル＋説明文＋タグ） からだ、とか主張できそう.</p>
+<p><strong>マヂレスすると都営の路線は4本しかないんだから覚えろって話</strong></p>
+<h2 id="その他">その他</h2>
+<p>二値分類なので、都営でもメトロでもない線について調べてもしょうがない. ところで、でも、違う呼び名というものがある. 例えば「東京メトロ副都心線」は「地下鉄13号線」である. 「都営浅草線」は「地下鉄1号線」である. 都営かメトロに関係なく勝手にナンバリングされてる. 「都営地下鉄大江戸線」という路線名が決まるまでに「東京環状線」という名称が候補にあった.</p>
+<pre><code>   cat phantom-list
+地下鉄1号線
+地下鉄13号線
+東京環状線</code></pre>
+<p>順に、都営、メトロ、都営 が正しい.</p>
+<pre><code>   for L in `cat phantom-list`;do echo $L; ./google.sh $L; done
+地下鉄1号線
+131000 都営
+372000 メトロ
+地下鉄13号線
+273000 都営
+409000 メトロ
+東京環状線
+469000 都営
+508000 メトロ
+
+   for L in `cat phantom-list`;do echo $L; ./bing.sh $L; done
+地下鉄1号線
+2450000 都営
+5990000 メトロ
+地下鉄13号線
+2790000 都営
+16700000 メトロ
+東京環状線
+265000 都営
+1080000 メトロ
+
+   for L in `cat phantom-list`;do echo $L; ./nico.sh $L; done
+地下鉄1号線
+0 都営
+1 メトロ
+地下鉄13号線
+0 都営
+0 メトロ
+東京環状線
+1 都営
+0 メトロ</code></pre>
+<p>全滅.</p>
+</body>
+</html>

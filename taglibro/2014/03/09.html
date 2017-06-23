@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sun Mar 9 18:32:02 JST 2014</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Sun Mar 9 18:32:02 JST 2014</h1>
+</header>
+<p>関数型プログラミング言語Haskell Part25<br />
+http://toro.2ch.net/test/read.cgi/tech/1393313450/</p>
+<blockquote>
+<p>11 名前：デフォルトの名無しさん [sage]： 2014/02/25(火) 20:10:26.83<br />
+Data.Function.fix 関数は何のためにあるのでしょうか。<br />
+どう使うのでしょうか。</p>
+<p>fix :: (a -&gt; a) -&gt; a<br />
+fix f = let x = f x in x</p>
+<p>12 名前：デフォルトの名無しさん [sage]： 2014/02/25(火) 20:17:14.12<br />
+再帰する関数を、それ自身には再帰的定義を含まずに定義するために使う。<br />
+Yコンビネータのようなもの（ないし、そのもの）。</p>
+<p>13 名前：デフォルトの名無しさん []： 2014/02/25(火) 20:17:35.74<br />
+&gt;&gt;11<br />
+ループを書きたいけどletやwhereを書くのすら面倒なときに使う<br />
+flip fix (0::Int) $ i -&gt; do<br />
+　putStrLn $ &quot;total &quot; ++ show i<br />
+　n &lt;- readLn<br />
+　if n &gt;= 0 then loop $! n + i else return ()</p>
+</blockquote>
+<p>上のを改めて引用</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">flip fix (<span class="dv">0</span><span class="ot">::</span><span class="dt">Int</span>) <span class="fu">$</span> \loop i <span class="ot">-&gt;</span> <span class="kw">do</span>
+  putStrLn <span class="fu">$</span> <span class="st">&quot;total &quot;</span> <span class="fu">++</span> show i
+  n <span class="ot">&lt;-</span> readLn
+  <span class="kw">if</span> n <span class="fu">&gt;=</span> <span class="dv">0</span> <span class="kw">then</span> loop <span class="fu">$!</span> n <span class="fu">+</span> i <span class="kw">else</span> return () </code></pre></div>
+<p><code>\loop i -&gt; do {}</code> を <code>loop i = do {}</code> と何故か勘違いして脳内型推論にずっと失敗してた。</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">fix ::</span> (a <span class="ot">-&gt;</span> a) <span class="ot">-&gt;</span> a</code></pre></div>
+<p>flip は第一引数に <code>a -&gt; b -&gt; c</code> が欲しいから fix の a を <code>b -&gt; c</code> だと解釈することで (HaskellやMLで、第n引数なんて言っていいのかしら)</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">flip<span class="ot"> fix ::</span> b <span class="ot">-&gt;</span> ((b <span class="ot">-&gt;</span> c) <span class="ot">-&gt;</span> b <span class="ot">-&gt;</span> c) <span class="ot">-&gt;</span> c</code></pre></div>
+<p>更に</p>
+<pre><code>b = Int
+c = IO ()</code></pre>
+<p><code>\loop i</code> の <code>loop</code> という名前は、ただ処理の続行の表現にしか 使ってなくて、<code>call/cc</code>による大域脱出みたいで、すごくカッコイイ。</p>
+<hr />
+<p><code>\loop i</code>以下をバラして書くと</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Data.Function</span>
+
+<span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span>
+  fix loop <span class="dv">10</span>
+  <span class="kw">where</span>
+<span class="ot">    loop ::</span> (<span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()) <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()
+    loop cont i <span class="fu">=</span>
+      <span class="kw">if</span> i <span class="fu">&lt;</span> <span class="dv">0</span> <span class="kw">then</span> return ()
+               <span class="kw">else</span> <span class="kw">do</span> { print i; cont (i<span class="fu">-</span><span class="dv">1</span>) }</code></pre></div>
+<p>多少分かりやすいと思うけど、 ここまで書くならSchemeでもおなじみのただの再帰で</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Data.Function</span>
+
+<span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span>
+  loop <span class="dv">10</span>
+  <span class="kw">where</span>
+<span class="ot">    loop ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()
+    loop i <span class="fu">=</span>
+      <span class="kw">if</span> i <span class="fu">&lt;</span> <span class="dv">0</span> <span class="kw">then</span> return ()
+               <span class="kw">else</span> <span class="kw">do</span> { print i; loop (i<span class="fu">-</span><span class="dv">1</span>) }</code></pre></div>
+<p>でいいやんな。。。 というか、型に恨み重ねるくらいなら、無理に<code>loop</code>使いたくない。</p>
+<p>それよりも、中では一体どんな計算順序を行ってるのか 一回くらい教えてもらわないと気持ち悪い。</p>
+<hr />
+<p>Haskellでのループの表現は Data.Function.fix 以外にも</p>
+<p>http://hackage.haskell.org/package/base-4.6.0.1/docs/Control-Arrow.html</p>
+<blockquote>
+<p>class Arrow a =&gt; ArrowLoop a where<br />
+loop :: a (b,d) (c,d) -&gt; a b c</p>
+<p>instance ArrowLoop (-&gt;) where<br />
+loop f b = let (c,d) = f (b,d) in c</p>
+</blockquote>
+<p>使えるかな。</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">loop f b <span class="fu">=</span> fst <span class="fu">$</span> f (b, d)
+         <span class="fu">=</span> fst <span class="fu">$</span> f (b, snd <span class="fu">$</span> f (b, d))
+         <span class="fu">=</span> fst <span class="fu">$</span> f (b, snd <span class="fu">$</span> f (b, snd <span class="fu">$</span> f (b, d)))</code></pre></div>
+<p>d の必要がある回数+1 だけ、fが呼ばれる。</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">f <span class="fu">=</span> \(b, d) <span class="ot">-&gt;</span> (b<span class="fu">-</span><span class="dv">1</span>, d)
+loop f <span class="dv">3</span> <span class="fu">=</span> fst <span class="fu">$</span> f (<span class="dv">3</span>, d)
+         <span class="fu">=</span> fst <span class="fu">$</span> (<span class="dv">2</span>, d)
+         <span class="fu">=</span> <span class="dv">2</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">flip loop <span class="dv">2</span> <span class="fu">$</span> \(b, d) <span class="ot">-&gt;</span>
+    (d b, \x <span class="ot">-&gt;</span> <span class="kw">if</span> x <span class="fu">&lt;</span> <span class="dv">0</span> <span class="kw">then</span> [] <span class="kw">else</span> x <span class="fu">:</span> d (x<span class="fu">-</span><span class="dv">1</span>))
+
+<span class="fu">=</span> loop f <span class="dv">2</span>
+    <span class="kw">where</span>
+      f (b, d) <span class="fu">=</span> (d b, \x <span class="ot">-&gt;</span> <span class="kw">if</span> x <span class="fu">&lt;</span> <span class="dv">0</span> <span class="kw">then</span> [] <span class="kw">else</span> x <span class="fu">:</span> d (x<span class="fu">-</span><span class="dv">1</span>))
+
+<span class="fu">=</span> <span class="kw">let</span> (c,d) <span class="fu">=</span> (d <span class="dv">2</span>, \x <span class="ot">-&gt;</span> <span class="kw">if</span> <span class="fu">..</span> <span class="kw">then</span> [] <span class="kw">else</span> x <span class="fu">:</span> d (x<span class="fu">-</span><span class="dv">1</span>))
+    <span class="kw">in</span> c
+
+<span class="fu">=</span> d <span class="dv">2</span> <span class="kw">where</span> d <span class="fu">=</span> \x <span class="ot">-&gt;</span> <span class="kw">if</span> <span class="fu">..</span> <span class="kw">then</span> [] <span class="kw">else</span> x <span class="fu">:</span> d (x<span class="fu">-</span><span class="dv">1</span>)
+<span class="fu">=</span> <span class="dv">2</span> <span class="fu">:</span> d <span class="dv">1</span> <span class="kw">where</span> d <span class="fu">=</span> <span class="fu">...</span>
+<span class="fu">=</span> <span class="dv">2</span> <span class="fu">:</span> (<span class="dv">1</span> <span class="fu">:</span> d <span class="dv">0</span>) <span class="kw">where</span> d <span class="fu">=</span> <span class="fu">...</span>
+<span class="fu">=</span> <span class="dv">2</span> <span class="fu">:</span> (<span class="dv">1</span> <span class="fu">:</span> <span class="dv">0</span> <span class="fu">:</span> d (<span class="fu">-</span><span class="dv">1</span>)) <span class="kw">where</span>
+<span class="fu">=</span> [<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">0</span>]
+
+<span class="co">-- fuck the lazy</span></code></pre></div>
+<p>ぜってぇこんなの使っても幸せにはならない</p>
+</body>
+</html>

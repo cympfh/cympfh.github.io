@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Mon Feb 29 19:15:45 JST 2016</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Mon Feb 29 19:15:45 JST 2016</h1>
+</header>
+<h2 id="twitter-ファボったツイートに付与された画像を保存してファボを消す">Twitter, ファボったツイートに付与された画像を保存してファボを消す</h2>
+<p>bashで書く</p>
+<p>UNIX哲学的に次のように分離する</p>
+<ol type="1">
+<li>ファボ一覧の取得</li>
+<li>ツイートが持つ画像のurlの取得</li>
+<li>ファボの削除</li>
+</ol>
+<h3 id="ファボ一覧の取得">ファボ一覧の取得</h3>
+<p>用いるAPIは <a href="https://dev.twitter.com/rest/reference/get/favorites/list">GET favorites/list | Twitter Developers</a>. このAPIは例によって、最近 n 個だけを取得して (デフォルトでn=20で最大200)、 <code>max_id</code> を指定することで、あるところより古い、最近 n 個を取得するという形になってる.</p>
+<p>我々の目的としては、全て取得したい. 従って、全部取得できるまでAPIをループで叩き続けなければいけない. 次のように書けば、多少は奇麗に書けると思う.</p>
+<p>一番最初は</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="va">OPT=</span><span class="st">&quot;&quot;</span>
+<span class="ex">twurl</span> /1.1/favorites/list.json?count=200<span class="va">${OPT}</span></code></pre></div>
+<p>とする. APIはツイートを表現するオブジェクトを成分とする配列を返す. 配列の最後の成分の <code>.id</code> から1だけ引き算したのを、<code>max_id</code> として利用することで、 その続きを取得するのに使える.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="va">OPT=</span><span class="st">&quot;&amp;max_id=</span><span class="va">$((</span> 最後のやつ.id - 1 <span class="va">))</span><span class="st">&quot;</span>
+<span class="ex">twurl</span> /1.1/favorites/list.json?count=200<span class="va">${OPT}</span></code></pre></div>
+<p>これをループする. 終了条件は返ってきた配列が空であること.</p>
+<p>ファボ一覧というけれど、何を取得すれば最小限度十分な情報か.</p>
+<blockquote>
+<p>前から疑問であったが、 <code>max_id</code> に指定したid以下のものが来るはずであるが、偶に少し大きいのも来る. あとで重複を取り除く必要が在る.</p>
+</blockquote>
+<p><a href="https://dev.twitter.com/rest/reference/get/statuses/show/%3Aid">GET statuses/show/:id | Twitter Developers</a> っていうAPIを見ると、 ツイートの id (<code>https://twitter.com/:screen_name/status/:id</code> の <code>:id</code>) だけあれば十分らしい.</p>
+<p>また、APIは <code>.id</code> と、それをただ文字列にしただけの <code>.id_str</code> も一緒に渡すのが通例になっている. <code>.id</code> は整数であるが <code>int32</code> では到底収まりきらず、<code>jq</code> は実は死ぬ.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="bu">echo</span> <span class="st">&#39;{&quot;x&quot;:111111111111111111111}&#39;</span> <span class="kw">|</span> <span class="ex">jq</span> .
+<span class="kw">{</span>
+  <span class="st">&quot;x&quot;</span>: <span class="ex">111111111111111110000</span>
+<span class="kw">}</span></code></pre></div>
+<p>また bash (zsh) の <code>$(( ))</code> による整数演算も同様の理由から信用できない. そのために、 <code>.id_str</code> があるわけで、これをソースにして信用できるプロセッサーのみを用いる.</p>
+<p>文字列を吐くとき、ダブルクオーテーションで括ろうとするので <code>-r</code> オプションでそれを抑止する.</p>
+<p>というわけでこんなスクリプトを <code>tw-fav-list</code> としておく.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co">#!/bin/bash</span>
+
+<span class="va">TMP=$(</span><span class="fu">mktemp</span><span class="va">)</span>
+<span class="va">OPT=</span><span class="st">&quot;&quot;</span>
+
+<span class="kw">while</span> <span class="bu">:</span><span class="kw">;</span> <span class="kw">do</span>
+    <span class="va">URL=</span><span class="st">&quot;/1.1/favorites/list.json?count=200</span><span class="va">${OPT}</span><span class="st">&quot;</span>
+    <span class="ex">twurl</span> <span class="st">&quot;</span><span class="va">$URL</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="ex">jq</span> -r <span class="st">&#39;.[].id_str&#39;</span> <span class="op">&gt;</span> <span class="st">&quot;</span><span class="va">$TMP</span><span class="st">&quot;</span>
+    <span class="kw">if</span><span class="bu"> [</span> <span class="ot">!</span> <span class="ot">-s</span> <span class="st">&quot;</span><span class="va">$TMP</span><span class="st">&quot;</span><span class="bu"> ]</span>; <span class="kw">then</span>
+        <span class="bu">break</span>
+    <span class="kw">else</span>
+        <span class="va">NEXTID=$(</span><span class="ex">ruby</span> -e <span class="st">&quot;p </span><span class="va">$(</span><span class="fu">tail</span> -1 <span class="st">&quot;</span><span class="va">$TMP</span><span class="st">&quot;</span><span class="va">)</span><span class="st"> - 1&quot;</span><span class="va">)</span>
+        <span class="va">OPT=</span><span class="st">&quot;&amp;max_id=</span><span class="va">${NEXTID}</span><span class="st">&quot;</span>
+        <span class="fu">cat</span> <span class="st">&quot;</span><span class="va">$TMP</span><span class="st">&quot;</span>
+    <span class="kw">fi</span>
+<span class="kw">done</span> <span class="kw">|</span> <span class="fu">sort</span> -ur
+
+<span class="fu">rm</span> <span class="st">&quot;</span><span class="va">$TMP</span><span class="st">&quot;</span></code></pre></div>
+<h3 id="ツイートが持つ画像のurlの取得">ツイートが持つ画像のurlの取得</h3>
+<p><code>https://twitter.com/ily_ilyhk2/status/703932013493915648</code> が持つ画像を取得してみる. 1ツイートが複数枚持つことがある.</p>
+<p>取り出すべきっぽい文字列はそこにあるので、</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">twurl</span> /1.1/statuses/show.json?id=703932013493915648 <span class="kw">|</span> <span class="ex">jq</span> -r <span class="st">&#39;.extended_entities.media[].media_url_https&#39;</span></code></pre></div>
+<p>とすればよい.</p>
+<p>次を <code>tw-media-list</code> としよう.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co">#!/bin/bash</span>
+
+<span class="ex">twurl</span> /1.1/statuses/show.json?id=<span class="va">$1</span> <span class="kw">|</span> <span class="ex">jq</span> -r <span class="st">&#39;.extended_entities.media[].media_url_https&#39;</span></code></pre></div>
+<h3 id="ファボの削除">ファボの削除</h3>
+<p>これはただAPIを叩くだけ.</p>
+<p>次を <code>tw-unfav</code> とする.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co">#!/bin/bash</span>
+
+<span class="ex">twurl</span> -X POST /1.1/favorites/destroy.json -d id=<span class="va">$1</span></code></pre></div>
+<h3 id="まとめ">まとめ</h3>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">tw-fav-list</span> <span class="op">&gt;</span> fav-list.txt
+<span class="kw">for</span> <span class="fu">id</span> in <span class="kw">`</span><span class="fu">cat</span> fav-list.txt<span class="kw">`;</span> <span class="kw">do</span> <span class="ex">tw-media-list</span> <span class="va">$id</span><span class="kw">;</span> <span class="kw">done</span> <span class="kw">|</span> <span class="fu">tee</span> media-list.txt
+<span class="fu">wget</span> -i media-list.txt
+<span class="kw">for</span> <span class="fu">id</span> in <span class="kw">`</span><span class="fu">cat</span> fav-list.txt<span class="kw">`;</span> <span class="kw">do</span> <span class="ex">tw-unfav</span> <span class="va">$id</span><span class="kw">;</span> <span class="kw">done</span></code></pre></div>
+<p>動画 (webp形式だったかな) は、これだとサムネイル (jpg) が得られるぽい</p>
+</body>
+</html>

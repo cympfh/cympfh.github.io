@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>ICWSM - A Great Catchy Name: Semi-Supervised Recognition of Sarcastic Sentences in Online Product Reviews</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/
+    </a>
+</h1>
+<header>
+<h1 class="title">ICWSM - A Great Catchy Name: Semi-Supervised Recognition of Sarcastic Sentences in Online Product Reviews</h1>
+</header>
+<ul>
+<li>
+url: <a href=http://www.aaai.org/ocs/index.php/ICWSM/ICWSM10/paper/viewFile/1495/1851/>http://www.aaai.org/ocs/index.php/ICWSM/ICWSM10/paper/viewFile/1495/1851/</a>
+</li>
+<li>
+tags: <span class="tag"><a href=index.html#自然言語処理>自然言語処理</a></span> <span class="tag"><a href=index.html#極性分析>極性分析</a></span> <span class="tag"><a href=index.html#半教師アリ学習>半教師アリ学習</a></span>
+</li>
+</ul>
+<p>66000 Amazon reviewから77%の精度と、83.1%の再現率で、 文に対して皮肉かどうか判定した。</p>
+<p>教師ありっぽい。 文に対して1~5の皮肉さが付与されている。</p>
+<blockquote>
+<p>sarcasm : the activity of saying or writing the opposite of what you mean, or of speaking in a way intended to make someone else feel stupid or show them that you are angry (Macmillan English Dictionary 2007)</p>
+</blockquote>
+<p>reviewのタイトル。</p>
+<ol style="list-style-type: decimal">
+<li>Love The Cover (book)</li>
+<li>Where am I? (GPS device)</li>
+<li>Trees died for this book? (book)</li>
+<li>Be sure to save your purchase receipt (smart phone)</li>
+<li>Are these iPods designed to die after two years? (music player)</li>
+<li>Great for insomniacs (book)</li>
+<li>All the features you want. Too bad they don't work! (smart phone)</li>
+<li>Great idea, now try again with a real product development team (e-reader)</li>
+<li>Defective by design (music player)</li>
+</ol>
+<p>1は真っ当にカバーを褒めてる。 9は真っ当にけなしてる。 6がいかにも皮肉だ。(不眠症によく効く)</p>
+<h2 id="手法">手法</h2>
+<h3 id="事前処理">事前処理</h3>
+<p>ドメインに特化したくない、一般的でありたいので、 製品の名前は [product] に置き換える。 同様に [company] [title] [author] と。 HTMLタグを除く。当たり前だ。</p>
+<h3 id="pattern-based-features">Pattern-based features</h3>
+<p>パターン集合をがんばって作る (Davidov and Rappoport 2006) 数100程度のパターンを得る。</p>
+<p>e.g.</p>
+<ul>
+<li>[company] CW does not CW much</li>
+<li>does not CW much abount CW CW or</li>
+<li>not CW much</li>
+<li>about CW CW or CW CW.</li>
+</ul>
+<p>選別をする。 一般的すぎても特化すぎてもだめ。</p>
+<ol style="list-style-type: decimal">
+<li>一文にしかマッチしないパターンを除去</li>
+<li>皮肉さが1にも5のにもマッチするのは一般的すぎるから除去</li>
+</ol>
+<p>マッチの度合い</p>
+<pre><code>let alpha = 0.1
+    gamma = 0.1</code></pre>
+<ul>
+<li>完全にマッチ = 1</li>
+<li>部分的にマッチ = alpha</li>
+<li>不完全なマッチ = gamma * n / N</li>
+<li>マッチしない = 0</li>
+</ul>
+<p>パターンの方に語をいくつか挿入したらマッチ -&gt; 部分的 パターン中の変数CWをいくつか消したらマッチ -&gt; 不完全なマッチ パターンの語数をN、マッチできた語数をnとする。</p>
+<blockquote>
+<p>Garmin apparently does not care much abount product quality of customer support.</p>
+</blockquote>
+<ul>
+<li>[title] CW does not -&gt; 1</li>
+<li>[title] CW not -&gt; alpha (doesを挿入)</li>
+<li>[title] CW CW does not -&gt; gamma * 4 / 5 (片方のCWを消した)</li>
+</ul>
+<h3 id="punctuation-based-features">Punctuation-based features</h3>
+<ol style="list-style-type: decimal">
+<li>語数</li>
+<li>!の数</li>
+<li>?の数</li>
+<li>クオートの数</li>
+<li>大文字から始ってる語の数</li>
+<li>全部大文字になってる語の数</li>
+</ol>
+<h2 id="data">Data</h2>
+<p>66000 reviews for 120 products をAmazonからあつめた。</p>
+<p>productの種類はできるだけ様々に</p>
+<ul>
+<li>book</li>
+<li>music player</li>
+<li>digital camera</li>
+<li>camcoder</li>
+<li>GPS</li>
+<li>e-readers</li>
+<li>game consoles</li>
+<li>mobile phone</li>
+</ul>
+<h3 id="seed">Seed</h3>
+<p>まず、手でアノテートする。 positive (sarcasm) 80 reviews and negative 80 reviews. 合わせて 505 文。</p>
+<h3 id="拡張">拡張</h3>
+<p>で、あとは出来るだけ簡単に増やそう。 データを増やすのに 皮肉文の語でYahoo!検索してデータを増やした。 最初の6単語でやふーでぐぐる。 皮肉のレベルは元のと同じ</p>
+<p>&quot;This book was really good-until page 2&quot;</p>
+<p>から、 &quot;this book was really good until&quot; で検索。</p>
+<p>&quot;Gee, I thought this book was really good until I found out the author didnt get into Bread Loaf&quot; を見つけた。</p>
+<p>このように拡張して、 471 positive と、 5020 negative を集めた。</p>
+<h2 id="分類">分類</h2>
+<p>kNNっぽいことをする。 連続的な値についてのクラスタリングなので、 もうちっと、 平均を取るようなことをする。</p>
+<h2 id="baseline">baseline</h2>
+<p>star が低くて positive sentiment のやつ。</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

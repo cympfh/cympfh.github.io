@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Mon Dec 7 14:27:37 JST 2015</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Mon Dec 7 14:27:37 JST 2015</h1>
+</header>
+<h2 id="seccon-2015---crypt-100-unzip">SECCON 2015 - Crypt 100 Unzip</h2>
+<p>既知平文攻撃 (Known-plaintext attack; KPA)</p>
+<p><a href="https://en.wikipedia.org/wiki/Known-plaintext_attack" class="uri">https://en.wikipedia.org/wiki/Known-plaintext_attack</a></p>
+<p>これを使えるツールは pkcrack (他にある?)</p>
+<h3 id="設定">設定</h3>
+<pre><code>   echo &#39;{SECRET FLAG 141306}&#39; &gt; flag
+   wget -O backnumber09.txt http://2014.seccon.jp/mailmagazine/backnumber09.txt
+   zip -e flag.zip flag backnumber09.txt
+Enter password:
+Verify password:
+  adding: flag (stored 0%)
+  adding: backnumber09.txt (deflated 60%)
+   rm flag
+   ls
+backnumber09.txt  flag.zip</code></pre>
+<h3 id="解読">解読</h3>
+<pre><code>   zip a.zip backnumber09.txt
+   ls
+a.zip  backnumber09.txt  flag.zip
+   ~/Tools/pkcrack-1.2.2/src/pkcrack -C 100.zip -c backnumber09.txt -P a.zip -p backnumber09.txt -d b.zip
+   unzip b.zip
+Archive:  b.zip
+extracting: flag
+replace backnumber09.txt? [y]es, [n]o, [A]ll, [N]one, [r]ename: A
+inflating: backnumber09.txt
+   cat flag
+{SECRET FLAG 141306}</code></pre>
+<h2 id="seccon-2015---web-100">SECCON 2015 - Web 100</h2>
+<p>URL <code>http://entryform.pwn.seccon.jp/register.cgi</code> だけが渡される. メールと名前だけの入力欄があるフォーム. <code>http://entryform.pwn.seccon.jp/</code> にアクセスすると、 <code>/SECRETS</code> <code>register.cgi_bak</code> の存在が確認できて、 特に <code>register.cgi_bak</code> では <code>register.cgi</code> のソースコードらしきものがテキストとして読める.</p>
+<p>中を見ると Perl で、 大事そうなとこだけ引用すると、</p>
+<div class="sourceCode"><pre class="sourceCode perl"><code class="sourceCode perl"><span class="kw">if</span>(<span class="dt">$q</span>-&gt;<span class="dt">param</span>(<span class="kw">&quot;</span><span class="st">mail</span><span class="kw">&quot;</span>) <span class="kw">ne</span> <span class="kw">&#39;&#39;</span> &amp;&amp; <span class="dt">$q</span>-&gt;<span class="dt">param</span>(<span class="kw">&quot;</span><span class="st">name</span><span class="kw">&quot;</span>) <span class="kw">ne</span> <span class="kw">&#39;&#39;</span>) {
+  <span class="fu">open</span>(SH, <span class="kw">&quot;</span><span class="st">|/usr/sbin/sendmail -bm &#39;</span><span class="kw">&quot;</span>.<span class="dt">$q</span>-&gt;<span class="dt">param</span>(<span class="kw">&quot;</span><span class="st">mail</span><span class="kw">&quot;</span>).<span class="kw">&quot;</span><span class="st">&#39;</span><span class="kw">&quot;</span>);
+  <span class="fu">print</span> SH <span class="kw">&quot;</span><span class="st">From: keigo.yamazaki\@seccon.jp</span><span class="ch">\n</span><span class="st">To: </span><span class="kw">&quot;</span>.<span class="dt">$q</span>-&gt;<span class="dt">param</span>(<span class="kw">&quot;</span><span class="st">mail</span><span class="kw">&quot;</span>).<span class="kw">&quot;</span><span class="ch">\n</span><span class="st">Subject: from SECCON Entry Form</span><span class="ch">\n\n</span><span class="st">We received your entry.</span><span class="ch">\n</span><span class="kw">&quot;</span>;
+  <span class="fu">close</span>(SH);</code></pre></div>
+<p>Perl 知らないけどたぶん、 <code>&quot;/usr/sbin/sendmail -bm '&quot;.$q-&gt;param(&quot;mail&quot;).&quot;'&quot;</code> という文字列を bash に投げるのだと思われる. というわけで、mail に <code>' ; echo Hi ; '</code> みたいな文字列を渡すことで OSコマンドインジェクションができる.</p>
+<p>あと、</p>
+<div class="sourceCode"><pre class="sourceCode perl"><code class="sourceCode perl">  <span class="fu">open</span>(LOG, <span class="kw">&quot;</span><span class="st">&gt;&gt;log</span><span class="kw">&quot;</span>); <span class="co">### &lt;-- FLAG HERE ###</span>
+  <span class="fu">flock</span>(LOG, <span class="dv">2</span>);</code></pre></div>
+<p>とあるので、作業ディレクトリ直下の <code>log</code> というファイルを覗いてみれば良いらしい.</p>
+<p>肝心の <code>sendmail</code> が正しく動いてなかったり、 ファイルを新しく作ることが許可されてなかったりするので、 直接ファイルの中身を我々に見る手立てが無い. というわけでブラインドする.</p>
+<p>tailed さんが自動化スクリプトを書いてくれたのでそれを使った. 賢いことに、 n文字目が何であるか? の命題 (真なら即座に結果が返って来て、さもなくば <code>sleep 10</code> する) と、その逆の命題を同時に投げ、 先に返って来た命題が正しいと判定することでさっさとできる.</p>
+<p>base64 に変換してからその判定に掛けるように変更して、<code>ls</code> の結果がわかるようになる</p>
+<div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby">chars.each {|c|
+  check(<span class="st">&quot;test $(ls -a . | base64 -w0 | cut -b </span><span class="ot">#{</span>i<span class="ot">}</span><span class="st">) = </span><span class="ot">#{</span>c<span class="ot">}</span><span class="st">&quot;</span>)
+}</code></pre></div>
+<p>で、 <code>SECRETS/backdoor123.php</code> なるファイルの存在を確認した. ブラウザでこれにアクセスして、エスパーして <code>cat ../log</code> したらできた (直接さっきのスクリプトで cat してもよかったのでは).</p>
+<h1 id="mon-dec-7-172823-jst-2015">Mon Dec 7 17:28:23 JST 2015</h1>
+<h2 id="テキスト分類---4chan-板当て">テキスト分類 - 4chan 板当て</h2>
+<h3 id="gist">gist</h3>
+<p><a href="https://gist.github.com/cympfh/d0e98d5d9006b03c0873" class="uri">https://gist.github.com/cympfh/d0e98d5d9006b03c0873</a></p>
+<h3 id="やったこと">やったこと</h3>
+<p>使う板は /a/, /b/, /c/, /g/ (/a/nime, random, /c/ute, Technology) の4つ. /a/ と /c/ とは似てるのでこれが難しそう. /b/, /g/ の区別は簡単そう.</p>
+<p>各板から10個、トップのスレッドを拾ってくる. ただし一番初めはようこそ的なスレッドなのでそれは除外. 拾ってくるスクリプトは以下ように. webスクレイピング部分はせっかくRubyで書いてるけどbashワンライナーしてる.</p>
+<p>事前処理として、HTML実態参照をアンエスケープ (<code>CGI.unescapeHTML</code>) してるのと、<code>&gt;&gt;[レス番号]</code> みたいなのだけ削ってる. URLも削りたかったけど、<code>http</code> をみんな書いてないので、諦めた. スラッシュやドットをいくつか以上含んである程度の長さを持つトークン? とかすれば良さ気だけど.</p>
+<div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="kw">#!/usr/bin/ruby</span>
+<span class="co"># filter.rb</span>
+
+<span class="co"># channel</span>
+c = <span class="dt">ARGV</span>[<span class="dv">0</span>]
+exit <span class="dv">0</span> <span class="kw">if</span> <span class="kw">not</span> c
+
+<span class="co"># thread catalog</span>
+data = <span class="st">`curl -s http://boards.4chan.org/</span><span class="ot">#{</span>c<span class="ot">}</span><span class="st">/catalog | sed &#39;s/^.*var catalog = //g&#39; | sed &#39;s/var style_group =.*$//g&#39; | sed &#39;s/; *$//g&#39;`</span>
+
+<span class="co"># collection of thread info</span>
+threads = []
+
+require <span class="st">&#39;json&#39;</span>
+<span class="dt">JSON</span>.load(data)[<span class="st">&#39;threads&#39;</span>].each { |id, obj|
+  sem_url = obj[<span class="st">&#39;semantic_url&#39;</span>]
+  threads &lt;&lt; [c, id, sem_url]
+}
+
+<span class="co"># num of thread for use</span>
+M=<span class="dv">10</span>
+
+require <span class="st">&#39;cgi&#39;</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="dv">1</span> .. M
+  c, id, sem_url = threads[i]
+  url = <span class="st">&quot;http://boards.4chan.org/</span><span class="ot">#{</span>c<span class="ot">}</span><span class="st">/thread/</span><span class="ot">#{</span>id<span class="ot">}</span><span class="st">/</span><span class="ot">#{</span>sem_url<span class="ot">}</span><span class="st">&quot;</span>
+  text = <span class="st">`curl -s </span><span class="ot">#{</span>url<span class="ot">}</span><span class="st"> | grep -Po &#39;&lt;blockquote .*?&lt;\/blockquote&gt;&#39; | sed &#39;s/&lt;[^&gt;]*&gt;//g&#39; | sed &#39;s/&amp;gt;&amp;gt;[0-9]*//g&#39;`</span>
+  text = <span class="dt">CGI</span>.unescapeHTML text
+
+  f = open(<span class="st">&quot;threads/</span><span class="ot">#{</span>c<span class="ot">}</span><span class="st">.</span><span class="ot">#{</span>sem_url<span class="ot">}</span><span class="st">&quot;</span>, <span class="st">&quot;w&quot;</span>, <span class="bn">0666</span>)
+  text.split(<span class="st">&quot;\n&quot;</span>).each { |line|
+    f.puts line <span class="kw">if</span> line != <span class="st">&#39;&#39;</span>
+  }
+  f.close
+<span class="kw">end</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="fu">mkdir</span> threads
+   <span class="ex">ruby</span> filter.rb a
+   <span class="ex">ruby</span> filter.rb b
+   <span class="ex">ruby</span> filter.rb c
+   <span class="ex">ruby</span> filter.rb g
+   <span class="fu">ls</span> threads
+
+<span class="ex">a.can-anyone-refute-this-argument</span>
+<span class="ex">a.dont-forget-youre-always-super-special</span>
+<span class="ex">a.holy-shit-what-a-slut</span>
+<span class="ex">a.it-had-to-be-asked-the-question-of-the-year</span>
+<span class="ex">a.love-live</span>
+<span class="ex">a.one-piece-is-the-most-overrated-piece-of-fiction</span>
+<span class="ex">a.owarimonogatari</span>
+<span class="ex">a.ss-secret-santa</span>
+<span class="ex">a.the-next-episode-of-opm-will-be-one-of-the-best</span>
+<span class="ex">a.tokyo-ghoulre</span>
+<span class="ex">b.ask-whatever-you-faggots-want-to-know</span>
+<span class="ex">b.bro-whats-the-best-porn-search-engine</span>
+<span class="ex">b.dubs-decides-what-i-say-next</span>
+<span class="ex">b.hey-b-i-need-your-advice-im-a-hs-senior-18-yo</span>
+<span class="ex">b.hey-b-i-suspect-that-my-shitskin-neighbor-is</span>
+<span class="ex">b.hey-guys-im-a-new-pc-gamer-and-i-currently-have</span>
+<span class="ex">b.how-does-b-like-my-gf</span>
+<span class="ex">b.making-this-thread-in-case-the-other-one-404</span>
+<span class="ex">b.no-porn-webm-lets-get-that-going</span>
+<span class="ex">b.trips-names-the-ak</span>
+<span class="ex">c.elizabeth-bathory-thread</span>
+<span class="ex">c.holo-thread</span>
+<span class="ex">c.if-i-may-request-a-thread-for-our-brave-prince</span>
+<span class="ex">c.illyasviel-von-einzbern</span>
+<span class="ex">c.kurumi-tokisaki</span>
+<span class="ex">c.nakano-azusa-thread-11</span>
+<span class="ex">c.noumi-kudryavka</span>
+<span class="ex">c.tamamo-thread-pt-2</span>
+<span class="ex">c.tohsaka-rin</span>
+<span class="ex">c.tsf-thread</span>
+<span class="ex">g.always-time-for-love</span>
+<span class="ex">g.dpt-daily-programming-thread</span>
+<span class="ex">g.javascript-project-accepting-any-nonmalicious</span>
+<span class="ex">g.mdt-question-how-do-i-make-this-shit-autologon-to</span>
+<span class="ex">g.phase-4-has-arrived-sunday-comes-to-a-close-those</span>
+<span class="ex">g.roots-edition</span>
+<span class="ex">g.seamonkey-waterfox-or-pale-moon</span>
+<span class="ex">g.software-that-g-recommends-but-is-actually</span>
+<span class="ex">g.whats-the-earliest-age-youd-give-a-smartphone-to</span>
+<span class="ex">g.why-shouldnt-i-start-learning-swift-and-using-it</span></code></pre></div>
+<p>こんな感じ. 適当に、各板10スレッドの内7を訓練に持ってきて残りをテストにしよう.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="fu">mkdir</span> train
+   <span class="fu">mkdir</span> test
+   \<span class="fu">ls</span> -1 a.* <span class="kw">|</span> <span class="fu">head</span> -7 <span class="kw">|</span> <span class="fu">sed</span> <span class="st">&#39;s/.*/mv &amp; train/g&#39;</span> <span class="kw">|</span> <span class="fu">sh</span>
+   \<span class="fu">ls</span> -1 b.* <span class="kw">|</span> <span class="fu">head</span> -7 <span class="kw">|</span> <span class="fu">sed</span> <span class="st">&#39;s/.*/mv &amp; train/g&#39;</span> <span class="kw">|</span> <span class="fu">sh</span>
+   \<span class="fu">ls</span> -1 c.* <span class="kw">|</span> <span class="fu">head</span> -7 <span class="kw">|</span> <span class="fu">sed</span> <span class="st">&#39;s/.*/mv &amp; train/g&#39;</span> <span class="kw">|</span> <span class="fu">sh</span>
+   \<span class="fu">ls</span> -1 g.* <span class="kw">|</span> <span class="fu">head</span> -7 <span class="kw">|</span> <span class="fu">sed</span> <span class="st">&#39;s/.*/mv &amp; train/g&#39;</span> <span class="kw">|</span> <span class="fu">sh</span>
+   <span class="fu">mv</span> a.* b.* c.* g.* test</code></pre></div>
+<h2 id="tf-idf">tf-idf</h2>
+<p>https://github.com/cympfh/nlptk を使う</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">cat</span> a.* <span class="op">&gt;</span> all
+<span class="bu">echo</span> --- <span class="op">&gt;&gt;</span> all
+<span class="fu">cat</span> b.* <span class="op">&gt;&gt;</span> all
+<span class="bu">echo</span> --- <span class="op">&gt;&gt;</span> all
+<span class="fu">cat</span> c.* <span class="op">&gt;&gt;</span> all
+<span class="bu">echo</span> --- <span class="op">&gt;&gt;</span> all
+<span class="fu">cat</span> g.* <span class="op">&gt;&gt;</span> all
+
+   <span class="ex">~/Tools/nlptk/tfidf/tfidf.exe</span> -N 30 all
+<span class="ex">0.00284506</span> Luffy
+<span class="ex">0.00236193</span> Piece
+<span class="ex">0.00198617</span> Gaen
+<span class="ex">0.00171777</span> characters
+<span class="ex">0.00142253</span> One
+<span class="ex">0.00134201</span> Oda
+<span class="ex">0.00131448</span> she
+<span class="ex">0.00128833</span> vs
+<span class="ex">0.00128833</span> Araragi
+<span class="ex">0.00118097</span> Doffy
+<span class="ex">0.00107361</span> power
+<span class="ex">0.00107361</span> arc
+<span class="ex">0.000912566</span> Saitama
+<span class="ex">0.000912566</span> Kanbaru
+<span class="ex">0.000751525</span> punches
+<span class="ex">0.000751525</span> Tatsumaki
+<span class="ex">0.000751525</span> Law
+<span class="ex">0.000751525</span> Fubuki
+<span class="ex">0.000751525</span> Doflamingo
+<span class="ex">0.000712939</span> than
+<span class="ex">0.000697844</span> spoiler
+<span class="ex">0.000697844</span> shonen
+<span class="ex">0.000697844</span> series
+<span class="ex">0.000697844</span> opinions
+<span class="ex">0.000697844</span> arguing
+<span class="ex">0.000697844</span> Luffy<span class="st">&#39;s</span>
+<span class="st">0.000644164 plot</span>
+<span class="st">0.000644164 ideological</span>
+<span class="st">0.000644164 boring</span>
+<span class="st">0.000644164 Ougi</span>
+<span class="st">---</span>
+<span class="st">0.00299236 roll</span>
+<span class="st">0.00265988 Roll</span>
+<span class="st">0.00216115 980</span>
+<span class="st">0.00199491 cpu</span>
+<span class="st">0.00199491 970</span>
+<span class="st">0.00132994 upgrade</span>
+<span class="st">0.00132994 nudes</span>
+<span class="st">0.00132994 grades</span>
+<span class="st">0.00132994 dubs</span>
+<span class="st">0.00132994 colleges</span>
+<span class="st">0.00132994 /b/</span>
+<span class="st">0.0011637 amd</span>
+<span class="st">0.0011637 Quality:</span>
+<span class="st">0.0011637 GPA</span>
+<span class="st">0.000997454 nigger</span>
+<span class="st">0.000997454 mobo</span>
+<span class="st">0.000997454 max</span>
+<span class="st">0.000997454 im</span>
+<span class="st">0.000997454 community</span>
+<span class="st">0.000997454 WINRAR</span>
+<span class="st">0.000997454 GTX</span>
+<span class="st">0.000997454 $350</span>
+<span class="st">0.000965955 fuck</span>
+<span class="st">0.000831211 settings</span>
+<span class="st">0.000831211 i5</span>
+<span class="st">0.000831211 gpa</span>
+<span class="st">0.000831211 experience</span>
+<span class="st">0.000831211 card</span>
+<span class="st">0.000831211 Rolling</span>
+<span class="st">0.000831211 Hey</span>
+<span class="st">---</span>
+<span class="st">0.00328117 finished</span>
+<span class="st">0.00218745 folder</span>
+<span class="st">0.00218745 art</span>
+<span class="st">0.00164059 reading</span>
+<span class="st">0.00164059 kurumi</span>
+<span class="st">0.00164059 cute!</span>
+<span class="st">0.00164059 OST</span>
+<span class="st">0.00164059 Kurumi</span>
+<span class="st">0.00164059 Illya</span>
+<span class="st">0.00164059 Bump</span>
+<span class="st">0.00164059 Azunyan</span>
+<span class="st">0.00136715 manga</span>
+<span class="st">0.00109372 visual</span>
+<span class="st">0.00109372 too,</span>
+<span class="st">0.00109372 tease,</span>
+<span class="st">0.00109372 senjou</span>
+<span class="st">0.00109372 reality</span>
+<span class="st">0.00109372 punpun</span>
+<span class="st">0.00109372 pun</span>
+<span class="st">0.00109372 onee-san</span>
+<span class="st">0.00109372 koe</span>
+<span class="st">0.00109372 jsut</span>
+<span class="st">0.00109372 finish</span>
+<span class="st">0.00109372 doki</span>
+<span class="st">0.00109372 dedicated</span>
+<span class="st">0.00109372 cuddle</span>
+<span class="st">0.00109372 bend</span>
+<span class="st">0.00109372 adorable</span>
+<span class="st">0.00109372 Yet</span>
+<span class="st">0.00109372 Umineko</span>
+<span class="st">---</span>
+<span class="st">0.00806341 0</span>
+<span class="st">0.00367447 index</span>
+<span class="st">0.00326619 trackers</span>
+<span class="st">0.00244964 tracker</span>
+<span class="st">0.00224551 values</span>
+<span class="st">0.00224551 row</span>
+<span class="st">0.00183723 pixel</span>
+<span class="st">0.00183723 invite</span>
+<span class="st">0.0016331 PTP</span>
+<span class="st">0.00142896 private</span>
+<span class="st">0.00142896 pixels</span>
+<span class="st">0.00142896 latest</span>
+<span class="st">0.00142896 color</span>
+<span class="st">0.00122482 lines</span>
+<span class="st">0.00122482 const</span>
+<span class="st">0.00122482 channel</span>
+<span class="st">0.00122482 AB</span>
+<span class="st">0.00102068 wtf</span>
+<span class="st">0.00102068 utorrent</span>
+<span class="st">0.00102068 rows</span>
+<span class="st">0.00102068 pizza</span>
+<span class="st">0.00102068 colors</span>
+<span class="st">0.00102068 R</span>
+<span class="st">0.00102068 BTN</span>
+<span class="st">0.00102068 AHD</span>
+<span class="st">0.000918616 y</span>
+<span class="st">0.000889607 use</span>
+<span class="st">0.000816548 value</span>
+<span class="st">0.000816548 then?</span>
+<span class="st">0.000816548 tested</span></code></pre></div>
+<p>順に、/a/ /b/ /c/ /g/ の特徴的な (tf-idf 的な意味で) トップ30の語を列挙したが、、、 分かるような分からないような感じだ.</p>
+<p>1-5gram で取ってみたほうが人間に取ってわかりよい:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="ex">~/Tools/nlptk/ngram/ngram.exe</span> -n 1,2,3,4,5 --tfidf --limit 5.0 all</code></pre></div>
+<p><a href="https://gist.github.com/cympfh/d0e98d5d9006b03c0873#file-4chan-ngram" class="uri">https://gist.github.com/cympfh/d0e98d5d9006b03c0873#file-4chan-ngram</a></p>
+<p>comma とか引用の <code>&gt;</code> が正しくトークナイズされてないので整形する. ルールベースで簡単にトークナイズして品詞タグ付けしてくれる <a href="https://www.npmjs.com/package/pos">npm/pos</a> を使う. 書いたスクリプトは以下:</p>
+<div class="sourceCode"><pre class="sourceCode coffee"><code class="sourceCode coffee"><span class="co">#!/usr/bin/env coffee</span>
+<span class="co"># pos.coffee</span>
+
+pos <span class="kw">=</span> require <span class="st">&#39;pos&#39;</span>
+words <span class="kw">=</span> <span class="kw">new</span> <span class="dt">pos.Lexer</span><span class="kw">().</span>lex<span class="kw">(</span>line<span class="kw">)</span>
+tagger <span class="kw">=</span> <span class="kw">new</span> <span class="dt">pos.Tagger</span><span class="kw">()</span>
+
+fs <span class="kw">=</span> require <span class="st">&#39;fs&#39;</span>
+text <span class="kw">=</span> fs<span class="kw">.</span>readFileSync<span class="kw">(</span>process<span class="kw">.</span>argv<span class="kw">[</span><span class="dv">2</span><span class="kw">],</span> <span class="st">&#39;utf-8&#39;</span><span class="kw">).</span>trim<span class="kw">()</span>
+lines <span class="kw">=</span> text<span class="kw">.</span>split <span class="st">&#39;\n&#39;</span>
+
+<span class="kw">for</span> line <span class="kw">in</span> lines
+  tagged <span class="kw">=</span> tagger<span class="kw">.</span>tag words
+  <span class="ot">console</span><span class="kw">.</span>log tagged<span class="kw">.</span>map<span class="kw">(</span><span class="fu">([w, p]) -&gt;</span> <span class="st">&quot;</span><span class="ch">#{</span>w<span class="ch">}</span><span class="st">_</span><span class="ch">#{</span>p<span class="ch">}</span><span class="st">&quot;</span><span class="kw">).</span>join <span class="st">&#39; &#39;</span></code></pre></div>
+<p>これを使って</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="fu">ls</span>
+<span class="ex">pos.coffee</span>  test  train
+   \<span class="fu">ls</span> -1 train/* <span class="kw">|</span> <span class="fu">sed</span> <span class="st">&#39;s/.*/coffee pos.coffee &amp; &gt; &amp;.pos/g&#39;</span> <span class="kw">|</span> <span class="fu">sh</span>
+   \<span class="fu">ls</span> -1 test/* <span class="kw">|</span> <span class="fu">sed</span> <span class="st">&#39;s/.*/coffee pos.coffee &amp; &gt; &amp;.pos/g&#39;</span> <span class="kw">|</span> <span class="fu">sh</span>
+
+   <span class="fu">head</span> train/c.nakano-azusa-thread-11.pos
+<span class="ex">Azunyan_NN</span> Thread_VB :_: Do_VBP it_PRP for_IN Her_PRP$ Edition<span class="op">&gt;</span>Previous_NNS thread_NN :_: <span class="op">&gt;</span>Previouser_NN threads_NNS :_: http_NN :_: /_NN /_NN pastebin_NN ._. com_NN /_NN CEmjik_NN 3_CD T<span class="op">&gt;</span>Useful_NN links_NNS :_: http_NN :_: /_NN /_NN pastebin_NN ._. com_NN /_NN 7_CD v_NN 605_CD WML_NN
+<span class="ex">Posting_VBG</span> even_RB more_JJR birthday_NN art_NN that_IN was_VBD uploaded_VBN late_JJ on_IN Pixiv_NN
+<span class="ex">what_WP</span> what_WP look_VB at_IN all_DT the_DT azunyan_NN merch_NN dedicated_VBN to_TO her_PRP$ 11_CD /_NN 11_CD birthday_NN !_! http_NN :_: /_NN /_NN www_NN ._. animenewsnetwork_NN ._. com_NN /_NN interest_NN /_NN 2015_CD -_: 11_CD -_: 11_CD /_NN pocky-day-shares-celebration-with-k-on-azu-nyan-idol-reina-tanaka_NN /_NN .95254_CD
+<span class="ex">I_NN</span> really_RB really_RB really_RB want_VBP that_IN wallscroll_NN ._.
+<span class="ex">Full_JJ</span> version_NN of_IN the_DT OP_NNP image_NN by_IN the_DT way_NN :_: https_NNS :_: /_NN /_NN jii_NN ._. moe_NN /_NN VJyi_NN 7_CD XJQl_NN ._. png_NN
+<span class="ex">Many_JJ</span> thanks_NNS !_!
+<span class="op">&gt;</span><span class="ex">tfw_NN</span> no_DT Azunyan_NN maido_NN
+<span class="ex">Yet_RB</span> more_JJR birthday_NN art_NN
+<span class="ex">Updated_VBN</span> folder_NN of_IN 2015_CD birthday_NN art_NN :_: https_NNS :_: /_NN /_NN mega_JJ ._. nz_NN /_NN <span class="co">#_# F_NN !_! f_NN 9_CD IXwT_NN 4_CD L_NNP !_! t_NN 48_CD Ijs-_NN 8_CD mp_NN 99_CD paCLgSMYPQ_NN</span>
+<span class="op">&gt;</span><span class="ex">two_NN</span> adorable_JJ nekos_NNS</code></pre></div>
+<p>こんな感じ. 引用符である <code>&gt;</code> が相変わらずだ.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="fu">cat</span> a.*.pos <span class="op">&gt;</span> all
+   <span class="bu">echo</span> --- <span class="op">&gt;&gt;</span> all
+   <span class="fu">cat</span> b.*.pos <span class="op">&gt;&gt;</span> all
+   <span class="bu">echo</span> --- <span class="op">&gt;&gt;</span> all
+   <span class="fu">cat</span> c.*.pos <span class="op">&gt;&gt;</span> all
+   <span class="bu">echo</span> --- <span class="op">&gt;&gt;</span> all
+   <span class="fu">cat</span> g.*.pos <span class="op">&gt;&gt;</span> all
+   <span class="ex">~/Tools/nlptk/ngram/ngram.exe</span> -n 1,2,3,4,5 --tfidf --limit 5.0 all</code></pre></div>
+<p><a href="https://gist.github.com/cympfh/d0e98d5d9006b03c0873#file-4chan-rev2-ngram" class="uri">https://gist.github.com/cympfh/d0e98d5d9006b03c0873#file-4chan-rev2-ngram</a></p>
+<p><code>--limit 5.0</code> はわざと数を制限するためにつけたけど素性として使う場合は、 単にこれでソートして大きいのから使えばいいだけ.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="ex">~/Tools/nlptk/ngram/ngram.exe</span> -n 1,2,3,4,5 --tfidf --limit 0.0 all <span class="kw">|</span> <span class="fu">grep</span> -v <span class="st">&#39;^---$&#39;</span> <span class="kw">|</span> <span class="fu">sort</span> -gr -k2,2 <span class="op">&gt;</span> ngrams
+   <span class="fu">head</span> ngrams
+<span class="ex">1</span> 101.199 Luffy_NN
+<span class="ex">1</span> 66.5421 Piece_NN
+<span class="ex">1</span> 65.1558 Gaen_NN
+<span class="ex">1</span> 65.1558 characters_NNS
+<span class="ex">2</span> 58.2244 One_NN Piece_NN
+<span class="ex">1</span> 49.9066 Araragi_NN
+<span class="ex">1</span> 45.7477 Doffy_NN
+<span class="ex">1</span> 42.9751 Saitama_NNP
+<span class="ex">1</span> 42.9751 Oda_NN
+<span class="ex">1</span> 42.9751 arc_NN
+   <span class="fu">tail</span> ngrams
+<span class="ex">1</span> 0 :_:
+<span class="ex">1</span> 0 <span class="kw">;</span><span class="ex">_</span><span class="kw">;</span>
+<span class="ex">1</span> 0 ,_,
+<span class="ex">1</span> 0 ,_,
+<span class="ex">1</span> 0 ,_,
+<span class="ex">1</span> 0 ,_,
+<span class="ex">1</span> 0 -_:
+<span class="ex">1</span> 0 -_:
+<span class="ex">1</span> 0 -_:
+<span class="ex">1</span> 0 -_:</code></pre></div>
+<p>Piece って何かと思ったらワンピースのことか.</p>
+<h2 id="クラス付き正則パターン">クラス付き正則パターン</h2>
+<p>https://github.com/cympfh/alice を使う</p>
+<pre><code>   cat a.*.pos &gt; all.a
+   cat b.*.pos &gt; all.b
+   cat c.*.pos &gt; all.c
+   cat g.*.pos &gt; all.g
+   ~/Tools/nlptk/ngram/ngram.exe -n 1,2,3,4,5 --tfidf --limit 5.0 all &gt; out
+   54:23 ~/test/4chan/threads/train
+   cat &lt;&lt; EOM &gt; split.awk
+BEGIN {
+  a[0]=&quot;a&quot;
+  a[1]=&quot;b&quot;
+  a[2]=&quot;c&quot;
+  a[3]=&quot;g&quot;
+  i=0
+}
+{
+  if ($0 == &quot;---&quot;) i++;
+  else print $0 &gt;&gt; &quot;ngram.&quot; a[i]
+}
+EOM
+   awk -f split.awk out
+   cat ngram.a | grep -v &#39;__BOS__&#39; | grep -v &#39;__EOS__&#39; | sort -gr -k 2,2 | head -n 100  | sed &#39;s/^[^ ]* [^ ]* //g&#39;  | sed &#39;s/.*/&lt;&gt; &amp; &lt;&gt;\n&amp; &lt;&gt;/g&#39; | sed &#39;s/_/\//g&#39; &gt; seed.a</code></pre>
+<p>/c/ のためのパターンをテキスト <code>all.c</code> とシード <code>ngrcm.c</code> を用いて作る.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="fu">head</span> all.c
+<span class="ex">I_NN</span> feel_VB like_IN crap_NN ._. How_WRB about_IN a_DT thread_NN of_IN my_PRP$ waifu_NN ?_.
+<span class="op">&gt;</span><span class="ex">dat_NN</span> cute_JJ nose_NN
+<span class="ex">I_NN</span> wish_VBP I_NN had_VBD more_JJR to_TO post_NN but_CC my_PRP$ good_JJ folder_NN is_VBZ in_IN an_DT HDD_NN and_CC I_NN <span class="st">&#39;_&quot; m_NN on_IN my_PRP$ crappy_NN phone_NN ._.</span>
+<span class="st">&gt;that_NN feel_VB your_PRP$ phone_NN dies_VBZ from_IN posting_VBG waifuJust_NN can_MD &#39;</span>_<span class="st">&quot; t_NN handle_VB her_PRP$ perfectness_NN I_NN guess_VBP ._.</span>
+<span class="st">Well_UH this_DT is_VBZ it_PRP from_IN me_PRP for_IN now_RB ._. Thanks_NNS for_IN the_DT contributions_NNS anon_NN ._.</span>
+<span class="st">She_PRP looks_VBZ like_IN Yui_NN from_IN Angel_NNP Beats_VBZ ._. I_NN approve_VB ._.</span>
+<span class="st">The_DT &quot;</span>_<span class="st">&quot; Blood_NNP Countess_NN &quot;</span>_<span class="st">&quot; who_WP was_VBD charged_VBN with_IN murdering_VBG 80_CD young_JJ girls_NNS and_CC bathing_VBG in_IN their_PRP$ blood_NN ?_. And_CC also_RB had_VBD a_DT quest_NN in_IN Diablo_NN 2_CD ?_. Do_VBP you_PRP know_VB what_WP you_PRP &#39;_&quot;</span> ve_NN gotten_VBN yourself_PRP into_IN ,_, OP_NNP ?_.
+<span class="ex">LIZ_NN</span> THREAD_NN
+<span class="ex">Bathory_NN</span> the_DT pioneering_VBG black_JJ metal_JJ band_NN ?_.
+<span class="ex">Yes_UH</span> I_NN love_NN her_PRP$ ._. Can_MD <span class="st">&#39;_&quot; t_NN be_VB helped_VBD she_PRP chose_VBD my_PRP$ shitty_NN self_NN ,_, but_CC I_NN &#39;</span>_<span class="st">&quot; m_NN loving_JJ it_PRP ._. Koi_NN no_DT beato_NN !_! Dragon_NNP sukeiru~_NN</span>
+
+<span class="st">   head seed.a</span>
+<span class="st">&lt;&gt; Luffy/NN &lt;&gt;</span>
+<span class="st">Luffy/NN &lt;&gt;</span>
+<span class="st">&lt;&gt; Piece/NN &lt;&gt;</span>
+<span class="st">Piece/NN &lt;&gt;</span>
+<span class="st">&lt;&gt; Gaen/NN &lt;&gt;</span>
+<span class="st">Gaen/NN &lt;&gt;</span>
+<span class="st">&lt;&gt; characters/NNS &lt;&gt;</span>
+<span class="st">characters/NNS &lt;&gt;</span>
+<span class="st">&lt;&gt; One/NN Piece/NN &lt;&gt;</span>
+<span class="st">One/NN Piece/NN &lt;&gt;</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="kw">for</span> <span class="ex">c</span> in a b c g<span class="kw">;</span> <span class="kw">do</span> <span class="ex">~/study/alice/alice</span> --book-only --frequency -P 30 -B 10 -S seed.<span class="va">$c</span> all.<span class="va">$c</span> <span class="op">&gt;</span> out.<span class="va">$c</span><span class="kw">;</span> <span class="kw">done</span>
+   <span class="ex">scan</span> from text:all.a ... finished.
+   <span class="va">time=</span>1118
+   <span class="ex">scan</span> from text:all.b ... finished.
+   <span class="va">time=</span>555
+   <span class="ex">scan</span> from text:all.c ... finished.
+   <span class="va">time=</span>226
+   <span class="ex">scan</span> from text:all.g ... finished.
+   <span class="va">time=</span>382</code></pre></div>
+<p><code>-B</code> (book size) を小さくすると得られるパターンが具体的になることが期待できるけど、 分類の素性に使うには適度に一般化されたパターンであるべきなので、ある程度大きくないといけない.</p>
+<ol type="1">
+<li><a href="https://gist.github.com/cympfh/d0e98d5d9006b03c0873#file-pattern-a-txt">patterns for /a/</a></li>
+<li><a href="https://gist.github.com/cympfh/d0e98d5d9006b03c0873#file-pattern-b-txt">patterns for /b/</a></li>
+<li><a href="https://gist.github.com/cympfh/d0e98d5d9006b03c0873#file-pattern-c-txt">patterns for /c/</a></li>
+<li><a href="https://gist.github.com/cympfh/d0e98d5d9006b03c0873#file-pattern-g-txt">patterns for /g/</a></li>
+</ol>
+<p>期待することとして、 シードなしのパターンはただの構文を捉え (What I do ... ? だとか I want to VB だとか)、 シードで内容語 (content words) を用意することで、それに構文を当てはめる.</p>
+<h2 id="todo">TODO</h2>
+<p>ここまでは素性を作るまでで、 ここから何かしらの学習器に食わせるフォーマットに直してっていう作業があるんだけど、 飽きたので（疲れたので）.</p>
+</body>
+</html>

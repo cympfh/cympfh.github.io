@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Exploring Twitter Hashtags</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/
+    </a>
+</h1>
+<header>
+<h1 class="title">Exploring Twitter Hashtags</h1>
+</header>
+<ul>
+<li>
+url: <a href=http://arxiv.org/pdf/1111.6553.pdf>http://arxiv.org/pdf/1111.6553.pdf</a>
+</li>
+<li>
+tags: <span class="tag"><a href=index.html#自然言語処理>自然言語処理</a></span> <span class="tag"><a href=index.html#twitter>twitter</a></span>
+</li>
+</ul>
+<p>2011年の論文なので古い部類だろうなあ</p>
+<h2 id="intro">Intro</h2>
+<p>SMS language</p>
+<ol style="list-style-type: decimal">
+<li>abbreviation (e.g. &quot;4 u&quot;)</li>
+<li>emoticons (e.g. &quot;:)&quot; )</li>
+</ol>
+<p>Twitter-specific forms</p>
+<ol style="list-style-type: decimal">
+<li>@-replies</li>
+<li>hashtags</li>
+</ol>
+<h3 id="例.">例.</h3>
+<blockquote>
+<p><span class="citation">@merazindagi</span> Thanks! Will make more 4 U. Live performances in #boulder area will be on http://saxy.us :) #jazz #rock #funk #dance #livemusic</p>
+</blockquote>
+<p>ハッシュタグはそのツイートが何の目的であるかを教えてくれるが、 複数のツイートが沢山含まれるようなものは一体何なのかわからなくなる. そこで、co-occurrences に基づく辞書の構築を目指す. 分類器の構成を考え，最終的にアプリケーションを作成する</p>
+<h2 id="dataset">Dataset</h2>
+<p>29,000,000 tweets から、 ノイズの少ない 310,000 種類のハッシュタグは取り除いて、 85,503 種類を使った</p>
+<h2 id="hashtag-co-occurrences">Hashtag co-occurrences</h2>
+<h3 id="dictionary">Dictionary</h3>
+<p>共起 where ハッシュタグ <span class="math inline">\(h_i, h_j\)</span>:</p>
+<p><span class="math display">\[C(h_i, h_j) = \# \{ t : t \in \text{tweets},
+\text{has}(t, h_i)
+\land
+\text{has}(t, h_J) \}\]</span></p>
+<p>辞書:</p>
+<p><span class="math display">\[D(h) = \{ (h&#39;, C(h, h&#39;)) : h \ne h&#39; \}\]</span></p>
+<h3 id="similarity-of-two-hashtags">Similarity of two hashtags</h3>
+<p><span class="math display">\[\text{synnet}: h \mapsto s\]</span></p>
+<p>類似度関数: <span class="math display">\[S(h_1, h_2) = \max \{ S&#39;(s_1, s_2 :
+s_1 \in \text{synset}(h_1),
+s_2 \in \text{synset}(h_2) \}\]</span></p>
+<p><span class="math inline">\(S&#39;\)</span> として、</p>
+<p>PythonのnltkのWordNet module には、 次の2種類が組み込まれている</p>
+<ol style="list-style-type: decimal">
+<li>path distance similarity</li>
+<li>Wu-Palmer distance</li>
+</ol>
+<p>それぞれ、Spath, Swp と呼ぼう．</p>
+<p>どちらも数字が大きいほうが近いことを意味する</p>
+<p>実際の値を見てみると、</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">Spath</th>
+<th align="left">Swp</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">共起ハッシュタグ</td>
+<td align="left">0.12</td>
+<td align="left">0.37</td>
+</tr>
+<tr class="even">
+<td align="left">Twitter (ランダムな2単語)</td>
+<td align="left">0.07</td>
+<td align="left">0.26</td>
+</tr>
+</tbody>
+</table>
+<p>って感じ．</p>
+<h2 id="clustered-graph">Clustered graph</h2>
+<p>共起してたら枝をつなぐ，でグラフがかけた． 連結成分というクラスらリングもできる．</p>
+<h2 id="classification">Classification</h2>
+<h3 id="hashtag-classes">hashtag classes</h3>
+<p>まあハッシュタグは何かそのものを表しているわけだけど，</p>
+<ol style="list-style-type: decimal">
+<li><code>organization</code></li>
+<li><code>geolocation</code></li>
+<li><code>person</code></li>
+<li><code>event</code>: particular interest on Twitter</li>
+<li><code>category</code>: all other hashtags</li>
+</ol>
+<p>に分類するのを第一目標とする</p>
+<p>例として，</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">class</th>
+<th align="left">example hashtags</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">organization</td>
+<td align="left">#google, #nokia</td>
+</tr>
+<tr class="even">
+<td align="left">geolocation</td>
+<td align="left">#europe, #uk, #graz</td>
+</tr>
+<tr class="odd">
+<td align="left">person</td>
+<td align="left">#obama, #madonna</td>
+</tr>
+<tr class="even">
+<td align="left">event</td>
+<td align="left">#christmas, #election</td>
+</tr>
+<tr class="odd">
+<td align="left">category</td>
+<td align="left">#fun, #math, #ipod</td>
+</tr>
+</tbody>
+</table>
+<h2 id="学習">学習</h2>
+<p>最大エントロピー (MaxEnt) で学習する</p>
+<h3 id="features">features</h3>
+<ul>
+<li>ハッシュタグ周りの window size 5 の words</li>
+<li>その words の shape</li>
+<li>その words の POS tag</li>
+<li>その words の geographical background knowledge</li>
+<li>ハッシュタグの shape</li>
+<li>ハッシュタグがツイートの最初であるか</li>
+</ul>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>MeCab using UTF-8</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+</head>
+<body>
+<header>
+<h1 class="title">MeCab using UTF-8</h1>
+</header>
+<h2 id="インストール">インストール</h2>
+<h3 id="ダウンロード">ダウンロード</h3>
+<p>必要なファイルは MeCab 本体と、そのための辞書<br />辞書には複数種類があるが、IPA辞書が推奨とされている</p>
+<p>いつのまにか Google Code から Github にプロジェクトが移ってて、</p>
+<ul>
+<li>https://github.com/taku910/mecab.git</li>
+</ul>
+<p>に、mecab本体も辞書も入ってる.</p>
+<p>以下、LinuxまたはMacOSで文字コードをUTF-8に縛って利用するためのビルド方法を書く</p>
+<h3 id="cd-mecab-0.996">cd mecab-0.996</h3>
+<p>MeCab本体のインストールを行う</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">./configure</span> --with-charset=utf8 --enable-utf8-only
+<span class="kw">sudo</span> make install</code></pre>
+<p>辞書がない状態でmecabを起動するとこうなる</p>
+<pre class="sourceCode bash"><code class="sourceCode bash">   <span class="kw">mecab</span>
+<span class="kw">param.cpp</span>(69) [<span class="kw">ifs</span>] no such file or directory: /usr/local/lib/mecab/dic/ipadic/dicrc</code></pre>
+<h3 id="cd-mecab-ipadic-2.7.0-20070801">cd mecab-ipadic-2.7.0-20070801</h3>
+<p>次にMeCabで利用するための辞書をインストールする</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">./configure</span> --with-charset=utf8
+<span class="kw">sudo</span> ldconfig
+<span class="kw">sudo</span> make install</code></pre>
+<h3 id="試用">試用</h3>
+<p>正しくインストールされたか見てみる</p>
+<pre class="sourceCode bash"><code class="sourceCode bash">   mecab <span class="kw">&lt;&lt;</span>&lt; <span class="st">&quot;こんにちわ&quot;</span>
+こんにちわ      感動詞,*,*,*,*,*,こんにちわ,コンニチワ,コンニチワ
+<span class="kw">EOS</span></code></pre>
+<p>「こんにちわ」は感動詞である。</p>
+<h2 id="オプション">オプション</h2>
+<p><code>man</code> 見ても何かあんまり説明が足りてない<br />次のサイトは大変詳細に書いてある</p>
+<ul>
+<li><a href="http://www.mwsoft.jp/programming/munou/mecab_command.html">MeCabのコマンドライン引数一覧とその実行例 | mwSoft</a></li>
+</ul>
+<h3 id="制約付き解析-部分解析--p">制約付き解析 (部分解析) <code>-p</code></h3>
+<p>辞書に無いが品詞が既知な語や、 その箇所のそこだけこの品詞にしたい。</p>
+<pre><code>mecab &lt;&lt;&lt; &#39;彼女はせもぽぬめと呼ばれている&#39;
+彼女    名詞,代名詞,一般,*,*,*,彼女,カノジョ,カノジョ
+は      助詞,係助詞,*,*,*,*,は,ハ,ワ
+せ      動詞,自立,*,*,サ変・スル,未然ヌ接続,する,セ,セ
+も      助詞,係助詞,*,*,*,*,も,モ,モ
+ぽ      形容詞,接尾,*,*,形容詞・アウオ段,ガル接続,ぽい,ポ,ポ
+ぬ      助動詞,*,*,*,特殊・ヌ,基本形,ぬ,ヌ,ヌ
+め      名詞,一般,*,*,*,*,め,メ,メ
+と      助詞,格助詞,引用,*,*,*,と,ト,ト
+呼ば    動詞,自立,*,*,五段・バ行,未然形,呼ぶ,ヨバ,ヨバ
+れ      動詞,接尾,*,*,一段,連用形,れる,レ,レ
+て      助詞,接続助詞,*,*,*,*,て,テ,テ
+いる    動詞,非自立,*,*,一段,基本形,いる,イル,イル
+EOS</code></pre>
+<p>入力を <code>s/せもぽぬめ/\nせもぽぬめ\t名詞\n/g</code> と置換する</p>
+<pre><code>mecab -p &lt;&lt;&lt; &#39;彼女は
+せもぽぬめ      名詞
+と呼ばれている
+EOS&#39;
+彼女    名詞,代名詞,一般,*,*,*,彼女,カノジョ,カノジョ
+は      助詞,係助詞,*,*,*,*,は,ハ,ワ
+せもぽぬめ      名詞,一般,*,*,*,*,*
+と      助詞,格助詞,引用,*,*,*,と,ト,ト
+呼ば    動詞,自立,*,*,五段・バ行,未然形,呼ぶ,ヨバ,ヨバ
+れ      動詞,接尾,*,*,一段,連用形,れる,レ,レ
+て      助詞,接続助詞,*,*,*,*,て,テ,テ
+いる    動詞,非自立,*,*,一段,基本形,いる,イル,イル
+EOS</code></pre>
+<p>ただし、「せもぽぬめ」が複数出現する場合<br />そのたびに上のような置換を行わなければならない</p>
+<p>小さい辞書をテキストで書いて追加に使うにはどうしたら良いんだろう？</p>
+</body>
+</html>

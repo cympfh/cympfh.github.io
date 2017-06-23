@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Feb 22 2014</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Feb 22 2014</h1>
+</header>
+<h2 id="libsvm-の-memo">libsvm の memo</h2>
+<p>参考; http://www.okuma.nuee.nagoya-u.ac.jp/~sakaguti/wiki/index.php?LibSVM</p>
+<h2 id="テストデータ形式">テストデータ形式</h2>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// test.js</span>
+<span class="cf">for</span> (<span class="kw">var</span> i<span class="op">=</span><span class="dv">0</span><span class="op">;</span> i<span class="op">&lt;</span><span class="dv">100</span><span class="op">;</span> <span class="op">++</span>i) <span class="op">{</span>
+  <span class="kw">var</span> a <span class="op">=</span> []<span class="op">;</span>
+  <span class="cf">for</span> (<span class="kw">var</span> j<span class="op">=</span><span class="dv">0</span><span class="op">;</span> j<span class="op">&lt;</span><span class="dv">10</span><span class="op">;</span> <span class="op">++</span>j) <span class="op">{</span>
+    a[j] <span class="op">=</span> <span class="va">Math</span>.<span class="at">round</span>(<span class="va">Math</span>.<span class="at">random</span>())<span class="op">;</span>
+  <span class="op">}</span>
+  <span class="kw">var</span> t <span class="op">=</span> <span class="va">a</span>.<span class="at">reduce</span>(<span class="kw">function</span>(x<span class="op">,</span>y)<span class="op">{</span><span class="cf">return</span> x<span class="op">+</span>y<span class="op">}</span>)<span class="op">;</span>
+  t <span class="op">=</span> t <span class="op">&gt;</span> <span class="dv">5</span> <span class="op">?</span> <span class="dv">1</span> : <span class="op">-</span><span class="dv">1</span><span class="op">;</span>
+  <span class="va">console</span>.<span class="at">log</span>(<span class="st">&quot;%d %s&quot;</span>
+           <span class="op">,</span> t
+           <span class="op">,</span> <span class="va">a</span>.<span class="at">map</span>(<span class="kw">function</span>(x<span class="op">,</span> i)<span class="op">{</span><span class="cf">return</span> i<span class="op">+</span><span class="st">&#39;:&#39;</span><span class="op">+</span>x<span class="op">}</span>).<span class="at">join</span>(<span class="st">&#39; &#39;</span>))<span class="op">;</span>
+<span class="op">}</span></code></pre></div>
+<blockquote>
+<p>間違ってた。番号を0スタートにしてるけど、 よく見るとWARNINGが出てて、1スタートにしてほしかったらしい。 ちゃんと動いてるっぽいからまぁいっか</p>
+</blockquote>
+<h2 id="分割公差検証">分割公差検証</h2>
+<pre><code>-t 0 : 線形
+-v 10 : 10分割</code></pre>
+<pre class="make"><code>do:
+    svm-train -t 0 -v 10 train.scale
+
+train.scale: test.js
+    node test.js &gt; train
+    svm-scale train &gt; train.scale</code></pre>
+<p>-t で設定した kernel type によって出力が２つあるみたいだけど、</p>
+<pre class="output"><code>(前略)
+*.*
+optimization finished, #iter = 102
+nu = 0.112336
+obj = -5.000000, rho = 0.999823
+nSV = 38, nBSV = 1
+Total nSV = 38
+Cross Validation Accuracy = 100%</code></pre>
+<h2 id="入力を倍">入力を倍</h2>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="cf">for</span> (<span class="kw">var</span> i<span class="op">=</span><span class="dv">0</span><span class="op">;</span> i<span class="op">&lt;</span><span class="dv">100</span><span class="op">;</span> <span class="op">++</span>i) <span class="op">{</span>
+  <span class="kw">var</span> a <span class="op">=</span> []<span class="op">;</span>
+  <span class="cf">for</span> (<span class="kw">var</span> j<span class="op">=</span><span class="dv">0</span><span class="op">;</span> j<span class="op">&lt;</span><span class="dv">20</span><span class="op">;</span> <span class="op">++</span>j) <span class="op">{</span>
+    a[j] <span class="op">=</span> <span class="va">Math</span>.<span class="at">round</span>(<span class="va">Math</span>.<span class="at">random</span>())<span class="op">;</span>
+  <span class="op">}</span>
+  <span class="kw">var</span> t <span class="op">=</span> <span class="va">a</span>.<span class="at">reduce</span>(<span class="kw">function</span>(x<span class="op">,</span>y)<span class="op">{</span><span class="cf">return</span> x<span class="op">+</span>y<span class="op">}</span>)<span class="op">;</span>
+  t <span class="op">=</span> t <span class="op">&gt;</span> <span class="dv">10</span> <span class="op">?</span> <span class="dv">1</span> : <span class="op">-</span><span class="dv">1</span><span class="op">;</span>
+  <span class="va">console</span>.<span class="at">log</span>(<span class="st">&quot;%d %s&quot;</span>
+           <span class="op">,</span> t
+           <span class="op">,</span> <span class="va">a</span>.<span class="at">map</span>(<span class="kw">function</span>(x<span class="op">,</span> i)<span class="op">{</span><span class="cf">return</span> i<span class="op">+</span><span class="st">&#39;:&#39;</span><span class="op">+</span>x<span class="op">}</span>).<span class="at">join</span>(<span class="st">&#39; &#39;</span>))<span class="op">;</span>
+<span class="op">}</span></code></pre></div>
+<pre><code>$ svm-train -t 0 -v 10 train.scale
+
+(前略)
+..........*......................*
+optimization finished, #iter = 2885
+nu = 0.094086
+obj = -4.186700, rho = 0.285305
+nSV = 19, nBSV = 0
+Total nSV = 19
+Cross Validation Accuracy = 99%</code></pre>
+<h2 id="パリティ-xor">パリティ (xor)</h2>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="cf">for</span> (<span class="kw">var</span> i<span class="op">=</span><span class="dv">0</span><span class="op">;</span> i<span class="op">&lt;</span><span class="dv">100</span><span class="op">;</span> <span class="op">++</span>i) <span class="op">{</span>
+  <span class="kw">var</span> a <span class="op">=</span> []<span class="op">;</span>
+  <span class="cf">for</span> (<span class="kw">var</span> j<span class="op">=</span><span class="dv">0</span><span class="op">;</span> j<span class="op">&lt;</span><span class="dv">10</span><span class="op">;</span> <span class="op">++</span>j) <span class="op">{</span>
+    a[j] <span class="op">=</span> <span class="va">Math</span>.<span class="at">round</span>(<span class="va">Math</span>.<span class="at">random</span>())<span class="op">;</span>
+  <span class="op">}</span>
+  <span class="kw">var</span> t <span class="op">=</span> <span class="va">a</span>.<span class="at">reduce</span>(<span class="kw">function</span>(x<span class="op">,</span>y)<span class="op">{</span><span class="cf">return</span> x<span class="op">+</span>y<span class="op">}</span>)<span class="op">;</span>
+  t <span class="op">=</span> t <span class="op">%</span> <span class="dv">2</span> <span class="op">?</span> <span class="dv">1</span> : <span class="op">-</span><span class="dv">1</span><span class="op">;</span>
+  <span class="va">console</span>.<span class="at">log</span>(<span class="st">&quot;%d %s&quot;</span>
+           <span class="op">,</span> t
+           <span class="op">,</span> <span class="va">a</span>.<span class="at">map</span>(<span class="kw">function</span>(x<span class="op">,</span> i)<span class="op">{</span><span class="cf">return</span> i<span class="op">+</span><span class="st">&#39;:&#39;</span><span class="op">+</span>x<span class="op">}</span>).<span class="at">join</span>(<span class="st">&#39; &#39;</span>))<span class="op">;</span>
+<span class="op">}</span></code></pre></div>
+<h3 id="線形">線形</h3>
+<pre><code>$ svm-train -t 0 -v 10 train.scale
+
+(前略)
+.........*
+optimization finished, #iter = 860
+nu = 0.669745
+obj = -59.094108, rho = 0.338879
+nSV = 65, nBSV = 53
+Total nSV = 65
+Cross Validation Accuracy = 61%</code></pre>
+<h3 id="多項式">多項式</h3>
+<pre><code>$ svm-train -t 1 -v 10 train.scale
+
+(前略)
+.*
+optimization finished, #iter = 139
+nu = 0.710394
+obj = -43.537098, rho = 0.154695
+nSV = 81, nBSV = 40
+Total nSV = 81
+Cross Validation Accuracy = 41%</code></pre>
+<h3 id="rbf">RBF</h3>
+<pre><code>$ svm-train -t 1 -v 10 train.scale
+
+(前略)
+*.*
+optimization finished, #iter = 104
+nu = 0.778061
+obj = -51.085066, rho = 0.243366
+nSV = 86, nBSV = 52
+Total nSV = 86
+Cross Validation Accuracy = 59%</code></pre>
+<p>50%は下回らないで欲しかった。</p>
+<h2 id="簡単なパリティ">簡単なパリティ</h2>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="cf">for</span> (<span class="kw">var</span> i<span class="op">=</span><span class="dv">0</span><span class="op">;</span> i<span class="op">&lt;</span><span class="dv">100</span><span class="op">;</span> <span class="op">++</span>i) <span class="op">{</span>
+  <span class="kw">var</span> a <span class="op">=</span> []<span class="op">;</span>
+  <span class="cf">for</span> (<span class="kw">var</span> j<span class="op">=</span><span class="dv">0</span><span class="op">;</span> j<span class="op">&lt;</span><span class="dv">10</span><span class="op">;</span> <span class="op">++</span>j) <span class="op">{</span>
+    a[j] <span class="op">=</span> <span class="va">Math</span>.<span class="at">round</span>(<span class="va">Math</span>.<span class="at">random</span>())<span class="op">;</span>
+  <span class="op">}</span>
+  <span class="kw">var</span> t <span class="op">=</span> <span class="va">a</span>.<span class="at">slice</span>(<span class="dv">0</span><span class="op">,</span><span class="dv">2</span>).<span class="at">reduce</span>(<span class="kw">function</span>(x<span class="op">,</span>y)<span class="op">{</span><span class="cf">return</span> x<span class="op">+</span>y<span class="op">}</span>)<span class="op">;</span>
+  t <span class="op">=</span> t <span class="op">%</span> <span class="dv">2</span> <span class="op">?</span> <span class="dv">1</span> : <span class="op">-</span><span class="dv">1</span><span class="op">;</span>
+  <span class="va">console</span>.<span class="at">log</span>(<span class="st">&quot;%d %s&quot;</span>
+           <span class="op">,</span> t
+           <span class="op">,</span> <span class="va">a</span>.<span class="at">map</span>(<span class="kw">function</span>(x<span class="op">,</span> i)<span class="op">{</span><span class="cf">return</span> i<span class="op">+</span><span class="st">&#39;:&#39;</span><span class="op">+</span>x<span class="op">}</span>).<span class="at">join</span>(<span class="st">&#39; &#39;</span>))<span class="op">;</span>
+<span class="op">}</span></code></pre></div>
+<p>入力は10だけど初めの２つだけで答えは実は決まってる。</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: right;">-t</th>
+<th style="text-align: right;">0</th>
+<th style="text-align: center;">1</th>
+<th style="text-align: right;">2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">Ac.</td>
+<td style="text-align: right;">52%</td>
+<td style="text-align: center;">62%</td>
+<td style="text-align: right;">82%</td>
+</tr>
+</tbody>
+</table>
+<p>パラメタのいじり方はわかってないので <code>-t</code> と <code>-v 10</code> 以外のオプション以外はつけてない。</p>
+<h2 id="入力を倍-1">入力を倍</h2>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="cf">for</span> (<span class="kw">var</span> i<span class="op">=</span><span class="dv">0</span><span class="op">;</span> i<span class="op">&lt;</span><span class="dv">100</span><span class="op">;</span> <span class="op">++</span>i) <span class="op">{</span>
+  <span class="kw">var</span> a <span class="op">=</span> []<span class="op">;</span>
+  <span class="cf">for</span> (<span class="kw">var</span> j<span class="op">=</span><span class="dv">0</span><span class="op">;</span> j<span class="op">&lt;</span><span class="dv">20</span><span class="op">;</span> <span class="op">++</span>j) <span class="op">{</span>
+    a[j] <span class="op">=</span> <span class="va">Math</span>.<span class="at">round</span>(<span class="va">Math</span>.<span class="at">random</span>())<span class="op">;</span>
+  <span class="op">}</span>
+  <span class="kw">var</span> t <span class="op">=</span> <span class="va">a</span>.<span class="at">slice</span>(<span class="dv">0</span><span class="op">,</span><span class="dv">2</span>).<span class="at">reduce</span>(<span class="kw">function</span>(x<span class="op">,</span>y)<span class="op">{</span><span class="cf">return</span> x<span class="op">+</span>y<span class="op">}</span>)<span class="op">;</span>
+  t <span class="op">=</span> t <span class="op">%</span> <span class="dv">2</span> <span class="op">?</span> <span class="dv">1</span> : <span class="op">-</span><span class="dv">1</span><span class="op">;</span>
+  <span class="va">console</span>.<span class="at">log</span>(<span class="st">&quot;%d %s&quot;</span>
+           <span class="op">,</span> t
+           <span class="op">,</span> <span class="va">a</span>.<span class="at">map</span>(<span class="kw">function</span>(x<span class="op">,</span> i)<span class="op">{</span><span class="cf">return</span> i<span class="op">+</span><span class="st">&#39;:&#39;</span><span class="op">+</span>x<span class="op">}</span>).<span class="at">join</span>(<span class="st">&#39; &#39;</span>))<span class="op">;</span>
+<span class="op">}</span></code></pre></div>
+<p>入力の数は倍だけど、やはり最初の２つだけで答えは決まる。</p>
+<table>
+<thead>
+<tr class="header">
+<th>-t</th>
+<th style="text-align: right;">0</th>
+<th style="text-align: right;">1</th>
+<th style="text-align: right;">2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Ac.</td>
+<td style="text-align: right;">49%</td>
+<td style="text-align: right;">45%</td>
+<td style="text-align: right;">70%</td>
+</tr>
+</tbody>
+</table>
+<h2 id="section"></h2>
+<p>期待してたような数字は出なかったのだけど、 あとSVMは入力次元がどんなに大きくてもうまい事取捨してくれるとか聞いた気がするんだけど、 けどけど、 パラメタのイジリ方勉強しないとだ。</p>
+<h3 id="分かった">分かった</h3>
+<p>はじめの方に書いたように (今気付いて追記した) 1スタートにして、 それとテストデータの数を10倍にしたら上手く行った。 入力次元20に対してテストデータ100件ってのは多くなかったみたい。</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="cf">for</span> (<span class="kw">var</span> i<span class="op">=</span><span class="dv">0</span><span class="op">;</span> i<span class="op">&lt;</span><span class="dv">1000</span><span class="op">;</span> <span class="op">++</span>i) <span class="op">{</span>
+  <span class="kw">var</span> a <span class="op">=</span> []<span class="op">;</span>
+  <span class="cf">for</span> (<span class="kw">var</span> j<span class="op">=</span><span class="dv">0</span><span class="op">;</span> j<span class="op">&lt;</span><span class="dv">20</span><span class="op">;</span> <span class="op">++</span>j) <span class="op">{</span>
+    a[j] <span class="op">=</span> <span class="va">Math</span>.<span class="at">round</span>(<span class="va">Math</span>.<span class="at">random</span>())<span class="op">;</span>
+  <span class="op">}</span>
+  <span class="kw">var</span> t <span class="op">=</span> <span class="va">a</span>.<span class="at">slice</span>(<span class="dv">0</span><span class="op">,</span><span class="dv">2</span>).<span class="at">reduce</span>(<span class="kw">function</span>(x<span class="op">,</span>y)<span class="op">{</span><span class="cf">return</span> x<span class="op">+</span>y<span class="op">}</span>)<span class="op">;</span>
+  t <span class="op">=</span> t <span class="op">%</span> <span class="dv">2</span> <span class="op">?</span> <span class="dv">1</span> : <span class="op">-</span><span class="dv">1</span><span class="op">;</span>
+  <span class="va">console</span>.<span class="at">log</span>(<span class="st">&quot;%d %s&quot;</span>
+           <span class="op">,</span> t
+           <span class="op">,</span> <span class="va">a</span>.<span class="at">map</span>(<span class="kw">function</span>(x<span class="op">,</span> i)<span class="op">{</span><span class="cf">return</span> (i<span class="dv">+1</span>)<span class="op">+</span><span class="st">&#39;:&#39;</span><span class="op">+</span>x<span class="op">}</span>).<span class="at">join</span>(<span class="st">&#39; &#39;</span>))<span class="op">;</span>
+<span class="op">}</span></code></pre></div>
+<pre><code>$ svm-train -t 2 -v 10 train.scale
+
+(前略)
+..*.*
+optimization finished, #iter = 3026
+nu = 0.597604
+obj = -276.353274, rho = -0.007254
+nSV = 823, nBSV = 199
+Total nSV = 823
+Cross Validation Accuracy = 100%</code></pre>
+</body>
+</html>

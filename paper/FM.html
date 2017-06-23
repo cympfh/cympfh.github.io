@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Factorization Machines (FMs)</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/
+    </a>
+</h1>
+<header>
+<h1 class="title">Factorization Machines (FMs)</h1>
+</header>
+<ul>
+<li>
+url: <a href=http://www.csie.ntu.edu.tw/~b97053/paper/Rendle2010FM.pdf>http://www.csie.ntu.edu.tw/~b97053/paper/Rendle2010FM.pdf</a>
+</li>
+<li>
+tags: <span class="tag"><a href=index.html#分類器>分類器</a></span> <span class="tag"><a href=index.html#機械学習>機械学習</a></span>
+</li>
+</ul>
+<h2 id="fms-とは何か">FMs とは何か</h2>
+<p>超スパースなデータにも使える予測器. 線形分類器の拡張になっている. 基本的に回帰モデルの形をしているが、分類器としても使えるし、スコアを計算するものだと思えばランキングを予測するようにも使える. スパースでデータ量が増えても線形程度にしか時間及び空間が増えない.</p>
+<h2 id="手法の概要">手法の概要</h2>
+<p>データ <span class="math inline">\(x \in \mathbb{R}^n\)</span> から <span class="math inline">\(y\)</span> を予測するモデルとして</p>
+<p><span class="math display">\[\hat{y} = w_0 + \langle w, x \rangle + \sum_{i &lt; j} \langle v_i, v_j \rangle x_i x_j\]</span></p>
+<p>とする (この形を 2-way FM という).</p>
+<p>ここで</p>
+<ul>
+<li><span class="math inline">\(w_0 \in \mathbb{R}\)</span></li>
+<li><span class="math inline">\(w \in \mathbb{R}^n\)</span></li>
+<li><span class="math inline">\(V \in \mathbb{R}^{n \times k}\)</span>
+<ul>
+<li><span class="math inline">\(v_i \in \mathbb{R}^k\)</span> は <span class="math inline">\(V\)</span> の <span class="math inline">\(i\)</span>-th 行ベクトル</li>
+<li><span class="math inline">\(k\)</span> はある自然数 (モデルのためのハイパーパラメータ)</li>
+</ul></li>
+<li><span class="math inline">\(x_i\)</span> は入力 <span class="math inline">\(x\)</span> の <span class="math inline">\(i\)</span>-th 成分</li>
+<li><span class="math inline">\(\langle \cdot, \cdot \rangle\)</span> は2つの同じ長さの行/列ベクトルの内積</li>
+</ul>
+<p>第二項までは通常の線形分類器であり、 第三項はデータの成分間の相互作用 (interaction) を表現している. <span class="math inline">\(\langle v_i, v_j\rangle\)</span> は相互作用の為の重みである. これ自体を <span class="math inline">\(i, j\)</span> 間の相互作用 (interaction) と呼ぶ. わざわざ一個の重み <span class="math inline">\(w_{i,j}\)</span> として表現をしないのは、 陽に <span class="math inline">\(w_{i,j}\)</span> を計算し保持しておくと、<span class="math inline">\(O(n^2)\)</span> の空間が必要になるし、予測の計算も <span class="math inline">\(O(n^2)\)</span> 掛かる. 適当な <span class="math inline">\(k\)</span> を決めて <span class="math inline">\(V\)</span> を持つことにすると、空間は明らかに <span class="math inline">\(O(nk)\)</span> で済み、 後述するように予測の計算も <span class="math inline">\(O(nk)\)</span> で済む.</p>
+<h3 id="データの持ち方">データの持ち方</h3>
+<p>データの持ち方が若干特殊. 基本的に素性を何でも突っ込む (ベクトル結合).</p>
+<p>例えば、ユーザー <span class="math inline">\(U\)</span> と、映画 <span class="math inline">\(M\)</span> があって、 ユーザーに関する素性 <span class="math inline">\(V\)</span> と映画に関する素性 <span class="math inline">\(N\)</span> があったときに、 ユーザー <span class="math inline">\(u \in U\)</span> の映画 <span class="math inline">\(m \in M\)</span> に対する評価値 <span class="math inline">\(y \in \mathbb{R}\)</span> を予測することを考える. (この例は元論文にあるものを参考にしている.)</p>
+<p>データ <span class="math inline">\(x\)</span> (列ベクトル) を次のように作る.</p>
+<ul>
+<li><span class="math inline">\(x_u\)</span>: ユーザー <span class="math inline">\(u \in U\)</span> を 1-of-K (one-hot) 表現で <span class="math inline">\(|U|\)</span> 次元ベクトルで表現する</li>
+<li><span class="math inline">\(x_m\)</span>: 映画 <span class="math inline">\(m \in M\)</span> を同様に 1-of-K で <span class="math inline">\(|M|\)</span> 次元ベクトルで表現</li>
+<li><span class="math inline">\(x_v\)</span>: 他の素性もよしなにベクトルで表現</li>
+<li><span class="math inline">\(x_n\)</span>: よしなに</li>
+</ul>
+<p>これらを結合して <span class="math inline">\(|U|+|M|+\cdots\)</span> 次元の列ベクトル <span class="math inline">\(x\)</span> とする.</p>
+<p>このようにしてデータ <span class="math display">\[\mathcal{D} = \{ (x_i, y_i) \}_i\]</span> を作る.</p>
+<p>元論文では、この列ベクトル <span class="math inline">\((x_i)_i\)</span> を縦に並べて大きな行列としている.</p>
+<h3 id="耐スパース性">耐スパース性</h3>
+<p>FMsはデータが超スパースであることを仮定している. そのような場合、 例えばユーザー <span class="math inline">\(u_1\)</span> の 映画 <span class="math inline">\(m_1\)</span> に対する評価がデータに含まれないことが多い. ということは、<span class="math inline">\(u_1\)</span> (に相当する成分) と <span class="math inline">\(m_1\)</span> (に相当する成分) との相互作用を推定することは出来なさそうに思える. FMs が上手いのはそれを直接推定することはせず、 <span class="math inline">\(v_{u_1}\)</span> 及び <span class="math inline">\(v_{m_1}\)</span> を推定して、その内積を相互作用としていることである. それらは別な関係、例えば <span class="math inline">\(u_1\)</span> と <span class="math inline">\(m_2\)</span> との関係、<span class="math inline">\(u_2\)</span> と <span class="math inline">\(m_1\)</span> との関係などから推定出来るかもしれない.</p>
+<h3 id="予測の計算方法">予測の計算方法</h3>
+<p>初めに示した計算式そのままだと <span class="math inline">\(O(kn^2)\)</span> 掛かりそうだが、式変形を施すと <span class="math inline">\(O(kn)\)</span> で済む.</p>
+<p>すなわち、第三項であるが (簡略のため先に二倍したものを考えると)、</p>
+<ul>
+<li><span class="math inline">\(2 \sum_{i &lt; j} \langle v_i, v_j \rangle x_i x_j = \sum_i \sum_j \langle v_i,v_j x_i x_j \rangle - \sum_i \langle v_i,v_i \rangle x_i x_i\)</span>
+<ul>
+<li><span class="math inline">\(= \sum_i \sum_j \sum_k v_{i,k} v_{j,k} x_i x_j - \sum_i \sum_k v_{i,k}^2 x_i^2\)</span></li>
+<li><span class="math inline">\(= \sum_k \left[ \sum_i \sum_j v_{i,k} v_{j,k} x_i x_j - \sum_i v_{i,k}^2 x_i^2 \right]\)</span></li>
+<li><span class="math inline">\(= \sum_k \left[ (\sum_i v_{i,k} x_i) (\sum_j v_{j,k} x_j) - \sum_i v_{i,k}^2 x_i^2 \right]\)</span></li>
+<li><span class="math inline">\(= \sum_k \left[ (\sum_i v_{i,k} x_i)^2 - \sum_i (v_{i,k} x_i)^2 \right]\)</span></li>
+</ul></li>
+</ul>
+<p>これなら <span class="math inline">\(O(kn)\)</span> で計算できる.</p>
+<h3 id="最適化-学習">最適化 (学習)</h3>
+<p>微分は容易だし、好きな最適化ソルバを流用すれば良い.</p>
+<ul>
+<li><span class="math inline">\(\frac{\partial}{\partial w_0} \hat{y} = 1\)</span></li>
+<li><span class="math inline">\(\frac{\partial}{\partial w_i} \hat{y} = x_i\)</span></li>
+<li><span class="math inline">\(\frac{\partial}{\partial v_{i,k}} \hat{y} = x_i \sum_j v_{j,k} x_j - v_{i,k} x_i^2\)</span></li>
+</ul>
+<h2 id="d-way-fm"><span class="math inline">\(d\)</span>-way FM</h2>
+<p>先述した形のものは、ちょうど2つの成分の相互作用だけを見るので 2-way FM と呼ぶ. これは一般化できて、ちょうど <span class="math inline">\(d\)</span> つ成分の相互作用を考慮する</p>
+<p><span class="math display">\[\hat{y} = w_0 + \langle w, x \rangle + \sum_{i_1 &lt; i_2 &lt; \cdots &lt; i_d} \left( \prod_i x_i \right) \langle v_{i_1}, v_{i_2}, \ldots v_{i_d} \rangle\]</span></p>
+<p>も考えられる. これを <span class="math inline">\(d\)</span>-way FM と呼ぶ. ここで、 <span class="math inline">\(\langle v_1,v_2,\ldots,v_d \rangle\)</span> は 成分間の積の和で <span class="math inline">\(\sum_i \sum_k v_{i,k}\)</span> と定める.</p>
+<h2 id="svm-との比較">SVM との比較</h2>
+<h2 id="行列分解との比較">行列分解との比較</h2>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

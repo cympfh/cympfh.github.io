@@ -1,0 +1,18 @@
+#!/bin/bash
+
+upload() {
+    if [ -f "$1" ]; then  # local
+        imgur --title "$1" -A neta "$1"
+    else  # url
+        imgur --title "$1" -A neta --url "$1"
+    fi
+}
+
+TMPFILE=/tmp/description
+: > $TMPFILE
+vim $TMPFILE
+description="$(< $TMPFILE tr '[A-Z]\n' '[a-z] ' | sed 's/  */ /g; s/ *$//g')"
+url=$(upload "$1")
+
+echo "{\"url\": \"${url}\", \"description\": \"${description}\"}" |
+tee -a db.jsonl

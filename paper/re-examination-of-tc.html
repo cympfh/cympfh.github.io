@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>A Re-Examination of Text Categorization Methods (1999)</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/
+    </a>
+</h1>
+<header>
+<h1 class="title">A Re-Examination of Text Categorization Methods (1999)</h1>
+</header>
+<ul>
+<li>
+url: <a href=http://dl.acm.org/citation.cfm?id=312647>http://dl.acm.org/citation.cfm?id=312647</a>
+</li>
+<li>
+tags: <span class="tag"><a href=index.html#自然言語処理>自然言語処理</a></span> <span class="tag"><a href=index.html#テキスト分類>テキスト分類</a></span> <span class="tag"><a href=index.html#機械学習>機械学習</a></span>
+</li>
+</ul>
+<p>次の5つの分類器によって テキスト分類 する実験が世の中に散在してる。 (e.g. <a href="http://dl.acm.org/citation.cfm?id=649721">Text Categorization with Suport Vector Machines</a>, 1998)</p>
+<ol style="list-style-type: decimal">
+<li>SVM</li>
+<li>kNN</li>
+<li>LLSF</li>
+<li>NNet</li>
+<li>NB</li>
+</ol>
+<p>コーパスが違ったり、統計量検定が無かったりなので、 一回綺麗に実験し直そうというもの.</p>
+<ul>
+<li>コーパスとして、 <code>reuters-21578</code> を使う (1999時代のニュースタンダードらしい)</li>
+<li>指標として、F値のmacro平均とmicro平均との2つを使う</li>
+<li>手法同士の有意な差を図るのに、<code>{micro,macro}-{s,t}検定</code> をする</li>
+</ul>
+<h2 id="手法">手法</h2>
+<p>分類器の原理は解説してあるけど、素性の使い方とか詳しくないからだめだ.</p>
+<h2 id="結論">結論</h2>
+<pre><code>{SVM, kNN} &gt; LLSF &gt; NNet &gt;&gt; NB</code></pre>
+<p>Figure-4, 5 は、トピックごとの micro,macro-F1 を、 トピックの頻度で並べて線でつないだもの (何かの収束する様子かと思ってしまった)</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

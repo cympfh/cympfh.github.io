@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Thu Mar 14 01:20:15 JST 2013</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Thu Mar 14 01:20:15 JST 2013</h1>
+</header>
+<h2 id="多倍長-処理系の速度比較">多倍長, 処理系の速度比較</h2>
+<p>言語の速度比較なんていくらでもあるけど。</p>
+<ul>
+<li>標準入力を整数としてパースして、</li>
+<li>末尾再帰でない形で、</li>
+<li>多倍長整数演算する。</li>
+</ul>
+<p>四度実行して、maxとminを除いて２つを残す。 Haskellはghcで最適化オプションなし。</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="co">-- test.hs</span>
+fact <span class="dv">0</span> <span class="fu">=</span> <span class="dv">1</span>
+fact n <span class="fu">=</span> n <span class="fu">*</span> fact (n<span class="fu">-</span><span class="dv">1</span>)
+main <span class="fu">=</span> getLine <span class="fu">&gt;&gt;=</span> print<span class="fu">.</span>fact<span class="fu">.</span>read
+
+<span class="co">{-</span>
+<span class="co">$ time ./test &lt; input</span>
+<span class="co">815915283247897734345611269596115894272000000000</span>
+
+<span class="co">real    0m0.005s</span>
+<span class="co">user    0m0.000s</span>
+<span class="co">sys     0m0.004s</span>
+<span class="co">$ time ./test &lt; input</span>
+<span class="co">815915283247897734345611269596115894272000000000</span>
+
+<span class="co">real    0m0.006s</span>
+<span class="co">user    0m0.000s</span>
+<span class="co">sys     0m0.000s</span>
+<span class="co">-}</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme"><span class="co">;; test.scm</span>
+(<span class="kw">define</span><span class="fu"> </span>(fact n)
+    (<span class="kw">if</span> (<span class="kw">zero?</span> n) <span class="dv">1</span>
+        (* n (fact (<span class="kw">-</span> n <span class="dv">1</span>)))))
+(print (fact (<span class="kw">read</span>)))
+
+#|
+$ time gosh test.scm <span class="kw">&lt;</span> input
+<span class="dv">815915283247897734345611269596115894272000000000</span>
+
+real    0m0.029s
+user    0m0.012s
+sys     0m0.012s
+$ time gosh test.scm <span class="kw">&lt;</span> input
+<span class="dv">815915283247897734345611269596115894272000000000</span>
+
+real    0m0.029s
+user    0m0.016s
+sys     0m0.004s
+|#</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// test.js (多倍長演算の一部を実装してるので長い)</span>
+<span class="kw">function</span> <span class="at">mult</span>(n<span class="op">,</span> bi) <span class="op">{</span>
+    <span class="kw">var</span> base <span class="op">=</span> <span class="dv">19</span><span class="op">;</span>
+    bi <span class="op">=</span> <span class="va">bi</span>.<span class="at">map</span>(<span class="kw">function</span>(s)<span class="op">{</span><span class="cf">return</span> s<span class="op">*</span>n<span class="op">}</span>)<span class="op">;</span>
+    <span class="cf">for</span> (<span class="kw">var</span> i<span class="op">=</span><span class="dv">0</span><span class="op">;</span>i<span class="op">&lt;</span><span class="va">bi</span>.<span class="at">length</span><span class="op">;++</span>i) <span class="op">{</span>
+        <span class="kw">var</span> s <span class="op">=</span> bi[i] <span class="op">+</span> <span class="st">&quot;&quot;</span><span class="op">;</span>
+        <span class="cf">if</span> (<span class="va">s</span>.<span class="at">length</span> <span class="op">&gt;</span> base) <span class="op">{</span>
+            <span class="kw">var</span> len <span class="op">=</span> <span class="va">s</span>.<span class="at">length</span><span class="op">;</span>
+            bi[i] <span class="op">=</span> <span class="op">+</span><span class="va">s</span>.<span class="at">slice</span>(len<span class="op">-</span>base<span class="op">,</span> len)<span class="op">;</span>
+            <span class="cf">if</span> ((i<span class="dv">+1</span>) <span class="kw">in</span> bi)
+                bi[i<span class="dv">+1</span>] <span class="op">+=</span> <span class="op">+</span><span class="va">s</span>.<span class="at">slice</span>(<span class="dv">0</span><span class="op">,</span> len<span class="op">-</span>base)<span class="op">;</span>
+            <span class="cf">else</span>
+                bi[i<span class="dv">+1</span>] <span class="op">=</span> <span class="op">+</span><span class="va">s</span>.<span class="at">slice</span>(<span class="dv">0</span><span class="op">,</span> len<span class="op">-</span>base)<span class="op">;</span>
+        <span class="op">}</span>
+    <span class="op">}</span>
+    <span class="cf">return</span> bi<span class="op">;</span>
+<span class="op">}</span>
+<span class="kw">function</span> <span class="at">show</span>(bi) <span class="op">{</span>
+    <span class="kw">var</span> str <span class="op">=</span> <span class="st">&quot;&quot;</span><span class="op">,</span> len <span class="op">=</span> <span class="va">bi</span>.<span class="at">length</span><span class="op">;</span>
+    <span class="cf">for</span> (<span class="kw">var</span> i<span class="op">=</span><span class="dv">0</span><span class="op">;</span>i<span class="op">&lt;</span>len<span class="op">;++</span>i)
+        str <span class="op">+=</span> bi[len<span class="op">-</span>i<span class="dv">-1</span>]<span class="op">;</span>
+    <span class="cf">return</span> str<span class="op">;</span>
+<span class="op">}</span>
+<span class="kw">function</span> <span class="at">fact</span>(n)<span class="op">{</span>
+    <span class="cf">return</span> n<span class="op">==</span><span class="dv">0</span> <span class="op">?</span> [<span class="dv">1</span>] : <span class="at">mult</span>(n<span class="op">,</span> <span class="at">fact</span>(n<span class="dv">-1</span>))<span class="op">;</span>
+<span class="op">}</span>
+<span class="va">console</span>.<span class="at">log</span>(<span class="at">show</span>(<span class="at">fact</span>(<span class="op">+</span><span class="at">require</span>(<span class="st">&quot;fs&quot;</span>).<span class="at">readFileSync</span>(<span class="st">&quot;/dev/stdin&quot;</span><span class="op">,</span><span class="st">&quot;utf-8&quot;</span>))))</code></pre></div>
+<pre><code>   time node test.js &lt; input
+815915283247897700418722000006115894272000000000
+
+real    0m0.168s
+user    0m0.072s
+sys     0m0.020s
+   time node test.js &lt; input
+815915283247897700418722000006115894272000000000
+
+real    0m0.169s
+user    0m0.072s
+sys     0m0.020s</code></pre>
+<p>ま、こんなもんよね</p>
+<hr />
+<footer>
+    <p style='text-align: right'>
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Tue Mar 19 00:26:09 JST 2013</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Tue Mar 19 00:26:09 JST 2013</h1>
+</header>
+<h2 id="time-of-reducing-maxmin">time of reducing max/min</h2>
+<p>これは一度ちょっと試したかった。 つまり、最大値、最小値を集めるのに、forで回して</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> maxi <span class="op">=</span> <span class="op">-</span><span class="dv">1</span><span class="op">;</span> <span class="co">// 数列には-1より大きいものしかないとする</span>
+<span class="cf">for</span> (<span class="kw">var</span> i<span class="op">=</span><span class="dv">0</span><span class="op">;</span> i<span class="op">&lt;</span><span class="va">array</span>.<span class="at">length</span><span class="op">;</span> <span class="op">++</span>i) <span class="op">{</span>
+    <span class="kw">var</span> a <span class="op">=</span> array[i]<span class="op">;</span>
+    maxi <span class="op">=</span> <span class="va">Math</span>.<span class="at">max</span>(maxi<span class="op">,</span> a)<span class="op">;</span> <span class="co">// とするのと、</span>
+    <span class="cf">if</span> (maxi <span class="op">&lt;</span> a) maxi <span class="op">=</span> a<span class="op">;</span> <span class="co">// あるいは、こうするのがある</span>
+<span class="op">}</span></code></pre></div>
+<p>上のほうは、aを一度参照しない。直接 array[i] と書いていい。 下では二度参照するので、一度何か変数に束縛するべきだ。 また、上では常に代入を行うが、下ではifによって代入を行わない 場合がある。</p>
+<p>で、実際速度を計測する。</p>
+<p>まず、入力としての数列を作る</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">(use srfi<span class="dv">-1</span>)
+(use srfi<span class="dv">-27</span>)
+(<span class="kw">for-each</span> (^i (print (random-integer <span class="dv">100</span>))) (iota <span class="dv">10000</span>))</code></pre></div>
+<p>一万個の、0以上100未満の数列を作る。</p>
+<h3 id="max-min-関数使うver">max, min 関数使うver</h3>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> maxi <span class="op">=</span> <span class="dv">0</span><span class="op">,</span>
+    mini <span class="op">=</span> <span class="kw">Infinity</span><span class="op">;</span>
+
+<span class="at">require</span>(<span class="st">&quot;fs&quot;</span>).<span class="at">readFileSync</span>(<span class="st">&quot;/dev/stdin&quot;</span><span class="op">,</span><span class="st">&quot;utf8&quot;</span>)
+    .<span class="at">split</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>).<span class="at">map</span>(<span class="kw">function</span>(s)<span class="op">{</span><span class="cf">return</span> <span class="op">+</span>s<span class="op">}</span>)
+    .<span class="at">forEach</span>(<span class="kw">function</span>(n) <span class="op">{</span>
+        maxi <span class="op">=</span> <span class="va">Math</span>.<span class="at">max</span>(maxi<span class="op">,</span> n)<span class="op">;</span>
+        mini <span class="op">=</span> <span class="va">Math</span>.<span class="at">min</span>(mini<span class="op">,</span> n)<span class="op">;</span>
+    <span class="op">}</span>)<span class="op">;</span>
+
+<span class="va">console</span>.<span class="at">log</span>(maxi<span class="op">,</span> mini)<span class="op">;</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">~/test</span>$ <span class="bu">time</span> node test.js <span class="op">&lt;</span> input
+<span class="ex">99</span> 0
+
+<span class="ex">real</span>    0m0.114s
+<span class="ex">user</span>    0m0.088s
+<span class="ex">sys</span>     0m0.016s</code></pre></div>
+<h3 id="if-使うver">if 使うver</h3>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> maxi <span class="op">=</span> <span class="dv">0</span><span class="op">,</span>
+    mini <span class="op">=</span> <span class="kw">Infinity</span><span class="op">;</span>
+
+<span class="at">require</span>(<span class="st">&quot;fs&quot;</span>).<span class="at">readFileSync</span>(<span class="st">&quot;/dev/stdin&quot;</span><span class="op">,</span><span class="st">&quot;utf8&quot;</span>)
+    .<span class="at">split</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>).<span class="at">map</span>(<span class="kw">function</span>(s)<span class="op">{</span><span class="cf">return</span> <span class="op">+</span>s<span class="op">}</span>)
+    .<span class="at">forEach</span>(<span class="kw">function</span>(n) <span class="op">{</span>
+        <span class="cf">if</span> (maxi <span class="op">&lt;</span> n) maxi <span class="op">=</span> n<span class="op">;</span>
+        <span class="cf">if</span> (mini <span class="op">&gt;</span> n) mini <span class="op">=</span> n<span class="op">;</span>
+    <span class="op">}</span>)<span class="op">;</span>
+
+<span class="va">console</span>.<span class="at">log</span>(maxi<span class="op">,</span> mini)<span class="op">;</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">~/test</span>$ <span class="bu">time</span> node test.js <span class="op">&lt;</span> input
+<span class="ex">99</span> 0
+
+<span class="ex">real</span>    0m0.124s
+<span class="ex">user</span>    0m0.072s
+<span class="ex">sys</span>     0m0.028s</code></pre></div>
+<p>この差はあんまり無視できない 相対差 8% だからね</p>
+<hr />
+<footer>
+    <p style='text-align: right'>
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+</body>
+</html>

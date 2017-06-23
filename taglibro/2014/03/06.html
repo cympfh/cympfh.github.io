@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Mar 06 2014</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Mar 06 2014</h1>
+</header>
+<h2 id="go-の実験">go の実験</h2>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="ex">19</span>:03:47 test$ time gosh test.scm
+<span class="ex">354224848179261915075</span>
+
+<span class="ex">real</span>    0m0.027s
+<span class="ex">user</span>    0m0.008s
+<span class="ex">sys</span>     0m0.008s
+<span class="ex">19</span>:04:02 test$ time gosh test.scm
+<span class="ex">354224848179261915075</span>
+
+<span class="ex">real</span>    0m0.029s
+<span class="ex">user</span>    0m0.008s
+<span class="ex">sys</span>     0m0.012s
+<span class="ex">19</span>:04:05 test$ time runghc test.hs
+<span class="ex">354224848179261915075</span>
+
+<span class="ex">real</span>    0m0.189s
+<span class="ex">user</span>    0m0.160s
+<span class="ex">sys</span>     0m0.030s
+<span class="ex">19</span>:04:13 test$ time runghc test.hs
+<span class="ex">354224848179261915075</span>
+
+<span class="ex">real</span>    0m0.188s
+<span class="ex">user</span>    0m0.172s
+<span class="ex">sys</span>     0m0.018s
+<span class="ex">19</span>:04:15 test$ time go run test.go
+<span class="ex">3736710778780434371</span>
+
+<span class="ex">real</span>    0m0.171s
+<span class="ex">user</span>    0m0.146s
+<span class="ex">sys</span>     0m0.027s
+<span class="ex">19</span>:04:20 test$ time go run test.go
+<span class="ex">3736710778780434371</span>
+
+<span class="ex">real</span>    0m0.159s
+<span class="ex">user</span>    0m0.136s
+<span class="ex">sys</span>     0m0.025s</code></pre></div>
+<p>Goとかいう動的型付け言語だけ答えが違うのはint64でやっちゃったから</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">(<span class="kw">define</span><span class="fu"> </span>(fib a b n)
+  (<span class="kw">if</span> (<span class="kw">zero?</span> n) a (fib b (<span class="kw">+</span> a b) (<span class="kw">-</span> n <span class="dv">1</span>))))
+
+(<span class="kw">display</span> (fib <span class="dv">0</span> <span class="dv">1</span> <span class="dv">100</span>))</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Data.List</span>
+<span class="kw">import </span><span class="dt">Data.Char</span>
+<span class="kw">import </span><span class="dt">Data.Maybe</span>
+<span class="kw">import </span><span class="dt">Data.Tuple</span>
+<span class="kw">import </span><span class="dt">Debug.Trace</span>
+<span class="kw">import </span><span class="dt">Data.Array</span>
+<span class="kw">import </span><span class="dt">Data.Array.IO</span>
+<span class="kw">import </span><span class="dt">Control.Monad</span>
+<span class="kw">import </span><span class="dt">Control.Applicative</span>
+<span class="kw">import </span><span class="dt">Control.Arrow</span>
+<span class="kw">import qualified</span> <span class="dt">Data.ByteString.Char8</span> <span class="kw">as</span> <span class="dt">B</span>
+<span class="kw">import qualified</span> <span class="dt">Data.Map</span> <span class="kw">as</span> <span class="dt">M</span>
+<span class="kw">import qualified</span> <span class="dt">Data.Set</span> <span class="kw">as</span> <span class="dt">S</span>
+<span class="kw">import </span><span class="dt">Text.Printf</span>
+
+readInt<span class="ot"> ::</span> <span class="dt">B.ByteString</span> <span class="ot">-&gt;</span> <span class="dt">Int</span>
+readInt <span class="fu">=</span> fst <span class="fu">.</span> fromJust <span class="fu">.</span> B.readInt
+
+<span class="ot">readInt2 ::</span> <span class="dt">B.ByteString</span> <span class="ot">-&gt;</span> (<span class="dt">Int</span>, <span class="dt">Int</span>)
+readInt2 <span class="fu">=</span> l2t <span class="fu">.</span> map readInt <span class="fu">.</span> B.words
+<span class="ot">readInt3 ::</span> <span class="dt">B.ByteString</span> <span class="ot">-&gt;</span> ((<span class="dt">Int</span>,<span class="dt">Int</span>),<span class="dt">Int</span>)
+readInt3 <span class="fu">=</span> l3t <span class="fu">.</span> map readInt <span class="fu">.</span> B.words
+
+l2t [x,y] <span class="fu">=</span> (x,y)
+l3t [x,y,z] <span class="fu">=</span> ((x<span class="fu">-</span><span class="dv">1</span>,y<span class="fu">-</span><span class="dv">1</span>),z)
+
+(<span class="fu">|&gt;</span>) x f <span class="fu">=</span> f x; <span class="kw">infixl</span> <span class="dv">1</span> <span class="fu">|&gt;</span>
+car <span class="fu">=</span> head
+cdr <span class="fu">=</span> tail
+cadr <span class="fu">=</span> car <span class="fu">.</span> cdr
+cddr <span class="fu">=</span> cdr <span class="fu">.</span> cdr
+caddr <span class="fu">=</span> car <span class="fu">.</span> cddr
+
+<span class="kw">type</span> <span class="dt">Cost</span> <span class="fu">=</span> <span class="dt">M.Map</span> (<span class="dt">Int</span>, <span class="dt">Int</span>) <span class="dt">Int</span>
+
+<span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span> <span class="kw">do</span>
+    <span class="kw">let</span> fibs <span class="fu">=</span> iterate (\(a,b) <span class="ot">-&gt;</span> (b,a<span class="fu">+</span>b)) (<span class="dv">0</span>, <span class="dv">1</span>)
+    print <span class="fu">$</span> fst <span class="fu">$</span> fibs <span class="fu">!!</span> <span class="dv">100</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode go"><code class="sourceCode go"><span class="kw">package</span> main
+
+<span class="kw">import</span> (
+   <span class="st">&quot;fmt&quot;</span>
+ )
+
+<span class="kw">func</span> main() {
+  <span class="kw">var</span> x, y <span class="dt">int64</span>
+  x = <span class="dv">0</span>
+  y = <span class="dv">1</span>
+  <span class="kw">for</span> i := <span class="dv">0</span>; i &lt; <span class="dv">100</span>; i++ {
+    x, y = y, x+y
+  }
+  fmt.Println(x)
+}</code></pre></div>
+<p>てきとーに<code>golang 多倍長</code>でググったらOKIのページが見つかった。</p>
+<p><a href="http://www.oki-osk.jp/esc/golang/arith.html">&quot;An experimental package in Go for mixed mode arithmetic including rational numbers</a></p>
+<hr />
+<pre><code>19:13:57 test$ time runghc test.hs
+354224848179261915075
+
+real    0m0.130s
+user    0m0.105s
+sys     0m0.026s
+19:13:58 test$ time runghc test.hs
+354224848179261915075
+
+real    0m0.128s
+user    0m0.108s
+sys     0m0.022s</code></pre>
+<p>1.44倍速になった！</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span> <span class="kw">do</span>
+    <span class="kw">let</span> fibs <span class="fu">=</span> iterate (\(a,b) <span class="ot">-&gt;</span> (b,a<span class="fu">+</span>b)) (<span class="dv">0</span>, <span class="dv">1</span>)
+    print <span class="fu">$</span> fst <span class="fu">$</span> fibs <span class="fu">!!</span> <span class="dv">100</span></code></pre></div>
+</body>
+</html>

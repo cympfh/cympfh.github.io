@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>組み合わせゲームの帰結類</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> aiura/
+    </a>
+</h1>
+<header>
+<h1 class="title">組み合わせゲームの帰結類</h1>
+</header>
+<p class="date" style="text-align: right">
+2017-04-23 (Sun.)
+</p>
+<div class="tags" style="text-align: right">
+<p><a class=tag href=index.html#数学>数学</a> <a class=tag href=index.html#ゲーム理論>ゲーム理論</a></p>
+</div>
+<h2 id="組み合わせゲームとは何か">組み合わせゲームとは何か</h2>
+<p>ここで単にゲームと言っているのは組み合わせゲームを指している. これは一般にゲーム理論が扱うゲームよりもかなり狭い (扱いやすい) ものを指している.</p>
+<p>具体的には次のようなものである.<br />
+二人の対局者 (これは左と右と呼ばれる) がただ一つの局面 (状態) を交互に操作をする. 許される操作は左右ともに共通である場合と、左右とで明確に分かれている場合とがある. 共通の場合を <strong>不偏</strong> 、共有でない場合を <strong>非不偏</strong> だと表現する. (直感通り、不偏の場合が解析は容易である.)</p>
+<p>局面の操作とは形式的かつ一般には、そのときの局面と操作する者が左右どちらであるかに依存して、次の局面に写すような写像である. ただ一つの局面に写すとは限らないので関数ではない. また、写す先がない場合もある. そのような局面を <strong>最終局面</strong> という. というわけで、操作とは局面の集合に写す関数だと記述できる.</p>
+<p><span class="math display">\[\rm{Op} : \rm{State} \times \{Left, Right\} \to \mathcal{P}(\rm{State})\]</span></p>
+<p>Left の最終局面とは、 <span class="math display">\[\rm{Op}(s, \rm{Left}) = \{\}\]</span> なる <span class="math inline">\(s \in \rm{State}\)</span> のことである. Right についても同様.</p>
+<h3 id="勝敗について">勝敗について</h3>
+<p>左右が交互に操作をするときに、その操作ができなくなった (つまり、操作を加えようとした局面が最終局面である) とき、その対局者の負けだと定める.</p>
+<p>例えば石取りゲーム (ニム) では、「1個以上の石を取る」のが操作である. 最後に一個の石を取ると、次の対局者は石がゼロ個しかないので、一切の操作ができない. 従って、最後の一個の石を取った対局者の勝ちである.</p>
+<p>といった風に、組み合わせゲームでは勝敗を定める. 局面に対して許される手を定めた時点で勝敗については定義されていることに註意.</p>
+<p>それから、明らかにゲームが引き分けになることはない.</p>
+<p>すぐに、そのちょうど逆 「最後の手を打った者が負けで、最終局面を渡された側の勝ち」 という場合を思いつく. これは <strong>逆形 (misère play)</strong> と呼ばれる. 対して元の形を正形と呼ぶのだが、逆形は正形に比べて解析が困難なので扱わない.</p>
+<h3 id="仮定">仮定</h3>
+<ol style="list-style-type: decimal">
+<li>お互いの対局者はお互いの打てる手を全て把握しているし、局面についても互いに知っている情報に不公平が無いことを仮定する (完全情報)</li>
+<li>必ず有限ステップでゲームは終了するとする
+<ul>
+<li>つまり二人がどのような手を打っても局面はいつか最終局面になる</li>
+</ul></li>
+</ol>
+<h2 id="組み合わせゲームの帰結類">組み合わせゲームの帰結類</h2>
+<h3 id="組み合わせゲームの基本定理">組み合わせゲームの基本定理</h3>
+<div class="thm">
+ある組み合わせゲームを Alice と Bob とが遊んだとする. Alice が先攻であったとする. 互いが自分の勝ちを正しく目指した時、このゲームは必ず先攻の Alice が勝つか、後攻の Bob が勝つかのいずれかである.
+</div>
+<p>組み合わせゲームに引き分けは無いわけだが、対局者がともに <strong>正しく</strong> 自分の勝ちを目指したとき、 初期局面の時点でどちらが勝てるか？ を予見できる、と言っている.</p>
+<p>実際のその証明は局面に関する帰納法によるわけだが、 その中身は <a href="https://ja.wikipedia.org/wiki/ミニマックス法">min-max 法</a> である.</p>
+<p>簡単に述べると、先攻の Alice が打てる手によって取り得る局面を</p>
+<p><span class="math display">\[s_1, s_2, \ldots, s_n\]</span></p>
+<p>とする. 帰納法の仮定で、<span class="math inline">\(s_1, s_2, \ldots, s_n\)</span> それぞれは 「先攻の Alice が勝つか、後攻の Bob が勝つかのいずれか」 であるとする. 一つでも Alice が勝てる局面があるのなら、Alice は正しくそれを選択することで勝てる. 一つもないのなら、Bob が勝つしか無い. (Bob がミスをしない限りは勝てない. 正しく勝ちを目指すことを仮定するので、これは考えない.)</p>
+<p>帰納法の基底として最終局面がある. 最終局面は後攻必勝である (勝敗の定義に註意).</p>
+<h3 id="帰結類">帰結類</h3>
+<h4 id="不偏ゲーム">不偏ゲーム</h4>
+<p>不偏ゲームでは、先の定理で Alice、Bob という名称は無視して、単に先攻、後攻だけを気にすればよい. つまり、不偏ゲームは「先攻必勝か後攻必勝かのいずれかである」ということが言える.</p>
+<p>先攻必勝のゲームをクラス <span class="math inline">\(\mathcal{N}\)</span> という. Next の頭文字である. 後攻必勝のゲームをクラス <span class="math inline">\(\mathcal{P}\)</span> という. これは Previous の頭文字である. ある不偏ゲーム <span class="math inline">\(G\)</span> が先攻必勝であることを <span class="math inline">\(G \in \mathcal{N}\)</span> と書くことがある.</p>
+<h4 id="非不偏ゲーム">非不偏ゲーム</h4>
+<p>非不偏ゲームにおいては、どちらが先攻でどちらが後攻かが大事である.<br />
+Alice や Bob といった固有名詞よりも私は左右という呼び分けが好きなので、 <code>s/Alice/Left/g</code> (左) <code>s/Bob/Right/g</code> (右) とする. 左右の概念はゲーム上に2つの異なる役割を与えるためのもの、 具体的には行える操作に区別をつけるためのものであって、先攻後攻とは独立した概念であることに註意. 基本定理に立ち返ると、次の四通りを考える必要がある.</p>
+<ol style="list-style-type: decimal">
+<li>左 が <strong>先</strong> 攻で 右 が後攻のとき、<strong>左</strong> が必勝</li>
+<li>左 が <strong>先</strong> 攻で 右 が後攻のとき、右 が必勝</li>
+<li>左 が後攻で 右 が先攻のとき、<strong>左</strong> が必勝</li>
+<li>左 が後攻で 右 が先攻のとき、右 が必勝</li>
+</ol>
+<p>これらのケースは排他的でなく、2x2 の表にする必要がある.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="center">-</th>
+<th align="center">1</th>
+<th align="center">2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">3</td>
+<td align="center"><span class="math inline">\(\mathcal{L}\)</span></td>
+<td align="center"><span class="math inline">\(\mathcal{P}\)</span></td>
+</tr>
+<tr class="even">
+<td align="center">4</td>
+<td align="center"><span class="math inline">\(\mathcal{N}\)</span></td>
+<td align="center"><span class="math inline">\(\mathcal{R}\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>クラス <span class="math inline">\(\mathcal{N}\)</span> と <span class="math inline">\(\mathcal{P}\)</span> は不偏ゲームで紹介したものである. 例えばケース 2 とケース 3 が同時に成り立つときとは、すなわち、常に後攻が勝つ.</p>
+<p>新たに導入した クラス <span class="math inline">\(\mathcal{L}\)</span> と <span class="math inline">\(\mathcal{R}\)</span> はそれぞれ Left, Right の頭文字であって、 左必勝、右必勝のことである. 例えばケース 1 とケース 3 とが同時に成り立つときは、先攻後攻にかかわらずに左が常に勝っている.</p>
+<div class="thm">
+<p>非不偏ゲームは常にこの4クラスのいずれかちょうど1つに属していることが、基本定理から言える.</p>
+</div>
+<h3 id="ゲームの選択肢と帰結類">ゲームの選択肢と帰結類</h3>
+<p>非不偏ゲームではある局面に対して左右それぞれに一般には異なる許された手が定められる. コンウェイのゲームの形式的表現はゲームそのものを打てる手の集合として表現する. (つまりゲーム木として抽象化するのである.) 非不偏ゲーム <span class="math inline">\(G\)</span> は 左が打てる手の集合 (左選択肢) <span class="math inline">\(\mathcal{G}^L\)</span> 及び 右が打てる手の集合 (右選択肢) <span class="math inline">\(\mathcal{G}^R\)</span> のペア</p>
+<p><span class="math display">\[G = \{ \mathcal{G}^L | \mathcal{G}^R \}\]</span></p>
+<p>と記述される.</p>
+<blockquote>
+<p>不偏ゲームは <span class="math inline">\(\mathcal{G}^L = \mathcal{G}^R\)</span> だと考えれば良いので、 非不偏ゲームの特別な場合だと見なせることが分かる. というわけで非不偏ゲームのことだけを考える.</p>
+</blockquote>
+<p>基本定理では、min-max 法によってどちらが勝つかを示した. 4 クラスへの分類も同様に帰納的に示すことが出来る.</p>
+<p>ゲーム <span class="math inline">\(G\)</span> がクラス <span class="math inline">\(\mathcal{L}\)</span> に属するのは、先ほどのケース 1, 3 が同時に成立する場合である. ケース 1 とは、先攻が左のときに左が必勝することであった. これは言い換えると、左選択肢の中に左が勝つような選択肢があれば良いということである. 左が勝つのはクラス <span class="math inline">\(\mathcal{L}\)</span> であればよいが、それだけではない. 左が手を打った後、左は後攻になるので、クラス <span class="math inline">\(\mathcal{P}\)</span> (後攻必勝) であってもよい. つまり、</p>
+<ul>
+<li>ケース 1 <span class="math inline">\(\iff \exists G^L \in \mathcal{G}^L, G^L \in \mathcal{L} \cup \mathcal{P}\)</span></li>
+</ul>
+<p>ということ. 同様に、ケース 3 についても考える. ケース 3 は、先攻が右のときに左が必勝の場合である. どのような選択をしても右が勝てないとは、どの右選択肢も左が必勝であることを言う. 右が打った直後は左が先攻であるので、</p>
+<ul>
+<li>ケース 3 <span class="math inline">\(\iff \forall G^R \in \mathcal{G}^R, G^R \in \mathcal{L} \cup \mathcal{N}\)</span></li>
+</ul>
+<p>以上から、ある非不偏ゲーム <span class="math inline">\(G\)</span> がクラス <span class="math inline">\(\mathcal{L}\)</span> に属する必要十分条件は</p>
+<p><span class="math display">\[\exists G^L \in \mathcal{G}^L, G^L \in \mathcal{L} \cup \mathcal{P}
+~
+\bigwedge
+~
+\forall G^R \in \mathcal{G}^R, G^R \in \mathcal{L} \cup \mathcal{N}\]</span></p>
+<p>だと分かる.</p>
+<p>他についても全く同様に考えると、先ほどの 2x2 の表を次のように形式的に書き換えられる.</p>
+<table style="width:17%;">
+<colgroup>
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">-</th>
+<th align="center"><span class="math inline">\(\exists G^L \in \mathcal{L} \cup \mathcal{P}\)</span></th>
+<th align="center"><span class="math inline">\(\forall G^L \in \mathcal{R} \cup \mathcal{N}\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><span class="math inline">\(\forall G^R \in \mathcal{L} \cup \mathcal{N}\)</span></td>
+<td align="center"><span class="math inline">\(\mathcal{L}\)</span></td>
+<td align="center"><span class="math inline">\(\mathcal{P}\)</span></td>
+</tr>
+<tr class="even">
+<td align="center"><span class="math inline">\(\exists G^R \in \mathcal{R} \cup \mathcal{P}\)</span></td>
+<td align="center"><span class="math inline">\(\mathcal{N}\)</span></td>
+<td align="center"><span class="math inline">\(\mathcal{R}\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>これはクラスを再帰的にゲームに与えている.</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sun Dec 13 14:46:11 JST 2015</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Sun Dec 13 14:46:11 JST 2015</h1>
+</header>
+<h2 id="coderunner-2015-本戦">CODERUNNER 2015 本戦</h2>
+<p>(一瞬だけ) (スコアの上昇速度で) 輝けた</p>
+<ul>
+<li>問題長いので、全部読むのは諦めた</li>
+<li>部分だけを使って極めれば勝てるだろうという楽観</li>
+<li>結果的に、外注を引き受けることをしなかった
+<ul>
+<li>完全に敗因これ</li>
+</ul></li>
+</ul>
+<h2 id="解法">解法</h2>
+<p>APIを使う練習のつもりで、次のプログラムをひとまず書いて動かそうとする</p>
+<ol type="1">
+<li>国から受注</li>
+<li>社員を割り当てる
+<ul>
+<li>その仕事種類についての速度でソートして上から2人だけ取る</li>
+</ul></li>
+</ol>
+<p>ちょっとルールを理解してきれてなかった.</p>
+<ol type="1">
+<li>期間内に仕事をこなせるぎりぎりの人間を割り当てるように変更
+<ul>
+<li>実際にPOSTを投げる箇所のコードを、「2人だけ取る」のままで90分ほど過ごし、最下位争いをしていた.</li>
+</ul></li>
+<li>ギリギリOKな人間を割り当てたはずなのに、何故かエラー (この人間だと納期に間に合わない) が帰ってきた
+<ul>
+<li>仕事を実際よりも2倍あるものと見なして、人間を割り当てることにした</li>
+<li>エラーが帰ってきたら外注に出すように処理 (例外処理)</li>
+<li>割り当てる人間が6人以上必要なとき、そんなに人間を使うのが勿体無いので、外注にする</li>
+<li>その他、割り当てに失敗するときにも外注</li>
+</ul></li>
+</ol>
+<h3 id="getinfo">getinfo</h3>
+<p>その時点での、自分の情報を得るAPI. これは、別のプログラムとして、1.1秒ごとに取得させて利用した.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="va">TOKEN=</span>9F7RPQP86817D3PJMIAQES8L0XLN6FZ9
+<span class="kw">while</span> <span class="bu">:</span><span class="kw">;</span> <span class="kw">do</span>
+  <span class="ex">curl</span> -s http://game.coderunner.jp/getinfoJson?token=<span class="va">$TOKEN</span> <span class="op">&gt;</span> tmp.json
+  <span class="fu">mv</span> tmp.json info.json
+  <span class="fu">date</span><span class="kw">;</span>
+  <span class="fu">sleep</span> 1.1
+<span class="kw">done</span></code></pre></div>
+<p>わざわざ書くほどのものでもないけど. 最後の1時間くらい、このAPIが頻繁に (1/10の確率) 死ぬようになった. そうすると古い情報で社員を割り当てるので、しょっちゅう、「その社員は既に働いています」エラーが出た.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">  <span class="ex">timeout</span> 1 curl -s http://game.coderunner.jp/getinfoJson?token=<span class="va">$TOKEN</span> <span class="op">&gt;</span> tmp.json <span class="kw">&amp;&amp;</span>
+    <span class="fu">mv</span> tmp.json info.json</code></pre></div>
+<p>に変更した. <code>timeout</code> コマンド便利. curl のタイムアウトのオプションとかいちいち覚えてられないです.</p>
+<h3 id="知見">知見</h3>
+<ol type="1">
+<li>自分たちで仕事が出来るならそれが一番良い</li>
+<li>外注に出す行為はリスク</li>
+<li>国から仕事を受けるのは運ゲー</li>
+<li>外注から仕事を取るのが賢い</li>
+</ol>
+<h3 id="プログラム">プログラム</h3>
+<p>最終的なプログラムはこれ.</p>
+<div class="sourceCode"><pre class="sourceCode coffee"><code class="sourceCode coffee">fs <span class="kw">=</span> require <span class="st">&#39;fs&#39;</span>
+<span class="kw">{</span>execSync<span class="kw">}</span> <span class="kw">=</span> require <span class="st">&#39;child_process&#39;</span>
+info <span class="kw">=</span> require <span class="st">&#39;./info.json&#39;</span>
+
+exec <span class="kw">=</span> <span class="fu">(com) -&gt;</span>
+  execSync<span class="kw">(</span>com<span class="kw">).</span>toString<span class="kw">()</span>
+
+TOKEN <span class="kw">=</span> <span class="st">&#39;9F7RPQP86817D3PJMIAQES8L0XLN6FZ9&#39;</span>
+
+int <span class="kw">=</span> <span class="fu">(x) -&gt;</span> x <span class="kw">|</span> <span class="dv">0</span>
+
+<span class="co"># [仕事のID] [納期までの残り時間(秒, 小数点以下切り捨て)] [仕事量] [仕事の種類] [報酬] [賠償]</span>
+<span class="kw">[</span>tid<span class="kw">,</span> time<span class="kw">,</span> w<span class="kw">,</span> k<span class="kw">,</span> reward<span class="kw">,</span> risk<span class="kw">]</span> <span class="kw">=</span>
+  exec<span class="kw">(</span><span class="st">&quot;curl -s http://game.coderunner.jp/taketask?token=</span><span class="ch">#{</span>TOKEN<span class="ch">}</span><span class="st">&quot;</span><span class="kw">).</span>split<span class="kw">(</span><span class="st">&#39; &#39;</span><span class="kw">).</span>map<span class="kw">(</span>int<span class="kw">)</span>
+<span class="ot">console</span><span class="kw">.</span>warn <span class="st">&quot;受注: </span><span class="ch">#{</span>[tid, time,w,k,reward,risk]<span class="ch">}</span><span class="st">&quot;</span>
+fs<span class="kw">.</span>appendFileSync <span class="st">&#39;log&#39;</span><span class="kw">,</span> <span class="kw">[</span>tid<span class="kw">,</span> time<span class="kw">,</span>w<span class="kw">,</span>k<span class="kw">,</span>reward<span class="kw">,</span>risk<span class="kw">]</span>
+fs<span class="kw">.</span>appendFileSync <span class="st">&#39;log&#39;</span><span class="kw">,</span> <span class="st">&#39;\n&#39;</span>
+
+<span class="co">## 外注</span>
+<span class="co">#</span>
+outsource <span class="kw">=</span> <span class="fu">-&gt;</span>
+  cost <span class="kw">=</span> reward <span class="kw">*</span> <span class="fl">0.7</span>
+  cost <span class="kw">=</span> cost <span class="kw">|</span> <span class="dv">0</span>
+  <span class="ot">console</span><span class="kw">.</span>warn <span class="st">&quot;* 外注: cost = </span><span class="ch">#{</span>cost<span class="ch">}</span><span class="st">&quot;</span>
+  exec <span class="st">&quot;curl -s &#39;http://game.coderunner.jp/outsource?task=</span><span class="ch">#{</span>tid<span class="ch">}</span><span class="st">&amp;orderReward=</span><span class="ch">#{</span>cost<span class="ch">}</span><span class="st">&amp;token=</span><span class="ch">#{</span>TOKEN<span class="ch">}</span><span class="st">&#39;&quot;</span>
+
+<span class="co">## 内</span>
+<span class="co">#</span>
+inner <span class="kw">=</span> <span class="fu">-&gt;</span>
+  workers <span class="kw">=</span> <span class="kw">[]</span>
+  info<span class="kw">.</span>workers<span class="kw">.</span>forEach <span class="fu">(w, i) -&gt;</span>
+    <span class="kw">return</span> <span class="kw">if</span> w<span class="kw">.</span>time <span class="kw">&gt;</span> <span class="dv">0</span>
+    workers<span class="kw">.</span>push <span class="kw">{</span> id<span class="kw">:</span> w<span class="kw">.</span>id<span class="kw">,</span> speed<span class="kw">:</span> w<span class="kw">.</span>speed<span class="kw">[</span>k<span class="kw">]</span> <span class="kw">}</span>
+  workers<span class="kw">.</span>sort <span class="fu">(a,b) -&gt;</span> b<span class="kw">.</span>speed <span class="kw">-</span> a<span class="kw">.</span>speed
+
+  qs <span class="kw">=</span> <span class="kw">[]</span>
+  sum <span class="kw">=</span> <span class="dv">0</span>
+  ok <span class="kw">=</span> <span class="ot">false</span>
+
+  <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">[</span><span class="dv">0</span> <span class="kw">...</span> workers<span class="kw">.</span>length<span class="kw">]</span>
+    qs<span class="kw">.</span>push workers<span class="kw">[</span>i<span class="kw">].</span>id
+    sum <span class="kw">+=</span> workers<span class="kw">[</span>i<span class="kw">].</span>speed
+    <span class="kw">if</span> sum <span class="kw">*</span> time <span class="kw">&gt;</span> <span class="kw">(</span>w<span class="kw">*</span><span class="fl">1.2</span><span class="kw">)</span>
+      ok <span class="kw">=</span> <span class="ot">true</span>
+      <span class="kw">break</span>
+
+  <span class="kw">if</span> qs<span class="kw">.</span>length <span class="kw">&gt;</span> <span class="dv">8</span>
+    ok <span class="kw">=</span> <span class="ot">false</span>
+
+  <span class="ot">console</span><span class="kw">.</span>warn <span class="st">&quot;* 割り当て: </span><span class="ch">#{</span>qs<span class="ch">}</span><span class="st"> (</span><span class="ch">#{</span>sum<span class="ch">}</span><span class="st">)&quot;</span>
+  <span class="kw">if</span> ok
+    res <span class="kw">=</span>
+      exec <span class="st">&quot;curl -s &#39;http://game.coderunner.jp/assign?token=</span><span class="ch">#{</span>TOKEN<span class="ch">}</span><span class="st">&amp;task=</span><span class="ch">#{</span>tid<span class="ch">}</span><span class="st">&amp;worker=</span><span class="ch">#{</span>qs.join(&#39;,&#39;)<span class="ch">}</span><span class="st">&#39;&quot;</span>
+    <span class="ot">console</span><span class="kw">.</span>warn res
+    <span class="kw">if</span> res<span class="kw">.</span>indexOf<span class="kw">(</span><span class="st">&#39;Error:&#39;</span><span class="kw">)</span> <span class="kw">is</span> <span class="dv">0</span>
+      <span class="kw">do</span> outsource
+  <span class="kw">else</span>
+    <span class="ot">console</span><span class="kw">.</span>warn <span class="st">&#39;* 割り当て無理&#39;</span>
+    <span class="kw">do</span> outsource
+
+<span class="kw">do</span> inner</code></pre></div>
+<p>延べて2時間程度はプログラムを書き続けてたのに、結果的に書いたのはこれだけと思うと、しょぼい. 他の人のはどんなだろう.</p>
+<h3 id="実況">実況</h3>
+<p>2015/12/12 2:30 PM - 5:30 PM</p>
+<blockquote class="twitter-tweet" lang="en">
+<p lang="ja" dir="ltr">
+coderunner来た
+</p>
+— /c/ympfh (<span class="citation" data-cites="cympfh">@cympfh</span>) <a href="https://twitter.com/cympfh/status/675536467611877376">December 12, 2015</a>
+</blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+<blockquote class="twitter-tweet" lang="en">
+<p lang="und" dir="ltr">
+<a href="https://t.co/cIHrsqqBZv">pic.twitter.com/cIHrsqqBZv</a>
+</p>
+— /c/ympfh (<span class="citation" data-cites="cympfh">@cympfh</span>) <a href="https://twitter.com/cympfh/status/675538511118790656">December 12, 2015</a>
+</blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+<blockquote class="twitter-tweet" lang="en">
+<p lang="en" dir="ltr">
+positive score
+</p>
+— /c/ympfh (<span class="citation" data-cites="cympfh">@cympfh</span>) <a href="https://twitter.com/cympfh/status/675559011136069632">December 12, 2015</a>
+</blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>(長い負スコアから偶然脱却したときのコメント)</p>
+<blockquote class="twitter-tweet" lang="en">
+<p lang="ja" dir="ltr">
+なんかこれあっという間にnegative score に吸い込まれるな
+</p>
+— /c/ympfh (<span class="citation" data-cites="cympfh">@cympfh</span>) <a href="https://twitter.com/cympfh/status/675565127500824576">December 12, 2015</a>
+</blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>(うん、だってバグってるからね)</p>
+<blockquote class="twitter-tweet" lang="en">
+<p lang="ja" dir="ltr">
+すごい重力
+</p>
+— /c/ympfh (<span class="citation" data-cites="cympfh">@cympfh</span>) <a href="https://twitter.com/cympfh/status/675565169993388032">December 12, 2015</a>
+</blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>(割り当てに失敗した仕事を放置してたので一気に賠償してた)</p>
+<blockquote class="twitter-tweet" lang="en">
+<p lang="ja" dir="ltr">
+正直 「外注する」って言葉、どちら側の言葉なのかわからなくない？
+</p>
+— /c/ympfh (<span class="citation" data-cites="cympfh">@cympfh</span>) <a href="https://twitter.com/cympfh/status/675566983719477248">December 12, 2015</a>
+</blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>(外注に出す、外注を受ける、って言ってくれればいいのに)</p>
+<blockquote class="twitter-tweet" lang="en">
+<p lang="ja" dir="ltr">
+一時的にポジティブスコア来てもあるとき一気にツケが回収されるように、ネガティブに吸い込まれる
+</p>
+— /c/ympfh (<span class="citation" data-cites="cympfh">@cympfh</span>) <a href="https://twitter.com/cympfh/status/675570011872755712">December 12, 2015</a>
+</blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+<blockquote class="twitter-tweet" lang="en">
+<p lang="ja" dir="ltr">
+マイナス無限 <a href="https://t.co/QiSUlYXuON">pic.twitter.com/QiSUlYXuON</a>
+</p>
+— /c/ympfh (<span class="citation" data-cites="cympfh">@cympfh</span>) <a href="https://twitter.com/cympfh/status/675572802687074304">December 12, 2015</a>
+</blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>(自分の点数の折れ線グラフ smooth bezier)</p>
+<blockquote class="twitter-tweet" lang="en">
+<p lang="ja" dir="ltr">
+くっっっっっっっっっっっっっそバグってた
+</p>
+— /c/ympfh (<span class="citation" data-cites="cympfh">@cympfh</span>) <a href="https://twitter.com/cympfh/status/675574199369396226">December 12, 2015</a>
+</blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>(プログラム変更してるはずなのにprinfデバッグもできないぞ、おかしいなあ、と思ったら違うファイル触ってた、みたいなタイプのバグです)</p>
+<blockquote class="twitter-tweet" lang="en">
+<p lang="ja" dir="ltr">
+中途半端な順位で終わることが容易に想像着く <a href="https://t.co/73R2lmBpVb">pic.twitter.com/73R2lmBpVb</a>
+</p>
+— /c/ympfh (<span class="citation" data-cites="cympfh">@cympfh</span>) <a href="https://twitter.com/cympfh/status/675575848133484544">December 12, 2015</a>
+</blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>(まともにスコアを稼ぎはじめたので、様子見のために、自分と一位と割と上位の人のスコアを比較し始める. 実はコレと同じグラフを描いてくれるためのツールが用意されてたらしい)</p>
+<blockquote class="twitter-tweet" lang="en">
+<p lang="ja" dir="ltr">
+getinfoたまに死ぬ
+</p>
+— /c/ympfh (<span class="citation" data-cites="cympfh">@cympfh</span>) <a href="https://twitter.com/cympfh/status/675577261710442496">December 12, 2015</a>
+</blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>(他の何よりも使うAPIなんですよ、これ)</p>
+<blockquote class="twitter-tweet" lang="en">
+<p lang="ja" dir="ltr">
+Error: Some workers are still working 連発するから困るなあ
+</p>
+— /c/ympfh (<span class="citation" data-cites="cympfh">@cympfh</span>) <a href="https://twitter.com/cympfh/status/675577355880894464">December 12, 2015</a>
+</blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+<blockquote class="twitter-tweet" lang="en">
+<p lang="ja" dir="ltr">
+数時間前の順位にようやく戻ってこられた <a href="https://t.co/TZzYlT9wfR">pic.twitter.com/TZzYlT9wfR</a>
+</p>
+— /c/ympfh (<span class="citation" data-cites="cympfh">@cympfh</span>) <a href="https://twitter.com/cympfh/status/675577660072792064">December 12, 2015</a>
+</blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>(じわりじわりと、親に顔向け出来る順位に来たので安心してトイレに立つ頻度が増える)</p>
+<blockquote class="twitter-tweet" lang="en">
+<p lang="ja" dir="ltr">
+来てるんじゃないですかこれ <a href="https://twitter.com/hashtag/coderunner2015?src=hash">#coderunner2015</a> <a href="https://t.co/QMmdkjJ6Rf">pic.twitter.com/QMmdkjJ6Rf</a>
+</p>
+— /c/ympfh (<span class="citation" data-cites="cympfh">@cympfh</span>) <a href="https://twitter.com/cympfh/status/675579091924336640">December 12, 2015</a>
+</blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+<blockquote class="twitter-tweet" lang="en">
+<p lang="ja" dir="ltr">
+22年間人生プレイしてきたけど人生は運
+</p>
+— /c/ympfh (<span class="citation" data-cites="cympfh">@cympfh</span>) <a href="https://twitter.com/cympfh/status/675579422632599553">December 12, 2015</a>
+</blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>(もうこれ以上プログラムを変更する気はない、という意思表明です)</p>
+<blockquote class="twitter-tweet" lang="en">
+<p lang="ja" dir="ltr">
+頼む！今終ってくれ！ <a href="https://t.co/qTBUajSyqQ">pic.twitter.com/qTBUajSyqQ</a>
+</p>
+— /c/ympfh (<span class="citation" data-cites="cympfh">@cympfh</span>) <a href="https://twitter.com/cympfh/status/675580507069878272">December 12, 2015</a>
+</blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>(バグが取れてからは、メインのプログラムに一切変更せずにここまで来たので浮かれた)</p>
+<blockquote class="twitter-tweet" lang="en">
+<p lang="ja" dir="ltr">
+凋落 <a href="https://t.co/lWbwtpAuxB">pic.twitter.com/lWbwtpAuxB</a>
+</p>
+— /c/ympfh (<span class="citation" data-cites="cympfh">@cympfh</span>) <a href="https://twitter.com/cympfh/status/675591763428446209">December 12, 2015</a>
+</blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>(最後の30分、外注天国になっていたらしく、外注から美味しい仕事を引き受けるほうが点数が稼げたようです)</p>
+<blockquote class="twitter-tweet" lang="en">
+<p lang="und" dir="ltr">
+<a href="https://t.co/jysxQd6lTA">pic.twitter.com/jysxQd6lTA</a>
+</p>
+— /c/ympfh (<span class="citation" data-cites="cympfh">@cympfh</span>) <a href="https://twitter.com/cympfh/status/675594783901913088">December 12, 2015</a>
+</blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>(最終スコア)</p>
+<blockquote class="twitter-tweet" lang="en">
+<p lang="und" dir="ltr">
+<a href="https://t.co/OUt2UVMibH">pic.twitter.com/OUt2UVMibH</a>
+</p>
+— /c/ympfh (<span class="citation" data-cites="cympfh">@cympfh</span>) <a href="https://twitter.com/cympfh/status/675595223611797505">December 12, 2015</a>
+</blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>(最終スコア)</p>
+</body>
+</html>

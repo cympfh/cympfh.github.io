@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Apr 08 2014</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Apr 08 2014</h1>
+</header>
+<p>レポジトリを更新するための日記更新。</p>
+<p>gitレポジトリごとに、user.name, user.email 設定しないといけないの面倒くさい。<br />
+なんにしてもPCごとにプライベートと研究用を区別することを徹底するのは大事なはず。<br />
+研究はプライベートではないのか。<br />
+就職はプライベートなんだろうか。</p>
+<hr />
+<p>コマンドラインからtwitterするための twurl.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">gem</span> install twurl</code></pre></div>
+<p>で入るらしいけど、先に git@github.com:twitter/twurl.git から持ってきて使ってた。</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">twurl</span> -v
+<span class="ex">0.9.1</span></code></pre></div>
+<p><code>twurl alias</code>が何故か使えない。そも、エイリアス程度じゃ煩わしさは拭えなさそうにないので、bash関数を自分で定義して呼んでる。</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">function</span><span class="fu"> tw()</span> <span class="kw">{</span>
+      <span class="va">${TWURL}</span> <span class="ex">-X</span> POST <span class="st">&quot;/1.1/statuses/update.json&quot;</span> -d <span class="st">&quot;status=</span><span class="va">$1</span><span class="st">&quot;</span> <span class="op">&gt;</span>/dev/null <span class="op">2&gt;&amp;1</span>
+<span class="kw">}</span>
+
+<span class="kw">function</span><span class="fu"> tw:media()</span> <span class="kw">{</span>
+      <span class="va">${TWURL}</span> <span class="ex">-X</span> POST <span class="st">&quot;/1.1/statuses/update_with_media.json&quot;</span> --file <span class="va">$2</span> --file-field <span class="st">&quot;media[]&quot;</span> -d <span class="st">&quot;status=</span><span class="va">$1</span><span class="st">&quot;</span> <span class="op">&gt;</span> /dev/null
+<span class="kw">}</span>
+
+<span class="kw">function</span><span class="fu"> tw:ls()</span> <span class="kw">{</span>
+      <span class="va">${TWURL}</span> <span class="ex">accounts</span>
+<span class="kw">}</span>
+
+<span class="kw">function</span><span class="fu"> tw:cd()</span> <span class="kw">{</span>
+      <span class="va">${TWURL}</span> <span class="kw">set</span> <span class="ex">default</span> <span class="va">$1</span>
+<span class="kw">}</span></code></pre></div>
+<p>このくらい。 TLを見るには、 /1.1/statuses/home_timeline.json でJSONを受け取るわけだけど、それをしたかったら、JSONを人間のために整形するスクリプトが必要だ。 私はTLを見ないので必要ない。</p>
+</body>
+</html>

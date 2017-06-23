@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>混合行列 (confusion matrix, heatmap)</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<h1 class="title">混合行列 (confusion matrix, heatmap)</h1>
+</header>
+<h2 id="参考">参考</h2>
+<ul>
+<li><a href="http://gnuplot.sourceforge.net/demo_svg/heatmaps.html">gnuplot demo script: heatmaps.dem</a></li>
+</ul>
+<h2 id="概要">概要</h2>
+<p>混合行列 (Confusion Matrix) などと呼ばれるあの表を色付きで図示する. 色の濃さで数の大きさを表現する.</p>
+<p>上の参考リンクでは色が連続して変化するように中間値補完が為されてるが、 私の知ってるgnuplotのバージョンではこれは再現できない. これをするには <code>pm3d</code> を使ったほうがいいと思う.</p>
+<figure>
+<img src="3d.heatmap.png" />
+</figure>
+<h2 id="data-format">data format</h2>
+<p>行列 (<code>matrix</code>) 形式でデータを与えることにする. すなわち、データ <span class="math inline">\(z\)</span> を <span class="math inline">\(n\)</span> 行 <span class="math inline">\(m\)</span> 列に並べたものをデータとする.</p>
+<pre class="dat"><code>z11 z12 z13
+z21 z22 z23
+z31 z32 z33
+z41 z42 z43</code></pre>
+<p>混合行列を図示する目的のためには行と列とに見出し (座標ではなくラベル) があるべきで、 どうせならデータに含めたい. gnuplot の matrix data は行ごとのアイテム数は揃ってる必要があるので、 0行目0列目にはダミーデータを入れた上で、 1行目または1列目に見出しを入れられる.</p>
+<pre class="dat"><code>xxxx Col1 Col2 Col3
+Row1  z11  z12  z13
+Row2  z21  z22  z23
+Row3  z31  z32  z33
+Row4  z41  z42  z43</code></pre>
+<h2 id="with-image"><code>with image</code></h2>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">plot</span> ... using <span class="op">&lt;</span>x<span class="op">&gt;</span>:<span class="op">&lt;</span>y<span class="op">&gt;</span>:<span class="op">&lt;</span>z<span class="op">&gt;</span> with image</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">params</th>
+<th style="text-align: center;">default</th>
+<th style="text-align: left;">value</th>
+<th style="text-align: left;">explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>x</code></td>
+<td style="text-align: center;">--</td>
+<td style="text-align: left;">(int)</td>
+<td style="text-align: left;">データの <span class="math inline">\(x\)</span> 座標</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>y</code></td>
+<td style="text-align: center;">--</td>
+<td style="text-align: left;">(int)</td>
+<td style="text-align: left;">データの <span class="math inline">\(y\)</span> 座標</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>z</code></td>
+<td style="text-align: center;">--</td>
+<td style="text-align: left;">(double)</td>
+<td style="text-align: left;">データ. 対応する色が塗られる</td>
+</tr>
+</tbody>
+</table>
+<p>ただし、matrix で読む場合は <code>x</code>, <code>y</code> は自動的に column 1, 2 として適切な値が入ってると見なしてよい.</p>
+<h2 id="columnheaders-rowheaders"><code>columnheaders</code>, <code>rowheaders</code></h2>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">plot</span> ... matrix column rowheaders</code></pre></div>
+<p>データの一行目、一列目の文字列を見出しだと思って、 二行目、二列目以降のデータだけを使う.</p>
+<h2 id="example">example</h2>
+<pre class="data"><code>xxxx Col1 Col2 Col3
+Row1    1    2    3
+Row2    2    4    6
+Row3    4    8   12
+Row4    8   16   24
+</code></pre>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">set</span> <span class="ex">terminal</span> pngcairo
+<span class="kw">set</span> <span class="ex">output</span> <span class="st">&#39;heatmap.png&#39;</span>
+
+<span class="bu">unset</span> <span class="va">key</span>
+<span class="kw">set</span> <span class="ex">title</span> <span class="st">&#39;Heatmap with image&#39;</span>
+
+<span class="kw">set</span> <span class="ex">cbrange</span> [0:30]  <span class="co"># the range of colorbox</span>
+<span class="kw">set</span> <span class="ex">palette</span> cubehelix start -2 cycles 0 saturation 3 gamma 3 negative  <span class="co"># color scheme</span>
+
+<span class="ex">plot</span> <span class="st">&#39;heatmap.dat&#39;</span> matrix rowheaders columnheaders u 1:2:3 with image ,\
+                <span class="st">&#39;&#39;</span> matrix rowheaders columnheaders u 1:2:(sprintf(<span class="st">&quot;%g&quot;</span>, <span class="va">$3</span>)) <span class="ex">with</span> labels</code></pre></div>
+<figure>
+<img src="3d.heatmap.png" />
+</figure>
+</body>
+</html>

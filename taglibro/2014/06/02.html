@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Mon Jun 2 20:13:40 JST 2014</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Mon Jun 2 20:13:40 JST 2014</h1>
+</header>
+<h2 id="日記電池残量の表示">日記・電池残量の表示</h2>
+<p>今までGNU Screenの右下に，「時計，CPUの温度，PCの電池残量」を表示していた．</p>
+<figure>
+<img src="http://i.imgur.com/4lh8G0b.png" />
+</figure>
+<p>この画像の一番右下の，「59.0 deg C ... 」がそれ．</p>
+<p>でもよく考えたらGNU Screen自体はもしかしたら， 複数表示するときもなくはないし， デスクトップ全体に時計が２つ以上表示されてるのが気持ち悪かったので，</p>
+<p>あと， hardstatusを表示しない人を見つけてかっこいいと思ったので， 自分も真似をした．</p>
+<p><code>i3_status</code>を自分で書いた． ちょっとハマったとこはあるけれど， 基本的に，</p>
+<p>プログラムは， <a href="http://code.stapelberg.de/git/i3/tree/contrib/trivial-bar-script.sh?h=next">i3 - A better tiling and dynamic window manager</a> を，</p>
+<p>設定ファイル(~/.i3/config)は， これは一行変えるだけだけど，</p>
+<pre><code>bar {
+      status_command $HOME/bin/your/own/program
+}</code></pre>
+<p>とするだけ．</p>
+<p>肝心の<code>i3_status</code> は， <a href="https://gist.github.com/cympfh/5f36cccfb704d9ae3957">i3_status.js</a> です．</p>
+<p>内容は全く変わらず，「CPUの温度，電池残量，時計」</p>
+<p>色を，<code>#ffffff</code> の形式で取らせるのだけど，たぶん１６色くらいにしか対応していないっぽい．</p>
+<hr />
+<p>nodejs で，外のプロセスを作って結果をとるのには普通非同期を使い， 今回の場合，CPUの温度を取るのに，<code>sensors</code> と， 電池の残量を取るのに，<code>acpi</code> を使っているため， 非同期が２つある．</p>
+<p>こういう時のために，Promiseなるものがもてはやされてるんだろう． 正式に追加されるまではなんとなく勉強する気にならない． いや，手元で実験しようと試みてたけど うまく動いてないので．</p>
+<p>自分の書いたプログラムではひどい非同期になっていて， どうせ，１秒ごとに動かすのだから， 結果が多少古くてもいいや，という方針で同期を再現している．</p>
+<p>こんなコードを書いたのも見たのも初めてだ．</p>
+<hr />
+<p>モニタの右下に，</p>
+<figure>
+<img src="http://i.imgur.com/GAJiv34.png" />
+</figure>
+<p>と，表示される． ターミナルの右下ではなく，モニタ一枚に付き，一箇所． 私は二枚のモニタを使ってるので，二箇所に表示される． これ自体の設定はどうするんだろう．</p>
+<hr />
+<footer>
+    <p style='text-align: right'>
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+</body>
+</html>

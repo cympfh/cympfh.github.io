@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>misc.3sat</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<h1 class="title">misc.3sat</h1>
+</header>
+<h2 id="参考文献">参考文献</h2>
+<ol type="1">
+<li>[1] 結城 浩: <a href="http://www.hyuki.com/girl/random.html">数学ガール／乱択アルゴリズム</a> [Kindle版]</li>
+<li>[2] http://ja.wikipedia.org/wiki/充足可能性問題 (2015/3/28 時点)</li>
+</ol>
+<ul>
+<li>アルゴリズムは[1]より</li>
+<li>3-CNF, kyouseibi も[1]より</li>
+<li>他のテストデータ c1, c2 は[2] より</li>
+</ul>
+<h2 id="misc.3sat.cc"><a href="misc.3sat.cc" class="uri">misc.3sat.cc</a></h2>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="kw">struct</span> Var {
+  <span class="dt">int</span> var;
+  <span class="dt">bool</span> pol;
+  Var(<span class="dt">int</span> v) : var(v), pol(<span class="kw">true</span>) {}
+  Var(<span class="dt">int</span> v, <span class="dt">bool</span> b) : var(v), pol(b) {}
+};
+<span class="kw">using</span> Clause = vector&lt;Var&gt;;
+<span class="kw">using</span> CNF = vector&lt;Clause&gt;;
+<span class="kw">using</span> Assign = vector&lt;<span class="dt">bool</span>&gt;;
+
+<span class="co">// {{{ debug print</span>
+
+ostream&amp; <span class="kw">operator</span>&lt;&lt;(ostream&amp;os, Var v) {
+  <span class="cf">if</span> (v.pol) <span class="cf">return</span> os &lt;&lt; <span class="st">&#39;x&#39;</span> &lt;&lt; v.var;
+  <span class="cf">return</span> os &lt;&lt; <span class="st">&quot;(not x&quot;</span> &lt;&lt; v.var &lt;&lt; <span class="st">&#39;)&#39;</span>;
+}
+ 
+ostream&amp; <span class="kw">operator</span>&lt;&lt;(ostream&amp;os, Clause&amp;c) {
+  os &lt;&lt; <span class="st">&quot;(or&quot;</span>;
+  <span class="cf">for</span> (<span class="kw">auto</span>&amp;x: c) os &lt;&lt; <span class="st">&#39; &#39;</span> &lt;&lt; x;
+  <span class="cf">return</span> os &lt;&lt; <span class="st">&#39;)&#39;</span>;
+}
+
+ostream&amp; <span class="kw">operator</span>&lt;&lt;(ostream&amp;os, CNF&amp;c) {
+  os &lt;&lt; <span class="st">&quot;(and &quot;</span> &lt;&lt; c[<span class="dv">0</span>] &lt;&lt; endl;;
+  <span class="cf">for</span> (<span class="dt">int</span> i=<span class="dv">1</span>;i&lt;c.size()<span class="dv">-1</span>;++i)
+    os &lt;&lt; <span class="st">&quot;     &quot;</span> &lt;&lt; c[i] &lt;&lt; endl;
+  os &lt;&lt; <span class="st">&quot;     &quot;</span> &lt;&lt; c[c.size()<span class="dv">-1</span>] &lt;&lt; <span class="st">&#39;)&#39;</span>;
+  <span class="cf">return</span> os;
+}
+<span class="co">// }}}</span>
+
+<span class="dt">bool</span> is_satisfied(CNF&amp;cnf, Assign&amp;v) {
+  <span class="cf">for</span> (<span class="kw">auto</span>&amp;c: cnf) {
+    <span class="dt">bool</span> bl = <span class="kw">false</span>;
+    <span class="cf">for</span> (<span class="kw">auto</span>&amp;x: c) <span class="cf">if</span> (v[x.var] == x.pol) { bl = <span class="kw">true</span>; <span class="cf">break</span>; }
+    <span class="cf">if</span> (<span class="kw">not</span> bl) <span class="cf">return</span> <span class="kw">false</span>;
+  }
+  <span class="cf">return</span> <span class="kw">true</span>;
+}
+
+<span class="co">/* N.B.</span>
+<span class="co"> * when `cnf` is not satisfi-able,</span>
+<span class="co"> * `solve` returns dummy</span>
+<span class="co"> * check with `is_satisfied`</span>
+<span class="co"> */</span>
+Assign solve(CNF&amp;cnf, <span class="dt">int</span> n, <span class="dt">int</span> R = <span class="dv">200</span>) {
+  random_device rd;
+  mt19937 rand(rd());
+  Assign a(n);
+  rep (i, n) a[i] = rand()%<span class="dv">2</span> == <span class="dv">0</span>;
+
+  rep (_, R) {
+    rep (__, <span class="dv">3</span> * n) {
+      vector&lt;<span class="dt">int</span>&gt; clauses;
+      rep (i, cnf.size()) {
+        <span class="kw">auto</span>&amp;c = cnf[i];
+        <span class="dt">bool</span> bl = <span class="kw">false</span>;
+        <span class="cf">for</span> (<span class="kw">auto</span>&amp;x: c) {
+          <span class="cf">if</span> (a[x.var] == x.pol) { bl = <span class="kw">true</span>; <span class="cf">break</span>; }
+        }
+        <span class="cf">if</span> (bl) { <span class="cf">continue</span>; }
+        <span class="cf">else</span> { clauses.push_back(i); }
+      }
+      <span class="dt">int</span> m = clauses.size();
+      <span class="cf">if</span> (m == <span class="dv">0</span>) <span class="cf">return</span> a;
+      m = rand() % m;
+      <span class="kw">auto</span>&amp;c = cnf[clauses[m]];
+      m = rand() % c.size();
+      m = c[m].var;
+      a[m] = <span class="kw">not</span> a[m];
+    }
+  }
+  <span class="cf">return</span> a; <span class="co">// this not satisfy</span>
+}
+
+<span class="dt">void</span> test(CNF&amp;c, <span class="dt">int</span> n) {
+  cout &lt;&lt; <span class="st">&quot;*&quot;</span> &lt;&lt; endl;
+  Assign a = solve(c, n);
+  <span class="cf">if</span> (is_satisfied(c, a)) {
+    cout &lt;&lt; c &lt;&lt; <span class="st">&quot; is satisfiable and&quot;</span> &lt;&lt; endl;
+    cout &lt;&lt; <span class="st">&quot;proper assignment = &quot;</span> &lt;&lt; a &lt;&lt; endl;
+  } <span class="cf">else</span> {
+    cout &lt;&lt; c &lt;&lt; <span class="st">&quot; is NOT satisfiable and&quot;</span> &lt;&lt; endl;
+  }
+  cout &lt;&lt; <span class="st">&quot;*&quot;</span> &lt;&lt; endl;
+}
+
+<span class="dt">int</span> main() {
+
+  CNF c1 {
+    Clause { Var(<span class="dv">0</span>), Var(<span class="dv">1</span>) },
+    Clause { Var(<span class="dv">0</span>), Var(<span class="dv">1</span>, <span class="kw">false</span>) },
+    Clause { Var(<span class="dv">0</span>, <span class="kw">false</span>), Var(<span class="dv">1</span>, <span class="kw">false</span>) }
+  };
+  test(c1, <span class="dv">2</span>);
+
+  CNF c2 {
+    Clause { Var(<span class="dv">0</span>), Var(<span class="dv">1</span>) },
+    Clause { Var(<span class="dv">0</span>), Var(<span class="dv">1</span>, <span class="kw">false</span>) },
+    Clause { Var(<span class="dv">0</span>, <span class="kw">false</span>), Var(<span class="dv">1</span>) },
+    Clause { Var(<span class="dv">0</span>, <span class="kw">false</span>), Var(<span class="dv">1</span>, <span class="kw">false</span>) }
+  };
+  test(c2, <span class="dv">2</span>);
+
+  CNF kyouseibi {
+    Clause { Var(<span class="dv">0</span>), Var(<span class="dv">1</span>), Var(<span class="dv">2</span>) },
+    Clause { Var(<span class="dv">3</span>), Var(<span class="dv">1</span>), Var(<span class="dv">2</span>, <span class="kw">false</span>) },
+    Clause { Var(<span class="dv">0</span>, <span class="kw">false</span>), Var(<span class="dv">3</span>), Var(<span class="dv">2</span>) },
+    Clause { Var(<span class="dv">0</span>, <span class="kw">false</span>), Var(<span class="dv">3</span>, <span class="kw">false</span>), Var(<span class="dv">1</span>) },
+    Clause { Var(<span class="dv">3</span>, <span class="kw">false</span>), Var(<span class="dv">1</span>, <span class="kw">false</span>), Var(<span class="dv">2</span>) },
+    Clause { Var(<span class="dv">0</span>, <span class="kw">false</span>), Var(<span class="dv">1</span>, <span class="kw">false</span>), Var(<span class="dv">2</span>, <span class="kw">false</span>) },
+    Clause { Var(<span class="dv">0</span>), Var(<span class="dv">3</span>, <span class="kw">false</span>), Var(<span class="dv">2</span>, <span class="kw">false</span>) },
+    Clause { Var(<span class="dv">0</span>), Var(<span class="dv">3</span>), Var(<span class="dv">1</span>, <span class="kw">false</span>) }
+  };
+  test(kyouseibi, <span class="dv">4</span>);
+
+  CNF kyouseibi_1 {
+    Clause { Var(<span class="dv">0</span>), Var(<span class="dv">1</span>), Var(<span class="dv">2</span>) },
+    Clause { Var(<span class="dv">3</span>), Var(<span class="dv">1</span>), Var(<span class="dv">2</span>, <span class="kw">false</span>) },
+    Clause { Var(<span class="dv">0</span>, <span class="kw">false</span>), Var(<span class="dv">3</span>), Var(<span class="dv">2</span>) },
+    Clause { Var(<span class="dv">0</span>, <span class="kw">false</span>), Var(<span class="dv">3</span>, <span class="kw">false</span>), Var(<span class="dv">1</span>) },
+    Clause { Var(<span class="dv">3</span>, <span class="kw">false</span>), Var(<span class="dv">1</span>, <span class="kw">false</span>), Var(<span class="dv">2</span>) },
+    Clause { Var(<span class="dv">0</span>, <span class="kw">false</span>), Var(<span class="dv">1</span>, <span class="kw">false</span>), Var(<span class="dv">2</span>, <span class="kw">false</span>) },
+    Clause { Var(<span class="dv">0</span>), Var(<span class="dv">3</span>), Var(<span class="dv">1</span>, <span class="kw">false</span>) }
+  };
+  test(kyouseibi_1, <span class="dv">4</span>);
+
+  <span class="cf">return</span> <span class="dv">0</span>;
+}</code></pre></div>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+</head>
+<body>
+<pre class="sourceCode scheme"><code class="sourceCode scheme">(<span class="kw">load</span> <span class="st">&quot;./LU.scm&quot;</span>) <span class="co">; LU, perm</span>
+
+;; 連立一次方程式 Ax <span class="kw">=</span> b を解きます．
+
+(<span class="kw">define</span><span class="fu"> </span>(solve A b)
+    (<span class="kw">define</span><span class="fu"> </span>(inner* x y) (apply <span class="kw">+</span> (map * x y)))
+
+    (receive (L U ord) (LU A)
+    (<span class="kw">let*</span> ((b (perm ord b))
+           (Ux
+          (<span class="kw">let</span> loop ((i <span class="dv">0</span>) (Ux &#39;()))
+              (<span class="kw">if</span> (<span class="kw">=</span> i (<span class="kw">length</span> A)) Ux
+                  (loop (<span class="kw">+</span> i <span class="dv">1</span>) (<span class="kw">append</span> Ux (<span class="kw">list</span>
+                          (<span class="kw">-</span> (ref b i) (inner* (ref L i) Ux)))))))))
+
+    (<span class="kw">let</span> loop ((i (<span class="kw">-</span> (<span class="kw">length</span> U) <span class="dv">1</span>)) (x &#39;()))
+        (<span class="kw">if</span> (<span class="kw">&lt;</span> i <span class="dv">0</span>) x
+            (loop (<span class="kw">-</span> i <span class="dv">1</span>)
+             (<span class="kw">cons</span> (<span class="kw">/</span> (<span class="kw">-</span> (ref Ux i)
+                         (inner* (<span class="kw">reverse</span> (ref U i)) (<span class="kw">reverse</span> x)))
+                      (ref (ref U i) i)) x)))))))
+
+<span class="co">; 1x + 2y + 3z = 1</span>
+<span class="co">; 4x + 0y + 6z = 2</span>
+<span class="co">; -x -  y +  z = 3</span>
+<span class="co">; </span>
+<span class="co">; gosh&gt; (solve &#39;((1 2 3) (4 0 6) (-1 -1 1)) &#39;(1 2 3))</span>
+<span class="co">; (-16/13 -8/13 15/13)</span>
+<span class="co">; </span>
+<span class="co">; [x, y, z] = [-16/13, -8/13, 15/13]</span></code></pre>
+</body>
+</html>

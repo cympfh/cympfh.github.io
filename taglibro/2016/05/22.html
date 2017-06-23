@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sun May 22 10:30:45 JST 2016</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Sun May 22 10:30:45 JST 2016</h1>
+</header>
+<h2 id="chainer-の勉強">chainer の勉強</h2>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">wget</span> https://github.com/pfnet/chainer/archive/v1.8.2.tar.gz <span class="co"># the latest url</span>
+<span class="fu">tar</span> xf v1.8.2.tar.gz
+<span class="bu">cd</span> chainer-v1.8.2/docs
+<span class="fu">make</span> html
+<span class="ex">open</span> html/build/index.html</code></pre></div>
+<ul>
+<li>&quot;Intdoduction to Chainer&quot; を良く読む
+<ul>
+<li>Chainer はバージョンが少し古いとすぐ書き方が変わるので注意</li>
+<li>そのバージョンの docs を信用すること</li>
+<li>一般人の書いたブログのコードなんて読んでもしょうがない
+<ul>
+<li>コンセプトだけを参考にすること</li>
+</ul></li>
+</ul></li>
+</ul>
+<p>以上</p>
+<p>以下、(私が詰まった) 最低限の必要知識</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> numpy <span class="im">as</span> np
+<span class="im">import</span> chainer
+<span class="im">from</span> chainer <span class="im">import</span> cuda, Function, gradient_check, Variable, optimizers, serializers, utils
+<span class="im">from</span> chainer <span class="im">import</span> Link, Chain, ChainList
+<span class="im">import</span> chainer.functions <span class="im">as</span> F
+<span class="im">import</span> chainer.links <span class="im">as</span> L</code></pre></div>
+<p>を前提とする.</p>
+<h3 id="環境">環境</h3>
+<ul>
+<li>Python 3.x</li>
+<li>chainer バージョンは最新</li>
+<li><code>pickle</code> ではなく <code>Chainer.serializer</code> でモデルを保存</li>
+</ul>
+<h3 id="型">型</h3>
+<ul>
+<li>Python のリスト
+<ul>
+<li>list</li>
+</ul></li>
+<li><code>np.array</code>
+<ul>
+<li><code>np.array(list)</code></li>
+<li>ベクトルも行列もこれで表現する
+<ul>
+<li><code>.reshape((n, m))</code> で <span class="math inline">\(n \times m\)</span> 行列に変換する</li>
+<li><code>.reshape((n, ))</code> でベクトルに変換する</li>
+</ul></li>
+<li><code>[]</code> で要素にアクセス</li>
+</ul></li>
+<li><code>Variable</code>
+<ul>
+<li>Chainer が扱いやすいように <code>np.array</code> をさらに包んだもの</li>
+<li>直接 <code>Variable</code> に対する諸々の演算が定義されている</li>
+<li><code>.data</code> で中の <code>np.array</code> にアクセス
+<ul>
+<li>内部的に <code>.grad</code> とかいろいろ実は持ってて最適化の際に用いられる</li>
+</ul></li>
+</ul></li>
+</ul>
+<h2 id="線形分類器">線形分類器</h2>
+<ul>
+<li>入力 <span class="math inline">\(x \in \mathbb{R}^2\)</span>
+<ul>
+<li><code>np.array(list, dtype=np.float32).reshape((1, 2))</code> と表現する
+<ul>
+<li><code>list</code> は適当な数の Pythonリスト</li>
+</ul></li>
+<li>これをさらに <code>Chainer.Variable</code> で包む</li>
+</ul></li>
+<li>出力 <span class="math inline">\(y \in \mathcal{Y}\)</span> where <span class="math inline">\(\#\mathcal{Y} = 2\)</span>
+<ul>
+<li><span class="math inline">\(\mathcal{Y} = \{ 0,1, \cdots, \#\mathcal{Y}-1 \}\)</span> を仮定せよ</li>
+<li><code>np.array([ y ], dtype=np.int32).reshape((1,))</code>
+<ul>
+<li><code>y</code> は <span class="math inline">\(y \in \mathcal{Y}\)</span> の <span class="math inline">\(y\)</span></li>
+</ul></li>
+<li>これをさらに <code>Chainer.Variable</code> で包む</li>
+</ul></li>
+</ul>
+<h3 id="ネットワーク-chainer.chain">ネットワーク (Chainer.Chain)</h3>
+<p>&quot;Core Concept&quot; にもあるように、まずはネットワークを定義する</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="kw">class</span> MyNet(Chain):
+    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>):
+        <span class="bu">super</span>(MyNet, <span class="va">self</span>).<span class="fu">__init__</span>(
+            l <span class="op">=</span> L.Linear(<span class="dv">2</span>, <span class="dv">2</span>) <span class="co"># (dim(x), #Y)</span>
+        )
+    <span class="kw">def</span> <span class="fu">__call__</span>(<span class="va">self</span>, x):
+        y <span class="op">=</span> <span class="va">self</span>.l(x)
+        <span class="cf">return</span> y</code></pre></div>
+<p><code>l = L.Linear(n, m)</code> とは <span class="math inline">\(n \times m\)</span> 行列 <span class="math inline">\(W\)</span> と長さ <span class="math inline">\(m\)</span> のバイアスなベクトル <span class="math inline">\(b\)</span> による線形分類１つを表現する (<span class="math inline">\(y = Wx+b\)</span>). <span class="math inline">\(b\)</span> は明示しなければ始めゼロベクトルであるが、<span class="math inline">\(W\)</span> は始めはランダムな数によって初期化されるっぽい.</p>
+<h3 id="モデル最適化ソルバ">モデル、最適化ソルバ</h3>
+<pre><code>model = L.Classifier(MyNet())
+opt = optimizers.SGD()
+opt.setup(model)</code></pre>
+<p>この時から我々は <code>model</code> および <code>opt</code> のみを操作すればよい. <code>Chainer.optimizers</code> は中に様々な最適化アルゴリズムをもっており、 例えばここでは <code>SGD</code> を選択している. <code>opt.setup</code> はよくわからんけど、不思議なことに <code>model</code> のための最適化を行うための構造をそこでセットする. 適当な数値微分を行うのだろうか.</p>
+<h3 id="人工データ">人工データ</h3>
+<ul>
+<li><span class="math inline">\(x = [ x_0, x_1 ]\)</span>
+<ul>
+<li><span class="math inline">\(x_0 \in_u [0,1]\)</span></li>
+<li><span class="math inline">\(x_1 \in_u [0,1]\)</span></li>
+</ul></li>
+<li><span class="math inline">\(\mathcal{Y} = \{0,1\}\)</span>
+<ul>
+<li><span class="math inline">\(y = 0\)</span> when <span class="math inline">\(x_0+x_1&lt;1\)</span></li>
+<li><span class="math inline">\(y = 1\)</span> otherwise</li>
+</ul></li>
+</ul>
+<h3 id="訓練">訓練</h3>
+<pre><code>    x = Variable(
+            np.array([x0, x1], dtype=np.float32)
+            .reshape((1, 2))
+            )
+    t = Variable(
+            np.array([ y ], dtype=np.int32)
+            .reshape((1,))
+            )
+    opt.update(model, x, t)</code></pre>
+<p>これを適当にループでやる.</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> sys, random
+<span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1000</span>):
+    x0 <span class="op">=</span> random.random()
+    x1 <span class="op">=</span> random.random()
+    y <span class="op">=</span> <span class="dv">0</span> <span class="cf">if</span> x0<span class="op">+</span>x1<span class="op">&lt;</span><span class="fl">1.0</span> <span class="cf">else</span> <span class="dv">1</span>
+    <span class="co"># 上のコード</span></code></pre></div>
+<p>こんな感じ</p>
+<h3 id="テスト">テスト</h3>
+<p>実際に予測してみるには <code>model.predictor</code> を使う.</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">x <span class="op">=</span> Variable(
+        np.array([x0, x1], dtype<span class="op">=</span>np.float32)
+        .reshape((<span class="dv">1</span>, <span class="dv">2</span>))
+        )</code></pre></div>
+<p>について、<code>model.predictor(x)</code> はやはり <code>Variable</code> なのだが、 その <code>.data</code> をみると、確信度 (confidence) を配列になっている. <code>y</code> 番目の要素が <span class="math inline">\(y (\in \mathcal{Y})\)</span> の確信度に対応している.</p>
+<p>最も大きい数が入ってるインデックスを選べば、最尤になる. <code>np.argmax</code> でこの操作は実現できる. 次のコードを参考に.</p>
+<p>訓練したのち、 網羅的に</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">101</span>):
+    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">101</span>):
+        x0 <span class="op">=</span> i <span class="op">/</span> <span class="fl">100.0</span>
+        x1 <span class="op">=</span> j <span class="op">/</span> <span class="fl">100.0</span>
+        y <span class="op">=</span> <span class="dv">0</span> <span class="cf">if</span> x0<span class="op">+</span>x1<span class="op">&lt;</span><span class="fl">1.0</span> <span class="cf">else</span> <span class="dv">1</span></code></pre></div>
+<p>について、実際に予測してみて、答え (<code>y</code>) との一致度 (Accuracy) を図ることにする.</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">correct <span class="op">=</span> <span class="dv">0</span>
+wrong <span class="op">=</span> <span class="dv">0</span>
+
+<span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">101</span>):
+    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">101</span>):
+        x0 <span class="op">=</span> i <span class="op">/</span> <span class="fl">100.0</span>
+        x1 <span class="op">=</span> j <span class="op">/</span> <span class="fl">100.0</span>
+        y <span class="op">=</span> <span class="dv">0</span> <span class="cf">if</span> x0<span class="op">+</span>x1<span class="op">&lt;</span><span class="fl">1.0</span> <span class="cf">else</span> <span class="dv">1</span>
+        x <span class="op">=</span> Variable(
+                np.array([x0, x1], dtype<span class="op">=</span>np.float32)
+                .reshape((<span class="dv">1</span>, <span class="dv">2</span>))
+                )
+        y2 <span class="op">=</span> np.argmax(model.predictor(x).data)
+
+        <span class="cf">if</span> y <span class="op">==</span> y2:
+            correct <span class="op">+=</span> <span class="dv">1</span>
+        <span class="cf">else</span>:
+            wrong <span class="op">+=</span> <span class="dv">1</span>
+
+<span class="bu">print</span>(<span class="st">&quot;Ac </span><span class="sc">{}</span><span class="st">&quot;</span>.<span class="bu">format</span>( correct <span class="op">/</span> (correct <span class="op">+</span> wrong) ))</code></pre></div>
+<h3 id="結果">結果</h3>
+<ul>
+<li>1000 回の訓練では <code>Ac 0.7490442113518283</code></li>
+<li>10000 回の訓練で、ようやく <code>Ac 0.9708852073326144</code></li>
+<li><code>.SGD()</code> の代わりに <code>.AdaDelta()</code> を使うと 1000 回のままでも <code>Ac 0.8820703852563474</code></li>
+</ul>
+<h2 id="of-k-表現">1-of-k 表現</h2>
+<p>直接の入力がユークリッド空間上の点でなく、整数型で表現されたIDであることがある. 例えば入力が <span class="math inline">\(n\)</span> 通りのラベルである場合. ラベル同士に従属関係がないのならば、これらを一つの実数に変換することは難しい. こういったものは 1-of-k ベクトルといった表現方法が取られる. これは、 <span class="math inline">\(n \leq 2^k\)</span> なる最小の自然数を <span class="math inline">\(k\)</span> とするとき、 ラベル一つを <span class="math inline">\(k\)</span> 次元のベクトルに変換する. 手順は次の通りである.</p>
+<ul>
+<li>ラベルのIDを <span class="math inline">\(i \in \{ 0,1, \ldots, n-1 \}\)</span> とする</li>
+<li><span class="math inline">\(k\)</span> 次元のゼロベクトル <span class="math inline">\(v = [ 0,0,\ldots,0 ]\)</span> とする</li>
+<li>IDによって <span class="math inline">\(v_i = 1\)</span> で上書きする</li>
+<li><span class="math inline">\(v\)</span> をラベルを表現するベクトルとする</li>
+</ul>
+<p>次元は <span class="math inline">\(k\)</span> に増えるが、異なるラベルは線形独立な異なるベクトルで表現できる.</p>
+<h3 id="l.embedid"><code>L.EmbedID</code></h3>
+<p><code>L.EmbedID</code> 関数は、難しいことを考えなくても 1-of-k 表現的なことをする. <code>L.EmbedID(n, k)</code> によって <span class="math inline">\(n\)</span> 個のID列を <span class="math inline">\(k\)</span> の長さのベクトルにする. 適度に大きい <span class="math inline">\(k\)</span> を設定すれば良い (思考停止).</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="kw">class</span> MyNet(Chain):
+    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>):
+        <span class="bu">super</span>(MyNet, <span class="va">self</span>).<span class="fu">__init__</span>(
+            embed <span class="op">=</span> L.EmbedID(<span class="dv">1</span>, <span class="dv">10</span>) <span class="co"># k=10</span>
+            l <span class="op">=</span> L.Linear(<span class="dv">10</span>, <span class="dv">2</span>) <span class="co"># (k, #Y)</span>
+        )
+    <span class="kw">def</span> <span class="fu">__call__</span>(<span class="va">self</span>, x):
+        x <span class="op">=</span> <span class="va">self</span>.embed(x) <span class="co"># ID(x) -&gt; k-vector(x)</span>
+        y <span class="op">=</span> <span class="va">self</span>.l(x) <span class="co"># y = Wx+b</span>
+        <span class="cf">return</span> y</code></pre></div>
+<p><code>__call__</code> 関数によってネットワークの計算手順を定義する. 入力 <code>x</code> はラベルID (<code>np.int32</code>) 一つだとする. これを長さ <span class="math inline">\(k=10\)</span> のベクトルに変換してから、先ほどと同じ線形分類に投げる.</p>
+<p>はじめの <span class="math inline">\(x\)</span> を <span class="math inline">\(\mathbb{R}^2\)</span> から ID にした都合上、コードの上の <code>x</code> の表現がちょっとだけ変わる.</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">  <span class="bu">id</span> <span class="op">=</span> <span class="dv">1</span>
+  x <span class="op">=</span> Variable( xp.array([ <span class="bu">id</span> ]).astype(xp.int32).reshape((<span class="dv">1</span>,<span class="dv">1</span>)) )
+  model.predictor(x).data</code></pre></div>
+<p>こんな風に使う.</p>
+</body>
+</html>

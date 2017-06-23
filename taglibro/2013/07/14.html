@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sun Jul 14 20:27:00 JST 2013</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Sun Jul 14 20:27:00 JST 2013</h1>
+</header>
+<h2 id="scheme-現在継続と名前付き-let-の関連">Scheme, 現在継続と名前付き let の関連?</h2>
+<h3 id="疑問点">疑問点</h3>
+<p>あたかも継続を返すように名前付きletは返せないのか なんでエラーが出ず下のコードは動いてしまうのか</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">(<span class="kw">define</span><span class="fu"> </span>(hoge)
+  (<span class="kw">let</span> loop ((i <span class="dv">0</span>))
+    (<span class="kw">if</span> (<span class="kw">odd?</span> i) (<span class="kw">values</span> i (delay (loop (<span class="kw">+</span> i <span class="dv">1</span>)))) (loop (<span class="kw">+</span> i <span class="dv">1</span>)))))</code></pre></div>
+<p>hogeは自然数を見ていって、奇数とその次の奇数を探す「継続もどき」の多値を返す</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">gosh&gt; (hoge)
+<span class="dv">1</span>
+#&lt;promise <span class="dv">0x8786910</span>&gt;</code></pre></div>
+<p>2つ目を実行してみよう</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">gosh&gt; (receive (j next) (hoge) (<span class="kw">force</span> next))
+<span class="dv">3</span></code></pre></div>
+<p>あれ？ ここは多値が帰ってきて欲しいのだけれど？？？？</p>
+<h3 id="追記-tue-aug-6-105306-jst-2013">追記 (Tue Aug 6 10:53:06 JST 2013)</h3>
+<p>名前付きletの名前を返すことは，確かに再帰手続きを返すことに等しい</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">gosh&gt; (<span class="kw">let</span> rec ((x -<span class="dv">1</span>))
+  (<span class="kw">cond</span> [(<span class="kw">&lt;</span> x <span class="dv">0</span>) rec]
+        [(<span class="kw">zero?</span> x) <span class="dv">1</span>]
+        [exe (* x (rec (<span class="kw">-</span> x <span class="dv">1</span>)))]))
+#&lt;closure rec&gt;</code></pre></div>
+<p>ここで，(&lt; x 0) というのはrecを返すためだけのもの</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">gosh&gt; (<span class="kw">define</span><span class="fu"> f </span>(<span class="kw">let</span> rec ((ls -<span class="dv">1</span>)) (<span class="kw">cond</span> [(<span class="kw">&lt;</span> ls <span class="dv">0</span>) rec] [(<span class="kw">zero?</span> ls) <span class="dv">1</span>] [<span class="kw">else</span> (* ls (rec (<span class="kw">-</span> ls <span class="dv">1</span>)))])))
+f
+gosh&gt; (f <span class="dv">10</span>)
+<span class="dv">3628800</span></code></pre></div>
+<p>最初のやつの問題は，単にこういうこと</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">gosh&gt; (<span class="kw">values</span> <span class="dv">1</span> <span class="dv">2</span>)
+<span class="dv">1</span>
+<span class="dv">2</span>
+gosh&gt; (<span class="kw">force</span> (delay (<span class="kw">values</span> <span class="dv">1</span> <span class="dv">2</span>)))
+<span class="dv">1</span></code></pre></div>
+<p>valuesじゃなくてやっぱりちゃんとcons使うべき</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">gosh&gt; (<span class="kw">let</span> rec ((ls &#39;(<span class="dv">9</span> <span class="dv">8</span> <span class="dv">7</span> <span class="dv">6</span> <span class="dv">5</span>))) (<span class="kw">if</span> (<span class="kw">null?</span> ls) <span class="dv">#f</span> (<span class="kw">cons</span> (<span class="kw">car</span> ls) (delay (rec (<span class="kw">cdr</span> ls))))))
+(<span class="dv">9</span> . #&lt;promise <span class="dv">0x9d5f590</span>&gt;)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">gosh&gt; (<span class="kw">let</span> rec ((ls &#39;(<span class="dv">9</span> <span class="dv">8</span> <span class="dv">7</span> <span class="dv">6</span> <span class="dv">5</span>))) (<span class="kw">if</span> (<span class="kw">null?</span> ls) <span class="dv">#f</span> (<span class="kw">begin</span> (set! cc (delay (rec (<span class="kw">cdr</span> ls)))) (<span class="kw">car</span> ls))))
+<span class="dv">9</span>
+gosh&gt; (<span class="kw">force</span> cc)
+<span class="dv">8</span>
+gosh&gt; (<span class="kw">force</span> cc)
+<span class="dv">7</span></code></pre></div>
+<p>はい，call/ccとか必要ない</p>
+<hr />
+<footer>
+    <p style='text-align: right'>
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+</body>
+</html>

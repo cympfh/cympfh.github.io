@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>カーネル法 - パターン解析とは何か</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> aiura/
+    </a>
+</h1>
+<header>
+<h1 class="title">カーネル法 - パターン解析とは何か</h1>
+</header>
+<p class="date" style="text-align: right">
+2016-09-18 (Sun.)
+</p>
+<div class="tags" style="text-align: right">
+<p><a class=tag href=index.html#機械学習>機械学習</a></p>
+</div>
+<h2 id="index">index</h2>
+<div id="toc">
+
+</div>
+<h2 id="パターン解析とは何か">パターン解析とは何か</h2>
+<p><strong>パターン解析</strong> はデータからパターンを自動的に獲得することを目指す. これはデータを生成するブラックボックスに関する振る舞いを自動的に学習することである.</p>
+<p><strong>パターン</strong> と呼ぶものを具体的に定義する.</p>
+<ol style="list-style-type: decimal">
+<li>(データ <span class="math inline">\(x\)</span> に関する) general exact pattern とは <span class="math inline">\(f(x) = 0\)</span> を満たす自明でない関数 <span class="math inline">\(f\)</span> のこと
+<ul>
+<li>理想環境下での物理法則などがふさわしい</li>
+</ul></li>
+<li>general approximate pattern とは <span class="math inline">\(f(x) \approx 0\)</span> となる非自明な関数 <span class="math inline">\(f\)</span> のこと
+<ul>
+<li>この <span class="math inline">\(\approx\)</span> は文字通り approximately equal である</li>
+<li>定義としては曖昧である</li>
+</ul></li>
+<li>general statistical pattern とは <span class="math inline">\(\mathcal{E}_x f(x) \approx 0\)</span>
+<ul>
+<li>ここで <span class="math inline">\(\mathcal{E}\)</span> は期待値を表す</li>
+<li><span class="math inline">\(x\)</span> の事前分布は与えられているものとする</li>
+</ul></li>
+</ol>
+<h2 id="パターン解析アルゴリズム">パターン解析アルゴリズム</h2>
+<p><strong>パターン解析アルゴリズム</strong> とは、有限個のデータから general statistical pattern <span class="math inline">\(f\)</span> を発見する (或いはそのような <span class="math inline">\(f\)</span> が無いことを言う) アルゴリズムのこと.</p>
+<p>アルゴリズムには次のような性質が求められるだろう:</p>
+<ol style="list-style-type: decimal">
+<li>Computational efficiency (計算効率):
+<ul>
+<li>現実世界での計算である以上、大量のデータを高速に捌く必要がある</li>
+<li>データ数に関して多項式時間に抑えられるアルゴリズムを効率的な (efficient) アルゴリズムだという</li>
+</ul></li>
+<li>Robustness (頑強性):
+<ul>
+<li>扱うデータが現実世界に関するものであるならば、通常、ノイズが加わっているデータしか観測できない</li>
+<li>ノイズへの強さを頑強性という</li>
+<li>従って発見されるパターンは exact である必要はなく、むしろ approximate な方が求められる</li>
+</ul></li>
+<li>Statistical stability (統計的安定性):
+<ul>
+<li>同じ発生源から生成されたデータからは似たパターンが得られるべきである</li>
+<li><span class="math inline">\(x\)</span> の微小な変化に過敏なパターン <span class="math inline">\(f\)</span> というのはパターンとしてふさわしくない
+<ul>
+<li>ノイズは無視して</li>
+</ul></li>
+<li>この逆の性質を統計的な安定性という</li>
+</ul></li>
+</ol>
+<p>統計的安定性についてはいわゆる汎化性能 (the quality of the generalization) と関連が大きい. というかたぶんニュアンスは違うけど同じ現象のことを言っている. 統計的安定性は生成モデルの文脈で言っていて、 汎化性能は予測モデルの予測性能の文脈で言っているだけ. どちらも、似たデータからは似た予測がなされるべき、と言ってるだけ.</p>
+<h3 id="パターン解析と仮説検証">パターン解析と仮説検証</h3>
+<p>データの偏りに引き摺られ、成立する確率が小さなパターンを発見してしまうことがありえる. このことを仮説検証の概念でテストする必要がある. 即ち、十分に小さな確率 <span class="math inline">\(p\)</span> を以って、誤る確率が <span class="math inline">\(p\)</span></p>
+<h3 id="過学習-overfitting">過学習 (overfitting)</h3>
+<p>データが少く、またそのデータの分布に関する仮定が少なすぎる場合、 そのデータ上でのみ良く成り立ち (misfit) 新しいデータに関してはほぼ成り立たないようなパターンを発見することがあり得る. これを <strong>過学習</strong> という. データが生成される過程に関して何かしらの仮定を入れることは過学習防ぐのに多いに役立つ. よく使われるのは、正規分布を仮定することである. もちろん正規分布に従わないものを正規分布と仮定したところで良いパターンは得られない. この逆の現象を過汎化 (underfit) という.</p>
+<h2 id="教師アリ-supervised-タスク">教師アリ (supervised) タスク</h2>
+<p>データ <span class="math inline">\(x\)</span> に関してラベル <span class="math inline">\(y\)</span> が関連づいてるときに <span class="math inline">\(x\)</span> から <span class="math inline">\(y\)</span> を予測するようなタスクを考える. このタスクにおける general statistical pattern は次のように記述できる:</p>
+<p><span class="math display">\[f(x, y) = \mathcal{L}(y, g(x))\]</span></p>
+<p>関数 <span class="math inline">\(g\)</span> は予測モデルであり、<span class="math inline">\(x\)</span> からラベル <span class="math inline">\(y\)</span> を予測する. <span class="math inline">\(\mathcal{L}\)</span> は損失関数と呼ばれ、<span class="math inline">\(y\)</span> と <span class="math inline">\(g(x)\)</span> との近さを非負実数で測る. <span class="math inline">\(g\)</span> による予測が正しい時に限り <span class="math inline">\(\mathcal{L}(y, g(x))\)</span> はゼロを示す.</p>
+<ol style="list-style-type: decimal">
+<li><span class="math inline">\(y\)</span> の取り得る値がちょうど2つの場合を二値分類 (binary classification) という
+<ul>
+<li><span class="math inline">\(y \in \{-1,+1\}\)</span> とする</li>
+</ul></li>
+<li>有限通りの場合を多クラス分類 (multiclass classification) という
+<ul>
+<li><span class="math inline">\(y \in \{1,2,\ldots,N\}\)</span> とする</li>
+</ul></li>
+<li><span class="math inline">\(y\)</span> の取り合える範囲が<span class="math inline">\(n\)</span>次元実数全体の場合を回帰 (regression) という
+<ul>
+<li><span class="math inline">\(y \in \mathbb{R}^n\)</span></li>
+</ul></li>
+</ol>
+<h2 id="半教師アリ-semisupervised-タスク">半教師アリ (semisupervised) タスク</h2>
+<p>対応するラベルがついてるデータと、ついていないデータ両方を用いる方法のこと. 大抵、目的は教師アリと同様にラベルの予測. ラベルのついていないデータなら大量に手に入るのでデータの事前分布を推定することで汎化性能を上げることが期待できる.</p>
+<h2 id="教師ナシ-unsupervised-タスク">教師ナシ (unsupervised) タスク</h2>
+<p>データには全てラベルがついていない場合のタスクを教師ナシという. この状況下でのタスクの一つにクラスタリングがある. データ <span class="math inline">\(x\)</span> のみを比較することで同質なグループに分けるタスクである. 異常検出 (Anomaly, novely-detection) も教師ナシタスクの一つである. これは与えられるデータはほとんど全てが同質であると仮定してそこから大きく外れたデータを検出するタスクである. 例えばある一つの機械の動作を監視し続け、異常を検知する、という適用が考えられる.</p>
+<p>他に次元圧縮がある. <span class="math inline">\(X\)</span> よりも低い次元空間 <span class="math inline">\(V\)</span> に押しやる <span class="math inline">\(Pv: X \rightarrow V\)</span> を以って <span class="math display">\[f(x) = | Pv(x) - x |^2\]</span> をパターンとして発見する. PCA (主成分分析; principal components analysis) はこれである. CCS (canonical correlation analysis) はこれと似ているが、データ <span class="math inline">\(x_1, x_2\)</span> のペアをデータ <span class="math inline">\(x = (x_1, x_2)\)</span> として、 2つの関係のみを調べる: <span class="math display">\[f(x) = f(x_1, x_2) = | Pv^1(x_1) - Pv^2(x_2) |^2\]</span></p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

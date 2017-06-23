@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>微分可能多様体の定義から接写像まで</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> aiura/
+    </a>
+</h1>
+<header>
+<h1 class="title">微分可能多様体の定義から接写像まで</h1>
+</header>
+<p class="date" style="text-align: right">
+2017-05-06 (Sat.)
+</p>
+<div class="tags" style="text-align: right">
+<p><a class=tag href=index.html#数学>数学</a> <a class=tag href=index.html#幾何学>幾何学</a></p>
+</div>
+<p>おさらいをやっていく.</p>
+<h2 id="微分可能多様体の定義">微分可能多様体の定義</h2>
+<p>微分可能多様体とは次のように定義する図形のことである.</p>
+<div class="thm">
+<p>ある位相空間 (ハウスドルフ空間であること) と、ある自然数 <span class="math inline">\(n\)</span> があって、空間の上の開集合の族 <span class="math display">\[\{U_i\}_{i \in I}\]</span> がある. <span class="math inline">\(U_i\)</span> は一般には無限個あることを想定する. 各 <span class="math inline">\(U_i\)</span> に対しては写像</p>
+<p><span class="math display">\[\varphi_i : U_i \to \mathbb{R}^n\]</span></p>
+<p>が定められているものとする. ここで <span class="math inline">\(\mathbb{R}^n\)</span> は <span class="math inline">\(n\)</span> 次元ユークリッド空間のこと.</p>
+<p>ここで次のような性質 (微分可能性) を要請する:</p>
+<p><span class="math display">\[U_i \cap U_j \ne \emptyset \Rightarrow
+\varphi_i \circ \varphi_j^{-1} ~\text{is}~ C^r \text{-class }\]</span></p>
+<p>大抵は <span class="math inline">\(C^\infty\)</span> 級のことを考える (簡単なので). またここでは、式を簡単にするために単に合成関数として書いているが、 実際は <span class="math inline">\(\varphi_i\)</span> の入力を <span class="math inline">\(U_i \cap U_j\)</span> に制限するために <span class="math inline">\(\varphi_j^{-1}\)</span> の定義域を制限する必要があるが、省略した.</p>
+<p>以上の時、 <span class="math display">\[\{ (U_i, \varphi_i) \}_{i \in I}\]</span> によって図形を表現し、これを <span class="math inline">\(n\)</span> <strong>次元微分可能多様体</strong> と呼ぶ.</p>
+</div>
+<p>各 <span class="math inline">\(U_i\)</span> のことを近傍とかいう. 特に <span class="math inline">\(x \in U_i\)</span> の関係のとき「<span class="math inline">\(U_i\)</span> は <span class="math inline">\(x\)</span> の (一つの) 近傍である」とかいう. また <span class="math inline">\(\varphi_i\)</span> のことを <span class="math inline">\(U_i\)</span> の局所座標という. 実際、単に位相空間にすぎない <span class="math inline">\(U_i\)</span> に <span class="math inline">\(n\)</span> 次元の座標を与えている.</p>
+<h2 id="接ベクトル">接ベクトル</h2>
+<h3 id="多様体上の曲線">多様体上の曲線</h3>
+<p>適当な開区間から多様体への写像のことを多様体上の曲線と定める. 区間はなんでも良いがここでは <span class="math inline">\([-\epsilon, \epsilon]\)</span> ということにする. すなわち多様体 <span class="math inline">\(M\)</span> 上の曲線 <span class="math inline">\(c\)</span> とは</p>
+<p><span class="math display">\[c: [-\epsilon, \epsilon] \to M\]</span> <span class="math display">\[c: (-\epsilon \leq t \leq \epsilon) \mapsto (x \in M)\]</span></p>
+<blockquote>
+<p><strong>N.B.</strong> <span class="math inline">\(x \in M\)</span> と書いた場合の <span class="math inline">\(M\)</span> は点の集合としての図形であって、<span class="math inline">\(x\)</span> は図形の中のある一つの点のことである. 先の定義に従って忠実に述べると <span class="math inline">\(x\)</span> とは、ある <span class="math inline">\(i\)</span> があって <span class="math inline">\(x \in U_i\)</span> である.</p>
+</blockquote>
+<h3 id="点-x-の接ベクトル">点 <span class="math inline">\(x\)</span> の接ベクトル</h3>
+<p><span class="math inline">\(M\)</span> のある点 <span class="math inline">\(x\)</span> の接ベクトルを定義する. 話をすっ飛ばすと、<span class="math inline">\(x\)</span> の接ベクトルとは <span class="math inline">\(x\)</span> を通る曲線のことである (これは正確ではない). 便宜上、<span class="math inline">\(0 \in [-\epsilon, \epsilon]\)</span> を <span class="math inline">\(x\)</span> に写すものに限ることにする (ここは本質ではない).</p>
+<p><span class="math display">\[c: [-\epsilon, \epsilon] \to M\]</span> <span class="math display">\[c(0) = x\]</span></p>
+<p>ある <span class="math inline">\(i\)</span> があって <span class="math inline">\(x \in U_i\)</span> なわけだが、定義域 (すなわち <span class="math inline">\(\epsilon\)</span>) を十分小さくすることで、 <span class="math inline">\(c\)</span> の値域が <span class="math inline">\(U_i\)</span> に完全に含まれることにしておく. <span class="math inline">\(U_i\)</span> に寄り添って局所座標 <span class="math inline">\(\varphi_i\)</span> があるわけだが、これは点 <span class="math inline">\(x\)</span> に対して一つ決めればいいだけなので、 添字を無視して単に <span class="math inline">\(\varphi\)</span> とだけ書く.</p>
+<p>なんやかんやあって曲線そのものを接ベクトルと見做すのは都合が悪いので、次のような写像</p>
+<p><span class="math display">\[\varphi^* : \mathcal{C}_x \to \mathbb{R}\]</span> <span class="math display">\[\varphi^*(c) = \frac{d \varphi \circ c}{dt}(t=0)\]</span></p>
+<p>を使って同値関係を定めるのが良い. ここで <span class="math inline">\(0 \mapsto x\)</span> な曲線全体のことを <span class="math inline">\(\mathcal{C}_x\)</span> と書いた.</p>
+<blockquote>
+<p><strong>N.B.</strong> <span class="math inline">\(t=0\)</span> での微分値を求めてるのは、今、<span class="math inline">\(t=0\)</span> で <span class="math inline">\(x\)</span> を通ると仮定しているからであって、一般にはその値を代入する.</p>
+</blockquote>
+<p>すなわち、</p>
+<p><span class="math display">\[c \sim c&#39;  \overset{\text{def}}{\Longleftrightarrow} \varphi^*(c) = \varphi^*(c&#39;)\]</span></p>
+<p>なる曲線同士の同値関係 <span class="math inline">\(\sim\)</span> を定める.</p>
+<p>この同値関係は <span class="math inline">\(\phi_i\)</span> を (もしあるならば) <span class="math inline">\(\phi_j\)</span> と取り替えても不都合がないという点で都合がよい.</p>
+<p><span class="math inline">\(\mathcal{C}_x/\!\sim\)</span> のことを <span class="math inline">\(T_xM\)</span> と書いて <strong>接空間</strong> と呼ぶ. 接空間の元を (<span class="math inline">\(x\)</span> の上の) <strong>接ベクトル</strong> という.</p>
+<h3 id="接空間はベクトル空間である">接空間はベクトル空間である</h3>
+<p>接空間は足し引き、スカラー倍ができる空間である. それは曲線の足し引きとスカラー倍から類推できるだろう.</p>
+<ul>
+<li><span class="math inline">\(u, v \in T_xM\)</span> について
+<ul>
+<li><span class="math inline">\(au + bv = \lambda t. au(t) + bv(t)\)</span> (<span class="math inline">\(a, b\)</span> は実数)</li>
+</ul></li>
+</ul>
+<p>というわけで、接空間といったとき、暗にベクトル空間としての性質を仮定することにする. その方が便利なので.</p>
+<div class="thm">
+<p>接空間の基底ベクトルは実は次のようである.</p>
+<p><span class="math inline">\(m\)</span> 次元多様体 <span class="math inline">\(M\)</span> 上のある点 <span class="math inline">\(x\)</span> 上の接空間 <span class="math inline">\(T_xM\)</span> の基底ベクトルは、 <span class="math inline">\(m\)</span> 次元ユークリッド空間の基底ベクトルを</p>
+<p><span class="math display">\[e_1, e_2, \ldots, e_m\]</span></p>
+<p>としたとき、</p>
+<p><span class="math display">\[c_i = \lambda t.~ \varphi^{-1}(t e_i) ~~(i=1,2,\ldots,m)\]</span></p>
+<p>である (すなわち接空間は <span class="math inline">\(m\)</span> 次元ベクトル空間である).</p>
+<p>これは基底の一つのとり方に過ぎないわけだが、このとり方の便利さは次の性質にある: <span class="math display">\[\varphi^*(c_i) = e_i\]</span> これは <span class="math inline">\(\varphi^*\)</span> の全射性を示すのにも使われる.</p>
+</div>
+<h2 id="多様体の上の写像">多様体の上の写像</h2>
+<p>ユークリッド空間そのものが多様体の一例であることを考えると、 曲線はある多様体からある多様体への写像の例になっている.</p>
+<p><span class="math inline">\(m\)</span> 次元多様体 <span class="math inline">\(M\)</span> から <span class="math inline">\(n\)</span> 次元多様体 <span class="math inline">\(N\)</span> への写像</p>
+<p><span class="math display">\[F: M \to N\]</span></p>
+<p>とは、(普通に) <span class="math inline">\(x \in M\)</span> を <span class="math inline">\(y \in N\)</span> に写す写像のことである.</p>
+<p>普通、大抵、どんな写像でも良いとするわけではなくて、ここでは連続な写像 <span class="math inline">\(F\)</span> のことを考えたい. 連続であることを <span class="math inline">\(C^r\)</span> 級 (すなわち微分可能性) で表現したい. しかし、 <span class="math inline">\(F\)</span> の定義域/値域は単に位相空間の上の図形にすぎないので微分をすることはできない.</p>
+<p>(常套手段であるが) このために<span class="math inline">\(M, N\)</span> には局所座標が設けられている. すなわち、次のようにする.</p>
+<div class="thm">
+<p>まずある点 <span class="math inline">\(x \in M\)</span> の周りで微分可能であることを調べる. <span class="math inline">\(x\)</span> の近傍 <span class="math inline">\(U_i\)</span> を持ってきて、その中の十分小さい領域 <span class="math inline">\(U&#39;\)</span> を取って</p>
+<p><span class="math display">\[F : U&#39; (\subseteq U_i) \to V&#39; (\subseteq V_j)\]</span></p>
+<p>に制限する. <span class="math inline">\(F\)</span> の両端にそれぞれの局所座標 (<span class="math inline">\(U_i\)</span> に対して <span class="math inline">\(\varphi_i\)</span>、<span class="math inline">\(V_j\)</span> に対して <span class="math inline">\(\psi_j\)</span>) を合成することで</p>
+<p><span class="math display">\[\psi_j \circ F \circ \varphi_i^{-1} : \mathbb{R}^m \to \mathbb{R}^n\]</span></p>
+<p>を得る. これはおなじみの実関数であるので自由に微分が可能. これが <span class="math inline">\(C^r\)</span> 級であるとき、<span class="math inline">\(F\)</span> は <span class="math inline">\(x\)</span> の周りで <span class="math inline">\(C^r\)</span> 級であると定義する.</p>
+<p>全ての <span class="math inline">\(x \in M\)</span> の周りで <span class="math inline">\(F\)</span> が <span class="math inline">\(C^r\)</span> 級であるとき、<span class="math inline">\(F\)</span> 自体を単に <span class="math inline">\(C^r\)</span> 級であると定義する.</p>
+</div>
+<h2 id="接写像">接写像</h2>
+<h3 id="introduction">Introduction</h3>
+<p>さて考える.</p>
+<ul>
+<li><span class="math inline">\(M\)</span> を <span class="math inline">\(m\)</span> 次元多様体、</li>
+<li><span class="math inline">\(N\)</span> を <span class="math inline">\(n\)</span> 次元多様体とし、</li>
+<li><span class="math inline">\(C^\infty\)</span> 級の写像 <span class="math inline">\(F: M \to N\)</span> があるとする.</li>
+</ul>
+<p><span class="math inline">\(M\)</span> 上のある点 <span class="math inline">\(x\)</span> を通る曲線の集合 <span class="math inline">\(\mathcal{C}_x\)</span> があって、そこに同値関係を導入したものが <span class="math inline">\(T_xM\)</span> であった.</p>
+<p>写像 <span class="math inline">\(F\)</span> は <span class="math inline">\(x\)</span> を <span class="math inline">\(y = F(x)\)</span> に写すとする.</p>
+<p>写像 <span class="math inline">\(F\)</span> は点を点に写すものであるが、曲線の像に注目すれば、<span class="math inline">\(M\)</span> 上の曲線を <span class="math inline">\(N\)</span> 上の曲線に写すことができる. 曲線とは写像のことであったが、写像の像を更に移せばよい. それはつまり関数合成のことである.</p>
+<ul>
+<li><span class="math inline">\(M\)</span> 上の曲線 <span class="math inline">\(c \in \mathcal{C}_x\)</span> に対して</li>
+<li><span class="math inline">\(c&#39; = F \circ c\)</span> は <span class="math inline">\(N\)</span> 上の曲線である.</li>
+<li><span class="math inline">\(c\)</span> が <span class="math inline">\(t=0\)</span> で <span class="math inline">\(x\)</span> を通るような曲線であったことに対して、</li>
+<li><span class="math inline">\(c&#39;\)</span> は <span class="math inline">\(t=0\)</span> で <span class="math inline">\(y\)</span> を通るような曲線である.
+<ul>
+<li>すなわち <span class="math inline">\(c&#39; \in \mathcal{C}_y\)</span>.</li>
+</ul></li>
+</ul>
+<center>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.38.0 (20140413.2041)
+ -->
+<!-- Title: %3 Pages: 1 -->
+<svg width="173pt" height="188pt" viewBox="0.00 0.00 173.19 188.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 184)">
+<title>
+%3
+</title>
+<!-- M -->
+<g id="node1" class="node">
+<title>
+M
+</title>
+<ellipse fill="none" stroke="black" cx="28.5975" cy="-162" rx="27" ry="18"/> <text text-anchor="middle" x="28.5975" y="-158.3" font-family="Times,serif" font-size="14.00">M</text> </g> <!-- N --> <g id="node2" class="node">
+<title>
+N
+</title>
+<ellipse fill="none" stroke="black" cx="138.195" cy="-162" rx="27" ry="18"/> <text text-anchor="middle" x="138.195" y="-158.3" font-family="Times,serif" font-size="14.00">N</text> </g> <!-- M&#45;&gt;N --> <g id="edge1" class="edge">
+<title>
+M-&gt;N
+</title>
+<path fill="none" stroke="black" d="M55.6438,-162C69.1566,-162 85.8861,-162 100.669,-162"/> <polygon fill="black" stroke="black" points="101.016,-165.5 111.016,-162 101.015,-158.5 101.016,-165.5"/> <text text-anchor="middle" x="84.1949" y="-165.8" font-family="Times,serif" font-size="14.00">F</text> </g> <!-- Cx --> <g id="node5" class="node">
+<title>
+Cx
+</title>
+<ellipse fill="none" stroke="black" cx="28.5975" cy="-90" rx="27" ry="18"/> <text text-anchor="middle" x="28.5975" y="-86.3" font-family="Times,serif" font-size="14.00">Cx</text> </g> <!-- M&#45;&gt;Cx --> <g id="edge3" class="edge">
+<title>
+M-&gt;Cx
+</title>
+<path fill="none" stroke="black" stroke-dasharray="1,5" d="M28.5975,-143.859C28.5975,-135.268 28.5975,-126.677 28.5975,-118.085"/> <polygon fill="black" stroke="black" points="32.0976,-118 28.5975,-108 25.0976,-118 32.0976,-118"/> </g> <!-- Cy --> <g id="node6" class="node">
+<title>
+Cy
+</title>
+<ellipse fill="none" stroke="black" cx="138.195" cy="-90" rx="27" ry="18"/> <text text-anchor="middle" x="138.195" y="-86.3" font-family="Times,serif" font-size="14.00">Cy</text> </g> <!-- N&#45;&gt;Cy --> <g id="edge5" class="edge">
+<title>
+N-&gt;Cy
+</title>
+<path fill="none" stroke="black" stroke-dasharray="1,5" d="M138.195,-143.859C138.195,-135.268 138.195,-126.677 138.195,-118.085"/> <polygon fill="black" stroke="black" points="141.695,-118 138.195,-108 134.695,-118 141.695,-118"/> </g> <!-- TxM --> <g id="node3" class="node">
+<title>
+TxM
+</title>
+<ellipse fill="none" stroke="black" cx="28.5975" cy="-18" rx="28.6953" ry="18"/> <text text-anchor="middle" x="28.5975" y="-14.3" font-family="Times,serif" font-size="14.00">TxM</text> </g> <!-- TyN --> <g id="node4" class="node">
+<title>
+TyN
+</title>
+<ellipse fill="none" stroke="black" cx="138.195" cy="-18" rx="27" ry="18"/> <text text-anchor="middle" x="138.195" y="-14.3" font-family="Times,serif" font-size="14.00">TyN</text> </g> <!-- TxM&#45;&gt;TyN --> <g id="edge2" class="edge">
+<title>
+TxM-&gt;TyN
+</title>
+<path fill="none" stroke="black" d="M57.3065,-18C70.6344,-18 86.781,-18 101.06,-18"/> <polygon fill="black" stroke="black" points="101.061,-21.5001 111.061,-18 101.061,-14.5001 101.061,-21.5001"/> <text text-anchor="middle" x="84.1949" y="-21.8" font-family="Times,serif" font-size="14.00">??</text> </g> <!-- Cx&#45;&gt;TxM --> <g id="edge4" class="edge">
+<title>
+Cx-&gt;TxM
+</title>
+<path fill="none" stroke="black" stroke-dasharray="1,5" d="M28.5975,-71.8594C28.5975,-63.2681 28.5975,-54.6768 28.5975,-46.0854"/> <polygon fill="black" stroke="black" points="32.0976,-46 28.5975,-36 25.0976,-46 32.0976,-46"/> </g> <!-- Cx&#45;&gt;Cy --> <g id="edge7" class="edge">
+<title>
+Cx-&gt;Cy
+</title>
+<path fill="none" stroke="black" d="M55.6438,-90C69.1566,-90 85.8861,-90 100.669,-90"/> <polygon fill="black" stroke="black" points="101.016,-93.5001 111.016,-90 101.015,-86.5001 101.016,-93.5001"/> <text text-anchor="middle" x="84.1949" y="-93.8" font-family="Times,serif" font-size="14.00">F.c</text> </g> <!-- Cy&#45;&gt;TyN --> <g id="edge6" class="edge">
+<title>
+Cy-&gt;TyN
+</title>
+<path fill="none" stroke="black" stroke-dasharray="1,5" d="M138.195,-71.8594C138.195,-63.2681 138.195,-54.6768 138.195,-46.0854"/> <polygon fill="black" stroke="black" points="141.695,-46 138.195,-36 134.695,-46 141.695,-46"/> </g> </g>
+</svg>
+</center>
+<p>以上話したことを一言で述べると、 写像 <span class="math inline">\(M \to N\)</span> から写像 <span class="math inline">\(\mathcal{C}_x \to \mathcal{C}_y\)</span> を導いた. では、これを <span class="math inline">\(\sim\)</span> で割って <span class="math inline">\(T_xM \to T_yN\)</span> を導くことはできるだろうか?</p>
+<h3 id="同値類の写像">同値類の写像</h3>
+<div class="thm">
+<p>ある関数 <span class="math inline">\(f: X \to Y\)</span> がある. <span class="math inline">\(X, Y\)</span> 上の同値関係 <span class="math inline">\(\sim\)</span> によって関数</p>
+<p><span class="math display">\[f&#39; : X/\!\sim \to Y/\!\sim\]</span></p>
+<p>を自然に導くとは、次のように関数 <span class="math inline">\(f&#39;\)</span> を定められること.</p>
+<ol style="list-style-type: decimal">
+<li><span class="math inline">\(f&#39;([x]) = [f(x)]\)</span> (写像の構成)</li>
+<li><span class="math inline">\(x \sim x&#39;\)</span> のとき <span class="math inline">\(f&#39;([x]) \sim f&#39;([x&#39;])\)</span> (同値関係の保存)</li>
+</ol>
+<p>ただしここで <span class="math inline">\(x \in X, y \in Y\)</span> に対してそれらの代表元を <span class="math inline">\([x] \in X/\!\sim, [y] \in Y/\!\sim\)</span> と書いた.</p>
+</div>
+<p>「導くことはできるか」を確認するにはこれを確認すればよい. すなわち、</p>
+<p><span class="math display">\[F \circ c :~ \mathcal{C}_x \to \mathcal{C}_y\]</span></p>
+<p>から</p>
+<p><span class="math display">\[T_xM \to T_yN\]</span></p>
+<p>を自然に導くことはできるか??</p>
+<h3 id="関手">関手</h3>
+<p>もし導くことができるのなら、 <span class="math inline">\(T\)</span> (添字とか細かいことは気にしないで) というのは次のようなオペレータと見做せないだろうか. すなわち、 定義域の <span class="math inline">\(M\)</span> を <span class="math inline">\(T_xM\)</span> に写し、 値域 <span class="math inline">\(N\)</span> を <span class="math inline">\(T_yN\)</span> に写し、 写像 <span class="math inline">\(F: M \to N\)</span> を <span class="math inline">\(T_xM \to T_yN\)</span> に写す.</p>
+<p>こうなると、写像 <span class="math inline">\(F\)</span> を写した先の写像のことは <span class="math inline">\(T_xF\)</span> と書くのが妥当に思えてくる. (この文書の中においてはほんと添字はあんま気にせんで.)</p>
+<center>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.38.0 (20140413.2041)
+ -->
+<!-- Title: %3 Pages: 1 -->
+<svg width="178pt" height="116pt" viewBox="0.00 0.00 178.19 116.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 112)">
+<title>
+%3
+</title>
+<!-- M -->
+<g id="node1" class="node">
+<title>
+M
+</title>
+<ellipse fill="none" stroke="black" cx="28.5975" cy="-90" rx="27" ry="18"/> <text text-anchor="middle" x="28.5975" y="-86.3" font-family="Times,serif" font-size="14.00">M</text> </g> <!-- N --> <g id="node2" class="node">
+<title>
+N
+</title>
+<ellipse fill="none" stroke="black" cx="143.195" cy="-90" rx="27" ry="18"/> <text text-anchor="middle" x="143.195" y="-86.3" font-family="Times,serif" font-size="14.00">N</text> </g> <!-- M&#45;&gt;N --> <g id="edge1" class="edge">
+<title>
+M-&gt;N
+</title>
+<path fill="none" stroke="black" d="M55.7126,-90C70.5278,-90 89.3023,-90 105.57,-90"/> <polygon fill="black" stroke="black" points="105.831,-93.5001 115.831,-90 105.831,-86.5001 105.831,-93.5001"/> <text text-anchor="middle" x="86.6949" y="-93.8" font-family="Times,serif" font-size="14.00">F</text> </g> <!-- TxM --> <g id="node3" class="node">
+<title>
+TxM
+</title>
+<ellipse fill="none" stroke="black" cx="28.5975" cy="-18" rx="28.6953" ry="18"/> <text text-anchor="middle" x="28.5975" y="-14.3" font-family="Times,serif" font-size="14.00">TxM</text> </g> <!-- M&#45;&gt;TxM --> <g id="edge3" class="edge">
+<title>
+M-&gt;TxM
+</title>
+<path fill="none" stroke="black" stroke-dasharray="1,5" d="M28.5975,-71.8594C28.5975,-63.2681 28.5975,-54.6768 28.5975,-46.0854"/> <polygon fill="black" stroke="black" points="32.0976,-46 28.5975,-36 25.0976,-46 32.0976,-46"/> </g> <!-- TyN --> <g id="node4" class="node">
+<title>
+TyN
+</title>
+<ellipse fill="none" stroke="black" cx="143.195" cy="-18" rx="27" ry="18"/> <text text-anchor="middle" x="143.195" y="-14.3" font-family="Times,serif" font-size="14.00">TyN</text> </g> <!-- N&#45;&gt;TyN --> <g id="edge4" class="edge">
+<title>
+N-&gt;TyN
+</title>
+<path fill="none" stroke="black" stroke-dasharray="1,5" d="M143.195,-71.8594C143.195,-63.2681 143.195,-54.6768 143.195,-46.0854"/> <polygon fill="black" stroke="black" points="146.695,-46 143.195,-36 139.695,-46 146.695,-46"/> </g> <!-- TxM&#45;&gt;TyN --> <g id="edge2" class="edge">
+<title>
+TxM-&gt;TyN
+</title>
+<path fill="none" stroke="black" d="M57.4305,-18C71.9287,-18 89.8447,-18 105.465,-18"/> <polygon fill="black" stroke="black" points="105.843,-21.5001 115.842,-18 105.842,-14.5001 105.843,-21.5001"/> <text text-anchor="middle" x="86.6949" y="-21.8" font-family="Times,serif" font-size="14.00">TxF</text> </g> </g>
+</svg>
+</center>
+<p>先章まで述べてきたことを言い直すと、こうだ. 接空間を考えることで、 写像 <span class="math inline">\(F\)</span> から <span class="math inline">\(T_xF\)</span> を導くことはできるだろうか???</p>
+<h3 id="やっていく.">やっていく.</h3>
+<p>出来る.</p>
+<p>具体的な写像の構成は、次のようである. 代表元を取る操作とかはいちいち書かないが、察して.</p>
+<p><span class="math display">\[T_xF : T_xM \to T_y N\]</span> <span class="math display">\[T_xF(u) = (F \circ c)(u)\]</span></p>
+<p>次に同値性を保存していることを確認する.</p>
+<p><span class="math inline">\(u \sim v\)</span> を仮定する. <span class="math inline">\(u, v\)</span> は <span class="math inline">\(T_xM\)</span> の元なので <span class="math inline">\(M\)</span> の上の適当な局所座標を取って定義される <span class="math inline">\(\varphi^*: U_i \to \mathbb{R}\)</span> によって同値性は定義される. すなわち <span class="math inline">\(\varphi^*(u) = \varphi^*(v)\)</span> である.</p>
+<p>このときに、</p>
+<p><span class="math display">\[T_xF(u) \sim T_xF(v)\]</span></p>
+<p>であることを確認できればよい. <span class="math inline">\(T_xF(u), T_xF(v)\)</span> は <span class="math inline">\(T_yN\)</span> の元であるので、そこでの適当な局所座標から定義される関数 <span class="math inline">\(\psi^*\)</span> によって同値性を確認する必要があることに註意.</p>
+<p>すなわち、 <span class="math display">\[\psi^*(F \circ u) = \psi^*(F \circ v)\]</span> を確認したい.</p>
+<p>やっていく:</p>
+<p><span class="math display">\[\begin{align*}
+\psi^*(F \circ u)
+&amp; = \frac{d \psi \circ F \circ u}{dt}(0) \\
+&amp; = \frac{d \psi \circ F \circ \varphi^{-1} \circ \varphi \circ  u}{dt}(0) \\
+&amp; = \frac{d \psi \circ F \circ \varphi^{-1}}{d x}(x=x_0) \cdot \frac{d \varphi \circ  u}{dt}(t=0)
+\\
+\end{align*}\]</span></p>
+<p>最後の式変形では微分のチェーンルールを用いている. また、 分母の <span class="math inline">\(dx\)</span> は <span class="math inline">\(M\)</span> の局所座標 (<span class="math inline">\(\varphi\)</span> の値域) 上での微分であって、<span class="math inline">\(x_0 = \varphi(u(0))\)</span> としている. これは <span class="math inline">\(\psi \circ F \circ \varphi^{-1}\)</span> が実関数であるから書けることに註意. 同様に <span class="math inline">\(\varphi \circ u\)</span> も実関数であるからこれも <span class="math inline">\(t\)</span> で微分できている.</p>
+<p>さて今、 <span class="math inline">\(\varphi^*(u) = \varphi^*(v)\)</span> を仮定しているので、 <span class="math inline">\(\frac{d \varphi \circ u}{dt}(t=0) = \frac{d \varphi \circ v}{dt}(t=0)\)</span> である. 従って、</p>
+<p><span class="math display">\[\begin{align*}
+\psi^*(F \circ u)
+&amp; = \frac{d \psi \circ F \circ \varphi^{-1}}{d x}(x=x_0) \cdot \frac{d \varphi \circ  u}{dt}(t=0) \\
+&amp; = \frac{d \psi \circ F \circ \varphi^{-1}}{d x}(x=x_0) \cdot \frac{d \varphi \circ  \color{red}{v}}{dt}(t=0) \\
+\end{align*}\]</span></p>
+<p>加えてこの一項目の <span class="math inline">\(\frac{d \psi \circ F \circ \varphi^{-1}}{d x}(x=x_0)\)</span> が、もはや <span class="math inline">\(u, v\)</span> に依存してないことに註意すれば、結局</p>
+<p><span class="math display">\[\begin{align*}
+\psi^*(F \circ u)
+&amp; = \psi^*(F \circ v)
+\end{align*}\]</span></p>
+<p>となる. というわけで同値性の保存が成立していることが確認できた.</p>
+<p>以上で、 写像 <span class="math inline">\(F\)</span> から <span class="math inline">\(T_xF\)</span> を導けることが示された. この <span class="math inline">\(T_xF\)</span> のことを <strong>接写像</strong> という.</p>
+<h2 id="接写像の行列表示">接写像の行列表示</h2>
+<p>接写像はベクトル空間 <span class="math inline">\(T_xM\)</span> から ベクトル空間 <span class="math inline">\(T_yN\)</span> への写像であるから、 写す値をベクトル表示することで、関数 <span class="math inline">\(T_xF\)</span> を行列表示することができるはずである. やっていく.</p>
+<p>具体的には基底がどう写るかを調べる.</p>
+<ul>
+<li><span class="math inline">\(c_i = \lambda t.~ \varphi^{-1}(te_i)\)</span></li>
+<li><span class="math inline">\(\varphi^*(c_i) = \left. \frac{d}{dt} \varphi(\varphi^{-1}(te_i)) \right|_{t=0} = e_i\)</span></li>
+</ul>
+<p>ただし <span class="math inline">\(e_i = (0, \ldots, 0, 1, 0, \ldots, 1) \in \mathbb{R}^m\)</span> (または <span class="math inline">\(\mathbb{R}^n\)</span>). これを <span class="math inline">\(T_xF\)</span> で写す</p>
+<ul>
+<li><span class="math inline">\(T_xF(c_i) = F \circ c_i\)</span></li>
+<li><span class="math inline">\(\psi^*(F \circ c_i) = \left. \frac{d}{dt} \psi(F (\varphi^{-1} (te_i))) \right|_{t=0}\)</span></li>
+</ul>
+<p>ここで <span class="math inline">\(\psi \circ F \circ \varphi^{-1}\)</span> という関数は <span class="math inline">\(F\)</span> を通して <span class="math inline">\(M\)</span> の上の局所座標 <span class="math inline">\((x_1, x_2, \ldots, x_m)\)</span> から <span class="math inline">\(N\)</span> 上局所座標 <span class="math inline">\((y_1, y_2, \ldots, y_n)\)</span> へ写しているものだと解釈できる.</p>
+<p><span class="math display">\[(y_1, y_2, \ldots, y_n) = (F_1(x_1), F_2(x_2), \ldots, F_n(x_n))\]</span></p>
+<p>しかも <span class="math inline">\(x\)</span> の上の <span class="math inline">\(e_i\)</span> 方向に (i.e. <span class="math inline">\(x_i\)</span> 成分を) 動かしたときの微分値であるから、これは、 <span class="math inline">\(F\)</span> を <span class="math inline">\(x_i\)</span> で偏微分した値だと言える. したがって、</p>
+<p><span class="math display">\[\frac{d}{dt} \psi(F(\varphi^{-1}(x_1, x_2, \ldots, x_m))) =
+\left(
+\frac{\partial F_1}{\partial x_i},~
+\frac{\partial F_2}{\partial x_i},~
+\ldots,~
+\frac{\partial F_n}{\partial x_i} \right)\]</span></p>
+<p>というわけで、 <span class="math display">\[\psi^*(F \circ c_i) =
+\left.
+\left(
+\frac{\partial F_1}{\partial x_i},~
+\frac{\partial F_2}{\partial x_i},~
+\ldots,~
+\frac{\partial F_n}{\partial x_i} \right)
+\right|_{x=x_0}\]</span> となる.</p>
+<div class="thm">
+<p>さて、ベクトル表示をすることは、<span class="math inline">\(\varphi^*, \psi^*\)</span> で写すことに相当する. なぜなら今用いている基底ベクトル <span class="math inline">\(c_i \in T_xM\)</span> は、 <span class="math inline">\(\varphi^*(c_i) = e_i (i=1,2,\ldots,m)\)</span> となるようなものだからである.</p>
+<p>これは <span class="math inline">\(N\)</span> 上でも同様で、 <span class="math inline">\(\varphi^*(d_i) = e_i (i=1,2,\ldots,n)\)</span> となるような <span class="math inline">\(d_i\)</span> を <span class="math inline">\(T_yN\)</span> の基底ベクトルと定める.</p>
+<p>というわけで、 <span class="math inline">\(\sum_i a_i c_i\)</span> は <span class="math inline">\(\varphi^*\)</span> によって自然にユークリッド空間上の点 <span class="math inline">\((a_1, a_2, \ldots, a_m)\)</span> に写せる.</p>
+<p>逆に <span class="math inline">\((b_1, b_2, \ldots, b_m) \in \mathbb{R}^n\)</span> を <span class="math inline">\(\sum_j b_j d_j\)</span> に戻すことも容易だろう.</p>
+</div>
+<p>では先程求めた</p>
+<ol style="list-style-type: decimal">
+<li><span class="math inline">\(\varphi^*(c_i) = \left. \frac{d}{dt} \varphi(\varphi^{-1}(te_i)) \right|_{t=0} = e_i\)</span></li>
+<li><span class="math inline">\(\psi^*(F \circ c_i) = \left. \left( \frac{\partial F_1}{\partial x_i},~ \frac{\partial F_2}{\partial x_i},~ \ldots,~ \frac{\partial F_n}{\partial x_i} \right) \right|_{x=x_0}\)</span></li>
+</ol>
+<p>これらを <span class="math inline">\(T_xM, T_yN\)</span> に引き戻すことをしよう.</p>
+<ol style="list-style-type: decimal">
+<li><span class="math inline">\(\varphi^*(c_i) = e_i \mapsto c_i\)</span></li>
+<li><span class="math inline">\(\psi^*(F \circ c_i) \mapsto \sum_{j=1}^n \left. \frac{\partial F_j}{\partial x_i} \right|_{x=x_0} d_j\)</span></li>
+</ol>
+<p>この一つ目から二つ目に <span class="math inline">\(F\)</span> によって移されたわけである. <span class="math inline">\(\mapsto\)</span> の左が行列表示で右が基底の線形結合の形で書き表したものである.</p>
+<p>行列表示ができそうに思えてくる. すなわち、</p>
+<p><span class="math display">\[\left[ \begin{array}{c}
+0\\ \vdots\\ 0\\ 1\\ 0\\ \vdots\\ 1
+\end{array} \right]
+\mapsto
+\left.
+\left[ \begin{array}{c}
+\frac{\partial y_1}{\partial x_i} &amp;
+\frac{\partial y_2}{\partial x_i} &amp;
+\cdots,
+\frac{\partial y_n}{\partial x_i}
+\end{array} \right]
+\right|_{x=x_0}\]</span></p>
+<p>というわけで <span class="math inline">\(F\)</span> を次のように行列表示することができる.</p>
+<p><span class="math display">\[\left.
+\left[ \begin{array}{c}
+\frac{\partial y_1}{\partial x_1} &amp; \frac{\partial y_2}{\partial x_1} &amp; \cdots &amp; \frac{\partial y_n}{\partial x_1} \\
+\frac{\partial y_1}{\partial x_2} &amp; \frac{\partial y_2}{\partial x_2} &amp; \cdots &amp; \frac{\partial y_n}{\partial x_2} \\
+\vdots &amp; \vdots &amp; \vdots &amp; \vdots \\
+\frac{\partial y_1}{\partial x_m} &amp; \frac{\partial y_2}{\partial x_m} &amp; \cdots &amp; \frac{\partial y_n}{\partial x_m}
+\end{array} \right]
+~
+\right|_{x=x_0}\]</span></p>
+<p>これはいわゆるヤコビアン (<span class="math inline">\(DF\)</span>) のことである.</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

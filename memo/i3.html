@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>i3 (i3wm)</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+</head>
+<body>
+<header>
+<h1 class="title">i3 (i3wm)</h1>
+</header>
+<h2 id="フォントの設定">フォントの設定</h2>
+<pre class="sourceCode cpp"><code class="sourceCode cpp">font pango:FontAwesome, aquafont, Mono, DejaVu Sans Mono <span class="dv">11</span></code></pre>
+<p>i3bar のみへの適用ならば、</p>
+<p><code>hogehoge</code> test</p>
+<pre><code>bar {
+  status_command $HOME/Dropbox/cympfh/i3status.js
+  font pango:FontAwesome, aquafont, Mono, DejaVu Sans Mono 11
+}</code></pre>
+<h3 id="fontawesome">FontAwesome</h3>
+<p>上の例では <a href="http://fortawesome.github.io/Font-Awesome/">FontAwesome</a> をロードしている. アイコンがたくさん収録されていて (<a href="http://fortawesome.github.io/Font-Awesome/cheatsheet/" class="uri">http://fortawesome.github.io/Font-Awesome/cheatsheet/</a>) 便利.</p>
+<h2 id="モニタ間のワークスペースの移動">モニタ間のワークスペースの移動</h2>
+<p>別のモニタに移動させるのにいちいち経由させるんじゃなくて、 ワークスペース自体を次のモニタに移動する.</p>
+<pre><code>bindsym $mod+m move workspace to output left</code></pre>
+<p>プロジェクター発表するときに、手元で全面表示させておいたのをぱっと、 映すのに大変便利.</p>
+<h2 id="i3bar-のモニタごとの設定">i3bar のモニタごとの設定</h2>
+<pre><code>bar {
+}</code></pre>
+<p>を複数回使うことで i3bar を複数個作る. そのときに <code>output</code> キーワードでどのモニタに作るかを指定できる. 同じモニタに対して複数回作るとき、下から順に i3bar が複数個、積み重ねられる. <code>output</code> を指定しないとき、全てのモニタが対象になる.</p>
+<pre><code>bar {
+  output VGA1
+  output HDMI1
+}</code></pre>
+<p>よくないのは、否定的な指定の仕方が (どうやら) 無いこと. 例えば、名前の分かっているメインモニタと、外部モニタとで別々な i3bar を作りたくても、 「モニタ以外」を指定する方法がないので、有り得そうな外部モニタの名前を列挙するしかない.</p>
+<h3 id="現時点の設定">現時点の設定</h3>
+<p>例として、今の設定の i3bar 部分をコピペする. メインモニタは <code>eDP1</code> という名前で (c.f. <code>xrandr</code>)、 出力ポートが VGA と HDMI いか無いので次のように、別々に設定できる.</p>
+<p>メインには、自前で書いた status スクリプトでいろいろ賑やかにしておいて、 外部モニタは基本的に人前でプレゼンする用なので、 何も表示させない. ワークスペース番号はさすがに必要なので、まっさらな bar を表示させる.</p>
+<pre><code>bar {
+  output VGA1
+  output HDMI1
+  tray_output none
+  colors {
+    background #000000
+    statusline #00A5FF
+    separator #666666
+
+    # border background foreground
+    focused_workspace  #000000 #000000 #ffffff
+    active_workspace   #000000 #000000 #dddddd
+    inactive_workspace #000000 #000000 #888888
+    urgent_workspace   #000000 #900000 #ffffff
+  }
+  position bottom
+}
+
+bar {
+  output eDP1
+  status_command /home/cympfh/Dropbox/cympfh/i3/bar.coffee
+  colors {
+    background #000000
+    statusline #00A5FF
+    separator #666666
+
+    # border background foreground
+    focused_workspace  #000000 #000000 #ffffff
+    active_workspace   #000000 #000000 #dddddd
+    inactive_workspace #000000 #000000 #888888
+    urgent_workspace   #000000 #900000 #ffffff
+  }
+  position bottom
+}</code></pre>
+<h2 id="便利外部コマンド">便利外部コマンド</h2>
+<h3 id="スクリーンショットを撮る">スクリーンショットを撮る</h3>
+<p>gnome の例:</p>
+<pre><code># PrintScreen to take a screenshot
+bindsym Print exec gnome-screenshot -f /home/cympfh/Pictures/hoge.jpg</code></pre>
+<h3 id="スクリーンロック">スクリーンロック</h3>
+<p><code>i3wm</code> には <code>i3lock</code> が同梱されいてる (無ければいれる)</p>
+<pre><code># screen lock
+bindsym $mod+Escape exec i3lock</code></pre>
+</body>
+</html>

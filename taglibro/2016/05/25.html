@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Wed May 25 22:24:37 JST 2016</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Wed May 25 22:24:37 JST 2016</h1>
+</header>
+<h2 id="対話事例を取ってくる">対話事例を取ってくる</h2>
+<p>「今起きた」「おそよう＾＾」</p>
+<ul>
+<li>無害そうな人を見つけてその人の発言をひたすらとってくる from Twitter
+<ul>
+<li>https://github.com/cympfh/eliza2/blob/master/script/hometime.sh</li>
+<li><code>./hometime.sh 2Dcat</code> みたいにして使う.</li>
+<li>発言 (id_str, in_reply_to_status_id_str, text) をファイル <code>2Dcat</code> に書いてく.</li>
+<li>コレ系はすぐにAPI制限にひっかかるので、そしたらしばらく休んでまた同じコマンドを打てば、<code>2Dcat</code> を読んで前回の続きから再開する.</li>
+<li>ただそれよりTwitterの謎な制約として、ある程度より昔のツイートはどうしても取ってこれない</li>
+</ul></li>
+<li><code>in_reply_to_status_id_str</code> があるものについて発言先を取ってくる
+<ul>
+<li>たぶんあとで便利なので、id_str をファイル名にして保存することにする</li>
+<li><code>mkdir inreplyto</code></li>
+</ul></li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">cat</span> 2Dcat <span class="kw">|</span> <span class="fu">awk</span> <span class="st">&#39;$0=$2&#39;</span> <span class="kw">|</span> <span class="fu">grep</span> -v null <span class="kw">|</span> <span class="kw">while</span> <span class="bu">read</span> <span class="va">id</span>; <span class="kw">do</span>
+  <span class="kw">if</span><span class="bu"> [</span> <span class="ot">!</span> <span class="ot">-f</span> <span class="st">&quot;inreplyto/</span><span class="va">$id</span><span class="st">&quot;</span><span class="bu"> ]</span>; <span class="kw">then</span>
+    <span class="ex">twurl</span> <span class="st">&quot;/1.1/statuses/show.json?id=</span><span class="va">${id}</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="ex">jq</span> -r .text <span class="op">&gt;</span> inreplyto/<span class="va">$id</span><span class="kw">;</span>
+    <span class="fu">sleep</span> 10<span class="kw">;</span>
+  <span class="kw">fi</span>;
+<span class="kw">done</span></code></pre></div>
+<ul>
+<li>これもすぐ制限にかかるので <strike>アカウントを変更して</strike> しばらく休ませてからまた発動する
+<ul>
+<li>引っ掛かってても気づかずに null とだけ書き込んだファイルを作ってしまうので</li>
+<li><code>for f in inreplyto/*; do if [ &quot;$(cat $f)&quot; == &quot;null&quot; ]; then echo $f; fi; done</code></li>
+<li>でまた上を発動
+<ul>
+<li>スマートではないけど</li>
+</ul></li>
+<li>単純にツイットが消えてても null だ</li>
+</ul></li>
+</ul>
+<h2 id="lstm-言語生成-検索">LSTM 言語生成 [検索]</h2>
+<p>いわゆるNNs の型は <code>[float; m] -&gt; [float; n]</code> である.<br />
+ここで <code>[float; m]</code> は長さ <code>m</code> で要素がすべて <code>float</code> とある配列を表現する型.<br />
+RNN (recurrent-NNs) の一つであるLSTMは <code>[float; m] -&gt; [float; m]</code> である.<br />
+ただし、この機械は状態を持つ.<br />
+状態は一回の入出力によって変化する.<br />
+その状態で入出力が変化するので <code>([float; m], State) -&gt; ([float; m], State)</code> と書くのが正確である.<br />
+また初期状態という状態が定まっている.</p>
+<p>応答文生成や自動翻訳にRNNが期待されている.<br />
+どちらともに、長さが不明な文1を入力に与えると、長さがやはり不明な文2が出力されるという機械にほかならない.</p>
+<p>RNNの枠組みでこの機械を再現する素朴な方法は単純である.<br />
+文1を <code>[float; m]</code> に変換する.<br />
+これを <code>x1 x2 .. xm</code> とする.<br />
+これは例えば文字やトークンの列に相当する.</p>
+<p>機械 RNN に <code>x1</code> <code>x2</code> .. <code>xm</code> を順に与える.<br />
+出力は初め気にしないが、<code>xm</code> を与えて出てきた出力を <code>y1</code> として記録する.<br />
+次からは <code>y1</code> を与えて出力を <code>y2</code> とする<br />
+<code>y2</code> を与えて出力を <code>y3</code> とする<br />
+これを繰り返すことで無限長の出力列を得るが、<br />
+特殊な制御文字 <code>&lt;/s&gt;</code> を考える.<br />
+これは決して他とは被らないという意味で特殊である.<br />
+出力 <code>yn</code> が <code>&lt;/s&gt;</code> になったとき、機械をとめ、それまでを出力とする.</p>
+<p>初めの入力の最後 <code>xm</code> をやはり制御文字 <code>&lt;/s&gt;</code> とする方法もあるし、別の制御文字を敢えて使うことも考えられる.<br />
+双方向RNNというのもある.<br />
+これは初め、<code>x1 x2 .. xm</code> と読むのではなく<br />
+<code>xm .. x2 x1 x1 x2 .. xm</code> と、まずはじめに逆順に読んで、その後に順に読むのである.<br />
+LSTMは昔読んだ入力を徐々に忘れていく.<br />
+繰り返し読むことでうまい具合に記憶しているっていう、技巧である.</p>
+<h2 id="実験-小さいサンプル">実験 (小さいサンプル)</h2>
+<ul>
+<li>https://github.com/cympfh/eliza2/tree/master/eliza
+<ul>
+<li>事例集 <code>./test.input</code>
+<ul>
+<li>奇数行目の発言について、次の行の発言が返答</li>
+</ul></li>
+<li><code>./train.py -i test.input -o test.model --iteration 1000</code></li>
+<li><code>.gen.py ./test.model</code></li>
+</ul></li>
+</ul>
+<pre><code>   ./gen.py test.model
+&gt; おはよう
+おはようございます
+&gt; おはようございます
+おやすみ
+&gt; おっはー
+おやすみ
+&gt; 起きた
+はい、おはよう
+&gt; 寝る
+おはようございます
+&gt; もう寝よう
+もう寝るの？！
+&gt; 寝ます
+おやすみなさい
+&gt;</code></pre>
+<ul>
+<li>10程度しかない事例集について1000も回せば十分過ぎた学習をしていて、事例に存在しない発言はしない
+<ul>
+<li>つまりいずれかと重複する文しか生成しない</li>
+</ul></li>
+<li>まあまあ、間違えてる</li>
+</ul>
+<h2 id="実験-少し大きいサンプル">実験 (少し大きいサンプル)</h2>
+<p>平面ねこさんからは結局、1035の対話事例が得られた. 決して多くはないが、平面ろぼさんからコレ以上取るのは難しそうだ. 他のソースも考えよう.</p>
+<p>とりあえずこれで演ってみる.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">./train.py</span> -i 2Dcat.txt -o 2Dcat.model --iteration 10000</code></pre></div>
+<p>実は公平に事例を選んでるわけではないのだが、平均的に10epoch学習したことになる.</p>
+<p>ちなみに CPU 1個で22分かかった.</p>
+<pre><code>$ ./gen.py 2Dcat.model
+&gt; あ
+うんんんだ
+&gt; ねえ
+その話
+&gt; 元気？
+うんんんんだ
+&gt; 元気してる？
+そう
+&gt; ねえねえ
+その話
+&gt; 大丈夫ですか
+そう
+&gt; おい
+そうだね
+&gt; しっかりして
+そうだね
+&gt; ごめんね
+なんだ
+&gt; おはよー
+ふうん
+&gt; 今まで寝てた
+その話しない
+&gt; 寝てた
+その話しない
+&gt; …
+そう
+&gt; ……
+そうなの
+&gt; やたのしい
+そんなの
+&gt; 楽しい
+そう
+&gt; やだ
+そう
+&gt; よし死のう
+そうだね
+&gt; なにそれ
+なんだ
+&gt; ＠＠；
+ふふむ
+&gt; ふふふ…
+そう
+&gt; ｗｗｗｗｗｗｗｗｗｗｗｗｗｗｗｗｗｗｗｗｗｗ
+ふふふ
+&gt; テンション高いねー
+なんだ
+&gt;</code></pre>
+<p>絶望</p>
+</body>
+</html>

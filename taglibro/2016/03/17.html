@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Thu Mar 17 14:06:30 JST 2016</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Thu Mar 17 14:06:30 JST 2016</h1>
+</header>
+<h2 id="家計簿-食費雑費">家計簿 (食費・雑費)</h2>
+<p>日付、支出額、買い物の中身をタブ区切りで記録する.<br />
+年は日付に含めず、年ごとにファイルを作ることにしてる.</p>
+<pre><code>   cat 2016.tsv
+MM/DD\tYEN\t備考 (買ったもののメモとか)
+03/17\t108\tドーナツ
+03/17\t380\t夕食</code></pre>
+<p>ざっと、お金を使いすぎたか、節約できてるかを見積もるための方法として、 一日あたりの支出を月ごとに出してみて、今月の額を過去の額と比較するというのがある.</p>
+<blockquote>
+<p>今日一日の支出だとバラつきがあって当前なので、一ヶ月のスパンで平均を出すわけ</p>
+</blockquote>
+<p>以下のスクリプトを <code>perday</code> として置く.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co">#!/bin/bash</span>
+
+<span class="va">TMP=</span><span class="kw">`</span><span class="fu">mktemp</span><span class="kw">`</span>
+
+<span class="kw">if</span><span class="bu"> [</span> <span class="va">$#</span> <span class="ot">==</span> 0<span class="bu"> ]</span>; <span class="kw">then</span>
+  <span class="fu">cat</span> <span class="op">&gt;</span> <span class="va">$TMP</span>
+<span class="kw">else</span>
+  <span class="fu">cp</span> <span class="va">$1</span> <span class="va">$TMP</span>
+<span class="kw">fi</span>
+
+<span class="bu">echo</span> <span class="st">&quot;month      average        yen  days&quot;</span>
+<span class="kw">for</span> <span class="ex">m</span> in <span class="dt">{01..12}</span><span class="kw">;</span> <span class="kw">do</span>
+  <span class="va">SUM=$(</span>
+  <span class="fu">cat</span> <span class="va">$TMP</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="st">&quot;^</span><span class="va">$m</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="fu">sort</span> -k1,1 -n <span class="kw">|</span> <span class="fu">grep</span> <span class="st">&#39;    &#39;</span> <span class="kw">|</span> <span class="fu">awk</span> -v s=0 <span class="st">&#39;{s+=$2} END{print s}&#39;</span>
+  <span class="va">)</span>
+  <span class="va">DAYS=$(</span>
+  <span class="fu">cat</span> <span class="va">$TMP</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="st">&quot;^</span><span class="va">$m</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="fu">sort</span> -k1,1 -n <span class="kw">|</span> <span class="fu">grep</span> <span class="st">&#39;    &#39;</span> <span class="kw">|</span> <span class="fu">cut</span> -f1 <span class="kw">|</span> <span class="fu">uniq</span> <span class="kw">|</span> <span class="fu">wc</span> -l
+  <span class="va">)</span>
+
+  <span class="kw">if</span><span class="bu"> [</span> <span class="va">$DAYS</span> <span class="ot">-gt</span> 0<span class="bu"> ]</span>; <span class="kw">then</span>
+    <span class="bu">echo</span> -n <span class="st">&quot;</span><span class="va">$m</span><span class="st">    &quot;</span>
+    <span class="ex">ruby</span> -e <span class="st">&quot;print sprintf(&#39;%12.3f %10d %5d&#39;, </span><span class="va">$SUM</span><span class="st">/</span><span class="va">$DAYS</span><span class="st">.to_f, </span><span class="va">$SUM</span><span class="st">, </span><span class="va">$DAYS</span><span class="st">)&quot;</span>
+    <span class="bu">echo</span>
+  <span class="kw">fi</span>
+<span class="kw">done</span>
+
+<span class="fu">rm</span> <span class="va">$TMP</span></code></pre></div>
+<p><code>./perday 2016.tsv</code> とか <code>cat 2016.tsv | ./perday</code> として使う.</p>
+<pre><code>   ./perday 2015.tsv
+month      average        yen  days
+06        1253.414      36349    29
+07        1357.226      42074    31
+08        1659.452      51443    31
+09        1587.433      47623    30
+10        1742.097      54005    31
+11        2191.333      65740    30
+12        2568.348      59072    23
+   ./perday 2016.tsv
+month      average        yen  days
+01        1474.258      45702    31
+02        1870.379      54241    29
+03        1482.125      23714    16</code></pre>
+<figure>
+<img src="../../img/2016/0317.png" />
+</figure>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Mon Aug 25 12:48:26 JST 2014</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Mon Aug 25 12:48:26 JST 2014</h1>
+</header>
+<h2 id="コマンドラインから-google-翻訳を呼ぶ">コマンドラインから Google 翻訳を呼ぶ</h2>
+<p><a href="http://dyama.org/2011/03/google-translate-from-commandline/">コマンドラインから Google 翻訳を利用するスクリプト | dyama's home page</a></p>
+<p>単純に url やらちょこちょこ変わってたので</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="bu">[</span> <span class="va">$#</span> <span class="ot">-ne</span> 2<span class="bu"> ]</span> <span class="kw">&amp;&amp;</span> <span class="bu">echo</span> <span class="st">&quot;usage: ./% en ja&quot;</span> <span class="kw">&amp;&amp;</span> <span class="bu">exit</span> 1
+
+<span class="bu">read</span> <span class="va">Q</span>
+<span class="va">Q=</span><span class="kw">`</span><span class="bu">echo</span> <span class="va">$Q</span> <span class="kw">|</span> <span class="fu">sed</span> <span class="st">&#39;s/ /%20/g&#39;</span><span class="kw">`</span>
+<span class="ex">curl</span> -s <span class="st">&quot;https://translate.google.co.jp/translate_a/single?client=t&amp;sl=</span><span class="va">$1</span><span class="st">&amp;tl=</span><span class="va">$2</span><span class="st">&amp;dt=ex&amp;dt=ld&amp;dt=md&amp;dt=qc&amp;dt=rw&amp;dt=rm&amp;dt=ss&amp;dt=t&amp;dt=at&amp;dt=sw&amp;ie=UTF-8&amp;oe=UTF-8&amp;oc=1&amp;otf=2&amp;ssel=3&amp;tsel=0&amp;q=</span><span class="va">$Q</span><span class="st">&quot;</span> \
+-H <span class="st">&#39;Accept-Encoding: gzip, deflate&#39;</span> \
+-H <span class="st">&#39;Host: translate.google.co.jp&#39;</span> \
+-H <span class="st">&#39;User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:31.0) Gecko/20100101 Firefox/31.0&#39;</span> <span class="kw">|</span> 
+<span class="fu">gunzip</span> -d <span class="kw">|</span> <span class="fu">cut</span> -d<span class="st">&#39;&quot;&#39;</span> -f2</code></pre></div>
+<p><code>curl</code> のオプションはちょっとずつ試しながら必要最小限をそこまで目指した訳ではない。</p>
+<p>かえって来たデータのほんの一部だけを <code>cut</code> で削りだしてるけど、例文とか発音とか有用そうなものも含まれてたので、使えるかもしれない。</p>
+<pre><code>~/test$ ./google-translate.sh  en ja
+This is a sample text.
+これはサンプルテキストです。
+~/test$ ./google-translate.sh  en de
+My favorite candy tastes water melon.
+Meine Lieblingssüÿßÿigkeit schmeckt Wassermelone .</code></pre>
+<hr />
+<footer>
+    <p style='text-align: right'>
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+</body>
+</html>

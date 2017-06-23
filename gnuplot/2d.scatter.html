@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>散布図</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<h1 class="title">散布図</h1>
+</header>
+<h2 id="点の散布図">点の散布図</h2>
+<figure>
+<img src="2d.scatter.png" />
+</figure>
+<p>点をプロットするだけなら gnuplot で何も修飾しない <code>plot</code> によって実現できる.</p>
+<div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="co"># gen.rb</span>
+N = <span class="dv">26</span>
+N.times <span class="kw">do</span>
+  x = rand**<span class="dv">2</span>
+  y = rand**<span class="dv">2</span>
+  puts <span class="st">&quot;</span><span class="ot">#{</span>x<span class="ot">}</span><span class="st"> </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st">&quot;</span>
+<span class="kw">end</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">plot</span> <span class="st">&#39;&lt;ruby gen.rb&#39;</span></code></pre></div>
+<h2 id="テキストの散布図-ラベル付き点">テキストの散布図 (ラベル付き点)</h2>
+<figure>
+<img src="2d.scatter.labels.png" />
+</figure>
+<p>点の代わりにテキストを置くには <code>with labels</code> によって点をプロットすればよい.</p>
+<div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="co"># gen.rb</span>
+N = <span class="dv">26</span>
+N.times <span class="kw">do</span> |i|
+  x = rand
+  y = rand
+  puts <span class="st">&quot;</span><span class="ot">#{</span>x<span class="ot">}</span><span class="st"> </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st"> label_</span><span class="ot">#{</span>(<span class="st">&#39;a&#39;</span>.ord + i).chr<span class="ot">}</span><span class="st">&quot;</span>
+<span class="kw">end</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">plot</span> <span class="st">&#39;&lt;ruby gen.rb&#39;</span> with labels</code></pre></div>
+<p>ラベルといったテキストには &quot;Enhanced Text Control Codes&quot; が機能し、上の例では <code>_</code> によって下付き文字になっている.</p>
+<h3 id="装飾">装飾</h3>
+<p><code>with labels</code> に対して 枠付きやフォント、フォントサイズの指定が出来る.</p>
+<figure>
+<img src="2d.scatter.labels.boxed.png" />
+</figure>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">plot</span> <span class="st">&#39;&lt;ruby gen.rb&#39;</span> with labels boxed font <span class="st">&quot;,20&quot;</span></code></pre></div>
+<h2 id="画像の散布図">画像の散布図</h2>
+<p>点の代わりに画像を置きたい.</p>
+<ul>
+<li><a href="http://www.ss.scphys.kyoto-u.ac.jp/person/yonezawa/contents/program/gnuplot/enbed_figure.html">gnuplotのグラフに画像を埋め込む - 米澤進吾 ホームページ</a></li>
+</ul>
+<p>できなくはないっぽい. リンク先では 4.2.2 では png 等が扱えないとあるが 5.0 では png 画像でも問題なく埋め込めた.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">plot</span> <span class="st">&#39;/tmp/tmp1.png&#39;</span> binary filetype=png array=100x100 origin=(0, 0) <span class="ex">with</span> rgbimage not, \
+     <span class="st">&#39;/tmp/tmp2.png&#39;</span> binary filetype=png array=100x100 origin=(200, 200) <span class="ex">with</span> rgbimage not,</code></pre></div>
+<p><code>origin</code> を起点座標とし、<code>array</code> で指定したサイズ分だけを表示する. <code>array</code> を省略すれば画像全体を埋め込み、 デフォルトでは画像 1x1px をグラフ中の 1x1 に相当させる (ここは <code>dx, dy</code> でスケールさせられる). ただ場合によっては予め画像のサイズをリサイズしておいたほうが使いやすい. またプロットする点の数だけ、<code>plot</code> コマンドを並べることになるので、あまり、散布図の作成に適してるとは言えないかも.</p>
+<h3 id="例">例</h3>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">system</span>(<span class="st">&quot;wget -O xfce.png https://gnulinux.guide/images/d/d1/XfceLogo.png&quot;</span>)
+<span class="ex">plot</span> <span class="st">&#39;xfce.png&#39;</span> binary filetype=png origin=(0, 0) <span class="ex">with</span> rgbimage not, \
+     <span class="st">&#39;xfce.png&#39;</span> binary filetype=png origin=(200, 200) <span class="ex">with</span> rgbimage not,</code></pre></div>
+<figure>
+<img src="2d.scatter.images.png" />
+</figure>
+<p>PNGの透過などは適切に処理されなかったりするので、あまり期待しすぎないほうがよさそう.</p>
+</body>
+</html>

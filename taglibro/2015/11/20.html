@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Fri Nov 20 06:24:30 JST 2015</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Fri Nov 20 06:24:30 JST 2015</h1>
+</header>
+<h2 id="nlptk">nlptk</h2>
+<p><code>git@github.com:cympfh/nlptk.git</code></p>
+<p>何度も同じようなコードを書いては捨てていて、 アホらしくなったので、 ちゃんとツールとして置いておくことにした. <code>n-gram</code> を列挙するだとか、<code>tf-idf</code> を計算するとか、 一つ一つは簡単だし、書捨てていたけれど、 バグを混入させてしまうこともあるし (例えば <code>n-gram</code> は微妙にインデックスを誤る)、 今更になってUNIX哲学の大切さを知った.</p>
+<h3 id="tf-idf">tf-idf</h3>
+<p>研究に関わることをやってみる. 若干、普通の tf-idf の使い方とは違う気もするが.</p>
+<p>ドキュメントは4つ. 通常考えるドキュメントではない. 論文要旨という文章において、文は BACKGROUND, METHOD, RESULT, CONCLUSION という4つのいずれかを表現するものである (他にもあるだろうがそれは除外する). BACKGROUND の文だけを、論文を横断してかき集めたものを一つのドキュメントとする. 同様にして、METHODドキュメント、RESULTドキュメント、CONCLUSIONドキュメントを作成する.</p>
+<p>この4つのドキュメントについて tf-idf を計算する.</p>
+<p>4つしかないので df (document frequency) は最大で4しかない. 普通はもっと沢山のドキュメントを用意するものだけども. まあでも意味がなくはないだろう.</p>
+<h3 id="httpsgithub.comcympfhnlptktreemastertfidf">https://github.com/cympfh/nlptk/tree/master/tfidf</h3>
+<p>複数のドキュメントを区切り --- で並べた一つのファイルを食わせる. (直接複数ファイルを食わせるようにしたほうがよかった. その内、そうもできるようにしよう)</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="fu">cp</span> BACKGROUND.pos concat
+   <span class="bu">echo</span> --- <span class="op">&gt;&gt;</span> concat 
+   <span class="fu">cat</span> METHOD.pos <span class="op">&gt;&gt;</span> concat
+   <span class="bu">echo</span> --- <span class="op">&gt;&gt;</span> concat
+   <span class="fu">cat</span> RESULT.pos <span class="op">&gt;&gt;</span> concat
+   <span class="bu">echo</span> --- <span class="op">&gt;&gt;</span> concat
+   <span class="fu">cat</span> CONCLUSION.pos <span class="op">&gt;&gt;</span> concat</code></pre></div>
+<p>こいつを食わせる.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="ex">nlptk/tfidf/tfidf.exe</span> -N 30 concat</code></pre></div>
+<p>標準出力で、各ドキュメントから最大30の特徴的なword (tf-idf でランキングしてトップ30) を出力する. 順序を保ち、区切りを行として出力する.</p>
+<pre style="overflow:scroll;width:90%; height:30em">0.000375806 aimed_VBD
+8.63341e-05 hypothesized_VBD
+7.05936e-05 controversial_JJ
+4.30971e-05 emerged_VBN
+4.14976e-05 Little_JJ
+3.88742e-05 Recently_RB
+2.9096e-05 studied_VBD
+2.40877e-05 elucidate_VB
+2.33722e-05 review_VB
+2.29851e-05 Aim_NNP
+2.26567e-05 investigates_VBZ
+2.18358e-05 Accumulating_VBG
+2.07488e-05 evaluates_VBZ
+1.83881e-05 controversy_NN
+1.83881e-05 Historically_NNP
+1.66642e-05 MicroRNAs_NNS
+1.60896e-05 Traditionally_RB
+1.60896e-05 Nowadays_RB
+1.5025e-05 explores_VBZ
+1.43657e-05 urgently_RB
+1.4071e-05 investigate_VBP
+1.37911e-05 promise_NN
+1.37911e-05 Glioblastoma_NN
+1.28786e-05 Research_NN
+1.26418e-05 postulated_VBD
+1.26418e-05 MATERIALS_NNS
+1.26418e-05 Autosomal_NN
+1.24016e-05 conflicting_VBG
+1.19246e-05 recommend_VBP
+1.09179e-05 unexplored_JJ
+---
+0.000149835 Embase_NNP
+0.000124701 SPSS_NNP
+9.32843e-05 blotting_NN
+7.63675e-05 Medline_NNP
+6.4284e-05 Library_NNP
+6.09835e-05 hundred_CD
+5.75173e-05 interviewed_VBN
+5.60673e-05 Pearson_NNP
+5.41339e-05 Scopus_NNP
+5.29594e-05 September_NNP
+4.97839e-05 t-test_NN
+4.93485e-05 May_NNP
+4.68838e-05 EMBASE_NNP
+4.68838e-05 EMBASE_NN
+4.35005e-05 Scholar_NNP
+4.23274e-05 August_NNP
+4.20505e-05 Multivariable_JJ
+4.09231e-05 studied_VBD
+4.06004e-05 Semi-structured_JJ
+3.86671e-05 Univariate_NNP
+3.81837e-05 MTT_NNP
+3.81837e-05 ANOVA_NNP
+3.52837e-05 Spearman_NNP
+3.4905e-05 November_NNP
+3.48004e-05 Samples_NNS
+3.48004e-05 Ovid_NNP
+3.43032e-05 Logistic_JJ
+3.35008e-05 0.05_CD
+3.2867e-05 log-rank_JJ
+3.2867e-05 Eligible_JJ
+---
+0.000551725 0.001_CD
+0.000300081 0.05_CD
+0.000203706 0.01_CD
+0.000196806 0.004_CD
+0.000178805 0.02_CD
+0.000160805 .0001_CD
+0.000155404 0.006_CD
+0.000147675 0.0001_CD
+0.000124804 AOR_NN
+0.000121203 0.008_CD
+0.000118203 0.009_CD
+0.000117916 .001_CD
+0.000117903 0.003_CD
+0.000117003 IQR_NN
+0.000113403 .01_CD
+0.000105303 0.005_CD
+9.66028e-05 .02_CD
+9.54028e-05 0.06_CD
+9.03026e-05 aOR_NN
+8.22024e-05 .04_CD
+7.86023e-05 0.013_CD
+7.80022e-05 0.000_CD
+7.44021e-05 .8_CD
+7.20021e-05 0.015_CD
+7.20021e-05 0.012_CD
+6.9002e-05 0.77_CD
+6.8402e-05 0.82_CD
+6.8402e-05 0.011_CD
+6.7802e-05 0.016_CD
+6.42019e-05 0.71_CD
+---
+0.000260194 ©_RB
+0.000175552 conclude_VBP
+0.00011599 ©_SYM
+0.000104234 Wiley_NNP
+9.48296e-05 Karger_NNP
+8.94496e-05 seems_VBZ
+8.29442e-05 demonstrates_VBZ
+7.83716e-05 Funded_VBN
+7.60204e-05 Periodicals_NNPS
+7.5463e-05 warranted_VBN
+4.85904e-05 underscore_VBP
+4.70229e-05 Sons_NNP
+4.46718e-05 Taken_VBN
+4.38881e-05 Copyright_NN
+3.74062e-05 Basel_NNP
+3.68346e-05 promise_NN
+3.02502e-05 recommend_VBP
+2.97812e-05 Reson_NN
+2.97812e-05 Magn_NNP
+2.89975e-05 well-designed_JJ
+2.89975e-05 Efforts_NNS
+2.66463e-05 reinforce_VBP
+2.66463e-05 copyright_NN
+2.53712e-05 seem_VBP
+2.50789e-05 urgently_RB
+2.35115e-05 ©_CD
+2.35115e-05 Implications_NNS
+2.35115e-05 Caution_NN
+2.34195e-05 appear_VB
+2.34195e-05 Neck_NNP
+</pre>
+<p>こういう実験データを示したら、 著者は自然言語で何かしら解説を付けないと怒られるので 何かしら言ってみると、</p>
+<ol type="1">
+<li>BACKGROUND では、近年の研究について言及し (<code>Recently</code>, <code>stdied</code>)、研究の目的を述べ (<code>aimed</code>, <code>Aim</code>)、仮説を立てる (<code>hypothesized</code>) だろう</li>
+<li>METHOD ではなんかまあ具体的な用語を出してごちゃごちゃ言う. <code>August</code> やら <code>September</code> やら言うのは何で？？？？
+<ul>
+<li>実験に使うデータについて言及するときに、いついつからいついつまでの患者のデータを用いた、っていう言及をしている</li>
+</ul></li>
+<li>RESULT は実験の結果を述べる. 数値が一杯出てくる</li>
+<li>CONCLUSION では主張とその結果をまとめる (<code>conclude</code>). あとコピーライトがここに来るのは、ノイズの文が最後に混じってるからだ
+<ul>
+<li>StanfordNLP を使って品詞付を行っているが、コピーライトに色んな品詞がついているのがｳｹﾙ</li>
+</ul></li>
+</ol>
+<p>(タグ付けを行った次にすべき) 自然な前処理として必要なのは、 数値は全部 <code>&lt;CD&gt;</code> にして、コピーライトは全部 <code>(C)</code> にすること.</p>
+</body>
+</html>

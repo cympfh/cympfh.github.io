@@ -1,0 +1,242 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+</head>
+<body>
+<pre class="sourceCode scheme"><code class="sourceCode scheme">(use srfi<span class="dv">-1</span>)
+(<span class="kw">load</span> <span class="st">&quot;./parser.scm&quot;</span>)
+
+; ./parser.scm を使って
+; 一行目に型環境(signature) 二行目にラムダ項を受け取って、
+; それを型推論する．
+
+<span class="co">; cympfh$ gosh typing.scm &lt;&lt; EOT</span>
+<span class="co">; const : a -&gt; b -&gt; a, take : Int -&gt; List -&gt; List, nat : List</span>
+<span class="co">; ^x -&gt; ((((const take) x) 10) nat)</span>
+<span class="co">; EOT</span>
+<span class="co">; e     : ^x:(a.0) -&gt; ((((const take) x) 10) nat)</span>
+<span class="co">; tau   : ((a.0) -&gt; (List))</span>
+<span class="co">; theta : ((List List) (List a.4) (Int Int) (a.3 (List List)) (b a.0) ((Int List List) a.2) (a (Int List List)) (a.1 (b a)))</span>
+
+; 入力したラムダ項に型注釈 (引数に対して型を与える)を添えたものは
+<span class="co">;    ^x:(a.0) -&gt; ((((const take) x) 10) nat)</span>
+; 全体の型は
+<span class="co">;    ((a.0) -&gt; (List))</span>
+<span class="co">; thetaについては略．</span>
+; a.0 という型は、型変数として新たに導入したもの．Intとかa,bとかに決定されたら
+; するけど、されなかったということは多相型、つまりなんでも良いということ．
+
+; わかりやすい多相型は、例えば恒等写像
+<span class="co">; cympfh$ gosh typing.scm &lt;&lt; EOT</span>
+<span class="co">; &gt;</span>
+<span class="co">; &gt; ^x -&gt; x</span>
+<span class="co">; &gt; EOT</span>
+<span class="co">; e     : ^x:(a.0) -&gt; x</span>
+<span class="co">; tau   : ((a.0) -&gt; ((a.0)))</span>
+<span class="co">; theta : ()</span>
+
+; 失敗する例．
+<span class="co">; cympfh$ gosh typing.scm &lt;&lt; EOT</span>
+<span class="co">; &gt; id : a -&gt; a</span>
+<span class="co">; &gt; ((^f -&gt; f) id)</span>
+<span class="co">; &gt; EOT</span>
+<span class="co">; ill-typed</span>
+; これは、MLの型推論のやり方を再現してるから．
+
+; 型の名前は文字列で持っている
+; 頭が大文字ならば、プリミティブ型である．
+(<span class="kw">define</span><span class="fu"> </span>(primitive-type? ty)
+    (<span class="kw">if</span> (<span class="kw">list?</span> ty) (every primitive-type? ty)
+        (<span class="kw">char-upper-case?</span> (<span class="kw">string-ref</span> ty <span class="dv">0</span>))))
+; <span class="st">&quot;a.&quot;</span>で始まるならば、それは型変数である．型変数は優先的に、単一化されるべき
+(<span class="kw">define</span><span class="fu"> </span>(type-var? ty)
+    (<span class="kw">if</span> (<span class="kw">list?</span> ty) (any type-var? ty)
+        (string-scan ty <span class="st">&quot;a.&quot;</span>)))
+
+; プリミティブでも型変数でもない、つまり多相型がある．
+; 次は、シグネチャのそれぞれの型宣言について、多相型を集めるもの．
+<span class="co">; &quot;a-&gt;Int&quot; -&gt; &quot;forall a. a-&gt;Int&quot;</span>
+(<span class="kw">define</span><span class="fu"> </span>(split types)
+    (<span class="kw">define</span><span class="fu"> </span>(add x xs)
+        (<span class="kw">if</span> (find (pa$ <span class="kw">equal?</span> x) xs) xs (<span class="kw">cons</span> x xs)))
+    (<span class="kw">define</span><span class="fu"> </span>(flatten ls)
+        (<span class="kw">cond</span> ((<span class="kw">null?</span> ls) &#39;())
+              ((<span class="kw">pair?</span> ls) (<span class="kw">append</span> (flatten (<span class="kw">car</span> ls)) (flatten (<span class="kw">cdr</span> ls))))
+              (<span class="kw">else</span> (<span class="kw">list</span> ls))))
+    (<span class="kw">define</span><span class="fu"> </span>(unique ls)
+        (<span class="kw">if</span> (<span class="kw">null?</span> ls) &#39;()
+            (<span class="kw">cons</span> (<span class="kw">car</span> ls)
+                  (remove (pa$ <span class="kw">equal?</span> (<span class="kw">car</span> ls)) (<span class="kw">cdr</span> ls)))))
+    (<span class="kw">values</span> 
+        ($ unique $ remove primitive-type? $ flatten types)
+        types))
+
+(<span class="kw">define</span><span class="fu"> *gen* </span>-<span class="dv">1</span>)
+(<span class="kw">define</span><span class="fu"> </span>(new-alpha)
+    ($ <span class="kw">string-append</span> <span class="st">&quot;a.&quot;</span> $ <span class="kw">number-&gt;string</span> $ inc! *gen*))
+
+(<span class="kw">define</span><span class="fu"> </span>(Gamma G x)
+    (let1 ls (<span class="kw">assoc</span> x G)
+    (<span class="kw">values</span> (second ls) (third ls))))
+
+<span class="co">; get type of a (a may be type-var) on theta</span>
+(<span class="kw">define</span><span class="fu"> </span>(got theta a)
+    (<span class="kw">define</span><span class="fu"> </span>(find$ key duals)
+        (let1 ret (<span class="kw">assoc</span> key duals)
+        (<span class="kw">if</span> ret (second ret)
+            (<span class="kw">let*</span> ((dls$ (map (^(dl) (<span class="kw">list</span> (second dl) (first dl))) duals))
+                   (ret$ (<span class="kw">assoc</span> key dls$)))
+            (<span class="kw">if</span> ret$ (second ret$) <span class="dv">#f</span>)))))
+
+    (<span class="kw">if</span> (<span class="kw">list?</span> a) (map (cut got theta &lt;&gt;) a)
+        (<span class="kw">cond</span> ((type-var? a)
+                    (let1 ls (find$ a theta)
+                    (<span class="kw">if</span> ls
+                        (<span class="kw">if</span> (type-var? ls)
+                            (<span class="kw">begin</span> (<span class="kw">display</span> <span class="st">&quot;ill-typed\n&quot;</span>) (exit))
+                            (got theta ls))
+                        a)))
+              ((primitive-type? a) a)
+              (<span class="kw">else</span>
+                    (let1 ls (find$ a theta) (<span class="kw">if</span> ls ls a)) ))))
+
+<span class="co">; get lambda with type notation on theta</span>
+(<span class="kw">define</span><span class="fu"> </span>(got-exp theta M)
+    (<span class="kw">case</span> (<span class="kw">car</span> M)
+        ((<span class="kw">lambda</span>)
+            (<span class="kw">let</span> ((arg  (<span class="kw">car</span> (second M)))
+                  (argt (<span class="kw">cdr</span> (second M)))
+                  (body (third M)))
+            (<span class="kw">list</span> &#39;lambda (<span class="kw">cons</span> arg (got theta argt))
+                   (got-exp theta body))))
+        (<span class="kw">else</span> M)))
+
+(<span class="kw">define</span><span class="fu"> </span>(theta+G theta G)
+    (<span class="kw">if</span> (<span class="kw">null?</span> G) &#39;()
+        (<span class="kw">let*</span> ((g    (<span class="kw">car</span> G))
+               (name (first g))
+               (alphas (second g))
+               (taus (third g)))
+        (<span class="kw">let*</span> ((dict (map (^a ($ <span class="kw">cons</span> a $ got theta a)) alphas))
+               (taus+ (map (^t (<span class="kw">if</span> (<span class="kw">assoc</span> t dict)
+                                   (<span class="kw">cdr</span> (<span class="kw">assoc</span> t dict)) t)) taus)))
+        (<span class="kw">cons</span> (<span class="kw">list</span> name alphas taus+)
+              (theta+G theta (<span class="kw">cdr</span> G))) ))))
+
+(<span class="kw">define</span><span class="fu"> theta-add </span><span class="kw">append</span>)
+
+(<span class="kw">define</span><span class="fu"> </span>(unify t1 t2 theta) <span class="co">; t1 is t2 on theta</span>
+    (<span class="kw">define</span><span class="fu"> np</span>? (compose <span class="kw">not</span> <span class="kw">pair?</span>))
+    <span class="co">; (format #t &quot;unify ~a and ~a \n&quot; t1 t2 )</span>
+    (<span class="kw">cond</span>
+          ((<span class="kw">and</span> (np? t1) (np? t2)) `((,t1 ,t2)))
+          ((<span class="kw">and</span> (np? t1) (<span class="kw">=</span> (<span class="kw">length</span> t2) <span class="dv">1</span>))
+                (<span class="kw">list</span> (<span class="kw">list</span> t1 (<span class="kw">car</span> t2))))
+          ((<span class="kw">and</span> (np? t2) (<span class="kw">=</span> (<span class="kw">length</span> t1) <span class="dv">1</span>))
+                (<span class="kw">list</span> (<span class="kw">list</span> t2 (<span class="kw">car</span> t1))))
+          ((np? t1) (<span class="kw">list</span> (<span class="kw">list</span> t1 t2)))
+          ((np? t2) (<span class="kw">list</span> (<span class="kw">list</span> t2 t1)))
+
+          ((<span class="kw">and</span> (<span class="kw">=</span> (<span class="kw">length</span> t1) <span class="dv">1</span>) (<span class="kw">=</span> (<span class="kw">length</span> t2) <span class="dv">1</span>))
+                (<span class="kw">list</span> (<span class="kw">list</span> (<span class="kw">car</span> t1) (<span class="kw">car</span> t2))))
+          ((<span class="kw">=</span> (<span class="kw">length</span> t2) <span class="dv">1</span>) 
+                (<span class="kw">list</span> (<span class="kw">list</span> (<span class="kw">car</span> t2) t1)))
+          ((<span class="kw">=</span> (<span class="kw">length</span> t1) <span class="dv">1</span>)
+                (<span class="kw">list</span> (<span class="kw">list</span> (<span class="kw">car</span> t1) t2)))
+          (<span class="kw">else</span>
+                (<span class="kw">append</span>
+                    (unify (<span class="kw">car</span> t1) (<span class="kw">car</span> t2) theta)
+                    (unify (<span class="kw">cdr</span> t1) (<span class="kw">cdr</span> t2) theta)))))
+
+; Inf とは、型環境Gの下で、ラムダ項Mを見て、
+; (<span class="kw">values</span> e tau theta) を返す．
+; e とは、Mに型注釈を添えたもの．型注釈とは、ラムダ注釈の引数にのみ型を添えるもの．
+; tau とは、M全体の型．
+; theta とは、unifyの結果．unifyは、型変数と多相型、多相型とプリミティブ型を
+; 対応付けたもの．例えばbとIntが同じだと分かったら、&#39;((<span class="st">&quot;b&quot;</span> <span class="st">&quot;Int&quot;</span>)) みたいになってる．
+
+(<span class="kw">define</span><span class="fu"> </span>(Inf G M)
+    <span class="co">; (format #t &quot;\nInf of ~a\n ~a\n&quot; G M)</span>
+    (<span class="kw">case</span> (<span class="kw">car</span> M)
+        [(int)  (<span class="kw">values</span> M &#39;(<span class="st">&quot;Int&quot;</span>) &#39;())]
+        [(bool) (<span class="kw">values</span> M &#39;(<span class="st">&quot;Boolean&quot;</span>) &#39;())]
+        [(var)
+            (receive (alphas tau) (Gamma G (<span class="kw">cdr</span> M))
+            (<span class="kw">values</span> M tau &#39;()) )]
+        [(<span class="kw">lambda</span>)
+            (<span class="kw">let*</span> ((arg (second M)) (body (third M))
+                   (a (new-alpha))
+                   (G+ (<span class="kw">cons</span> (<span class="kw">list</span> arg &#39;() (<span class="kw">list</span> a)) G)))
+            (receive (e tau theta) (Inf G+ body)
+            (let1    t (got theta a)
+            (let1    tau* (got theta tau)
+            (<span class="kw">values</span> `(<span class="kw">lambda</span> (,arg . ,t) ,e)
+                    `(,t ,tau*)
+                     theta) ))))]
+        [(apply)
+            (<span class="kw">let*</span> ((M1 (second M)) (M2 (third M)))
+            (receive (e1 tau1 theta1) (Inf G M1)
+            (let1 theta1+G (theta+G theta1 G)
+            (receive (e2 tau2 theta2) (Inf theta1+G M2)
+            (let1 tau2* (<span class="kw">if</span> (<span class="kw">=</span> (<span class="kw">length</span> tau2) <span class="dv">1</span>) (<span class="kw">car</span> tau2) tau2)
+            (<span class="kw">let*</span> ((a (new-alpha))
+                   (theta3 (unify tau1 (<span class="kw">list</span> tau2* a) theta1))
+                   (theta3<span class="dv">+2</span>   (theta-add theta3 theta2))
+                   (theta3<span class="dv">+2+1</span> (theta-add theta3<span class="dv">+2</span> theta1)))
+            (<span class="kw">values</span> `(apply ,(got-exp theta3<span class="dv">+2</span> e1) ,(got-exp theta3 e2))
+                     (got theta3<span class="dv">+2+1</span> a)
+                     theta3<span class="dv">+2+1</span>) ))))))] ))
+
+(<span class="kw">define</span><span class="fu"> </span>(show-type t)
+    (<span class="kw">string-append</span>
+        <span class="st">&quot;(&quot;</span> (<span class="kw">if</span> (<span class="kw">list?</span> t) (string-join (map show-type t) <span class="st">&quot; -&gt; &quot;</span>) t) <span class="st">&quot;)&quot;</span>))
+(<span class="kw">define</span><span class="fu"> </span>(show term)
+    (<span class="kw">define</span><span class="fu"> </span>(show-field ls)
+        (<span class="kw">string-append</span> (<span class="kw">car</span> ls) <span class="st">&quot; : &quot;</span> (string-join (<span class="kw">cdr</span> ls) <span class="st">&quot; -&gt; &quot;</span>)))
+    (<span class="kw">if</span> (<span class="kw">null?</span> term) <span class="st">&quot;&quot;</span>
+        (<span class="kw">case</span> (<span class="kw">car</span> term)
+            [(var int bool) (x-&gt;string (<span class="kw">cdr</span> term))]
+            [(<span class="kw">lambda</span>)
+                (<span class="kw">let*</span> ((arg  (second term))
+                       (body (third term)))
+                (<span class="kw">string-append</span> <span class="st">&quot;^&quot;</span> (<span class="kw">if</span> (<span class="kw">pair?</span> arg) (<span class="kw">string-append</span> (<span class="kw">car</span> arg) <span class="st">&quot;:&quot;</span> (show-type (<span class="kw">cdr</span> arg))) arg) <span class="st">&quot; -&gt; &quot;</span> (show body)))]
+            [(apply) (<span class="kw">string-append</span> <span class="st">&quot;(&quot;</span> (show (<span class="kw">cadr</span> term)) <span class="st">&quot; &quot;</span>
+                               (show (<span class="kw">caddr</span> term)) <span class="st">&quot;)&quot;</span>)]
+            [<span class="kw">else</span> (string-join (map show-field term) <span class="st">&quot;, &quot;</span>)] )))
+
+;; --- 実行結果
+(<span class="kw">define</span><span class="fu"> env  </span>
+    (map (^f (receive (alphas taus) (split (<span class="kw">cdr</span> f))
+             (<span class="kw">list</span> (<span class="kw">car</span> f) alphas taus))) ($ parse-env $ read-line)))
+(<span class="kw">define</span><span class="fu"> term </span>($ parse-lambda $ read-line))
+<span class="co">; (format #t  &quot;env : ~a\nterm : ~a\n&quot; env term)</span>
+(receive (e tau theta) (Inf env term)
+(format <span class="dv">#t</span> <span class="st">&quot;e     : ~a\ntau   : ~a\ntheta : ~a\n&quot;</span>
+       (show e)
+       (show-type tau) theta))</code></pre>
+</body>
+</html>

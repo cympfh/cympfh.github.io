@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sat May 25 19:59:47 JST 2013</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Sat May 25 19:59:47 JST 2013</h1>
+</header>
+<h2 id="latex-書きたくない">LaTeX 書きたくない</h2>
+<p>冗長性ありすぎるし、パッと見で何が書かれてるのか読めないし というのでS式で書いてTeXにトランスレートするものを書いてみた. Schemeです． 全体をtexという名前のマクロで包んで、その中身は、一切全て手続きで書くことにした． 手続きが返すのは全て文字列で、texマクロは、その文字列をひとつずつdisplayしている．</p>
+<p>/scheme/tex.scm</p>
+<p>実はまだこれを使ってちゃんと誰かに提出する様なtexまで書いたことが無いので まだまだ足りないと思うけど(行列を書くこともまだだった)、 使ってく内にきっと充実してくんじゃないかな．</p>
+<p>少し調べれば、似たようなものはすでにあって、自分にはそれらがいいとは思えなかったので 自作したんだけど．で、どうもそれらは成功してないので、作った本人だけが使ってるという パターンじゃないなのかな これもきっとそうなる</p>
+<p>関数である以上、いちいち全て、文字列はダブルクオーテーションで括ってるのが たぶんダメ．一応、文字列だろうがシンボルだろうが文字列に変換するという x-&gt;string 手続き をかませてるので、英単語一つなら、文字列じゃなくてシンボルにしたほうが見やすく なるかもしれないよ、という． 使う例</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">(<span class="kw">load</span> <span class="st">&quot;./tex.scm&quot;</span>)
+(tex
+(jsarticle <span class="st">&quot;12pt&quot;</span>)
+(usepackage <span class="st">&quot;amsmath&quot;</span> <span class="st">&quot;amssymb&quot;</span>)
+(title <span class="st">&quot;何かのレポート&quot;</span>)
+(author <span class="st">&quot;Tsukasa Hirakata&quot;</span> (thanks <span class="st">&quot;保気学部&quot;</span> <span class="st">&quot;何年&quot;</span>))
+(document
+    (maketitle)
+    (enumerate
+        (item
+            <span class="st">&quot;中間値の定理&quot;</span> (yyen)
+            <span class="st">&quot;連続な関数&quot;</span> ($ <span class="st">&quot;f : [a,b]&quot;</span> (yen &#39;rightarrow) <span class="st">&quot;D&quot;</span>) <span class="st">&quot;について&quot;</span>
+            ($ <span class="st">&quot;f(a) &lt; f(b)&quot;</span>) <span class="st">&quot;と仮定して&quot;</span>
+            (eqn
+                (forall) <span class="st">&quot;c (f(a)&lt;c&lt;f(b))&quot;</span>
+                (exists) <span class="st">&quot;L (a&lt;L&lt;b)&quot;</span>
+                <span class="st">&quot;f(L) = c&quot;</span>))
+        (item <span class="dv">#t</span> <span class="st">&quot;Proof.&quot;</span>
+            ($ <span class="st">&quot;</span><span class="ch">\\</span><span class="st">epsilon - </span><span class="ch">\\</span><span class="st">delta&quot;</span>) <span class="st">&quot;論法による.&quot;</span> (yyen)
+            <span class="st">&quot;区間&quot;</span> ($ <span class="st">&quot;[a,b]&quot;</span>) <span class="st">&quot;をN分割する.&quot;</span>
+            (eqn <span class="st">&quot;p_k = a + &quot;</span> (frac <span class="st">&quot;(b-a)&quot;</span> <span class="st">&quot;N&quot;</span>) <span class="st">&quot;(k = 0, 1, </span><span class="ch">\\</span><span class="st">dots , N)&quot;</span>)
+            <span class="st">&quot;として...&quot;</span>))))</code></pre></div>
+<hr />
+<footer>
+    <p style='text-align: right'>
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+</body>
+</html>

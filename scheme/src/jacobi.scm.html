@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+</head>
+<body>
+<pre class="sourceCode scheme"><code class="sourceCode scheme">; 連立方程式のヤコビ法．
+<span class="co">; http://en.wikipedia.org/wiki/Jacobi_method</span>
+
+; サンプルの入力
+<span class="co">; 3</span>
+<span class="co">; 10 1 1</span>
+<span class="co">; 0 10 1</span>
+<span class="co">; 2 1 10</span>
+<span class="co">; 1 2 1</span>
+<span class="co">; </span>
+; 一行目は次元 n
+; 続くn行に、各行nコずつ書いてn*nの行列Aを表す．
+; 最後の行は n次元ベクトルbを横に寝かせたもの．
+
+; Ax <span class="kw">=</span> b をxについて、解く．
+; Jacobi method において、Aは対角成分がある程度大きいこと、
+; という前提がある．詳しくは最初に掲げたWikipediaなど．
+
+(<span class="kw">define</span><span class="fu"> n </span>(<span class="kw">read</span>))
+
+<span class="co">; matrix of n*n</span>
+(<span class="kw">define</span><span class="fu"> a</span>
+    (<span class="kw">let</span> loop ((ac &#39;()) (acl &#39;()) (x <span class="dv">0</span>) (y <span class="dv">0</span>))
+        (<span class="kw">cond</span> ((<span class="kw">&gt;=</span> x n) ac)
+              ((<span class="kw">&gt;=</span> y n) (loop (<span class="kw">append</span> ac (<span class="kw">list</span> acl)) &#39;() (<span class="kw">+</span> x <span class="dv">1</span>) <span class="dv">0</span>))
+              (<span class="kw">else</span> (loop ac (<span class="kw">append</span> acl (<span class="kw">list</span> (<span class="kw">read</span>))) x (<span class="kw">+</span> y <span class="dv">1</span>))) )))
+
+<span class="co">;inv of diagonal of a</span>
+(<span class="kw">define</span><span class="fu"> d-inv</span>
+    (<span class="kw">let</span> loop ((ac &#39;()) (acl &#39;()) (x <span class="dv">0</span>) (y <span class="dv">0</span>))
+        (<span class="kw">cond</span> ((<span class="kw">&gt;=</span> x n) ac)
+              ((<span class="kw">&gt;=</span> y n) (loop (<span class="kw">append</span> ac (<span class="kw">list</span> acl)) &#39;() (<span class="kw">+</span> x <span class="dv">1</span>) <span class="dv">0</span>))
+              (<span class="kw">else</span> (loop ac (<span class="kw">append</span> acl (<span class="kw">list</span>
+                (<span class="kw">if</span> (<span class="kw">=</span> x y) (<span class="kw">exact-&gt;inexact</span> (<span class="kw">/</span> <span class="dv">1</span> (ref (ref a x) y))) <span class="dv">0</span>)
+                )) x (<span class="kw">+</span> y <span class="dv">1</span>))) )))
+
+<span class="co">;vector of n</span>
+(<span class="kw">define</span><span class="fu"> b</span>
+    (<span class="kw">let</span> loop ((ac &#39;()) (x <span class="dv">0</span>))
+        (<span class="kw">if</span> (<span class="kw">&gt;=</span> x n) ac (loop (<span class="kw">append</span> ac (<span class="kw">list</span> (<span class="kw">read</span>))) (<span class="kw">+</span> x <span class="dv">1</span>))) ))
+
+<span class="co">;vector zero of n</span>
+(<span class="kw">define</span><span class="fu"> x</span>
+    (<span class="kw">let</span> loop ((ac &#39;()) (i <span class="dv">0</span>))
+        (<span class="kw">if</span> (<span class="kw">&gt;=</span> i n) ac (loop (<span class="kw">cons</span> <span class="dv">0</span> ac) (<span class="kw">+</span> i <span class="dv">1</span>))) ))
+
+<span class="co">; mainly used by (next)</span>
+(<span class="kw">define</span><span class="fu"> </span>(inprod u v)
+    (<span class="kw">let</span> loop ((u u) (v v) (ac <span class="dv">0</span>))
+        (<span class="kw">if</span> (<span class="kw">or</span> (<span class="kw">null?</span> u)(<span class="kw">null?</span> v)) ac
+            (loop (<span class="kw">cdr</span> u) (<span class="kw">cdr</span> v) (<span class="kw">+</span> ac (* (<span class="kw">car</span> u)(<span class="kw">car</span> v)))))))
+(<span class="kw">define</span><span class="fu"> </span>(mat-mul a x) <span class="co">; mul of mat * vec</span>
+    (<span class="kw">let</span> loop ((a a) (ac &#39;()))
+        (<span class="kw">if</span> (<span class="kw">null?</span> a) ac
+            (loop (<span class="kw">cdr</span> a) (<span class="kw">append</span> ac (<span class="kw">list</span> (inprod (<span class="kw">car</span> a) x)))))))
+(<span class="kw">define</span><span class="fu"> </span>(vec-add u v)
+    (<span class="kw">let</span> loop ((u u) (v v) (ac &#39;()))
+        (<span class="kw">if</span> (<span class="kw">or</span> (<span class="kw">null?</span> u)(<span class="kw">null?</span> v)) ac
+            (loop (<span class="kw">cdr</span> u)(<span class="kw">cdr</span> v)
+                  (<span class="kw">append</span> ac (<span class="kw">list</span> (<span class="kw">+</span> (<span class="kw">car</span> u)(<span class="kw">car</span> v)))) ))))
+(<span class="kw">define</span><span class="fu"> </span>(vec-neg u)
+    (<span class="kw">let</span> loop ((u u) (ac &#39;()))
+        (<span class="kw">if</span> (<span class="kw">null?</span> u) ac
+            (loop (<span class="kw">cdr</span> u) (<span class="kw">append</span> ac (<span class="kw">list</span> (<span class="kw">-</span> (<span class="kw">car</span> u))))))))
+
+<span class="co">;Jacobi method</span>
+(<span class="kw">define</span><span class="fu"> </span>(next)
+    (vec-add x
+        (mat-mul d-inv
+            (vec-add b (vec-neg (mat-mul a x))))) )
+
+(<span class="kw">define</span><span class="fu"> </span>(norm u)
+    (<span class="kw">let</span> loop ((u u) (ac <span class="dv">0</span>))
+        (<span class="kw">if</span> (<span class="kw">null?</span> u) (<span class="kw">sqrt</span> ac) (loop (<span class="kw">cdr</span> u) (<span class="kw">+</span> ac (<span class="kw">expt</span> (<span class="kw">car</span> u) <span class="dv">2</span>))))))
+
+<span class="co">;main</span>
+(<span class="kw">let</span> iter ((i <span class="dv">0</span>))
+    (<span class="kw">if</span> (<span class="kw">&gt;</span> i <span class="dv">28</span>) (<span class="kw">newline</span>)
+        (<span class="kw">begin</span>
+            (<span class="kw">display</span> i) (<span class="kw">display</span> <span class="st">&quot; &quot;</span>)
+            <span class="co">;(display x) (display &quot; -&gt; &quot;)</span>
+            (<span class="kw">display</span> (norm (vec-add b (vec-neg (mat-mul a x)))))
+            (<span class="kw">newline</span>)
+            (set! x (next))
+            (iter (<span class="kw">+</span> i <span class="dv">1</span>)) )))</code></pre>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Wed Oct 5 23:29:45 JST 2016</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Wed Oct 5 23:29:45 JST 2016</h1>
+</header>
+<h2 id="分散表現と内包論理">分散表現と内包論理</h2>
+<p>妄想を書きます. 決して信じないで下さい.</p>
+<h3 id="シンボルとしての個体">シンボルとしての個体</h3>
+<p>述語論理のような形式言語のもともとの目的は自然言語を形式的な形に翻訳できるような形式を目指すことであった. ありきたりな例を使う. 「誰々が誰々を愛する」という動詞を述語 <span class="math inline">\(Love\)</span> を用いる. これは二項関数で、<span class="math inline">\(Love(x, y)\)</span> は <span class="math inline">\(x\)</span> は <span class="math inline">\(y\)</span> を愛している、という意味を割り当てるのである.</p>
+<p>ここの <span class="math inline">\(x\)</span> や <span class="math inline">\(y\)</span> は変数であって、何かを代入して使うのである. 例えば <span class="math inline">\(x={\rm Taro}, y={\rm Hanako}\)</span> を代入して <span class="math inline">\(Love({\rm Taro}, {\rm Hanako})\)</span> と書いて、これは「Taro は Hanako を愛している」という意味なのだと解釈することにする.</p>
+<p>さて <span class="math inline">\({\rm Taro}\)</span> や <span class="math inline">\({\rm Hanako}\)</span> が何であるかといえば、それは現実世界にいるある太郎と、ある花子なのだと思うだろうが、 形式言語においては <span class="math inline">\({\rm Taro}\)</span> は <span class="math inline">\({\rm Taro}\)</span> でしかない. <span class="math inline">\({\rm Hanako}\)</span> は単に <span class="math inline">\({\rm Hanako}\)</span> でしかない. (Lisp や Ruby の) シンボルなのだと思ってもいいし、そういう文字列だと思ってもいい.</p>
+<p>Bag-of-words (BoW) はこれに相当する. 文の中で Taro や Hanako が出現したら、ただ Taro というトークン、 Hanako というトークンが出現しているということだけを気にする. それらについてこれ以上、一切の、深追いはしない.</p>
+<h3 id="内包">内包</h3>
+<p>それでは困ることがある. 実在しないと考えられている個体である. 例えばユニコーン (<span class="math inline">\({\rm Unicorn}\)</span>) という動物を考える. これは空想上の動物なので実在しないはずである. 先ほどの <span class="math inline">\(Love\)</span> という動詞では、「太郎はユニコーンを愛している」くらいはちょっとばかし単純すぎるので何も問題がないような気がする. 「誰々が何何を見た」を意味する <span class="math inline">\(See(x, y)\)</span> を考えよう. <span class="math inline">\(See({\rm Taro}, {\rm Unicorn})\)</span> はどうか. 「太郎は (実在しないはずの) ユニコーンを見た」という文は意味をなさない. 常に成立しないからである. 「太郎はユニコーンを見た」を <span class="math inline">\(See({\rm Taro}, {\rm Unicorn})\)</span> と翻訳するのは文字通りナンセンスなのである.</p>
+<blockquote>
+<p>意味を為さない? ナンセンス? とはなんぞや?? 後述</p>
+</blockquote>
+<p>普通、このような文は「太郎はユニコーンを見たと主張している」と訳するのである. これなら意味が通る. 実際にユニコーンが存在しようがしまいが、そう主張したかどうかは太郎次第で成立も不成立もするから.</p>
+<p>「〜と主張している」と同様に、ユニコーンの非実在に関わらずに成立したりしなかったりするような動詞は他にも考えられる. 「〜を信じている」も同様だろう. こういった動詞を内包動詞という.</p>
+<p>さて、そういう動詞はそういうものなのだと思えば、じゃあそれでもなお、ユニコーンは <span class="math inline">\({\rm Unicorn}\)</span> というシンボルで書けばいいと思えるだろうか. 「主張する」を <span class="math inline">\(Insist\)</span> で書くことにする. 「太郎はユニコーンを見たと主張している」は <span class="math inline">\(Insist(Taro, See({\rm Taro}, {\rm Unicorn}))\)</span> だと書ける. まあ、これはこれで良いことにしても良い気もするが、モンタギューは構成主義を取った.</p>
+<p>構成主義とは何か. それは、全体は部分によって説明されることを言う.</p>
+<p>おお、文系お得意の煙に巻く説明だ.</p>
+<p>構成主義とは何か. <span class="math inline">\(P(x) = y\)</span> のとき、<span class="math inline">\(Q(P(x)) = Q(y)\)</span> である、という主張である. 先ほどの <span class="math inline">\(Insist({\rm Taro}, See({\rm Taro}, {\rm Unicorn}))\)</span> は、 <span class="math inline">\({\rm Unicorn}\)</span> 故に <span class="math inline">\(See(\cdots)\)</span> が偽なので、単に 「(偽なる事柄) を主張している」という解釈しかできない. <span class="math inline">\({\rm Unicorn}\)</span> 同様に実在しえない空想上の動物として ゴジラ (<span class="math inline">\({\rm Godzilla}\)</span>) がある. <span class="math inline">\(Insist({\rm Taro}, See({\rm Taro}, {\rm Godzilla}))\)</span> も同様にして、「(偽なる事柄) を主張している」という解釈になる.</p>
+<p>ユニコーンの場合とゴジラの場合とを区別できないぞ??? ほら、困るでしょう?</p>
+<h3 id="可能世界">可能世界</h3>
+<p>モンタギューは可能世界を導入した. 個体の解釈はどの世界で解釈するかによって違って見えるのだとした. ある世界ではユニコーンは存在する、というのである. まあ、そういう世界を頭の中に作れる、という程度の意味だが. ある世界ではユニコーンが存在して、ゴジラが存在しない、といったケースを考えることで、ゴジラとユニコーンを区別できる.</p>
+<p>ある世界 <span class="math inline">\(w\)</span> での <span class="math inline">\(x\)</span> の解釈を <span class="math inline">\([\![x]\!]_w\)</span> と書く. 「ユニコーン」を <span class="math inline">\({\rm Unicorn}\)</span> というシンボルを用いて、 <span class="math inline">\(\hat{}{\rm Unicorn}\)</span> とする. ハットがついてるのが、モンタギューが導入した形式言語における個体の表し方である. (N.B. 中に使われているシンボルはユニコーンそのものではない.) <span class="math inline">\(\hat{} {\rm Unicorn}\)</span> を解釈するには、解釈する世界が <span class="math inline">\(w\)</span> であることに註意して、 <span class="math inline">\([\![{\rm Unicorn}]\!]_w\)</span> を調べることにする.</p>
+<p>本質的に重要なことは、世界が決まったら解釈ができることではなく、 「ユニコーン」自体は、あらゆる世界を想定していること. <span class="math inline">\(w\)</span> を引数にとる関数自体が個体なのだと言える.</p>
+<h3 id="自然言語処理との関連">自然言語処理との関連</h3>
+<p>自然言語処理において今まで我々は、<span class="math inline">\({\rm Unicorn}\)</span> という単語が出現したら、それは単に <span class="math inline">\({\rm Unicorn}\)</span> というシンボルだとしか解釈しなかった (Bow). モンタギューは 1970年、 &quot;English as a Formal Language&quot; という論文の中で、先述した、内包、可能世界といった概念を導入した. 一つの単語をただのシンボルとして扱う以上の必要性を説いたものにほかならない. 即ち、Taro、Unicorn といった単語は、あらゆる世界でどういう解釈をされてきたか、を知らないと読めない単語なのだ. ある一つの文に Taro と出てきただけでは我々はそれが何かを知ることができない.</p>
+<p>分散表現までに話を飛ばさなくても、「共起ベクトル」という発明がある. 可能世界とは、人類の歴史における人間の頭の中にあったものである. そしてそれはテキストという形で残されてきた. それら多くを今でも手に入れることができる.</p>
+<p>共起ベクトルは、「単語の解釈」を「単語の使われ方」だと思うことにした. さらに「単語の使われ方」を「近くにどんな単語 (周辺単語) が出てきたか」だと思うことにした.</p>
+<p>例えば、&quot;Taro loves Hanako.&quot; という一文における Taro の使われ方は、 <span class="math inline">\(((), (loves, {\rm Hanako}))\)</span> である. loves の使われ方は <span class="math inline">\((({\rm Taro}), ({\rm Hanako}))\)</span> である. ここらへんの細かいところは流儀があるだろうけれど. 左右を区別するかとか順序を考慮するかとか「近く」とは一体何なのか (例えば、その単語から3トークン以内に出現する単語). たった一文では「あらゆる世界」を考慮してることにならない. それでも、ありったけ大量の文を集めてくれば「あらゆる世界」に近づけるだろう.</p>
+<p>それでも共起ベクトルはまだ内包への抽象化が足りない. <span class="math inline">\(A\)</span> というシンボルを表現するために、近所のシンボルを集めることをしているからである. <span class="math inline">\(A\)</span> 自体の表現はシンボルから一歩遠ざかったが、そこには直接、シンボルが使われている. 上の例では <span class="math inline">\(loves\)</span> を表現するのに <span class="math inline">\({\rm Taro}\)</span> というシンボルが使われている.</p>
+<p>今書いた共起ベクトルのことを「単語の分散表現」というのは恐らく間違っていて、 普通思い描くのは word2vec だろう. でも所詮、分散表現は共起ベクトルの延長でしかない.</p>
+<ul>
+<li>BoW
+<ul>
+<li>シンボル = 単語の表現</li>
+</ul></li>
+<li>共起ベクトル
+<ul>
+<li>シンボル -- 共起ベクトル = 単語の表現 -- 周辺のシンボル</li>
+</ul></li>
+</ul>
+<p>CBoW (continuous Bow) や skip-gram はさらに一歩シンボルから遠ざかっているように思える. それは単純にあの計算グラフを思い描ければ分かる.</p>
+<h3 id="まとめ">まとめ</h3>
+<p>書きたいこと書き終えたので話をまとめたい.</p>
+<ul>
+<li>BoW 以前の自然言語処理:
+<ul>
+<li>単語はシンボル</li>
+</ul></li>
+<li>単語の分散表現:
+<ul>
+<li>可能世界の考慮</li>
+</ul></li>
+</ul>
+<p>最初に「妄想を書きます」と言ったので平気で怪しいことを断定口調で書けるようになった. これこそが自由なインターネット.</p>
+</body>
+</html>

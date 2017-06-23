@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Mon Jul 7 23:51:02 JST 2014</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Mon Jul 7 23:51:02 JST 2014</h1>
+</header>
+<h2 id="node-line-stream">node, line-stream</h2>
+<p>同じコード片を書いてると気づいててもどうして何度も書いてしまうんだ． 己は本当に．</p>
+<p>標準入力、ファイルの読み取りは <code>readFile</code> もしくは <code>readFileSync</code> を使うが、 あんまりファイルの量が多いと死ぬ． ストリームを作って受け取るのが普通．</p>
+<script src="https://gist.github.com/cympfh/45b2c711c1bfe135626f.js"></script>
+<p>以下のように使う．</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> lineStream <span class="op">=</span> <span class="at">require</span>(<span class="st">&#39;./line-stream&#39;</span>)<span class="op">;</span>
+
+<span class="kw">var</span> cx <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>
+<span class="kw">function</span> <span class="at">proc</span>(line) <span class="op">{</span>
+  <span class="va">console</span>.<span class="at">log</span>(cx<span class="op">,</span> line)<span class="op">;</span>
+  cx<span class="op">++;</span>
+<span class="op">}</span>
+<span class="kw">function</span> <span class="at">defer</span>() <span class="op">{</span>
+  <span class="va">console</span>.<span class="at">log</span>(<span class="st">&quot;~&quot;</span>)<span class="op">;</span>
+<span class="op">}</span>
+
+<span class="at">lineStream</span>(<span class="st">&#39;/dev/stdin&#39;</span><span class="op">,</span> proc<span class="op">,</span> defer)<span class="op">;</span></code></pre></div>
+<hr />
+<footer>
+    <p style='text-align: right'>
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+</body>
+</html>

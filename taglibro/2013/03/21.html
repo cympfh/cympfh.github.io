@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Thu Mar 21 14:35:29 JST 2013</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Thu Mar 21 14:35:29 JST 2013</h1>
+</header>
+<h2 id="statet">StateT</h2>
+<p>Stateモナド、大体使い方分かったつもり.<br />
+StateTも大体同じみたいだし</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Control.Monad.State</span>
+
+<span class="kw">data</span> <span class="dt">Tree</span> <span class="fu">=</span> <span class="dt">Nil</span> <span class="fu">|</span> <span class="dt">Node</span> <span class="dt">Int</span> <span class="dt">Tree</span> <span class="dt">Tree</span> <span class="kw">deriving</span> <span class="dt">Show</span>
+
+push_t tr n <span class="fu">=</span>
+    <span class="kw">case</span> tr <span class="kw">of</span>
+      <span class="dt">Nil</span> <span class="ot">-&gt;</span> <span class="dt">Node</span> n <span class="dt">Nil</span> <span class="dt">Nil</span>
+      <span class="dt">Node</span> m l r <span class="fu">|</span> n <span class="fu">&lt;</span> m <span class="ot">-&gt;</span> <span class="dt">Node</span> m (push_t l n) r
+                 <span class="fu">|</span> <span class="dt">True</span>  <span class="ot">-&gt;</span> <span class="dt">Node</span> m l (push_t r n)
+
+pop_t tr <span class="fu">=</span>
+    <span class="kw">case</span> tr <span class="kw">of</span>
+      <span class="dt">Node</span> n <span class="dt">Nil</span> r
+          <span class="ot">-&gt;</span> (n , r)
+      <span class="dt">Node</span> n (<span class="dt">Node</span> m <span class="dt">Nil</span> r2) r
+          <span class="ot">-&gt;</span> (m , <span class="dt">Node</span> n r2 r)
+      <span class="dt">Node</span> n l r
+          <span class="ot">-&gt;</span> <span class="kw">let</span> (m, tr) <span class="fu">=</span> pop_t l <span class="kw">in</span>
+               (m, <span class="dt">Node</span> n tr r)
+
+<span class="ot">push ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">State</span> <span class="dt">Tree</span> <span class="dt">Int</span>
+push n <span class="fu">=</span> get <span class="fu">&gt;&gt;=</span> put<span class="fu">.</span>(\tr <span class="ot">-&gt;</span> push_t tr n) <span class="fu">&gt;&gt;</span> return n
+
+<span class="ot">pop ::</span> <span class="dt">State</span> <span class="dt">Tree</span> <span class="dt">Int</span>
+pop <span class="fu">=</span> get <span class="fu">&gt;&gt;=</span> (\(n,tr) <span class="ot">-&gt;</span> put tr <span class="fu">&gt;&gt;</span> return n)<span class="fu">.</span>pop_t</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">*</span><span class="dt">Main</span> <span class="dt">Control.Monad.State</span><span class="fu">&gt;</span> runState (push <span class="dv">0</span>) <span class="dt">Nil</span>
+(<span class="dv">0</span>,<span class="dt">Node</span> <span class="dv">0</span> <span class="dt">Nil</span> <span class="dt">Nil</span>)
+<span class="fu">*</span><span class="dt">Main</span> <span class="dt">Control.Monad.State</span><span class="fu">&gt;</span> runState (push <span class="dv">0</span> <span class="fu">&gt;&gt;</span> push <span class="dv">1</span> <span class="fu">&gt;&gt;</span> push <span class="dv">2</span>) <span class="dt">Nil</span>
+(<span class="dv">2</span>,<span class="dt">Node</span> <span class="dv">0</span> <span class="dt">Nil</span> (<span class="dt">Node</span> <span class="dv">1</span> <span class="dt">Nil</span> (<span class="dt">Node</span> <span class="dv">2</span> <span class="dt">Nil</span> <span class="dt">Nil</span>)))
+<span class="fu">*</span><span class="dt">Main</span> <span class="dt">Control.Monad.State</span><span class="fu">&gt;</span> runState (push <span class="dv">0</span> <span class="fu">&gt;&gt;</span> push <span class="dv">1</span> <span class="fu">&gt;&gt;</span> push <span class="dv">2</span> <span class="fu">&gt;&gt;</span> pop) <span class="dt">Nil</span>
+(<span class="dv">0</span>,<span class="dt">Node</span> <span class="dv">1</span> <span class="dt">Nil</span> (<span class="dt">Node</span> <span class="dv">2</span> <span class="dt">Nil</span> <span class="dt">Nil</span>))
+<span class="fu">*</span><span class="dt">Main</span> <span class="dt">Control.Monad.State</span><span class="fu">&gt;</span> runState (push <span class="dv">2</span> <span class="fu">&gt;&gt;</span> push <span class="dv">1</span> <span class="fu">&gt;&gt;</span> push <span class="dv">0</span> <span class="fu">&gt;&gt;</span> pop) <span class="dt">Nil</span>
+(<span class="dv">0</span>,<span class="dt">Node</span> <span class="dv">2</span> (<span class="dt">Node</span> <span class="dv">1</span> <span class="dt">Nil</span> <span class="dt">Nil</span>) <span class="dt">Nil</span>)</code></pre></div>
+<hr />
+<footer>
+    <p style='text-align: right'>
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+</body>
+</html>

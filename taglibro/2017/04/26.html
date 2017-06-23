@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Wed Apr 26 01:18:48 JST 2017</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Wed Apr 26 01:18:48 JST 2017</h1>
+</header>
+<h2 id="日記ペンタブレットを買った-xsetwacom-の設定">日記・ペンタブレットを買った (xsetwacom の設定)</h2>
+<p>Amazonで激落ち君を買おうとしたのだが「2000円以上まとめ買い対象商品」であったので、 なにか適当に購入をすることで2000円以上にすることが求められた. 以前、買おうと思って、しかしやはり無駄な買い物になるかもしれないと思ってキャンセルをした WACOM の Intuos Draw を購入した.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="ex">xsetwacom</span> list
+<span class="ex">Wacom</span> Intuos S 2 Pen stylus             id: 10  type: STYLUS
+<span class="ex">Wacom</span> Intuos S 2 Pad pad                id: 11  type: PAD</code></pre></div>
+<p>もちろん Linux (Ubuntu 16.04) で使っている. 初めHHKBのUSB穴に挿したがランプが点滅 (<span class="math inline">\(\ne\)</span> 点灯) するだけで認識しない. そういえばHHKBの穴はUSB2.0 までしか対応していなかった. おそらく、これはUSB3.0じゃないとダメなのだろう. PC本体のUSB穴に挿すと認識して使えるようになった.</p>
+<ul>
+<li><a href="http://zaka-think.com/linux/linux-mint/post-12412/">Linux Mint sarah （ubuntu16.04）ワコム ペンタブレット Intuos Draw 使ってみた＆設定</a></li>
+</ul>
+<p>これを参考にして設定をすることにした. 最近の Ubuntu なら <code>xsetwacom</code> コマンドというのが初めから入っていて、WACOM製ペンタブレットの設定が出来るらしい.</p>
+<p>ほとんどそのブログの方の設定を真似しただけなので恐縮なのだが、次のようにした.</p>
+<pre><code>device=&quot;Wacom Intuos S 2&quot;
+stylus=&quot;$device Pen stylus&quot;
+pad=&quot;$device Pad pad&quot;
+xsetwacom --set &quot;$stylus&quot; Threshold 1
+xsetwacom --set &quot;$stylus&quot; RawSample 8
+xsetwacom --set &quot;$stylus&quot; TabletPCButton on
+xsetwacom --set &quot;$stylus&quot; PressureCurve 50 0 100 50
+xsetwacom --set &quot;$pad&quot; Button +1 &quot;key ctrl&quot; &quot;key z&quot;
+xsetwacom --set &quot;$pad&quot; Button +3 &quot;key ctrl&quot; &quot;key y&quot;
+xsetwacom --set &quot;$pad&quot; Button +9 &quot;key PgUp&quot;
+xsetwacom --set &quot;$pad&quot; Button +8 &quot;key PgDn&quot;</code></pre>
+<p>ペンの方をLinuxでは &quot;Stylus&quot; と呼称するのだそう. ペンの消しゴム側を &quot;Eraser&quot; と呼称するらしいが、私のこのタイプには Eraser はついていない. Stylus のボタンはペン先の方から <code>&quot;Button +2&quot;</code> <code>&quot;Button +3&quot;</code> であることが分かった. デフォルトはそれぞれ、ダブルクリックと右クリックに設定されてある. 右クリックはそのままでいいだろう. ダブルクリックは正直要らない.</p>
+<p>ところで私は、マウスとしてペンタブレットを使いたい. 不満といえばスクロールが出来ないことである. 仕方がないので Pad の <code>&quot;Button +9&quot;</code> とかに <code>PgUp</code> を置いているのである. 正直これもそんなに使ってないのでもっといい割当を考えている.</p>
+<p>理想は、Stylus の <code>&quot;Button +2&quot;</code> を押したまま、Stylus を Pad の上で滑らせることでスクロールをさせることだ. 果たして xsetwacom でこんな設定は出来るだろうか.</p>
+<h3 id="追記-sun-may-7-005022-jst-2017">追記 (Sun May 7 00:50:22 JST 2017)</h3>
+<p>スクロールは諦めて (家のパソコン、i3wm 環境に限るならどうせ極力マウスは使わないし) それよりペンにあるボタンの存在が邪魔に思えてきた. 特に上側にあるボタンとか押しにくいし. とりあえずどっちも右クリックにした.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">xsetwacom</span> --set <span class="st">&quot;</span><span class="va">$stylus</span><span class="st">&quot;</span> Button +2 3
+<span class="ex">xsetwacom</span> --set <span class="st">&quot;</span><span class="va">$stylus</span><span class="st">&quot;</span> Button +3 3</code></pre></div>
+<h2 id="入社して一年が経った">入社して一年が経った</h2>
+<p>この記事を書くためにブログを書こうと思ったのだった. しかし特段これといって面白いこともない.</p>
+<p>まさか自分が一年も (首にならずに、あるいは辞職せずに) 続くとは思わなかった、 などと友人には冗談めかして言うが、 けして厳しい職場ではないので、自分から辞めなければ首になることはなさそうだし、 どうしても辞めたくなるほどつらい経験はとりあえずは無い.</p>
+<p>不満めいたことを言うと、人間の扱いというものは不公平がことがしばしばある. 自分という人間は一人なのに対して、自分以外の人間はたくさんいるので、 他人が優遇されている場面ばかりを多く見てしまう. いや実際、自分が優遇されたことなんてほとんど無いのではないか. 不公平というのは一様乱数で決まるものではない. 上手な人ほど優遇される. これは確かにある. わたしはなんて下手な人間だろう. <!-- そうして人から好かれない --></p>
+<hr />
+<footer>
+    <p style='text-align: right'>
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+</body>
+</html>

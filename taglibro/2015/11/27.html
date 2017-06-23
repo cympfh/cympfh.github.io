@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Fri Nov 27 21:22:21 JST 2015</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Fri Nov 27 21:22:21 JST 2015</h1>
+</header>
+<h2 id="node.js-スクリプトを他のシェルスクリプトと組み合わせるとエラーを出すことがある">node.js スクリプトを他のシェルスクリプトと組み合わせるとエラーを出すことがある</h2>
+<p>よく調べると、パイプにつないだ時にエラーが出ることがわかった. 再現する簡単なコードは次</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="fu">cat</span> test.js
+<span class="ex">console.log</span>(0);
+<span class="ex">console.log</span>(1);
+
+   <span class="ex">node</span> test.js
+<span class="ex">0</span>
+<span class="ex">1</span>
+
+   <span class="ex">node</span> test.js <span class="kw">|</span> <span class="fu">head</span> -1
+<span class="ex">0</span>
+<span class="ex">events.js</span>:141
+      <span class="ex">throw</span> er<span class="kw">;</span> <span class="ex">//</span> Unhandled <span class="st">&#39;error&#39;</span> event
+            ^
+<span class="ex">Error</span>: write EPIPE
+    <span class="ex">at</span> Object.exports._errnoException (util.js:749:11)
+    <span class="ex">at</span> exports._exceptionWithHostPort (util.js:772:20)
+    <span class="ex">at</span> WriteWrap.afterWrite (net.js:753:14)</code></pre></div>
+<p>要するに、パイプの次のプロセスがコレ以上の入力を受け付けない為に、 書き出す先が閉じられているのが原因らしい. でも普通、だからってエラーは出さないのでは？</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="ex">ruby</span> test.rb <span class="co"># ソースコード略</span>
+<span class="ex">1</span>
+<span class="ex">2</span>
+
+   <span class="ex">ruby</span> test.rb <span class="kw">|</span> <span class="fu">head</span> -1
+<span class="ex">1</span></code></pre></div>
+<p>この挙動が普通のはずだ. 調べてみて、コレ以上の原因はつかめなかったが、 <a href="https://github.com/mhart/epipebomb/">mhart/epipebomb</a> なるものを見つけた. 全く同じこの問題を、解決するためだけのモジュールらしい.</p>
+<p>中身を見ると、なんということもなく、 <code>process.stdout</code> に <code>error</code> が投げられたらプロセスを終了するだけのものだ.</p>
+<p>従って、次のように頭に一行追加することでエラーが防げる (握りつぶせる). UNIX的コマンドを書くときは、使おう.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="fu">cat</span> test.js
+<span class="ex">process.stdout.on</span>(<span class="st">&#39;error&#39;</span>,process.exit);
+<span class="ex">console.log</span>(0);
+<span class="ex">console.log</span>(1);
+
+   <span class="ex">node</span> test.js <span class="kw">|</span> <span class="fu">head</span> -1
+<span class="ex">0</span></code></pre></div>
+<h1 id="tue-jan-5-123559-jst-2016">Tue Jan 5 12:35:59 JST 2016</h1>
+<p>Ruby でも同じ現象が起きた. 上の例のように出力が少ないとエラーは起きないが、ずっと大きくなるとやはり Broken pipe なるエラーが出る. バッファサイズの問題だろう.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="ex">ruby</span> -e <span class="st">&quot;9.times{|i|p i}&quot;</span> <span class="kw">|</span> <span class="fu">head</span> -1
+<span class="ex">0</span>
+
+   <span class="ex">ruby</span> -e <span class="st">&quot;10.times{|i|p i}&quot;</span> <span class="kw">|</span> <span class="fu">head</span> -1
+<span class="ex">0</span>
+<span class="ex">-e</span>:1:in <span class="kw">`</span><span class="ex">p</span><span class="st">&#39;: Broken pipe (Errno::EPIPE)</span>
+<span class="st">        from -e:1:in `block in &lt;main&gt;&#39;</span>
+        <span class="ex">from</span> -e:1:in <span class="kw">`</span>times<span class="st">&#39;</span>
+<span class="st">        from -e:1:in `&lt;main&gt;&#39;</span></code></pre></div>
+<p>http://stackoverflow.com/questions/1807355/broken-pipe-errnoepipe にあるように例外処理すれば良い. Ruby の try 文の書き方を初めて目にした.</p>
+<pre><code>   ruby -e &quot;begin;100.times{|i|p i};rescue Errno::EPIPE; end&quot; | head -1
+0</code></pre>
+</body>
+</html>

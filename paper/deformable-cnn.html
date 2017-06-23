@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Deformable Convolutional Networks</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/
+    </a>
+</h1>
+<header>
+<h1 class="title">Deformable Convolutional Networks</h1>
+</header>
+<ul>
+<li>
+url: <a href=https://arxiv.org/abs/1703.06211>https://arxiv.org/abs/1703.06211</a>
+</li>
+<li>
+tags: <span class="tag"><a href=index.html#深層学習>深層学習</a></span> <span class="tag"><a href=index.html#物体認識>物体認識</a></span>
+</li>
+</ul>
+<h2 id="links">links</h2>
+<ol style="list-style-type: decimal">
+<li><a href="https://arxiv.org/abs/1703.06211">original paper</a></li>
+<li><a href="https://medium.com/@phelixlau/notes-on-deformable-convolutional-networks-baaabbc11cf3#.o1nd2nv1t">a note</a></li>
+</ol>
+<h2 id="概要">概要</h2>
+<p>所謂CNNはカーネルが固定だけど、それ自体を学習可能にする. その点を以って &quot;deformable&quot; と形容する. 同様の方式でプーリングも行える. これを RoI (region-of-interest) pooling と呼称する.</p>
+<h2 id="手法">手法</h2>
+<h3 id="cnn">CNN</h3>
+<p>通常のCNNは次のように定式化出来る.</p>
+<p>カーネルとは二次元グリッド上のオフセットの集合</p>
+<p><span class="math display">\[\mathcal{R} = \{ p_i = (x_i, y_i) \}_{i \in I}\]</span></p>
+<p>のこと. 例えば &quot;3x3 カーネル&quot; とは</p>
+<p><span class="math display">\[\mathcal{R} = \{ (x, y) : -1 \leq x \leq 1, -1 \leq y \leq 1 \}.\]</span></p>
+<p>CNN はグリッド上の点 <span class="math inline">\(p\)</span> 及び、グリッドの上の重み <span class="math inline">\(w(p)\)</span> と入力の値 <span class="math inline">\(x(p)\)</span> を以って</p>
+<p><span class="math display">\[y(p) = \sum_{p_i \in \mathcal{R}} w(p_i) x(p + p_i)\]</span></p>
+<p>という計算によって <span class="math inline">\(x\)</span> から <span class="math inline">\(y\)</span> を求める手続きのこと. ここで <span class="math inline">\(w(p_i)\)</span> のみを訓練する.</p>
+<h3 id="deformable-cnn">deformable CNN</h3>
+<p>ここでカーネルの各点にオフセットを設けることで、カーネルの形を変更する:</p>
+<p><span class="math display">\[y(p) = \sum_{p_i \in \mathcal{R}} w(p_i) x(p + p_i + \Delta p_i)\]</span></p>
+<p><span class="math inline">\(\Delta p_i\)</span> がカーネルの各点のオフセット.</p>
+<p>この <span class="math inline">\(\Delta p_i\)</span> 自体がどこから来るかというと、これは通常の CNN の一つのカーネルから計算/学習をする.</p>
+<p><span class="math display">\[\Delta p_i = \sum_{p_i \in \mathcal{R}} v(p_i) x(p + p_i)\]</span></p>
+<p><span class="math inline">\(\Delta p_i\)</span> は <span class="math inline">\(i=1,2,\ldots,N\)</span> (<span class="math inline">\(N=|\mathcal{R}|\)</span>) だけあって、 各々は実際にはグリッド上の点を表現するために <span class="math inline">\((x, y)\)</span> であるので、 <span class="math inline">\(\Delta p_i\)</span> 全てを求めるために、<span class="math inline">\(2N\)</span> 個の CNN を使っている.</p>
+<h3 id="roi-region-of-interest-pooling">RoI (Region-of-interest) Pooling</h3>
+<p>同様にカーネルを学習可能にした Average Pooling を RoI Pooling として提案している.</p>
+<p><span class="math display">\[y(p) = \frac{1}{N} \sum_{p_i \in \mathcal{R}} x(p + p_i + \Delta p_i)\]</span></p>
+<p>やはりオフセット <span class="math inline">\(\Delta p_i\)</span> を学習可能な CNN で計算する.</p>
+<h2 id="実験">実験</h2>
+<p>物体検知の各手法に本手法を差し込むことで僅かながら性能向上が確認出来た.</p>
+<h2 id="感想">感想</h2>
+<p>実装がただ大変なだけで、期待するほどの性能向上がなくて残念.</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

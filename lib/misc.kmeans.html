@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>misc.kmeans</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<h1 class="title">misc.kmeans</h1>
+</header>
+<h2 id="misc.kmeans.cc"><a href="misc.kmeans.cc" class="uri">misc.kmeans.cc</a></h2>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span>
+<span class="pp">#include </span><span class="im">&lt;stack&gt;</span>
+<span class="pp">#include </span><span class="im">&lt;cmath&gt;</span>
+<span class="pp">#include </span><span class="im">&lt;vector&gt;</span>
+<span class="pp">#include </span><span class="im">&lt;ctime&gt;</span>
+<span class="kw">using</span> <span class="kw">namespace</span> std;
+
+<span class="pp">#define iota(i,n,b,s) for(int i=int(b);i!=int((b)+(s)*(n));i+=(s))</span>
+<span class="pp">#define range(i,n,m) iota(i,(((n)&gt;(m))?((n)-(m)+1):((m)-(n)+1)),(n),((n)&gt;(m)?-1:1))</span>
+<span class="pp">#define rep(i,n) iota(i,(n),0,1)</span>
+
+<span class="pp">#define INF (1e9)</span>
+<span class="pp">#define EPS (1e-9)</span>
+<span class="pp">#define cons(a,b) (make_pair(a,b))</span>
+<span class="pp">#define car(a) (a.first)</span>
+<span class="pp">#define cdr(a) (a.second)</span>
+<span class="pp">#define cadr(a) (car(cdr(a)))</span>
+<span class="pp">#define cddr(a) (cdr(cdr(a)))</span>
+<span class="pp">#define all(a) a.begin(), a.end()</span>
+<span class="pp">#define trace(var) cerr&lt;&lt;&quot;&gt;&gt;&gt; &quot;&lt;&lt;#var&lt;&lt;&quot; = &quot;&lt;&lt;var&lt;&lt;endl;</span>
+
+<span class="kw">template</span>&lt;<span class="kw">class</span> S, <span class="kw">class</span> T&gt;
+ostream&amp; <span class="kw">operator</span>&lt;&lt;(ostream&amp; os, pair&lt;S,T&gt; p) {
+  os &lt;&lt; <span class="st">&#39;(&#39;</span> &lt;&lt; car(p) &lt;&lt; <span class="st">&quot;, &quot;</span> &lt;&lt; cdr(p) &lt;&lt; <span class="st">&#39;)&#39;</span>;
+  <span class="cf">return</span> os;
+}
+
+<span class="kw">template</span>&lt;<span class="kw">class</span> T&gt;
+ostream&amp; <span class="kw">operator</span>&lt;&lt;(ostream&amp; os, vector&lt;T&gt; v) {
+  os &lt;&lt; v[<span class="dv">0</span>];
+  <span class="cf">for</span> (<span class="dt">int</span> i=<span class="dv">1</span>, len=v.size(); i&lt;len; ++i) os &lt;&lt; <span class="st">&#39; &#39;</span> &lt;&lt; v[i];
+  <span class="cf">return</span> os;
+}
+
+<span class="kw">typedef</span> <span class="dt">double</span> Real;
+<span class="kw">typedef</span> pair&lt;Real, Real&gt; P;
+
+<span class="co">/*</span>
+<span class="co"> * k-means</span>
+<span class="co"> *</span>
+<span class="co"> * return vector&lt;int&gt;ids;</span>
+<span class="co"> * ids[i] is the cluster ID of ps[i]</span>
+<span class="co"> */</span>
+
+<span class="co">/* vector operator */</span>
+P <span class="kw">operator</span>+(P&amp;a, P&amp;b) {
+    <span class="cf">return</span> cons(car(a) + car(b), cdr(a) + cdr(b));
+}
+P <span class="kw">operator</span>-(P&amp;a) {
+    <span class="cf">return</span> cons(-car(a), -cdr(a));
+}
+
+P <span class="kw">operator</span>-(P&amp;a, P&amp;b) {
+    <span class="cf">return</span> cons(car(a) - car(b), cdr(a) - cdr(b));
+}
+
+Real Euclidean(P&amp;a, P&amp;b) {
+  P p = a - b;
+  <span class="cf">return</span> sqrt(pow(car(p), <span class="dv">2</span>) + pow(cdr(p), <span class="dv">2</span>));
+}
+
+vector&lt;<span class="dt">int</span>&gt;
+kmeans(<span class="dt">int</span> cluster_N, vector&lt;P&gt;&amp;ps, <span class="dt">int</span> iterator_N = <span class="dv">20</span>) {
+  <span class="dt">int</span> len = ps.size();
+  vector&lt;<span class="dt">int</span>&gt; ids(len);
+
+  vector&lt;P&gt; ms(cluster_N);
+  rep (i, cluster_N) ms[i] = ps[i * len / cluster_N];
+
+  rep (i, iterator_N) {
+    cerr &lt;&lt; <span class="st">&quot;iterate: &quot;</span> &lt;&lt; i &lt;&lt; endl;
+    vector&lt;P&gt; sum(cluster_N, P(<span class="dv">0</span>, <span class="dv">0</span>)); <span class="co">// sum[j] は id j のクラスタの和</span>
+    vector&lt;<span class="dt">int</span>&gt; cod(cluster_N, <span class="dv">0</span>); <span class="co">// id j のクラスタの濃度</span>
+
+    <span class="co">// ps[j] と ms[n] の比較</span>
+    rep (j, len) {
+      <span class="dt">int</span> id = <span class="dv">-1</span>;
+      Real min_d = INF;
+      rep (n, cluster_N) {
+        Real d = Euclidean(ps[j], ms[n]);
+        <span class="cf">if</span> (min_d &gt; d) {
+          min_d = d;
+          id = n;
+        }
+      }
+      ids[j] = id;
+      sum[id] = sum[id] + ps[j];
+      cod[id]++;
+    }
+
+    <span class="co">// update</span>
+    rep (n, cluster_N) {
+      <span class="cf">if</span> (cod[n] == <span class="dv">0</span>) {
+        <span class="co">// fuck</span>
+        ms[n] = ps[rand() % len];
+      } <span class="cf">else</span> {
+        <span class="co">// means</span>
+        P total = sum[n];
+        ms[n] = P(car(total) / cod[n], cdr(total) / cod[n]);
+      }
+    }
+  }
+
+  <span class="cf">return</span> ids;
+}
+
+<span class="at">const</span> <span class="dt">int</span> M = <span class="dv">10</span>;
+Real gaussian_gen() {
+  <span class="at">const</span> <span class="dt">int</span> mu = <span class="dv">10</span>;
+  Real x = <span class="dv">0</span>;
+  rep (j, M) x += Real((rand() % (mu * <span class="dv">2</span>)) - mu);
+  x /= M;
+  <span class="cf">return</span> x;
+}
+
+<span class="dt">int</span> main() {
+  srand(time(NULL));
+
+  <span class="co">/*</span>
+<span class="co">   * Point ps[j] has class ts[j]</span>
+<span class="co">   */</span>
+  vector&lt;P&gt; ps; <span class="co">// seq of point</span>
+  vector&lt;<span class="dt">int</span>&gt; ts; <span class="co">// seq of class</span>
+
+  <span class="at">const</span> <span class="dt">int</span> N = <span class="dv">100</span>;
+  rep (i, N) {
+    <span class="dt">int</span> klass = rand() % <span class="dv">3</span>;
+    Real x = gaussian_gen();
+    Real y = gaussian_gen();
+
+    <span class="co">// give klass by its mean</span>
+    <span class="cf">switch</span> (klass) {
+      <span class="cf">case</span> <span class="dv">0</span>:
+        <span class="cf">break</span>;
+      <span class="cf">case</span> <span class="dv">1</span>:
+        x += <span class="dv">10</span>;
+        y += <span class="dv">10</span>;
+        <span class="cf">break</span>;
+      <span class="cf">case</span> <span class="dv">2</span>:
+        x += <span class="dv">5</span>;
+        y += <span class="dv">5</span>;
+        <span class="cf">break</span>;
+    }
+    ps.push_back(P(x, y));
+    ts.push_back(klass);
+  }
+
+  <span class="kw">auto</span> result = kmeans(<span class="dv">3</span>, ps);
+
+  <span class="co">/*</span>
+<span class="co">   * IDは違うので、単純に比較はできない。</span>
+<span class="co">   */</span>
+  <span class="dt">float</span> acc = <span class="dv">0</span>;
+  <span class="cf">for</span> (<span class="dt">int</span> id0 = <span class="dv">0</span>; id0 &lt; <span class="dv">3</span>; ++id0) {
+    <span class="cf">for</span> (<span class="dt">int</span> id1 = <span class="dv">0</span>; id1 &lt; <span class="dv">3</span>; ++id1) {
+      <span class="cf">if</span> (id0 == id1) <span class="cf">continue</span>;
+      <span class="cf">for</span> (<span class="dt">int</span> id2 = <span class="dv">0</span>; id2 &lt; <span class="dv">3</span>; ++id2) {
+        <span class="cf">if</span> (id0 == id2) <span class="cf">continue</span>;
+        <span class="cf">if</span> (id1 == id2) <span class="cf">continue</span>;
+        <span class="dt">int</span> n = <span class="dv">0</span>;
+        rep (i, N) {
+          <span class="cf">if</span> (ts[i] == <span class="dv">0</span> &amp;&amp; result[i] == id0) ++n;
+          <span class="cf">else</span> <span class="cf">if</span> (ts[i] == <span class="dv">1</span> &amp;&amp; result[i] == id1) ++n;
+          <span class="cf">else</span> <span class="cf">if</span> (ts[i] == <span class="dv">2</span> &amp;&amp; result[i] == id2) ++n;
+        }
+        acc = max&lt;<span class="dt">float</span>&gt;(acc, <span class="dt">float</span>(n) / <span class="dt">float</span>(N));
+      }
+    }
+  }
+  cerr &lt;&lt; <span class="st">&quot;Accuracy: &quot;</span> &lt;&lt; (acc * <span class="dv">100</span>) &lt;&lt; <span class="st">&quot;%&quot;</span> &lt;&lt; endl;
+
+  <span class="cf">return</span> <span class="dv">0</span>;
+}</code></pre></div>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+</head>
+<body>
+<pre class="sourceCode scheme"><code class="sourceCode scheme"><span class="co">#!  /usr/local/bin/gosh</span>
+
+<span class="co">;; 語の重みに tf-idf を用いた用いてテキストのコサイン類似度を</span>
+<span class="co">;; 調べる.</span>
+<span class="co">;</span>
+<span class="co">;; 空白か改行で語を区切れる程度の簡単な文章を2つ以上用意して</span>
+<span class="co">;; $ gosh ./similarity.scm input1 input2 ...</span>
+<span class="co">;; のように実験する</span>
+
+<span class="co">; 例えば Wikipediaからいくつかの記事を wikiディレクトリに保存して</span>
+<span class="co">; </span>
+<span class="co">; $ gosh ./similarity.scm wiki/*</span>
+<span class="co">; wiki/Aiura wiki/Linux 0.0054991185818617765</span>
+<span class="co">; wiki/Aiura wiki/Macos 0.002611462566896136</span>
+<span class="co">; wiki/Aiura wiki/Trisquel 0.003894850295124982</span>
+<span class="co">; wiki/Aiura wiki/Windows 0.0035955775448793274</span>
+<span class="co">; wiki/Aiura wiki/Yuyushiki 0.4289658365289811</span>
+<span class="co">; wiki/Linux wiki/Macos 0.135492604558405</span>
+<span class="co">; wiki/Linux wiki/Trisquel 0.1167040839600922</span>
+<span class="co">; wiki/Linux wiki/Windows 0.11053283743818382</span>
+<span class="co">; wiki/Linux wiki/Yuyushiki 0.005589308305096626</span>
+<span class="co">; wiki/Macos wiki/Trisquel 0.0170007870784677</span>
+<span class="co">; wiki/Macos wiki/Windows 0.10521518337390891</span>
+<span class="co">; wiki/Macos wiki/Yuyushiki 0.0032617734817390353</span>
+<span class="co">; wiki/Trisquel wiki/Windows 0.01082203311131606</span>
+<span class="co">; wiki/Trisquel wiki/Yuyushiki 0.00462516926987522</span>
+<span class="co">; wiki/Windows wiki/Yuyushiki 0.00353391844504245</span>
+
+<span class="co">;; コサイン類似度であるから2つのテキストの類似度として0以上1以下の</span>
+<span class="co">;; 実数が出力されて，数字が大きいほど類似度が高いことを言う</span>
+
+
+<span class="co">(use srfi-13)</span>
+
+<span class="co">;; filename -&gt; hash-table(word-&gt;tf)</span>
+<span class="co">(define (get-tokens f)</span>
+<span class="co">  (define words</span>
+<span class="co">    (call-with-input-file f (lambda (port)</span>
+<span class="co">    (string-tokenize (port-&gt;string port) #[\w]))))</span>
+<span class="co">  (define N (length words))</span>
+<span class="co">  (define A (make-hash-table &#39;equal?))</span>
+
+<span class="co">  ;; count words and div by N</span>
+<span class="co">  (let1 /N (/ N)</span>
+<span class="co">  (for-each (cut hash-table-update! A &lt;&gt; (cut + /N &lt;&gt;) 0) words))</span>
+
+<span class="co">  A)</span>
+
+<span class="co">(define (main args)</span>
+
+<span class="co">  (let1 files (cdr args)</span>
+<span class="co">  (define N (length files))</span>
+<span class="co">  (when (&lt; N 2) (error &#39;need-more-2-files))</span>
+
+<span class="co">  ;; hash-table (filename -&gt; hash-table(word-&gt;tf))</span>
+<span class="co">  (let1 ht</span>
+<span class="co">      (apply hash-table &#39;equal?</span>
+<span class="co">        (map (lambda (f) (cons f (get-tokens f))) files))</span>
+
+<span class="co">  ;; word -&gt; idf ; with memo</span>
+<span class="co">  (define idf</span>
+
+<span class="co">    (let1 memo (make-hash-table &#39;equal?)</span>
+<span class="co">    (define (get-idf w) ; without memo</span>
+<span class="co">      (log (/ N</span>
+<span class="co">              (apply +</span>
+<span class="co">                (hash-table-map ht (lambda (_ A)</span>
+<span class="co">                  (if (hash-table-exists? A w) 1 0)))))))</span>
+
+<span class="co">    (lambda (w)</span>
+<span class="co">      (let1 x (hash-table-get memo w #f)</span>
+<span class="co">      (cond (x x)</span>
+<span class="co">            (else</span>
+<span class="co">              (let1 ret (get-idf w)</span>
+<span class="co">              ;(format #t &quot;idf of ~a = ~a\n&quot; w ret)</span>
+<span class="co">              (hash-table-put! memo w ret)</span>
+<span class="co">              ret)) )))</span>
+<span class="co">    ))</span>
+
+<span class="co">  ;; (filename, filename) -&gt; [0, 1]</span>
+<span class="co">  (define (cosine-distance f1 f2)</span>
+<span class="co">    (let ((A1 (hash-table-get ht f1))</span>
+<span class="co">          (A2 (hash-table-get ht f2)))</span>
+<span class="co">    (let ((abs-A1 0) (abs-A2 0) (A1*A2 0))</span>
+<span class="co">    (hash-table-for-each A1 (lambda (w tf)</span>
+<span class="co">      (let1 idf. (idf w)</span>
+<span class="co">      (set! A1*A2 (+ A1*A2 (* tf (hash-table-get A2 w 0) idf. idf.)))</span>
+<span class="co">      (set! abs-A1 (+ abs-A1 (* tf tf idf. idf.))))))</span>
+<span class="co">    (hash-table-for-each A2 (lambda (w tf)</span>
+<span class="co">      (let1 idf. (idf w)</span>
+<span class="co">      (set! abs-A2 (+ abs-A2 (* tf tf idf. idf.))))))</span>
+<span class="co">    (/ A1*A2 (sqrt abs-A1) (sqrt abs-A2)))))</span>
+
+<span class="co">  ;; for all combination, figure out cosine-distance</span>
+<span class="co">  (let for ((ls files))</span>
+<span class="co">    (cond ((&lt; (length ls) 2) &#39;done)</span>
+<span class="co">          (else</span>
+<span class="co">              (let1 f1 (car ls)</span>
+<span class="co">              (for-each (lambda (f2)</span>
+<span class="co">                (let1 dis (cosine-distance f1 f2)</span>
+<span class="co">                  (format #t &quot;~a ~a ~a\n&quot; f1 f2 dis)))</span>
+<span class="co">                (cdr ls)))</span>
+<span class="co">              (for (cdr ls)))))</span>
+<span class="co">  ))</span>
+<span class="co">  0)</span></code></pre>
+</body>
+</html>

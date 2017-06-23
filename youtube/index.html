@@ -1,0 +1,220 @@
+<html>
+  <head>
+    <meta charset="UTF-8">
+<title>
+lists/fav
+</title>
+<style>
+  body {
+    background-color: #1b1b1b;
+  }
+  center.player {
+    z-index: 10;
+    width: 100%;
+    position: fixed;
+    left: 0;
+    top: 10px;
+    padding: 0;
+    margin: 20px 0 0 0;
+    pointer-events: none;
+  }
+  iframe#player {
+    pointer-events: auto;
+  }
+  div#ground {
+    padding: 0;
+    margin: 440px 0 0 0;
+  }
+  img {
+    z-index: 1;
+    width: 20%;
+    position: relative;
+    left: 0;
+    top: 0;
+    opacity: 0.3;
+  }
+  img:hover {
+    opacity: 0.6;
+    z-index: 3 !important;
+  }
+  img.playing {
+    opacity: 1.0;
+    z-index: 2 !important;
+  }
+  footer {
+    text-align: center;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    z-index: 10;
+    color: white;
+    font-family: monospace;
+    background:linear-gradient(rgba(255,255,255,1.0), rgba(200,200,200,0.7) 10%, rgba(0,0,0,1));
+  }
+  footer > a {
+    color: #cccccc;
+  }
+  input#conpane {
+    background: transparent;
+    border: 1px #ddd solid;
+    color: white;
+    opacity: 0.2;
+    padding: 4px;
+    width: 5em;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+  }
+</style>
+<script>
+  var list =
+[ [ "nIbjR9nG_MY", "you feat. nayuta [SOUNDSCVPE REMIX] - Let's Jump!" ],[ "RbgR2W3xBT0", "咲-saki　阿知賀編　まじかる☆まーじゃん☆ワールドver.玄" ],[ "-ko4sS0KEfg", "Party! Love Beat!" ],[ "-q1MMx9fwDQ", "Armando Land of confusion" ],[ "0EHne2id_Kk", "ハイスクールD×D OP Trip -innocent of D-" ],[ "0HAHMr6vDII", "寝・逃・げでリセット" ],[ "LIHJWCKxY3E", "ココロコネクト OP パラダイム" ],[ "lOGbvuZa_CI", "秋山澪 Heart_Goes_Boom !!" ],[ "1EdIVRxk5fk", "Mashup: Kill Me Baby Vs Gorillaz" ],[ "9St882T4pKo", "ぱにぽにだっしゅ！ OP 少女Q -Miyako Donkstep Mix-" ],[ "1WinEb3zc1g", "バカとテストと召喚獣にっ！ ｏｐテーマ「君＋謎＋私でＪＵＭＰ」" ],[ "1nN9N6zV4pE", "朝からずっしり♥ミルクポットSPECIAL OST クロスフェードデモ" ],[ "uRkUmnS939U", "芽生えドライブ" ],[ "23tvzwQ-jIc", "Lovely! (ラブリ)" ],[ "25cP9fIfF1Q", "Free TEMPO - Love Will Bring You Back" ],[ "295GatEHR_0", "ユメミルキカク～Ver一般論～" ],[ "5_nw2B_2sKk", "生徒会役員共 ED 蒼い春 8bit(LSDj on GB) ver" ],[ "2TKRRs9tjuI", "上坂すみれ「七つの海よりキミの海」" ],[ "2b-BgArfeKs", "相対性理論と大谷能生 - 乱暴と待機" ],[ "3MlaI45rGTg", "偽物語 ED - ナイショの話 (saqwz Breakbeats Remix)" ],[ "9csqqm4Suvs", "もってけ！セーラーふく Bak-Bak-Bakoon!!Mix" ],[ "ADmzDFABCNc", "本日、満開ワタシ色" ],[ "4I2v2b5RNRI", "海腹川背・旬エンディング" ],[ "ylXYJuWj9KM", "NEGUSE / KITOTAN's Deep House Remix" ],[ "4xa4oqaSLOc", "[Tales] ラヴ・ビート(Love Beat)" ],[ "V5MUdahOnPI", "チョコレートに夢中" ],[ "7YSZ29cKq44", "あの夏で待ってる OP Sign" ],[ "6Cse3zSeiTs", "もってけ！セーラーふくElectro 乙女ちっくmix" ],[ "GNjwSFX-aEI", "百花繚乱 サムライガールズ ED 恋にせっせ通りゃんせ" ],[ "6jexItFW36Q", "Sleepless Tsukasa, Pt. 14" ],[ "6vdVYk9gjao", "おねがいマイメロディ♪ 比較ＯＰ集　" ],[ "781GWx0WSnk", "miii - Dead at Chelsea Hotel" ],[ "7AYAiYeGZGA", "Yukari Fresh - Yukarin Disco" ],[ "7Cfl8ydFNnw", "Tsukasa Cut Up or something like that" ],[ "7zEDRjSaE9E", "Takeshi Nakatsuka - Your Voice(sings with Asako Toki)" ],[ "8P48GxucJ4M", "Area Arena/電気グルーヴ" ],[ "8QOxKCKC09A", "YELLE - Ce Jeu" ],[ "aHr-EJpI3RM", "山手線の歌" ],[ "9LbtkJ2UZ6E", "WE CALL IT TECHNO! Documentary Trailer" ],[ "c8ttvUzY8F4", "あの夏で待ってる ビードロ模様 最終回" ],[ "YNSxNsr4wmA", "The Pussy Cat Dolls Don't Cha" ],[ "9d_WO8VKgUg", "天罰！長門有希" ],[ "9gaa3c4t2ME", "Hare Hare Yukai v2.0" ],[ "Zq6jkgLcpno", "茶太 - スーパースターはもういない" ],[ "cqXoroGSohg", "茶太 - 走れ！中央線" ],[ "qt28kIqeims", "茶太 - 滑稽というなかれ" ],[ "ASE1VclYJIg", "シャルロ － なごみのポーズ" ],[ "AavV-vAQ9Tw", "パプリカOP　club mix（long）" ],[ "ArJ7No_iuwc", "オトメスイッチ紹介ムービー その1" ],[ "AzP2PnyWYbo", "ゆゆ式 OP せーのっ！z-mix／AnimeSkeetIt'sMeal remix" ],[ "B5Fsdz_TbvQ", "Yes! Pretty Cure 5 OP - Full Throttle Go! Go!" ],[ "BNLQEdx3z0Y", "Kimi No Shiranai Monogatari (Drum N Bass Mix)" ],[ "BQMXtYiTrWE", "京都旅行" ],[ "4k0iemsLUPk", "Meaw - pair* Factory MIX FULL" ],[ "CLKO4yWY-0g", "やくしまるえつこ『ロンリープラネット』" ],[ "Cl_kIDKU9s4", "ニョキニョキ" ],[ "D7asqzFiBW0", "Monofrog_4sk - Soda Float" ],[ "EGWrLjsbjOo", "筋肉少女帯（ナゴム時代）" ],[ "EK0Z6PDBB-E", "vvotaru - One's Future Remix" ],[ "EycBHsl_5fA", "Helblinde - Hardcore Frontiers 2011" ],[ "o6G3DC8hWIg", "ココロコネクト ED 2 Cry Out" ],[ "BwKXnSTFm6o", "Go-qualia - リセットされる記憶" ],[ "MHGIn3IGWoQ", "Go-qualia - 軽音部ノ思ヒ出" ],[ "A9mzkXs9Njs", "虫歯建設株式会社" ],[ "GB-qySwIGN0", "Air Guitar Act2 (Jakka Jan Mix)" ],[ "GEo2Cbj2dKg", "Bebu Silvetti - Spring Rain" ],[ "HmSO8XRq-Cg", "あそびにいくヨ！ 双葉アオイ - 君色*コンプリート" ],[ "IsOGLNq_ZkE", "サーバント×サービス OP めいあいへるぷゆー？Smooth Dubstep mix／AnimeSkeetIt'sMeal remix" ],[ "JMfoMeibLdk", "TOWA TEI - Different Nu Nu - [2005, Flash]" ],[ "s9qjVCi0ID4", "TOWA TEI - APPLE with Ringo Sheena" ],[ "JiUdthoFO-k", "LISP 「あなたにVacuum!～ちょいやわらかめ～」 PV" ],[ "JxyIV9si5eg", "Platinum by Mio (Yuuki Aoi)" ],[ "KRJhfYdjW2w", "adventure monsters　/ instant cytron" ],[ "KiPVNwOLn78", "Calla Soiled - Invisible Cry" ],[ "KuuKLIL1W_g", "そんなこと裏のまた裏話でしょ_ h-mix／AnimeSkeetIt'sMeal remix" ],[ "LcigAiYTnbY", "Q＆Aリサイタル" ],[ "Ld3x4SpRKeo", "Motteke! Sailor Fuku [-Undakada ~ Kyou no Yabou-]" ],[ "LoQsvRDTGRU", "きんいろモザイク OP - Jumping!! (you & saqwz Remix)" ],[ "LxHvOBVnKy8", "伊藤真澄「ユメのなかノわたしのユメ」90秒PV.mov" ],[ "aLN681Ib-Xs", "daoko - 戯言スピーカー (Rap.ver)" ],[ "Mb97y3V2kPQ", "small happiness feat. フレネシ - たしかなこと" ],[ "O2V3Sw90nCU", "綿いっぱいの愛を! 絶望少女版 (詳細に歌詞付き)" ],[ "a9apuQI5YDU", "Dear future" ],[ "O886FKlu8tc", "ウレロ☆未完成少女OP【ウレロ!!のテーマ2】" ],[ "yGRSDp__drQ", "君に、胸キュン。/　天の妃少女合唱団" ],[ "aLN681Ib-Xs", "アニマル横町 OP 飛んでもNotning" ],[ "PQ0x8M4vb18", "気分は大発明♪ - Wonder Strawberry ☆ F" ],[ "PrreUUhP6Nw", "-MADLAX-nowhere" ],[ "QSqLlN8p74A", "寝・に・げでリセット！(Hypo77's E.P.P. remix)" ],[ "QUuYW2w-vYI", "\" DOKI\" ryofuko chan- OP" ],[ "M4IFm-kv9jc", "ドキドキ！プリキュア ED この空の向こう" ],[ "QaRmIOOKLE0", "中二病でも恋がしたい OP" ],[ "R-hotvkE__k", "Sweets Parade ~ Lyrics ~ Karuta Roromiya [FULL]" ],[ "Reg0qrEQKvY", "Let's Go Lovely Henshin Time!" ],[ "S6KJ3Bcej_o", "オートバイで「涼宮ハルヒの憂鬱」の聖地巡礼 GoPro HD" ],[ "SJxPj6IlSD8", "寝・逃・げでリセット！（かっとあっぷえでぃしょん）" ],[ "SRJ2sEoYlWg", "小倉優子 オンナのコ♡オトコのコ" ],[ "SbTsN86I3z4", "ニンジーン Loves you yeah!" ],[ "Skuf_k7aV3I", "僕は友達が少ないED　私のキ・モ・チ 三日月夜空" ],[ "T0XjJW0uSRs", "ハローソフマップワールド" ],[ "T517qbUQH_8", "異国迷路のクロワーゼOP フル 世界は踊るよ、君と。" ],[ "U7bh__iN7uw", "Un-Go Ending Fantasy - Full Version" ],[ "UA_3giFOac0", "寝・逃・げでリセット！ / Ne Ni Ge de Reset! Acapella" ],[ "UPQUFQBNk5E", "君を知ること Kimi wo Shiru Koto (侵略!?イカ娘 Shinryaku!? Ika Musume ED, FULL)" ],[ "UXotv3GooFw", "Yui Makino お願いジュンブライト (Onegai Jun Bright)" ],[ "UtKE9eE1FH8", "Denki Groove - The Words (HD)" ],[ "VDvKghU_IuY", "12. Wind Climbing ~Kaze ni Asobarete~ / Boido & Meramipoppu" ],[ "VhxzMQ_SYQA", "青春いいじゃないかっ　鶴屋さん" ],[ "VmMwtk3s0Hs", "続・生意気☆いちごミルクDAYO！！ -ツン成分63％増量CHU（当社比） - あらら、ど～も☆CHUぅ, あべにゅうぷろじぇくと(ave;new) feat.草柳順子" ],[ "Vs4prOSOL2o", "Nathan Fake - The sky was pink (James Holden)" ],[ "EJdRvLhlLJw", "Qypthone - Tension Attention, Please ~ Modernica in the house" ],[ "Xk7rmHLOs9Q", "DATE ☆ DATE - Sugar Sugar Rune" ],[ "ZSGE4xQpoOQ", "【HD】 Kore wa Zombie desu ka? of the Dead　ED　FULL　Koi no Beginner Nan Desu（T_T）" ],[ "_57ukSwEg_I", "【osu!-CTB】ゆるゆり 魔女っ娘ミラクるん♪ 【Full Ver.】" ],[ "_HnFAczHtUA", "キラキラしちゃってMy True Love (Yes! プリキュア5 前期ED)" ],[ "_z2TbXhmydw", "返して！ニーソックス kaeshite knee socks (Full)【高音質】" ],[ "bVTrWvzPQ2A", "Denki Groove - Eine Klein Melodie (HD)" ],[ "cddQqOsfrh4", "消せない罪 (Kesenai Tsumi) - Nana Kitade" ],[ "n3TvzgHB0k0", "Colorful Days" ],[ "d-KTBJFGInY", "【咲-Saki-】麻雀ラボ 【恋愛ラボEDパロ 】" ],[ "d4ESaBm9LhM", "撫子ロック 「凛として咲く花の如く ＬＯＮＧ」" ],[ "dFkB7GHSUjU", "CHIBIKKO IDOL 「オトメルンバ♪」" ],[ "dxcO2p0w5b4", "高嶋ちさ子　海の見える街" ],[ "e4ANWrBKnrk", "GDGD妖精s OP mini dance" ],[ "e5IVCZGfVns", "Panty and Stocking - Chocolat (Full) [with lyrics]" ],[ "eWJts3psDaA", "猫の恩返し　風になる" ],[ "ebPOPEMYzhU", "エプロンだけはとらないで！.wmv" ],[ "fxI5rpPj6eI", "CAPSULE PRINCESS 「ふしぎなくすり ＬＯＮＧ」" ],[ "gKIJYqko_u0", "16 Alright! ハートキャッチプリキュア! - Acid=Stone Valley feat. Camry" ],[ "gZaelu4lieE", "ハナエ - 「神様はじめました（Short Ver.)」" ],[ "gabAiXu2j-g", "花澤香菜 - Sweets Parade (mondaystudio bootleg remix)" ],[ "o6m_BAaHW0k", "ビューティフル・ストーリー" ],[ "h0v-Si4VAkI", "【日常キャラソン】麻衣のカカカタ☆カタオモイ-梵" ],[ "iNTSuiRWnX4", "Instant Cytron - My Melodies" ],[ "jWWGYrQ4BKY", "【比較】中二病でも恋がしたい！ OP" ],[ "k474iuH0xr0", "(((さらうんど))) / きみは New Age (Music Video)" ],[ "kZmk8PxjhnY", "sakura and the hysterious magic book - famicon uchujin" ],[ "lozJUpUvDCM", "フジファブリック　『徒然モノクローム (short version)』" ],[ "luZ24t1diog", "ファンタジスタ☆ガール" ],[ "pc4zZ43R9o0", "Shibayan Records - 賢者の極北 (Nhato Remix)" ],[ "fB8KxwEs_lo", "Shibayan Records - 彼と彼女とわたしの話" ],[ "E93n3BONHSo", "Shibayan Records - ・ー・・　ーーー　・・・ー　・" ],[ "m3ddc6Y_UQE", "[Kusayanagi Junko] Namaiki Ichigo Milk DAYO!! / 生意気☆いちごミルクDAYO!!" ],[ "mPtbkWOLX5U", "pop'n music20 fantasia 　MAGICAL HEROINE ラブ☆ゲッター～ピュアクル♥リップ～" ],[ "moHFEPcKYRA", "Calla Soiled - Radiation" ],[ "nlTpWmAdais", "恋はどう？モロ◎波動OK☆方程式!! {Science Pop) Pop'n music 20 fantasia" ],[ "nozL5j7N2kc", "[SD] Itoshii Kanojo no Mamorikata - Demo / 愛しい対象の護り方" ],[ "nxvXHZNYvr0", "USYN - Perpetual Emotion [Japan Nerdstep]" ],[ "oPYyonx0XSQ", "Sunday Sundae / Melocure" ],[ "oU9ak3lwVg0", "Damon Wild - Avion" ],[ "YYOW1J_An4M", "坂本慎太郎 - まともがわからない" ],[ "ouAVDyROVq0", "いままでのあらすじ" ],[ "p12DbJD93e4", "芽生えドライブ" ],[ "XscnNkfDhbA", "太陽曰く燃えよカオス" ],[ "pq1nNykPCDQ", "在日ファンク - 嘘" ],[ "qJFyqP7KG6A", "ゲッチュウ!らぶらぶぅ?!(ふたりはプリキュア ED)" ],[ "rWWgKV6mOqw", "[U] Mighty Love" ],[ "rtrYx4ygmtA", "【らきすたMAD】EX.Motte[k]remix" ],[ "s1wP9CTP8mo", "泉こなた(平野綾),柊かがみ(加藤英美里),柊つかさ(福原香織),高良みゆき(遠藤綾) - もってけ！ニーソックス" ],[ "K-Wk_N8epsM", "麻生夏子 Lovely Girls Anthem" ],[ "ITR1t1SpfP0", "戦国コレクション ED 1 UNLUCKY GIRL" ],[ "curFa5zwXJo", "戦国コレクション ED 2 ダーリンとマドンナ" ],[ "lKdbr-TqIak", "戦国コレクション OP 2 Back into my world" ],[ "bCQAMNXwH_Q", "戦国コレクション OP 1 目を閉じてギュッしよ" ],[ "_DdLNQYiif4", "魔界天使ジブリール4" ],[ "ukm3tmdQeBE", "おぱーい！～鹿野優以のテーマ～" ],[ "vNq5XNvCYCk", "すたこらごらく部" ],[ "vOJYA7mdBls", "《僕は友達が少ない》 二人の季節 Full ver. 夜空x星奈 混唱" ],[ "vtvVwgQCKrM", "arthur ながれぼし" ],[ "w4ooZaElHzs", "【俗＆獄・】さよなら絶望先生OP「空想ルンバ」　比較動画　【フルHD】" ],[ "ze7uCUCCRoQ", "恋のダブルパンチ" ],[ "x5vtfjlChCQ", "ベン・トーop 「狼たちの夜」full" ],[ "xBA4OZJgU9Y", "Spank Happy ♡ ラブクランクイン" ],[ "xy6ogSdE8ZE", "GUITAR FREAKS V5 ＆ drummania V5 Rock to Infinity 　[からふるぱすてる]" ],[ "yEy1H-8FKF4", "Denki Groove - Reaktion (HD)" ],[ "ysdPmXwYVTc", "ももいろクローバーZ　曲途中でPA故障 アカペラで歌いきる" ],[ "z4TaZay2GGI", "Denki Groove - Fuji-san [Live at FUJI ROCK FESTIVAL 2006]" ],[ "zDXCrdfOK1s", "Baby please kill me Remix.wmv" ],[ "zMI23phBgJo", "電気グルーヴ　『Upside Down』" ],[ "37g9a_7Tp74", "vvotaru - Joke" ],[ "fWFljWFjjTg", "Green Night Parade (feat.星子) - Green Night Parade" ],[ "xt5h8xgEqFQ", "fu_mou - Green Night Parade - 01. Prelude" ],[ "ZB3DQ0iW9e4", "VERY NICE DROOL" ],[ "P7Nfc-sv0BE", "[AMV] RHYTHM CIRCUS" ],[ "lPlq6gbksnY", "Madotsuki's Porch" ],[ "nsci5T-gK6U", "NoNoWire11_The Shouty Track" ],[ "bLLLbbghVLs", "na-na-nana-nananana-nana-(mihotyan)" ],[ "fWyQxVqAFzc", "Mikuru 'N' Bass" ],[ "Fq7Zh_kpOGg", "【Remix】鉄腕バーディーDECODE 02 【OP】Nirgilis「kiseki」Remix" ],[ "LFFrmguBPRk", "Gurren Lagann Opening Theme Full" ],[ "ymsr-9q36hY", "Melocure - Meguriai" ],[ "COIWYfqfVAs", "乙女よ大志を抱け" ],[ "Os9RtDCc2UU", "Space Dandy - Welcome to the X Dimension [Ending Extended]" ],[ "AYefYbOw41Y", "[Yuki]\"Disco☆Chocolatheque\" english subbed (annotation) [romaji / english in the description]" ],[ "804NtcaFLlw", "オトメスイッチ オープニングムービー 全年齢版" ],[ "ssnx6KmRK6s", "goreshit - look at me tenderly" ],[ "R7t-P2Y6KwQ", "goreshit - sayonara utsukushii usagi. anata o aishite imasu" ],[ "6GLg6u7PTQU", "Bakemonogatari Suteki Meppou (MIDI)" ],[ "v2rNyYQt5Jk", "High School DxD NEW Ending 2" ],[ "6s2TwbJEzLw", "HIGHSCHOOL DxD ENDING" ],[ "jikQmrkvEYc", "The LASTTRAK - Light between the clouds" ],[ "8taiKjt4CZA", "あんずのうた / Anzu's Song / Anzu no Uta -cruz remix-" ],[ "Jp1zvaFiKyY", "Pollarstars - Tick Tock" ],[ "wyU_0kDWWN8", "クドわふたーOP『one's future』 Fullバージョン" ],[ "SEPzCqiF5EM", "To Loveる -とらぶる- ダークネス ED ファールプレーにくら" ],[ "ymwVqYl67Gk", "forever we can make it! -Full- 歌詞付き" ],[ "6RNrpBK3JXQ", "もっとTo LOVEる　Loop-the-Loop　(FULLHD)" ],[ "AoUA1F36tf4", "魔法少女シンドローム" ],[ "MI36h4bcxts", "ネプテューヌ☆サガして / アフィリア・サーガ　『高音質』" ],[ "295GatEHR_0", "ユメミルキカク～Ver一般論～" ],[ "R9ac12AYpDo", "May'n／ヤマイダレdarlin' MusicVideo（1Chorus）" ],[ "nO2q4vAHbdw", "Calm-Remix Nation - 02 Good Night, Sasami san" ],[ "qop9X-UrarI", "片道きゃっちぼーる　　 ぽてまよ　OP" ],[ "jr0UN8aByRw", "PANDA 1/2「ぼくらがスリジャヤワルダナプラコッテへ旅に出る理由」" ],[ "yjd3hrWIn3Y", "アイカツ! 【カレンダーガール】" ],[ "ARgdBb2Go0w", "Fox Stevenson - Sweets (Soda Pop) [Original Mix]" ],[ "KytkhoNg_IM", "marble - できるかなって☆☆☆" ],[ "h-MbsBRgYGc", "Liquid Holic - Waterin'" ],[ "AyhKtGX0xG8", "どっきゅん☆ハート" ],[ "35SrRXNMeF0", "Saturday Night Witches" ] ]
+;
+  var idx = 0;
+</script>
+  </head>
+  <body>
+    <center class="player"><div id="player"></div></center>
+    <div id="ground"></div>
+    <script>
+      var tag = document.createElement('script');
+      tag.src = "https://www.youtube.com/iframe_api";
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+      var player;
+      function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+          height: '390',
+          width: '640',
+          videId: list[0][0],
+          events: {
+            'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange,
+            'onError': onPlayerError
+          }
+        });
+      }
+
+      function stop() {
+        if (idx >= 0) {
+          var cn = document.getElementById("image" + idx).className;
+          document.getElementById("image" + idx).className = cn.replace(' playing', '');
+        }
+      }
+
+      function toggle() {
+        if (player.getPlayerState() == 1) {
+          player.pauseVideo();
+        } else {
+          player.playVideo();
+        }
+      }
+
+      function prevCue() {
+        idx = (idx + list.length - 1) % list.length;
+        player.cueVideoById(list[idx][0], 0, 'large');
+        document.getElementById("image" + idx).className += ' playing';
+        player.playVideo();
+      }
+
+      function nextCue() {
+        idx = (idx + 1) % list.length;
+        player.cueVideoById(list[idx][0], 0, 'large');
+        document.getElementById("image" + idx).className += ' playing';
+        player.playVideo();
+      }
+
+      var htmlTitle;
+      function onPlayerReady(event) {
+        idx = -1;
+        setTimeout(nextCue, 100);
+      }
+
+      function onPlayerStateChange(event) {
+        if (event.data == YT.PlayerState.ENDED) {
+          stop();
+          setTimeout(nextCue, 100);
+        }
+      }
+
+      function onPlayerError(err) {
+        stop();
+        nextCue();
+      }
+
+      function init_ground() {
+        var i = 0;
+        for (; i < list.length; ++i) {
+          var image = document.createElement('img');
+          image.src = "https://i.ytimg.com/vi/" + list[i][0] + "/mqdefault.jpg";
+          image.title = list[i][1];
+          var deg = ((Math.random() * 40) | 0) - 20;
+          var scale = (90 + (Math.random() * 20) | 0) / 100;
+          image.style.transform = 'rotate(' + deg + 'deg) scale(' + scale + ')';
+          image.style.position = 'relative';
+          var dx = 100;
+          var dy = 40;
+          image.style.left = ((Math.random() * (dx + dx) - dx) | 0) + 'px';
+          image.style.top = ((10 + Math.random() * (dy + dy) - dy - 4*i) | 0) + 'px';
+          image.onclick = (function(j) { return function() { stop(); idx = j-1; nextCue(); }; }(i));
+          image.id = "image" + i;
+          ground.appendChild(image);
+        }
+      };
+      init_ground();
+
+      function shuffle_list() {
+        var i, j, tmp;
+        for (i = list.length - 1; i >= 0; --i) {
+          j = (Math.random() * (i+1)) | 0;
+          tmp = list[i];
+          list[i] = list[j];
+          list[j] = tmp;
+        }
+        ground.innerHTML = '';
+        init_ground();
+        idx = -1;
+        setTimeout(nextCue, 100);
+      }
+      if (location.hash === '#shuffle') {
+        shuffle_list();
+      }
+    </script>
+
+    <form action='none'>
+      <input type='text' id='conpane' />
+    </form>
+
+    <script>
+var CP = document.getElementById('conpane');
+CP.value = 'Search';
+
+CP.addEventListener('keyup', function (e) {
+  CP.value = 'Search';
+  switch (e.keyCode) {
+  case 188:
+    stop();
+    setTimeout(prevCue, 100);
+    break;
+  case 190:
+    stop();
+    setTimeout(nextCue, 100);
+    break;
+  case 191:
+    if (location.hash !== '') {
+      location.reload();
+    } else {
+      location.href = location.href + '#shuffle';
+    }
+    break;
+  case 32:
+    toggle();
+    break;
+  }
+});
+
+    </script>
+
+  </body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Apr 19 2014</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Apr 19 2014</h1>
+</header>
+<h2 id="夢日記">夢日記。</h2>
+<p>なんかの体育祭に参加していた。自分が25組で、固まって座っていたけどみんなどこかにあそびに行ってしまった。 残ったのは自分を含めて四人で、内一人が自分に馴れ馴れしく近寄ってきたので慌てて行き先もなく逃げた。</p>
+<hr />
+<p>外で偶然知り合いと出会う確率は知り合いの人数に比例すると言えなくもないけれど、 場所だとか時間だとかいう条件が与えられたら、確率は零か壱かであるような気もする。</p>
+<hr />
+<p>へんなゼリーが、試供品が、町のあちらこちらで配られていた。 たくさん人間がいる中で自分だけが無視されていたようだった。 だからたくさん自分から人に話しかけることにした。そうすれば一応はみんな、自分の相手をしてくれた。</p>
+<hr />
+<p>余再帰、の意味はわからないけれど、それを用いた キューっぽい何かデータ構造の再現を利用した、 幅優先探索。</p>
+<p>ノード <code>a</code> の行き先、<code>c a = @ [c1 .. cn]</code> が自然に考えられるデータ構造について、 (木とか) 根ノード <code>a0</code> から初めて、幅優先探索で辿った順をリストとして返すことにすれば目的は果たされた。</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">bfs a0 <span class="fu">=</span> a0 <span class="fu">:</span> something</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">walk (a <span class="fu">:</span> rest) <span class="fu">=</span> c a <span class="fu">++</span> walk rest</code></pre></div>
+<p>that is</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">walk q <span class="fu">=</span> c (head q) <span class="fu">++</span> walk (tail q)</code></pre></div>
+<p>初めから、完全な<code>a : rest</code> が与えられてれば、 <code>walk</code> とは所詮 <code>map</code> に近い何かだけど、</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">queue <span class="fu">=</span> a <span class="fu">:</span> walk queue</code></pre></div>
+<p>このようにリストの再帰的定義を用いると、違うことになる。</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">walk q <span class="fu">=</span> c (head q) <span class="fu">++</span> walk (tail q)</code></pre></div>
+<p>の下で(ちょっと書きなおした)、</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">q <span class="fu">=</span> a <span class="fu">:</span> walk q
+  <span class="fu">=</span> a <span class="fu">:</span> c (head q) <span class="fu">++</span> walk (tail q)
+
+  <span class="kw">where</span>
+  walk (tail q) <span class="fu">=</span> c <span class="fu">$</span> head (tail q)
+                <span class="fu">=</span> c <span class="fu">$</span> c <span class="fu">$</span> head q
+                <span class="fu">=</span> c (c a)
+
+q <span class="fu">=</span> a <span class="fu">++</span> c a <span class="fu">++</span> c (c a) <span class="fu">++</span> c (c (c a)) <span class="fu">++</span> <span class="fu">..</span></code></pre></div>
+<p>になるはず。 <code>(++)</code>が<code>(:)</code>なら、ただの<code>scan</code>だ。</p>
+<p><code>q</code>の先頭から、適当な処理をしてやって、適当なとこで打ち切れば、 幅優先探索は完遂される。</p>
+</body>
+</html>

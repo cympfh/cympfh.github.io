@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>LIBLINEAR</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<h1 class="title">LIBLINEAR</h1>
+</header>
+<p>libsvm の同じグループが制作した線形分類器. SVM の線形カーネル版の他に線形回帰が含まれる.</p>
+<p>データのフォーマットはlisvm のそれと全く同じなので、 使いまわすことができる.</p>
+<p>libsvm を使わずにこちらを使う利点として、 線形カーネル用にチューニングが為されており、 計算空間量も時間もかなりの節約ができること.</p>
+<p>実感として、素性が大きくなると、こちらの方が返って精度がよくなること.</p>
+<p>詳細な原理、及びチュートリアルを含むドキュメントとして次がある. 原理を読み飛ばすにしても、細々としたテクニックが紹介されているので、 一度読んで見ることを薦める.</p>
+<ul>
+<li><a href="http://www.csie.ntu.edu.tw/~cjlin/papers/liblinear.pdf" class="uri">http://www.csie.ntu.edu.tw/~cjlin/papers/liblinear.pdf</a></li>
+</ul>
+<h2 id="solver--s">solver (<code>-s</code>)</h2>
+<p>libsvm と同様に <code>-s</code> で、どの最適化問題を解くかを (ソルバーを) 指定できる. 線形回帰を選ぶか、SVMを選ぶか、SVMにしても詳細にどのバージョンを用いるかをここで指定する.</p>
+<p>とりあえず、SVMを用いてクラス分類するソルバーとして、次がある.</p>
+<pre><code>-s type : set type of solver (default 1) 
+  1 -- L2-regularized L2-loss support vector classification (dual)
+  2 -- L2-regularized L2-loss support vector classification (primal)                                         
+  3 -- L2-regularized L1-loss support vector classification (dual)                                           
+  4 -- support vector classification by Crammer and Singer                                                   
+  5 -- L1-regularized L2-loss support vector classification  </code></pre>
+<p>線形SVMの主問題とは <span class="math display">\[\min \|w\| + C \cdot \sum_i \xi (w,x_i,y_i)\]</span> であった. この主問題を直接解くのが (primal) で、 双対問題を直接解くのが (dual).</p>
+<p>先ほどの <a href="http://www.csie.ntu.edu.tw/~cjlin/papers/liblinear.pdf">pdf</a> によると、</p>
+<blockquote>
+<p><code>1. Try the default dual-based solver first.</code><br />
+<code>2. If it is slow, check primal-based solvers.</code></p>
+</blockquote>
+<p>とある.</p>
+<p>主問題第一項の <span class="math inline">\(\|w\|\)</span> が <span class="math inline">\(\sqrt{w^T w}\)</span> なのが L1-regularized で、 <span class="math inline">\(w^T w\)</span> なのが L2-regularized.</p>
+<p>第二項の <span class="math inline">\(\xi\)</span> は損失関数 (loss function) と呼ばれるものであるが、</p>
+<p>L1-loss とは、 <span class="math display">\[\xi(w, x_i, y_i) = \max(0, 1-y_i w^T x_i)\]</span> L2-loss とは、 <span class="math display">\[\xi(w, x_i, y_i) = (\max(0, 1-y_i w^T x_i))^2\]</span> とあるものである.</p>
+<p>以上で、 <code>-s 1 2 3 5</code> を説明したことになる. <code>-s 4</code> の <code>Multi-class SVM by Crammer and Singer</code> については、先pdfの <code>Appendix E.</code> に説明があるが、 よく読んでない.</p>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sat Feb 16 2013</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Sat Feb 16 2013</h1>
+</header>
+<h2 id="無限リスト-遅延リスト-を用いたフィボナッチ数列の計算">無限リスト (遅延リスト) を用いた、フィボナッチ数列の計算</h2>
+<p>Haskell でのコード．あまりにも有名．</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> print <span class="fu">$</span> take <span class="dv">10</span> fib
+    <span class="kw">where</span>
+    fib <span class="fu">=</span> <span class="dv">0</span> <span class="fu">:</span> <span class="dv">1</span> <span class="fu">:</span> (zipWith (<span class="fu">+</span>) fib <span class="fu">$</span> tail fib)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">[<span class="ex">0</span>,1,1,2,3,5,8,13,21,34]
+
+<span class="ex">real</span>    0m0.003s
+<span class="ex">user</span>    0m0.000s
+<span class="ex">sys</span> 0m0.000s</code></pre></div>
+<p>十分シンプル． <code>fib!!0</code>, <code>fib!!1</code> までは、<code>cons</code> によって与えられ、例えば <code>fib!!2</code> は</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">fib<span class="fu">!!</span><span class="dv">2</span> <span class="fu">=</span> head (zipWith (<span class="fu">+</span>) <span class="fu">..</span> <span class="fu">..</span>)
+       <span class="fu">=</span> (head fib) <span class="fu">+</span> (head <span class="fu">$</span> tail fib)
+       <span class="fu">=</span> <span class="dv">0</span> <span class="fu">+</span> (head (<span class="dv">1</span> <span class="fu">:</span> <span class="fu">..</span>))
+       <span class="fu">=</span> <span class="dv">0</span> <span class="fu">+</span> <span class="dv">1</span></code></pre></div>
+<p>何も問題ない．</p>
+<p>Scheme での実験．Gauche 0.9.3 には、プリミティブ型としてのlconsが あり、cdrにのみ、遅延が入るconsであり、しかもこれは、一度評価したら その値をメモしておく．</p>
+<p>上の Haskell でのコードをほとんどそのまま翻訳したもの．</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">(use gauche.lazy)
+(<span class="kw">define</span><span class="fu"> fib</span>
+    ($ lcons* <span class="dv">0</span> <span class="dv">1</span> $ lmap <span class="kw">+</span> fib $ <span class="kw">cdr</span> fib))
+(<span class="kw">define</span><span class="fu"> </span>(main _)
+    ($ <span class="kw">display</span> $ take fib <span class="dv">10</span>))
+
+*** ERROR: Attempt to recursively <span class="kw">force</span> a lazy pair.
+Stack Trace:
+_______________________________________
+  <span class="dv">0</span>  ((with-module gauche.internal %zip-nary-args) args)
+        At line <span class="dv">73</span> of <span class="st">&quot;/usr/local/share/gauche-0.9/0.9.3.3/lib/gauche/lazy.scm&quot;</span>
+  <span class="dv">1</span>  (take fib <span class="dv">10</span>)
+        [unknown location]</code></pre></div>
+<p>などと実行時エラーを吐く． <code>(info 'lcons)</code> を見てると、そのまんま、このコードはバグを含んでいて、「不幸にも」 Gaucheはこれを計算できないのだと書いてある．</p>
+<p>即ち、<code>(lcons a b)</code>は<code>b</code>のみを遅延するが、それ自体を評価するときに aとbを計算してしまう．</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">(lcons* a b c) <span class="co">;; (lcons a (lcons b c))</span></code></pre></div>
+<p>ならば、まず <code>a</code>, <code>b</code> を計算する． cdr部の評価の時に、<code>b</code>, <code>c</code>c を計算する．bは先の計算結果がメモされている．</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">gosh&gt; (<span class="kw">define</span><span class="fu"> a </span>(lcons* (<span class="kw">display</span> <span class="st">&quot;car\n&quot;</span>) (<span class="kw">display</span> <span class="st">&quot;cadr\n&quot;</span>) (<span class="kw">display</span> <span class="st">&quot;caddr\n&quot;</span>)))
+<span class="kw">car</span>
+<span class="kw">cadr</span>
+a
+gosh&gt; (<span class="kw">car</span> a)
+#&lt;undef&gt;
+gosh&gt; (<span class="kw">cadr</span> a)
+<span class="kw">caddr</span>
+#&lt;undef&gt;</code></pre></div>
+<p>だから問題なのは、<code>fib!!1</code> に相当する <code>(cadr fib)</code> の計算には、これはそもそも <code>(car (cdr fib))</code> であり、 <code>(cdr fib)</code> の計算とは、<code>(cadr fib)</code> 及び <code>(cddr fib)</code> である．だから <code>fib!!1</code> の評価に <code>fib!!2</code> の計算が伴い、そしてそれには <code>(cdr fib)</code> が必要である．よって無限の再帰が行われる．</p>
+<p>頭3つを用意して、またmapの計算を直してやれば、 (<span class="math inline">\(Fib_n\)</span>を計算するのに, <span class="math inline">\(Fib_{n-2}\)</span>と <span class="math inline">\(Fib_{n-1}\)</span> を用いることになるから) よくて．</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">(use gauche.lazy)
+(<span class="kw">define</span><span class="fu"> fib</span>
+    ($ lcons* <span class="dv">0</span> <span class="dv">1</span> <span class="dv">1</span> $ lmap (cut $ <span class="kw">+</span> &lt;&gt; $ * &lt;&gt; <span class="dv">2</span>) fib $ <span class="kw">cdr</span> fib))
+(<span class="kw">define</span><span class="fu"> </span>(main _)
+    ($ <span class="kw">display</span> $ take fib <span class="dv">10</span>))</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">(</span><span class="ex">0</span> 1 1 2 3 5 8 13 21 34<span class="kw">)</span>
+<span class="ex">real</span>    0m0.052s
+<span class="ex">user</span>    0m0.040s
+<span class="ex">sys</span> 0m0.008s</code></pre></div>
+<p>綺麗じゃない</p>
+</body>
+</html>

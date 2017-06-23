@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sun Apr 20 00:30:08 JST 2014</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Sun Apr 20 00:30:08 JST 2014</h1>
+</header>
+<h2 id="haskell-で-bfs">Haskell で BFS</h2>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Tree</span> <span class="fu">=</span> <span class="dt">L</span> <span class="fu">|</span> <span class="dt">N</span> <span class="dt">Int</span> <span class="dt">Tree</span> <span class="dt">Tree</span> <span class="kw">deriving</span> <span class="dt">Show</span>
+
+<span class="co">-- てきとーに考えた木の生成</span>
+range<span class="ot"> ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Tree</span>
+range i m
+  <span class="fu">|</span> i <span class="fu">&gt;=</span> m <span class="fu">=</span> <span class="dt">L</span>
+  <span class="fu">|</span> otherwise <span class="fu">=</span> <span class="dt">N</span> i (range (i<span class="fu">*</span><span class="dv">2</span> <span class="fu">+</span> <span class="dv">1</span>) m) (range (i<span class="fu">*</span><span class="dv">2</span> <span class="fu">+</span> <span class="dv">2</span>) m)
+
+<span class="ot">bfs ::</span> <span class="dt">Tree</span> <span class="ot">-&gt;</span> [<span class="dt">Tree</span>]
+bfs tree <span class="fu">=</span> q
+  <span class="kw">where</span> q <span class="fu">=</span> tree <span class="fu">:</span> walk<span class="ot"> q ::</span> [<span class="dt">Tree</span>]
+<span class="ot">        walk ::</span> [<span class="dt">Tree</span>] <span class="ot">-&gt;</span> [<span class="dt">Tree</span>]
+        walk (<span class="dt">L</span> <span class="fu">:</span> _) <span class="fu">=</span> [<span class="dt">L</span>]
+        walk ((<span class="dt">N</span> value left right) <span class="fu">:</span> rest) <span class="fu">=</span> left <span class="fu">:</span> right <span class="fu">:</span> walk rest
+
+main <span class="fu">=</span> <span class="kw">do</span>
+  <span class="co">-- print a -- これからたどる木</span>
+  <span class="co">-- print ls -- たどる順 (ただし木)</span>
+  print <span class="fu">$</span> map just ls <span class="co">-- 木の根が、実際に見るノードになる</span>
+  <span class="co">-- doSomething (fromJust $ isJust $ map just ls) たどる順 (たぶん無限リスト) について、doSomething する。大域脱出することになるから、たぶん末尾再帰とかかな</span>
+  <span class="kw">where</span>
+  a <span class="fu">=</span> range <span class="dv">0</span> <span class="dv">16</span>
+  ls <span class="fu">=</span> bfs a
+  just <span class="dt">L</span> <span class="fu">=</span> <span class="dt">Nothing</span>
+  just (<span class="dt">N</span> x _ _) <span class="fu">=</span> <span class="dt">Just</span> x</code></pre></div>
+<hr />
+<footer>
+    <p style='text-align: right'>
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+</body>
+</html>

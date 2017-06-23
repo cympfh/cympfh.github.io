@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Debian GNU/Linux</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+  <link rel="stylesheet" href="../../resources/css/c.css">
+</head>
+<body>
+<header>
+<h1 class="title">Debian GNU/Linux</h1>
+</header>
+<h2 id="index">INDEX</h2>
+<div id="toc">
+
+</div>
+<h2 id="外部デバイスの設定">外部デバイスの設定</h2>
+<h3 id="認識されてるデバイスの確認">認識されてるデバイスの確認</h3>
+<pre><code>   xinput
+⎡ Virtual core pointer                          id=2    [master pointer  (3)]
+⎜   ↳ Virtual core XTEST pointer                id=4    [slave  pointer  (2)]
+⎜   ↳ Sony Vaio Jogdial                         id=8    [slave  pointer  (2)]
+⎜   ↳ SynPS/2 Synaptics TouchPad                id=12   [slave  pointer  (2)]
+⎣ Virtual core keyboard                         id=3    [master keyboard (2)]
+   ↳ Virtual core XTEST keyboard               id=5    [slave  keyboard (3)]
+   ↳ Video Bus                                 id=6    [slave  keyboard (3)]
+   ↳ Sony Vaio Keys                            id=7    [slave  keyboard (3)]
+   ↳ Power Button                              id=9    [slave  keyboard (3)]
+   ↳ USB2.0 Camera                             id=10   [slave  keyboard (3)]
+   ↳ AT Translated Set 2 keyboard              id=11   [slave  keyboard (3)]</code></pre>
+<p>左に表示されてる &quot;SynPS/2 Synaptics TouchPad&quot; がデバイス名、その右に id が数字で表示される. どちらかを指定して、設定を行える.</p>
+<h3 id="設定できる項目">設定できる項目</h3>
+<pre><code>   xinput list-props &quot;SynPS/2 Synaptics TouchPad&quot;
+Device &#39;SynPS/2 Synaptics TouchPad&#39;:
+Device Enabled (139):   1
+Coordinate Transformation Matrix (141): 1.000000, 0.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000, 0.000000, 1.000000
+Device Accel Profile (262):     1
+Device Accel Constant Deceleration (263):       3.000000
+Device Accel Adaptive Deceleration (264):       1.000000
+Device Accel Velocity Scaling (265):    12.500000
+Synaptics Edges (287):  1493, 5447, 1352, 4502
+Synaptics Finger (288): 25, 30, 0
+Synaptics Tap Time (289):       180
+Synaptics Tap Move (290):       258
+Synaptics Tap Durations (291):  180, 100, 100
+Synaptics ClickPad (292):       1
+Synaptics Middle Button Timeout (293):  0
+Synaptics Two-Finger Pressure (294):    282
+Synaptics Two-Finger Width (295):       7
+Synaptics Scrolling Distance (296):     117, 117
+Synaptics Edge Scrolling (297): 1, 0, 0
+    (中略)
+Synaptics Move Speed (299):     1.000000, 1.750000, 0.034037, 0.000000
+Synaptics Off (300):    0
+    (略)</code></pre>
+<p>例えば</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">xinput</span> --set-prop <span class="st">&quot;SynPS/2 Synaptics TouchPad&quot;</span> <span class="st">&quot;Synaptics Off&quot;</span> 1</code></pre>
+<p>などとすることで、設定ができる. ちなみに &quot;Synaptics Off&quot; はそのデバイスを無効化する項目.</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">xinput</span> --set-prop <span class="st">&quot;SynPS/2 Synaptics TouchPad&quot;</span> <span class="st">&quot;Synaptics Off&quot;</span> 0</code></pre>
+<p>で解除する.</p>
+<h2 id="debian-への-flash-インストールアップデート">Debian への Flash インストール/アップデート</h2>
+<pre><code>sudo apt-get update
+sudo apt-get install flashplugin-nonfree
+sudo update-flashplugin-nonfree --install</code></pre>
+<h2 id="フォントの追加">フォントの追加</h2>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">mkdir</span> ~/.fonts
+<span class="kw">cp</span> *.ttf ~/.fonts
+fc-cache -fv # 単に fc-cache でもいいし、放っておいても、いつか勝手に認識される
+<span class="kw">fc-list</span> <span class="co"># check</span></code></pre>
+<h2 id="cd-からの音楽ファイルの取り込み">CD からの音楽ファイルの取り込み</h2>
+<h3 id="cdからのインポート">CDからのインポート</h3>
+<p><code>Asunder</code> を使う. 適切なデータ・ベース (CDDB) を併せて使うことで、曲を取り込む際に適切なタグを振ってくれる. 日本語CDDB として名前があるのが <a href="http://freedbtest.dyndns.org/">freedb 日本語</a> (公開して下さっている <code>piro77</code>氏に感謝します).</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">sudo</span> apt-get install asunder
+<span class="kw">sudo</span> apt-get install lame</code></pre>
+<p>次のように、URLとポートを指定する. 1つ目の <code>freedb.freedb.org:8880</code> はデフォルトのもので、 2つ目の <code>freedbtest.dyndns.org:80</code> は自分で追加したもの.</p>
+<figure>
+<img src="img/asunder.2.jpg" />
+</figure>
+<p>日本語のアニソンでも問題なく.</p>
+<figure>
+<img src="img/asunder.1.jpg" />
+</figure>
+<h3 id="id3タグ">ID3タグ</h3>
+<p>曲タイトル、アルバム名、アーティスト名といったタグ付けは <code>id3lib</code> パッケージ (<code>apt-get install id3lib</code>) にある <code>id3tag</code> コマンドで行う.</p>
+<p>しかしながら、 <code>id3tag</code> ではジャケット画像 (artwork) のタグ付けが出来ないので、 そちらには <a href="http://eyed3.nicfit.net/#installation">eyeD3</a> (<code>pip install eyeD3</code>) を使う. <code>eyeD3</code> でもタイトルやアルバム名のタグ付けは可能だが、日本語に対応していない (Pythonで書かれたスクリプトファイルなのでどうにかなりそうだけど).</p>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">id3tag</span> -s <span class="st">&#39;Music Title&#39;</span> -A <span class="st">&#39;Awesome Album&#39;</span> -a <span class="st">&#39;Our Artist&#39;</span> music.mp3
+<span class="kw">id3info</span> music.mp3
+<span class="kw">eyeD3</span> --add-image=A.jpg:FRONT_COVER music.mp3</code></pre>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var UL = document.createElement('ul');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    UL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(UL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

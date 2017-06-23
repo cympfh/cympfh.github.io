@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sat Oct 26 14:25:10 JST 2013</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Sat Oct 26 14:25:10 JST 2013</h1>
+</header>
+<h2 id="node.js-oauth-だけでtwitter認証">node.js + oauth だけでTwitter認証</h2>
+<p>ログインが可能なTwitterアカウント と，<br />
+Twitterクライアントと呼ばれる単位の (consumer_key, consumer_secret) とから<br />
+アカウントのクライアントに対する</p>
+<pre><code>(access_token_key, access_token_secre)</code></pre>
+<p>これを取得するまで． その4つを一回取得できれば，もうメモしといて未来永劫どうとでも使える</p>
+<p>まず，<br />
+npmでモジュール追加する場合，-g オプションは有効に使いましょう<br />
+初めのPCでそれをする場合は，インストールした際にメッセージをよく読み，どのディレクトリに入ったかを見たら<br />
+環境変数 NODE_PATH に書いときましょう</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">cympfh@</span>:~$ echo <span class="va">$NODE_PATH</span>
+<span class="ex">/usr/local/lib/node_modules/</span></code></pre></div>
+<p>このサイトのソースコードを大いに参照しました．<br />
+わかってしまえば，そのまんまなのに，随分長いことできなかったから．<br />
+http://d.hatena.ne.jp/sugyan/20110105/1294157289</p>
+<p>いやほんとは，ずっと前にも同じプログラムは書いたのだけど，例のnpm はデフォルトでその場にディレクトリ作って そこにモジュール保存するとかしらなくて，ディレクトリがごちゃごちゃしてたから一緒に間違えて削除しちゃったの</p>
+<h2 id="作り方">作り方</h2>
+<p>まずサーバを作ります サーバは簡単に作れることで http://nodejs.org/ にも載ってるわけですけど，実際的には express モジュールなんかを使います</p>
+<pre><code>$ sudo npm install -g express</code></pre>
+<p>モジュールだけでなく，expressコマンドも一緒に入ります．</p>
+<p>てきとーな，実験用のディレクトリに移って</p>
+<pre><code>$ express hogehoge</code></pre>
+<p>hogehogeというディレクトリが出来て，中には app.js routes/ などなどが入ってます メッセージの指示通りに</p>
+<pre><code>$ cd hogehoge &amp;&amp; npm install</code></pre>
+<p>たぶん普通いじるのは app.js か routes/index.js なんかだと思います 必要最小限のことがらが書かれたファイルなので，書き足すようにする</p>
+<p>express のバージョンによって随分と中身は違うようなので，まるまるをブログに載っけてるのを よく見かけるけど，自分のと違ってても気にしちゃいけない．</p>
+<p>app.getは，どうもその相対パスのurlが来たらどうするか，をappに登録してて， そのappを持って，</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="va">http</span>.<span class="at">createServer</span>(app).<span class="at">listen</span>(<span class="va">app</span>.<span class="at">get</span>(<span class="st">&#39;port&#39;</span>)<span class="op">,</span> <span class="kw">function</span>()<span class="op">{</span>
+  <span class="va">console</span>.<span class="at">log</span>(<span class="st">&#39;Express server listening on port &#39;</span> <span class="op">+</span> <span class="va">app</span>.<span class="at">get</span>(<span class="st">&#39;port&#39;</span>))<span class="op">;</span>
+<span class="op">}</span>)<span class="op">;</span></code></pre></div>
+<p>サーバが動くようなので，これよりも上に，次のようなものをコピペ</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> oauth <span class="op">=</span> <span class="kw">new</span> (<span class="at">require</span>(<span class="st">&#39;oauth&#39;</span>).<span class="at">OAuth</span>)(
+     <span class="st">&#39;https://api.twitter.com/oauth/request_token&#39;</span><span class="op">,</span>
+     <span class="st">&#39;https://api.twitter.com/oauth/access_token&#39;</span><span class="op">,</span>
+     <span class="st">&#39;qnNRwjeo8zFjhIDfgG1F6Q&#39;</span><span class="op">,</span>                     <span class="co">// CONSUMER_KEY (replace)</span>
+     <span class="st">&#39;JtKRv1e9QIEG6mKvWl0g4ygGVGzWclgfd7GaSBEGtg&#39;</span><span class="op">,</span> <span class="co">// CONSUMER_SECRET (replace)</span>
+     <span class="st">&#39;1.0&#39;</span><span class="op">,</span>
+     <span class="st">&#39;http://127.0.0.1:3000/signin/twitter&#39;</span><span class="op">,</span> <span class="co">// callback URL</span>
+     <span class="st">&#39;HMAC-SHA1&#39;</span>
+ )<span class="op">;</span>
+
+ <span class="va">app</span>.<span class="at">get</span>(<span class="st">&#39;/signin/twitter&#39;</span><span class="op">,</span> <span class="kw">function</span>(req<span class="op">,</span> res) <span class="op">{</span>
+     <span class="kw">var</span> oauth_token    <span class="op">=</span> <span class="va">req</span>.<span class="va">query</span>.<span class="at">oauth_token</span><span class="op">;</span>
+     <span class="kw">var</span> oauth_verifier <span class="op">=</span> <span class="va">req</span>.<span class="va">query</span>.<span class="at">oauth_verifier</span><span class="op">;</span>
+     <span class="cf">if</span> (oauth_token <span class="op">&amp;&amp;</span> oauth_verifier) <span class="op">{</span>
+         <span class="va">console</span>.<span class="at">log</span>(<span class="st">&quot;##&quot;</span><span class="op">,</span> oauth_token<span class="op">,</span> oauth_verifier)<span class="op">;</span>
+         <span class="va">oauth</span>.<span class="at">getOAuthAccessToken</span>(
+             oauth_token<span class="op">,</span> <span class="kw">null</span><span class="op">,</span> oauth_verifier<span class="op">,</span>
+             <span class="kw">function</span>(error<span class="op">,</span> oauth_access_token<span class="op">,</span> oauth_access_token_secret<span class="op">,</span> results) <span class="op">{</span>
+                 <span class="cf">if</span> (error) <span class="op">{</span>
+                     <span class="va">res</span>.<span class="at">send</span>(error<span class="op">,</span> <span class="dv">500</span>)<span class="op">;</span>
+                 <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span>
+                     <span class="co">// req.session.user = results.screen_name;</span>
+                     <span class="va">console</span>.<span class="at">log</span>(<span class="st">&quot;@@@&quot;</span><span class="op">,</span> oauth_access_token<span class="op">,</span> oauth_access_token_secret)<span class="op">;</span>
+                     <span class="va">res</span>.<span class="at">end</span>(oauth_access_token <span class="op">+</span> <span class="st">&quot; &quot;</span> <span class="op">+</span> oauth_access_token_secret)<span class="op">;</span>
+                     <span class="co">// res.redirect(&#39;/&#39;);</span>
+                 <span class="op">}</span>
+             <span class="op">}</span>
+         )<span class="op">;</span>
+     <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span>
+         <span class="va">oauth</span>.<span class="at">getOAuthRequestToken</span>(<span class="kw">function</span>(error<span class="op">,</span> oauth_token<span class="op">,</span> oauth_token_secret<span class="op">,</span> results) <span class="op">{</span>
+             <span class="cf">if</span> (error) <span class="op">{</span>
+                 <span class="va">res</span>.<span class="at">send</span>(error<span class="op">,</span> <span class="dv">500</span>)<span class="op">;</span>
+             <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span>
+                 <span class="va">req</span>.<span class="at">session</span> <span class="op">=</span> <span class="op">{</span>
+                     <span class="dt">oauth_token</span><span class="op">:</span> oauth_token<span class="op">,</span>
+                     <span class="dt">oauth_token_secret</span><span class="op">:</span> oauth_token_secret<span class="op">,</span>
+                     <span class="dt">request_token_results</span><span class="op">:</span> results
+                 <span class="op">};</span>
+                 <span class="va">res</span>.<span class="at">redirect</span>(<span class="st">&#39;https://api.twitter.com/oauth/authorize?oauth_token=&#39;</span> <span class="op">+</span> oauth_token)<span class="op">;</span>
+             <span class="op">}</span>
+         <span class="op">}</span>)<span class="op">;</span>
+     <span class="op">}</span>
+ <span class="op">}</span>)<span class="op">;</span></code></pre></div>
+<p>はい，これで ブラウザで <code>http://127.0.0.1:3000/signin/twitter</code> に言ってごちゃごちゃすると 欲しかったものが得られます</p>
+<p>dev.twitter.com の方で，アプリケーションのコールバックurlを登録するけど，あれ関係ないよね？</p>
+<hr />
+<p>Author : 枚方 (Hirakata)<br />
+e-mail: cympfh@gmail.com</p>
+</body>
+</html>

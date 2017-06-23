@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Fine-Grained Sentiment Analysis with Structural Features</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/
+    </a>
+</h1>
+<header>
+<h1 class="title">Fine-Grained Sentiment Analysis with Structural Features</h1>
+</header>
+<ul>
+<li>
+url: <a href=http://aclweb.org/anthology/I/I11/I11-1038.pdf>http://aclweb.org/anthology/I/I11/I11-1038.pdf</a>
+</li>
+<li>
+tags: <span class="tag"><a href=index.html#自然言語処理>自然言語処理</a></span> <span class="tag"><a href=index.html#極性分析>極性分析</a></span> <span class="tag"><a href=index.html#MarkovLogic>MarkovLogic</a></span>
+</li>
+</ul>
+<h2 id="概要">概要</h2>
+<p>商品のレビューテキストの極性判定を行いたい. 極性判定では結局全体として肯定なのか否定なのか調べるために構造的に調べることは必須である. この論文は構造を考慮するために Markov Logic Networks (MLNs) を用いる手法を提案する. セグメントごとの極性判定で正解率 69% の判定を行った. 全体の極性判定はやってないらしい (そっちが重要やろうが).</p>
+<h2 id="考察">考察</h2>
+<p>商品のレビューは一つのレビューの中に肯定と否定が交じることもある:</p>
+<blockquote>
+<p>&quot;Despite the pretty design I would never recommend it, because the sound quality is unacceptable&quot;</p>
+</blockquote>
+<p>だから sub-sentence レベルでの解析が必要.</p>
+<h3 id="discourse-segments">discourse segments</h3>
+<p>関連研究として</p>
+<ul>
+<li>Rhetorical Structure Theory (RST) introduced by Mann and Thompson (1988)</li>
+</ul>
+<p>これによると、 discourse セグメントの単位で解析をして、セグメント同士の関係を調べるのが良いらしい.</p>
+<p>先ほどの例文は次のように分割されるべきらしい:</p>
+<ol style="list-style-type: decimal">
+<li>Despite the pretty design</li>
+<li>I would never recommend it</li>
+<li>because the sound quality is unacceptable</li>
+</ol>
+<p>そしてこれらはこのような接続関係を持つ</p>
+<ul>
+<li>CONCESSION 1 2</li>
+<li>CAUSE-EXPLATINATION-EVIDENCE 2 3</li>
+</ul>
+<h3 id="隣接セグメント">隣接セグメント</h3>
+<p>多くの場合、隣接したセグメントは同じ極性を持つ</p>
+<h3 id="対比関係">対比関係</h3>
+<p>but で接続された隣接するセグメントの極性が同じかどうかは結構微妙で、 彼らが調査したところ、 40% は反対の極性で、60% は同じ極性を持っていたという.</p>
+<p>極性を反転させているかどうかの判定が必要である.</p>
+<h3 id="辞書的分類">辞書的分類</h3>
+<p>古典的ながら (この論文自体が古典だが) 確実そうなのは、 極性辞書 (語と極性とのペアを集めたもの) を持っておいて、 登場した語が辞書に乗っていたらそれを参照するというものである.</p>
+<h2 id="markov-logic-による極性判定の形式化">Markov Logic による極性判定の形式化</h2>
+<p>セグメント <span class="math inline">\(x\)</span> について、これが positive であるか negative であるかを述語論理</p>
+<ul>
+<li><span class="math inline">\(P(x)\)</span></li>
+<li><span class="math inline">\(N(x)\)</span></li>
+</ul>
+<p>で書くことにする. この２つについて次を認める.</p>
+<ul>
+<li><span class="math inline">\(\lnot P(x) \Rightarrow N(x)\)</span></li>
+<li><span class="math inline">\(\lnot N(x) \Rightarrow P(x)\)</span></li>
+</ul>
+<h3 id="辞書による事前知識">辞書による事前知識</h3>
+<ul>
+<li><span class="math inline">\(PS(x) \iff P(x)\)</span></li>
+<li><span class="math inline">\(NS(x) \iff N(x)\)</span></li>
+</ul>
+<p>ここで PS は positive source の略. NS も同様.</p>
+<p>ここが一番重要な気がするけど、WordNet を使ってどうこうとかルールベースで頑張ってるだけという感じ.</p>
+<h3 id="隣接セグメント-1">隣接セグメント</h3>
+<p>２つのセグメント <span class="math inline">\(x, y\)</span> が隣接していることを述語 <span class="math inline">\(pre(x,y)\)</span> で書くとき、</p>
+<ul>
+<li><span class="math inline">\(pre(x,y) \land P(x) \Rightarrow P(y)\)</span></li>
+<li><span class="math inline">\(pre(x,y) \land N(x) \Rightarrow N(y)\)</span></li>
+</ul>
+<p>これは隣り合うセグメントは同じ極性を持ちやすいことを言う.</p>
+<h3 id="対比関係-1">対比関係</h3>
+<p>2つのセグメントが対比関係にあるのを述語 <span class="math inline">\(cont(x,y)\)</span> で、 対比関係でないのを述語 <span class="math inline">\(nconst(x,y)\)</span> で書くとき、</p>
+<ul>
+<li><span class="math inline">\(cont(x,y) \land P(x) \Rightarrow N(y)\)</span></li>
+<li><span class="math inline">\(cont(x,y) \land N(x) \Rightarrow P(y)\)</span></li>
+<li><span class="math inline">\(ncont(x,y) \land P(x) \Rightarrow P(y)\)</span></li>
+<li><span class="math inline">\(ncont(x,y) \land N(x) \Rightarrow N(y)\)</span></li>
+</ul>
+<h2 id="実験">実験</h2>
+<p>Amazon のレビューで実験. SVM が56% で提案手法の max が 69%.</p>
+<h2 id="感想">感想</h2>
+<p>本当に MLNs の貢献なのか大変に疑わしいし、 ルールベースにルールベースを積み重ねたような古典的手法だと思った. 今なら LSTM に読ませるだけでももっとまともな精度が出そう.</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

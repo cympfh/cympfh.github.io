@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sun May 3 13:59:49 JST 2015</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Sun May 3 13:59:49 JST 2015</h1>
+</header>
+<h2 id="tic-tac-toe">tic-tac-toe</h2>
+<ul>
+<li><a href="http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=0066">三目並べ | Aizu Online Judge</a></li>
+</ul>
+<p>三目並べの盤の状態が与えられるから<code>o</code>(先攻)と<code>x</code>(後攻)どちらが勝つか判定するもの<sup>[1]</sup><br />
+盤の状態は9文字の文字列として <code>o</code> (oの置いたマス) <code>x</code> (xの置いたマス) <code>s</code> (何も置かれてないマス) で左上から順に並べたもので表現される</p>
+<p>ちゃんとゲーム木の上を探索するプログラムを書いた</p>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="co">// you can this source</span>
+<span class="co">// also at: https://gist.github.com/cympfh/8aa0b2aa0d26b8822bed</span>
+<span class="pp">#include </span><span class="im">&lt;bits/stdc++.h&gt;</span>
+<span class="kw">using</span> <span class="kw">namespace</span> std;
+
+<span class="pp">#define rep(i,n) for(int i=0;i&lt;(n);++i)</span>
+<span class="pp">#define loop for(;;)</span>
+<span class="pp">#define trace(var) cerr&lt;&lt;&quot;&gt;&gt;&gt; &quot;&lt;&lt;#var&lt;&lt;&quot; = &quot;&lt;&lt;var&lt;&lt;endl;</span>
+<span class="pp">#define inf (1e9)</span>
+<span class="pp">#define eps (1e-9)</span>
+
+<span class="co">// 盤の空いてるところ集合</span>
+<span class="kw">inline</span>
+vector&lt;<span class="dt">int</span>&gt; empties(vector&lt;<span class="dt">int</span>&gt;&amp;v) {
+  vector&lt;<span class="dt">int</span>&gt; r;
+  rep (i, <span class="dv">9</span>) <span class="cf">if</span> (v[i] == <span class="dv">0</span>) r.push_back(i);
+  <span class="cf">return</span> r;
+}
+
+<span class="kw">inline</span>
+<span class="dt">int</span> num_empty(vector&lt;<span class="dt">int</span>&gt;&amp;v) {
+  <span class="cf">return</span> empties(v).size();
+}
+
+<span class="kw">inline</span>
+<span class="dt">bool</span> is_full(vector&lt;<span class="dt">int</span>&gt;&amp;v) {
+  <span class="cf">return</span> num_empty(v) == <span class="dv">0</span>;
+}
+
+<span class="co">// 決着がついてるかどうか</span>
+<span class="co">// 0: ついてない</span>
+<span class="co">// ついてる場合</span>
+<span class="co">// 1: o (Alice) の勝ち</span>
+<span class="co">// 2: x (Bob) の勝ち</span>
+<span class="kw">inline</span>
+<span class="dt">int</span> is_goal(vector&lt;<span class="dt">int</span>&gt;&amp;v) {
+  <span class="cf">for</span> (<span class="dt">int</span> t=<span class="dv">1</span>; t&lt;<span class="dv">3</span>; ++t) {
+    rep (k, <span class="dv">3</span>) {
+      <span class="cf">if</span> ( v[<span class="dv">3</span> * k + <span class="dv">0</span>] == t
+       <span class="kw">and</span> v[<span class="dv">3</span> * k + <span class="dv">1</span>] == t
+       <span class="kw">and</span> v[<span class="dv">3</span> * k + <span class="dv">2</span>] == t ) <span class="cf">return</span> t;
+      <span class="cf">if</span> ( v[k + <span class="dv">0</span>] == t
+       <span class="kw">and</span> v[k + <span class="dv">3</span>] == t
+       <span class="kw">and</span> v[k + <span class="dv">6</span>] == t ) <span class="cf">return</span> t;
+    }
+    <span class="cf">if</span> (v[<span class="dv">0</span>] == t
+      <span class="kw">and</span> v[<span class="dv">4</span>] == t
+      <span class="kw">and</span> v[<span class="dv">8</span>] == t ) <span class="cf">return</span> t;
+    <span class="cf">if</span> (v[<span class="dv">2</span>] == t
+        <span class="kw">and</span> v[<span class="dv">4</span>] == t
+        <span class="kw">and</span> v[<span class="dv">6</span>] == t ) <span class="cf">return</span> t;
+  }
+  <span class="cf">return</span> <span class="dv">0</span>;
+}
+
+<span class="co">// search のなかで使う探索メモ</span>
+map&lt;vector&lt;<span class="dt">int</span>&gt;, <span class="dt">int</span>&gt; memo;
+
+<span class="co">// v: 盤の状態</span>
+<span class="co">// b: Aliceの手版であるか？の</span>
+<span class="co">//</span>
+<span class="co">// 返り値</span>
+<span class="co">// 0: 引き分け</span>
+<span class="co">// 1: Aliceの勝ち</span>
+<span class="co">// 2: Bobの勝ち</span>
+<span class="dt">int</span> search(vector&lt;<span class="dt">int</span>&gt; v, <span class="dt">bool</span> b) {
+  <span class="cf">if</span> (memo.count(v) &gt; <span class="dv">0</span>) <span class="cf">return</span> memo[v];
+  <span class="cf">if</span> (is_goal(v)) <span class="cf">return</span> memo[v] = is_goal(v);
+  <span class="cf">if</span> (is_full(v)) <span class="cf">return</span> memo[v] = <span class="dv">0</span>;
+  <span class="kw">auto</span> es = empties(v);
+  <span class="dt">int</span> t = b ? <span class="dv">1</span> : <span class="dv">2</span>;
+  <span class="dt">bool</span> drawable = <span class="kw">false</span>;
+  <span class="cf">for</span> (<span class="dt">int</span> e: es) {
+    v[e] = t;
+    <span class="co">// 状態をDFSする</span>
+    <span class="dt">int</span> r = search(v, (<span class="kw">not</span> b));
+    <span class="co">// それを指せば必勝なら勝ち</span>
+    <span class="cf">if</span> (r == t) <span class="cf">return</span> memo[v] = t;
+    <span class="co">// せめて引き分けにもっていけるかどうかメモしておく</span>
+    <span class="cf">if</span> (r == <span class="dv">0</span>) drawable = <span class="kw">true</span>;
+    v[e] = <span class="dv">0</span>;
+  }
+  <span class="co">// ここに到達するということは必勝の手は無かったということ</span>
+  <span class="cf">if</span> (drawable) <span class="cf">return</span> memo[v] = <span class="dv">0</span>;
+  <span class="co">// 引き分けにも出来ないのなら必敗</span>
+  <span class="cf">return</span> memo[v] = (<span class="dv">3</span> - t);
+}
+
+<span class="dt">int</span> solve(string s) {
+  vector&lt;<span class="dt">int</span>&gt; f(<span class="dv">9</span>); rep (i, <span class="dv">9</span>) f[i] = s[i] == <span class="st">&#39;s&#39;</span> ? <span class="dv">0</span> : s[i] == <span class="st">&#39;o&#39;</span> ? <span class="dv">1</span> : <span class="dv">2</span>;
+  <span class="dt">bool</span> b = num_empty(f) % <span class="dv">2</span> == <span class="dv">1</span>; <span class="co">// is o&#39;s turn?</span>
+  <span class="cf">return</span> search(f, b);
+}
+
+<span class="dt">int</span> main() {
+  string s;
+  <span class="cf">while</span> (getline(cin, s)) {
+    <span class="dt">int</span> res = solve(s);
+    cout &lt;&lt; ((res == <span class="dv">0</span>) ? <span class="st">&#39;d&#39;</span> : (res == <span class="dv">1</span>) ? <span class="st">&#39;o&#39;</span> : <span class="st">&#39;x&#39;</span>) &lt;&lt; endl;
+  }
+  <span class="cf">return</span> <span class="dv">0</span>;
+}</code></pre></div>
+<p>大した状態数もないだろうから、<br />
+実直に工夫なくDFSで全探索させた。</p>
+<h2 id="動作例">動作例</h2>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="fu">cat</span> input
+<span class="ex">sssssssss</span>
+<span class="ex">ssssossss</span>
+<span class="ex">ssssossxs</span>
+$ <span class="ex">./a.out</span> <span class="op">&lt;</span> input
+<span class="ex">d</span>
+<span class="ex">d</span>
+<span class="ex">o</span></code></pre></div>
+<p>すなわち</p>
+<pre><code>| | | |
+| | | |
+| | | |
+=&gt; draw
+
+| | | |
+| |o| |
+| | | |
+=&gt; draw
+
+| | | |
+| |o| |
+| |x| |
+=&gt; o wins</code></pre>
+<p>三目並べって経験上、よっぽど下手を打たない限り、引き分けになるイメージだ</p>
+<p><b>[1]</b> で、ちょっと他の人の提出も見てみた<br />
+<a href="http://judge.u-aizu.ac.jp/onlinejudge/review.jsp?rid=683724#1">AIZU ONLINE JUDGE: Code Review</a></p>
+<p>すごく短い。<br />
+ていうかこれは問題の解釈を間違えてた<br />
+なんか、読み込まれた盤面の上ですでに、決着が付いてるかどうかだけを判定する問題だったらしい</p>
+<p>だから当然、</p>
+<pre><code>| | | |
+| |o| |
+| |x| |</code></pre>
+<p>は <code>draw</code> と判定しないといけなかった<br />
+じゃあなんで私のは通ったんだろう<br />
+運が良かったのかな (入力が雑魚だったのかな）</p>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Mon Feb 17 15:12:51 JST 2014</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Mon Feb 17 15:12:51 JST 2014</h1>
+</header>
+<p>ン(ん)をそと発音する.</p>
+<ul>
+<li>〜タン → 〜たそ</li>
+<li>〜クン → 〜くそ</li>
+</ul>
+<p>気をつけた方が良い.</p>
+<h1 id="mon-feb-17-192301-jst-2014">Mon Feb 17 19:23:01 JST 2014</h1>
+<blockquote>
+<p>「プログラミングClojure 第2版 Stuart 川合訳」</p>
+</blockquote>
+<div class="sourceCode"><pre class="sourceCode clojure"><code class="sourceCode clojure">(<span class="bu">defn</span><span class="fu"> gcd </span>[x y]
+  (<span class="kw">if</span> (<span class="kw">&lt;</span> x y) (gcd y x)
+      (<span class="kw">let</span> [r (<span class="kw">mod</span> x y)]
+        (<span class="kw">if</span> (<span class="kw">zero?</span> r) y (<span class="kw">recur</span> y r)))))
+
+(<span class="bu">defn</span><span class="fu"> so </span>[x y z]
+  (<span class="kw">and</span> (<span class="kw">=</span> (gcd x y) <span class="dv">1</span>)
+       (<span class="kw">=</span> (gcd y z) <span class="dv">1</span>)))
+
+(<span class="bu">def</span><span class="fu"> pyts</span>
+  (<span class="kw">for</span> [c (<span class="kw">iterate</span> <span class="kw">inc</span> <span class="dv">3</span>)
+        b (<span class="kw">range</span> <span class="dv">1</span> c)
+        a (<span class="kw">range</span> <span class="dv">1</span> b)
+        <span class="at">:when</span> (<span class="kw">=</span> (<span class="kw">+</span> (<span class="kw">*</span> a a) (<span class="kw">*</span> b b)) (<span class="kw">*</span> c c))
+        <span class="at">:when</span> (so a b c)
+        ]
+        [a b c]))</code></pre></div>
+<p>clojureは再帰を使うよりも遅延シーケンスで表現する方がいいって本にあって. じゃあ<code>gcd</code>で、 <code>[x, y, x%y, ..., 0]</code> みたいなシーケンスが作れれば例えば最後から二つ目の要素が答えになる みたいな解き方もありそうだけど、<code>iterate</code>は無限シーケンスだし、 何を再帰を使わずにこんなシーケンスはどうやって作るんだろう. シーケンスの終わりの代わりに<code>nil</code>を使っちゃって、その一つ手前までを見るとか. 気持ち悪いから絶対嫌だ.</p>
+<p>あと、三つの数の互いに素って、二つの関係を見れば十分だっけ？十分な気がする.</p>
+</body>
+</html>

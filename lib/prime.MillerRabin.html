@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>prime.MillerRabin</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<h1 class="title">prime.MillerRabin</h1>
+</header>
+<h2 id="prime.millerrabin.cc"><a href="prime.MillerRabin.cc" class="uri">prime.MillerRabin.cc</a></h2>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="kw">namespace</span> Prime {
+  <span class="kw">template</span>&lt;<span class="kw">typename</span> Int&gt;
+  Int powmod(Int a, Int k, Int m) {
+    <span class="cf">if</span> (k == <span class="dv">0</span>) <span class="cf">return</span> <span class="dv">1</span>;
+    Int t = powmod(a, k/<span class="dv">2</span>, m);
+    t = (t * t) % m;
+    <span class="cf">if</span> (k&amp;<span class="dv">1</span>) t = (t * a) % m;
+    <span class="cf">return</span> t;
+  }
+
+  <span class="co">// Miller-Rabin test</span>
+  <span class="kw">template</span>&lt;<span class="kw">typename</span> Int=<span class="dt">int</span>&gt;
+  <span class="dt">bool</span> test(Int n) {
+    <span class="cf">if</span> (n&lt;<span class="dv">2</span>) <span class="cf">return</span> <span class="kw">false</span>;
+    <span class="cf">if</span> (n&lt;<span class="dv">4</span>) <span class="cf">return</span> <span class="kw">true</span>;
+    <span class="cf">if</span> (!(n&amp;<span class="dv">1</span>)) <span class="cf">return</span> <span class="kw">false</span>;
+
+    random_device dev;
+    mt19937 rand(dev());
+    Int d = n<span class="dv">-1</span>;
+    <span class="cf">while</span> (!(d&amp;<span class="dv">1</span>)) d/=<span class="dv">2</span>;
+    rep (_, <span class="dv">100</span>) {
+      Int a = rand()%(n<span class="dv">-1</span>) + <span class="dv">1</span>;
+      Int y = powmod&lt;Int&gt;(a,d,n);
+      Int t = d;
+      <span class="cf">while</span> (t!=n<span class="dv">-1</span> <span class="kw">and</span> y!=<span class="dv">1</span> <span class="kw">and</span> y!=n<span class="dv">-1</span>) {
+        y = (y * y) % n;
+        t &lt;&lt;= <span class="dv">1</span>;
+      }
+      <span class="cf">if</span> (y!=n<span class="dv">-1</span> <span class="kw">and</span> !(t&amp;<span class="dv">1</span>)) <span class="cf">return</span> <span class="kw">false</span>;
+    }
+    <span class="cf">return</span> <span class="kw">true</span>;
+  }
+}</code></pre></div>
+<h2 id="テスト">テスト</h2>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="dt">bool</span> isprime(<span class="dt">int</span> n) { <span class="co">// naiive</span>
+  <span class="cf">if</span> (n&lt;<span class="dv">2</span>) <span class="cf">return</span> <span class="kw">false</span>;
+  <span class="cf">for</span> (<span class="dt">int</span> i = <span class="dv">2</span>; i*i &lt;= n; ++i)
+    <span class="cf">if</span> (n % i == <span class="dv">0</span>) <span class="cf">return</span> <span class="kw">false</span>;
+  <span class="cf">return</span> <span class="kw">true</span>;
+}
+
+<span class="dt">int</span> main() {
+  <span class="at">const</span> <span class="dt">int</span> M = <span class="dv">10000</span>;
+  <span class="cf">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>; i &lt; M; ++i) {
+    <span class="cf">if</span>(isprime(i) != Prime::test(i)) {
+      cout &lt;&lt; i &lt;&lt; <span class="st">&#39; &#39;</span> &lt;&lt; isprime(i) &lt;&lt; <span class="st">&#39; &#39;</span> &lt;&lt; Prime::test(i) &lt;&lt; endl;
+      <span class="cf">return</span> <span class="dv">1</span>;
+    }
+  }
+  <span class="cf">return</span> <span class="dv">0</span>;
+}</code></pre></div>
+</body>
+</html>

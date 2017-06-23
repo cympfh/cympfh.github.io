@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sun Nov 8 05:40:34 JST 2015</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Sun Nov 8 05:40:34 JST 2015</h1>
+</header>
+<h2 id="code-runner-2015-予選b">CODE RUNNER 2015 予選B</h2>
+<ul>
+<li><a href="https://coderunner.jp/index.html">CODE RUNNER 2015</a></li>
+</ul>
+<p>こないだありました. 86位で本戦に出場します.</p>
+<h2 id="code-runner-2015-予選b-write-up">CODE RUNNER 2015 予選B Write Up</h2>
+<p>もうソースコードが手元に無いのだけれど、覚えてる内に覚えてることを書く.</p>
+<h3 id="問題">問題</h3>
+<p>問題ページは <a href="https://coderunner.jp/mypage-problem-pb.html">予選 B 問題</a> であるが、ログインしないと読めないので、概略を書く.</p>
+<p>状態について、</p>
+<ol type="1">
+<li>ユーザーは、部屋に入っているか入っていないかの状態を持つ.</li>
+<li>また、パワー (整数値) と、スコア (整数値) という状態を持つ.
+<ol type="1">
+<li>初期値として、部屋に入っていない、パワー 0、スコア 0.</li>
+</ol></li>
+</ol>
+<p>操作について、</p>
+<ol type="1">
+<li>ユーザーが出来る操作は2つある
+<ol type="1">
+<li>部屋に入っていないのなら入る、さもなくば、部屋の中において攻撃を行う</li>
+<li>部屋の情報を見る
+<ol type="1">
+<li>部屋に入っているとき、部屋の情報を JSON で得る (テキストで得ることもできる)</li>
+<li>さもなくば、部屋に入ってないよ、的な短いテキストが返ってくる</li>
+</ol></li>
+</ol></li>
+<li>本当は他にも、他のユーザーについての何か情報を得る操作があるけど、使わなかった.</li>
+</ol>
+<p>部屋について、</p>
+<ol type="1">
+<li>部屋に入ろうとすると、3人がマッチングなされて、一つの部屋に割り当てられる</li>
+<li>部屋には 10匹 のモンスターが一列に用意されている
+<ol type="1">
+<li>モンスターには HP (整数値) が割り振られている
+<ol type="1">
+<li>どんなHPを持つかについては事前情報はない</li>
+<li>部屋の情報を見ることで知る</li>
+</ol></li>
+</ol></li>
+<li>後述する攻撃によって、モンスター10匹が全員いなくなるか、入室してから1分すると、自動的に退室される
+<ol type="1">
+<li>自ら退室はできない</li>
+</ol></li>
+<li>退室時に、3人のユーザーに順位が与えられる
+<ol type="1">
+<li>順位は、部屋中で、それぞれのユーザーが、削ったHPの合計で付けられる</li>
+<li>その順位に応じて、ユーザーそれぞれにスコアが与えられる (加算される)
+<ol type="1">
+<li>普通に1,2,3位と順位が付けば、1000,600,300点である</li>
+<li>同順位が着くと、1,1,3位、じゃなくて2,2,3位、のように悪いように付けられて、600,600,300点が与えられる</li>
+</ol></li>
+</ol></li>
+</ol>
+<p>パワー、攻撃について、</p>
+<ol type="1">
+<li>パワーは始め 0 であるが、(現実の) 時間 (ミリ秒) と共に自動的に増加する
+<ol type="1">
+<li>まだ一度も攻撃をしたことないユーザーは、ゲーム開始時刻から、今の時刻の差 (ミリ秒) の2乗のパワーを持つ</li>
+<li>あるいは、前回の攻撃をした時刻から、今の時刻の差の2乗 のパワーを持つ</li>
+</ol></li>
+<li>攻撃という操作は、一列の先頭にいるモンスター一匹に対してのみ行う
+<ol type="1">
+<li>攻撃をすると、自分の持っているパワーだけ、攻撃されたモンスターのHPが削られる
+<ol type="1">
+<li>削られるHPとは、パワーとHPの最小値である</li>
+<li>パワーがHPを越えていれば、削るHPはHP分だけである</li>
+</ol></li>
+<li>HP 0 になったモンスターは即座に列から外れる</li>
+<li>攻撃が終わると自分のパワーは 0 になる</li>
+</ol></li>
+</ol>
+<p>部屋の情報について、</p>
+<ol type="1">
+<li>入室しているとき、部屋の情報を取ることができる</li>
+<li>部屋の情報とは、残っているモンスターのHP全て、自分のパワー、部屋にいる各ユーザーの、部屋中で削った総 HP
+<ol type="1">
+<li>他にもあったかもしれない</li>
+</ol></li>
+</ol>
+<p>スコア、ゲームの勝敗について</p>
+<ol type="1">
+<li>スコアは退室時に加算される</li>
+<li>現実時間の1分ごとに5%減少する</li>
+<li>ゲーム中のスコアの最大値で、ゲームの順位がつく</li>
+</ol>
+<h3 id="考えたこと">考えたこと</h3>
+<p>パワーは時間の二乗だから、例えば、1ms待って攻撃を2回するより、 2ms待って攻撃を1回する方がよい. しかし、他のユーザーもいる. 他のユーザーが先に攻撃してモンスターがいなくなっては、攻撃はできない. ギリギリまで待って、一回、大きな攻撃をするほうが良い.</p>
+<p>初めは、手で、数秒待って攻撃、を繰り返して、観察した. モンスターのHPは、多くは10進法で6桁、たまに7桁のようである. 他のユーザーのパワーが無い時に、 7桁のHPを持つモンスターを、一撃するとかなり有利だ.</p>
+<p>ここまでで、次のようなメインと成るスクリプトを書いた. このスクリプト自体は大した意味がないので、最後までこのままだった.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co">#!/bin/bash</span>
+<span class="co"># main.sh</span>
+<span class="ex">curl</span> <span class="va">$APIURL</span> <span class="co"># 入室</span>
+
+<span class="kw">while</span> <span class="bu">:</span><span class="kw">;</span> <span class="kw">do</span>
+  <span class="ex">curl</span> <span class="va">$GETINFO</span> <span class="op">&gt;</span> info.json
+  <span class="kw">if</span><span class="bu"> [</span> テスト<span class="bu"> ]</span>
+    <span class="ex">curl</span> <span class="va">$APIURL</span> <span class="co"># 攻撃</span>
+  <span class="kw">fi</span>
+  <span class="fu">sleep</span> 0.5
+<span class="kw">done</span></code></pre></div>
+<p>入室も攻撃も同じAPIなのが困る.</p>
+<ol type="1">
+<li>初めに入室をする</li>
+<li>次をループ
+<ol type="1">
+<li>部屋の情報を得る</li>
+<li>情報から何か調べて攻撃するタイミングであるかを計算する (テスト)</li>
+<li>攻撃するタイミングなら攻撃する</li>
+</ol></li>
+</ol>
+<p>部屋の情報は json で来るので、<code>info.json</code> として保存して、テスト中でこれを読む. 退室された時は、部屋の情報について json ではなく、 なんか適当な文字列が帰ってき、テストの中で失敗するので、 失敗したらプログラムを停止する、みたいな例外処理も、実際には書いた.</p>
+<p>従って、 次のように動かす.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">while</span> <span class="bu">:</span><span class="kw">;</span> <span class="kw">do</span> <span class="fu">bash</span> ./main.sh<span class="kw">;</span> <span class="fu">sleep</span> 0.1<span class="kw">;</span> <span class="kw">done</span></code></pre></div>
+<p><code>while</code> ループのなかで、一つの部屋についての処理が完結される、という想定.</p>
+<p>今までのCODE RUNNER での自分のやり方であるが (これで成功してきたわけではないのだが)、 まず、他のユーザーの情報を使わず、できるだけ少ない情報だけを処理して、割と勝てるやり方を模索して、 成功したら、徐々に他のユーザーの情報も使うようにしていき… とやる.</p>
+<h3 id="テスト">テスト</h3>
+<p>まずはじめは、 HPの大きなモンスターが先頭にいて、十分にパワーを持っていたら攻撃をする、 みたいなテストを書いた.</p>
+<p>使うデータは、自分のパワー <span class="math inline">\(p\)</span> と先頭モンスターの残りHP <span class="math inline">\(hp\)</span> だけ.</p>
+<ol type="1">
+<li><span class="math inline">\(hp &gt; 2e7\)</span> and <span class="math inline">\(p &gt; hp/2\)</span> ならば攻撃</li>
+<li><span class="math inline">\(hp &gt; 1e7\)</span> and <span class="math inline">\(p &gt; hp/1.5\)</span> ならば攻撃</li>
+<li><span class="math inline">\(hp &gt; 5e6\)</span> and <span class="math inline">\(p &gt; hp\)</span> ならば攻撃</li>
+</ol>
+<p>初期はこんなんだった. 気持ちとしては、すごい強い敵のHP半分以上削れば、他のユーザーは自分より少ないHPしか削れなくて、有利だろう.</p>
+<blockquote>
+<p>この時点で200位くらいをじっとしている</p>
+</blockquote>
+<p>他の方が話すに、次のような戦略を取る人が大半だったらしい:</p>
+<ul>
+<li><span class="math inline">\(min(hp, p) &gt; E\)</span> ならば攻撃</li>
+</ul>
+<p>で、他のユーザーの削った総HP数 (言いにくいな) をようやく使う.<br />
+自分のそれを <span class="math inline">\(h_0\)</span> 、他ユーザーのそれを <span class="math inline">\(h_1, h_2\)</span> (<span class="math inline">\(h_1 &gt; h_2\)</span>) とする.</p>
+<p>想像で次のような条件を追加した.</p>
+<ol type="1">
+<li>「勝ちすぎている」場合、攻撃をしない.
+<ol type="1">
+<li>勝ちすぎているとは、<span class="math inline">\(h_0 &gt; 2 h_1\)</span> とした</li>
+</ol></li>
+<li>「負けすぎている」場合、攻撃する
+<ol type="1">
+<li>負けすぎているとは、<span class="math inline">\(2 h_0 &lt; h_2\)</span> とした</li>
+</ol></li>
+</ol>
+<p>動かしてみて、最後の追い込みが足りずに負けることがわかった. つまり、最後のモンスターは弱くても、自分のパワーがちょっと小さくても、攻撃すれば部屋1位とれた、というケースが見られた. それに、パワーは、ある程度大きくなったら、使わないと損なのである. もちろん、次の部屋ででかいモンスターと当たれば、先制攻撃ができるが、 目の前の一位は取った方が良い.</p>
+<p>上の「負けすぎている」を修正する形で、次の「逆転できる」を追加した.</p>
+<ol type="1">
+<li>「逆転できる」場合、攻撃する
+<ol type="1">
+<li>逆転できるとは、<span class="math inline">\(h_0 + min(hp, p) &gt; h_1\)</span> である</li>
+</ol></li>
+</ol>
+<p>結果的には、これは良かった. ポイントとしては <span class="math inline">\(h_2\)</span> は見ないことである. これは2位を目指さずに常に1位を目指していることである. まあ、それはどうでもよくて. 部屋中序盤はともかく、中盤以降、 <span class="math inline">\(h_1\)</span> の人は <span class="math inline">\(h_2\)</span> の人に較べて優秀なのだ. その人の <span class="math inline">\(h\)</span> を参考にして、合わせることは意義がある.</p>
+<p>序盤でこれを使ってもしょうがないので、 <span class="math inline">\(p &gt; 1e7\)</span> の条件の下で、この「逆転できる」を、「負けすぎている」の代わりに用いた.</p>
+<p>動かしてみると、まあまあ割と勝てている. 他ユーザーの情報を使ってようやく、ランキングも上がってきた.</p>
+<blockquote>
+<p>50位くらい</p>
+</blockquote>
+<p>よくよく考えると、退室時の <span class="math inline">\(h_0 + h_1 + h_2\)</span> というのは、入室時に決まっていて、 モンスターのHPの合計値である (タイムアップによる退室のことは考えないことにした). ということは、いくつHP削れば絶対に勝てるか、というのは見積もれるのである.</p>
+<p>現時点の <span class="math inline">\(h_0, h_1, h_2 (h_1 &gt; h_2)\)</span> と、 モンスターのHP の列 <span class="math inline">\(hp_0 .. hp_n\)</span> を使って <span class="math display">\[h_0 &gt; h_1 + \sum_i hp_i\]</span> ならば、相手がどうやっても自分は勝つことが分かる (既に勝っている). 先ほどの 「勝ちすぎている」は、それはそれで良く効いていたので、 それは残して、「既に勝っている」を頭に追加した.</p>
+<p>逆に、残りのモンスター全員を自分一人で倒しても、勝てない場合も、もしかしたらある. 「既に負けている」も、同様に追加した.</p>
+<blockquote>
+<p>最高で29位までいった</p>
+</blockquote>
+<p>あとは、各パラメータを動かしながら調整した. ただ、そのころには他の人たちのAIも強くなり、 特にランキングも上げられなかった. 最後の方なんて、1/3の確率で部屋1位を取る運ゲーみたいな形になっていた.</p>
+<p>他の方たちも口にしていたが、 先頭のモンスターの残りHPが少なすぎて誰も攻撃したがらず、譲りあう、 囚人のジレンマ状態を、打破できなかったこと.</p>
+<p>また、早く退室できれば、時間あたりの稼げるスコアが高くなる、という戦略に、 終わってから気付いたが、 しかしどうすれば早く終わらせられるかは難しい.</p>
+<p>副作用的な嬉しさとして、 始めに書いた bash スクリプトは、テストのためのスクリプトファイルを、 テストの度に起動するだけなので、 動かしながらスクリプトファイルを変更すれば、再読み込みしてくれること.</p>
+</body>
+</html>

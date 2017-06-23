@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sat Aug 22 17:34:54 JST 2015</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Sat Aug 22 17:34:54 JST 2015</h1>
+</header>
+<h2 id="問題">問題</h2>
+<p><a href="http://yukicoder.me/problems/581">No.267 トランプソート - yukicoder</a></p>
+<h2 id="解答">解答</h2>
+<p><a href="http://yukicoder.me/submissions/45138" class="uri">http://yukicoder.me/submissions/45138</a></p>
+<h2 id="トランプカードの入出力クラス">トランプカードの入出力クラス</h2>
+<p>自前クラスの入出力と、<code>compare&lt;</code> を定義するだけの実装ゲー</p>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="pp">#include </span><span class="im">&lt;bits/stdc++.h&gt;</span>
+<span class="kw">using</span> <span class="kw">namespace</span> std;
+
+<span class="pp">#define rep(i,n) for(int i=0;i&lt;(n);++i)</span>
+<span class="pp">#define trace(var) cerr&lt;&lt;&quot;&gt;&gt;&gt; &quot;&lt;&lt;#var&lt;&lt;&quot; = &quot;&lt;&lt;var&lt;&lt;endl;</span>
+
+<span class="kw">template</span>&lt;<span class="kw">class</span> T&gt; <span class="kw">inline</span>
+ostream&amp; <span class="kw">operator</span>&lt;&lt;(ostream&amp;os, vector&lt;T&gt; v) {
+  <span class="cf">if</span> (v.size() == <span class="dv">0</span>) { <span class="cf">return</span> os &lt;&lt; <span class="st">&quot;(empty)&quot;</span>; }
+  os &lt;&lt; v[<span class="dv">0</span>];
+  <span class="cf">for</span> (<span class="dt">int</span> i=<span class="dv">1</span>, len=v.size(); i&lt;len; ++i) os &lt;&lt; <span class="st">&#39; &#39;</span> &lt;&lt; v[i];
+  <span class="cf">return</span> os;
+}
+
+<span class="kw">template</span>&lt;<span class="kw">class</span> T&gt; <span class="kw">inline</span>
+istream&amp; <span class="kw">operator</span>&gt;&gt;(istream&amp;is, vector&lt;T&gt;&amp;v) {
+  rep (i, v.size()) is &gt;&gt; v[i];
+  <span class="cf">return</span> is;
+}
+
+<span class="kw">enum</span> Suit { D, C, H, S };
+<span class="kw">struct</span> Card {
+  Suit s;
+  <span class="dt">int</span> n;
+  Card() {};
+  Card(Suit _s, <span class="dt">int</span> _n) : s(_s), n(_n) {};
+};
+
+ostream&amp; <span class="kw">operator</span>&lt;&lt;(ostream&amp;os, Suit&amp;s) {
+  <span class="cf">if</span> (s == D) os &lt;&lt; <span class="st">&#39;D&#39;</span>;
+  <span class="cf">else</span> <span class="cf">if</span> (s == H) os &lt;&lt; <span class="st">&#39;H&#39;</span>;
+  <span class="cf">else</span> <span class="cf">if</span> (s == C) os &lt;&lt; <span class="st">&#39;C&#39;</span>;
+  <span class="cf">else</span> <span class="cf">if</span> (s == S) os &lt;&lt; <span class="st">&#39;S&#39;</span>;
+  <span class="cf">else</span> cerr &lt;&lt; <span class="st">&quot;Suit show Error&quot;</span> &lt;&lt; endl;
+  <span class="cf">return</span> os;
+}
+
+ostream&amp; <span class="kw">operator</span>&lt;&lt;(ostream&amp;os, Card&amp;c) {
+  os &lt;&lt; c.s;
+  <span class="cf">if</span> (c.n == <span class="dv">1</span>) os &lt;&lt; <span class="st">&#39;A&#39;</span>;
+  <span class="cf">else</span> <span class="cf">if</span> (c.n == <span class="dv">10</span>) os &lt;&lt; <span class="st">&#39;T&#39;</span>;
+  <span class="cf">else</span> <span class="cf">if</span> (c.n == <span class="dv">11</span>) os &lt;&lt; <span class="st">&#39;J&#39;</span>;
+  <span class="cf">else</span> <span class="cf">if</span> (c.n == <span class="dv">12</span>) os &lt;&lt; <span class="st">&#39;Q&#39;</span>;
+  <span class="cf">else</span> <span class="cf">if</span> (c.n == <span class="dv">13</span>) os &lt;&lt; <span class="st">&#39;K&#39;</span>;
+  <span class="cf">else</span> os &lt;&lt; c.n;
+  <span class="cf">return</span> os;
+}
+
+istream&amp; <span class="kw">operator</span>&gt;&gt;(istream&amp;is, Suit&amp;s) {
+  <span class="dt">char</span> c; is &gt;&gt; c;
+  <span class="cf">if</span> (c == <span class="st">&#39;D&#39;</span>) s = D;
+  <span class="cf">else</span> <span class="cf">if</span> (c == <span class="st">&#39;H&#39;</span>) s = H;
+  <span class="cf">else</span> <span class="cf">if</span> (c == <span class="st">&#39;C&#39;</span>) s = C;
+  <span class="cf">else</span> <span class="cf">if</span> (c == <span class="st">&#39;S&#39;</span>) s = S;
+  <span class="cf">else</span> cerr &lt;&lt; <span class="st">&quot;Suit read Error&quot;</span> &lt;&lt; endl;
+  <span class="cf">return</span> is;
+}
+
+istream&amp; <span class="kw">operator</span>&gt;&gt;(istream&amp;is, Card&amp;c) {
+  Suit s; is &gt;&gt; s;
+  <span class="dt">char</span> n; is &gt;&gt; n;
+  c.s = s;
+  <span class="cf">if</span> (n == <span class="st">&#39;A&#39;</span>) c.n = <span class="dv">1</span>;
+  <span class="cf">else</span> <span class="cf">if</span> (n == <span class="st">&#39;T&#39;</span>) c.n = <span class="dv">10</span>;
+  <span class="cf">else</span> <span class="cf">if</span> (n == <span class="st">&#39;J&#39;</span>) c.n = <span class="dv">11</span>;
+  <span class="cf">else</span> <span class="cf">if</span> (n == <span class="st">&#39;Q&#39;</span>) c.n = <span class="dv">12</span>;
+  <span class="cf">else</span> <span class="cf">if</span> (n == <span class="st">&#39;K&#39;</span>) c.n = <span class="dv">13</span>;
+  <span class="cf">else</span> c.n = n - <span class="st">&#39;0&#39;</span>;
+  <span class="cf">return</span> is;
+}
+
+<span class="dt">bool</span> <span class="kw">operator</span>&lt;(<span class="at">const</span> Card&amp; lh, <span class="at">const</span> Card&amp; rh) {
+  <span class="cf">if</span> (lh.s != rh.s) <span class="cf">return</span> lh.s &lt; rh.s;
+  <span class="cf">return</span> lh.n &lt; rh.n;
+}
+
+<span class="dt">int</span> main() {
+
+  <span class="dt">int</span> n; cin &gt;&gt; n;
+  vector&lt;Card&gt; cs(n); cin &gt;&gt; cs;
+  sort(begin(cs), end(cs));
+  cout &lt;&lt; cs &lt;&lt; endl;
+
+  <span class="cf">return</span> <span class="dv">0</span>;
+}</code></pre></div>
+<p><code>vector&lt;T&gt;</code> の入出力はテンプレに入れてるが、重宝している. 特に入力はしょっちゅう使うし、 出力は問題に依存するが、yukicoderでは私の定義の形でそのまま使えることが多い気がする.</p>
+</body>
+</html>

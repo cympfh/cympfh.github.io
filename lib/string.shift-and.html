@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Shift-And アルゴリズム</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<h1 class="title">Shift-And アルゴリズム</h1>
+</header>
+<ul>
+<li>文字列 <code>text</code>, <code>pattern</code> について、<code>text</code> 中に <code>pattern</code> が部分文字列として初めて出現する位置を返す
+<ul>
+<li>大体 <span class="math inline">\(O(n)\)</span></li>
+<li>Rust では位置を <code>Option&lt;usize&gt;</code> とし、出現しない場合を <code>None</code> で表現する</li>
+<li>C++ では <code>int</code> で返し、出現しない場合を <code>-1</code> で表現する</li>
+</ul></li>
+</ul>
+<h2 id="string.shift-and.rs"><a href="string.shift-and.rs" class="uri">string.shift-and.rs</a></h2>
+<ul>
+<li><code>pattern</code> 長がusizeの大きさ (32bit or 64bit) 以下であることを仮定
+<ul>
+<li>マシン依存</li>
+</ul></li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> shift_and(text: &amp;<span class="dt">String</span>, pattern: &amp;<span class="dt">String</span>) -&gt; <span class="dt">Option</span>&lt;<span class="dt">usize</span>&gt; {
+    <span class="kw">let</span> text_chars = text.chars().map(|c| c <span class="kw">as</span> <span class="dt">usize</span>).collect::&lt;<span class="dt">Vec</span>&lt;_&gt;&gt;();
+    <span class="kw">let</span> pattern_chars = pattern.chars().map(|c| c <span class="kw">as</span> <span class="dt">usize</span>).collect::&lt;<span class="dt">Vec</span>&lt;_&gt;&gt;();
+    <span class="kw">let</span> n = text.len();
+    <span class="kw">let</span> m = pattern.len();
+    <span class="kw">let</span> g = <span class="dv">1</span> &lt;&lt; (m - <span class="dv">1</span>);
+
+    <span class="kw">let</span> <span class="kw">mut</span> d = [<span class="dv">0</span>; <span class="dv">300</span>];
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.m { d[pattern_chars[i]] ^= <span class="dv">1</span> &lt;&lt; i }
+
+    <span class="kw">let</span> <span class="kw">mut</span> x: <span class="dt">usize</span> = <span class="dv">0</span>;
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.n {
+        x = (<span class="dv">1</span> | (x &lt;&lt; <span class="dv">1</span>)) &amp; d[text_chars[i]];
+        <span class="kw">if</span> x &amp; g &gt; <span class="dv">0</span> { <span class="kw">return</span> <span class="cn">Some</span>(i+<span class="dv">1</span>-m) }
+    }
+    <span class="kw">return</span> <span class="cn">None</span>
+}</code></pre></div>
+<h2 id="example">Example</h2>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> test(s: &amp;<span class="dt">str</span>, t: &amp;<span class="dt">str</span>) {
+    <span class="kw">let</span> a = <span class="dt">String</span>::from(s);
+    <span class="kw">let</span> b = <span class="dt">String</span>::from(t);
+    <span class="pp">println!</span>(<span class="st">&quot;{:?} {:?} {:?}&quot;</span>, s, t, shift_and(&amp;a, &amp;b));
+}
+
+<span class="kw">fn</span> main() {
+    test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;BCX&quot;</span>);    <span class="co">// &quot;ABC&quot; &quot;BCX&quot; None</span>
+    test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;BX&quot;</span>);     <span class="co">// &quot;ABC&quot; &quot;BX&quot; None</span>
+    test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;X&quot;</span>);      <span class="co">// &quot;ABC&quot; &quot;X&quot; None</span>
+    test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;BC&quot;</span>);     <span class="co">// &quot;ABC&quot; &quot;BC&quot; Some(1)</span>
+    test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;B&quot;</span>);      <span class="co">// &quot;ABC&quot; &quot;B&quot; Some(1)</span>
+    test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;C&quot;</span>);      <span class="co">// &quot;ABC&quot; &quot;C&quot; Some(2)</span>
+    test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;AC&quot;</span>);     <span class="co">// &quot;ABC&quot; &quot;AC&quot; None</span>
+    test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;AB&quot;</span>);     <span class="co">// &quot;ABC&quot; &quot;AB&quot; Some(0)</span>
+    test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;A&quot;</span>);      <span class="co">// &quot;ABC&quot; &quot;A&quot; Some(0)</span>
+    test(<span class="st">&quot;BACABAB&quot;</span>, <span class="st">&quot;AB&quot;</span>); <span class="co">// &quot;BACABAB&quot; &quot;AB&quot; Some(3)</span>
+}</code></pre></div>
+<h2 id="string.shift-and.cc"><a href="string.shift-and.cc" class="uri">string.shift-and.cc</a></h2>
+<ul>
+<li><code>pattern</code> 長が32以下であることを仮定</li>
+<li>64以下なら unsigned long に切り替えればまだ使える</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="dt">int</span> shift_and(string text, string pattern) {
+  <span class="kw">using</span> T = <span class="dt">unsigned</span> <span class="dt">int</span>;
+  <span class="co">// using T = unsigned long</span>
+
+  <span class="at">const</span> <span class="dt">int</span> n = text.size();
+  <span class="at">const</span> <span class="dt">int</span> m = pattern.size();
+  assert(<span class="kw">sizeof</span>(T) * <span class="dv">8</span> &gt;= m);
+
+  <span class="at">const</span> T M = <span class="dv">1</span> &lt;&lt; (m - <span class="dv">1</span>);
+  T d[<span class="dv">300</span>] = {<span class="dv">0</span>};
+  <span class="co">// map&lt;char, T&gt; d;</span>
+
+  rep (i, m) d[pattern[i]] ^= <span class="dv">1</span> &lt;&lt; i;
+  T x = <span class="dv">0</span>;
+  rep (i, n) {
+    x = (<span class="dv">1</span> | (x &lt;&lt; <span class="dv">1</span>)) &amp; d[text[i]];
+    <span class="cf">if</span> (x &amp; M) <span class="cf">return</span> i - m + <span class="dv">1</span>;
+  }
+  <span class="cf">return</span> <span class="dv">-1</span>;
+}</code></pre></div>
+<h2 id="example-1">Example</h2>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="dt">void</span> test(string s, string t) {
+  <span class="kw">auto</span> r = shift_and(s, t);
+  cout &lt;&lt; s &lt;&lt; <span class="st">&#39; &#39;</span> &lt;&lt; t &lt;&lt; <span class="st">&#39; &#39;</span> &lt;&lt; r &lt;&lt; endl;
+}
+
+<span class="dt">int</span> main()
+{
+  test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;BCX&quot;</span>);    <span class="co">// ABC BCX -1</span>
+  test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;BX&quot;</span>);     <span class="co">// ABC BX -1</span>
+  test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;X&quot;</span>);      <span class="co">// ABC X -1</span>
+  test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;BC&quot;</span>);     <span class="co">// ABC BC 1</span>
+  test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;B&quot;</span>);      <span class="co">// ABC B 1</span>
+  test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;C&quot;</span>);      <span class="co">// ABC C 2</span>
+  test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;AC&quot;</span>);     <span class="co">// ABC AC -1</span>
+  test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;AB&quot;</span>);     <span class="co">// ABC AB 0</span>
+  test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;A&quot;</span>);      <span class="co">// ABC A 0</span>
+  test(<span class="st">&quot;BACABAB&quot;</span>, <span class="st">&quot;AB&quot;</span>); <span class="co">// BACABAB AB 3</span>
+}</code></pre></div>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Mon Aug 26 09:51:59 JST 2013</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Mon Aug 26 09:51:59 JST 2013</h1>
+</header>
+<h2 id="j言語-fizzbuzz">J言語, FizzBuzz</h2>
+<p>またJ言語で遊ぶ. FizzBuzz 書くなどしてみよう.</p>
+<p>J言語でifやforなどの制御構造は用意はされてるけど それを使うのはJ言語らしくな〜い というどこかに書いてあった気がするので使わないことにしよう</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">idx n <span class="fu">|</span> n <span class="ot">`mod`</span> <span class="dv">15</span> <span class="fu">==</span> <span class="dv">0</span> <span class="fu">=</span> <span class="dv">3</span>
+      <span class="fu">|</span> n <span class="ot">`mod`</span> <span class="dv">5</span> <span class="fu">==</span> <span class="dv">0</span> <span class="fu">=</span> <span class="dv">2</span>
+      <span class="fu">|</span> n <span class="ot">`mod`</span> <span class="dv">3</span> <span class="fu">==</span> <span class="dv">0</span> <span class="fu">=</span> <span class="dv">1</span>
+      <span class="fu">|</span> n <span class="ot">`mod`</span> <span class="dv">1</span> <span class="fu">==</span> <span class="dv">0</span> <span class="fu">=</span> <span class="dv">0</span>
+
+fizzbuzz n <span class="fu">=</span> [show n, <span class="st">&quot;Fizz&quot;</span>, <span class="st">&quot;Buzz&quot;</span>, <span class="st">&quot;FizzBuzz&quot;</span>] <span class="fu">!!</span> (idx n)
+
+main <span class="fu">=</span> print <span class="fu">$</span> map fizzbuzz [<span class="dv">1</span><span class="fu">..</span><span class="dv">100</span>]</code></pre></div>
+<p>思いついたのは，こういうやり方</p>
+<pre class="j"><code>idx =: (0=5|]) + 2 * 0=3|]</code></pre>
+<p>大変そのままである もっとJらしく書くべきかもと</p>
+<pre class="j"><code>idx =: +/ @ (1 2 # 0=3 5 |])</code></pre>
+<p>書いててわかったことに，Jでは全ては右結合と思っていたけれど， <span class="citation" data-cites="のような接続詞は例外らしい">@のような接続詞は例外らしい</span> 詰めれば，短くはなってるか？でも分かりにくくは，なった</p>
+<pre class="j"><code>   table =: 13 : &#39;(y; &#39;&#39;Fizz&#39;&#39;; &#39;&#39;Buzz&#39;&#39;; &#39;&#39;FizzBuzz&#39;&#39;)&#39;
+   table
+(&lt;;._1 &#39; Fizz Buzz FizzBuzz&#39;) ;~ ]</code></pre>
+<p><code>13 : 'hogehoge'</code> という明示的定義をすれば，新しい演算子を学べる</p>
+<pre class="j"><code>   table 0
+┌─┬────┬────┬────────┐
+│0│Fizz│Buzz│FizzBuzz│
+└─┴────┴────┴────────┘
+   table 1
+┌─┬────┬────┬────────┐
+│1│Fizz│Buzz│FizzBuzz│
+└─┴────┴────┴────────┘
+
+   fizzbuzz =: idx { table</code></pre>
+<p>できた！</p>
+<pre class="j"><code>   fizzbuzz&quot;0 (i.6)
+┌────────┬─┬─┬────┬─┬────┐
+│FizzBuzz│1│2│Buzz│4│Fizz│
+└────────┴─┴─┴────┴─┴────┘</code></pre>
+<p>文字列を入れるためにボックス使ったけど Open (アンボックス)するのは &gt; という演算子だったはず</p>
+<pre><code>   &gt; fizzbuzz&quot;0 (i.6)
+|domain error
+|       &gt; fizzbuzz&quot;0(i.6)</code></pre>
+<p>あー，Openはボックスから配列にするけど，配列ってのは中の型が揃ってる のが前提なのだった．</p>
+<p><code>&quot;:</code> は整数を文字列に変換する</p>
+<pre class="j"><code>   table =: 13 : &#39;(&quot;: y); &#39;&#39;Fizz&#39;&#39;; &#39;&#39;Buzz&#39;&#39;; &#39;&#39;FizzBuzz&#39;&#39; &#39;
+   table
+(&lt;;._1 &#39; Fizz Buzz FizzBuzz&#39;) ;~ &quot;:
+   fizzbuzz 24
+Fizz</code></pre>
+<pre class="j"><code>   fizzbuzz&quot;0 (i.6)
+FizzBuzz
+1
+2
+Fizz
+4
+Buzz</code></pre>
+<p>なんか勝手に改行されて表示されてるのが怪しいけど，できた！</p>
+<hr />
+<p>この <code>(&lt;;._1 ' Fizz Buzz FizzBuzz') ;~ &quot;:</code> については<br />
+http://www.jsoftware.com/help/dictionary/d331.htm</p>
+<p><code>_1</code> という数字に一般の意味はない？ ただ <code>m ;. _1</code> の場合， <code>' hoge fuga'</code> という文字列を <code>hoge , fuga</code> に分割して，それぞれに m を適用して返す，というだけらしい</p>
+<h1 id="mon-aug-26-112546-jst-2013">Mon Aug 26 11:25:46 JST 2013</h1>
+<h2 id="日記">日記</h2>
+<p>2013/8/24 (Sat.) に上野，国立科学博物館で「深海」という展示を見ました この日付は幾分か意味を持っていることをメモしておきます</p>
+<h3 id="追記-sun-jan-24-004440-jst-2016">追記 (Sun Jan 24 00:44:40 JST 2016)</h3>
+<p>意味が全く思い出せない.</p>
+<hr />
+<footer>
+    <p style='text-align: right'>
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+</body>
+</html>

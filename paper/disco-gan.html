@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Learning to Discover Cross-Domain Relations with Generative Adversarial Networks</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/
+    </a>
+</h1>
+<header>
+<h1 class="title">Learning to Discover Cross-Domain Relations with Generative Adversarial Networks</h1>
+</header>
+<ul>
+<li>
+url: <a href=https://arxiv.org/abs/1703.05192>https://arxiv.org/abs/1703.05192</a>
+</li>
+<li>
+tags: <span class="tag"><a href=index.html#深層学習>深層学習</a></span> <span class="tag"><a href=index.html#GAN>GAN</a></span>
+</li>
+</ul>
+<h2 id="論文概要">論文概要</h2>
+<p>異なるドメインの間の対応関係を教師ナシで学習する. などと言うと大袈裟だが、ドメイン A の画像からドメイン B らしき画像に GAN を用いて学習するというだけ.</p>
+<p>論文の初めの例 (Figure 1) では、 鞄の画像を入力すると同じような色と材質で出来た靴の画像が出力され、 靴の画像を入力するとやはり同じような色と材質で出来た鞄の画像が出力される.</p>
+<h2 id="手法">手法</h2>
+<p>ドメインA, B の間の変換を行う <span class="math inline">\(G_{AB}\)</span> と <span class="math inline">\(G_{BA}\)</span> とを NNs (CNN+DCNN) で構成する.</p>
+<p>GAN としては <span class="math inline">\(G_{AB}(x_A)\)</span> と <span class="math inline">\(x_B\)</span> の区別をするものと <span class="math inline">\(G_{BA}(x_B)\)</span> と <span class="math inline">\(x_A\)</span> との区別をするものの２つを学習させることで、 <span class="math inline">\(G_{AB}\)</span> はドメイン A の画像をドメイン B の画像らしく変換する.</p>
+<p>以上.</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sat Jul 27 16:56:51 JST 2013</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Sat Jul 27 16:56:51 JST 2013</h1>
+</header>
+<h2 id="haskell-のデータ構築子に中置記法が使えた話">Haskell のデータ構築子に中置記法が使えた話</h2>
+<p>データ構築子に中置記法使えたんだ！</p>
+<p><code>:^:</code> っていう文法があるみたい？</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="dt">Prelude</span><span class="fu">&gt;</span> <span class="kw">data</span> <span class="dt">Tree</span> a <span class="fu">=</span> <span class="dt">Leaf</span> a <span class="fu">|</span> <span class="dt">Tree</span> a <span class="fu">:^:</span> <span class="dt">Tree</span> a <span class="kw">deriving</span> <span class="dt">Show</span>
+<span class="dt">Prelude</span><span class="fu">&gt;</span> <span class="kw">let</span> treeMap f t <span class="fu">=</span> <span class="kw">case</span> t <span class="kw">of</span> { <span class="dt">Leaf</span> x <span class="ot">-&gt;</span> <span class="dt">Leaf</span> <span class="fu">$</span> f x ; l <span class="fu">:^:</span> r <span class="ot">-&gt;</span> (treeMap f l) <span class="fu">:^:</span> (treeMap f r) }
+<span class="dt">Prelude</span><span class="fu">&gt;</span> treeMap succ ((<span class="dt">Leaf</span> <span class="dv">0</span>) <span class="fu">:^:</span> (((<span class="dt">Leaf</span> <span class="dv">2</span>) <span class="fu">:^:</span> (<span class="dt">Leaf</span> <span class="dv">3</span>)) <span class="fu">:^:</span> (<span class="dt">Leaf</span> <span class="dv">4</span>)))
+<span class="dt">Leaf</span> <span class="dv">1</span> <span class="fu">:^:</span> ((<span class="dt">Leaf</span> <span class="dv">3</span> <span class="fu">:^:</span> <span class="dt">Leaf</span> <span class="dv">4</span>) <span class="fu">:^:</span> <span class="dt">Leaf</span> <span class="dv">5</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">data</span> <span class="dt">Tr</span> a <span class="fu">=</span> <span class="dt">Lf</span> a <span class="fu">|</span> <span class="dt">Tr</span> a <span class="fu">:^:</span> <span class="dt">Tr</span> a <span class="kw">deriving</span> <span class="dt">Show</span>
+
+<span class="kw">instance</span> <span class="dt">Functor</span> <span class="dt">Tr</span> <span class="kw">where</span>
+  fmap f (<span class="dt">Lf</span> x) <span class="fu">=</span> <span class="dt">Lf</span> (f x)
+  fmap f (l <span class="fu">:^:</span> r) <span class="fu">=</span> (fmap f l) <span class="fu">:^:</span> (fmap f r)
+
+main <span class="fu">=</span> print <span class="fu">$</span> a <span class="kw">where</span>
+  t <span class="fu">=</span> ((<span class="dt">Lf</span> <span class="dv">1</span> <span class="fu">:^:</span> <span class="dt">Lf</span> <span class="dv">2</span>) <span class="fu">:^:</span> <span class="dt">Lf</span> <span class="dv">3</span>) <span class="fu">:^:</span> <span class="dt">Lf</span> <span class="dv">4</span>
+  a <span class="fu">=</span> fmap (<span class="fu">+</span><span class="dv">1</span>) t</code></pre></div>
+<h2 id="追記-tue-aug-6-104214-jst-2013">追記 (Tue Aug 6 10:42:14 JST 2013)</h2>
+<p>別に <code>:^:</code> じゃなくても，なんだっていいらしい． 使われてないトークンなら で，コロンで挟むようなものは定義されてることがないことに なってるらしいです. 自分で新しく使うのに，後腐れがないだとか</p>
+<hr />
+<footer>
+    <p style='text-align: right'>
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+</body>
+</html>

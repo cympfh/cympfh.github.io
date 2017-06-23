@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Mon Jan 11 23:11:17 JST 2016</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Mon Jan 11 23:11:17 JST 2016</h1>
+</header>
+<h2 id="linux-terminal-ranger">Linux, terminal, ranger</h2>
+<p>ranger はターミナルから使うCLIなファイルマネージャ.</p>
+<figure>
+<img src="../../img/2016/11a.jpg" />
+</figure>
+<ul>
+<li><a href="https://www.google.co.jp/search?site=imghp&amp;tbm=isch&amp;source=hp&amp;biw=1200&amp;bih=1495&amp;q=ranger+cli&amp;oq=ranger+cli&amp;gs_l=img.3..0i19l10.1506.2517.0.2666.10.10.0.0.0.0.184.942.6j3.9.0....0...1ac.1.64.img..1.9.940.9D9kIicUoQg">ranger cli | 画像検索</a></li>
+<li><a href="http://ranger.nongnu.org/">ranger</a></li>
+<li><a href="http://ranger.nongnu.org/ranger.1.html">man</a></li>
+</ul>
+<p>もちろん、 いわゆる (もちろん GUI の) ファイルマネージャ (e.g. nautilus, thunar) と同様に、 当たり前のファイルの操作ができる. それでCUI. でも、それだけなら vim でいい. 普通、GUI のファイルマネージャをわざわざ起動するのは、 画像や動画のサムネイルを見て直観的にファイルの移動や削除を行いたいから.</p>
+<p>ranger は、できるだけ徹底的にプレビュー機能がついている. 動画ならサムネイルを生成するし、 テキストファイルのちょっとしたプレビューもある. その際には可能な限りの外部コマンドを使ってる (<code>ranger/data/scope.sh</code>). ソースコードなら、<code>highlight</code> があれば、ハイライトして (htmlを出力する) から表示する (htmlはw3mを使う). 画像なら、<code>w3mimgdisplay</code> を使って画像をターミナルに表示してしまう (頭の画像). w3m がなければ lynx を使う. lynx がなければ...</p>
+<h2 id="install">INSTALL</h2>
+<p><code>apt-get</code> にもあるけど古い. バージョン 1.7代が今の最新. 中身は実はただのスクリプトファイルなので、頭に貼った公式のwebページから直接ダウンロードしてくるのがいい.</p>
+<p>ちなみにデフォルトだと、プレビュー機能はオフになってる. 動作が遅くなるしね.</p>
+<p>画像のプレビューなら (vim 同様に)</p>
+<pre><code>:set preview_images true</code></pre>
+<p>すると機能がオンになる (タブ補完が効く). <code>true</code> ってのは、<code>on/On/true/True</code> でもいいし、 対義語は <code>off/Off/false/False</code>. 設定ファイルを用意しておくことができて (後述)、 それに予め書いておけば、毎度設定する必要はない.</p>
+<h2 id="gnu-screen-sixel">GNU screen, SIXEL</h2>
+<p>私が使っているターミナルは terminator っていうんだけど、 まあ、最近のなら、大抵、画像を表示する. (<code>apt-get w3m-img</code> して、 <code>w3m google.co.jp</code> してみるといい.)</p>
+<p>しかしながら、 私はいつも、terminator の上に更に GNU screen を実行してして、 その上で全ての操作をしている.</p>
+<figure>
+<img src="../../img/2016/11b.jpg" />
+</figure>
+<p>どうやら、GNU screen は画像を表示できないらしい.</p>
+<p>そうだった、そうだった. それでこれだ:</p>
+<ul>
+<li><a href="http://savannah.gnu.org/bugs/?45506">GNU Screen - バグ: bug #45506, sixel integration [Savannah]</a></li>
+</ul>
+<p>見方がよくわからないけれど、たぶんまだ組み込まれてはいないんだよね、たぶん</p>
+<p>本体に組み込まれてないなら、無理に使いたくない. 一回だけデタッチして任意のコマンドを一つだけ実行して、 それが終了したら自動的にアタッチしてくれる、みたいなコマンドがあればいいんだけど.</p>
+<pre><code>terminator -e ranger .</code></pre>
+<p>で誤魔化そう.</p>
+<h2 id="設定ファイル">設定ファイル</h2>
+<p>こんな感じ</p>
+<pre><code>   cat ~/.config/ranger/rc.conf
+set preview_files true
+set preview_images true
+set tilde_in_titlebar true</code></pre>
+<p>設定項目は、起動した ranger の上で、<code>?</code> <code>s</code> を順にタイプすると、 設定事項のリストが出てくる.</p>
+<h2 id="でも正直">でも正直</h2>
+<p>受け売りで色々書いたけど、画像のプレビューはできたけど、 pdf のプレビューとかソースコードのハイライトとか、 本来は出来るんだろうけど、 まだ手元で再現できてない. 設定が面倒すぎるという印象. しかも、最悪自分で(bash) スクリプトを弄ってね、という姿勢らしい.</p>
+</body>
+</html>

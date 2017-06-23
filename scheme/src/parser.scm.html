@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+</head>
+<body>
+<pre class="sourceCode scheme"><code class="sourceCode scheme">(use parser.peg)
+<span class="co">; reference for parser.peg:  http://d.hatena.ne.jp/mjt/20110626/p2 </span>
+
+; parser.peg を使うテスト
+
+; 型環境(signature) とラムダ項をパーズする．
+
+; 型環境  ::= name : type [, 型環境]
+
+; type ::= Typename (頭が大文字ならそれはプリミティブ型)
+;        | a | b | .. (頭が小文字ならそれは多相型)
+<span class="co">;        | type -&gt; type</span>
+<span class="co">;        | (type) -&gt; type</span>
+
+; ラムダ項 ::= <span class="dv">0</span> | <span class="dv">1</span> | <span class="dv">2</span> | ..
+<span class="co">;            | #t | # f</span>
+<span class="co">;            | a | b | .. | y | z | aa | ab | ..</span>
+;            | (ラムダ項 ラムダ項)
+;            | ^x -&gt; ラムダ項
+
+(<span class="kw">define</span><span class="fu"> parse-lambda</span>
+    (<span class="kw">letrec</span> ((hat ($c <span class="ch">#\^</span>))
+             (parel ($seq spaces ($c <span class="ch">#\(</span>) spaces))
+             (parer ($seq spaces ($c <span class="ch">#\)</span>) spaces))
+             (shp ($c <span class="ch">#\#</span>))
+             (arrow ($seq spaces ($string <span class="st">&quot;-&gt;&quot;</span>) spaces))
+
+             (id  ($many1 ($one-of #[a-z\-\?])))
+             (var ($do (id id) ($return `(var . ,(<span class="kw">list-&gt;string</span> id)) )))
+
+             (int ($do (n ($many1 ($one-of #[<span class="dv">0-9</span>])))
+                       ($return (<span class="kw">cons</span> &#39;int
+                            (read-from-string (<span class="kw">list-&gt;string</span> n))))))
+             (true ($do (s ($string <span class="st">&quot;t&quot;</span>)) ($return (<span class="kw">cons</span> &#39;bool <span class="dv">#t</span>))))
+             (fals ($do (s ($string <span class="st">&quot;f&quot;</span>)) ($return (<span class="kw">cons</span> &#39;bool <span class="dv">#f</span>))))
+             (bool ($do (shp) ($or true fals)))
+
+             (lmbda  ($do (hat) (spaces) (arg id) (arrow) (body term)
+                         ($return `(<span class="kw">lambda</span> . ,(<span class="kw">list</span> (<span class="kw">list-&gt;string</span> arg) body))) ))
+             (abst  ($or ($do (parel) (l lmbda) (parer) ($return l))
+                         lmbda))
+
+             (appli  ($do (parel) (m1 term) (spaces) (m2 term) (parer)
+                          ($return (<span class="kw">list</span> &#39;apply m1 m2))))
+
+             (term ($or ($try abst) ($try appli) ($try var) ($try int) ($try bool))) )
+    (cut peg-parse-string term &lt;&gt;)))
+
+(<span class="kw">define</span><span class="fu"> parse-env</span>
+    (<span class="kw">letrec</span> ((colon ($seq spaces ($c <span class="ch">#\:</span>) spaces))
+             (comma ($seq spaces ($c <span class="ch">#\,</span>) spaces))
+             (id    ($many ($one-of #[A-Za-z\?\-])))
+             (arrow ($seq spaces ($string <span class="st">&quot;-&gt;&quot;</span>) spaces))
+             (parel ($seq spaces ($c <span class="ch">#\(</span>) spaces))
+             (parer ($seq spaces ($c <span class="ch">#\)</span>) spaces))
+             (to2   ($do parel (t1 type) parer arrow (t2 type)
+                         ($return (<span class="kw">cons</span> t1 t2))))
+             (to    ($do (t1 id) arrow (t2 type)
+                         ($return (<span class="kw">cons</span> (<span class="kw">list-&gt;string</span> t1) t2))))
+             (ti    ($do (t id)
+                         ($return (<span class="kw">list</span> (<span class="kw">list-&gt;string</span> t))) ))
+             (type  ($or ($try to2) ($try to) ($try ti)))
+             (field ($do (x id) (_ colon) (t type)
+                         ($return (<span class="kw">cons</span> (<span class="kw">list-&gt;string</span> x) t)) ))
+             (env   ($sep-by field comma)))
+    (cut peg-parse-string env &lt;&gt;)))
+
+; 入力をS式にしてもらえば(<span class="kw">read</span>)で一発で読み込めちゃうんだけど、
+; それじゃ芸がないからちゃんとパーズしようと思ったんだけど、
+; 結果的にS式とあんまり変わらないや．</code></pre>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Freepal: A Large Collection of Deep Lexico-Syntactic Patterns for Relation Extraction</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/
+    </a>
+</h1>
+<header>
+<h1 class="title">Freepal: A Large Collection of Deep Lexico-Syntactic Patterns for Relation Extraction</h1>
+</header>
+<ul>
+<li>
+url: <a href=http://www.lrec-conf.org/proceedings/lrec2014/pdf/764_Paper.pdf>http://www.lrec-conf.org/proceedings/lrec2014/pdf/764_Paper.pdf</a>
+</li>
+<li>
+tags: <span class="tag"><a href=index.html#テキストマイニング>テキストマイニング</a></span> <span class="tag"><a href=index.html#自然言語処理>自然言語処理</a></span>
+</li>
+</ul>
+<h2 id="目的">目的</h2>
+<p>コーパス中の一文に現れた二つの名詞の関係を抽出する。</p>
+<h2 id="手法">手法</h2>
+<p>現れた二つの名詞 A, B について、</p>
+<ul>
+<li>freebase によって、entity linking する. (id_A, id_B) (いつ使うかわからん)</li>
+<li>freebase によって、AとBの関係 R を取ってくる</li>
+<li>dependency tree で、AとBの最短路を取る (列にする)</li>
+<li>最短路に現れるA, B を [X], [Y] で置き換えてパターンとする</li>
+</ul>
+<h2 id="例">例</h2>
+<ul>
+<li>パターン: PLAY [X] IN MOVIE [Y]</li>
+<li>関係: StarringInFilm</li>
+<li>confidence: 0.431</li>
+</ul>
+<h2 id="実装">実装</h2>
+<p>http://free-pal.appspot.com/#show で公開されてる。</p>
+<ul>
+<li>Free Text Search</li>
+<li>Search by Relation</li>
+</ul>
+<p>の二つがある。 前者は、なんかサーバーのエラーで動かなかった。 後者は、freebaseにある関係から、 その関係はどんなパターンで抽出できるかを列挙してくれる。</p>
+<p>例えば、 <code>education.field_of_study.students_majoring..education.education.specialization</code> は、</p>
+<ul>
+<li>receive in [X] with emphasis in [Y]</li>
+<li>receive in [X] with specialization in [Y]</li>
+</ul>
+<p>とかパターンが19個出てきて、 各々に、 Counts, Entropy, Confidence が情報として付いてる。</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

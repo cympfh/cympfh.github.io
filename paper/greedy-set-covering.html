@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>A Greedy Heuristic for Set-Covering Problem</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/
+    </a>
+</h1>
+<header>
+<h1 class="title">A Greedy Heuristic for Set-Covering Problem</h1>
+</header>
+<ul>
+<li>
+url: <a href=http://www.jstor.org/stable/3689577?seq=1#page_scan_tab_contents>http://www.jstor.org/stable/3689577?seq=1#page_scan_tab_contents</a>
+</li>
+<li>
+tags: <span class="tag"><a href=index.html#最適化>最適化</a></span> <span class="tag"><a href=index.html#集合被覆>集合被覆</a></span>
+</li>
+</ul>
+<p><a href="./better-than-greedy.html">better-than-greedy</a> のついでに. 3ページだけなので.</p>
+<p>k-set cover problem を所謂貪欲法で解いた場合の近似度の解析を行う.</p>
+<h1 id="問題">問題</h1>
+<p>有限集合のコレクション <span class="math inline">\(P_1, P_2 .. P_N\)</span> がある. 正のコストとして、<span class="math inline">\(P_i\)</span> には <span class="math inline">\(c_i\)</span> が与えられる.</p>
+<p><span class="math display">\[I = \bigcup_{i=1..N} P_i = \bigcup_{i \in J} P_i\]</span></p>
+<p>が満たされるようなインデックスの集合 <span class="math inline">\(J\)</span> であって <span class="math display">\[\min \sum_{i \in J} c_i\]</span> となるようなものを探す.</p>
+<p><span class="math display">\[k = \max |P_j|\]</span> だとしておく (k-set cover problem).</p>
+<h1 id="直感的な貪欲法">直感的な貪欲法</h1>
+<p><span class="math inline">\(|P_j| / c_j\)</span> という比が大きいものほど良い.</p>
+<ol start="0" style="list-style-type: decimal">
+<li><span class="math inline">\(J = \{\}\)</span></li>
+<li>while <span class="math inline">\(\exists j .~ P_j \ne \{\}\)</span>
+<ol style="list-style-type: decimal">
+<li>ある <span class="math inline">\(k\)</span> で <span class="math inline">\(\frac{|P_k|}{c_k}\)</span> を最大となるとする</li>
+<li><span class="math inline">\(J \leftarrow J \cup k\)</span></li>
+<li><span class="math inline">\(P_j \leftarrow P_j \setminus P_k\)</span></li>
+</ol></li>
+<li><span class="math inline">\(J\)</span> が答え</li>
+</ol>
+<h2 id="illustration">Illustration</h2>
+<p>コレクション <span class="math inline">\(P_1 .. P_{m+1}\)</span> が与えられるとする.</p>
+<ul>
+<li>for <span class="math inline">\(1 \leq j \leq m\)</span>
+<ul>
+<li><span class="math inline">\(P_j = \{ j \}\)</span></li>
+<li><span class="math inline">\(c_j = 1 / j\)</span></li>
+</ul></li>
+<li>for <span class="math inline">\(j = m+1\)</span>
+<ul>
+<li><span class="math inline">\(P_j = \{ 1 .. j \}\)</span></li>
+<li><span class="math inline">\(c_j &gt; 1\)</span></li>
+</ul></li>
+</ul>
+<p>先の貪欲法では、 順に <span class="math inline">\(j = m, m-1, .. 1\)</span> を選択して、 <span class="math inline">\(J = \{ 1 .. m\}\)</span> を返す.<br />
+(何故ならば、<span class="math inline">\(r_j = j \geq 1 (1 \leq j \leq m), r_{m+1} = m/c_{m+1} &lt; 1\)</span> なので)</p>
+<p>そしてこれのコストは <span class="math display">\[H_m = \sum_{j=1}^m \frac{1}{j} &gt; 1.\]</span></p>
+<p>もちろん <span class="math inline">\(J=\{m+1\}\)</span> もまた別な解であって、 このコストは <span class="math inline">\(c_{m+1} &gt; 1\)</span> である. こちらが最適解であることはあり得る.</p>
+<p>この場合の近似度は <span class="math inline">\(H_m / c_{m+1} (&lt; H_m)\)</span> となる.</p>
+<p>で、実は、 <span class="math inline">\(H_k\)</span> で上限として抑えられるのである.</p>
+<h2 id="定理">定理</h2>
+<p>貪欲法が返す被覆のコストは、最適解の高々 <span class="math inline">\(H(k)\)</span> 倍である.</p>
+<p>もっと強い事実を証明することで、証明を行う.</p>
+<p>被覆関係を行列で表現する: <span class="math display">\[A_{i, j} = \chi(i \in P_j)\]</span> where <span class="math inline">\(\chi(true) = 1, \chi(false) = 0\)</span></p>
+<p><span class="math inline">\(i=1..m, j=1..n\)</span> で <span class="math inline">\(A\)</span> を <span class="math inline">\(m \times n\)</span> 行列とする.</p>
+<p>被覆とは、どの <span class="math inline">\(P_j\)</span> を01で表現したベクトル <span class="math inline">\(x \in \{0,1\}^m\)</span> である. 被覆できているとは <span class="math display">\[A \cdot x \geq 1\]</span></p>
+<p>被覆 <span class="math inline">\(x\)</span> が示すコストは <span class="math inline">\(c \cdot x\)</span> と表現できる (<span class="math inline">\(c = [ c_1 .. c_n ]\)</span>).</p>
+<h3 id="主張">主張</h3>
+<p>貪欲法が返す被覆 <span class="math inline">\(J\)</span> について: <span class="math display">\[\sum_{j=1}^m H(\sum_{i=1}^m A_{i,j}) c_j x_j \geq \sum_{J} c_j\]</span> が成立する.</p>
+<p>左辺はさらに左から <span class="math inline">\(H(k) \sum_j c_j x_j\)</span> で抑えられ、 また、右辺の下限として最適解があって、 それは最初の定理となる. 従って、 この主張は定理よりも一つ強いものとなっている.</p>
+<p>この主張を証明することで定理の証明とする.</p>
+<p>非負数 <span class="math inline">\(y_1 .. y_m\)</span> でもって次の２つが成り立つようなものが存在する.</p>
+<ul>
+<li><span class="math inline">\(\forall j .~ \sum_i A_{i,j} y_i \leq H(\sum_i A_{i,j}) c_j\)</span></li>
+<li><span class="math inline">\(\sum_i y_i = \sum_J c_j\)</span></li>
+</ul>
+<p>存在を疑わなければ次のように主張が導かれる.</p>
+<p><span class="math display">\[\sum_j H(\sum_i A_{i,j}) c_j x_j \geq \sum_j (\sum_i A_{i,j} y_i) x_j = \sum_i (\sum_j A_{i,j} x_j) y_i\]</span> <span class="math display">\[\geq \sum_i y_i = \sum_J c_i\]</span></p>
+<p>そろそろ飽きたので.</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

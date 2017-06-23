@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sun Jan 15 22:09:19 JST 2017</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Sun Jan 15 22:09:19 JST 2017</h1>
+</header>
+<h2 id="cant-stop-の戦略">Can't Stop の戦略</h2>
+<p>考えてみる.</p>
+<h3 id="ルール概要">ルール概要</h3>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/XxvhDiT-eio" frameborder="0" allowfullscreen>
+</iframe>
+<ul>
+<li>2-4人ゲーム</li>
+<li>盤面
+<ul>
+<li><span class="math inline">\(i\)</span>-th レーンがある
+<ul>
+<li><span class="math inline">\(i=2,3,\ldots,11,12\)</span></li>
+<li>レーンとは <span class="math inline">\(m_i = 13 - 2 \times |i-7|\)</span> 個のマスが一列にならんだもの
+<ul>
+<li>端がスタートでもう端がゴール</li>
+</ul></li>
+</ul></li>
+<li>人数に対応した色の <strong>石</strong> が十分な数ある</li>
+<li>3つの <strong>駒</strong> がある
+<ul>
+<li><strong>石</strong> ではない</li>
+</ul></li>
+<li>初め盤面には石も駒も置かれてない</li>
+</ul></li>
+<li>ターン制で手を行う
+<ul>
+<li>1人の1ターンは好きなだけ次を繰り返す
+<ol type="1">
+<li>4つのサイコロを振る</li>
+<li>出目を2つと2つに分け、それぞれの和を <span class="math inline">\(m, n\)</span> とする</li>
+<li><span class="math inline">\(m\)</span>-th レーンと <span class="math inline">\(n\)</span>-th レーンのそれぞれについて、駒をスゴロクの要領で一つ進める
+<ul>
+<li><strong>駒を一つ進める</strong> とは次によって定められる手続きのこと
+<ul>
+<li>そのレーンに既に駒があるなら、それを一マスだけゴール方向に動かす
+<ul>
+<li>既にゴールのマスにあるなら何もしない</li>
+</ul></li>
+<li>そのレーンに駒が無く、
+<ul>
+<li>使用していない駒が余っているとき (駒は3つしかないことに註意)、
+<ul>
+<li>そのレーンに自分の色の石が置いてある時、その次のマスに駒を置く</li>
+<li>石も置いてないとき、スタートのマスに駒を置く</li>
+</ul></li>
+<li>駒が余っていないなら「駒を進めることに失敗」</li>
+</ul></li>
+<li>ただし後述するが、レーンは使用不可という状態になる場合がある
+<ul>
+<li>そのようなレーンについては駒を進めることはできない</li>
+<li>これは「駒を進めることに失敗」</li>
+</ul></li>
+</ul></li>
+<li>上で定めた手続きに於いて <strong>失敗</strong> を定めた
+<ul>
+<li><span class="math inline">\(m, n\)</span> のいずれか一方で失敗するとき、成功する方だけ行う</li>
+<li><span class="math inline">\(m, n\)</span> の <strong>両方で</strong> 失敗するとき、
+<ul>
+<li>バーストと言ってその人のターンは終了する</li>
+<li>その際に、その人が進めた駒は盤面から取り除かれる !!</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>バーストしなかった場合、ターンを自ら終わることが出来る
+<ul>
+<li>この場合、駒を自分の色の石に置き換え、次の人のターンに移る
+<ul>
+<li>駒を置いてたマスに石を置いて、駒を取り除く</li>
+</ul></li>
+<li>終了を選択しないなら、サイコロを振るところから、再び繰り返す</li>
+</ul></li>
+</ol></li>
+<li>各レーンのゴールのマスに石を置かれた場合、そのレーンはその色の人のものになる
+<ul>
+<li>石が置かれた直後からそのレーンは使用不可になる</li>
+<li>従ってこれはバーストを誘発する</li>
+</ul></li>
+<li>ある一人のプレイヤーが3つのレーンを得るとゲームは終了し、その人の勝利となる</li>
+</ul></li>
+</ul>
+<h3 id="出目の確率">出目の確率</h3>
+<p>サイコロを振る前に私が考えることと言えば</p>
+<p>「4個サイコロを振って出目の2個の組み合わせ (和) で <span class="math inline">\(m\)</span> が作れるか?」</p>
+<p>ということである. すなわち、 すでに駒を置いた <span class="math inline">\(m\)</span> のレーンがある場合には、 <span class="math inline">\(m\)</span> を出しさえすればいいのである. そうすれば何度でもターンが続けられるので、それ以上の戦略は不要に思える.</p>
+<p>4個のサイコロ中2個の和で <span class="math inline">\(m\)</span> を作る確率を計算する.</p>
+<div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="co"># 出目のリスト dices から2つ選んで m を作れるか?</span>
+<span class="kw">def</span> make?(dices, m)
+  dices.combination(<span class="dv">2</span>).any? { |a, b| a + b == m }
+<span class="kw">end</span>
+
+<span class="co"># m-th lane</span>
+(<span class="dv">2</span>..<span class="dv">12</span>).each <span class="kw">do</span> |m|
+  count = <span class="dv">0</span>
+  <span class="co"># 4個のサイコロの出目を全列挙</span>
+  (<span class="dv">1</span>..<span class="dv">6</span>).to_a.repeated_permutation(<span class="dv">4</span>) <span class="kw">do</span> |a, b, c, d|
+    count += <span class="dv">1</span> <span class="kw">if</span> make?([a, b, c, d], m)
+  <span class="kw">end</span>
+  pr = count.to_f / <span class="dv">6</span> / <span class="dv">6</span> / <span class="dv">6</span> / <span class="dv">6</span>
+  puts <span class="st">&quot;</span><span class="ot">#{</span>sprintf(<span class="st">&quot;%2d&quot;</span>, m)<span class="ot">}</span><span class="st"> =&gt; </span><span class="ot">#{</span>pr<span class="ot">}</span><span class="st">&quot;</span>
+<span class="kw">end</span></code></pre></div>
+<h4 id="結果">結果</h4>
+<pre><code> 2 =&gt; 0.13194444444444445
+ 3 =&gt; 0.2330246913580247
+ 4 =&gt; 0.35570987654320985
+ 5 =&gt; 0.44753086419753085
+ 6 =&gt; 0.5609567901234568
+ 7 =&gt; 0.6435185185185185
+ 8 =&gt; 0.5609567901234568
+ 9 =&gt; 0.44753086419753085
+10 =&gt; 0.35570987654320985
+11 =&gt; 0.2330246913580247
+12 =&gt; 0.13194444444444445</code></pre>
+<p>大凡予想通りである.</p>
+<ol type="1">
+<li><span class="math inline">\(1 \leq m \leq 7\)</span> では単調増加
+<ul>
+<li><span class="math inline">\(m \geq 7\)</span> は対称</li>
+</ul></li>
+<li><span class="math inline">\(6,7,8\)</span>-th レーンだけが <span class="math inline">\(50\)</span> % を超える</li>
+<li>雑な覚え方としては、端から <span class="math inline">\(10, 20, 30, 40, 50, 60, 50, \ldots\)</span> %</li>
+</ol>
+<p><span class="math inline">\(6,7,8\)</span>-th の3つのレーンに駒を置いている場合にバーストする確率は、</p>
+<pre><code>0.06871499254944341</code></pre>
+<p>すなわち、93%くらいでセーフ.</p>
+<h3 id="速度">速度</h3>
+<p><span class="math inline">\(m\)</span>-th レーンを考える. 4つのサイコロを振って駒を進める <strong>1 ステップ</strong> で <span class="math inline">\(m\)</span>-th レーン上の駒を平均でどれだけ進められるだろうか? これを <strong>速度</strong> と呼ぶことにする. ただし初めにスタートに駒を置くという行為も1マス進めると見なして良いのはいいでしょう.</p>
+<blockquote>
+<p>N.B. 先ほどの確率は4つの出目の内の2つの和で <span class="math inline">\(m\)</span> を作れるか? しか考慮してないのでここでは使わない. 今は残り2つの和でも進めるところまで考慮する. すなわち、 <span class="math inline">\(m\)</span> と <span class="math inline">\(m\)</span> を作れるなら2マス進めることが出来るから.</p>
+</blockquote>
+<p>速度を計算するプログラムは次の通り.</p>
+<div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="co"># 出目のリスト dices から2つ選んで n を作れるか?</span>
+<span class="kw">def</span> make?(dices, n)
+  dices.combination(<span class="dv">2</span>).any? { |a, b| a + b == n }
+<span class="kw">end</span>
+
+<span class="co"># m-th lane</span>
+(<span class="dv">2</span>..<span class="dv">12</span>).each <span class="kw">do</span> |m|
+  count = <span class="dv">0</span>
+  <span class="co"># 4個のサイコロの出目を全列挙</span>
+  (<span class="dv">1</span>..<span class="dv">6</span>).to_a.repeated_permutation(<span class="dv">4</span>) <span class="kw">do</span> |a, b, c, d|
+    sum = [a, b, c, d].inject :+
+    <span class="kw">if</span> make?([a, b, c, d], m)
+      <span class="kw">if</span> sum == m + m
+        count += <span class="dv">2</span>
+      <span class="kw">else</span>
+        count +=<span class="dv">1</span>
+      <span class="kw">end</span>
+    <span class="kw">end</span>
+  <span class="kw">end</span>
+  average = count.to_f / <span class="dv">6</span> / <span class="dv">6</span> / <span class="dv">6</span> / <span class="dv">6</span>
+  puts <span class="st">&quot;speed(</span><span class="ot">#{</span>sprintf(<span class="st">&quot;%2d&quot;</span>, m)<span class="ot">}</span><span class="st">) = </span><span class="ot">#{</span>average<span class="ot">}</span><span class="st">&quot;</span>
+<span class="kw">end</span></code></pre></div>
+<h4 id="結果-1">結果</h4>
+<pre><code>speed( 2) = 0.13271604938271606
+speed( 3) = 0.2376543209876543
+speed( 4) = 0.3703703703703704
+speed( 5) = 0.4753086419753086
+speed( 6) = 0.6080246913580247
+speed( 7) = 0.7129629629629629
+speed( 8) = 0.6080246913580247
+speed( 9) = 0.4753086419753086
+speed(10) = 0.3703703703703704
+speed(11) = 0.2376543209876543
+speed(12) = 0.13271604938271606</code></pre>
+<ol type="1">
+<li>先ほどの確率と一見似てるがちょい大きくて <span class="math inline">\(m=7\)</span> に近づくほど大きくなる具合が大きい</li>
+<li><span class="math inline">\(1 \leq m \leq 7\)</span> では単調増加
+<ul>
+<li><span class="math inline">\(m \geq 7\)</span> は対称</li>
+</ul></li>
+</ol>
+<p>速度と、レーンの長さが分かっているので、<span class="math inline">\(m\)</span>-th レーンについて、平均で何ステップの試行がゴールに必要かが分かる.</p>
+<h4 id="結果-2">結果</h4>
+<pre><code>steps( 2) = 22.604651162790695
+steps( 3) = 21.03896103896104
+steps( 4) = 18.9
+steps( 5) = 18.935064935064936
+steps( 6) = 18.091370558375633
+steps( 7) = 18.233766233766236
+steps( 8) = 18.091370558375633
+steps( 9) = 18.935064935064936
+steps(10) = 18.9
+steps(11) = 21.03896103896104
+steps(12) = 22.604651162790695</code></pre>
+<ul>
+<li>想像以上に、どのレーンであっても、まあまあバランスが取れている</li>
+<li>しかしやっぱり <span class="math inline">\(m=7\)</span> 付近が有利で、端っこに比べて 4 ステップ程度早くゴールできる</li>
+<li>不思議なことに <span class="math inline">\(m=7\)</span> が最小というわけでもなく
+<ul>
+<li><span class="math inline">\(step(6) &lt; step(7) &lt; step(4) &lt; step(5) &lt; step(3) &lt; step(2)\)</span></li>
+<li>となっている (<span class="math inline">\(m \geq 8\)</span> は対称性があるので)</li>
+<li>全然単調じゃない!!</li>
+</ul></li>
+</ul>
+</body>
+</html>

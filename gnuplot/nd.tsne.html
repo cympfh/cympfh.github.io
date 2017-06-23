@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>t-SNE による高次元データの可視化</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<h1 class="title">t-SNE による高次元データの可視化</h1>
+</header>
+<h2 id="参考">参考</h2>
+<ul>
+<li><a href="http://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html">sklearn.manifold.TSNE — scikit-learn 0.18.1 documentation</a></li>
+</ul>
+<h2 id="概要">概要</h2>
+<p>3次元でもやっとなのにそれ以上の次元のデータをプロットするにはどうにか次元削減をしないといけない. t-SNE はそのための一つの手法. Python ライブラリの scikit-learn の中に実装があるのでそれを使う. t-SNE して可視化するまでの一連をツールとして書いた.</p>
+<p>本当はプロットするところは matplotlib を使おうと思ったけど gnuplot が当たり前にやってくれることが全然出来なくて酷いので gnuplot を使う. 特に点が混み合うような散布図を書くと、ユーザーが対話的に拡大したら移動したりしたくなる. terminal に Qt (あるいは X11 等) を使うとそれが可能なので便利.</p>
+<h2 id="実装">実装</h2>
+<ul>
+<li><a href="https://gist.github.com/cympfh/2c970e4656f52adf57f91483f9b1e75c" class="uri">https://gist.github.com/cympfh/2c970e4656f52adf57f91483f9b1e75c</a>
+<ul>
+<li>tsne-vis.py
+<ul>
+<li>データを読んで t-sne した結果を吐き出す</li>
+<li>あるいは一時ファイルとして吐き出して即座に gnulot を実行する</li>
+</ul></li>
+<li>usage.sh
+<ul>
+<li>使ってみるサンプルです</li>
+</ul></li>
+</ul></li>
+</ul>
+<h2 id="依存">依存</h2>
+<ul>
+<li>Python 3.6 (3.x なら大丈夫だろう)</li>
+<li>sklearn
+<ul>
+<li>t-sne はこれのものを用いた</li>
+<li>pip で入る</li>
+</ul></li>
+<li>click
+<ul>
+<li>CLI ライブラリ</li>
+<li>pip で入る</li>
+</ul></li>
+</ul>
+<h2 id="使い方">使い方</h2>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="ex">./tsne.vis.py</span> --help
+<span class="ex">Usage</span>: tsne.vis.py [OPTIONS]
+
+<span class="ex">Options</span>:
+  <span class="ex">-d</span> TEXT              deliminator between the label and its vector
+  <span class="ex">-c</span> TEXT              deliminator for the vector
+  <span class="ex">--dim</span> INTEGER RANGE
+  <span class="ex">-o</span>, --output TEXT    When no --output is specified, run gnuplot/Qt directly
+  <span class="ex">--help</span>               Show this message and exit.</code></pre></div>
+<h3 id="データフォーマット">データフォーマット</h3>
+<pre><code>&lt;DATA&gt; ::= &lt;LINES&gt;
+&lt;LINES&gt; ::= &lt;LINE&gt; | &lt;LINE&gt; &quot;\n&quot; &lt;LINES&gt;
+&lt;LINE&gt; ::= &lt;LABEL&gt; &lt;D&gt; &lt;VECTOR&gt;
+
+&lt;LABEL&gt; ::= string
+&lt;D&gt; ::= &quot;\t&quot; (-d で変更可能)
+
+&lt;VECTOR&gt; ::= float | float &lt;C&gt; &lt;VECTOR&gt;
+&lt;C&gt; ::= &quot; &quot; (-c で変更可能)</code></pre>
+<p>ラベルはプロット点にアノテートするのに使う. 要らないなら 'x' とか指定すればいい.</p>
+<h3 id="埋め込み次元">埋め込み次元</h3>
+<p><code>--dim</code> では何次元空間に埋め込むかを指定する. <code>2</code> か <code>3</code> かが指定できてデフォルトは <code>2</code>.</p>
+<h3 id="出力">出力</h3>
+<p>gnuplot で可視化するまでの工程を任せる場合は <code>-o</code> を指定しない. 埋め込むデータが必要な場合は <code>-o</code> で出力先を指定する.</p>
+</body>
+</html>

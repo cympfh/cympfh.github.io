@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Thu Jun 30 21:52:27 JST 2016</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Thu Jun 30 21:52:27 JST 2016</h1>
+</header>
+<h2 id="linux-touchpad-xinput">Linux, Touchpad, xinput</h2>
+<p>社内に不要品取引システムがあって、闇市と呼ばれている. アクセスできる人なら誰でも自由に出品ができて、品物はオークションに出される. アクセスできる人なら誰でも自由に競りに参加することができる. ただし金品の実際のやり取りは、実際にどちらかがどちらかの席まで実際に行って行われる. 大抵、競り落とした人が、出品した人の席まで脚を運ぶことが多いようだ.</p>
+<p>Logicool T650 というタッチパッドを定価の半額で手に入れた. 何も考えてなくて、Windows用であるらしく、会社のMacでは使えなかった. 最もMacで使うつもりは無かったので、それは構わなかった. 自宅のUbuntu機に接続して使っている.</p>
+<p>簡単に調べた所、タップをクリックと認識させるには、ファームウェアのアップデートが必要で、 そのアップデートはWindows機が無いとできないらしい. 私が手に入れたこれは、接続したら既にそのように使えたので、ファームウェアはアップデート済みだったらしい.</p>
+<p>しかしながら、意図しない程度のタップがクリックと認識されたり、2本指でスクロールした後に指を持ち上げる動作で右クリックと認識されたり、 なかなか使いづらかった.</p>
+<p>マウスの設定するために、普通デスクトップ環境に付随する、「パソコン全般の設定」の中に、普通含まれてる「マウスの設定」を使おうとした. これは Ubuntu なので (不断私は Unity を使ってるわけではないのだが) <code>unity-tweak-tool</code> が初めから入っている. この中にマウスの設定があるにはあるが、設定項目が極端に少く、また水平方向へのスクロールという項目のチェックボックスが、チェックできない (disable) ようになっていた. 最後のに関しては、タッチパッドを正しく認識できてないせいなのだろうか? lxde のそれも試したが、せいぜい、ダブルクリックの時間間隔を設定するくらいのものだった.</p>
+<p>基本的に <code>xinput</code> を使えば、設定できない項目はない. 昨日の夜、どんな項目が存在するのかを一通り読んで、一応満足できる設定が完成したので、コピペしておく.</p>
+<h3 id="参考文献">参考文献</h3>
+<ul>
+<li>ftp://www.x.org/pub/X11R7.5/doc/man/man4/synaptics.4.html</li>
+<li>https://wiki.archlinux.org/index.php/Touchpad_Synaptics</li>
+</ul>
+<p>ほとんど、1つめの文書で事足りる. ただし古いのか何のか、全ての設定項目を網羅できていなくて、 'Soft Button Areas' に関しては、2つめの文書を参照した.</p>
+<h3 id="設定">設定</h3>
+<p>次を .xinitrc に書いてある</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="va">TP=</span><span class="st">&#39;Logitech Rechargeable Touchpad T650&#39;</span> 
+<span class="ex">xinput</span> set-prop <span class="st">&quot;</span><span class="va">$TP</span><span class="st">&quot;</span> <span class="st">&#39;Synaptics Move Speed&#39;</span> 1.4, 3.0, 0.1, 0.000000  <span class="co"># min, max, accel, ?</span>
+<span class="ex">xinput</span> set-prop <span class="st">&quot;</span><span class="va">$TP</span><span class="st">&quot;</span> <span class="st">&#39;Synaptics Finger&#39;</span> 4 18 0  <span class="co"># release, touch, press の圧力</span>
+<span class="ex">xinput</span> set-prop <span class="st">&quot;</span><span class="va">$TP</span><span class="st">&quot;</span> <span class="st">&#39;Synaptics Two-Finger Scrolling&#39;</span> 1 1  <span class="co"># 垂直 水平 2本指スクロールのオン</span>
+<span class="ex">xinput</span> set-prop <span class="st">&quot;</span><span class="va">$TP</span><span class="st">&quot;</span> <span class="st">&#39;Synaptics Scrolling Distance&#39;</span> 50 50  <span class="co"># 速度 値が小さいほど速い</span>
+<span class="co"># xinput set-prop &quot;$TP&quot; &#39;Synaptics Tap Action&#39; 0 0 0 0 1 1 1  # 右上 右下 左上 左下 TapButton1 TapButton2 TapButton3</span>
+<span class="ex">xinput</span> set-prop <span class="st">&quot;</span><span class="va">$TP</span><span class="st">&quot;</span> <span class="st">&#39;Synaptics Soft Button Areas&#39;</span> 2416, 0, 2938, 0, 0, 0, 0, 0  <span class="co"># 右クリック領域の左右上下、中クリック領域の左右上下</span></code></pre></div>
+<p>'Synaptics Move Speed': マウスカーソルを普通に動かす時の速度. 1つめの数字が動き始めの速度. 動き始めはゆっくり. 指を早く滑らせると、3つめの数字にしたがって加速し、2つめの数字を上限とする速度まで早くなる. 4つめの数字は知らん.</p>
+<p>'Synaptics Finger': 押しこむ圧力が、1つ目の数字を下回ったら、マウスリリースと見做す. 2つめを上回ったら、タッチを見做す. 3つめを上回ったらプレスと見做す. 今の場合、タッチもプレスも同じクリックだし、強く押したら普通にクリックのスイッチが入るので、3つめの数字は意味のないダミー.</p>
+<p>'Synaptics Two-Finger Scrolling': この数字はただのブーリアン. つまり 0 か 1 かをそれぞれ指定する. ここでは垂直方向、水平方向へのスクロールを2本指を滑らすことで行うことをスイッチオンしてる.</p>
+<p>'Synaptics Scrolling Distance': スクロールの速度. それぞれ垂直、水平方向に対応. 速度っていったけど、数字が小さいほど速い.</p>
+<p>'Synaptics Tap Action': 右上、右下、左上、左下、それからなんかボタン3つに特別なクリックを割り当てられる. 特別っていっても、左中右クリック、のいずれかだけど. T650は、対応してないっぽい？</p>
+<p>'Synaptics Soft Button Area': タッチパッドの上の自由な領域を指定して、右クリック、中クリックに割り当てることができる. デフォルトでは、右下よりちょっとだけ真ん中くらいのある領域だけが右クリックになってて、そこをタップかクリックすると、右クリックとなっていた. これが嫌なので、上の設定では、タッチパッドよりも外にある座標を指定して、右クリックの領域を実際上消している.</p>
+<h3 id="念の為">念の為</h3>
+<p>デバイス名や、そのデバイスのための設定項目、デフォルト値は、<code>xinput</code> で取得する</p>
+</body>
+</html>

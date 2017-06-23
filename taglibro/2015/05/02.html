@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sat May 2 02:01:36 JST 2015</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Sat May 2 02:01:36 JST 2015</h1>
+</header>
+<h2 id="写真から手書きっぽい漫画の生成">写真から手書きっぽい漫画の生成</h2>
+<figure>
+<img src="../../img/150502a.jpg" />
+</figure>
+<p>ppm(P3)からppm(P2)への変換をする</p>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="pp">#include </span><span class="im">&lt;bits/stdc++.h&gt;</span>
+<span class="kw">using</span> <span class="kw">namespace</span> std;
+
+<span class="pp">#define rep(i,n) for(int i=0;i&lt;(n);++i)</span>
+<span class="pp">#define loop for(;;)</span>
+<span class="pp">#define trace(var) cerr&lt;&lt;&quot;&gt;&gt;&gt; &quot;&lt;&lt;#var&lt;&lt;&quot; = &quot;&lt;&lt;var&lt;&lt;endl;</span>
+<span class="pp">#define inf (1e9)</span>
+
+<span class="kw">template</span>&lt;<span class="kw">class</span> S, <span class="kw">class</span> T&gt; <span class="kw">inline</span>
+ostream&amp; <span class="kw">operator</span>&lt;&lt;(ostream&amp;os, pair&lt;S,T&gt; p) {
+  os &lt;&lt; <span class="st">&#39;(&#39;</span> &lt;&lt; p.first &lt;&lt; <span class="st">&quot;, &quot;</span> &lt;&lt; p.second &lt;&lt; <span class="st">&#39;)&#39;</span>;
+  <span class="cf">return</span> os;
+}
+
+<span class="kw">template</span>&lt;<span class="kw">class</span> T&gt; <span class="kw">inline</span>
+ostream&amp; <span class="kw">operator</span>&lt;&lt;(ostream&amp;os, vector&lt;T&gt; v) {
+  <span class="cf">if</span> (v.size() == <span class="dv">0</span>) {
+    os &lt;&lt; <span class="st">&quot;(empty)&quot;</span>;
+    <span class="cf">return</span> os;
+  }
+  os &lt;&lt; v[<span class="dv">0</span>];
+  <span class="cf">for</span> (<span class="dt">int</span> i=<span class="dv">1</span>, len=v.size(); i&lt;len; ++i) os &lt;&lt; <span class="st">&#39; &#39;</span> &lt;&lt; v[i];
+  <span class="cf">return</span> os;
+}
+
+<span class="kw">template</span>&lt;<span class="kw">class</span> T&gt; <span class="kw">inline</span>
+istream&amp; <span class="kw">operator</span>&gt;&gt;(istream&amp;is, vector&lt;T&gt;&amp;v) {
+  rep (i, v.size()) is &gt;&gt; v[i];
+  <span class="cf">return</span> is;
+}
+
+<span class="kw">template</span>&lt;<span class="kw">class</span> S, <span class="kw">class</span> T, <span class="kw">class</span> U&gt; <span class="kw">inline</span>
+ostream&amp; <span class="kw">operator</span>&lt;&lt;(ostream&amp;os, tuple&lt;S, T, U&gt; t) {
+  <span class="cf">return</span> os &lt;&lt; <span class="st">&#39;(&#39;</span> &lt;&lt; get&lt;<span class="dv">0</span>&gt;(t) &lt;&lt; <span class="st">&quot;, &quot;</span> &lt;&lt; get&lt;<span class="dv">1</span>&gt;(t)
+    &lt;&lt; <span class="st">&quot;, &quot;</span> &lt;&lt; get&lt;<span class="dv">2</span>&gt;(t) &lt;&lt; <span class="st">&#39;)&#39;</span>;
+}
+
+<span class="kw">using</span> vi = vector&lt;<span class="dt">int</span>&gt;;
+<span class="kw">using</span> vvi = vector&lt;vi&gt;;
+
+<span class="dt">void</span> display(string format, <span class="dt">int</span> w, <span class="dt">int</span> h, <span class="dt">int</span> c, vvi gray) {
+  cout &lt;&lt; format &lt;&lt; endl;
+  cout &lt;&lt; w &lt;&lt; <span class="st">&#39; &#39;</span> &lt;&lt; h &lt;&lt; endl;
+  cout &lt;&lt; c &lt;&lt; endl;
+  rep (i, h) {
+    rep (j, w) {
+      cout &lt;&lt; min(c, max(<span class="dv">0</span>, gray[i][j]));
+      cout &lt;&lt; (j%<span class="dv">15</span>==<span class="dv">14</span> ? <span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span> : <span class="st">&#39; &#39;</span>);
+    }
+    cout &lt;&lt; endl;
+  }
+}
+
+<span class="dt">int</span> main(<span class="dt">int</span> argc, <span class="dt">char</span>*argv[]) {
+  string format; cin &gt;&gt; format;
+  <span class="dt">int</span> w, h; cin &gt;&gt; w &gt;&gt; h;
+  <span class="dt">int</span> area = w * h;
+  <span class="dt">int</span> c; cin &gt;&gt; c;
+  vector&lt;vvi&gt; cols(<span class="dv">3</span>, vvi(h, vi(w)));
+  rep (i, h) {
+    rep (j, w) {
+      cin
+        &gt;&gt; cols[<span class="dv">0</span>][i][j]
+        &gt;&gt; cols[<span class="dv">1</span>][i][j]
+        &gt;&gt; cols[<span class="dv">2</span>][i][j];
+      rep (k, <span class="dv">3</span>) cols[k][i][j] = c - cols[k][i][j];
+    }
+  }
+
+  <span class="co">// embossing</span>
+  <span class="at">const</span> <span class="dt">int</span> D = <span class="dv">4</span>;
+  rep (k, <span class="dv">3</span>) {
+    rep (i, h) {
+      rep (j, w) {
+        <span class="dt">int</span> max_c = <span class="dv">0</span>;
+        <span class="dt">int</span> min_c = c;
+        <span class="cf">for</span> (<span class="dt">int</span> dx = -D; dx &lt;= D; ++dx) {
+          <span class="cf">for</span> (<span class="dt">int</span> dy = -D; dy &lt;= D; ++dy) {
+            <span class="dt">int</span> x = i + dx;
+            <span class="dt">int</span> y = j + dy;
+            <span class="cf">if</span> (x &lt; <span class="dv">0</span> <span class="kw">or</span> y &lt; <span class="dv">0</span> <span class="kw">or</span> x &gt;= h <span class="kw">or</span> y &gt;= w) <span class="cf">continue</span>;
+            max_c = max(max_c, cols[k][x][y]);
+            min_c = min(min_c, cols[k][x][y]);
+          }
+        }
+        <span class="dt">int</span> mid_c = (max_c + min_c) / <span class="dv">2</span>;
+        <span class="cf">for</span> (<span class="dt">int</span> dx = -D; dx &lt;= D; ++dx) {
+          <span class="cf">for</span> (<span class="dt">int</span> dy = -D; dy &lt;= D; ++dy) {
+            <span class="dt">int</span> x = i + dx;
+            <span class="dt">int</span> y = j + dy;
+            <span class="cf">if</span> (x &lt; <span class="dv">0</span> <span class="kw">or</span> y &lt; <span class="dv">0</span> <span class="kw">or</span> x &gt;= h <span class="kw">or</span> y &gt;= w) <span class="cf">continue</span>;
+            <span class="dt">int</span> c = cols[k][x][y];
+            cols[k][x][y] = c &lt; mid_c ? <span class="dv">0</span> : c;
+          }
+        }
+      } } }
+  cerr &lt;&lt; <span class="st">&quot;embossing: done&quot;</span> &lt;&lt; endl;
+
+  vvi gray(h, vi(w, c));
+
+  rep (k, <span class="dv">3</span>) { <span class="co">// random walk for-each color</span>
+    <span class="dt">int</span> x = rand() % h,
+        y = rand() % w;
+    rep (_, area/<span class="dv">2</span>) {
+      <span class="at">const</span> <span class="dt">int</span> D = <span class="dv">10</span>;
+      <span class="dt">int</span> dx, dy,
+          x2, y2;
+      rep (__, <span class="dv">10</span>) {
+        dx = rand() % (<span class="dv">2</span>*D<span class="dv">+1</span>) - D;
+        dy = rand() % (<span class="dv">2</span>*D<span class="dv">+1</span>) - D;
+        x2 = max(<span class="dv">0</span>, min(h - <span class="dv">1</span>, x + dx));
+        y2 = max(<span class="dv">0</span>, min(w - <span class="dv">1</span>, y + dy));
+        <span class="cf">if</span> (x == x2 <span class="kw">and</span> y == y2) <span class="cf">continue</span>;
+        <span class="cf">if</span> (cols[k][x2][y2] &gt; rand()%c) <span class="cf">break</span>;
+      }
+      { <span class="co">// draw a line</span>
+        <span class="dt">int</span> weight = (cols[k][x2][y2] + cols[k][x][y]) / <span class="dv">10</span>;
+        <span class="cf">for</span> (<span class="dt">int</span> d = <span class="dv">0</span>; d &lt;= D; ++d) {
+          <span class="dt">int</span> xi = x + d * (x2 - x) / D;
+          <span class="dt">int</span> yi = y + d * (y2 - y) / D;
+          gray[xi][yi] -= weight;
+          cols[k][x][y] -= weight;
+        }
+      }
+      x = x2; y = y2;
+    }
+  }
+
+  display(<span class="st">&quot;P2&quot;</span>, w, h, c, gray);
+
+  <span class="cf">return</span> <span class="dv">0</span>;
+}</code></pre></div>
+<figure>
+<img src="../../img/150502b.jpg" />
+</figure>
+<ul>
+<li>embossing が一番時間がかかるが、これは絶対必要だった</li>
+<li>とりあえず、色素の上をランダムウォークするってのは全然違った</li>
+</ul>
+<h2 id="魚釣り同情迷子ごっこ">魚釣り、同情、迷子ごっこ</h2>
+<p>魚釣りという行為を目の当たりにした時<br />
+魚は何のために生きているのだろうと真剣に考えたのを覚えている<br />
+あれはれっきとした、娯楽としての、狩猟だ<br />
+人間の都合のために飼われる魚は決して可愛がられる為のものじゃない<br />
+ちょっと考えを転換すると、水族館の魚というのも、ふつう、可愛がられるものではないだろう</p>
+<p>神保町から、日付が代わる前の昨日は映画の日であったので、 映画を見るために池袋に行くことにした。 この頃また暖かなので、私の足は自転車であった。 いつも走る道だと、神保町からまっすぐに旧白山通りで北に走り、 千石のあたりで、不忍通りで今度はまっすぐ西に向かって春日通りにぶつかるまで走る。 今度はそこから少し北に走ると池袋である。 どんな道路が在るかにもよるが、一般的に言って、これは無駄のある走路であろう。 斜めに一直線に行ける方が近道である。 そういうわけで今日は、近道を目指して、今まで走ったこともない道だけを走って池袋まで行くことにした。 どうせ見知らぬ道である。 見知った道をずいずい走るほうが近いに決まっているのであるが、 これはまあ、 一つの遊びだ。 自分からすすんで迷子になる。 子供よくやる探検ごっこだ。 行きは太陽が出ていたから簡単だった。 比較的簡単に、春日通りにぶつかることができた。 神保町から、一旦、飯田橋まで走って、そこから大体真北を目指した。 小石川を通りぬけ、茗荷谷という文字を目指して走ると、春日通りは随分整備されていた。 途中で通った小石川四丁目は仏教の染み通った町であるらしく、そういった施設や幼稚園がよく見受けられた。 子どもたちは公道の上でキャッチボールをし、 播磨坂さくら並木は、東京の真ん中としては珍しいくらいの緑色を私に見せてくれて、 大変のどかで平和な印象であった。</p>
+<p>どこをどう走っても、小石川植物園とぶつかって大変邪魔だった。 池袋からの帰りも知らない道をできるだけ走ることにした。 なんせ私は現代人らしからぬスマートフォンなんてものを持たないので、 本当に迷子になったら本当に、である。 しかしまあ、思えば、 わざとちょっと迷子になってみる趣味は大昔からだった。 これは言ってみれば、平凡な日常にちょっとしたスリルを加えることである。 スマートフォンがなくても、道路標識をよく見ていれば大体自分がどこにいるかわかるし、 自分が高校生の頃はしょっちゅう、交番に道を訪ねて、駅の場所を尋ねたらすぐ裏だったなんてことがある。 自分が行く必要のある数カ所、家、大学、本屋さん、映画館、それらをつなぐ、たかだか数本の道だけを走るのが日常だと考えているところに由来するのではないか。 つまり、 旅行に行くなんて、そんなことする人が本当にいるなんて、思わなかった。 いや、そりゃいるんだろうけどさ、 旅行会社ってあるしさ。 でもだからって、 わざわざ自分のお金を払ってだよ？ 楽しいかどうかも定かじゃないただの移動だよ。 純粋に旅行を目的にした旅行なんて、自分がすることが、あるかしら</p>
+<p>ペットショップにおいて、 大まかにいえば、犬と猫と、その他（魚とか）が扱われる。 犬と猫が主役だ。 その他、すなわち魚類なんかは、可愛がられない。 客に、ではなくて、店員に、だ。 少なからず、一部の客は、熱帯魚やらに熱心だ。 我々より熱心だ。 だって、そんなただの水草をわざわざ買っていくんだもん。 わかめでも入れておけばいいのに。 大勢の群れをなす魚は、 水族館においては、客にも水族館の人にも可愛がられないんだろうなあ。</p>
+<h2 id="タイルをスライドするパズル">タイルをスライドするパズル</h2>
+<ul>
+<li><a href="http://www.coolbuddy.com/games/game.asp?gid=4880">Rubpix Game, Free Flash Games</a></li>
+</ul>
+<p>しょうもないことをしてました。<br />
+<code>Rubpix</code> なるFlash製パズルをやってて、だんだん辛くなってきたので、 解くプログラムを書く作戦に変更した</p>
+<ol type="1">
+<li><span class="math inline">\(n \times n\)</span> に色のついたタイルが並んでいる</li>
+<li>行または列について (上下左右に一つ) シフトする操作が許されている</li>
+<li>目標の色の配置 (<span class="math inline">\(n \times n\)</span>) に一致させたらゴール
+<ul>
+<li>それまでの操作の回数はたぶんスコアとして記憶されてる</li>
+</ul></li>
+</ol>
+<p>はじめは <span class="math inline">\(3 \times 3\)</span> で、勘で出来るんだけど、飽きてくる<br />
+ステージが上がるごとに、<span class="math inline">\(n\)</span>の数は徐々に増えるらしく、<br />
+<span class="math inline">\(4 \times 4\)</span> になるともう、本格的に難しさを感じてくる<br />
+まだ私はその画面を見たことがないが、&quot;rubpix&quot; で画像検索をすると、 <span class="math inline">\(6 \times 6\)</span> も出てくる</p>
+<p>以下は <span class="math inline">\(n \times n\)</span> の場合について、双方向探索で解くプログラム<br />
+<span class="math inline">\(6 \times 6\)</span> でも現実的な時間で解けるのかちょっと自信がない<br />
+頭のいいヒューリスティックを入れるべきだ</p>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="co">// you can read this source </span>
+<span class="co">// also at: https://gist.github.com/cympfh/3ddc2e84211f37a81bb1</span>
+<span class="pp">#include </span><span class="im">&lt;bits/stdc++.h&gt;</span>
+<span class="kw">using</span> <span class="kw">namespace</span> std;
+
+<span class="pp">#define rep(i,n) for(int i=0;i&lt;(n);++i)</span>
+<span class="pp">#define loop for(;;)</span>
+<span class="pp">#define trace(var) cerr&lt;&lt;&quot;&gt;&gt;&gt; &quot;&lt;&lt;#var&lt;&lt;&quot; = &quot;&lt;&lt;var&lt;&lt;endl;</span>
+<span class="pp">#define inf (1e9)</span>
+
+<span class="kw">template</span>&lt;<span class="kw">class</span> S, <span class="kw">class</span> T&gt; <span class="kw">inline</span>
+ostream&amp; <span class="kw">operator</span>&lt;&lt;(ostream&amp;os, pair&lt;S,T&gt; p) {
+  os &lt;&lt; <span class="st">&#39;(&#39;</span> &lt;&lt; p.first &lt;&lt; <span class="st">&quot;, &quot;</span> &lt;&lt; p.second &lt;&lt; <span class="st">&#39;)&#39;</span>;
+  <span class="cf">return</span> os;
+}
+
+<span class="kw">template</span>&lt;<span class="kw">class</span> T&gt; <span class="kw">inline</span>
+ostream&amp; <span class="kw">operator</span>&lt;&lt;(ostream&amp;os, vector&lt;T&gt; v) {
+  <span class="cf">if</span> (v.size() == <span class="dv">0</span>) {
+    os &lt;&lt; <span class="st">&quot;(empty)&quot;</span>;
+    <span class="cf">return</span> os;
+  }
+  os &lt;&lt; v[<span class="dv">0</span>];
+  <span class="cf">for</span> (<span class="dt">int</span> i=<span class="dv">1</span>, len=v.size(); i&lt;len; ++i) os &lt;&lt; <span class="st">&#39; &#39;</span> &lt;&lt; v[i];
+  <span class="cf">return</span> os;
+}
+
+<span class="kw">template</span>&lt;<span class="kw">class</span> T&gt; <span class="kw">inline</span>
+istream&amp; <span class="kw">operator</span>&gt;&gt;(istream&amp;is, vector&lt;T&gt;&amp;v) {
+  rep (i, v.size()) is &gt;&gt; v[i];
+  <span class="cf">return</span> is;
+}
+
+<span class="kw">template</span>&lt;<span class="kw">class</span> S, <span class="kw">class</span> T, <span class="kw">class</span> U&gt; <span class="kw">inline</span>
+ostream&amp; <span class="kw">operator</span>&lt;&lt;(ostream&amp;os, tuple&lt;S, T, U&gt; t) {
+  <span class="cf">return</span> os &lt;&lt; <span class="st">&#39;(&#39;</span> &lt;&lt; get&lt;<span class="dv">0</span>&gt;(t) &lt;&lt; <span class="st">&quot;, &quot;</span> &lt;&lt; get&lt;<span class="dv">1</span>&gt;(t)
+    &lt;&lt; <span class="st">&quot;, &quot;</span> &lt;&lt; get&lt;<span class="dv">2</span>&gt;(t) &lt;&lt; <span class="st">&#39;)&#39;</span>;
+}
+
+<span class="kw">using</span> vi = vector&lt;<span class="dt">char</span>&gt;;
+<span class="kw">using</span> vvi = vector&lt;vi&gt;;
+
+<span class="kw">enum</span> Dir {
+  Down = <span class="dv">0</span>,
+  Up = <span class="dv">1</span>,
+  Left = <span class="dv">2</span>,
+  Right = <span class="dv">3</span>
+};
+
+Dir invert(Dir d) {
+  <span class="cf">if</span> (d == Down) <span class="cf">return</span> Up;
+  <span class="cf">if</span> (d == Up) <span class="cf">return</span> Down;
+  <span class="cf">if</span> (d == Left) <span class="cf">return</span> Right;
+  <span class="cf">if</span> (d == Right) <span class="cf">return</span> Left;
+}
+
+<span class="kw">struct</span> Op {
+  Dir dir; <span class="dt">int</span> pos;
+  Op(<span class="dt">int</span> _pos, Dir _d) : pos(_pos), dir(_d) {}
+};
+
+<span class="kw">inline</span>
+ostream&amp; <span class="kw">operator</span>&lt;&lt;(ostream&amp;os, Op o) {
+  os &lt;&lt; <span class="st">&quot;pos[ &quot;</span> &lt;&lt; o.pos &lt;&lt; <span class="st">&quot; ] &quot;</span>;
+  <span class="cf">if</span> (o.dir == Left) os &lt;&lt; <span class="st">&quot;Left&quot;</span>;
+  <span class="cf">if</span> (o.dir == Right) os &lt;&lt; <span class="st">&quot;Right&quot;</span>;
+  <span class="cf">if</span> (o.dir == Up) os &lt;&lt; <span class="st">&quot;Up&quot;</span>;
+  <span class="cf">if</span> (o.dir == Down) os &lt;&lt; <span class="st">&quot;Down&quot;</span>;
+  <span class="cf">return</span> os;
+}
+
+<span class="kw">inline</span> <span class="dt">void</span>
+mov_left(vi&amp;v, <span class="dt">int</span> n, <span class="dt">int</span> k) {
+  <span class="dt">char</span> tmp = v[n*k];
+  rep (i, n - <span class="dv">1</span>) v[n*k+i] = v[n*k+i<span class="dv">+1</span>];
+  v[n*k+n<span class="dv">-1</span>] = tmp;
+}
+
+<span class="kw">inline</span> <span class="dt">void</span>
+mov_right(vi&amp;v, <span class="dt">int</span> n, <span class="dt">int</span> k) {
+  <span class="dt">char</span> tmp = v[n*k+n<span class="dv">-1</span>];
+  rep (i, n - <span class="dv">1</span>) v[n*k+n-i<span class="dv">-1</span>] = v[n*k+n-i<span class="dv">-2</span>];
+  v[n*k] = tmp;
+}
+
+<span class="kw">inline</span> <span class="dt">void</span>
+mov_up(vi&amp;v, <span class="dt">int</span> n, <span class="dt">int</span> k) {
+  <span class="dt">char</span> tmp = v[k];
+  rep (i, n - <span class="dv">1</span>) v[k + n * i] = v[k + n * (i<span class="dv">+1</span>)];
+  v[k + (n<span class="dv">-1</span>)*n] = tmp;
+}
+
+<span class="kw">inline</span> <span class="dt">void</span>
+mov_down(vi&amp;v, <span class="dt">int</span> n, <span class="dt">int</span> k) {
+  <span class="dt">char</span> tmp = v[k + (n<span class="dv">-1</span>)*n];
+  rep (i, n - <span class="dv">1</span>) v[k + n*(n-i<span class="dv">-1</span>)] = v[k + n*(n-i<span class="dv">-2</span>)];
+  v[k] = tmp;
+}
+
+vector&lt;pair&lt;vi, Op&gt;&gt; step(<span class="dt">int</span> n, vi v) {
+  vector&lt;pair&lt;vi, Op&gt;&gt; ret;
+  rep (k, n) {
+    mov_left(v, n, k);
+    ret.push_back({ v, Op(k, Left) });
+    mov_right(v, n, k);
+    mov_right(v, n, k);
+    ret.push_back({ v, Op(k, Right) });
+    mov_left(v, n, k);
+  }
+  rep (k, n) {
+    mov_up(v, n, k);
+    ret.push_back({ v, Op(k, Up) });
+    mov_down(v, n, k);
+    mov_down(v, n, k);
+    ret.push_back({ v, Op(k, Down) });
+    mov_up(v, n, k);
+  }
+  <span class="cf">return</span> ret;
+}
+
+<span class="dt">bool</span> equal(vi&amp;xs, vi&amp;ys) {
+  <span class="dt">int</span> n = xs.size();
+  <span class="cf">if</span> (ys.size() != n) <span class="cf">return</span> <span class="kw">false</span>;
+  rep (i, n)
+    <span class="cf">if</span> (xs[i] != ys[i]) <span class="cf">return</span> <span class="kw">false</span>;
+  <span class="cf">return</span> <span class="kw">true</span>;
+}
+
+map&lt;vi, vector&lt;Op&gt;&gt; memo;
+map&lt;vi, vector&lt;Op&gt;&gt; r_memo;
+
+<span class="dt">int</span> main(<span class="dt">int</span> argc, <span class="dt">char</span>*argv[]) {
+
+  <span class="dt">int</span> n; cin &gt;&gt; n;
+  vi f(n*n), g(n*n);
+  rep (i, n*n) cin &gt;&gt; f[i];
+  rep (i, n*n) cin &gt;&gt; g[i];
+  trace(f); trace(g);
+
+  vector&lt;Op&gt; ops;
+  queue&lt;pair&lt;vi, <span class="dt">bool</span>&gt;&gt; q;
+  q.push({ f, <span class="kw">true</span> });
+  q.push({ g, <span class="kw">false</span> });
+
+  memo[f] = {};
+  r_memo[g] = {};
+
+  <span class="cf">while</span> (<span class="kw">not</span> q.empty()) {
+    <span class="kw">auto</span> tp = q.front(); q.pop();
+    <span class="kw">auto</span>&amp;f = tp.first;
+    <span class="kw">auto</span> d = tp.second;
+
+    <span class="cf">if</span> ((d <span class="kw">and</span> r_memo.count(f) &gt; <span class="dv">0</span>) <span class="kw">or</span> ((<span class="kw">not</span> d) <span class="kw">and</span> memo.count(f) &gt; <span class="dv">0</span>)) {
+      <span class="cf">for</span> (<span class="kw">auto</span>&amp;o: memo[f])
+        cout &lt;&lt; o &lt;&lt; endl;
+      <span class="cf">for</span> (<span class="dt">int</span> i = r_memo[f].size() - <span class="dv">1</span>; i &gt;= <span class="dv">0</span>; --i) {
+        Op&amp;o = r_memo[f][i];
+        o.dir = invert(o.dir);
+        cout &lt;&lt; r_memo[f][i] &lt;&lt; endl;
+      }
+      <span class="cf">return</span> <span class="dv">0</span>;
+    }
+
+    <span class="cf">for</span> (<span class="kw">auto</span>&amp;p: step(n, f)) {
+      <span class="kw">auto</span>&amp;f2 = p.first;
+      <span class="kw">auto</span> o = p.second;
+      <span class="cf">if</span> (d) {
+        <span class="cf">if</span> (memo.count(f2) &gt; <span class="dv">0</span>) <span class="cf">continue</span>;
+        vector&lt;Op&gt; hs2 = memo[f];
+        hs2.push_back(o);
+        memo[f2] = hs2;
+      } <span class="cf">else</span> {
+        <span class="cf">if</span> (r_memo.count(f2) &gt; <span class="dv">0</span>) <span class="cf">continue</span>;
+        vector&lt;Op&gt; hs2 = r_memo[f];
+        hs2.push_back(o);
+        r_memo[f2] = hs2;
+      }
+      q.push({f2, d});
+    }
+  }
+  <span class="cf">return</span> <span class="dv">0</span>;
+}</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="fu">cat</span> input
+<span class="ex">4</span>
+
+<span class="ex">YYYY</span>
+<span class="ex">YGYG</span>
+<span class="ex">RRGR</span>
+<span class="ex">RGYY</span>
+
+<span class="ex">YYYY</span>
+<span class="ex">GGGG</span>
+<span class="ex">RRRR</span>
+<span class="ex">YYYY</span>
+
+$ <span class="ex">./a.out</span> <span class="op">&lt;</span> input
+<span class="ex">pos</span>[ 1 ] Up
+<span class="ex">pos</span>[ 2 ] Up
+<span class="ex">pos</span>[ 2 ] Left
+<span class="ex">pos</span>[ 1 ] Down
+<span class="ex">pos</span>[ 0 ] Up</code></pre></div>
+<p><code>pos[ m ]</code> (<span class="math inline">\(0 \leq m &lt; n\)</span>) <span class="math inline">\(m\)</span> 行目、または <span class="math inline">\(m\)</span> 列目を表す<br />
+ただし、 盤の最上段を0行目、最左列を0列目だとして数える<br />
+(人間が読む部分くらい、1-indexedにするものだと反省した)</p>
+<p>今の場合</p>
+<ol type="1">
+<li>1列目を上にshift</li>
+<li>2列目を上にshift</li>
+<li>2行目を左にshift</li>
+<li>1列目を下にshift</li>
+<li>0列目を上にshift</li>
+</ol>
+<p>という手順を表す</p>
+<h3 id="感想">感想</h3>
+<p>一つのステージをクリアする度に、 入力を作る作業が一番の手間だった</p>
+</body>
+</html>

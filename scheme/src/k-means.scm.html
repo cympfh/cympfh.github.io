@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+</head>
+<body>
+<pre class="sourceCode scheme"><code class="sourceCode scheme">(use srfi<span class="dv">-1</span> :only (iota fold))
+(use srfi<span class="dv">-27</span> :only (random-integer))
+
+<span class="co">;; k-means</span>
+<span class="co">; N points on R^s into K clasters</span>
+
+(<span class="kw">define</span><span class="fu"> s </span><span class="dv">2</span>)
+(<span class="kw">define</span><span class="fu"> N </span><span class="dv">30</span>)
+(<span class="kw">define</span><span class="fu"> K </span><span class="dv">4</span>)
+
+<span class="co">; input data</span>
+(<span class="kw">define</span><span class="fu"> xs</span>
+    (map (<span class="kw">lambda</span> (i) (map (^_ (random-integer <span class="dv">20</span>)) (iota s)))
+         (iota N)))
+
+(<span class="kw">define</span><span class="fu"> mus</span>
+    (map (<span class="kw">lambda</span> (i) (map (^_ (random-integer <span class="dv">20</span>)) (iota s)))
+         (iota K)))
+
+(<span class="kw">define</span><span class="fu"> rs </span>())<span class="co">; map :: N -&gt; K</span>
+
+(<span class="kw">define</span><span class="fu"> </span>(update-rs)
+    (<span class="kw">define</span><span class="fu"> </span>(dist a b)
+        (<span class="kw">sqrt</span> (apply <span class="kw">+</span> (map (^x (* x x)) (map <span class="kw">-</span> a b)))))
+    (set! rs
+    (map
+        (<span class="kw">lambda</span> (x)
+            (<span class="kw">cdr</span>
+              (fold
+                  (<span class="kw">lambda</span> (di1 di2)
+                    (<span class="kw">if</span> (<span class="kw">&lt;</span> (<span class="kw">car</span> di1) (<span class="kw">car</span> di2)) di1 di2))
+                 &#39;(<span class="dv">10000</span> . -<span class="dv">1</span>)
+                  (map <span class="kw">cons</span>
+                       (map (<span class="kw">lambda</span> (mu) (dist x mu)) mus)
+                       (iota (<span class="kw">length</span> mus))))))
+         xs)))
+
+(<span class="kw">define</span><span class="fu"> </span>(update-mus)
+    (<span class="kw">let</span> loop ((i <span class="dv">0</span>))
+        (when (<span class="kw">&lt;</span> i K)
+              (<span class="kw">let</span> rec ((xs xs) (rs rs) (ac (make-list s <span class="dv">0</span>)) (count <span class="dv">0</span>))
+                   (<span class="kw">if</span> (<span class="kw">null?</span> xs)
+                       (set! (ref mus i) (map (cut <span class="kw">/</span> &lt;&gt; count) ac))
+                       (rec (<span class="kw">cdr</span> xs) (<span class="kw">cdr</span> rs)
+                            (<span class="kw">if</span> (<span class="kw">=</span> i (<span class="kw">car</span> rs))
+                                (map <span class="kw">+</span> ac (<span class="kw">car</span> xs)) ac)
+                            (<span class="kw">if</span> (<span class="kw">=</span> i (<span class="kw">car</span> rs))
+                                (<span class="kw">+</span> count <span class="dv">1</span>) count)))))))
+(<span class="kw">define</span><span class="fu"> </span>(update)
+    (update-rs)
+    (update-mus))
+
+(print xs)
+(<span class="kw">for-each</span> (^_ (update)) (iota <span class="dv">20</span>))
+(print mus)
+(print rs)</code></pre>
+</body>
+</html>

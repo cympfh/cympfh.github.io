@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sun Nov 30 17:15:19 JST 2014</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Sun Nov 30 17:15:19 JST 2014</h1>
+</header>
+<h2 id="code-runner-2014">CODE RUNNER 2014</h2>
+<h3 id="test.coffee">test.coffee</h3>
+<div class="sourceCode"><pre class="sourceCode coffee"><code class="sourceCode coffee">fs <span class="kw">=</span> require <span class="st">&#39;fs&#39;</span>
+<span class="kw">{</span>exec<span class="kw">}</span> <span class="kw">=</span> require <span class="st">&#39;child_process&#39;</span>
+it <span class="kw">=</span> require <span class="st">&#39;./it.json&#39;</span>
+
+N <span class="kw">=</span> <span class="kw">(+</span>process<span class="kw">.</span>argv<span class="kw">[</span><span class="dv">3</span><span class="kw">]</span> <span class="kw">or</span> <span class="dv">60</span><span class="kw">)</span>
+
+ms <span class="kw">=</span> <span class="kw">[]</span>
+
+curl <span class="kw">=</span> <span class="fu">(url, cont) -&gt;</span>
+  exec <span class="st">&quot;curl \&#39;</span><span class="ch">#{</span>url<span class="ch">}</span><span class="st">\&#39; |nkf&quot;</span><span class="kw">,</span> <span class="fu">(err, out) -&gt;</span>
+    <span class="kw">throw</span> err <span class="kw">if</span> err
+    cont out <span class="kw">if</span> cont
+
+URL <span class="kw">=</span> <span class="st">&quot;https://game.coderunner.jp/&quot;</span>
+token <span class="kw">=</span> <span class="st">&#39;CDR2YBS99ZXWOQSQUERT71KL18ORJV6K&#39;</span>
+time_lag <span class="kw">=</span> <span class="dv">1100</span>
+
+<span class="co"># who am i?</span>
+info <span class="kw">=</span> <span class="kw">{}</span>
+ami <span class="kw">=</span> <span class="fu">(cont) -&gt;</span>
+  curl <span class="st">&quot;</span><span class="ch">#{</span>URL<span class="ch">}</span><span class="st">info.json?token=</span><span class="ch">#{</span>token<span class="ch">}</span><span class="st">&quot;</span><span class="kw">,</span> <span class="fu">(result) -&gt;</span>
+    <span class="kw">try</span>
+      info <span class="kw">=</span> JSON<span class="kw">.</span>parse result
+      cont info <span class="kw">if</span> cont
+    <span class="kw">catch</span>
+      <span class="co">#passing</span>
+
+summon <span class="kw">=</span> <span class="fu">(id, cont) -&gt;</span>
+  <span class="ot">console</span><span class="kw">.</span>log <span class="st">&quot;summon </span><span class="ch">#{</span>id<span class="ch">}</span><span class="st">&quot;</span>
+  curl <span class="st">&quot;</span><span class="ch">#{</span>URL<span class="ch">}</span><span class="st">summon?monster=</span><span class="ch">#{</span>id<span class="ch">}</span><span class="st">&amp;token=</span><span class="ch">#{</span>token<span class="ch">}</span><span class="st">&quot;</span><span class="kw">,</span> <span class="fu">(result) -&gt;</span>
+    <span class="ot">console</span><span class="kw">.</span>log <span class="st">&quot;result: </span><span class="ch">#{</span>result<span class="ch">}</span><span class="st">&quot;</span>
+    cont <span class="kw">(</span>result <span class="kw">is</span> <span class="st">&quot;OK&quot;</span><span class="kw">)</span>
+
+<span class="co"># monsters scores info</span>
+reload <span class="kw">=</span> <span class="fu">(cont) -&gt;</span>
+  exec <span class="st">&quot;curl https://game.coderunner.jp/scorelist&quot;</span><span class="kw">,</span> <span class="fu">(_, out) -&gt;</span>
+    ls <span class="kw">=</span> out<span class="kw">.</span>split<span class="kw">(</span><span class="st">&#39;\r\n&#39;</span><span class="kw">).</span>slice <span class="dv">0</span><span class="kw">,</span> <span class="kw">-</span><span class="dv">1</span>
+    ms <span class="kw">=</span> ls<span class="kw">.</span>map <span class="fu">(x) -&gt;</span> x <span class="kw">|</span> <span class="dv">0</span>
+    cont ms
+
+ok <span class="kw">=</span> <span class="fu">(m_id) -&gt;</span>
+  ls1 <span class="kw">=</span> it<span class="kw">[</span>m_id<span class="kw">].</span>required
+  ls2 <span class="kw">=</span> info<span class="kw">.</span>stone
+  <span class="kw">for</span> x<span class="kw">,</span> i <span class="kw">in</span> ls1
+    <span class="kw">if</span> x <span class="kw">&gt;</span> ls2<span class="kw">[</span>i<span class="kw">]</span>
+      <span class="kw">return</span> <span class="ot">false</span>
+  <span class="ot">console</span><span class="kw">.</span>log <span class="st">&quot;ok&quot;</span>
+  <span class="ot">console</span><span class="kw">.</span>log <span class="st">&quot;req: </span><span class="ch">#{</span>ls1<span class="ch">}</span><span class="st">&quot;</span>
+  <span class="ot">console</span><span class="kw">.</span>log <span class="st">&quot;pos: </span><span class="ch">#{</span>ls2<span class="ch">}</span><span class="st">&quot;</span>
+  <span class="kw">return</span> <span class="ot">true</span>
+
+loop_summon <span class="kw">=</span> <span class="fu">-&gt;</span>
+  ami <span class="fu">-&gt;</span>
+    reload <span class="fu">(ms) -&gt;</span>
+
+      ms <span class="kw">=</span> ms<span class="kw">.</span>slice<span class="kw">(</span><span class="dv">0</span><span class="kw">,</span> N<span class="kw">)</span>
+      ls <span class="kw">=</span> ms<span class="kw">.</span>map<span class="kw">(</span><span class="fu">(score, idx) -&gt;</span> <span class="kw">[</span>idx<span class="kw">,</span> score<span class="kw">])</span>
+        <span class="kw">.</span>sort <span class="fu">(a,b) -&gt;</span> b<span class="kw">[</span><span class="dv">1</span><span class="kw">]</span> <span class="kw">-</span> a<span class="kw">[</span><span class="dv">1</span><span class="kw">]</span>
+
+      rec <span class="kw">=</span> <span class="fu">(idx) -&gt;</span>
+        <span class="ot">console</span><span class="kw">.</span>log <span class="st">&quot;rec : </span><span class="ch">#{</span>idx<span class="ch">}</span><span class="st">&quot;</span>
+        <span class="kw">if</span> idx <span class="kw">&lt;</span> ls<span class="kw">.</span>length
+          <span class="kw">if</span> ok idx
+            summon ls<span class="kw">[</span>idx<span class="kw">][</span><span class="dv">0</span><span class="kw">],</span> <span class="fu">(b) -&gt;</span>
+              <span class="kw">if</span> b
+                <span class="ot">setTimeout</span> <span class="kw">(</span><span class="fu">-&gt;</span> rec idx<span class="kw">),</span> time_lag
+              <span class="kw">else</span>
+                <span class="ot">setTimeout</span> <span class="kw">(</span><span class="fu">-&gt;</span> rec idx <span class="kw">+</span> <span class="dv">1</span><span class="kw">),</span> time_lag
+          <span class="kw">else</span>
+            <span class="ot">console</span><span class="kw">.</span>log <span class="st">&quot;ng&quot;</span>
+            rec idx <span class="kw">+</span> <span class="dv">1</span>
+        <span class="kw">else</span>
+          <span class="kw">do</span> loop_summon
+
+      rec <span class="dv">0</span>
+
+trade <span class="kw">=</span> <span class="fu">(take, give, num) -&gt;</span>
+  <span class="ot">console</span><span class="kw">.</span>warn <span class="st">&quot;</span><span class="ch">#{</span>URL<span class="ch">}</span><span class="st">trade?token=</span><span class="ch">#{</span>token<span class="ch">}</span><span class="st">&amp;in=</span><span class="ch">#{</span>take<span class="ch">}</span><span class="st">&amp;out=</span><span class="ch">#{</span>give<span class="ch">}</span><span class="st">&amp;num=</span><span class="ch">#{</span>num<span class="ch">}</span><span class="st">&quot;</span>
+  curl <span class="st">&quot;</span><span class="ch">#{</span>URL<span class="ch">}</span><span class="st">trade?token=</span><span class="ch">#{</span>token<span class="ch">}</span><span class="st">&amp;in=</span><span class="ch">#{</span>take<span class="ch">}</span><span class="st">&amp;out=</span><span class="ch">#{</span>give<span class="ch">}</span><span class="st">&amp;num=</span><span class="ch">#{</span>num<span class="ch">}</span><span class="st">&quot;</span><span class="kw">,</span> <span class="fu">(out) -&gt;</span>
+    <span class="ot">console</span><span class="kw">.</span>warn out <span class="kw">if</span> out
+
+loop_trade <span class="kw">=</span> <span class="fu">-&gt;</span>
+  base <span class="kw">=</span> <span class="dv">20</span>
+  cx <span class="kw">=</span> <span class="dv">24</span> <span class="kw">-</span> base <span class="kw">+</span> <span class="dv">1</span>
+  ami <span class="fu">(o) -&gt;</span>
+    ls <span class="kw">=</span> o<span class="kw">.</span>stone<span class="kw">[</span>base <span class="kw">..</span> <span class="dv">24</span><span class="kw">]</span>
+    mx <span class="kw">=</span> <span class="kw">-</span><span class="dv">1</span>
+    mi <span class="kw">=</span> <span class="kw">-</span><span class="dv">1</span>
+    <span class="kw">for</span> m<span class="kw">,</span> i <span class="kw">in</span> ls
+      <span class="kw">if</span> mx <span class="kw">&lt;</span> m
+        mx <span class="kw">=</span> m
+        mi <span class="kw">=</span> i
+    <span class="ot">console</span><span class="kw">.</span>log ls
+    <span class="ot">console</span><span class="kw">.</span>log <span class="st">&quot;mx, mi = &quot;</span><span class="kw">,</span> mx<span class="kw">,</span> mi
+    rec <span class="kw">=</span> <span class="fu">(idx) -&gt;</span>
+      <span class="kw">if</span> idx <span class="kw">&gt;=</span> ls<span class="kw">.</span>length <span class="kw">or</span> <span class="kw">(</span>idx <span class="kw">&gt;</span> <span class="dv">10</span><span class="kw">)</span>
+        <span class="kw">return</span>
+      <span class="kw">if</span> idx <span class="kw">isnt</span> mi
+        trade <span class="kw">(</span>base <span class="kw">+</span> idx<span class="kw">),</span> <span class="kw">(</span>base <span class="kw">+</span> mi<span class="kw">),</span> <span class="kw">(</span>mx <span class="kw">/</span> cx <span class="kw">|</span> <span class="dv">0</span><span class="kw">)</span>
+      <span class="ot">setTimeout</span> rec<span class="kw">,</span> time_lag<span class="kw">,</span> <span class="kw">(</span>idx <span class="kw">+</span> <span class="dv">1</span><span class="kw">)</span>
+    rec <span class="dv">0</span>
+
+seco_trade <span class="kw">=</span> <span class="fu">-&gt;</span>
+  list <span class="kw">=</span> <span class="kw">[]</span>
+  <span class="kw">for</span> i <span class="kw">in</span> <span class="kw">[</span><span class="dv">0</span> <span class="kw">..</span> <span class="dv">16</span><span class="kw">]</span>
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="kw">[</span><span class="dv">0</span> <span class="kw">..</span> <span class="dv">16</span><span class="kw">]</span>
+      <span class="kw">if</span> i <span class="kw">isnt</span> j
+        list<span class="kw">.</span>push <span class="kw">[</span>i<span class="kw">,</span> j<span class="kw">]</span>
+
+  rec <span class="kw">=</span> <span class="fu">(idx) -&gt;</span>
+    <span class="kw">if</span> idx <span class="kw">&lt;</span> list<span class="kw">.</span>length
+      <span class="kw">[</span>t<span class="kw">,</span> g<span class="kw">]</span> <span class="kw">=</span> list<span class="kw">[</span>idx<span class="kw">]</span>
+      trade t<span class="kw">,</span> g<span class="kw">,</span> <span class="dv">0</span>
+      <span class="ot">setTimeout</span> rec<span class="kw">,</span> time_lag<span class="kw">,</span> idx <span class="kw">+</span> <span class="dv">1</span>
+  rec <span class="dv">0</span>
+
+<span class="co"># ---- main</span>
+
+<span class="kw">switch</span> process<span class="kw">.</span>argv<span class="kw">[</span><span class="dv">2</span><span class="kw">]</span>
+  <span class="kw">when</span> <span class="st">&quot;-s&quot;</span>
+    <span class="kw">do</span> loop_summon
+  <span class="kw">when</span> <span class="st">&quot;-t&quot;</span>
+    <span class="kw">do</span> loop_trade
+  <span class="kw">when</span> <span class="st">&quot;-T&quot;</span>
+    <span class="kw">do</span> seco_trade</code></pre></div>
+<h3 id="ui.coffee">ui.coffee</h3>
+<div class="sourceCode"><pre class="sourceCode coffee"><code class="sourceCode coffee">fs <span class="kw">=</span> require <span class="st">&#39;fs&#39;</span>
+<span class="kw">{</span>exec<span class="kw">}</span> <span class="kw">=</span> require <span class="st">&#39;child_process&#39;</span>
+ms <span class="kw">=</span> require <span class="st">&#39;./scores.json&#39;</span>
+monsters <span class="kw">=</span> require <span class="st">&#39;./it.json&#39;</span>
+
+curl <span class="kw">=</span> <span class="fu">(url, cont) -&gt;</span>
+  exec <span class="st">&quot;curl \&#39;</span><span class="ch">#{</span>url<span class="ch">}</span><span class="st">\&#39; |nkf&quot;</span><span class="kw">,</span> <span class="fu">(err, out) -&gt;</span>
+    <span class="kw">throw</span> err <span class="kw">if</span> err
+    cont out <span class="kw">if</span> cont
+
+URL <span class="kw">=</span> <span class="st">&quot;https://game.coderunner.jp/&quot;</span>
+token <span class="kw">=</span> <span class="st">&#39;CDR2YBS99ZXWOQSQUERT71KL18ORJV6K&#39;</span>
+
+ls <span class="kw">=</span> ms<span class="kw">.</span>map <span class="fu">(s, idx) -&gt;</span> <span class="kw">[</span>idx<span class="kw">,</span> s<span class="kw">]</span>
+  <span class="kw">.</span>sort <span class="fu">(a, b) -&gt;</span> b<span class="kw">[</span><span class="dv">1</span><span class="kw">]</span> <span class="kw">-</span> a<span class="kw">[</span><span class="dv">1</span><span class="kw">]</span>
+  <span class="kw">.</span>slice<span class="kw">(</span><span class="dv">0</span><span class="kw">,</span> <span class="dv">10</span><span class="kw">)</span>
+  <span class="kw">.</span>map <span class="fu">(o) -&gt;</span> o<span class="kw">[</span><span class="dv">0</span><span class="kw">]</span>
+
+<span class="ot">console</span><span class="kw">.</span>warn ms<span class="kw">.</span>slice<span class="kw">(</span><span class="dv">0</span><span class="kw">,</span><span class="dv">3</span><span class="kw">)</span>
+<span class="ot">console</span><span class="kw">.</span>warn ls<span class="kw">.</span>slice<span class="kw">(</span><span class="dv">0</span><span class="kw">,</span><span class="dv">3</span><span class="kw">)</span>
+
+<span class="ot">console</span><span class="kw">.</span>log <span class="st">&quot;&lt;div style=&#39;padding-top:60px;&#39;&gt;&quot;</span>
+<span class="ot">console</span><span class="kw">.</span>log <span class="st">&quot;&lt;table&gt;&quot;</span>
+<span class="kw">for</span> m<span class="kw">,</span> i <span class="kw">in</span> ms
+  <span class="ot">console</span><span class="kw">.</span>log <span class="st">&quot;&lt;tr&gt;&quot;</span>
+  <span class="ot">console</span><span class="kw">.</span>log <span class="st">&quot;&lt;td style=&#39;width:60px;&#39;&gt;</span><span class="ch">#{</span>i<span class="ch">}</span><span class="st">-th&lt;/td&gt;&quot;</span>
+  <span class="kw">if</span> i <span class="kw">in</span> ls
+    <span class="ot">console</span><span class="kw">.</span>log <span class="st">&quot;&lt;td style=&#39;width:120px&#39;&gt;&lt;font color=red&gt;</span><span class="ch">#{</span>m<span class="ch">}</span><span class="st">&lt;/font&gt;&lt;/td&gt;&quot;</span>
+  <span class="kw">else</span>
+    <span class="ot">console</span><span class="kw">.</span>log <span class="st">&quot;&lt;td style=&#39;width:120px&#39;&gt;</span><span class="ch">#{</span>m<span class="ch">}</span><span class="st">&lt;/td&gt;&quot;</span>
+  <span class="kw">for</span> k <span class="kw">in</span> monsters<span class="kw">[</span>i<span class="kw">].</span>required<span class="kw">[</span><span class="dv">17</span> <span class="kw">..</span> <span class="dv">24</span><span class="kw">]</span>
+  <span class="co">#for k in monsters[i].required</span>
+    <span class="ot">console</span><span class="kw">.</span>log <span class="st">&quot;&lt;td style=&#39;width:50px&#39;&gt;</span><span class="ch">#{</span>k<span class="ch">}</span><span class="st">&lt;/td&gt;&quot;</span>
+  <span class="ot">console</span><span class="kw">.</span>log <span class="st">&quot;&lt;/tr&gt;&quot;</span>
+<span class="ot">console</span><span class="kw">.</span>log <span class="st">&quot;&lt;/table&gt;&quot;</span>
+<span class="ot">console</span><span class="kw">.</span>log <span class="st">&quot;&lt;/div&gt;&quot;</span>
+
+ami <span class="kw">=</span> <span class="fu">-&gt;</span>
+  curl <span class="st">&quot;</span><span class="ch">#{</span>URL<span class="ch">}</span><span class="st">info.json?token=</span><span class="ch">#{</span>token<span class="ch">}</span><span class="st">&quot;</span><span class="kw">,</span> <span class="fu">(result) -&gt;</span>
+    info <span class="kw">=</span> JSON<span class="kw">.</span>parse result
+    <span class="ot">console</span><span class="kw">.</span>log <span class="st">&quot;&lt;div style=&#39;position:fixed;left:0px;top:0px;background-color:white&#39;&gt;&quot;</span>
+    <span class="ot">console</span><span class="kw">.</span>log <span class="st">&quot;&lt;table&gt;&quot;</span>
+    <span class="ot">console</span><span class="kw">.</span>log <span class="st">&quot;&lt;tr&gt;&quot;</span>
+    <span class="ot">console</span><span class="kw">.</span>log <span class="st">&quot;&lt;td style=&#39;width:180px&#39;&gt;poss&lt;/td&gt;&quot;</span>
+    <span class="kw">for</span> m<span class="kw">,</span> i <span class="kw">in</span> info<span class="kw">.</span>stone<span class="kw">[</span><span class="dv">17</span> <span class="kw">..</span> <span class="dv">24</span><span class="kw">]</span>
+    <span class="co">#for m, i in info.stone</span>
+      <span class="ot">console</span><span class="kw">.</span>log <span class="st">&quot;&lt;td style=&#39;width:50px&#39;&gt;</span><span class="ch">#{</span>m<span class="ch">}</span><span class="st">&lt;/td&gt;&quot;</span>
+    <span class="ot">console</span><span class="kw">.</span>log <span class="st">&quot;&lt;/tr&gt;&quot;</span>
+    <span class="ot">console</span><span class="kw">.</span>log <span class="st">&quot;&lt;/table&gt;&quot;</span>
+    <span class="ot">console</span><span class="kw">.</span>log <span class="st">&quot;&lt;/div&gt;&quot;</span>
+
+<span class="kw">do</span> ami</code></pre></div>
+<p><code>it.json</code> は、ゲーム開始時のモンスターの情報</p>
+<p><a href="https://gist.github.com/cympfh/7aae1d6eaee1d00a86bd" class="uri">https://gist.github.com/cympfh/7aae1d6eaee1d00a86bd</a></p>
+</body>
+</html>

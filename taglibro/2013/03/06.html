@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Wed Mar 6 04:43:00 JST 2013</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Wed Mar 6 04:43:00 JST 2013</h1>
+</header>
+<h2 id="a-sample-code-should-not-answer-7-because-the-character-7-seems-to-see-.">A sample code should not answer 7 because the character, 7 seems to see ?.</h2>
+<p>R5RSを初めて読んだ。 <code>call/cc</code> が少しわからなくなった。 ---</p>
+<p>多値を返すための <code>values</code> を <code>call/cc</code> で定義してて、なんで多値になるのか分からない。</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">(<span class="kw">define</span><span class="fu"> </span>(<span class="kw">values</span> . things)
+    (<span class="kw">call/cc</span> (<span class="kw">lambda</span> (cc) (apply cc things))) )</code></pre></div>
+<p>とあって、ためしに実験</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">gosh&gt; (<span class="kw">define</span><span class="fu"> </span>(balues . things) (<span class="kw">call/cc</span> (<span class="kw">lambda</span> (cont) (apply cont things))))
+balues
+gosh&gt; (balues <span class="dv">1</span> <span class="dv">2</span> <span class="dv">3</span>)
+<span class="dv">1</span>
+<span class="dv">2</span>
+<span class="dv">3</span>
+gosh&gt; (receive (a b c) (balues <span class="dv">1</span> <span class="dv">2</span> <span class="dv">3</span>) (<span class="kw">list</span> c b a))
+(<span class="dv">3</span> <span class="dv">2</span> <span class="dv">1</span>)</code></pre></div>
+<p>できてる。なんで出来るのか分からない。 values手続きの定義本体のccは、大域脱出をするただのid関数だと思うんだけど。 じゃあ、もうそれでいいのかな。</p>
+<p><code>dynamic-wind</code> で出てくるサンプルコードも果てしなく難しい。 意義は分かった。そのthunkがどのタイミングででも呼び出される前後には beforeとafterが呼び出される。それはいいんだけど</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">(<span class="kw">define</span><span class="fu"> path </span>&#39;())
+(<span class="kw">define</span><span class="fu"> c </span><span class="dv">#f</span>)
+ (<span class="kw">define</span><span class="fu"> </span>(add s) (push! path s))
+
+ (<span class="kw">dynamic-wind</span>
+     (<span class="kw">lambda</span> () (add &#39;connect))
+     (<span class="kw">lambda</span> ()
+         (add (<span class="kw">call/cc</span> (<span class="kw">lambda</span> (c0) (set! c c0) &#39;talk1))))
+     (<span class="kw">lambda</span> () (add &#39;disconnect)) )
+
+(c &#39;talk2)</code></pre></div>
+<p>これを読み込ませてREPLで実験</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">gosh&gt; path
+(disconnect talk2 connect disconnect talk1 connect)
+gosh&gt; c
+#&lt;subr continuation&gt;
+gosh&gt; (c &#39;talk-final)
+
+シェルが値を返しました <span class="dv">70</span></code></pre></div>
+<p>なんか、エラーなのかよく分からないエラーが出る。</p>
+<p>以上。</p>
+<h1 id="wed-mar-6-082500-jst-2013">Wed Mar 6 08:25:00 JST 2013</h1>
+<h2 id="choose-マクロ">choose マクロ</h2>
+<p>choose マクロは</p>
+<p>http://www.shido.info/lisp/scheme_amb.html</p>
+<p>による。(ちょっと違う)</p>
+<p>問題は</p>
+<p>http://www.geocities.jp/m_hiroi/light/abcruby17.html</p>
+<p>にあった.</p>
+<blockquote>
+<p>出典：Leon Sterling, Ehud Shapiro (著), 松田利夫 (訳), 『Prolog の技芸』, 共立出版, 1988, (278頁より)</p>
+</blockquote>
+<p>の、もの。</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">(<span class="kw">define</span><span class="fu"> </span>(fail) &#39;@)
+
+(<span class="kw">define-syntax</span><span class="fu"> choose</span>
+    (<span class="kw">syntax-rules</span> ()
+        ((_) (fail))
+        ((_ a) a)
+        ((_ a b ...) (<span class="kw">let</span> ((fail0 fail))
+            (<span class="kw">call/cc</span> (<span class="kw">lambda</span> (cc)
+                (set! fail (<span class="kw">lambda</span> () (set! fail fail0) (cc (choose b ...))))
+                (cc a))))) ))
+
+<span class="co">;;;</span>
+
+(<span class="kw">let</span> ((Michael (<span class="kw">list</span> (choose <span class="dv">1</span> <span class="dv">2</span> <span class="dv">3</span>) &#39;bascket (choose &#39;Islam &#39;Australia &#39;America)))
+      (Simon   (<span class="kw">list</span> (choose <span class="dv">1</span> <span class="dv">2</span> <span class="dv">3</span>) (choose &#39;bascket &#39;tennis &#39;clicket) &#39;Islam))
+      (Richard (<span class="kw">list</span> (choose <span class="dv">1</span> <span class="dv">2</span> <span class="dv">3</span>) (choose &#39;bascket &#39;tennis &#39;clicket) (choose &#39;Islam &#39;Australia &#39;America))) )
+
+      (<span class="kw">define</span><span class="fu"> </span>(require <span class="kw">cond</span>)
+          (<span class="kw">if</span> (<span class="kw">not</span> <span class="kw">cond</span>) (fail)))
+
+      (<span class="kw">define</span><span class="fu"> </span>(unique? ls)
+        (<span class="kw">if</span> (<span class="kw">&lt;</span> (<span class="kw">length</span> ls) <span class="dv">2</span>) <span class="dv">#t</span>
+            (<span class="kw">if</span> (<span class="kw">member</span> (<span class="kw">car</span> ls) (<span class="kw">cdr</span> ls)) <span class="dv">#f</span>
+                (unique? (<span class="kw">cdr</span> ls)))))
+
+      (require (unique?
+            (map <span class="kw">car</span> (<span class="kw">list</span> Michael Simon Richard))))
+      (require (unique?
+            (map <span class="kw">cadr</span> (<span class="kw">list</span> Michael Simon Richard))))
+      (require (unique?
+            (map <span class="kw">caddr</span> (<span class="kw">list</span> Michael Simon Richard))))
+
+      (require (<span class="kw">&lt;</span> (<span class="kw">car</span> Michael)
+                  (<span class="kw">car</span> (find (<span class="kw">lambda</span> (p) (<span class="kw">eq?</span> (<span class="kw">caddr</span> p) &#39;America))
+                             (<span class="kw">list</span> Michael Simon Richard)) )))
+
+      (require (<span class="kw">&lt;</span> (<span class="kw">car</span> Simon)
+                  (<span class="kw">car</span> (find (<span class="kw">lambda</span> (p) (<span class="kw">eq?</span> (<span class="kw">cadr</span> p) &#39;tennis))
+                             (<span class="kw">list</span> Michael Simon Richard)))))
+
+      (require (<span class="kw">=</span> <span class="dv">1</span> (<span class="kw">car</span> (find (<span class="kw">lambda</span> (p) (<span class="kw">eq?</span> (<span class="kw">cadr</span> p) &#39;clicket))
+                               (<span class="kw">list</span> Michael Simon Richard)))))
+
+      (<span class="kw">display</span> #`<span class="st">&quot;Michael : ,Michael\n&quot;</span>)
+      (<span class="kw">display</span> #`<span class="st">&quot;Simon : ,Simon\n&quot;</span>)
+      (<span class="kw">display</span> #`<span class="st">&quot;Richard : ,Richard\n&quot;</span>)
+      &#39;done)
+
+<span class="co">; Michael : (2 bascket Australia)</span>
+<span class="co">; Simon : (1 clicket Islam)</span>
+<span class="co">; Richard : (3 tennis America)</span></code></pre></div>
+<hr />
+<footer>
+    <p style='text-align: right'>
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+</body>
+</html>

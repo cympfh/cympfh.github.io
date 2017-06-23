@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Wed Dec 1</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Wed Dec 1</h1>
+</header>
+<h2 id="問題">問題</h2>
+<p><a href="http://yukicoder.me/problems/840">No.308 素数は通れません - yukicoder</a></p>
+<h2 id="解答">解答</h2>
+<p><a href="http://yukicoder.me/submissions/61714" class="uri">http://yukicoder.me/submissions/61714</a></p>
+<p>Nの制約を一旦忘れて素朴にBFSで解くプログラムを書くと、 小さいNではなんか色々な値が解になって、 それ以降、8かたまに14になる.</p>
+<p>パネルは本来 <code>1</code> から <code>N</code> までしかないが、<code>3N</code> くらいまであるとしてみると、 14は消えて8になった. 巾8のフィールドについて考察してみると、 次のように、全ての合成数に (ほとんどの場合) アクセス可能であることがわかる.</p>
+<ul>
+<li>2を除いて、偶数の列では自由に移動可能</li>
+<li>1 → 9 → 10</li>
+<li>26 → 27 → 28</li>
+<li>20 → 21 → 22</li>
+<li>14 → 15 → 16</li>
+</ul>
+<p>のルートを使って、全ての偶数の合成数にアクセス可能. 奇数の合成数は、全て偶数の合成数の隣にあるので、これもアクセス可能.</p>
+<p>実際には (N+1) 以上のパネルは存在しない. これで困るかもしれないのは、 <code>N</code> が奇数で <code>N%8==1</code> のとき. 隣の偶数 (N+1) から 直接 N に行くことができないので (N-8) から行くしか無い. (N-8) が奇数だと、Nに行けないことになる.</p>
+<p>考察はしてないけど、どうやらこのときに解が14になるので間違いない.</p>
+<div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="co"># Nが小さい時の解は埋め込み</span>
+m={<span class="dv">4</span>=&gt;<span class="dv">3</span>,<span class="dv">6</span>=&gt;<span class="dv">5</span>,<span class="dv">8</span>=&gt;<span class="dv">7</span>,<span class="dv">9</span>=&gt;<span class="dv">7</span>,<span class="dv">10</span>=&gt;<span class="dv">7</span>,<span class="dv">15</span>=&gt;<span class="dv">7</span>,<span class="dv">16</span>=&gt;<span class="dv">7</span>,<span class="dv">22</span>=&gt;<span class="dv">7</span>,<span class="dv">12</span>=&gt;<span class="dv">11</span>,<span class="dv">14</span>=&gt;<span class="dv">13</span>,<span class="dv">20</span>=&gt;<span class="dv">19</span>,<span class="dv">21</span>=&gt;<span class="dv">19</span>,<span class="dv">24</span>=&gt;<span class="dv">23</span>,<span class="dv">25</span>=&gt;<span class="dv">23</span>}
+
+require <span class="st">`prime`</span>
+n=gets.chomp.to_i
+p m[n]?m[n]:(n%<span class="dv">8</span>==<span class="dv">1</span>&amp;&amp;(n<span class="dv">-8</span>).prime?)?<span class="dv">14</span>:<span class="dv">8</span> <span class="co"># 大体8、たまに14</span></code></pre></div>
+<p>これで TLE. WAは出てないので、<code>Prime.prime?</code> だと遅いらしい.</p>
+<p>プロコンっぽくないけど、乱択で素数判定する Miller-Rabin 判定を実装してAC.</p>
+<div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="kw">def</span> powmod(a,k,m)
+  <span class="kw">return</span> <span class="dv">1</span> <span class="kw">if</span> k == <span class="dv">0</span>
+  t = powmod(a, k / <span class="dv">2</span>, m)
+  t = t * t % m
+  t = t * a % m <span class="kw">if</span> k.odd?
+  <span class="kw">return</span> t
+<span class="kw">end</span>
+
+<span class="kw">def</span> prime?(n)
+  <span class="kw">return</span> <span class="dv">false</span> <span class="kw">if</span> n&lt;<span class="dv">2</span>
+  <span class="kw">return</span> <span class="dv">true</span> <span class="kw">if</span> n&lt;<span class="dv">4</span>
+  <span class="kw">return</span> <span class="dv">false</span> <span class="kw">if</span> n.even?
+  d = n<span class="dv">-1</span>
+  d &gt;&gt;= <span class="dv">1</span> <span class="kw">while</span> d.even?
+  <span class="dv">100</span>.times <span class="kw">do</span>
+    a = rand(n<span class="dv">-1</span>) + <span class="dv">1</span>
+    y = powmod(a, d, n)
+    t = d
+    <span class="kw">while</span> t != n<span class="dv">-1</span> <span class="kw">and</span> y != <span class="dv">1</span> <span class="kw">and</span> y != n<span class="dv">-1</span>
+      y = (y*y) % n
+      t &lt;&lt;= <span class="dv">1</span>
+    <span class="kw">end</span>
+    <span class="kw">return</span> <span class="dv">false</span> <span class="kw">if</span> y!=n<span class="dv">-1</span> <span class="kw">and</span> t.even?
+  <span class="kw">end</span>
+  <span class="kw">return</span> <span class="dv">true</span>
+<span class="kw">end</span></code></pre></div>
+<p>として、さきの <code>(n-8).prime?</code> を <code>prime?(n-8)</code> に差し替え.</p>
+</body>
+</html>

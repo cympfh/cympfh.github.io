@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>J言語</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+  <link rel="stylesheet" href="../../resources/css/c.css">
+  <script src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+</head>
+<body>
+<header>
+<h1 class="title">J言語</h1>
+</header>
+<h2 id="index">index</h2>
+<p><span id="toc"></span></p>
+<h2 id="超絶参考サイト">超絶参考サイト</h2>
+<ul>
+<li><a href="http://vipprog.net/wiki/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0%E8%A8%80%E8%AA%9E/J.html">vipでプログラミング wiki / プログラミング言語 / J</a>
+<ul>
+<li>基本文法が解説されていて最初に読むのにふさわしい</li>
+</ul></li>
+<li><a href="http://www.jsoftware.com/help/dictionary/vocabul.htm">jsoftware/dictionary/vocabul</a>
+<ul>
+<li>語の辞書 (公式)</li>
+</ul></li>
+</ul>
+<h2 id="library-jal-addons">Library (JAL, addons)</h2>
+<p>ライブラリまたはJALまたはアドオン</p>
+<ul>
+<li><a href="http://www.jsoftware.com/jwiki/Library">公式wiki</a></li>
+</ul>
+<h3 id="基本パッケージのダウンロード">基本パッケージのダウンロード</h3>
+<ul>
+<li>参考: <a href="http://kquoe2.hatenablog.com/entry/20120703/p1">J701でのplot - niming538の日記</a></li>
+</ul>
+<pre class="sourceCode ruby"><code class="sourceCode ruby">load <span class="st">&#39;pacman&#39;</span>
+<span class="st">&#39;update&#39;</span> jpkg <span class="st">&#39;&#39;</span>
+<span class="st">&#39;showinstall&#39;</span> jpkg <span class="st">&#39;&#39;</span>
+<span class="st">&#39;install&#39;</span> jpkg <span class="st">&#39;all&#39;</span></code></pre>
+<p><code>''</code> は意味のない仮の引数 (ユニットみたいな)</p>
+<h3 id="require-いわゆるライブラリのロード-で読み込めない場合">require (いわゆるライブラリのロード) で読み込めない場合</h3>
+<p>自分は <code>j64-803</code> を <code>~/Tools</code> に置いて管理している (<code>~/Tools/j64-803/bin/jconsole</code>)<br />上のコマンドを実行すると <code>~/Tools/j64-803/addons/</code> 以下に色々追加された</p>
+<p><code>require 'plot'</code> すると <code>addons/graphics/plot/plot.ijs</code> が読み込まれるようである</p>
+<p><code>addons/games/minesweeper</code> を見つけたので <code>require 'minesweeper'</code> すると見つからないと言われた<br /><code>addons/games/minesweeper/minesweeper.ijs</code> が無いと言っているようで <code>addons/games/minesweeper/uiconsole.ijs</code> ならあるので <code>require 'games/minesweeper/uiconsole'</code> とすると読み込めた</p>
+<h2 id="グラフのプロット">グラフのプロット</h2>
+<h3 id="区間と関数を与える">区間と関数を与える</h3>
+<pre class="sourceCode ruby"><code class="sourceCode ruby">load <span class="st">&#39;plot&#39;</span>
+plot <span class="dt">_5</span> <span class="dv">5</span>; <span class="st">&#39;sin,cos&#39;</span></code></pre>
+<p><code>sin</code> <code>cos</code> は plotアドオンを読み込むと定義される</p>
+<figure>
+<img src="img/plot-cossin.png" />
+</figure>
+<h3 id="点列を与える">点列を与える</h3>
+<pre class="sourceCode ruby"><code class="sourceCode ruby">plot *: i.<span class="dv">100</span></code></pre>
+<figure>
+<img src="img/plot-sq100.png" />
+</figure>
+<p>点と点の間は直線によって補完される.</p>
+<ul>
+<li>さらなるバリエーションは <a href="http://japla.sakura.ne.jp/workshop/workshop/2009/primer_plot.pdf" class="uri">http://japla.sakura.ne.jp/workshop/workshop/2009/primer_plot.pdf</a> に詳しい</li>
+</ul>
+<h2 id="hook-fork">Hook, Fork</h2>
+<ul>
+<li>参考; <a href="http://www.jsoftware.com/help/jforc/forks_hooks_and_compound_adv.htm">Forks, Hooks, and Compound Adverbs</a></li>
+</ul>
+<p>動詞同士を2つまたは3つ組み合わせて、新しい動詞として使うことが出来る. ややこしい関数合成である. 2つの組み合わせを Hook、3つの組み合わせを Fork と呼ぶ. 4つ以上の組み合わせは Train と呼ばれるが、これは Hook と Fork との組み合わせに過ぎない.</p>
+<p>組み合わせて出来た動詞をまた、monadic として使うか dyadic として使うかによっても、 意味が微妙に異なる. これらを区別するために &quot;monadic fork&quot;, &quot;dyadic fork&quot; などと言う. 注意すべき点として、実際に使われるまでは monadic とも dyadic とも決定付かない. monadic または dyadic だと、定義の時に決定しておくには <code>:</code> を使う、と <a href="http://www.jsoftware.com/help/dictionary/d502.htm" class="uri">http://www.jsoftware.com/help/dictionary/d502.htm</a> に書いてあった.</p>
+<p><code>x,y,z</code> は名詞、 <code>f,g,h</code> は動詞 だとして書く.</p>
+<h3 id="monadic-hook">monadic hook</h3>
+<p><code>(g h) y</code> <span class="math">\(\Rightarrow\)</span> <code>y g (h y)</code></p>
+<ul>
+<li><code>(+ *:) y</code> <span class="math">\(\Rightarrow\)</span> <code>y + *:y</code> <span class="math">\(\Rightarrow y + y^2\)</span></li>
+</ul>
+<h3 id="dyadic-hook">dyadic hook</h3>
+<p><code>x (g h) y</code> <span class="math">\(\Rightarrow\)</span> <code>x g (h y)</code></p>
+<ul>
+<li><code>x (+ *:) y</code> <span class="math">\(\Rightarrow\)</span> <code>x + (*:y)</code> <span class="math">\(\Rightarrow x + y^2\)</span></li>
+</ul>
+<h3 id="monadic-fork">monadic fork</h3>
+<p><code>(f g h) y</code> <span class="math">\(\Rightarrow\)</span> <code>(f y) g (h y)</code></p>
+<ul>
+<li><code>(+/ % #) a</code> <span class="math">\(\Rightarrow\)</span> <code>(+/ a) % #a</code> <span class="math">\(\Rightarrow \dfrac{\sum a}{\#a}\)</span></li>
+<li>これはいわゆる平均を求めるためのイディオムである</li>
+</ul>
+<h3 id="dyadic-fork">dyadic fork</h3>
+<p><code>x (f g h) y</code> <span class="math">\(\Rightarrow\)</span> <code>(x f y) g (x h y)</code></p>
+<ul>
+<li><code>x ([ + ]) y</code> <span class="math">\(\Rightarrow\)</span> <code>(x [ y) + (x ] y)</code> <span class="math">\(\Rightarrow\)</span> <code>x + y</code></li>
+</ul>
+<h3 id="monadic-noun-fork">monadic noun fork</h3>
+<p><code>(z g h) y</code> <span class="math">\(\Rightarrow\)</span> <code>z g (h y)</code></p>
+<p>名詞 <code>z</code> を渡しておくと部分適用のようなことができる</p>
+<pre class="sourceCode ruby"><code class="sourceCode ruby">   NB. ] は右辺恒等関数
+   ] <span class="dv">1</span>
+<span class="dv">1</span>
+   <span class="dv">1</span> ] <span class="dv">2</span>
+<span class="dv">2</span>
+ 
+   NB. 名詞 2 と ] を * で fork
+   twice =. <span class="dv">2</span> * ]
+   twice <span class="dv">3</span>
+<span class="dv">6</span>
+   twice i.<span class="dv">10</span>
+<span class="dv">0</span> <span class="dv">2</span> <span class="dv">4</span> <span class="dv">6</span> <span class="dv">8</span> <span class="dv">10</span> <span class="dv">12</span> <span class="dv">14</span> <span class="dv">16</span> <span class="dv">18</span></code></pre>
+<h3 id="dyadic-noun-fork">dyadic noun fork</h3>
+<p><code>x (z g h) y</code> <span class="math">\(\Rightarrow\)</span> <code>z g (x h y)</code></p>
+<ul>
+<li><code>2 (10 * +) 3</code> <span class="math">\(\Rightarrow\)</span> <code>10 * (2 + 3)</code></li>
+</ul>
+<h3 id="monadic-capped-fork">monadic capped fork</h3>
+<p><code>([: g h) y</code> <span class="math">\(\Rightarrow\)</span> <code>g (h y)</code></p>
+<ul>
+<li>Hook でも Fork でも <code>g</code> が常に dyadic であったことに注意すると、こういうのも必要なことに気づく</li>
+<li><code>[:</code> は Cap と呼ばれる. 品詞はよくわからない. <code>g</code> の左辺に蓋を被せる、みたいなイメージ</li>
+<li>そしてこれはよく見ると、我々がよく知っている関数合成である</li>
+</ul>
+<h3 id="dyadic-capped-fork">dyadic capped fork</h3>
+<p><code>x ([: g h) y</code> <span class="math">\(\Rightarrow\)</span> <code>g (x h y)</code></p>
+<pre class="sourceCode ruby"><code class="sourceCode ruby">   sq_of_sum =: [: *: +
+   <span class="dv">1</span> sq_of_sum <span class="dv">10</span>  <span class="dt">NB</span>. *: (<span class="dv">1+10</span>)
+<span class="dv">121</span>
+   sq_of_sum 10  NB. monadic として使っても意味は通じる (!)
+<span class="dv">100</span></code></pre>
+<h2 id="接続詞">接続詞</h2>
+<h3 id="bond">Bond (<code>&amp;</code>)</h3>
+<ul>
+<li><code>(f &amp; g) y</code> <span class="math">\(\Rightarrow\)</span> <code>f (g y)</code>
+<ul>
+<li>monadic capped fork と同じやんけ</li>
+</ul></li>
+<li><code>x (f &amp; g) y</code> <span class="math">\(\Rightarrow\)</span> <code>(g x) f (g y)</code></li>
+</ul>
+<h3 id="noun-bond">noun Bond</h3>
+<p>名詞 <code>n</code> をとって</p>
+<ul>
+<li><code>(f &amp; n) y</code> <span class="math">\(\Rightarrow\)</span> <code>y f n</code></li>
+<li><code>(n &amp; g) y</code> <span class="math">\(\Rightarrow\)</span> <code>n g y</code>
+<ul>
+<li>これもやっぱり部分適用だ</li>
+</ul></li>
+</ul>
+<pre class="sourceCode ruby"><code class="sourceCode ruby">   (^ &amp; <span class="dv">3</span>) <span class="dv">2</span>  <span class="dt">NB</span>. cubic
+<span class="dv">8</span>
+   (, &amp; <span class="dv">2</span>) <span class="dv">1</span>  <span class="dt">NB</span>. append <span class="dv">2</span>
+<span class="dv">1</span> <span class="dv">2</span>
+   (<span class="dv">3</span> &amp; ^) <span class="dv">2</span>  <span class="dt">NB</span>. power of <span class="dv">3</span>
+<span class="dv">9</span>
+   (<span class="dv">1</span> &amp; ,) <span class="dv">0</span>  <span class="dt">NB</span>. cons <span class="dv">1</span>
+<span class="dv">1</span> <span class="dv">0</span></code></pre>
+<h3 id="atop">Atop (<code>@</code>)</h3>
+<ul>
+<li><code>(f @ g) y</code> <span class="math">\(\Rightarrow\)</span> <code>f (g y)</code></li>
+<li><code>x (f @ g) y</code> <span class="math">\(\Rightarrow\)</span> <code>f (x g y)</code></li>
+</ul>
+<p>capped fork と完全に一致.</p>
+<h2 id="副詞">副詞</h2>
+<p>副詞は動詞に付与して使う. 動詞の意味を僅かに変更して新しい動詞を合成するものだと解釈できる. 合成されて出来た動詞もまた、monadic/dyadic とも使えたりするのでややこしい.</p>
+<h3 id="insert">Insert (<code>/</code>)</h3>
+<p><code>/</code> は二項動詞を挿入する副詞として説明される.</p>
+<p>二項動詞としての <code>+</code> に付与して動詞 <code>+/</code> を生成する. <code>+/</code> は monadic/dyadic 両方として使える.</p>
+<p>単項としての <code>+/</code> は容易である:</p>
+<ul>
+<li><code>+/ 1 2 3</code> <span class="math">\(\Rightarrow\)</span> <code>1 + 2 + 3</code> <span class="math">\(\Rightarrow\)</span> <code>6</code></li>
+</ul>
+<pre><code>   2 2 $ i.4
+0 1
+2 3
+   +/ 2 2 $ i.4
+2 4</code></pre>
+<p>二項としての <code>+/</code> はちょっとアレ.</p>
+<pre><code>   ] u =: i.3
+0 1 2
+   ] v =: 10 * i.5
+0 10 20 30 40
+   u +/ v
+0 10 20 30 40
+1 11 21 31 41
+2 12 22 32 42</code></pre>
+<pre><code>   (i.3) +/ (2 2$i.4)
+0 1
+2 3
+
+1 2
+3 4
+
+2 3
+4 5</code></pre>
+<p>二項 <code>+/</code> は <span class="math">\(n\)</span> 次元 Array と <span class="math">\(m\)</span> 次元 Array から <span class="math">\(n+m\)</span> 次元 Array を返す.</p>
+<h2 id="動詞の定義">動詞の定義</h2>
+<p>動詞の定義には大きく、暗黙的 (tacit) 定義と明示的 (explicit) 定義とがある. 明示的定義は動詞以外の語も定義できる. (暗黙的定義では出来ないとは言ってない. 出来るんだろうか?)</p>
+<h3 id="暗黙的定義">暗黙的定義</h3>
+<p>暗黙的定義は前章で述べた Fork, Hook を組み合わせて動詞を作る方法である. 使いまわす為には名詞 (変数のこと) に代入しておけばよい.</p>
+<pre class="j"><code>   mean =: +/%#
+   mean i.10
+4.5</code></pre>
+<p>罠としては、本当に期待する通りに monadic/dyadic として使われているかのデバグが困難なことである. 各々の Hook, Fork は実際に使われる際に初めて monadic/dyadic のどちらで解釈するかを決定する.</p>
+<h3 id="明示的定義">明示的定義</h3>
+<p>明示的定義は、やや奇妙なシンタクスを用いる. 公式のリファレンスとしては <a href="http://www.jsoftware.com/help/dictionary/d310n.htm">: Explict</a> と併せて <a href="http://www.jsoftware.com/help/dictionary/d310v.htm">: Monad-Dyad</a> を読むと良い.</p>
+<p>次に示す複数の (奇妙な) シンタクスが存在すると <strong>思えば</strong> 良い.</p>
+<h4 id="単項とも二項とも用いられる動詞">1. 単項とも二項とも用いられる動詞</h4>
+<pre><code>(動詞名) =: verb : 0
+(単項の定義)
+:
+(二項の定義)
+)</code></pre>
+<p>この間の <code>:</code> は正しく <a href="http://www.jsoftware.com/help/dictionary/d310v.htm">: Monad-Dyad</a> の <code>:</code> である.</p>
+<p>定義は、右辺が <code>y</code>、左辺が <code>x</code> だとして、自由に J言語の式を改行で区切って複数並べればよい.</p>
+<p>例を示す:</p>
+<pre><code>   add =: verb : 0
+y
+:
+x + y
+)
+   add 2
+2
+   1 add 2
+3</code></pre>
+<h4 id="単項の動詞">2. 単項の動詞</h4>
+<p>単項として用いられる動詞を定義する. これの意味するところは、 二項として用いようとすると実行時エラー (domain error) を吐く、という意味である. 二通りのシンタクスがある.</p>
+<pre><code>(動詞名) =: monad : (定義を書いた文字列)</code></pre>
+<pre><code>(動詞名) =: monad : 0
+(定義)
+)</code></pre>
+<p>1つめはやや奇妙であるが定義本体が文字列である. 一つのJ言語で書かれたステートを文字列として (つまりシングルクオートで括って) 書く. 複数文からなる定義ならば、後者のが便利である. キーワード <code>monad</code> は実の所 <code>verb</code> でいいのだけど <code>monad</code> のが可読性があるでしょ.</p>
+<p>まとめて例を示す:</p>
+<pre><code>   f =: monad : &#39;- 2 ^ y&#39;
+
+   f 10
+_1024
+
+   f
+3 : &#39;- 2 ^ y&#39;
+
+
+   f =: monad : 0
+a =. 2 ^ y
+- a
+)
+
+   f 10
+_1024
+
+   1 f 10
+|domain error: f
+|   1     f 10
+</code></pre>
+<h4 id="二項の動詞">3. 二項の動詞</h4>
+<p>二項としてのみ用いられる動詞はキーワード <code>dyad</code> で定義する.</p>
+<pre><code>(動詞名) =: dyad : (定義を書いた文字列)</code></pre>
+<pre><code>(動詞名) =: dyad : 0
+(定義)
+)</code></pre>
+<p><code>monad</code> の場合と全く同様に用いる. 例を示す:</p>
+<pre><code>   add =: dyad : &#39;x+y&#39;
+
+   add
+4 : &#39;x+y&#39;
+
+   1 add 2
+3
+
+   add 2
+|domain error: add
+|       add 2
+
+
+   add =: dyad : 0
+x + y
+)
+
+   add
+4 : &#39;x + y&#39;
+
+   1 add 2
+3
+
+   add 2
+|domain error: add
+|       add 2</code></pre>
+<p>他のページでは大抵、キーワード <code>verb</code> <code>monad</code> <code>dyad</code> などとは書かず、 数字が書かれる. それぞれ 3 3 4 が当てはまる. 実の所、そういった名詞がはじめからあって数値が代入されているだけである. そんでもって <code>verb = monad</code> である.</p>
+<h4 id="明示的な暗黙的定義-tacit-definition">4. 明示的な暗黙的定義 (tacit definition)</h4>
+<p><code>verb</code> のところに 13 を使うだけ.</p>
+<pre><code>   tacit =: 13
+   f =: tacit : &#39;x ^ (+: y)&#39;
+   f
+[ ^ [: +: ]</code></pre>
+<p>普通に <code>verb</code> だと思って読めば良く、そのように動く. しかしながら、 上の例にあるように、 (可能ならば) 暗黙的定義に書きなおしてくれる.</p>
+<p>J言語を書く動機なんて、可読性を無視してとにかく短く書くことであるし、 暗黙的定義こそ、J言語の華だと思う. tacit definition は、 (恐らく) (そこまで) 複雑な書き換えルールを用いてるわけではないっぽいけど、 偶に気附きを与えてくれる.</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var UL = document.createElement('ul');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    UL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(UL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

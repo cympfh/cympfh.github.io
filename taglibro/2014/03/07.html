@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Mar 07 2014</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Mar 07 2014</h1>
+</header>
+<h2 id="気まぐれで-anarchy-golf-など">気まぐれで anarchy golf など</h2>
+<p>http://golf.shinh.org/p.rb?bars</p>
+<p>AtCoder Regular Contest ならそのままB問題として使われそうだなって思いました。</p>
+<p><code>cympfh  307 0.0433  14/03/07 01:18:59   0B / ?B / ?B</code></p>
+<p>Python 132 の倍以上なので、ちゃんと頑張らないと、 Haskellの面汚しになりそう。 でも素直に言えばSuccessしただけで満足。</p>
+<p>圧縮前のコードは下。</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> <span class="kw">do</span>
+    xs<span class="ot">&lt;-</span>getLine<span class="fu">&gt;&gt;=</span>return<span class="fu">.</span>map read<span class="fu">.</span>words
+    <span class="kw">let</span> m <span class="fu">=</span> maximum xs
+    putStrLn <span class="fu">$</span> unlines [ trim <span class="fu">$</span> ins (yoko xs i) (tate xs i) <span class="fu">|</span> i <span class="ot">&lt;-</span> [m, m<span class="fu">-</span><span class="dv">1</span> <span class="fu">..</span> <span class="dv">0</span>]]
+    <span class="kw">where</span>
+      yoko xs i <span class="fu">=</span>
+        [ <span class="kw">if</span> xs<span class="fu">!!</span>j <span class="fu">==</span> i <span class="kw">then</span> <span class="st">&quot;__&quot;</span> <span class="kw">else</span> <span class="st">&quot;  &quot;</span>
+        <span class="fu">|</span> j <span class="ot">&lt;-</span> [<span class="dv">0</span> <span class="fu">..</span> length xs<span class="fu">-</span><span class="dv">1</span>]]
+      tate xs i <span class="fu">=</span>
+        [ <span class="kw">if</span> xs&#39; <span class="fu">!!</span> j <span class="fu">&gt;</span> i <span class="fu">||</span> xs&#39; <span class="fu">!!</span> (j<span class="fu">+</span><span class="dv">1</span>) <span class="fu">&gt;</span> i <span class="kw">then</span> <span class="st">&quot;|&quot;</span> <span class="kw">else</span> <span class="st">&quot; &quot;</span> 
+        <span class="fu">|</span> j <span class="ot">&lt;-</span> [<span class="dv">0</span> <span class="fu">..</span> length xs]]
+        <span class="kw">where</span> xs&#39; <span class="fu">=</span> <span class="dv">0</span><span class="fu">:</span>xs<span class="fu">++</span>[<span class="dv">0</span>]
+      ins [] [x] <span class="fu">=</span> x
+      ins (x<span class="fu">:</span>xs) (y<span class="fu">:</span>ys) <span class="fu">=</span> y <span class="fu">++</span> x <span class="fu">++</span> ins xs ys
+      trim <span class="fu">=</span> reverse <span class="fu">.</span> dropWhile (<span class="fu">==</span> <span class="ch">&#39; &#39;</span>) <span class="fu">.</span> reverse</code></pre></div>
+<p>yoko, tate, trim はインライン展開して提出したけど ins はトップレベル定義したまま出しちゃった。 というかもっとキレイに書けるような関数が絶対あると思うんだけど。</p>
+</body>
+</html>

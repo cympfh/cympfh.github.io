@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sat Aug 23 14:51:41 JST 2014</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Sat Aug 23 14:51:41 JST 2014</h1>
+</header>
+<h2 id="node-の-require-とか-fs-はどこ基準の相対パスか">node の require とか fs はどこ基準の相対パスか</h2>
+<p>そろそろはっきりさせよう．</p>
+<p><code>~/test</code> を作業ディレクトリに、 <code>~/test/test.*</code> というスクリプトを実行するとき を考える</p>
+<h2 id="bash-の場合">bash の場合</h2>
+<p>まずは <code>bash</code></p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">~/test</span>$ <span class="bu">cd</span> ~/test
+<span class="ex">~/test</span>$ <span class="fu">mkdir</span> src
+
+<span class="ex">~/test</span>$ <span class="bu">echo</span> <span class="st">&#39;</span>
+<span class="st">echo $PWD</span>
+<span class="st">cat thefile</span>
+<span class="st">&#39;</span> <span class="op">&gt;</span> src/test.sh
+
+<span class="ex">~/test</span>$ <span class="bu">echo</span> <span class="st">&quot;base&quot;</span> <span class="op">&gt;</span> thefile
+<span class="ex">~/test</span>$ <span class="bu">echo</span> <span class="st">&quot;base/src&quot;</span> <span class="op">&gt;</span> src/thefile
+
+<span class="ex">~/test</span>$ <span class="fu">bash</span> src/test.sh
+<span class="ex">/home/cympfh/test</span>
+<span class="ex">base</span></code></pre></div>
+<p>これはつまり、スクリプトを作業ディレクトリにコピーしてから実行したと考えて同じ挙動である．</p>
+<pre><code>cp src/test.sh .
+bash test.sh</code></pre>
+<p>(これは上と同じ挙動)</p>
+<h2 id="node-nodejs-の場合">node (nodejs) の場合</h2>
+<p><code>src/library.js</code> を読む (require) スクリプト <code>src/test.js</code> を、 作業ディレクトリから 呼ぶ．</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// src/test.js</span>
+fs <span class="op">=</span> <span class="at">require</span>(<span class="st">&#39;fs&#39;</span>)
+cat <span class="op">=</span> <span class="at">require</span>(<span class="st">&#39;./library.js&#39;</span>).<span class="at">cat</span>
+<span class="at">cat</span>(<span class="st">&#39;thefile&#39;</span>)
+<span class="va">console</span>.<span class="at">log</span>(<span class="va">fs</span>.<span class="at">readFileSync</span>(<span class="st">&#39;thefile&#39;</span><span class="op">,</span> <span class="st">&#39;utf8&#39;</span>))
+
+cat_the_file <span class="op">=</span> <span class="at">require</span>(<span class="st">&#39;./library.js&#39;</span>).<span class="at">cat_the_file</span>
+<span class="at">cat_the_file</span>()<span class="op">;</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// src/library.js</span>
+<span class="va">exports</span>.<span class="at">cat</span> <span class="op">=</span> <span class="kw">function</span> (path) <span class="op">{</span>
+  <span class="va">console</span>.<span class="at">log</span>(<span class="va">fs</span>.<span class="at">readFileSync</span>(path<span class="op">,</span> <span class="st">&#39;utf8&#39;</span>))
+<span class="op">};</span>
+<span class="va">exports</span>.<span class="at">cat_the_file</span> <span class="op">=</span> <span class="kw">function</span> () <span class="op">{</span>
+  <span class="kw">var</span> path <span class="op">=</span> <span class="st">&#39;thefile&#39;</span>
+  <span class="va">console</span>.<span class="at">log</span>(<span class="va">fs</span>.<span class="at">readFileSync</span>(path<span class="op">,</span> <span class="st">&#39;utf8&#39;</span>))
+<span class="op">}</span></code></pre></div>
+<h3 id="結果">結果</h3>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">~/test</span>$ <span class="ex">node</span> src/test.js
+<span class="ex">base</span>
+
+<span class="ex">base</span>
+
+<span class="ex">base</span></code></pre></div>
+<p>つまり、<code>require</code> の中に書いた相対パスだけ、 スクリプト基準に解釈し、 その他のパスは作業ディレクトリを基準にする．</p>
+<h2 id="終わり">終わり</h2>
+<p>基準点の違う相対パス を織り交ぜて書くのが気持ち悪い．</p>
+<p>なにより、 vim のパス補完が一方が利く場合には もう一方がどうしても利かないのが不便である．</p>
+</body>
+</html>

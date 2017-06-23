@@ -1,0 +1,111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+</head>
+<body>
+<pre class="sourceCode scheme"><code class="sourceCode scheme">(<span class="kw">define</span><span class="fu"> </span>(f x) (<span class="kw">exact-&gt;inexact</span> (<span class="kw">/</span> <span class="dv">1</span> (<span class="kw">+</span> <span class="dv">1</span> (<span class="kw">expt</span> x <span class="dv">2</span>)))))
+(<span class="kw">define</span><span class="fu"> a </span>-<span class="dv">1</span>)
+(<span class="kw">define</span><span class="fu"> b </span><span class="dv">1</span>)
+
+
+<span class="co">; int [-1, 1] 1 / (1+x**2) dx</span>
+<span class="co">; </span>
+; report.scm の (solve1 N) (solve2 N) (solve3 k j) が、それぞれ、
+; N点複合台数則、N点Gauss則、Romberg積分をするもの．
+<span class="co">; </span>
+; 例えば
+<span class="co">; (display (solve1 40))(newline)</span>
+<span class="co">; (display (solve2 6))(newline)</span>
+<span class="co">; (display (solve3 4 3))(newline)</span>
+; とすると
+<span class="co">; 1.5705879934770641</span>
+<span class="co">; 1.570731707317072</span>
+<span class="co">; 1.5707928918809373</span>
+; と出力された．
+<span class="co">; </span>
+<span class="co">; 真値は</span>
+<span class="co">; (* 2 (atan 1)))</span>
+; によって
+<span class="co">; 1.5707963267948966</span>
+; と計算される．
+
+; 手で計算したところ、真の値は pi/<span class="dv">2</span> であった
+(<span class="kw">define</span><span class="fu"> truth</span>
+    (* <span class="dv">2</span> (<span class="kw">atan</span> <span class="dv">1</span>)))
+
+<span class="co">; Trapezoidal rule</span>
+(<span class="kw">define</span><span class="fu"> </span>(solve1 N) <span class="co">; integral from a to b by N splits</span>
+    (<span class="kw">let</span> ((h (<span class="kw">/</span> (<span class="kw">-</span> b a) N)))
+        (<span class="kw">define</span><span class="fu"> </span>(solve1-sub i ac)
+            (<span class="kw">let</span> ((x (<span class="kw">+</span> a (* i h))))
+                (<span class="kw">cond</span> ((<span class="kw">=</span> i <span class="dv">0</span>) (solve1-sub (<span class="kw">+</span> i <span class="dv">1</span>) (<span class="kw">+</span> ac (<span class="kw">/</span> (f x) <span class="dv">2</span>))))
+                      ((<span class="kw">=</span> i N) (* h (<span class="kw">+</span> ac (<span class="kw">/</span> (f x) <span class="dv">2</span>))))
+                      (<span class="kw">else</span> (solve1-sub (<span class="kw">+</span> i <span class="dv">1</span>) (<span class="kw">+</span> ac (f x)))))))
+        (solve1-sub <span class="dv">0</span> <span class="dv">0</span>)))
+
+<span class="co">; Gauss-Legendre</span>
+(<span class="kw">define</span><span class="fu"> </span>(solve2 N)
+    (<span class="kw">define</span><span class="fu"> pi </span><span class="fl">3.14159265358979323846264338</span>)
+    (<span class="kw">define</span><span class="fu"> </span>(P n x)
+        (<span class="kw">cond</span> ((<span class="kw">=</span> n <span class="dv">0</span>) <span class="dv">1</span>)
+              ((<span class="kw">=</span> n <span class="dv">1</span>) x)
+              (<span class="kw">else</span> (<span class="kw">/</span> (<span class="kw">-</span> (* (<span class="kw">-</span> (* <span class="dv">2</span> n) <span class="dv">1</span>) x (P (<span class="kw">-</span> n <span class="dv">1</span>) x)) (* (<span class="kw">-</span> n <span class="dv">1</span>) (P (<span class="kw">-</span> n <span class="dv">2</span>) x))) n)) ))
+    (<span class="kw">define</span><span class="fu"> </span>(newton x c)
+        (<span class="kw">if</span> (<span class="kw">&lt;=</span> c <span class="dv">0</span>) x
+            (newton
+                (<span class="kw">-</span> x [<span class="kw">/</span> (<span class="kw">-</span> <span class="dv">1</span> (* x x)) N (<span class="kw">-</span> (<span class="kw">/</span> (P (<span class="kw">-</span> N <span class="dv">1</span>) x) (P N x)) x)])
+                (<span class="kw">-</span> c <span class="dv">1</span>))))
+    (<span class="kw">define</span><span class="fu"> </span>(x i)
+        (newton
+            (<span class="kw">cos</span> (* (<span class="kw">+</span> i <span class="fl">0.75</span>) pi (<span class="kw">/</span> <span class="dv">1</span> (<span class="kw">+</span> N <span class="fl">0.5</span>))))
+            <span class="dv">10</span>))
+    (<span class="kw">define</span><span class="fu"> </span>(w i)
+        (<span class="kw">let</span> ((x_i (x i)))
+            (* <span class="dv">2</span> [<span class="kw">-</span> <span class="dv">1</span> (* x_i x_i)] [<span class="kw">/</span> <span class="dv">1</span> (<span class="kw">expt</span> (* N (P (<span class="kw">-</span> N <span class="dv">1</span>) x_i)) <span class="dv">2</span>)])))
+    (<span class="kw">define</span><span class="fu"> </span>(solve2-sub i ac)
+        (<span class="kw">if</span> (<span class="kw">=</span> i N) ac
+                (solve2-sub (<span class="kw">+</span> i <span class="dv">1</span>) (<span class="kw">+</span> ac (* (f (x i)) (w i))))))
+    (solve2-sub <span class="dv">0</span> <span class="dv">0</span>))
+
+<span class="co">; Romberg</span>
+(<span class="kw">define</span><span class="fu"> </span>(solve3 k j)
+    (<span class="kw">if</span> (<span class="kw">=</span> j <span class="dv">0</span>) (solve1 (<span class="kw">expt</span> <span class="dv">2</span> k))
+            (<span class="kw">let</span> ((r (<span class="kw">expt</span> <span class="dv">4</span> j)))
+                (<span class="kw">/</span> (<span class="kw">-</span> (* r (solve3 k (<span class="kw">-</span> j <span class="dv">1</span>))) (solve3 (<span class="kw">-</span> k <span class="dv">1</span>) (<span class="kw">-</span> j <span class="dv">1</span>)))
+                   (<span class="kw">-</span> r <span class="dv">1</span>)) )))
+
+(<span class="kw">define</span><span class="fu"> </span>(err x) (<span class="kw">abs</span> (<span class="kw">/</span> (<span class="kw">-</span> x truth) truth )))
+(<span class="kw">define</span><span class="fu"> </span>(plot n)
+    (<span class="kw">if</span> (<span class="kw">&lt;</span> n <span class="dv">11</span>)
+        (<span class="kw">begin</span>
+            (<span class="kw">display</span> n)(<span class="kw">display</span> <span class="st">&quot; &quot;</span>)
+            (<span class="kw">display</span> (err (solve3 n <span class="dv">2</span>)))(<span class="kw">newline</span>)
+            (plot (<span class="kw">+</span> n <span class="dv">1</span>)))
+        (<span class="kw">newline</span>)))
+(plot <span class="dv">2</span>)</code></pre>
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>坪井 多様体 - 多様体上の関数</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> aiura/
+    </a>
+</h1>
+<header>
+<h1 class="title">坪井 多様体 - 多様体上の関数</h1>
+</header>
+<p class="date" style="text-align: right">
+2017-05-20 (Sat.)
+</p>
+<div class="tags" style="text-align: right">
+<p><a class=tag href=index.html#数学>数学</a> <a class=tag href=index.html#幾何学>幾何学</a></p>
+</div>
+<h2 id="index">index</h2>
+<div id="toc">
+
+</div>
+<h2 id="notation">notation</h2>
+<p>多様体 <span class="math inline">\(M\)</span> から <span class="math inline">\(N\)</span> への <span class="math inline">\(C^\infty\)</span> 級関数全体を <span class="math inline">\(C^\infty(M,N)\)</span> と書く. またユークリッド空間への関数全体 <span class="math inline">\(C^\infty(M, \mathbb{R})\)</span> を単に <span class="math inline">\(C^\infty(M)\)</span> と書く. 本章では主にこのユークリッド空間への関数を取り扱う.</p>
+<p>関数 <span class="math inline">\(f \in C^\infty(M)\)</span> の台 (support) とは <span class="math display">\[\mathrm{supp} f = \overline{\{x \in M : f(x) \ne 0 \}}\]</span> のことと定義する. ただしここで、位相空間の集合 <span class="math inline">\(X\)</span> に対して <span class="math inline">\(\overline{X}\)</span> とは <span class="math inline">\(X\)</span> の閉包 (極大の閉集合, <span class="math inline">\(X \subseteq \overline{X}\)</span>).</p>
+<p>集合 <span class="math inline">\(X\)</span> に対して <span class="math inline">\(\mathrm{int}X\)</span> で <span class="math inline">\(X\)</span> の内部 (極大の開集合, <span class="math inline">\(\mathrm{int}X \subseteq X\)</span>) を表す.</p>
+<h2 id="定理">定理</h2>
+<div class="thm">
+<p>多様体 <span class="math inline">\(M\)</span> とその上の任意の点 <span class="math inline">\(x_0\)</span> 及び <span class="math inline">\(x_0\)</span> の任意の近傍 <span class="math inline">\(V\)</span> に対して、 次のような関数 <span class="math inline">\(\mu \in C^\infty(M)\)</span> がある.</p>
+<ul>
+<li><span class="math inline">\(\forall x \in M, \mu(x) \geq 0\)</span></li>
+<li><span class="math inline">\(\mu(x_0) &gt; 0\)</span></li>
+<li><span class="math inline">\(\mathrm{supp}\mu \subseteq V\)</span>
+<ul>
+<li><span class="math inline">\(\iff \forall x \not\in V, \mu(x) = 0\)</span></li>
+</ul></li>
+</ul>
+</div>
+<p>すなわち任意の点の周りでだけ正でその他でゼロであるような関数であって、 かつその台は望むだけ狭くできるような関数を作る方法が存在する.</p>
+<p>台の領域に関しては局所座標に関して作ればよく (連続関数なので)、 <span class="math inline">\(\varphi(V) \to M \to \mathbb{R}\)</span> の関数として</p>
+<p><span class="math display">\[\rho(x) = \begin{cases}
+\exp(-\frac{1}{x}) &amp; \text{ when } x&gt;0 \\
+0
+\end{cases}\]</span></p>
+<p>これを使う. <span class="math inline">\(x\)</span> 軸と傾きゼロで接しているのが大事. 左に <span class="math inline">\(\varphi^{-1}\)</span> を合成して、<span class="math inline">\(x=0\)</span> が <span class="math inline">\(x_0 \in M\)</span> に写るようにして、 <span class="math inline">\(\mu(x) = \rho(1 - \|x\|_2)\)</span> みたいに使う.</p>
+<center>
+<img src="http://i.imgur.com/mCS1Pwt.png" />
+</center>
+<p>上図の緑色. <span class="math inline">\(\|x\| \geq 0\)</span> であって、この領域では問題なく <span class="math inline">\(C^\infty\)</span> 級. この図では <span class="math inline">\(\|x\| &lt;1 \iff \mu(x) &gt; 0\)</span>. これを適当にスケーリングすることで、台を十分狭く出来る.</p>
+<h2 id="定理-1">定理</h2>
+<p>先の <span class="math inline">\(\mu\)</span> は台にいわば上限を与える制約しかない. 次の定理はより強い関数があることを言う.</p>
+<div class="thm">
+<p>多様体 <span class="math inline">\(M\)</span> のある近傍 <span class="math inline">\(U\)</span> とその部分集合でコンパクトな <span class="math inline">\(K (\subseteq U)\)</span> があるとする. 次のような <span class="math inline">\(C^\infty\)</span> 級関数 <span class="math inline">\(\nu_1: M \to \mathbb{R}\)</span> がある.</p>
+<ul>
+<li><span class="math inline">\(\nu_1(x) \geq 0\)</span></li>
+<li><span class="math inline">\(\mathrm{supp}f \subseteq U\)</span>
+<ul>
+<li><span class="math inline">\(\iff \forall x \not\in V, \mu(x) = 0\)</span></li>
+</ul></li>
+<li><span class="math inline">\(\forall x \in K, \nu_1(x) &gt; 0\)</span></li>
+</ul>
+</div>
+<p>一番最後の要請によって台の下限が <span class="math inline">\(K\)</span> として与えられている.</p>
+<p><span class="math inline">\(K\)</span> をコンパクトとしてるのが肝で、有限個の <span class="math inline">\(\mu\)</span> を足し合わせることで実現できる.</p>
+<h2 id="定理-2">定理</h2>
+<p>更に強く出来る.</p>
+<div class="thm">
+<p>先ほどと同様に、近傍 <span class="math inline">\(U\)</span> とそのコンパクト部分集合 <span class="math inline">\(K\)</span> について、次の関数 <span class="math inline">\(\nu\)</span> がある.</p>
+<ul>
+<li><span class="math inline">\(0 \leq \nu(x) \leq 1\)</span></li>
+<li><span class="math inline">\(\mathrm{supp}f \subseteq U\)</span>
+<ul>
+<li><span class="math inline">\(\iff \forall x \not\in V, \mu(x) = 0\)</span></li>
+</ul></li>
+<li><span class="math inline">\(\forall x \in K, \nu(x) = 1\)</span></li>
+</ul>
+</div>
+<p>次のように作れる.</p>
+<p><span class="math inline">\((U, K)\)</span> に関して先ほどの <span class="math inline">\(\nu_1\)</span> を作り、 <span class="math inline">\((U \setminus K, \mathrm{supp} \nu_1 \setminus \mathrm{int}(\mathrm{supp} \nu_1))\)</span> に関して作った <span class="math inline">\(\nu_1\)</span> を <span class="math inline">\(\nu_2\)</span> と名付ける. <span class="math inline">\(K_2 = \mathrm{supp} \nu_1 \setminus \mathrm{int}(\mathrm{supp} \nu_1)\)</span> はコンパクトであることに註意.</p>
+<p>こうすると、</p>
+<ul>
+<li><span class="math inline">\(\forall x \not\in \mathrm{supp} \nu_1, \nu_1(x) = 0 \land \nu_2(x)=0\)</span></li>
+<li><span class="math inline">\(\forall x \in K_2, \nu_1(x) &gt; 0 \land \nu_2(x) &gt; 0\)</span></li>
+<li><span class="math inline">\(\forall x \in K \setminus K_2, \nu_1(x) &gt; 0 \land \nu_2(x) = 0\)</span></li>
+</ul>
+<p>とできる. というわけで、 <span class="math display">\[\nu(x) = \begin{cases}
+\frac{\nu_1(x)}{\nu_1(x) + \nu_2(x)} &amp; \text{ when } x \in \mathrm{int}(\mathrm{supp}(\nu_1 + \nu_2)) \\
+0 &amp; \text{ otherwise}
+\end{cases}\]</span></p>
+<p>によって実現できる.</p>
+<h2 id="微分-ライプニッツ則">微分 (ライプニッツ則)</h2>
+<p>ある多様体<span class="math inline">\(M\)</span> の上の関数全体 <span class="math inline">\(C^\infty(M)\)</span> は自然にベクトル空間と見做すことが出来る. すなわち、 <span class="math inline">\(f, g \in C^\infty(M)\)</span> と実数 <span class="math inline">\(\alpha, \beta\)</span> について <span class="math display">\[(\alpha f + \beta g)(x) = \alpha f(x) + \beta g(x)\]</span> とすればよい.</p>
+<p>また関数の乗算を次のように値の乗算として定義しておく. <span class="math display">\[(f \cdot g)(x) = f(x) \cdot g(x)\]</span></p>
+<p>さて線形関数 <span class="math inline">\(D : C^\infty \to \mathbb{R}\)</span> について次の性質 (これをライプニッツ則と呼ぶ) が成り立つと仮定する. <span class="math display">\[D (f \cdot g) = Df \cdot g(p) + f(p) \cdot Dg\]</span> ここで <span class="math inline">\(p\)</span> は適当な点. <span class="math inline">\(Df, Dg\)</span> は実数であることに註意. ライプニッツ則が成立する <span class="math inline">\(D\)</span> 全体を <span class="math inline">\(\mathcal{D}_p\)</span> と書く.</p>
+<h3 id="mathcald_p-は線形空間"><span class="math inline">\(\mathcal{D}_p\)</span> は線形空間</h3>
+<p><span class="math inline">\(D_1, D_2 \in \mathcal{D}_p\)</span> について、 <span class="math inline">\(\alpha D_1 + \beta D_2\)</span> もまた、ライプニッツ則を満たすことから <span class="math inline">\(\mathcal{D}_p\)</span> に属する. 従って <span class="math inline">\(\mathcal{D}_p\)</span> は線形空間である.</p>
+<h3 id="微分はライプニッツ則を満たす">微分はライプニッツ則を満たす</h3>
+<p>ライプニッツ則がいかにもそういう形をしてたから当然だけど.</p>
+<div class="thm">
+<p>関数 <span class="math inline">\(f : M \to \mathbb{R}\)</span> に対して、ある <span class="math inline">\(M\)</span> 上の曲線 <span class="math inline">\(c\)</span> を用いて <span class="math display">\[f \mapsto \frac{d f \circ c}{dt}(t=t_0)\]</span> はライプニッツ則を満たす線形関数である.</p>
+</div>
+<p>微分に関して親しんだいくつかの性質は実はライプニッツ則さえ成立すれば成り立つ.</p>
+<h3 id="命題">命題</h3>
+<div class="thm">
+<p><span class="math inline">\(M\)</span> 上の関数 <span class="math inline">\(f\)</span> がある開集合 <span class="math inline">\(U\)</span> の上で <span class="math inline">\(f|_U=0\)</span> だったとき、 点 <span class="math inline">\(p \in U\)</span> に対して、 任意の <span class="math inline">\(D \in \mathcal{D}_p\)</span> を用いて <span class="math display">\[Df = 0\]</span> が成立する.</p>
+</div>
+<p>前章で示したことから、 <span class="math inline">\(\mathrm{supp}(g) \subseteq U\)</span> なる関数 <span class="math inline">\(g\)</span> が存在して、 <span class="math inline">\(f \cdot g = 0\)</span> となる. <span class="math inline">\(D\)</span> の線形性から <span class="math inline">\(D(fg)=0\)</span> である.</p>
+<p>ライプニッツ則から <span class="math inline">\(D(fg) = Df \cdot g(p) + f(p) \cdot Dg\)</span> であるが、左辺は0、<span class="math inline">\(f(p)=0\)</span> より、 <span class="math inline">\(Df \cdot g(p) = 0\)</span> を得、今 <span class="math inline">\(g(p)\)</span> は一般に非ゼロなので結局 <span class="math inline">\(Df=0\)</span> を得る.</p>
+<h2 id="方向微分">方向微分</h2>
+<p>点 <span class="math inline">\(p\)</span> の周りの局所座標 <span class="math inline">\((U, \varphi)\)</span> に対して、曲線 <span class="math display">\[c_i : t \mapsto \varphi^{-1}(0,\ldots,0,t,0,\ldots,0)\]</span> による微分 <span class="math display">\[D_{c_i} = \left(f \mapsto \frac{d f\circ c_i}{dt}(t=0)\right)\]</span> これのことを <span class="math display">\[\frac{\partial}{\partial x_i}\]</span> と名付け、 <strong>方向微分</strong> と呼ぶ.</p>
+<h3 id="命題-1">命題</h3>
+<div class="thm">
+<p><span class="math inline">\(\frac{\partial}{\partial x_i}\)</span> と <span class="math inline">\(\frac{\partial}{\partial x_j}\)</span> (<span class="math inline">\(i \ne j\)</span>) とは一次独立である.</p>
+</div>
+<div class="thm">
+<p>多様体 <span class="math inline">\(M\)</span> の次元が <span class="math inline">\(m\)</span> で <span class="math inline">\(\varphi : x \mapsto (x_1, x_2, \ldots, x_m)\)</span> に対して <span class="math inline">\(m\)</span> 個の方向微分 <span class="math display">\[\left\{
+\frac{\partial}{\partial x_i}
+\right\}_{i=1,2,\ldots,m}\]</span> が <span class="math inline">\(\mathcal{D}_p\)</span> の基底になっている.</p>
+</div>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

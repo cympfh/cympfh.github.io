@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>箱ひげ図 (boxplot, box-and-whisker plot)</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<h1 class="title">箱ひげ図 (boxplot, box-and-whisker plot)</h1>
+</header>
+<h2 id="参考">参考</h2>
+<ul>
+<li><a href="http://gnuplot.info/demo/boxplot.html" class="uri">http://gnuplot.info/demo/boxplot.html</a></li>
+<li><a href="https://ja.wikipedia.org/wiki/%E7%AE%B1%E3%81%B2%E3%81%92%E5%9B%B3">箱ひげ図 - Wikipedia</a></li>
+</ul>
+<h2 id="概要">概要</h2>
+<p><span class="math inline">\(\{ (\text{label}_i, z_i) \}_i\)</span> <span class="math inline">\((z_i \in \mathbb{R})\)</span> というデータ列から、 次の図のような、いわゆる箱ひげ図を作成する.</p>
+<figure>
+<img src="2d.box.png" />
+</figure>
+<h2 id="data-format">data format</h2>
+<p>一列目にデータのラベル (またはカテゴリ) を文字列で与える. これに関してソートする必要はない. 二列目にデータの実数値を与える.</p>
+<pre><code>Label_1 z1
+Label_2 z2
+:
+Label_n zn</code></pre>
+<h2 id="with-boxplot"><code>with boxplot</code></h2>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">plot</span> ... using <span class="op">&lt;</span>x<span class="op">&gt;</span>:<span class="op">&lt;</span>z<span class="op">&gt;</span><span class="dt">{:&lt;box_width&gt;{:&lt;label&gt;}}</span> with boxplot</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">params</th>
+<th style="text-align: center;">default</th>
+<th style="text-align: left;">value</th>
+<th style="text-align: left;">explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>x</code></td>
+<td style="text-align: center;">--</td>
+<td style="text-align: left;">(double)x</td>
+<td style="text-align: left;">データ (箱ひげ) を置く x 座標</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>z</code></td>
+<td style="text-align: center;">--</td>
+<td style="text-align: left;">(double)z</td>
+<td style="text-align: left;">データ (実数値)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>box_width</code></td>
+<td style="text-align: center;">--</td>
+<td style="text-align: left;">(double)</td>
+<td style="text-align: left;">箱の横幅サイズ</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>label</code></td>
+<td style="text-align: center;">--</td>
+<td style="text-align: left;">(string)</td>
+<td style="text-align: left;">データのラベル. これを与えるとき <code>x</code> は無視される</td>
+</tr>
+</tbody>
+</table>
+<p>ラベルを与えるときは <code>x</code> は無視されて自動的に配置される.</p>
+<p>先述の data format に合わせると</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">using</span> (0):<span class="ex">2</span>:(1):<span class="ex">1</span> with boxplot</code></pre></div>
+<p>などとなる.</p>
+<h2 id="example">example</h2>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">set</span> <span class="ex">terminal</span> pngcairo size 350,600
+<span class="kw">set</span> <span class="ex">output</span> <span class="st">&#39;box.png&#39;</span>
+
+<span class="kw">set</span> <span class="ex">grid</span>
+<span class="kw">set</span> <span class="ex">ytics</span> 0.1
+<span class="bu">unset</span> <span class="va">key</span>
+<span class="ex">plot</span> <span class="st">&#39;box.dat&#39;</span> u (0):<span class="ex">2</span>:(0):<span class="ex">1</span> with boxplot</code></pre></div>
+<ul>
+<li><a href="2d.box.dat">box.dat</a></li>
+</ul>
+<figure>
+<img src="2d.box.png" />
+</figure>
+</body>
+</html>

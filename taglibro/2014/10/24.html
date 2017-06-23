@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Fri Oct 24 02:07:51 JST 2014</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Fri Oct 24 02:07:51 JST 2014</h1>
+</header>
+<h2 id="in-c-addon-アドオン-on-node.js-processing-the-utf8-or-unicode-string">In c++ addon (アドオン) on node.js, processing the utf8 (or unicode?) string</h2>
+<ul>
+<li><a href="https://github.com/cympfh/pattern-language">cympfh/pattern-language</a></li>
+<li>問題のcode
+<ul>
+<li><a href="https://github.com/cympfh/pattern-language/blob/master/mcp.coffee">coffee版</a></li>
+<li><a href="https://github.com/cympfh/pattern-language/blob/master/mcp/mcp.cc">c++版</a></li>
+</ul></li>
+</ul>
+<p>極小共通汎化を解く必要があって, 最長共通部分文字列のあの, O(mn)でやるDPと全く同様に解けた. これがめっちゃ遅くって, C++で書き直してた.</p>
+<p>で, nodeが扱う文字列は無条件でutf-8 である. c++の内部でも, それをそのように扱う必要がある.</p>
+<ul>
+<li>ref; <a href="http://izs.me/v8-docs/classv8_1_1String.html">v8: v8::String Class Reference</a></li>
+</ul>
+<p>まったく、APIの名前が紛らわしい。 <code>Write</code> という名前も、<code>WriteUtf8</code> という名前も。</p>
+<p>今回、私が新しく学んだAPIについてのみ書く。</p>
+<h3 id="型チェック">型チェック</h3>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp">v8::Value::IsString()
+
+<span class="co">// Arguments&amp; args</span>
+args[<span class="dv">0</span>]-&gt;IsString();</code></pre></div>
+<h3 id="v8string-へのキャスト-objecttostring">v8::String へのキャスト (Object#toString)</h3>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp">v8::Value::ToString()
+
+<span class="co">// Arguments&amp; args</span>
+Local&lt;String&gt; str = args[<span class="dv">0</span>]-&gt;ToString();</code></pre></div>
+<h3 id="文字列長さの取得-stringlength">文字列長さの取得 (String#length)</h3>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp">v8::Value::Length()
+
+<span class="co">// Arguments&amp; args</span>
+<span class="dt">int</span> n = args[<span class="dv">0</span>]-&gt;Length();</code></pre></div>
+<p>変換をする前に、 <code>String#length</code> で長さを取得する必要がある。</p>
+<h3 id="c-プリミティブ型へのキャスト">c++ プリミティブ型へのキャスト</h3>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="co">// Local&lt;String&gt; str</span>
+<span class="dt">int</span> n = str-&gt;Length();
+<span class="dt">uint16_t</span> s[n];
+str-&gt;Write(s);</code></pre></div>
+<p><code>Write</code> はいわゆる <code>sprinf</code> である。 また、<code>WriteAscii</code> と、 <code>WriteUtf8</code> もあるが、 今は使いどきではない。</p>
+<h3 id="c-プリミティブ型から-javascript-文字列へのキャスト">c++ プリミティブ型から javascript 文字列へのキャスト</h3>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="dt">uint16_t</span> s[<span class="dv">14</span>];
+<span class="co">// assign into s[0] to s[12]</span>
+s[<span class="dv">13</span>] = <span class="dv">0</span>; <span class="co">// last must be &#39;\n&#39;</span>
+Local&lt;String&gt; str = String::New(us));</code></pre></div>
+</body>
+</html>

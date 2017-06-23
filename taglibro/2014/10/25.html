@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sat Oct 25 02:04:22 JST 2014</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Sat Oct 25 02:04:22 JST 2014</h1>
+</header>
+<h2 id="twurl-を使って一括スパム報告">twurl を使って一括スパム報告</h2>
+<p><a href="https://github.com/twitter/twurl">twitter/twurl</a> を使って一括スパム報告</p>
+<p>よくわかんないんだけど、 アニメ公式アカウント関連ばっかりフォローすると、 胡散臭いアカウントに大量にフォローされる。</p>
+<p>&quot;@{anime title}fan&quot; というIDで何かの宣伝しつつ、 特定の作品の画像を貼るみたいな、 明らかに同じ人たちが作っていて、 &quot;<span class="citation" data-cites="sarbantfan">@sarbantfan</span>&quot; なんかを見ると、 怪しいurlを貼るわけでもなく、 怪しい商品の宣伝をするわけもないし。</p>
+<p>それはともかく、 はじめは一人ひとりスパム報告してたんだけど、 ちょっと忘れてたらもうweb上でそれをやるには面倒すぎる量になってた。 目方で量ると、フォロワ160人のほとんど半分がスパムだった。</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">twurl</span> accounts
+<span class="ex">ampeloss</span>
+  <span class="ex">qnLRwkeo8zFjhIDfgG0F8Q</span>
+<span class="ex">cympfh</span>
+  <span class="ex">qnLRwkeo8zFjhIDfgG0F8Q</span> (default)
+<span class="ex">unddich</span>
+  <span class="ex">qnLRwkeo8zFjhIDfgG0F8Q</span></code></pre></div>
+<p>jsonなので, <a href="http://stedolan.github.io/jq/">jq</a> も使う。</p>
+<p>フォロワの取得 (max 200 at a time)</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">twurl</span> -X GET /1.1/followers/list.json?count=200 <span class="kw">|</span> <span class="ex">jq</span> -r <span class="st">&#39;.users[].screen_name&#39;</span> <span class="op">&gt;</span> /tmp/ids</code></pre></div>
+<p>スパムしたい方がそうでないより少ないとして、</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="fu">cp</span> /tmp/ids /tmp/ids0
+$ <span class="ex">vim</span> /tmp/ids
+<span class="kw">(</span>スパムしたいアカウントの行を消す<span class="kw">)</span>
+$ <span class="fu">diff</span> /tmp/ids0 /tmp/ids <span class="kw">|</span> <span class="fu">grep</span> <span class="st">&#39;^&lt;&#39;</span> <span class="kw">|</span> <span class="fu">sed</span> <span class="st">&#39;s/^..//g&#39;</span> <span class="op">&gt;</span> /tmp/list</code></pre></div>
+<p><code>/tmp/list</code> が最終的に消したい人たち.<br />
+漏れがあると嫌なので、スパムの数を数えておいて、 予め、頭の中で引き算しておく。</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="fu">wc</span> -l /tmp/list
+<span class="ex">81</span> /tmp/list</code></pre></div>
+<p>これに対して /users/report_spam を叩きたいんだけど、 他同様、使用制限があるらしい。 でも、 https://dev.twitter.com/rest/public/rate-limits には載っていない。 素敵だ。</p>
+<p>素敵なことは無視しよう。</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="fu">cat</span> /tmp/list <span class="kw">|</span> <span class="fu">xargs</span> -i twurl -X POST -d screen_name=<span class="dt">{}</span> /1.1/users/report_spam.json</code></pre></div>
+<p>すぐに、</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="op">{</span><span class="st">&quot;errors&quot;</span><span class="op">:</span>[<span class="op">{</span><span class="st">&quot;code&quot;</span><span class="op">:</span><span class="dv">205</span><span class="op">,</span><span class="st">&quot;message&quot;</span><span class="op">:</span><span class="st">&quot;You are over the limit for spam reports.&quot;</span><span class="op">}</span>]<span class="op">}</span></code></pre></div>
+<p>を返してきた。 ほとんど一度に、このAPIを叩けるのは 65 回らしい。</p>
+<p>1 window は 15分らしいので、</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="fu">tail</span> -n <span class="kw">`</span><span class="fu">expr</span> 81 - 65<span class="kw">`</span> /tmp/list <span class="op">&gt;</span> /tmp/list_rest
+$ <span class="fu">sleep</span> 15m <span class="kw">&amp;&amp;</span> <span class="fu">cat</span> /tmp/list_rest <span class="kw">|</span> <span class="fu">xargs</span> -i twurl -X POST -d screen_name=<span class="dt">{}</span> /1.1/users/report_spam.json</code></pre></div>
+<p>として寝ます。<br />
+おやすみなさい。</p>
+<hr />
+<footer>
+    <p style='text-align: right'>
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+</body>
+</html>

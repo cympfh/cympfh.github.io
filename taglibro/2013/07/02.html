@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sep 02 2013</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Sep 02 2013</h1>
+</header>
+<h2 id="haskell-モナドと評価順序">Haskell, モナドと評価順序</h2>
+<p>Haskellにおける遅延評価でモナドが計算順序を定めることの意味が ようやくにして理解できた． つまり、いくら関数をつないでも渡した引数は必要になるまで評価 してくれない．それが入出力であっても．</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">System.IO.Unsafe</span>
+
+<span class="ot">getLn ::</span> () <span class="ot">-&gt;</span> <span class="dt">String</span>
+getLn _ <span class="fu">=</span> unsafePerformIO getLine
+
+<span class="ot">int ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Int</span>
+int <span class="fu">=</span> unsafePerformIO<span class="fu">.</span>readIO
+<span class="ot">getInt ::</span> () <span class="ot">-&gt;</span> <span class="dt">Int</span>
+getInt () <span class="fu">=</span> int<span class="fu">$</span>getLn ()
+
+<span class="ot">double ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Double</span>
+double <span class="fu">=</span> unsafePerformIO<span class="fu">.</span>readIO
+<span class="ot">getDouble ::</span> () <span class="ot">-&gt;</span> <span class="dt">Double</span>
+getDouble () <span class="fu">=</span> double<span class="fu">$</span>getLn ()</code></pre></div>
+<p><code>unsafePerformIO :: IO a -&gt; a</code> である．なんて便利なんだ！プロコンでHaskellを使う時の為の テンプレートのつもりで上を書いた. getLn、getDouble は何かしら引数を渡さないといけない関数に するので毎回入力をとる． 初め</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">getDouble <span class="fu">=</span> double <span class="fu">$</span> getLine</code></pre></div>
+<p>としていたから、getDoubleを複数回呼び出しても一行しか入力を 受け取ってくれなかった．</p>
+<p>使ってみよう．</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span>
+    <span class="kw">let</span> x <span class="fu">=</span> getInt ()
+        y <span class="fu">=</span> getInt () <span class="kw">in</span>
+        print (x <span class="fu">+</span> y)</code></pre></div>
+<p>便利だ！</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span>
+    <span class="kw">let</span> x <span class="fu">=</span> getDouble ()
+        a <span class="fu">=</span> getInt () <span class="kw">in</span>
+        print (x <span class="fu">^</span> a)</code></pre></div>
+<p>たぶんパースエラーを起こす．私のGHCiは、(^)の演算にまず右側を 評価するらしいので、まず getInt を呼び出すらしいのだ． コードを見るとつい x を先に評価してるように思えてしまう．</p>
+<p>遅延評価がデフォルトであることの意味がやっと分かった</p>
+<p>じゃあどう書くかって言われて、こんなコードくらいしか書けないよ</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> <span class="kw">do</span>
+    s <span class="ot">&lt;-</span> getLine
+    x <span class="ot">&lt;-</span> readIO<span class="ot"> s ::</span> <span class="dt">IO</span> <span class="dt">Double</span>
+    t <span class="ot">&lt;-</span> getLine
+    a <span class="ot">&lt;-</span> readIO<span class="ot"> t ::</span> <span class="dt">IO</span> <span class="dt">Int</span>
+    print (x<span class="fu">^</span>a)</code></pre></div>
+<p>do記法使っときながら (&gt;&gt;=) も使うなら</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> <span class="kw">do</span>
+    x <span class="ot">&lt;-</span> getLine <span class="fu">&gt;&gt;=</span><span class="ot"> readIO ::</span> <span class="dt">IO</span> <span class="dt">Double</span>
+    a <span class="ot">&lt;-</span> getLine <span class="fu">&gt;&gt;=</span><span class="ot"> readIO ::</span> <span class="dt">IO</span> <span class="dt">Int</span>
+    b <span class="ot">&lt;-</span> getLine <span class="fu">&gt;&gt;=</span><span class="ot"> readIO ::</span> <span class="dt">IO</span> <span class="dt">Int</span>
+    print (x<span class="fu">^</span>(a<span class="fu">+</span>b))</code></pre></div>
+<p>なんかApplicativeとかに&lt;$&gt;だとかでまともに書けるのあった ようなのをなんとなく覚えてる．</p>
+<p>ていうか、長いし、</p>
+<pre><code>(define-macro (getInt a)
+    a &lt;- getLine &gt;&gt;= readIO :: Int)</code></pre>
+<p>とか書きたくなる</p>
+<hr />
+<footer>
+    <p style='text-align: right'>
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+</body>
+</html>

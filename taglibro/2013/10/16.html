@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Wed Oct 16 10:10:52 JST 2013</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Wed Oct 16 10:10:52 JST 2013</h1>
+</header>
+<h2 id="日記">日記</h2>
+<p>研究室に MacBook Pro 買ってもらった．すばらしく思った点は，lidを開いてから操作できるように なるまでの時間が本当に数秒だということと，ディスプレイの解像度の高さ．他はWindowsとは方向は違うものの 大きさは同じだ．Linuxを原点とした二次元平面上の話だけど．</p>
+<p>新しいPC，殊，綺麗なディスプレイだととにかく何でも良いからプログラミングがしたくなる．</p>
+<p>/js/neuralNetwork.js.txt</p>
+<p>PRML上巻を少しずつ読み進めている．最も単純なニューラルネットワークだけどいろいろ解けて大変面白い</p>
+<p>new NNするときに学習データのセット(Array)を渡して，test関数で未知データを実験する</p>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// 学習データのセットdtを作ります</span>
+<span class="kw">var</span> dt <span class="op">=</span> []<span class="op">;</span>
+<span class="cf">for</span> (<span class="kw">var</span> i<span class="op">=</span><span class="dv">0</span><span class="op">;</span> i<span class="op">&lt;</span><span class="dv">200</span><span class="op">;</span> i<span class="op">++</span>) <span class="op">{</span>
+  <span class="kw">var</span> x <span class="op">=</span> <span class="va">Math</span>.<span class="at">random</span>()<span class="op">*</span><span class="dv">2-1</span> 
+    <span class="op">,</span> y <span class="op">=</span> <span class="va">Math</span>.<span class="at">random</span>()<span class="op">*</span><span class="dv">2-1</span><span class="op">;</span>
+  <span class="va">dt</span>.<span class="at">push</span>(<span class="op">{</span><span class="dt">xs </span><span class="op">:</span> [x<span class="op">,</span>y]<span class="op">,</span> <span class="dt">t </span><span class="op">:</span> (x<span class="op">*</span>x<span class="op">+</span>y<span class="op">*</span>y<span class="op">&lt;</span><span class="dv">1</span> <span class="op">?</span> <span class="dv">1</span> : <span class="dv">0</span>) <span class="op">}</span>)<span class="op">;</span>
+  <span class="co">// ランダムな二次元[-1,1]*[-1,1] 上の点 がなんか円の中にあるかどうか</span>
+<span class="op">}</span>
+<span class="kw">var</span> h <span class="op">=</span> <span class="kw">new</span> <span class="at">NN</span>(<span class="dv">2</span><span class="op">,</span> <span class="dv">3</span><span class="op">,</span> dt)<span class="op">;</span>
+<span class="co">// 2入力隠れ層に3ユニットのニューラルネットワークでdtを学習</span>
+
+<span class="co">// 6つの点で実験</span>
+<span class="va">console</span>.<span class="at">log</span>(<span class="va">h</span>.<span class="at">test</span>([ <span class="dv">1</span><span class="op">,</span> <span class="dv">1</span>]))<span class="op">;</span>
+<span class="va">console</span>.<span class="at">log</span>(<span class="va">h</span>.<span class="at">test</span>([<span class="op">-</span><span class="dv">1</span><span class="op">,</span> <span class="dv">1</span>]))<span class="op">;</span>
+<span class="va">console</span>.<span class="at">log</span>(<span class="va">h</span>.<span class="at">test</span>([<span class="dv">1</span><span class="op">,</span> <span class="op">-</span><span class="dv">1</span>]))<span class="op">;</span>
+<span class="va">console</span>.<span class="at">log</span>(<span class="va">h</span>.<span class="at">test</span>([<span class="op">-</span><span class="dv">1</span><span class="op">,-</span><span class="dv">1</span>]))<span class="op">;</span>
+<span class="va">console</span>.<span class="at">log</span>(<span class="va">h</span>.<span class="at">test</span>([<span class="dv">0</span><span class="op">,</span><span class="dv">0</span>]))<span class="op">;</span>
+<span class="va">console</span>.<span class="at">log</span>(<span class="va">h</span>.<span class="at">test</span>([<span class="dv">0</span><span class="op">,</span>.<span class="dv">5</span>]))<span class="op">;</span>
+
+これは全然うまくいかなかった
+試しに隠れ層ユニットの数を増やしてみる
+
+<span class="kw">var</span> h <span class="op">=</span> <span class="kw">new</span> <span class="at">NN</span>(<span class="dv">2</span><span class="op">,</span> <span class="dv">20</span><span class="op">,</span> dt)<span class="op">;</span>
+
+<span class="va">console</span>.<span class="at">log</span>( <span class="va">Math</span>.<span class="at">round</span>( <span class="va">h</span>.<span class="at">test</span>([ <span class="dv">1</span><span class="op">,</span> <span class="dv">1</span>])) )<span class="op">;</span>
+<span class="va">console</span>.<span class="at">log</span>( <span class="va">Math</span>.<span class="at">round</span>( <span class="va">h</span>.<span class="at">test</span>([<span class="op">-</span><span class="dv">1</span><span class="op">,</span> <span class="dv">1</span>])) )<span class="op">;</span>
+<span class="va">console</span>.<span class="at">log</span>( <span class="va">Math</span>.<span class="at">round</span>( <span class="va">h</span>.<span class="at">test</span>([<span class="dv">1</span><span class="op">,</span> <span class="op">-</span><span class="dv">1</span>])) )<span class="op">;</span>
+<span class="va">console</span>.<span class="at">log</span>( <span class="va">Math</span>.<span class="at">round</span>( <span class="va">h</span>.<span class="at">test</span>([<span class="op">-</span><span class="dv">1</span><span class="op">,-</span><span class="dv">1</span>])) )<span class="op">;</span>
+<span class="va">console</span>.<span class="at">log</span>( <span class="va">Math</span>.<span class="at">round</span>( <span class="va">h</span>.<span class="at">test</span>([<span class="dv">0</span><span class="op">,</span><span class="dv">0</span>])) )<span class="op">;</span>
+<span class="va">console</span>.<span class="at">log</span>( <span class="va">Math</span>.<span class="at">round</span>( <span class="va">h</span>.<span class="at">test</span>([<span class="dv">0</span><span class="op">,</span>.<span class="dv">5</span>])) )<span class="op">;</span>
+
+<span class="co">// 0</span>
+<span class="co">// 0</span>
+<span class="co">// 0</span>
+<span class="co">// 0</span>
+<span class="co">// 1</span>
+<span class="co">// 1</span></code></pre></div>
+<p>これでもう巧く行った (すごい)</p>
+<p>8個くらいでもたまに巧くいけたけど珠になんだよね</p>
+<p>今の場合は，恣意的に学習データを作ってる以上，未知データについても 答えが自分の頭でわかるために，「うまくいかなかった」とか「うまくいった」とか 判断できるんだけど</p>
+<p>実際の場合はどう判断してユニットの数を調整すればいいのだろうか 可視化して滑らかな曲線を描くトコロを探せばいいのかな</p>
+<p>研究室の先輩のアドバイス ユニットの数は 入力数足す出力数の半分</p>
+<hr />
+<footer>
+    <p style='text-align: right'>
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+</body>
+</html>

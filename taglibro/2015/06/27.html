@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sat Jun 27 20:31:12 JST 2015</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Sat Jun 27 20:31:12 JST 2015</h1>
+</header>
+<h2 id="ここまで考えたことのまとめ">ここまで考えたことのまとめ</h2>
+<p>kMMGのアルゴリズムに、 <span class="math inline">\(L^{\leq \ell}(p)\)</span> をヒューリスティック関数として導入する. あるいは 最終的に得られる <span class="math inline">\(P\)</span> に対して <span class="math inline">\(L^{\leq \ell}(P)\)</span> を最小化するための貪欲法も考えられる.</p>
+<p><span class="math inline">\(L^{\leq \ell}(P)\)</span> を直接求めるより先に <span class="math inline">\(L^{\leq \ell}(p)\)</span> を求めることを考えた. さらに <span class="math inline">\(L^{= \ell}(p)\)</span> を計算することまでに還元する.</p>
+<p>パターン <span class="math inline">\(p\)</span> に対して、 自明に、 言語 <span class="math inline">\(L(p)\)</span> を受理する非決定性有限オートマトン (NFA) は構成できる. このNFAの状態数は、パターン長 <span class="math inline">\(|p|\)</span> の二倍で抑えられる. 厳密に言えば、<span class="math inline">\(p\)</span> 中の <span class="math inline">\(\diamond\)</span> が2つの状態に変換されて、 その他の要素はちょうど1つの状態に変換される. <b class=alert> (誤り. 厳密に、状態数は　<span class="math inline">\(1 + |p|\)</span> だ. 一つの状態からなるNFAについて、各要素はちょうど一つの状態を追加することしかしない.) </b> 教科書的に、NFAから決定性有限オートマトン (DFA) もまた、構成できる. しかしながら、一般的には、このDFAの状態数は、NFAの状態数の指数を最大で持ちうる.</p>
+<p>無曖昧有限オートマトン (UFA) とは、次の2つを満たす有限オートマトンである.</p>
+<ol type="1">
+<li>任意の状態、状態、語 <span class="math inline">\((p, q, w)\)</span> について、UFAの上で、<span class="math inline">\(p \rightarrow^w q\)</span> というパスは高々一つだけ存在する.</li>
+<li>UFAが受理する語 <span class="math inline">\(w\)</span> について、<span class="math inline">\(p \rightarrow^w q\)</span> というパスを作る初期状態 <span class="math inline">\(p\)</span> と終了状態 <span class="math inline">\(q\)</span> の組は一意であること.</li>
+</ol>
+<p>明らかに、一般にNFAはUFAとは限らなく、また、一般にDFAはUFAである.</p>
+<ul>
+<li>参考; http://swatmac.info/wp-content/uploads/2013/05/mpaper.pdf</li>
+</ul>
+<p>さて、UFAの上では、それが受理する言語 <span class="math inline">\(L\)</span> に対して <span class="math inline">\(\# L^{= \ell}\)</span> は次のようにして計算できる.</p>
+<p>UFAの隣接行列を次のように定義する.</p>
+<center>
+<span class="math inline">\((M)_{pq} =\)</span> <span class="math inline">\(p \rightarrow^a q\)</span> という遷移をなすアルファベット <span class="math inline">\(a\)</span> の数
+</center>
+<p>この行列を <span class="math inline">\(k\)</span>乗して得られる行列 <span class="math inline">\(M^k\)</span> の <span class="math inline">\(pq\)</span> 成分は、<span class="math inline">\(p \rightarrow q\)</span> というパスで長さが <span class="math inline">\(k\)</span> の語の数に相当する.</p>
+<p>UFAの状態数を <span class="math inline">\(m\)</span> とすると、<span class="math inline">\(M\)</span> は <span class="math inline">\(m \times m\)</span> 行列であって、 その <span class="math inline">\(k\)</span> 乗は行列乗算については素朴に計算することで <span class="math inline">\(O(m^3 \log k)\)</span> かかる.</p>
+<p>というわけで、</p>
+<center>
+「パターン <span class="math inline">\(p\)</span>」 → 「<span class="math inline">\(L(p)\)</span> を受理するNFA」 → 「同等なDFA」 → 「隣接行列」
+</center>
+<p>これで、計算ができる.</p>
+<p>最終的に欲しいのは、<span class="math inline">\(\#L^{\leq \ell}\)</span> であって、 これを <span class="math inline">\(\#L^{= 1} + \#L^{= 2} + \cdots \#L^{= \ell}\)</span> と計算する予定なので、 全体として <span class="math inline">\(O(m^3 \ell)\)</span> ということになる.</p>
+<p><b class=alert>追記 (Tue Jun 30 20:31:34 JST 2015)</p>
+<p>直接 <span class="math inline">\(M^k\)</span> を求めるんじゃなくて、 初期ベクトル: <span class="math inline">\(V = [1, 0 .. 0]\)</span> (初期状態だけ立ってるbit列) を用いて<br />
+<span class="math inline">\(M^k V\)</span> が、初期状態付きの、最終状態なわけ. これは、<span class="math inline">\(k\)</span> 回、行列とベクトルの掛け算をすればいいんだけど、 これって、一回の掛け算が <span class="math inline">\(O(m^2)\)</span> でできる. というわけで、全体としては、 <span class="math inline">\(O(m^2 \ell)\)</span> となってオーダーが落ちる</p>
+<p>ちゃんと授業を聞いててよかった</b></p>
+<p><span class="math inline">\(\ell\)</span> はせいぜい30程度の大きさのつもりである. <span class="math inline">\(|p|\)</span> も、それと同程度である. ではさて、<span class="math inline">\(m\)</span> (UFAにおける状態数) は、<span class="math inline">\(2|p|\)</span> の指数ありそう.</p>
+<h2 id="予想">予想</h2>
+<p>パターン言語を受理するDFAの状態数は、 (別にそれが上手な構築方法でなくても) <span class="math inline">\(|p|\)</span> の定数倍程度.</p>
+<p>これは完全に、いくつかを、手で実際に作ってみて得られた経験である. といっても、本当に複雑すぎるパターンについてそんなやったわけではない. 実際にDFAを構築してみせるプログラムをさっさと書いて、 その状態数がどう増えるかを見てみようと思う.</p>
+</body>
+</html>

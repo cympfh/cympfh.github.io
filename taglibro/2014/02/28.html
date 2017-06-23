@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Fri Feb 28 21:33:43 JST 2014</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Fri Feb 28 21:33:43 JST 2014</h1>
+</header>
+<h2 id="macbook-pro-with-retina-us-arranged-keyborard-に-ubuntu13.10-を入れて環境を整えるまでにしたことのメモ">MacBook Pro (with Retina; US arranged keyborard) に Ubuntu13.10 を入れて環境を整えるまでにしたことのメモ</h2>
+<h2 id="結論">結論</h2>
+<p>実用のために、MacBookProでLinuxするための選択肢は Unity しかないことに註意。 でも私はいくつかの設定のために結果的に xfce を経由した。</p>
+<p>大変に満足してる。怖がらずさっさとすべきだった。 いくつか不満がある。どうにかしよう。</p>
+<h2 id="インストール手法">インストール手法</h2>
+<p>基本的には http://blog.echarles.net/2013/10/01/Ubuntu-13.04-On-MacbookPro-Retina の通りにしてなんの問題もない。 私が入れたのは、Ubuntu 13.10 で、その記事とは違うけど</p>
+<h2 id="補遺">補遺</h2>
+<h3 id="refit">rEFit</h3>
+<p>で Linux 用と Linux swap 用に２つパーティションを新しく設けたけど Linux swap 用はいらなかったかも。Linux installer が勝手にやってくれる。 つまり手で設ける必要はなかった…？</p>
+<h3 id="インターネット">インターネット</h3>
+<p>Ubuntuインストールの際に、電源が接続されてることと同様に インターネットに接続されてることが要求される。 接続されてないと「次へ」がクリックできないはず。 MacBookだから、有線LAN + thunderboltへのアダプタ が必要。 PCの電源入れる時点でアダプタで接続していれば、認識された。</p>
+<h3 id="ブートローダ-refit-grub2">ブートローダ (rEFit &amp; GRUB2)</h3>
+<p>Linuxをインストールしたのち、PCの電源を入れると、 ブートローダである rEFit が起動して、 そのあとUbuntu採択のブートローダであるGRUB2が起動する。 二回もOSを選ぶチャンスがある。 rEFitは画面が綺麗でいいんだけど、GRUB2はできればスキップしたい。</p>
+<h3 id="touchpad">touchpad</h3>
+<p>先の url に書かれてるような touchpad の設定は必要なのか必要でないのか 結局よくわからない。 ただよくよく間違えてクリックしてしまう。 Macデフォルトの、クリック音がするまで押し込まないとクリックではなくて、 これはタッチだけでクリックがデフォルトで買える方法は思いつかない</p>
+<h3 id="sleep-mode">sleep mode</h3>
+<p>についてはさっきの url に書かれてる通り。 じゃないと、蓋を閉じると一瞬でPCの電源が消える仕様になってしまう。 nvida と文字列が入ってて最も大きな数字が含まれてる行を選択した。</p>
+<p>あとで書くけど、これはUnity の場合のみに、うまく動くことを確認した。 蓋を閉じると、リンゴのマークが一旦消えて、 すぐ二回、点滅して (ちょっと不気味) から消える。 蓋を開けてなんかキーを押せば (電源キーだったか？) すぐログインできる。 なんの問題もない。</p>
+<h3 id="function-keys">Function keys</h3>
+<p>Macのデフォルトの動作になる。つまり、F10 キーをそのまま押すとミュートのトグルとして働き、Fn + F10 でF10というキーになる。 変えられるかな？別にこれはこれでいいけど。</p>
+<h3 id="キー入れ替え">キー入れ替え</h3>
+<p>MBP英字配列では私は次の２つの入れ替えを行いたい。</p>
+<ol type="1">
+<li>CapsLock を Ctrl にする</li>
+<li>左Command (Super key 扱い) を Alt にする</li>
+</ol>
+<p>1つ目は、前から普通に .bashrc に書いてた設定として</p>
+<pre><code>setxkbmap -option ctrl:nocaps</code></pre>
+<p>.bashrc に書いてるから一旦bash起動しないと効かないけど、 いつも私こうしてた。</p>
+<p>2つ目として、スペースバーのすぐ隣はAltが良い。 これは今のところどうにもなってない。 それどころか、AltもCommandもSuper key になってそう</p>
+<p>(http://asukiaaa.blogspot.jp/2013/12/ubuntu1310-capslockctrl.html)</p>
+<p>Caps -&gt; Ctrol も Super -&gt; Meta も</p>
+<pre><code>sudo apt-get install gnome-tweak-tool</code></pre>
+<p>でいける。はじめから全部GNOMEにしておけば幸せ、だったらいいのに。</p>
+<h3 id="ime">IME</h3>
+<pre><code>sudo apt-get install ibus-mozc</code></pre>
+<p>がんばって、 設定からまず ibus を使うことと、日本語IMEとしてMozcを使うことを教える。</p>
+<h2 id="xfce">xfce</h2>
+<p>いくつかの不便から</p>
+<pre><code>sudo apt-get install xubuntu-desktop</code></pre>
+<p>で xfce にした。これはいくつかの設定を行うために必要だったけれど、 最終的にはUnityにした。はじめの結論にも書いたとおりである。</p>
+<p>不満点</p>
+<ul>
+<li>IMEの設定ができない</li>
+<li>IME切り替え (Ctrl + Space) の反応が大変に悪い (一時的なものだった)</li>
+<li>単純にUnityが嫌い、xfceが好き (これは今でも変わらない)</li>
+</ul>
+<p>さて、また、 スペースバーのすぐ隣が Command key であるが、これは Super key (Windows key) として扱われるらしい。 誰もこんなキーは欲しくない。Altにしようと思ったけどうまく行かなかった。 <code>setxkbmap</code> は、一瞬で設定が戻る。 <code>/usr/share/X11/xkb/keycodes/evdev</code> で書き換えるのは、PC をスリープさせて (蓋を閉じて) 復帰すると また設定が戻ってた。様子見</p>
+<h3 id="ime-1">IME</h3>
+<p>普通にMozcの設定ができる。 辞書のインポートとか各種設定を行うこと。 Control + Space でのIME切り替えがストレスなくできるようになった。 あとでUnityに戻したけど問題がなくなった。よくわからない。</p>
+<h3 id="xfce-の問題点">xfce の問題点</h3>
+<p>見た目ならxubuntu は大変クールなのでこれを使い続けたいのだけどそうもいかなそう。</p>
+<ul>
+<li>蓋を閉じても手動でもスリープあるいはサスペンドがうまくできない。</li>
+<li>ショートカットキーが設定できない。(Setting -&gt; Keyboard)
+<ul>
+<li>したがってせっかくキーボードにあるのに音量調整とかバックライト調整が行えない</li>
+</ul></li>
+<li>キーボードバックライトはそもそも使えない</li>
+</ul>
+<h1 id="追記">3/2 追記</h1>
+<p>こんなこと言いたくないけど、 何度かPCのシャットダウンと起動を繰り返すと、動作が安定してきた。 安定してきたので、やっぱりやっぱり xfce にした。 ボリュームの調整はキーボードでできる。</p>
+<p>今はちょっとできないけど。できた時もある。</p>
+<ul>
+<li>ディスプレイのバックライトは常に全力。</li>
+<li>キーボードのバックライトは使えない。</li>
+<li>タッチパッドがやたら反応するのは xfce の setting -&gt; &quot;Mouse and Touchpad&quot; の &quot;Touchpad&quot; の項目、&quot;Disable touchpad while typing&quot; で極端に避けられるよう。</li>
+<li>suspend はやっぱり怪しい</li>
+<li>電力消費も半端じゃない
+<ul>
+<li>というか、ステータスバーに電池のアイコンが出ない (hint: acpiコマンド)</li>
+</ul></li>
+</ul>
+<p>これを承知でもxfceのが結局一番といろんなデスクトップやらタイル型wmまで一人ツアーしてきて思いました終わり。</p>
+</body>
+</html>

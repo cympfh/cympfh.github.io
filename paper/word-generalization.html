@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>A Computational Cognitive Model of Novel Word Generalization</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/
+    </a>
+</h1>
+<header>
+<h1 class="title">A Computational Cognitive Model of Novel Word Generalization</h1>
+</header>
+<ul>
+<li>
+url: <a href=http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.697.2491>http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.697.2491</a>
+</li>
+<li>
+tags: <span class="tag"><a href=index.html#自動獲得>自動獲得</a></span> <span class="tag"><a href=index.html#自然言語処理>自然言語処理</a></span>
+</li>
+</ul>
+<pre><code>@MISC{Nematzadeh_acomputational,
+  author = {Aida Nematzadeh and Erin Grant and Suzanne Stevenson},
+  title = {A Computational Cognitive Model of Novel Word Generalization},
+  year = {2015}
+}</code></pre>
+<ul>
+<li>語彙獲得とかいうやつ</li>
+<li>未知語と、それを例示する写真とから、その語について何かしら理解したい</li>
+</ul>
+<h2 id="introduction">Introduction</h2>
+<h3 id="quine-2016">Quine, 2016</h3>
+<p>白いうさぎが周りを飛び跳ねてるのを見ながら &quot;dax&quot; という言葉を聞いたとしたら、 &quot;dax&quot; とは、白いうさぎ、ウサギ、動物、可愛い、などといったことを意味するすると考えるだろう</p>
+<p>どうやって、本当の意味を知るか</p>
+<ul>
+<li>その言葉が出現した状況の共通部分 (Pinker, 1989)
+<ul>
+<li>これを再現することによる語彙理解に cross-situational learning ってのがある</li>
+</ul></li>
+</ul>
+<p>適度な汎化が必要である</p>
+<ul>
+<li>&quot;dog&quot; という言葉が特定の犬種を指すわけでなくあらゆる種類の犬を指すと理解しないといけない</li>
+<li>しかしながら、汎化しすぎると、動物を意味すると理解しかねない</li>
+</ul>
+<p>適切な category level へ汎化することを &quot;word generalization&quot; と呼ぶことにする</p>
+<h3 id="既存研究-basic-level-assumption-markman1991-golinkoff1994">既存研究: basic-level assumption (Markman,1991; Golinkoff,1994)</h3>
+<p>子供の語彙獲得についての、次のような仮説:</p>
+<ul>
+<li>語には basic-level があって、それを好んで使う
+<ul>
+<li>「犬」</li>
+</ul></li>
+<li>より下位の概念は滅多に使わない
+<ul>
+<li>「ダルメシアン」</li>
+</ul></li>
+</ul>
+<h2 id="既存研究-xu-and-tenenbaum-xt-2007">既存研究: Xu and Tenenbaum (X&amp;T), 2007</h2>
+<p>子供、大人それぞれが、語彙獲得するモデルをベイズ推定として記述</p>
+<h3 id="novel-word-generalization-in-people-人間に対しての実験">Novel Word Generalization in People: 人間に対しての実験</h3>
+<p>X&amp;T による調査</p>
+<ol style="list-style-type: decimal">
+<li>訓練フェーズ
+<ol style="list-style-type: decimal">
+<li>被験者に、未知語 (e.g. &quot;fep&quot;) という語と、事例をいくつか見せる
+<ul>
+<li>大人に対しては写真を</li>
+<li>子供に対しては実際の物 (玩具) を 事例とする</li>
+</ul></li>
+<li>異なるレベルの事例も見せる
+<ul>
+<li>犬に対しての、ダルメシアン、動物</li>
+</ul></li>
+</ol></li>
+<li>テストフェーズ
+<ol style="list-style-type: decimal">
+<li>色んな事例を見せて、先の語 (&quot;fep&quot;) に相当するものを選ばせる</li>
+<li>訓練フェーズで用いたものは含まない</li>
+</ol></li>
+</ol>
+<p>実際には、動物、自動車、野菜を事例として用いた</p>
+<ul>
+<li>訓練に選択する事例は次の4パターン (Fig 1 (a)).</li>
+<li>テストで選ばれた事例を次のように区分する (Fig 1 (b)).
+<ol style="list-style-type: decimal">
+<li>subord. match: 犬種レベルでの正解</li>
+<li>basic match: 犬</li>
+<li>super. match: 動物</li>
+</ol></li>
+</ul>
+<div class="figure">
+<img src="img/novel-a.jpg" />
+
+</div>
+<p>結果は次の通り:</p>
+<div class="figure">
+<img src="img/novel-b.jpg" />
+
+</div>
+<p>縦軸は、テストフェーズで見せた事例の内の再現率</p>
+<ul>
+<li>1つダルメシアンを見せられた大人 (Adult; 1 ex)
+<ul>
+<li>ダルメシアンを選ぶしかない</li>
+<li>他の犬種も選ばれる</li>
+</ul></li>
+<li>3つダルメシアンを見せられた大人 (Adult; 3 subord)
+<ul>
+<li>ダルメシアンしか選ばれない</li>
+</ul></li>
+<li>(Adult; 3 basic)
+<ul>
+<li>1 ex より少し汎化</li>
+</ul></li>
+<li>(Adult; 3 super)
+<ul>
+<li>動物が何でも選ばれる</li>
+</ul></li>
+</ul>
+<p>大体予想どおり</p>
+<p>子供の場合は、 basic match が減る傾向がある.</p>
+<h2 id="the-word-learning-framework">The Word Learning Framework</h2>
+<p>Fazlyらによる cross-situational word learner モデルである FAS (Fazly, 2010) をベースに用いる</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

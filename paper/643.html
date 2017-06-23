@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>文字列パターンと MathML による構造を利用した数学問題文の検索</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/
+    </a>
+</h1>
+<header>
+<h1 class="title">文字列パターンと MathML による構造を利用した数学問題文の検索</h1>
+</header>
+<ul>
+<li>
+url: <a href=https://kaigi.org/jsai/webprogram/2013/pdf/643.pdf>https://kaigi.org/jsai/webprogram/2013/pdf/643.pdf</a>
+</li>
+<li>
+tags: <span class="tag"><a href=index.html#自然言語処理>自然言語処理</a></span> <span class="tag"><a href=index.html#テキストマイニング>テキストマイニング</a></span>
+</li>
+</ul>
+<p>よくみたら、京都大学生徒の卒論だった. 諸君はもっといいの読むべき.</p>
+<h2 id="小問集合の抽出">3. 小問集合の抽出</h2>
+<p>一つの問題は、</p>
+<ul>
+<li>前提記述 (P)</li>
+<li>質問記述がいくつか (Q)</li>
+</ul>
+<p>に分解できる.</p>
+<p>分解したら、</p>
+<ul>
+<li>P = {P}</li>
+<li>Q = {Q1, Q2}</li>
+</ul>
+<p>に対して、</p>
+<ul>
+<li>(P + Q1)</li>
+<li>(P + Q2)</li>
+</ul>
+<p>を考えるのが自然.</p>
+<p>訓練データ <code>TP</code>, <code>TQ</code> を用いて、 未知の問題データ <code>U</code> に含まれる <code>UP</code>, <code>UQ</code> を抽出したい.</p>
+<p>そこで次に説明するパターン言語をもちいる</p>
+<h2 id="パターン言語">パターン言語</h2>
+<ul>
+<li><span class="math inline">\(\Sigma\)</span>: Alphabet</li>
+<li>X: Vars</li>
+</ul>
+<p>を用いて <span class="math inline">\((\Sigma \cup X)^+\)</span> と定義されるもの. さらにここでは、同じ変数は一度しか使われないと限定する (正規パターン言語)</p>
+<p>正規言語の繰り返しとかグループ化が無い劣化バージョンである.</p>
+<h3 id="汎化関係">汎化関係</h3>
+<p>パターン <span class="math inline">\(p, q\)</span> について、 パターン <span class="math inline">\(p\)</span> にある代入をして、パターン <span class="math inline">\(q\)</span> になったとき、 <span class="math display">\[q \preceq p\]</span> と書いて、 <span class="math inline">\(p\)</span> は <span class="math inline">\(q\)</span> の汎化 (generalization) であるとか、 あるいは <span class="math inline">\(q\)</span> は <span class="math inline">\(p\)</span> を包摂 (subsume) するとか言う.</p>
+<p>パターンの集合 <span class="math display">\[P = \{ p_1 .. p_n \}\]</span> に対して、 あるパターン <span class="math inline">\(q\)</span> が、 <span class="math display">\[\forall i .~ q \succeq p_i\]</span> を満たすとき、 <span class="math inline">\(q\)</span> を <span class="math inline">\(p_1 .. p_n\)</span> の共通汎化という.</p>
+<p>共通汎化であるようなパターンの集合 <span class="math inline">\(\Pi = \{ q, q_1, q_2 .. \}\)</span> について、 <span class="math display">\[\forall i .~ \lnot(q_i \preceq q)\]</span> のとき、<span class="math inline">\(q\)</span> を極小の共通汎化だという.</p>
+<p>さて、パターン <span class="math inline">\(p\)</span> が作る言語を <span class="math inline">\(L(p)\)</span> と書く. これは、p に、空文字列を含む任意の代入を行うことで得る文字列の無限集合</p>
+<p>さらに、パターンの集合 <span class="math inline">\(\Pi = \{ p_1 .. p_n \}\)</span> に対して <span class="math inline">\(L(\Pi) = \bigcup L(p_i)\)</span> とする.</p>
+<h3 id="話戻す">話戻す</h3>
+<p>TP、TQ はそれぞれ、 パターン集合 <span class="math inline">\(\Pi_P, \Pi_Q\)</span> が生成する <span class="math inline">\(L(\Pi_P), L(\Pi_Q)\)</span> の部分集合だと仮定する.</p>
+<p>訓練データ TP, TQ から、次のような <span class="math inline">\(L(\Pi_P), L(\Pi_Q)\)</span> を作ることを目指す.</p>
+<p>U を受け取って UP, UQ に、</p>
+<ul>
+<li><span class="math inline">\(|UP \triangle (U \cap L(PiP))|\)</span></li>
+<li><span class="math inline">\(|UQ \triangle (U \cap L(PiQ))|\)</span></li>
+</ul>
+<p>を共に小さくする.</p>
+<p><span class="math inline">\(\triangle\)</span> は、対称差</p>
+<h3 id="具体的なアルゴリズム">具体的なアルゴリズム</h3>
+<p>TP, TQ から、まずは <span class="math inline">\(\Pi_P\)</span> を作る. 全く同様の手順から <span class="math inline">\(\Pi_Q\)</span> は作られる.</p>
+<p>繰り返し回数 <span class="math inline">\(k\)</span> 閾値 <span class="math inline">\(m\)</span> を用意して、</p>
+<ul>
+<li><span class="math inline">\(T \leftarrow TP\)</span></li>
+<li><span class="math inline">\(\Pi \leftarrow \{\}\)</span></li>
+<li>次を <span class="math inline">\(k\)</span> 回繰り返す
+<ul>
+<li><span class="math inline">\(e_1 \in_u T\)</span> (ランダムに選ぶ)</li>
+<li><span class="math inline">\(e_2 \in_u T\)</span> (<span class="math inline">\(e_1 \ne e_2\)</span>)</li>
+<li><span class="math inline">\(p = mcp(e_1, e_2)\)</span> ; minimum common pattern</li>
+<li><span class="math inline">\(x = | L(p) \cap TP |\)</span> ; goodness</li>
+<li><span class="math inline">\(y = | L(p) \cap TQ |\)</span> ; badness</li>
+<li><span class="math inline">\(m&#39; = \frac{x}{x+y}\)</span></li>
+<li>If <span class="math inline">\(m&#39; \geq m\)</span>
+<ul>
+<li><span class="math inline">\(\Pi \leftarrow \Pi \cup \{ P \}\)</span></li>
+<li><span class="math inline">\(T \leftarrow T \setminus L(p)\)</span></li>
+</ul></li>
+</ul></li>
+<li><span class="math inline">\(T\)</span> を返して終了</li>
+</ul>
+<p>こうして構成した <span class="math inline">\(\Pi_P, \Pi_Q\)</span> から、 未知の文 <span class="math inline">\(d\)</span> が来た時に、 これを次の2つのスコアの大小比較によって、 <span class="math inline">\(d\)</span> が P、Q どちらに属するかを決定する.</p>
+<ul>
+<li>score of P: <span class="math inline">\(\sum \{ |L(p) \cap TP| - |L(p) \cap TQ| : p \in \Pi_P, d \preceq p \}\)</span></li>
+<li>score of P: <span class="math inline">\(\sum \{ |L(p) \cap TQ| - |L(p) \cap TP| : p \in \Pi_Q, d \preceq p \}\)</span></li>
+</ul>
+<p>(このスコア式のあたり、誤植だと思われるので、上のようにした)</p>
+<h2 id="問題文間の類似度">問題文間の類似度</h2>
+<h3 id="自然言語文間の類似度">自然言語文間の類似度</h3>
+<p>索引語 <span class="math inline">\(D = (w_1 .. w_n)\)</span> に tf-idf で重み附けて cos similarity <code>SIM-N</code> を定める</p>
+<h3 id="数式集合間の類似度">数式集合間の類似度</h3>
+<p>一つの数式と一つの数式の間の類似度には、 Yokoi+ の手法 <code>T-sim</code> を用いて計算する.</p>
+<p>数式集合一つと一つの間の類似度には 以下で説明する Earth Mover's Distance (EMD) を用いる.</p>
+<p>これにはまず 2つの数式集合 <span class="math inline">\(\Pi_1, \Pi_2\)</span> から これを頂点にした 有向グラフを作る.</p>
+<ol style="list-style-type: decimal">
+<li>頂点は <span class="math inline">\(V = \{s\} \cup \Pi_1 \cup \Pi_2 \cup \{t\}\)</span> where <span class="math inline">\(\Pi_1 = \{e_1 .. e_n\}\)</span>, <span class="math inline">\(\Pi_2 = \{f_1 .. f_m\}\)</span>.</li>
+<li>枝は <span class="math inline">\(s \rightarrow e_i\)</span>、 <span class="math inline">\(e_i \rightarrow f_j\)</span>、 <span class="math inline">\(f_j \rightarrow t\)</span>.</li>
+</ol>
+このグラフの最大流問題を解くことを考える.
+<center>
+maximize <span class="math inline">\(\sum_{(i, j)} \text{T-sim}(e_i, f_j) F_{i,j}\)</span>
+</center>
+<p>重み掛ける流量の和な. 書いてないけど、枝の容量は <span class="math inline">\(e_i \rightarrow f_j\)</span> は <span class="math inline">\(\min(w(e_i), w(f_j))\)</span> として、 他は無限の容量を持つことにすればいい. ここで <span class="math inline">\(w(e)\)</span> は数式 <span class="math inline">\(e\)</span> の重み (書いてないけどな).</p>
+<p>流量 <span class="math inline">\(F\)</span> を得たら 最終的に、集合間の類似度を以下のようにする</p>
+<p><span class="math display">\[\text{SIM-E}(\Pi_1, \Pi_2) = \frac{ \sum_{i,j} \text{T-sim}(e_i, f_j) F_{i,j} }{\sum F_{i,j}}\]</span></p>
+<h3 id="全体の類似度">全体の類似度</h3>
+<p>自然言語部分と、数式部分とを合わせて、 <span class="math display">\[\text{SIM-Q} = \sqrt{\text{SIM-N} \times \text{SIM-E}}\]</span> とする. おわり.</p>
+<h2 id="実験">実験</h2>
+<p>できたパターンは、 基本的には human-readble じゃなさそう.</p>
+<p>まず、P,Q の分類は、</p>
+<table>
+<thead>
+<tr class="header">
+<th align="center"></th>
+<th align="center">P</th>
+<th align="center">Q</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><span class="math inline">\(F_1\)</span></td>
+<td align="center">65.9%</td>
+<td align="center">82.1%</td>
+</tr>
+</tbody>
+</table>
+<p>うーん.</p>
+<h3 id="pip">PiP</h3>
+<ul>
+<li>x1 と x2 する x3</li>
+<li>x1 点 x2 と x3 を x4.</li>
+<li>x1 い x2 と x3 (x1(adj) x2 and x3)</li>
+<li>x1 とき x2 (when x1, x2)</li>
+</ul>
+<h3 id="piq">PiQ</h3>
+<ul>
+<li>x1 が x2 り x3 (x1 do x2 and x3)</li>
+<li>x1 である. (it is x1)</li>
+<li>x1 となる. (it becomes x1)</li>
+<li>であり、 (It is .... and)</li>
+</ul>
+<p>で、えっと、 最終的には、問題を、11のクラスに分類してたらしい. 自然言語部分だけのVSMと、 数式をそれに加えたバージョンであるVSM-MATHとの比較.</p>
+<p>「統計」なんかはどちらでも100%. 大体は、上手くいっていて、 「ベクトル」は、85.2 <span class="math inline">\(\rightarrow\)</span> 96.4%. よくみたら、落ちてるのもある. 「三角比」70.2 <span class="math inline">\(\rightarrow\)</span> 56.0%.</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

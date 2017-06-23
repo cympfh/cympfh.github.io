@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sat Jan 23 23:11:42 JST 2016</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Sat Jan 23 23:11:42 JST 2016</h1>
+</header>
+<h2 id="twitter-あるツイートへのメンション-リプライ-を取得する">Twitter, あるツイートへのメンション (リプライ) を取得する</h2>
+<p><code>https://twitter.com/:screen_name/status/:id</code> で表現されるような、 あるツイートへのメンション一覧を取得するためのツイートを取得するためのAPIは現在公開されていない.</p>
+<p>事実として、公式サイトで出来る全てのことがAPIとして公開されているわけではない. 最近始まったPollに関するAPIもまだ出てないしね.</p>
+<p>少し古いサイトだが、本当に無いっぽいのである:</p>
+<ul>
+<li><a href="http://stackoverflow.com/questions/2693553/replies-to-a-particular-tweet-twitter-api">Replies to a particular tweet, Twitter API - Stack Overflow</a></li>
+</ul>
+<p>少し関連して、自分でないあるユーザーへのメンション一覧というのも、同様にAPIとして公開されていない</p>
+<ul>
+<li><a href="http://stackoverflow.com/questions/4178131/find-tweets-mentioning-any-arbitrary-twitter-user">find tweets mentioning any arbitrary twitter user - Stack Overflow</a></li>
+<li><a href="https://twittercommunity.com/t/how-to-receive-all-tweets-mentioning-a-specific-user-through-streaming-api/22186">How to receive all tweets mentioning a specific user through Streaming API - Streaming APIs - Twitter Developers</a></li>
+</ul>
+<p>ある事情でそのようなことをする必要が生じたので、</p>
+<ul>
+<li><a href="https://dev.twitter.com/rest/reference/get/search/tweets">GET search/tweets | Twitter Developers</a></li>
+</ul>
+<p>これを代替に用いて再現した. つまり、普通のTwitter検索でもって、&quot;<span class="citation" data-cites="sceen_name">@sceen_name</span>&quot; で検索し、 該当するツイートへのメンションらしきものだけをフィルタするのである.</p>
+<h2 id="ソースコード-ruby">ソースコード (Ruby)</h2>
+<p>Rubyで書いた. これを見て真似しようとする人間はおそらくいないが、 そして大変恐縮だが、Twitter API を叩くのには <a href="https://github.com/twitter/twurl/">twurl</a> を用いている. 外部コマンドとして叩くだけである.</p>
+<div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby">require <span class="st">&#39;json&#39;</span>
+
+screen_name = <span class="st">&quot;screen_name&quot;</span> <span class="co"># @screen_name</span>
+opt = <span class="st">&quot;&quot;</span>
+
+loop <span class="kw">do</span>
+  res = <span class="dt">JSON</span>.parse <span class="st">`twurl &#39;/1.1/search/tweets.json?q=@</span><span class="ot">#{</span>screen_name<span class="ot">}</span><span class="st">&amp;count=99&amp;result_type=recent</span><span class="ot">#{</span>opt<span class="ot">}</span><span class="st">&#39;`</span>
+  tws = res[<span class="st">&quot;statuses&quot;</span>]
+
+  <span class="kw">for</span> tw <span class="kw">in</span> tws
+    <span class="kw">if</span> tw[<span class="st">&quot;in_reply_to_status_id_str&quot;</span>] == <span class="st">&quot;684966772810776576&quot;</span> <span class="co"># リプライ先</span>
+      text = tw[<span class="st">&quot;text&quot;</span>].gsub(<span class="st">&quot;\n&quot;</span>, <span class="st">&quot; &quot;</span>)
+      id = tw[<span class="st">&quot;id_str&quot;</span>]
+      puts <span class="st">&quot;</span><span class="ot">#{</span>id<span class="ot">}</span><span class="st">: </span><span class="ot">#{</span>text<span class="ot">}</span><span class="st">&quot;</span>
+    <span class="kw">end</span>
+  <span class="kw">end</span>
+
+  next_id = tws[-<span class="dv">1</span>][<span class="st">&quot;id_str&quot;</span>].to_i - <span class="dv">1</span>
+  opt = <span class="st">&quot;&amp;max_id=</span><span class="ot">#{</span>next_id<span class="ot">}</span><span class="st">&quot;</span>
+<span class="kw">end</span></code></pre></div>
+<p>出力を <code>log</code> として保存する.</p>
+<p>実際には、この検索で得た中で最近のツイートのidを持っておいた上で、 何度も同じ検索結果を得ないようにして、5分おきに上のスクリプトを走らせる. ただしそれでも同じ検索結果を得ないわけでもないので、</p>
+<pre><code>cat log | sort -nru -k1,1 &gt; a &amp;&amp; mv a log</code></pre>
+<p>などとして、idによって重複を取り除く.</p>
+<h2 id="余談">余談</h2>
+<p>よく、Twitterを利用したキャンペーンで、 「リプライしてくれた人の中から抽選で何人にナニナニが当選します」 みたいなのがある. そういうのがあった. 21個の商品があり、 そのうち一つを選んだ上でリプライを送ると、 各商品につき一人ずつ当選する何かがあった. (リンクはしないが <code>https://twitter.com/wanimagazine/status/684966772810776576</code> であった.)</p>
+<p>「これ、締め切りギリギリまで待って、一番人気がないのを選べばいいんじゃない？」 と誰かがツイートしていたのを見て、 自動的に統計を取ることをした.</p>
+<p>おおよその傾向を見るのに、上のスクリプトは役だった. 実のところ、ちゃんと in_reply_to を付けずにツイートしてあるのもちらほらと見かけたので、 その if 文は外して全部チェックした. ただし商品 (というかエロ漫画) を選ぶ方法としては、通し番号などは用いられず、 漫画のタイトルまたは作者をツイート本文に含める方法が取られていた. 誤字もあったし、そういったことにも寛容だと仮定して、 (たかだか21個だったので) ルールを手で愛情を込めて正規表現として書いた.</p>
+<p>Twitter検索というのは、漏れが発生しやすい. しかしながら、結果が1件と2件とでは大きく違う. (例えば100件と101件とならそこまで違いはないが.) 理由はわからないけれど、全てのツイートがちゃんとデータベースに乗るわけではないらしいのだ. これは実際問題だった. 解決はしていない.</p>
+<pre><code>   cat list</code></pre>
+<pre><code>\(なぱた\|ぱんでもにうむ\)
+\(mogg\|肉体コミュニケーション\)
+\(utu\|色は匂へど\)
+\(ReDrop\|ヘンカノ\)
+\(縁山\|める子\)
+\(スミヤ\|センテンス\|ガール\)
+\(無望菜志\|NTR\)
+\(くじら\|ぐじら\|ギャルとかビッチとか色々\)
+\(あきのそら\|じゅんれん\)
+\(かるま\|龍狼\|淫ママ\)
+\(狼亮輔\|求愛\)
+\(DISTANCE\|あねこもり\)
+\(ぴょん吉\|ぷにかの\)
+\(小川ひだり\|ちちんくりくり\)
+\(いーむす\|ヌレスジ\)
+\(レオパルド\|スケッチ\)
+\(ちょびぺろ\|はつもの果実\)
+\(モチ\|死なず\|姫君\)
+\(七宮つぐ\|あいまいますく\)
+\(発情メソッド\|アシオミマサト\)
+\(篠塚\|ファーストタッチ\)</code></pre>
+<pre><code>   cat stat.sh</code></pre>
+<pre><code>#!/bin/bash
+for kw in `cat list`; do
+  echo &quot;&lt;tr&gt;&lt;td&gt;$kw&lt;/td&gt;&lt;td&gt;&quot; &gt;&gt;$OUT
+  grep -i $kw log | wc -l  &gt;&gt;$OUT
+  echo &quot;&lt;/td&gt;&lt;/tr&gt;&quot; &gt;&gt;$OUT
+done</code></pre>
+<p>上のリストで網羅できてない可能性がある. どのキーワードにも引っかからないツイートを次で抽出して、目視する. (問題は無かった.)</p>
+<pre><code>cp log rest
+for kw in `cat list`; do
+  cat rest | grep -v $kw &gt; a
+  mv a rest
+done</code></pre>
+<p>最終的な結果は次.</p>
+<table>
+<tr>
+<th>
+PATTERN
+</th>
+<th>
+tweet数
+</th>
+</tr>
+<tr>
+<td>
+(なぱた|ぱんでもにうむ)
+</td>
+<td>
+121
+</td>
+</tr>
+<tr>
+<td>
+(mogg|肉体コミュニケーション)
+</td>
+<td>
+12
+</td>
+</tr>
+<tr>
+<td>
+(utu|色は匂へど)
+</td>
+<td>
+13
+</td>
+</tr>
+<tr>
+<td>
+(ReDrop|ヘンカノ)
+</td>
+<td>
+7
+</td>
+</tr>
+<tr>
+<td>
+(縁山|める子)
+</td>
+<td>
+7
+</td>
+</tr>
+<tr>
+<td>
+(スミヤ|センテンス|ガール)
+</td>
+<td>
+10
+</td>
+</tr>
+<tr>
+<td>
+(無望菜志|NTR)
+</td>
+<td>
+4
+</td>
+</tr>
+<tr>
+<td>
+(くじら|ぐじら|ギャルとかビッチとか色々)
+</td>
+<td>
+13
+</td>
+</tr>
+<tr>
+<td>
+(あきのそら|じゅんれん)
+</td>
+<td>
+25
+</td>
+</tr>
+<tr>
+<td>
+(かるま|龍狼|淫ママ)
+</td>
+<td>
+4
+</td>
+</tr>
+<tr>
+<td>
+(狼亮輔|求愛)
+</td>
+<td>
+4
+</td>
+</tr>
+<tr>
+<td>
+(DISTANCE|あねこもり)
+</td>
+<td>
+3
+</td>
+</tr>
+<tr>
+<td>
+(ぴょん吉|ぷにかの)
+</td>
+<td>
+46
+</td>
+</tr>
+<tr>
+<td>
+(小川ひだり|ちちんくりくり)
+</td>
+<td>
+3
+</td>
+</tr>
+<tr>
+<td>
+(いーむす|ヌレスジ)
+</td>
+<td>
+7
+</td>
+</tr>
+<tr>
+<td>
+(レオパルド|スケッチ)
+</td>
+<td>
+8
+</td>
+</tr>
+<tr>
+<td>
+(ちょびぺろ|はつもの果実)
+</td>
+<td>
+11
+</td>
+</tr>
+<tr>
+<td>
+(モチ|死なず|姫君)
+</td>
+<td>
+51
+</td>
+</tr>
+<tr>
+<td>
+(七宮つぐ|あいまいますく)
+</td>
+<td>
+70
+</td>
+</tr>
+<tr>
+<td>
+(発情メソッド|アシオミマサト)
+</td>
+<td>
+11
+</td>
+</tr>
+<tr>
+<td>
+(篠塚|ファーストタッチ)
+</td>
+<td>
+24
+</td>
+</tr>
+</table>
+<p>人気がはっきり分かって面白い. 雑誌の人気アンケートがここで公開されたようなものだ. 一番人気の無いものを選んで、2つのアカウントで応募した. 1/2の確率で少なくとも1つは当選する計算だったが、残念ながら外れた.</p>
+<p>2つアカウントがあったので、一番少ないのに2つとも応募するか、 あるいは一番少ないものと二番目に少ないものに1つずつ応募する方法の二通りあった. どっちが有利になるかは、大体直感通りである:</p>
+<p>一番少ないツイートをN件、二番目をM件とすると、</p>
+<ol type="1">
+<li>N=M ならひとつずつ応募して(N+1)、(M+1)件にするのがよくて</li>
+<li>N+1=M ならどっちでも同じで、</li>
+<li>N+1&lt;Mなら、Nの方に2つ突っ込むのが有利.</li>
+</ol>
+</body>
+</html>

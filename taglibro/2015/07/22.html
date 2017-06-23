@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Wed Jul 22 07:34:03 JST 2015</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Wed Jul 22 07:34:03 JST 2015</h1>
+</header>
+<h2 id="魔法陣ぐるぐる">魔法陣ぐるぐる</h2>
+<p>Rubyの練習のつもりで、やるだけゲーをAOJで探して解いてた: <a href="http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=0078">魔方陣 | Aizu Online Judge</a></p>
+<p>奇数<span class="math inline">\(n\)</span>が入力されるから、<br />
+大きさが<span class="math inline">\(n \times n\)</span> の所謂、魔法陣を書けというもので、<br />
+魔法陣の書き方を問題文の中で説明してある.</p>
+<p>(この問題の引用元であるPCKというのが何なのか知らないけれど、<br />
+説明が不正確だなぁ。。。</p>
+<p>説明された魔法陣の作り方を完全に真似る必要があるのか、<br />
+あくまでヒントであって、自由に魔法陣を作ればいいのかが<br />
+判別できないし寧ろ後者に読めるが、<br />
+実際には前者らしかった)</p>
+<div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="kw">#!/usr/bin/ruby</span>
+<span class="co"># coding: utf-8</span>
+
+<span class="dt">PI</span> = <span class="dt">Math</span>.acos(-<span class="dv">1</span>)
+
+<span class="kw">def</span> padding(n)
+  (<span class="st">&quot;    &quot;</span> + n.to_s)[-<span class="dv">4</span>, <span class="dv">4</span>]
+<span class="kw">end</span>
+
+<span class="kw">def</span> solve(n)
+  f = <span class="dt">Array</span>.new(n)
+  <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0</span>...n
+    f[i] = <span class="dt">Array</span>.new(n, <span class="dv">0</span>)
+  <span class="kw">end</span>
+
+  x = <span class="dv">1</span> + n/<span class="dv">2</span>
+  y = n/<span class="dv">2</span>
+  <span class="kw">for</span> k <span class="kw">in</span> <span class="dv">1</span>..(n*n)
+    <span class="kw">while</span> f[x][y] &gt; <span class="dv">0</span>
+      x += <span class="dv">1</span>
+      y += n<span class="dv">-1</span>
+      x %= n
+      y %= n
+    <span class="kw">end</span>
+    f[x][y] = k
+    x += <span class="dv">1</span>
+    y += <span class="dv">1</span>
+    x %= n
+    y %= n
+  <span class="kw">end</span>
+
+  <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0</span>...n
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="dv">0</span>...n
+      print padding(f[i][n-j<span class="dv">-1</span>])
+    <span class="kw">end</span>
+    puts <span class="st">&#39;&#39;</span>
+  <span class="kw">end</span>
+<span class="kw">end</span>
+
+<span class="kw">while</span> <span class="dv">true</span>
+  n = <span class="dt">STDIN</span>.gets.to_i
+  <span class="kw">if</span> n == <span class="dv">0</span>
+    <span class="kw">break</span>
+  <span class="kw">else</span>
+    solve(n)
+  <span class="kw">end</span>
+<span class="kw">end</span></code></pre></div>
+</body>
+</html>

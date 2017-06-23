@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Thu Jul 25 21:12:28 JST 2013</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Thu Jul 25 21:12:28 JST 2013</h1>
+</header>
+<h2 id="日記">日記</h2>
+<p>昨夜は試験前日ということで学校で泊まりこみで学科の人たちの勉強をしていた. なのだけどJ言語という面白いのを知ってしまった．APLなら聞いたことはあったけれど (SRFI-1のiotaの由来がある言語だ)それの後継であるらしい.</p>
+<p>この言語では関数とか演算子のことを動詞と呼ぶらしいのだけれど、単項か二項の動詞しか なくて、引数が3つ以上の関数に相当するものがどうしても作れないのだけれど.</p>
+<p>部分適用はあるけど、ラムダ抽象がないので、引数を増やす方法ができない. リストを渡せる場合ならいいけれど.</p>
+<ul>
+<li>演算子は全て右結合.</li>
+<li>単項として使うか二項として使うかで異なる作用をほとんど全ての演算子が持っている.</li>
+<li>演算子と引数の間に「副詞」を挟むことでちょっと意味が変えられる.</li>
+<li><code>a -&gt; b</code> な演算子があるとき、 <code>a</code> のリストまたは行列をその演算子に渡すと勝手にmapしてくれる.</li>
+<li>リストは数を空白で区切って並べたもの</li>
+<li>でも関数適用も空白で並べるだけでこちらであると優先的に解釈される</li>
+<li><code>,</code> が append か cons になる</li>
+</ul>
+<h2 id="j言語-フィボナッチ数列の計算">J言語, フィボナッチ数列の計算</h2>
+<p>再帰爆発するやつ</p>
+<pre class="j"><code>  fib =: 3 : &#39;if. y &lt;: 1 do. y else. (fib y-1) + (fib y-2) end.&#39;
+  fib 1
+1
+  fib 2
+1
+  fib 2
+1
+  fib 3
+2
+  fib 4
+3
+  fib 1 2 3 4 5
+1 2 3 4 5</code></pre>
+<p>リスト渡してmapしてくれない. なにゆえ</p>
+<p>線形時間で終わるタイプの再帰呼び出し</p>
+<pre class="j"><code>  next
+3 : &#39;(1{y) , (+/ y)&#39; NB. [a,b] =&gt; [b,a+b]
+  fib2
+4 : &#39;if. x=0 do. (0{y) else. (x-1) fib2 (next y) end.&#39;
+  fib
+3 : &#39;y fib2 0 1&#39;
+  fib 2
+1
+  fib 3
+2
+  fib 4
+3
+  fib 5
+5
+  fib i.10
+0</code></pre>
+<p>wtf!?</p>
+<h2 id="追記-tue-aug-6-104626-jst-2013">追記 (Tue Aug 6 10:46:26 JST 2013)</h2>
+<p>上の奇妙に見える動作は不取敢，理由はわかった 自分で定義したfibは配列を受け取っても正しく動作してしまうのである</p>
+<pre class="j"><code>  1 2 3 4 &lt;: 1
+1 1 1 1</code></pre>
+<p>これは <code>map (&lt;= 1) [1,2,3,4]</code></p>
+<pre class="j"><code>  if. 1 1 1 1 do. ...</code></pre>
+<p>これは配列の0-thだけでtrue/falseの判断をするらしいので，今はtrue</p>
+<p>引数に何を来ることにするかくらい，どっかに書かせてほしい ゆるゆるな動的型付けもびっくりな仕様だ</p>
+<h2 id="追記-mon-aug-26-090954-jst-2013">追記 (Mon Aug 26 09:09:54 JST 2013)</h2>
+<p>rankという概念がここで役立つそうだ つまり，適用させる引数がスカラーか，n次の行列かを直接適用する際に書ける</p>
+<pre class="j"><code>   fib&quot;0 (i.10)
+0 1 1 2 3 5 8 13 21 34</code></pre>
+<p>出来た <code>&quot;0</code> は適用されるのがスカラーであることを意味する</p>
+<p>というか，メモ化の為の演算子(本当，なんでも用意されている！)の説明のページ</p>
+<p>http://www.jsoftware.com/help/dictionary/dmcapdot.htm</p>
+<p>にフィボナッチの例があるのでこれを見るのが良いです</p>
+<hr />
+<footer>
+    <p style='text-align: right'>
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+</body>
+</html>

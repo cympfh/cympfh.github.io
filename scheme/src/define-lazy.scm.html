@@ -1,0 +1,143 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+</head>
+<body>
+<pre class="sourceCode scheme"><code class="sourceCode scheme">;;; 竹内関数
+; 何かの思い違いかと思ったけど，node.jsに比べて６倍も遅かった
+
+;;; 動機
+
+<span class="co">;(define (tak x y z)</span>
+<span class="co">;  (if (&lt;= x y) y</span>
+<span class="co">;      (tak (tak (- x 1) y z)  (tak (- y 1) z x) (tak (- z 1) x y))))</span>
+<span class="co">;</span>
+<span class="co">;(print (tak 13 6 0))</span>
+<span class="co">; real    0m6.851s</span>
+<span class="co">; user    0m6.824s</span>
+<span class="co">; sys     0m0.008s</span>
+
+; 竹内関数は遅延評価にすれば大幅に計算を削れることで有名である
+; 次のように
+
+<span class="co">;(define (ltak x y z)</span>
+<span class="co">;  (let ((x (force x))</span>
+<span class="co">;        (y (force y)))</span>
+<span class="co">;  (if (&lt;= x y) y</span>
+<span class="co">;      (let1 z (force z)</span>
+<span class="co">;        (ltak (delay (ltak (- x 1) y z))</span>
+<span class="co">;              (delay (ltak (- y 1) z x))</span>
+<span class="co">;              (delay (ltak (- z 1) x y)))))))</span>
+<span class="co">;</span>
+<span class="co">;(print (ltak 13 6 0))</span>
+<span class="co">; real    0m0.043s</span>
+<span class="co">; user    0m0.012s</span>
+<span class="co">; sys     0m0.016s</span>
+
+; delayの使い方に注意
+; delayはltakがとる引数全てにそれぞれdelayをかませるのである
+; 形式的には
+<span class="co">;   (ltake (- x 1) y z)</span>
+; っていうのも
+<span class="co">;   (ltake (delay (- x 1)) (delay y) (delay z))</span>
+; ってするべきなんだけど，この (<span class="kw">-</span> x 1) , y , z はすでに評価済みだし
+; 手でいちいち書くのが大変だったし，
+; forceにpromiseでない，例えば3を渡してみると
+<span class="co">; &gt; (force 3)</span>
+<span class="co">; 3</span>
+; として，恒等関数のように働く
+; ので実際，動作に問題ないので
+
+; forceの使い方に注意
+; forceは基本的にはひとつのpromiseを受け取って評価する
+; 一度評価したらその値は内部に保存して二度評価することはないので
+; 上のようにletで保存する必要はないのであって，
+<span class="co">;   (let ...</span>
+<span class="co">;   (if (&lt;= x y) y</span>
+<span class="co">; というのは</span>
+<span class="co">;   (if (&lt;= (force x) (force y)) (force y)</span>
+; と書いても実は問題ないのだ
+
+;;; 結論
+
+; というわけで，
+; 初めに書いた tak 手続きは次のように，形式的に書き換えれば遅延評価になる
+
+
+<span class="co">; (define (tak x y z)</span>
+<span class="co">;   (if (&lt;= (force x) (force y)) (force y)</span>
+<span class="co">;       (tak (delay (tak (delay (- (force x) 1))</span>
+<span class="co">;                        (delay (force y))</span>
+<span class="co">;                        (delay (force z))))</span>
+<span class="co">;            (delay (tak (delay (- (force y) 1))</span>
+<span class="co">;                        (delay (force z))</span>
+<span class="co">;                        (delay (force x))))</span>
+<span class="co">;            (delay (tak (delay (- (force z) 1))</span>
+<span class="co">;                        (delay (force x))</span>
+<span class="co">;                        (delay (force y)))))))</span>
+
+; 「形式的に書き換える」，のココロはマクロ
+; 次のようなものを書いた
+
+(<span class="kw">define-macro</span><span class="fu"> </span>(define-lazy ls . body)
+
+  (<span class="kw">define</span><span class="fu"> funname </span>(<span class="kw">car</span> ls))
+  (<span class="kw">define</span><span class="fu"> args </span>(<span class="kw">cdr</span> ls))
+
+  (<span class="kw">define</span><span class="fu"> </span>(insert-delay expr)
+    (<span class="kw">cond</span> [(<span class="kw">not</span> (<span class="kw">pair?</span> expr))
+            (<span class="kw">if</span> (find (pa$ <span class="kw">equal?</span> expr) args) `(<span class="kw">force</span> ,expr) expr)]
+          [(<span class="kw">equal?</span> (<span class="kw">car</span> expr) funname)
+            (let1 args (insert-delay (<span class="kw">cdr</span> expr))
+            `(,funname ,@(map (^x (<span class="kw">list</span> &#39;delay x)) args)))]
+          [<span class="kw">else</span> (map insert-delay expr)] ))
+
+  `(<span class="kw">define</span><span class="fu"> </span>,ls ,@(insert-delay body)))
+
+; このように使う
+
+(define-lazy (tak x y z)
+  (<span class="kw">if</span> (<span class="kw">&lt;=</span> x y) y
+      (tak (tak (<span class="kw">-</span> x <span class="dv">1</span>) y z) (tak (<span class="kw">-</span> y <span class="dv">1</span>) z x) (tak (<span class="kw">-</span> z <span class="dv">1</span>) x y))))
+
+(print (tak <span class="dv">13</span> <span class="dv">6</span> <span class="dv">0</span>))
+
+
+;;; ダメなところ．
+
+; 関数名をfunnameとして，関数本体に (funname x ...) を見つけ次第
+; (funname (delay x) ... ) に置き換えるのだが，
+; じゃあ (apply funname ls) は置き換えられていない
+; ほかにもdelayしたいような関数手続きの書き方はいくらでもあるので
+; いちいち対応できない気がした
+
+; 実際的には自分で delay するんだけど，delayとforceくらいリーダマクロ
+<span class="co">; あって欲しいなあ</span>
+
+<span class="co">; vim: set ft=scheme:</span></code></pre>
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Fri Aug 14 03:57:09 JST 2015</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Fri Aug 14 03:57:09 JST 2015</h1>
+</header>
+<h2 id="codeforces-round-316-div.-2"><a href="http://codeforces.com/contest/570">Codeforces Round #316 (Div. 2)</a></h2>
+<p>Div.1 が開催されてなかったので、強者もこちらに参戦していた. 自分は、ABCの3問が解けて3完. 部屋一位であった. どちらとも初めてなので嬉しい.</p>
+<pre><code>1559 -&gt; 1667</code></pre>
+<h3 id="a.">A.</h3>
+<p>正しく数えるだけ.</p>
+<h3 id="b.">B.</h3>
+<p><span class="math inline">\([1, m)\)</span> と <span class="math inline">\((m, n]\)</span> に分けて可能性が大きく残ってる方に賭ける. 可能性が同じときは、インデックスが小さい方 (i.e. <span class="math inline">\([1,m)\)</span>) を使う. 具体的には、<span class="math inline">\(m-1\)</span> か <span class="math inline">\(m+1\)</span> のどちらかを出力すればよい. 簡単なコーナーケースとして、<span class="math inline">\(n=1\)</span> のときは仕方がないので <span class="math inline">\(1\)</span> を出力するしかない.</p>
+<h3 id="c.">C.</h3>
+<p>文字列は単に <code>.</code> のゾーンと、そうでないアルファベット <code>a</code> のゾーンとにグルーピングして、その長さだけ管理しておけばよい.</p>
+<pre><code>.b..bz....
+=&gt; [ (. 1) (a 1) (. 2) (a 2) (. 4) ]</code></pre>
+<p><span class="math inline">\(f(s)\)</span> の計算は、つまるところ、<code>.</code> のグループだけを見て、 長さ<span class="math inline">\(-1\)</span> の和を取ればよい.</p>
+<pre><code>f([ (. 1) (a 1) (. 2) (a 2) (. 4) ]) = (1 - 1) + (2 - 1) + (4 - 1)</code></pre>
+<p>文字の置換 (<code>.</code> または <code>a</code> を <code>.</code> または <code>a</code> へ変更する) は、グループのリストを上手く変更しなければならない. そのようなデータ構造を知らず、また、Div2のC問題なので、簡単にできるだろうと予測した. グループのリストを表現するようなデータ構造はやめる. 考え方としては使うけど、 直接的に扱うデータ構造は、元の文字列そのものとする. <code>std::string</code> は何文字目を変更するっていうのが出来ないはずなので <code>std::vector&lt;char&gt;</code> に変換する. しかも文字は <code>'.'</code> であるかだけを気にすれば良いので <code>std::vector&lt;bool&gt;</code> とした.</p>
+<ul>
+<li><code>a</code> を <code>a</code> へ変更する場合: 文字列は何も変わらない</li>
+<li><p><code>.</code> を <code>.</code> へ変更する場合: 文字列は何も変わらない</p></li>
+<li><code>a</code> を <code>.</code> へ変更する場合: <code>.</code> のグループが生まれるか伸びるか連結される. いずれになるかは結局、その両隣を見ればよい
+<ul>
+<li><code>a(n) a a(m)</code> を <code>a(n) . a(m)</code> に変更する場合 (アルファベットが<span class="math inline">\(n\)</span>個並んでるものを <code>a(n)</code> と表記した): <code>.</code> のグループは新しく生まれる. ただしその長さは <span class="math inline">\(1\)</span> なので、<span class="math inline">\(f(s)\)</span> は変わらない</li>
+<li><code>a(n) a .(m)</code> を <code>a(n) . .(m)</code> に変更する場合: 既に存在する<code>.</code> のグループの長さが<span class="math inline">\(1\)</span>伸びるだけだから <span class="math inline">\(f(s)\)</span> は<span class="math inline">\(1\)</span> 増える</li>
+<li><code>.(n) a a(m)</code> を <code>.(n) . a(m)</code> に変更する場合: 上と同じ</li>
+<li><code>.(n) a .(m)</code> を <code>.(n) . .(m)</code> に変更する場合: <span class="math inline">\(f(s) = C + (n-1) + (m-1)\)</span> であったのが、 <span class="math inline">\(f(s) = C + (n+1+m - 1)\)</span> になるから、実は <span class="math inline">\(2\)</span> 増えるだけ</li>
+</ul></li>
+<li><p><code>.</code> を <code>a</code> へ変更する場合: 先ほどの逆 (増えるのが減る) になるだけ！</p></li>
+</ul>
+<p>のように、文字置換する前の <span class="math inline">\(f(s)\)</span> から、置換後の <span class="math inline">\(f(s)\)</span> は計算できる</p>
+<h2 id="a">A</h2>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp">  <span class="dt">int</span> n; cin &gt;&gt; n;
+  <span class="dt">int</span> m; cin &gt;&gt; m;
+
+  vi xs(n, <span class="dv">0</span>);
+  rep (i, m) {
+    vi ys(n, <span class="dv">0</span>); cin &gt;&gt; ys;
+    <span class="dt">int</span> mx = *max_element(begin(ys), end(ys));
+    rep (j, n) {
+      <span class="cf">if</span> (ys[j] == mx) {
+        xs[j]++;
+        <span class="cf">break</span>;
+      }
+    }
+  }
+  {
+    <span class="dt">int</span> mx = *max_element(begin(xs), end(xs));
+    <span class="dt">int</span> ans = <span class="dv">-1</span>;
+    rep (j, n) {
+      <span class="cf">if</span> (xs[j] == mx) {
+        ans = j;
+        <span class="cf">break</span>;
+      }
+    }
+    cout &lt;&lt; ans<span class="dv">+1</span> &lt;&lt; endl;
+  }</code></pre></div>
+<h2 id="b">B</h2>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp">  <span class="dt">int</span> n; cin &gt;&gt; n;
+  <span class="dt">int</span> m; cin &gt;&gt; m;
+
+  <span class="cf">if</span> (n == <span class="dv">1</span>) {
+    cout &lt;&lt; <span class="dv">1</span> &lt;&lt; endl;
+  }
+  <span class="cf">else</span> {
+
+    <span class="cf">if</span> (m<span class="dv">-1</span> &lt; n-m) {
+      cout &lt;&lt; m + <span class="dv">1</span> &lt;&lt; endl;
+    }<span class="cf">else</span> {
+      cout &lt;&lt; m - <span class="dv">1</span> &lt;&lt; endl;
+    }
+
+  }</code></pre></div>
+<h2 id="c">C</h2>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp">  <span class="dt">int</span> n; cin &gt;&gt; n;
+  <span class="dt">int</span> m; cin &gt;&gt; m;
+
+  vector&lt;<span class="dt">bool</span>&gt; cs; <span class="co">// 文字列の表現</span>
+  vector&lt;<span class="dt">int</span>&gt; dots; <span class="co">// dot のグループの長さの列</span>
+  {
+    string s; cin &gt;&gt; s;
+    cs.push_back(<span class="kw">false</span>);
+    <span class="cf">for</span> (<span class="dt">char</span> c: s) cs.push_back(c == <span class="st">&#39;.&#39;</span>);
+    cs.push_back(<span class="kw">false</span>);
+    <span class="dt">int</span> i = <span class="dv">0</span>;
+    <span class="cf">while</span> (i &lt; n) {
+      <span class="cf">while</span> (i &lt; n <span class="kw">and</span> s[i] != <span class="st">&#39;.&#39;</span>) ++i;
+      <span class="dt">int</span> k = <span class="dv">0</span>;
+      <span class="cf">while</span> (i &lt; n <span class="kw">and</span> s[i] == <span class="st">&#39;.&#39;</span>) { ++k; ++i; }
+      dots.push_back(k);
+    }
+  }
+  <span class="co">// trace(cs);</span>
+  <span class="co">// trace(dots);</span>
+
+  <span class="co">// 初めの文字列 s の f(s)</span>
+  <span class="dt">int</span> ans = <span class="dv">0</span>;
+  <span class="cf">for</span> (<span class="dt">int</span> d: dots) ans += max(<span class="dv">0</span>, d<span class="dv">-1</span>);
+
+  rep (_, m) {
+    <span class="dt">int</span> pos; <span class="dt">char</span> c; cin &gt;&gt; pos &gt;&gt; c;
+    <span class="dt">bool</span> b = c == <span class="st">&#39;.&#39;</span>;
+
+    <span class="cf">if</span> (cs[pos] != b) {
+      <span class="cf">if</span> (b) { <span class="co">// dot</span>
+        <span class="cf">if</span> (cs[pos<span class="dv">-1</span>] <span class="kw">and</span> cs[pos<span class="dv">+1</span>]) { <span class="co">// 両辺 dot</span>
+          ans += <span class="dv">2</span>;
+        }
+        <span class="cf">else</span> <span class="cf">if</span> ((<span class="kw">not</span> cs[pos<span class="dv">-1</span>]) <span class="kw">and</span> (<span class="kw">not</span> cs[pos<span class="dv">+1</span>])) { <span class="co">// 両辺 a</span>
+          ans += <span class="dv">0</span>;
+        }
+        <span class="cf">else</span> { <span class="co">// 片側 dot</span>
+          ans += <span class="dv">1</span>;
+        }
+      }
+      <span class="cf">else</span> {
+        <span class="cf">if</span> (cs[pos<span class="dv">-1</span>] <span class="kw">and</span> cs[pos<span class="dv">+1</span>]) {
+          ans -= <span class="dv">2</span>;
+        }
+        <span class="cf">else</span> <span class="cf">if</span> ((<span class="kw">not</span> cs[pos<span class="dv">-1</span>]) <span class="kw">and</span> (<span class="kw">not</span> cs[pos<span class="dv">+1</span>])) {
+          ans -= <span class="dv">0</span>;
+        }
+        <span class="cf">else</span> {
+          ans -= <span class="dv">1</span>;
+        }
+      }
+    }
+
+    cout &lt;&lt; ans &lt;&lt; endl;
+    cs[pos] = b;
+  }</code></pre></div>
+</body>
+</html>

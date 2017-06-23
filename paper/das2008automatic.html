@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Automatic Extraction of Briefing Templates</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/
+    </a>
+</h1>
+<header>
+<h1 class="title">Automatic Extraction of Briefing Templates</h1>
+</header>
+<ul>
+<li>
+url: <a href=></a>
+</li>
+<li>
+tags: <span class="tag"><a href=index.html#自然言語処理>自然言語処理</a></span> <span class="tag"><a href=index.html#自然言語生成>自然言語生成</a></span> <span class="tag"><a href=index.html#自動要約>自動要約</a></span>
+</li>
+</ul>
+<p><em>&quot;automatic briefing generation from non-textual event&quot;</em></p>
+<p>元がテキストでないようなイベントを自動要約したい。 従ってテキストの元と成るテンプレートが必要である。</p>
+<p>例えば、天気、風、という情報を知らせるためのテンプレート:</p>
+<ul>
+<li>[A warm front] from [Iceland] to [the Faeroes] will move [ENE] across [the Norwegian Sea] [this evening]</li>
+<li>[A ridge] from [the British Isles] to [Iceland] will move [NE] across [the North Sea] [today]</li>
+</ul>
+<p>the domain of the weather forecast のニュース記事からこのようなテンプレートを作りたい</p>
+<ol style="list-style-type: decimal">
+<li>クラスタリングをして</li>
+<li>構文木 (主語が根) を作って、適当に枝刈り</li>
+<li>評価
+<ul>
+<li>良さ気なテンプレートを選んで</li>
+<li>その数を精度とする</li>
+<li>ROUGE</li>
+</ul></li>
+</ol>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

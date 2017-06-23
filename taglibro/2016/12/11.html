@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sun Dec 11 2016</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Sun Dec 11 2016</h1>
+</header>
+<h1 id="seccon-2016-予選">SECCON 2016 予選</h1>
+<p>いつも通り negainoido チームにお邪魔して参戦した. いつも通り私は、バイナリ解析といった王道な問題は全然なので、ちょっと邪道な問題に手を付けていた.</p>
+<h2 id="seccon-tower">SECCON TOWER</h2>
+<p>問題は次の動画を読み取って PNG 画像を得よ、ということらしい.</p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/Y6voaURtKlM" frameborder="0" allowfullscreen>
+</iframe>
+<p>(問題を知らない人は ↑ この動画の (せめて) 最初の2分くらいは我慢して見て下さい)</p>
+<h3 id="考えたこと">考えたこと</h3>
+<p>ロボット？ (よく見ると伏せた紙コップの中にラズパイを仕込んで作ってある) がどうも手旗信号みたいなのを振っている. 最初の 70秒程度は、チュートリアルである. ロボットの動きに対して人間がノートに &quot;WELCOMETO...&quot; とペンで書き込む. ロボットの一つのポーズが一つのアルファベットに対応してることが推測できる. だとしてもいくつかのアルファベットが欠けているので完璧な対応表をここだけで得ることはできない.</p>
+<p>以降50分に渡って、ロボットがひたすらポーズを取っていくので、対応する文字を列にして、何かしらの方法でバイナリにデコードすると PNG 画像になるのだろう.</p>
+<p>ポーズとポーズとの間隔はほぼ、1秒であった. おそらく、ぴったり1秒になるように調整されてるのだと願い、フレームを切り出して、機械的に振り分けることにした. はじめは画像をピクセルのベクトルに変換して、コサイン類似度を取って、高かったら2つの画像は同じポーズを示している、、、、で分類することにした. ココらへんに関しては後述.</p>
+<p>結局大事だったのは、とりあえず、ロボットの一つのポーズを一つの文字だと思って (それが実際には何の英字や数字に対応してるかは気にせず) 最初の100文字程度を手でアノテートしてみたこと.</p>
+<p>ロボットの腕の形は、中心が固定されてぐるぐる廻る長い棒と、その両端に関節がある小さい棒の三本で構成される. 長い棒は、地面に対して、0度、45度、90度、135度の四通り. 小さい棒は、長い棒に対して、90度未満程度、右、左、または長い棒と重なった状態の三通り. 以上から、 4x3x3 で 36 通りありえる. これをラーメン屋でチームの皆に話した所、BASE36というのがあるらしい. 英字+数字で表現するらしい. しかし自分は36通りの内、35通りしか切り出したフレーム (ロボットのポーズの瞬間を取った画像) から発見できなかった (これについても後述). BASE36 なら 36 文字全てが出てこないのは怪しい.</p>
+<h3 id="フレームの切り出し">フレームの切り出し</h3>
+<p>ポーズは1秒間隔で、動画は50分なので、ポーズ、すなわち読むべき文字は3000文字. 最悪、人間が全部読み取るのも覚悟しつつも、とりあえずの方針は、機械的にフレームを切り出して機械的に判別させることとした. 人が見るにしても、フレームの切り出しは必要. 何番目のポーズの文字は何々、という情報を共有するのに、動画を初めから睨んで、そのポーズが何番目かなんてカウントしたくないので.</p>
+<p>最初、自分は次のように単純な方法でポーズ画像を得ることにした. あ、動画は YouTube にあるが、どうにかこうにかして手元に input.mp4 としてあるものとする.</p>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="co"># 動画 -&gt; ポーズ</span>
+<span class="ex">ffmpeg</span> -ss 75.5 -i ./input.mp4 -f image2 -vcodec png -r 1 <span class="st">&quot;./pose/%05d.png&quot;</span></code></pre></div>
+<p>75.5秒を起点に、1秒に1枚、スクリーンショットを取って保存する. これはロボットがぴったり一秒ごとにポーズを取ってくれることを期待している. ついでに、画像全体だと無駄が多い. ほしいのはロボットの腕部分だけだし、ついでにいうとカラー画像である必要はない. HDD を圧迫するし.</p>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="kw">for</span> <span class="ex">f</span> in pose/*.png<span class="kw">;</span> <span class="kw">do</span>
+    <span class="va">g=</span>crop/<span class="va">${f#</span>*/<span class="va">}</span>
+    <span class="ex">convert</span> -crop 400x400+520+20 -type GrayScale <span class="va">$f</span> <span class="va">$g</span><span class="kw">;</span>
+<span class="kw">done</span></code></pre></div>
+<figure>
+<img src="http://i.imgur.com/iCr1PvU.png" />
+</figure>
+<p>こんな感じ. 最初の方はいいんだが、後半、なんだかロボットの動きが鈍くなってく気がする. 動きがたま〜に、遅いんだか、まだ腕を動かしてる途中のフレームを切り出してしまうことがある.</p>
+<figure>
+<img src="http://i.imgur.com/IG3BxRP.png" />
+</figure>
+<p>躍動感がある. ちょっと腕がブレてるぐらいならいいが、実際と違うポーズに見える瞬間を切り取ってしまったことがあった. 先程、35通りのポーズを確認したと言ったがそれは嘘で、これが原因だった.</p>
+<p>ちゃんとロボットが動きを止めてることを確認して、フレームを切り出さなければならなかったのだ. ここはチームメイトにタスクを投げたので私はやってないが、次のようなことをやってもらった.</p>
+<ol type="1">
+<li>全フレームを切り出す (動画は12fps)</li>
+<li>隣接する2フレームの cos 類似度を取る
+<ul>
+<li><code>i</code> 番目と <code>i+1</code> 番目のそれを <code>k[i]</code> とする</li>
+</ul></li>
+<li>変数 <code>i</code> に初期値を与える</li>
+<li><code>i+12</code> の周辺 (そのプラスマイナス2程度) で <code>k[j]</code> が最大となる <code>j</code> を探す</li>
+<li><code>j</code> 番目のフレームをポーズとして出力</li>
+<li><code>i</code> を <code>j</code> で更新 (<code>i &lt;- j</code>)</li>
+</ol>
+<p><code>+12</code> 周辺を見るのは、やはり基本的にポーズの次のポーズは 1 秒後、すなわち 12 フレーム後であるはずというヒューリスティック.</p>
+<p>これできれいなポーズ画像が 3000 枚手に入る.</p>
+<h3 id="自動識別">自動識別</h3>
+<p>きれいなポーズ画像が 3000 枚、手に入り、それまでにやってたアノテーションは誤りを多く含むことがわかった. 先程、 36 種類の文字を表現できるのに 35 種類しか発見できなかったと述べたが、実は誤りで、35 どころか 32 種類しか無いことが発覚した. ここらへんで <span class="citation" data-cites="autotaker1984">@autotaker1984</span> さんが chappe system なるものを見つけ、加えて BASE32 であることを推理したので話が一気に簡単になった.</p>
+<ul>
+<li>chappe system はなんかセマフォアライン？の 1 プロコトル[https://en.wikipedia.org/wiki/Semaphore_line:title]
+<ul>
+<li>chappe system でのポーズの対応表 [https://en.wikipedia.org/wiki/Semaphore_line#/media/File:Rees%27s_Cyclopaedia_Chappe_telegraph.png]</li>
+</ul></li>
+<li>Base32 は英字と数字を使うが 0, 1, 8, 9 は使われない [https://en.wikipedia.org/wiki/Base32:title]</li>
+</ul>
+<p>いくつかすぐ気づく例外として、chappe system の &quot;&amp;&quot; (アンパサンド) が SECCON TOWER の &quot;J&quot; である. あとあと、動画の最初のチュートリアルでは、次のポーズ、</p>
+<figure>
+<img src="http://i.imgur.com/2XnVOEn.png" />
+</figure>
+<p>は &quot;.&quot; (ピリオド) に対応しそうな雰囲気だったが、BASE32に &quot;.&quot; などない. 本番のスタートもこのポーズからスタートしているが、途中で一切出てこないので、気にしない (存在しない) ことにした. ちなみに padding の &quot;=&quot; というつもりでもないらしい. 動画の最後は &quot;A&quot; で終わっているので.</p>
+<p>で、さて、自動識別であるが、フレームの切り出しにも利用した画像のコサイン類似度は、まるで使い物にならないことは結構初めに気づいていたので (今回これがダメな理由は [http://wgg.hatenablog.jp/entry/20161211/1481451044:title] にある通りです. でももっと工夫すれば頑張りの余地はありそう)、MNIST と同じ要領で簡単なCNNで32に分類させることにした.</p>
+<p>コード自体は全然なんということもなく、chainer でちゃちゃっと書いた.</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> chainer
+<span class="im">import</span> chainer.functions <span class="im">as</span> F
+<span class="im">import</span> chainer.links <span class="im">as</span> L
+
+
+<span class="kw">class</span> SecconTowerClassifier(chainer.Chain):
+
+    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>):
+        <span class="bu">super</span>().<span class="fu">__init__</span>(
+            bn0<span class="op">=</span>L.BatchNormalization(<span class="dv">3</span>),
+            bn1<span class="op">=</span>L.BatchNormalization(<span class="dv">8</span>),
+            c1<span class="op">=</span>L.Convolution2D(<span class="dv">3</span>, <span class="dv">8</span>, <span class="dv">3</span>),
+            c2<span class="op">=</span>L.Convolution2D(<span class="dv">8</span>, <span class="dv">32</span>, <span class="dv">5</span>, stride<span class="op">=</span><span class="dv">2</span>),
+            c3<span class="op">=</span>L.Convolution2D(<span class="dv">32</span>, <span class="dv">64</span>, <span class="dv">5</span>, stride<span class="op">=</span><span class="dv">2</span>),
+            out<span class="op">=</span>L.Linear(<span class="va">None</span>, <span class="dv">32</span>)
+        )
+
+    <span class="kw">def</span> forward(<span class="va">self</span>, x, train<span class="op">=</span><span class="va">False</span>):
+        h <span class="op">=</span> x
+        h <span class="op">=</span> F.average_pooling_2d(h, <span class="dv">3</span>)
+        h <span class="op">=</span> <span class="va">self</span>.bn0(h)
+        h <span class="op">=</span> F.dropout(h, <span class="fl">0.5</span>, train<span class="op">=</span>train)
+        h <span class="op">=</span> <span class="va">self</span>.c1(h)
+        h <span class="op">=</span> <span class="va">self</span>.bn1(h)
+        h <span class="op">=</span> <span class="va">self</span>.c2(h)
+        h <span class="op">=</span> F.elu(h)
+        h <span class="op">=</span> <span class="va">self</span>.c3(h)
+        h <span class="op">=</span> F.max_pooling_2d(h, <span class="dv">3</span>)
+        h <span class="op">=</span> <span class="va">self</span>.out(h)
+        <span class="cf">return</span> h
+
+    <span class="kw">def</span> <span class="fu">__call__</span>(<span class="va">self</span>, x, t):
+        h <span class="op">=</span> <span class="va">self</span>.forward(x, train<span class="op">=</span><span class="va">True</span>)
+        loss <span class="op">=</span> F.softmax_cross_entropy(h, t)
+
+        <span class="co"># Acc</span>
+        n <span class="op">=</span> x.data.shape[<span class="dv">0</span>]
+        _i <span class="op">=</span> chainer.cuda.cupy.argmax(h.data, axis<span class="op">=</span><span class="dv">1</span>).reshape((n, ))
+        acc <span class="op">=</span> chainer.cuda.cupy.<span class="bu">sum</span>((_i <span class="op">==</span> t.data)) <span class="op">/</span> n
+
+        chainer.report({<span class="st">&#39;loss&#39;</span>: loss, <span class="st">&#39;acc&#39;</span>: acc}, <span class="va">self</span>)
+        <span class="cf">return</span> loss</code></pre></div>
+<p>学習も何十分何時間も回していない. 何と言っても学習データは自分一人で作っていたので、そんなに数が無くすぐに収束するので. 学習を回しながら学習データを増やしてって、ちょっと溜まったら学習をリスタートさせるというサイクルを30分位？繰り返していた.</p>
+<p>以下、作ったデータセット. 行の頭がラベル (chappe system ならぬ seccon tower におけるポーズが表すシンボル) で、続く数字の列が、何番目のポーズであるか. 例えば 1 番目のポーズは &quot;R&quot;. 2 番目は &quot;F&quot;.</p>
+<pre><code>A 12 14 15 17 18 27 28 29 30 33 34 35 36 40 53 54 55 56 57 58 61 67 68 69 70 1137 1388
+B 9 40 47 50 1520 1512 2427
+C 23 63 88 2311 2594
+D 1017 1032 2485 2469
+E 4 24 49 1351 1348 1452 1386 2474 2452
+F 2 37 60 698 703 2450 2407 2312
+G 19 1040 402 1521 1517
+H 52 71 1020 1665 1587 1387 2463 2421 2408
+I 3 10 26 65 1015 1022 403 1952
+J 91 1012 456 373 2025 1779
+K 25 1005 1352 590 617 2835 2697 2655
+L 77 1009 1029 1044 822 651 589 2974 2905 2263
+M 42 79 1353 2252 2120 2042 1975 1903 1855 920
+N 8 11 1025 1028 219 1156
+O 89 1019 1003 1350 2253 1940 1924
+P 1031 1042 400 1045 1273 1357 1930 2722
+Q 39 1018 1033 2231 2324
+R 1 6 90 999 1002 1034
+S 21 22 1382 968 1065 1141 1207 1382
+T 51 62 1041 1354 856 1875
+U 13 20 64 66 82 94 1026 1027 1030 1035
+V 48 1004 1036 1379 1362
+W 31 38 78 1014 404 1108 1181 1330 1413 1522 1660 1960 2102 2175
+X 1000 1010 1319 1672 1971 2864
+Y 7 1021 1364 2264 2131 684 603 543
+Z 1001 1013 1125 2266 303 412 494
+2 32 76 855 2817 2546 2270 2198
+3 81 1043 1380 1349 278 279 1446 1696
+4 5 93 1016 1023 1363
+5 1006 1039 1361 1356 401 405
+6 1024 1383 2219 1570 1857 2333
+7 72 73 74 75 80 95 96 97 98 530 522 256 788 1072 1088</code></pre>
+<p>見たら分かるように、「ディープラーニング」をするにはあまりにも事例数が足りない. 一応訓練事例において正解率 97% を超えてたことにはなった時点で学習を終了した.</p>
+<p>たった 10 の文字に分類する MNIST ですら、100% の精度を出したという報告はない. すなわち多少の誤りは諦めるしかない. <span class="citation" data-cites="autotaker1984">@autotaker1984</span> のアドバイスにより、機械学習の識別でポーズ画像をディレクトリに分けて、あとは人間の目でチェックすることにした. 基本的に分類はほぼ成功しており、人間がすべきコトは、多くの同じポーズの中に、別なポーズが混じっていないかを確認するだけなので、そんなに難しくはなかったし、誤りは 3000 ポーズ中、10 程度しかなかった.</p>
+<figure>
+<img src="http://i.imgur.com/GGl0lJU.png" />
+</figure>
+<p>10程度誤ったと言ったが、それらは全て、UとV、QとM の取り違いであった. 次にそれぞれのポーズを示す.</p>
+<h3 id="u">U</h3>
+<figure>
+<img src="http://i.imgur.com/73pHYKi.png" />
+</figure>
+<h3 id="v">V</h3>
+<figure>
+<img src="http://i.imgur.com/ermruxH.png" />
+</figure>
+<h3 id="q">Q</h3>
+<figure>
+<img src="http://i.imgur.com/jfFTThC.png" />
+</figure>
+<h3 id="m">M</h3>
+<figure>
+<img src="http://i.imgur.com/OgIXcuM.png" />
+</figure>
+<p>まあ、似てる. しょうがない. 人間の手で修正したあと、base32 列になおしてバイナリに直したところ、次の画像を得た.</p>
+<figure>
+<img src="http://i.imgur.com/cvaZYiW.png" />
+</figure>
+<p>Macのプレビューでは強引に開けるものの、いまブログにアップロードしようとすると「未対応のファイル形式です」と怒られたし、明らかに最後の方、壊れてる. でもカメラでは読み取ることが出来た. 読み取るとフラグ及びスペシャルサンクスを得る. よかった.</p>
+<h2 id="明日も一日">明日も一日!!</h2>
+<figure>
+<img src="http://i.imgur.com/JHfXxen.jpg" />
+</figure>
+</body>
+</html>

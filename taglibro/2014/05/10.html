@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sat May 10 01:58:20 JST 2014</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Sat May 10 01:58:20 JST 2014</h1>
+</header>
+<h2 id="gauche-gosh-およびそれの-info-のビルドとインストール">Gauche (gosh) およびそれの info のビルドとインストール</h2>
+<p>gosh の組み込み関数、 <code>apropos</code> と <code>info</code> が大変便利なんだけれど、<br />
+<code>info</code>を呼ぶと、参照するだけで</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">gosh&gt; info
+*** ERROR: Compile Error: Compile Error: cannot find <span class="st">&quot;rfc/zlib&quot;</span> in (<span class="st">&quot;/usr/local/share/gauche-0.9/site/lib&quot;</span> <span class="st">&quot;/usr/local/share/gauche-0.9/0.9.3.3/lib&quot;</span> <span class="st">&quot;/usr/local/share/gauche/site/lib&quot;</span> <span class="st">&quot;/usr/local/share/gauche/0.9/lib&quot;</span>)
+    <span class="st">&quot;/usr/local/share/gauche-0.9/0.9.3.3/lib/text/info.scm&quot;</span>:<span class="dv">34</span>:(<span class="kw">define-module</span><span class="fu"> text</span>.info (use srfi<span class="dv">-1</span> ...
+
+    <span class="st">&quot;/usr/local/share/gauche-0.9/0.9.3.3/lib/gauche/interactive/info.scm&quot;</span>:<span class="dv">34</span>:(<span class="kw">define-module</span><span class="fu"> gauche</span>.interactive.in ...</code></pre></div>
+<p>このように出る。rfc/zlibというSchemeモジュールがないという。</p>
+<p>今まで何度もgoshをいくつものマシンにインストールしてきて、<br />
+<code>info</code>が使えるようになったのは一度だけで、<br />
+それも何故使えるようになったのか理解していなかった。</p>
+<p>たまにはちゃんとエラーメッセージを読んで解決を試みよう。</p>
+<h3 id="configureのメッセージ"><code>configure</code>のメッセージ</h3>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">checking</span> for makeinfo... no</code></pre></div>
+<p><code>gauche-refe.info.gz</code>を作るために<code>makeinfo</code>が必要らしい</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="fu">sudo</span> apt-get install makeinfo</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">configure</span>: WARNING: <span class="st">&quot;Can&#39;t find zlib.h so I turned off using zlib; you may want to use --with-zlib=PATH.&quot;</span></code></pre></div>
+<p>zlibっていうSchemeモジュールがないって言うので、Scheme側の問題かと思ってたのだけれど、 そもそも共有ヘッダファイルがないので、生成されてなかったらしい。</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sudo</span> apt-get install zlib1g-dev</code></pre></div>
+<p>このパッケージ名は自分で見つけられなかったので <a href="http://d.hatena.ne.jp/embedded/20081101/p3">Ubuntuで足りないファイルがどのパッケージにあるか調べる方法Add Starmacchayoshihiro503</a> を参照した。</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">gosh&gt; info
+#&lt;closure info&gt;
+gosh&gt; (info &#39;display)
+<span class="fl">6.22.8</span> Output
+-------------
+
+    For the following procedures, the optional PORT argument must be an
+    output port, <span class="kw">and</span> when omitted, the current output port is assumed.
+
+-- Function: <span class="kw">write</span> obj :optional port
+-- Function: <span class="kw">display</span> obj :optional port
+           [R5RS] Produces a printable representation of an object OBJ to the</code></pre></div>
+<p>できた！</p>
+<h2 id="便利なrlwrap">便利なrlwrap</h2>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="bu">alias</span> f=<span class="st">&#39;echo this is ef&#39;</span></code></pre></div>
+<p>aliasは''でくくるなりしないといけなくて、中に'を含めるのにエスケープがちょっと今の眠たい頭じゃ無理そうなので関数として</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">gauche()</span> <span class="kw">{</span>
+  <span class="ex">rlwrap</span> -pRED -b <span class="st">&quot;&#39;&quot;&#39;(){}[].,#@;|`&quot;&#39;</span> -f ~/Dropbox/cympfh/.gosh_complements -q<span class="st">&#39;&quot;&#39;</span> -m gosh
+<span class="kw">}</span></code></pre></div>
+<p>aliasならば、名前と中からの呼び出しに同じ名前があっても、 関数とは違って、再帰呼び出しにはならない。 というわけで、上の関数は <code>gosh</code> とは異なる名前にした。</p>
+<p>補完のためのファイルには、存在する手続きの名前を列挙するのだけど、</p>
+<p><a href="http://d.hatena.ne.jp/rui314/20070604/p1" class="uri">http://d.hatena.ne.jp/rui314/20070604/p1</a> には、そのためのGauche用スクリプトがあった。</p>
+<p>でも、私は、gosh REPLから</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">(apropos &#39;||)</code></pre></div>
+<p>として、出力結果をコピペして、ちょっとだけ整形してやる手間を加えた。</p>
+<blockquote>
+<p>/dots/gosh_complements.txt</p>
+</blockquote>
+</body>
+</html>

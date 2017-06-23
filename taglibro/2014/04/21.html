@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Apr 21 2014</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Apr 21 2014</h1>
+</header>
+<p><a href="http://www.vim.org/scripts/script.php?script_id=2226">vimwiki</a> という2008年からのプラグイン, 未だに vba で配布されてるタイプの vimプラグイン</p>
+<p>wiki記法なるものに親しみはないので できれば markdownで書きたい</p>
+<ul>
+<li>http://nanasi.jp/articles/vim/vimwiki/vimwiki_vim_syntax.html</li>
+</ul>
+<p>に１ページで説明された少ない文法だけで充分ではありそうなのでしばらく使ってみる</p>
+<pre class="vim"><code>Bundle &quot;vimwiki&quot;</code></pre>
+<p>最低限 私には次のように書き換えた おそらくどこかで設定するんだろうけど 本体を書き換える方が早い</p>
+<p>(元ファイルが無いので diff の出力を載せるという手法ができない また 手で diff の出力を再現させる自信もない)</p>
+<div class="sourceCode"><pre class="sourceCode diff"><code class="sourceCode diff">@ftplugin/vimwiki.vim l409
+<span class="va">+ nmap &lt;silent&gt;&lt;buffer&gt; ! &lt;Plug&gt;VimwikiToggleListItem</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode diff"><code class="sourceCode diff">@autoload/vimwiki/base.vim l444
+<span class="st">-   call system(&#39;hoge-open &#39; . shellescape(a:url, 1).&#39; &amp;&#39;)</span>
+<span class="va">+   call system(&#39;firefox &#39; . shellescape(a:url, 1).&#39; &amp;&#39;)</span></code></pre></div>
+<p>こんなものに違いない</p>
+<p>前から必要に感じていた 論文の読んだ文献もこれで管理しよう</p>
+<hr />
+<p>どうせもう開発も止まってるし 今の変更を加えたのを自分で持っとくことにした 自分でっていうかGithubで</p>
+<ul>
+<li>https://github.com/cympfh/vimwiki</li>
+</ul>
+<pre class="vim"><code>Bundle &quot;cympfh/vimwiki&quot;
+let g:vimwiki_list = [{&#39;path&#39;: &#39;~/Dropbox/wiki&#39;, &#39;path_html&#39;: &#39;~/Dropbox/wiki/html/&#39;}]</code></pre>
+<hr />
+<p><code>:help vimwiki-options</code> してみると syntaxとして markdown が選択できるらしかった</p>
+<pre class="vim"><code>let g:vimwiki_list = [{&#39;path&#39;: &#39;~/Dropbox/wiki&#39;, &#39;syntax&#39;: &#39;markdown&#39;, &#39;ext&#39;: &#39;.md&#39;}]</code></pre>
+<p>このようにする</p>
+<p>残念ながら 見出しくらいが markdown式になるだけで さらに残念なことに</p>
+<pre class="vim"><code>:VimwikiAll2HTML
+
+vimwiki: conversion to HTML is not supported for this syntax!!!</code></pre>
+<p>HTML化ができなくなった 当然ながら wiki に戻した</p>
+</body>
+</html>

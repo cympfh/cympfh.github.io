@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>不偏ゲームのグランディ数 (ニム数)</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> aiura/
+    </a>
+</h1>
+<header>
+<h1 class="title">不偏ゲームのグランディ数 (ニム数)</h1>
+</header>
+<p class="date" style="text-align: right">
+2017-03-25 (Sat.)
+</p>
+<div class="tags" style="text-align: right">
+<p><a class=tag href=index.html#数学>数学</a> <a class=tag href=index.html#ゲーム理論>ゲーム理論</a></p>
+</div>
+<h2 id="index">index</h2>
+<div id="toc">
+
+</div>
+<h2 id="不偏ゲームとは何か">不偏ゲームとは何か</h2>
+<p>二人が交互に手を打つ (一つの局番に関する操作) 完全情報ゲームであって、 二人ともが打てる手が同じものを不偏ゲームという. ただし、千日手が無く、どのような手を打ってもいつかは最終局面に移ることが保証されているものとする.</p>
+<p>例えばオセロやチェスは置ける/動かせるコマが色によって区別されて打てる手が違う (黒のコマを置く操作は一方しか行えない) ため、不偏ゲームではない.</p>
+<p>不偏ゲームとして有名なゲームの例は <a href="https://ja.wikipedia.org/wiki/ニム">Nim (石取りゲーム)</a> である.</p>
+<h2 id="コンウェイによるゲームの抽象化">コンウェイによるゲームの抽象化</h2>
+<p>直感的にはゲームとは、局面の初期状態 <span class="math inline">\(I_0\)</span> と、局面に対して打つ手を定めるルール <span class="math inline">\(R\)</span> の2つ組 <span class="math inline">\((I_0, R)\)</span> のことである.</p>
+<p>手を打つとは、局面に操作を加える操作である. 局面が初期状態 <span class="math inline">\(I_0\)</span> から <span class="math inline">\(I\)</span> に変更したとき、 これを、ゲーム <span class="math inline">\((I_0, R)\)</span> からゲーム <span class="math inline">\((I, R)\)</span> への変更だと見做す. 即ち、手を打つという操作は、ゲームを別なゲームに変更する操作である.</p>
+<p>ルールとは局面それぞれに対して (もし非不偏ゲームであればプレイヤーにも依存して) 打てる手を定めるものである. 打てる手全てを集めた集合が局面に対して与えられていればルールが与えられたと見なせる.</p>
+<p>以上の考察から、次のような形式化が思いつく.</p>
+<div class="thm">
+<p>ゲームとは、一回の打てる手によって写せる先のゲーム全てからなる集合のこと.</p>
+</div>
+<p>例えば「最終局面」とはそれ以上打てる手がないゲームのことであるが、 最終局面は全て空集合 <span class="math inline">\(\{\}\)</span> によって表現される. 或いは、打てる手が 1 つ以上あるが、どれを打っても全て最終局面になるのならば、 そのような局面は空集合からなる <span class="math inline">\(\{\{\}\}\)</span> として表現される.</p>
+<p>このように「ゲーム」とは局面及びその局面に対して打てる手を情報として持たせたものとして定められるが、 単に「局面」と呼んで同一視することがある. これは「ゲームをゲームに写す」よりは「局面を局面に写す」と言った方が一般的だから. あるいは局面と言った時に、暗黙的に、ルールを既に一つ定めて仮定しているから.</p>
+<h2 id="グランディ数-ニム数-grundy-value-nim-value-nimber-energy-などとも">グランディ数 (ニム数, Grundy value, Nim value, Nimber, Energy などとも)</h2>
+<p>グランディ数とは不偏ゲーム <span class="math inline">\(G\)</span> を (<span class="math inline">\(0\)</span> を含む) 自然数に写す写像であって、</p>
+<p><span class="math display">\[g: \mathcal{G} \to \mathbb{N}\]</span> <span class="math display">\[g(G) = \text{mex } \{ g(G&#39;) : G&#39; \in G \}\]</span></p>
+<p>ここで mex とは、最小除外数 (minimum exclusion) などと呼ばれるもので、 <span class="math inline">\(\text{mex }T\)</span> (<span class="math inline">\(T\)</span> は自然数の部分集合) とは、<span class="math inline">\(T\)</span> に含まれない自然数の中で最小の数のことである. すなわち <span class="math inline">\(\text{mex } T = \text{min }(\mathbb{N} \setminus T)\)</span> である.</p>
+<p>例えば</p>
+<p>定義から、<span class="math inline">\(G\)</span> が最終局面ならば、<span class="math inline">\(g(G) = \text{mex }\{\} = 0\)</span> である.</p>
+<h3 id="例.-制限付き-nim-石取りゲーム">例. 制限付き Nim (石取りゲーム)</h3>
+<h4 id="ルール">ルール</h4>
+<p>取れる石の数に制限を設けた Nim を考える.</p>
+<p>山に <span class="math inline">\(N\)</span> 個の石がある. プレイヤーが行える操作は 1 個以上 3 個以下の石を取ることである. これを交互に行い、先に手が打てなくなった方の負け (つまり最後の一個を取れば勝ち).</p>
+<h4 id="グランディ数">グランディ数</h4>
+<p>このゲームのグランディ数を考える.</p>
+<p>局面を考えるには、単に石がいくつ残っているかを考えれば良い. 先述したゲームの形式的表現を用いる.</p>
+<p>石が <span class="math inline">\(n\)</span> 個あるゲームを <span class="math inline">\(\overline{n}\)</span> とすると、</p>
+<ul>
+<li><span class="math inline">\(\overline{0} = \{\}\)</span></li>
+<li><span class="math inline">\(\overline{1} = \{ \overline{0} \}\)</span> (<span class="math inline">\(= \{\{\}\}\)</span>)</li>
+<li><span class="math inline">\(\overline{2} = \{ \overline{0} , \overline{1} \}\)</span></li>
+<li><span class="math inline">\(\overline{3} = \{ \overline{0} , \overline{1} ,\overline{2} \}\)</span></li>
+<li><span class="math inline">\(\overline{k} = \{ \overline{k-3} , \overline{k-2} , \overline{k-1} \}\)</span> (<span class="math inline">\(k &gt; 3\)</span>)</li>
+</ul>
+<p>これらに対して、グランディ数 <span class="math inline">\(g\)</span> を計算すると次のようになる.</p>
+<ul>
+<li><span class="math inline">\(g(\overline{0}) = \text{mex }\{\} = 0\)</span>,</li>
+<li><span class="math inline">\(g(\overline{1}) = \text{mex }\{0\} = 1\)</span>,</li>
+<li><span class="math inline">\(g(\overline{2}) = \text{mex }\{0,1\}=2\)</span>,</li>
+<li><span class="math inline">\(g(\overline{3}) = \text{mex }\{0,1,2\}=3\)</span>,</li>
+<li><span class="math inline">\(g(\overline{4}) = \text{mex }\{1,2,3\}=0\)</span>.</li>
+</ul>
+<p>簡単に次のような事実に気附く:</p>
+<p><span class="math display">\[g(\overline{n}) = n \bmod 4\]</span></p>
+<p>更に石の数の制限を 1 個以上 <span class="math inline">\(k\)</span> 個以下とするとき、</p>
+<p><span class="math display">\[g(\overline{n}) = n \bmod (k+1)\]</span></p>
+<p>と出来そう. 制限なし (いくつでも取っていい) なら、<span class="math inline">\(k=\infty\)</span> とすることで、</p>
+<p><span class="math display">\[g(\overline{n}) = n\]</span></p>
+<p>を得る.</p>
+<h3 id="定理">定理</h3>
+<div class="thm">
+<p>不偏ゲーム <span class="math inline">\(G\)</span> のグランディ数 <span class="math inline">\(g\)</span> が <span class="math inline">\(g(G)=0\)</span> のとき、またそのときに限り、 ゲーム <span class="math inline">\(G\)</span> は後手必勝である.</p>
+</div>
+<p>ゲームのグランディ数が <span class="math inline">\(0\)</span> である状態を考える.</p>
+<ol style="list-style-type: decimal">
+<li><span class="math inline">\(G=\{\}\)</span> のとき、これは最終局面であるので後手必勝であるし <span class="math inline">\(g(G)=0\)</span> である.</li>
+<li><span class="math inline">\(G \ne \{\}\)</span> のとき、先手には打てる手があるので、先手は <span class="math inline">\(G&#39; \in G\)</span> に写したとする. <span class="math inline">\(g(G)=0\)</span> より <span class="math inline">\(g(G&#39;)&gt;0\)</span>. <span class="math inline">\(g(G&#39;)&gt;0\)</span> より <span class="math inline">\(G&#39; \ne \{\}\)</span> であることと、 <span class="math inline">\(\exists G&#39;&#39; \in G&#39;, g(G&#39;&#39;)=0\)</span> が分かる. 即ち、先手がどのような手を打っても、後手はゲームのグランディ数を再び <span class="math inline">\(0\)</span> にできる.</li>
+</ol>
+<p>後手はゲームのグランディ数を常に <span class="math inline">\(0\)</span> になるような手を打ち続けることで、いつかは <span class="math inline">\(G=\{\}\)</span> にでき勝てる (千日手は無いと仮定している).</p>
+<h2 id="ゲーム和-直和-とそのグランディ数-ニム和">ゲーム和 (直和) とそのグランディ数 (ニム和)</h2>
+<p>しばしばゲームはより簡単なゲームに分解でき、それらの和とすることで簡単に考えることが出来る. 典型的な例は複数山の Nim である. 一山からなる Nim の直和だと見做すことが出来る.</p>
+<h3 id="ゲーム和の定義">ゲーム和の定義</h3>
+<p>ゲーム <span class="math inline">\(G\)</span> と <span class="math inline">\(H\)</span> の和 <span class="math inline">\(G + H\)</span> とは、 その2つを並べて、プレイヤーは <span class="math inline">\(G, H\)</span> の内一つを自由に選んで手を打つようなゲームのことである. どちらともに最終局面の場合に限って、和も最終局面だとする.</p>
+<p>形式的には次のように再帰的に定義する.</p>
+<ul>
+<li><span class="math inline">\(G+\{\} = G\)</span></li>
+<li><span class="math inline">\(\{\}+H = H\)</span></li>
+<li><span class="math inline">\(G+H = \{ G&#39;+H : G&#39; \in G \} \cup \{ G+H&#39; : H&#39; \in H \}\)</span></li>
+</ul>
+<p>特にこの三式目が再帰的定義となっているので註意.</p>
+<p>この二項演算子を用いることで <span class="math inline">\(G_1 + G_2 + \cdots + G_n\)</span> が定義出来る.</p>
+<h3 id="ニム和">ニム和</h3>
+<p>グランディ数 <span class="math inline">\(g(G), g(H)\)</span> が明らかな時 <span class="math inline">\(g(G+H)\)</span> を容易に計算することが出来、</p>
+<p><span class="math display">\[g(G+H) = g(G) \oplus g(H)\]</span></p>
+<p>と書ける. この <span class="math inline">\(\oplus\)</span> をニム和という.</p>
+<p>ニム和の具体的な計算であるが、これは実はグランディ数 (自然数) を bit 表現したときの <a href="https://ja.wikipedia.org/wiki/排他的論理和#.E3.83.93.E3.83.83.E3.83.88.E3.81.94.E3.81.A8.E3.81.AE.E6.8E.92.E4.BB.96.E7.9A.84.E8.AB.96.E7.90.86.E5.92.8C">排他的論理和</a> となっている.</p>
+<p><span class="math inline">\(n\)</span> 個のゲーム和のグランディ数も、同じ <span class="math inline">\(\oplus\)</span> を用いて <span class="math display">\[g(G_1,G_2,..,G_n) = g(G_1) \oplus g(G_2) \oplus \ldots \oplus g(G_n)\]</span> で与えられる.</p>
+<h3 id="つ山の制限付き-nim-石取りゲーム">2つ山の制限付き Nim (石取りゲーム)</h3>
+<p>2つの山があって、それぞれ <span class="math inline">\(n\)</span> 個、<span class="math inline">\(m\)</span> 個の石からなる. プレイヤーは交互に、1つの山を選んで石を取る. 先ほどと同様に、取る石の数は1個以上3個以下と制限する. 手が打てなくなったら負け (最後の最後の一個を取ったら勝ち).</p>
+<p>局面の状態は <span class="math inline">\((n,m)\)</span> で表せるので先ほどと同様に <span class="math inline">\(\overline{(n,m)}\)</span> と書くことにする. 終盤局面は <span class="math inline">\(\overline{(0,0)}\)</span> である.</p>
+<p>愚直にグランディ数を計算するには先ほどと同様に、 <span class="math inline">\(\overline{(0,0)}\)</span> から <span class="math inline">\(\overline{(4,4)}\)</span> くらいまでのグランディ数を愚直に計算すれば良い.</p>
+<p>二次元のテーブルの上でグランディ数を具体的に書きだしてみると、 周期性が見えて、やはりなんとなく分かるが、 先ほどのニム和の性質が満たされていることも確認できる. すなわち、</p>
+<p><span class="math display">\[g \overline{(n,m)} = g(\overline{n}) \oplus g(\overline{m})
+= (n \bmod 4) \oplus (m \bmod 4)\]</span></p>
+<p>である.</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

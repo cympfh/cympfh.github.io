@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sun Jun 26 21:16:15 JST 2016</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Sun Jun 26 21:16:15 JST 2016</h1>
+</header>
+<h2 id="参考">参考</h2>
+<ul>
+<li>30分で作るかんたんパーザコンビネータ - http://niconare.nicovideo.jp/watch/kn1472</li>
+</ul>
+<h2 id="rust-でパーザコンビネータを書く">Rust でパーザコンビネータを書く</h2>
+<ul>
+<li>参考スライドのコードをRustで実装することを目指す</li>
+<li>高階の書き方が難しい...</li>
+</ul>
+<h2 id="型">型</h2>
+<p>扱いやすさのために、入力となる文字列を全て <code>Vec&lt;char&gt;</code> と仮定する.<br />
+パーザは、 <code>Vec&lt;char&gt;</code> を入力として受け取り、消費した (読んだ) 分と、まだ読んでない分のペア <code>(Vec&lt;char&gt;, Vec&lt;char&gt;)</code> を返す関数である.<br />
+ただし、パースは常に成功するとは限らないので、それを更に <code>Option</code> で包む. この返す型を <code>ParseResult</code> とする.<br />
+したがって、パーザは <code>Vec&lt;char&gt;</code> を取って <code>ParseResult</code> を返す関数であるが、都合上、それを <code>Box</code> に包んでしかも <code>Parser</code> と名付けた struct で包む.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">type</span> ParseResult = <span class="dt">Option</span>&lt;(<span class="dt">Vec</span>&lt;<span class="dt">char</span>&gt;, <span class="dt">Vec</span>&lt;<span class="dt">char</span>&gt;)&gt;;
+<span class="kw">struct</span> Parser(<span class="dt">Box</span>&lt;<span class="bu">Fn</span>(&amp;<span class="dt">Vec</span>&lt;<span class="dt">char</span>&gt;) -&gt; ParseResult&gt;);</code></pre></div>
+<p>関数型っぽく書く場合は、入力は参照 <code>&amp;</code> 付けて読めば大体いい気がする.</p>
+<h2 id="基本パーザ">基本パーザ</h2>
+<p>参考スライドにしたがって、1文字だけを読むパーザ (<code>one_of</code>) と頭の何文字化を読むパーザ (<code>string</code>) を実装する.</p>
+<h3 id="one_of">one_of</h3>
+<p>頭の一文字を与えて、消費させるパーザを作る.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> one_of(c: <span class="dt">char</span>) -&gt; Parser {
+    Parser(<span class="dt">Box</span>::new(<span class="kw">move</span> |cs: &amp;<span class="dt">Vec</span>&lt;<span class="dt">char</span>&gt;| {
+        <span class="kw">if</span> cs.len() == <span class="dv">0</span> || cs[<span class="dv">0</span>] != c {
+            <span class="cn">None</span>
+        } <span class="kw">else</span> {
+            <span class="cn">Some</span>((<span class="pp">vec!</span>[c], cs[<span class="dv">1.</span>.].to_owned()))
+        }
+    }))
+}</code></pre></div>
+<p>文字 <code>c</code> を受け取って次のようなパーザ (Parser) を返す. パーザは文字列 <code>cs</code> を受け取って、頭の一文字が <code>c</code> と一致したら、それを消費して、残り (<code>cs[1..]</code>) を消費せずに返す. 頭が一致しないか、そもそも <code>cs</code> が長さ0の場合は頭が無いので失敗 <code>None</code> を返す.</p>
+<h3 id="パーザの適用">パーザの適用</h3>
+<p>作ったパーザが正しく動作するかを確認したいので、先に、パーザを文字列に適用するメソッドを実装する.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">impl</span> Parser {
+    <span class="kw">fn</span> call(&amp;<span class="kw">self</span>, s: <span class="dt">String</span>) -&gt; ParseResult {
+        <span class="kw">let</span> Parser(<span class="kw">ref</span> f) = *<span class="kw">self</span>;
+        <span class="kw">let</span> chars = s.chars().collect::&lt;<span class="dt">Vec</span>&lt;_&gt;&gt;();
+        f(&amp;chars)
+    }
+}</code></pre></div>
+<p>パーザ (self) の中身を <code>let Parser(ref f) = ...</code> の部分で <code>f</code> という名前を付けて取り出す. Boxに包んでるが、そのまま関数として使えば良い. わざわざ <code>ref</code> で関数を参照してるのは、<code>parser</code> を繰り返し何度も利用するため (借用のアレ).</p>
+<h3 id="例">例</h3>
+<p>先ほどの <code>one_of</code> を使ってみる.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust">    <span class="kw">let</span> parser = one_of(<span class="ch">&#39;a&#39;</span>);
+    <span class="kw">let</span> s = <span class="dt">String</span>::from(<span class="st">&quot;abc&quot;</span>);
+    <span class="pp">println!</span>(<span class="st">&quot;{:?}&quot;</span>, parser.call(s));</code></pre></div>
+<p>=&gt;</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="cn">Some</span>(([<span class="ch">&#39;a&#39;</span>], [<span class="ch">&#39;b&#39;</span>, <span class="ch">&#39;c&#39;</span>]))</code></pre></div>
+<h3 id="string">string</h3>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> string(s: <span class="dt">String</span>) -&gt; Parser {
+    <span class="kw">let</span> ds: <span class="dt">Vec</span>&lt;<span class="dt">char</span>&gt; = s.chars().collect();
+    Parser(<span class="dt">Box</span>::new(<span class="kw">move</span> |cs: &amp;<span class="dt">Vec</span>&lt;<span class="dt">char</span>&gt;| {
+        <span class="kw">let</span> n = ds.len();
+        <span class="kw">if</span> cs.len() &lt; n { <span class="kw">return</span> <span class="cn">None</span> }
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.n {
+            <span class="kw">if</span> ds[i] != cs[i] { <span class="kw">return</span> <span class="cn">None</span> }
+        }
+        <span class="cn">Some</span>((ds.to_owned(), cs[n..].to_owned()))
+    }))
+}</code></pre></div>
+<p>基本的に <code>one_of</code> と同じ.</p>
+<h2 id="合成コンビネータ">合成コンビネータ</h2>
+<h3 id="選択-choose">選択 <code>choose</code> <code>/</code></h3>
+<p>2つのパーザを与えて、1つめを試して成功したらそれを返す. 失敗したら2つ目を返す、というパーザを生成するコンビネータを実装する.</p>
+<p>先に使い方を述べると</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust">    <span class="kw">let</span> parser = one_of(<span class="ch">&#39;a&#39;</span>) / one_of(<span class="ch">&#39;b&#39;</span>); <span class="co">// &#39;a&#39; を読む. 失敗したら、&#39;b&#39; を読む</span>
+    {
+        <span class="kw">let</span> s = <span class="dt">String</span>::from(<span class="st">&quot;abc&quot;</span>);
+        <span class="pp">println!</span>(<span class="st">&quot;{:?}&quot;</span>, parser.call(s));
+    }
+    {
+        <span class="kw">let</span> s = <span class="dt">String</span>::from(<span class="st">&quot;bbc&quot;</span>);
+        <span class="pp">println!</span>(<span class="st">&quot;{:?}&quot;</span>, parser.call(s));
+    }
+    {
+        <span class="kw">let</span> s = <span class="dt">String</span>::from(<span class="st">&quot;cbc&quot;</span>); <span class="co">// fails</span>
+        <span class="pp">println!</span>(<span class="st">&quot;{:?}&quot;</span>, parser.call(s));
+    }</code></pre></div>
+<p>結果は順に</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="cn">Some</span>(([<span class="ch">&#39;a&#39;</span>], [<span class="ch">&#39;b&#39;</span>, <span class="ch">&#39;c&#39;</span>]))
+<span class="cn">Some</span>(([<span class="ch">&#39;b&#39;</span>], [<span class="ch">&#39;b&#39;</span>, <span class="ch">&#39;c&#39;</span>]))
+<span class="cn">None</span></code></pre></div>
+<p>適用する関数を先に述べたので、それを使えばいいだけ. 1つめを適用して、 None を返したら2つめの適用した結果を返す. <code>choose</code> という名前の関数として実装する.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> choice(p1: Parser, p2: Parser) -&gt; Parser {
+    <span class="kw">let</span> Parser(f1) = p1;
+    <span class="kw">let</span> Parser(f2) = p2;
+    Parser(<span class="dt">Box</span>::new(<span class="kw">move</span> |cs: &amp;<span class="dt">Vec</span>&lt;<span class="dt">char</span>&gt;| {
+        <span class="kw">if</span> <span class="kw">let</span> <span class="cn">Some</span>(a) = f1(&amp;cs) {
+            <span class="cn">Some</span>(a)
+        } <span class="kw">else</span> {
+            f2(&amp;cs)
+        }
+    }))
+}</code></pre></div>
+<p>ちょっと詰まりポイントとしては、<code>f1(cs)</code> で <code>cs</code> があっちに行っちゃって使えなくなるので <code>clone</code> を渡す. てか普通に、入力を参照で受け取るようにパーザを定義すればよかったなぁ. 今更いっか.</p>
+<p>演算子 <code>/</code> で書けたほうがちょっとかっこいいので、演算子オーバーロードする.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">use</span> std::ops::Div;
+<span class="kw">impl</span> Div <span class="kw">for</span> Parser {
+    <span class="kw">type</span> Output = Parser;
+    <span class="kw">fn</span> div(<span class="kw">self</span>, rhs: Parser) -&gt; Parser { choice(<span class="kw">self</span>, rhs) }
+}</code></pre></div>
+<h3 id="連接-then">連接 <code>then</code> <code>+</code></h3>
+<p>今度は、2つのパーザを順に適用するというパーザを生成する. どっちかでパースに失敗すれば、全体としても失敗とする.</p>
+<p><code>choose</code> をちょっと書き直すだけでいい.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> then(p1: Parser, p2: Parser) -&gt; Parser {
+    <span class="kw">let</span> Parser(f1) = p1;
+    <span class="kw">let</span> Parser(f2) = p2;
+    Parser(<span class="dt">Box</span>::new(<span class="kw">move</span> |cs: &amp;<span class="dt">Vec</span>&lt;<span class="dt">char</span>&gt;| {
+        <span class="kw">if</span> <span class="kw">let</span> <span class="cn">Some</span>((xs, ys)) = f1(&amp;cs) {
+            <span class="kw">if</span> <span class="kw">let</span> <span class="cn">Some</span>((xs2, ys2)) = f2(&amp;ys) {
+                <span class="kw">let</span> <span class="kw">mut</span> mxs = xs.clone();
+                <span class="kw">let</span> <span class="kw">mut</span> mxs2 = xs2.clone();
+                mxs.append(&amp;<span class="kw">mut</span> mxs2);
+                <span class="kw">return</span> <span class="cn">Some</span>((mxs.to_owned(), ys2))
+            }
+        }
+        <span class="cn">None</span>
+    }))
+}
+
+<span class="kw">use</span> std::ops::Add;
+<span class="kw">impl</span> Add <span class="kw">for</span> Parser {
+    <span class="kw">type</span> Output = Parser;
+    <span class="kw">fn</span> add(<span class="kw">self</span>, rhs: Parser) -&gt; Parser { then(<span class="kw">self</span>, rhs) }
+}</code></pre></div>
+<h3 id="例-1">例</h3>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust">    <span class="kw">let</span> parser = (string(<span class="dt">String</span>::from(<span class="st">&quot;A&quot;</span>)) / string(<span class="dt">String</span>::from(<span class="st">&quot;The&quot;</span>))) + one_of(<span class="ch">&#39; &#39;</span>) + string(<span class="dt">String</span>::from(<span class="st">&quot;cat&quot;</span>));
+    {
+        <span class="kw">let</span> s = <span class="dt">String</span>::from(<span class="st">&quot;My cat&quot;</span>); <span class="co">// fails</span>
+        <span class="pp">println!</span>(<span class="st">&quot;{:?}&quot;</span>, parser.call(s));
+    }
+    {
+        <span class="kw">let</span> s = <span class="dt">String</span>::from(<span class="st">&quot;The cat&quot;</span>);
+        <span class="pp">println!</span>(<span class="st">&quot;{:?}&quot;</span>, parser.call(s));
+    }
+}</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="cn">None</span>
+<span class="cn">Some</span>(([<span class="ch">&#39;T&#39;</span>, <span class="ch">&#39;h&#39;</span>, <span class="ch">&#39;e&#39;</span>, <span class="ch">&#39; &#39;</span>, <span class="ch">&#39;c&#39;</span>, <span class="ch">&#39;a&#39;</span>, <span class="ch">&#39;t&#39;</span>], []))</code></pre></div>
+<p>ていうか毎回 String::from つけるのだるい.</p>
+<h2 id="src">src</h2>
+<ul>
+<li>https://gist.github.com/cympfh/c7b48b97cdd44fb1d8f73ccc958103ed</li>
+</ul>
+</body>
+</html>

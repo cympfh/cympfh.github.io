@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>ゲームの代数</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> aiura/
+    </a>
+</h1>
+<header>
+<h1 class="title">ゲームの代数</h1>
+</header>
+<p class="date" style="text-align: right">
+2017-04-23 (Sun.)
+</p>
+<div class="tags" style="text-align: right">
+<p><a class=tag href=index.html#数学>数学</a> <a class=tag href=index.html#ゲーム理論>ゲーム理論</a></p>
+</div>
+<h2 id="index">index</h2>
+<div id="toc">
+
+</div>
+<h2 id="前提">前提</h2>
+<p>ここではゲームとは組み合わせゲームを指します. <a href="game-class.html">組み合わせゲームの帰結類</a> に組み合わせゲームの定義と帰結類についてまとめているのでここは読んだことを前提にします.</p>
+<h2 id="ゲームの和-直和-選択和">ゲームの和 (直和, 選択和)</h2>
+<p>2つのゲーム <span class="math inline">\(G\)</span>, <span class="math inline">\(H\)</span> の和 <span class="math inline">\(G+H\)</span> を次のように定める.</p>
+<p><span class="math inline">\(G\)</span> と <span class="math inline">\(H\)</span> を横に並べた状態で、 二人がゲーム <span class="math inline">\(G+H\)</span> をプレイする. 許される手は、<span class="math inline">\(G\)</span> または <span class="math inline">\(H\)</span> のどちらか一方を選択し、 そちらにとって許される手を1度打つ. これを先手と後手とが交互に繰り返す.</p>
+<p><span class="math inline">\(G\)</span>, <span class="math inline">\(H\)</span> がともに最終局面の時が <span class="math inline">\(G+H\)</span> の最終局面である (<span class="math inline">\(G=\{\} \land H=\{\} \iff G+H=\{\}\)</span>). 一方が既に最終局面で、もう一方を最終局面にした (つまり最後の手を打った) 人の勝ちである.</p>
+<h3 id="不偏ゲームの和">不偏ゲームの和</h3>
+<p>形式的表現での定義を与える. 不偏ゲームの場合、ゲームとは単に選択肢 (ゲーム) の集合である.</p>
+<ul>
+<li><span class="math inline">\(G+\{\} = G\)</span></li>
+<li><span class="math inline">\(\{\}+H = H\)</span></li>
+<li><span class="math inline">\(G+H = \{ G&#39;+H : G&#39; \in G \} \cup \{ G+H&#39; : H&#39; \in H \}\)</span></li>
+</ul>
+<p>右辺の <span class="math inline">\(G&#39;+H\)</span> なんかもゲーム同士の <span class="math inline">\(+\)</span> であって、ここが再帰的定義になってる.</p>
+<p>ところで不偏ゲームは非不偏ゲームはの特別な場合に過ぎないので、非不偏ゲームだけを考える.</p>
+<h3 id="非不偏ゲームの和">非不偏ゲームの和</h3>
+<p>左右を別々に考えるだけで、不偏ゲームの場合と同様である.</p>
+<p><span class="math inline">\(G = \{\mathcal{G}^L | \mathcal{G}^R\}\)</span>, <span class="math inline">\(H = \{\mathcal{H}^L | \mathcal{H}^R\}\)</span> について</p>
+<ul>
+<li><span class="math inline">\(G+\{|\} = G\)</span></li>
+<li><span class="math inline">\(\{|\}+H = H\)</span></li>
+<li><span class="math inline">\(G+H = \{ (G+H)^L | (G+H)^R \}\)</span>
+<ul>
+<li>where
+<ul>
+<li><span class="math inline">\((G+H)^L = \{ G^L + H : G^L \in \mathcal{G}^L \} \cup \{ G + H^L : H^L \in \mathcal{H}^L \}\)</span></li>
+<li><span class="math inline">\((G+H)^R = \{ G^R + H : G^R \in \mathcal{G}^R \} \cup \{ G + H^R : H^R \in \mathcal{H}^R \}\)</span></li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="ゼロ">ゼロ</h3>
+<p>最終局面 (<span class="math inline">\(\{\}\)</span> または <span class="math inline">\(\{|\}\)</span>) をゲーム <span class="math inline">\(0\)</span> と呼ぶ. これは <span class="math inline">\(+\)</span> の単位元である.</p>
+<h2 id="ゲームの反転">ゲームの反転</h2>
+<p>左右の立場を入れ替える操作を反転とし、ゲーム <span class="math inline">\(G\)</span> に対して <span class="math inline">\(-G\)</span> と表現する.</p>
+<p>形式的には左選択肢と右選択肢を入れ替えればよいだけだが、再帰的に反転をシなければならないことに註意. つまり</p>
+<ul>
+<li><span class="math inline">\(-0 = 0\)</span>
+<ul>
+<li>(<span class="math inline">\(-\{\} = \{\}\)</span>)</li>
+</ul></li>
+<li><span class="math inline">\(-G = -\{ \mathcal{G}^L | \mathcal{G}^R \} = \{ -\mathcal{G}^R | -\mathcal{G}^L \}\)</span></li>
+</ul>
+<h3 id="差">差</h3>
+<p>二項演算 <span class="math inline">\(-\)</span> を反転を使って定義する.</p>
+<p><span class="math display">\[G - H = G + (-H)\]</span></p>
+<ul>
+<li><span class="math inline">\(-(-G) = G\)</span></li>
+<li><span class="math inline">\(-(G+H) = (-G) + (-H)\)</span></li>
+</ul>
+<h2 id="ゲームの等価性-ne">ゲームの等価性 (<span class="math inline">\(=\)</span>, <span class="math inline">\(\ne\)</span>)</h2>
+<p>ゲームの等価性 (<span class="math inline">\(=\)</span>) を次のように定める.</p>
+<div class="thm">
+<p><span class="math inline">\(G = H\)</span> とは、 任意のゲーム <span class="math inline">\(X\)</span> について <span class="math inline">\(G+X\)</span> と <span class="math inline">\(H+X\)</span> との帰結類が同じであること</p>
+</div>
+<p>これは 「任意の文脈 <span class="math inline">\(X\)</span> について <span class="math inline">\(G\)</span> な部分を <span class="math inline">\(H\)</span> に置き換えてもゲーム全体の勝敗には差支えがない」 ということを言っている. 明らかにこの <span class="math inline">\(=\)</span> は同値関係を与えている.</p>
+<ul>
+<li><span class="math inline">\(F=G \land G=H \Rightarrow F=H\)</span></li>
+<li><span class="math inline">\(G=G\)</span></li>
+</ul>
+<p>自然に <span class="math inline">\(\ne\)</span> も定義する.</p>
+<h3 id="定理">定理</h3>
+<div class="thm">
+<p><span class="math display">\[G \in \mathcal{P} \iff G = 0\]</span></p>
+</div>
+<p>後手必勝のゲームに限って 0 と等価である.</p>
+<h4 id="leftarrow-の証明"><span class="math inline">\((\Leftarrow)\)</span> の証明:</h4>
+<p><span class="math inline">\(G\)</span> が 0 と等価であるとは <span class="math inline">\(G+X\)</span> が <span class="math inline">\(0+X\)</span> と同じ帰結類であるということ. <span class="math inline">\(X=0\)</span> とすると、<span class="math inline">\(G+0=G\)</span> と <span class="math inline">\(0+0=0\)</span> とが同じ帰結類であるということ. <span class="math inline">\(0\)</span> の帰結類は <span class="math inline">\(\mathcal{P}\)</span> であるので、<span class="math inline">\(G\)</span> の帰結類も <span class="math inline">\(\mathcal{P}\)</span>.</p>
+<h4 id="rightarrow-の証明"><span class="math inline">\((\Rightarrow)\)</span> の証明:</h4>
+<p>任意のゲーム <span class="math inline">\(X\)</span> について、<span class="math inline">\(G+X\)</span> の帰結類が <span class="math inline">\(0+X=X\)</span> の帰結類と同じであることを示す. ゲームの帰結類は次の 4 ケース</p>
+<ol style="list-style-type: decimal">
+<li>左 が <strong>先</strong> 攻で 右 が後攻のとき、<strong>左</strong> が必勝</li>
+<li>左 が <strong>先</strong> 攻で 右 が後攻のとき、右 が必勝</li>
+<li>左 が後攻で 右 が先攻のとき、<strong>左</strong> が必勝</li>
+<li>左 が後攻で 右 が先攻のとき、右 が必勝</li>
+</ol>
+<p>の組み合わせで決まることは <a href="game-class.html">以前</a> に書いた. この 4 ケースについて、<span class="math inline">\(X\)</span> と <span class="math inline">\(G+X\)</span> とが一致することを言う.</p>
+<p><span class="math inline">\(X\)</span> が左が先攻で左が勝つ場合 (ケース1)、<span class="math inline">\(G+X\)</span> についても先攻で左が勝つ. 具体的には、左はまず <span class="math inline">\(G+X\)</span> の <span class="math inline">\(X\)</span> 部分について正しく手を打つ. 右が <span class="math inline">\(X\)</span> について打つならば正しく応じることで <span class="math inline">\(X\)</span> について勝てる. <span class="math inline">\(G\)</span> については左は自分からは打たず、右が打った場合に限って打てばよい. 右が先に打てば <span class="math inline">\(G\)</span> については右が先攻になる. <span class="math inline">\(G\)</span> は後攻必勝であるので、左が勝てる. 以上のようにして左は <span class="math inline">\(G\)</span> についても <span class="math inline">\(X\)</span> についても勝つので <span class="math inline">\(G+X\)</span> でも勝つ.</p>
+<p>他のケースも同様.</p>
+<h3 id="定理-1">定理</h3>
+<div class="thm">
+<p><span class="math display">\[G - G = 0\]</span></p>
+</div>
+<p>先の定理を使えば、<span class="math inline">\(0\)</span> と等価であることを示すためには、後攻必勝であることを示せばよいことがわかる.</p>
+<p><span class="math inline">\(G - G = G + (-G)\)</span> は後攻が先攻と同じ手を常に使う <strong>物真似戦略</strong> によって後攻必勝である.</p>
+<p>具体的には、先攻が <span class="math inline">\(H - G\)</span> (または <span class="math inline">\(G - H\)</span>) にしたとき、後攻は <span class="math inline">\(H - H\)</span> にできる. 符号が反転してる方を操作しているからこそ出来ることに註意. これを繰り返すことでいつか <span class="math inline">\(0 - 0 = 0\)</span> にでき、後攻が勝つ.</p>
+<p>これは先攻後攻を逆にした2つのチェス盤を並べて相手が片方に打った手をもう片方に打つことに相当する.</p>
+<h3 id="定理-2">定理</h3>
+<div class="thm">
+<p><span class="math display">\[G + J = H + J \iff G = H\]</span></p>
+</div>
+<p>当然成り立っていて欲しい性質であるが確かめておく.</p>
+<p><span class="math inline">\((\Leftarrow)\)</span> だけを示す. 逆もほぼ同様であるので.</p>
+<p><span class="math inline">\(G=H\)</span> を仮定する. 任意の <span class="math inline">\(X\)</span> で <span class="math inline">\(G+X\)</span>, <span class="math inline">\(H+X\)</span> の帰結類が同じ. <span class="math inline">\(X=J+X&#39;\)</span> とすれば、<span class="math inline">\(G+J+X&#39;\)</span>, <span class="math inline">\(H+J+X&#39;\)</span> の帰結類が同じ. これは任意の <span class="math inline">\(X&#39;\)</span> について <span class="math inline">\(X\)</span> を <span class="math inline">\(J+X&#39;\)</span> とすることで言える. というわけで <span class="math inline">\(G+J=H+J\)</span>.</p>
+<h3 id="系">系</h3>
+<div class="thm">
+<p><span class="math display">\[G=G&#39; \land H=H&#39; \Rightarrow G+H = G&#39;+H&#39;\]</span></p>
+</div>
+<p>先の定理を使う.</p>
+<h2 id="半順序-geq-rhd-unrhd">半順序 (<span class="math inline">\(\geq, &gt;, \|, \rhd, \unrhd\)</span>)</h2>
+<p>任意の文脈 <span class="math inline">\(X\)</span> で部分 <span class="math inline">\(G\)</span> を <span class="math inline">\(H\)</span> に置き換えても左にとっては差し支えないようなときを <span class="math inline">\(H \geq G\)</span> という. 或いは「ゲーム <span class="math inline">\(H\)</span> は左にとってゲーム <span class="math inline">\(G\)</span> よりも有利である」とも言える.</p>
+<ul>
+<li><span class="math inline">\(G \geq H\)</span> とは、任意の <span class="math inline">\(X\)</span> について、 <span class="math inline">\(H+X\)</span> が左が勝つとき、<span class="math inline">\(G+X\)</span> も左が勝つ</li>
+<li><span class="math inline">\(G \leq H\)</span> とは、任意の <span class="math inline">\(X\)</span> について、 <span class="math inline">\(H+X\)</span> が右が勝つとき、<span class="math inline">\(G+X\)</span> も右が勝つ</li>
+</ul>
+<p>以上を組み合わせて自然に次の比較演算子を定義する.</p>
+<ul>
+<li><span class="math inline">\(G~\|~H \iff \lnot(G\geq H) \land \lnot(G \leq H)\)</span> (比較不能)</li>
+<li><span class="math inline">\(G &gt; H \iff (G \geq H) \land (G \ne H)\)</span></li>
+<li><span class="math inline">\(G \rhd H \iff (G &gt; H) \lor (G~\|~H)\)</span></li>
+<li><span class="math inline">\(G \unrhd H \iff (G \geq H) \lor (G~\|~H)\)</span></li>
+</ul>
+<h3 id="性質">性質</h3>
+<ul>
+<li><span class="math inline">\(G \geq H \iff H \leq G\)</span></li>
+<li><span class="math inline">\(G \geq H \land G \leq H \iff G = H\)</span></li>
+</ul>
+<h3 id="定理-3">定理</h3>
+<div class="thm">
+<p><span class="math display">\[G + J \geq H + J \iff G \geq J\]</span></p>
+</div>
+<p>証明は <span class="math inline">\(=\)</span> のときと同様.</p>
+<h3 id="系-1">系</h3>
+<div class="thm">
+<p><span class="math display">\[G \geq H \iff G - H \geq 0\]</span></p>
+</div>
+<p>先の定理で <span class="math inline">\(J=-H\)</span> とすると得られる.</p>
+<h3 id="半順序つきの群">半順序つきの群</h3>
+<p>以上から、ゲーム全体は、 <strong>可換群</strong> であって <strong>半順序</strong> の構造を入れることができる.</p>
+<h3 id="帰結類">帰結類</h3>
+<ul>
+<li><span class="math inline">\(G &gt; 0 \iff G \in \mathcal{L}\)</span> (左必勝)</li>
+<li><span class="math inline">\(G = 0 \iff G \in \mathcal{P}\)</span> (後手必勝)</li>
+<li><span class="math inline">\(G &lt; 0 \iff G \in \mathcal{R}\)</span> (右必勝)</li>
+<li><span class="math inline">\(G~\|~0 \iff G \in \mathcal{N}\)</span> (先手必勝)</li>
+</ul>
+<h2 id="ゲームの標準形">ゲームの標準形</h2>
+<p>全てのゲーム <span class="math inline">\(G\)</span> について、それと等しい <span class="math inline">\(G=H\)</span> となるような最小のゲーム <span class="math inline">\(H\)</span> が存在し、 これを <span class="math inline">\(G\)</span> の <strong>標準形</strong> という. <span class="math inline">\(G\)</span> からそれの標準形を求める手順を考える.</p>
+<h3 id="片手枷原理-one-hand-tied">片手枷原理 (One-hand-tied)</h3>
+<p>明らかにある手が、別な手に比べて劣位な場合、そのような手は初めから考える必要がない、という原理.</p>
+<p><span class="math display">\[G=\{A,B,C,\ldots | H,I,J,\ldots\}\]</span></p>
+<p>について <span class="math inline">\(B \geq A\)</span> ならば</p>
+<p><span class="math display">\[G = \{B,C,\ldots | H,I,J,\ldots\}.\]</span></p>
+<p>としてよい. 或いは <span class="math inline">\(I \geq J\)</span> ならば</p>
+<p><span class="math display">\[G = \{A,B,C,\ldots | H,J,\ldots\}.\]</span></p>
+<p>と考えてよい.</p>
+<p>すなわち、</p>
+<p><span class="math inline">\(B \geq A\)</span> のとき</p>
+<ul>
+<li><span class="math inline">\(G = \{A,B,C,\ldots | H,I,J,\ldots\}\)</span></li>
+<li><span class="math inline">\(G&#39;= \{B,C,\ldots | H,I,J,\ldots\}\)</span></li>
+</ul>
+<p>に関して <span class="math inline">\(G=G&#39;\)</span> であることを示す. 直接的には、<span class="math inline">\(G-G&#39;=0\)</span> すなわち <span class="math inline">\(G-G&#39;\)</span> が後手必勝であることを示せば良い.</p>
+<p>先手が <span class="math inline">\(B,C\ldots\)</span> または <span class="math inline">\(H,I,J,\ldots\)</span> を <span class="math inline">\(G\)</span> または <span class="math inline">\(-G&#39;\)</span> から選んだ場合、 後手は <span class="math inline">\(-G&#39;\)</span> または <span class="math inline">\(G\)</span> から先手の打った手のマイナスを選ぶことで、 <span class="math inline">\((B-B=0),(C-C=0),\ldots,(H-H=0),\ldots\)</span> に進んで後手必勝になる.</p>
+<p>(e.g. 先手の右が <span class="math inline">\(G\)</span> から <span class="math inline">\(I\)</span> を選んだなら、後手の左は <span class="math inline">\(-G&#39;\)</span> から <span class="math inline">\(-I\)</span> を選べる)</p>
+<p>以上で網羅出来てない手としては、「先手の左が <span class="math inline">\(G\)</span> から <span class="math inline">\(A\)</span> を選択した場合」である. この場合、後手は <span class="math inline">\(-G&#39;\)</span> から <span class="math inline">\(-B\)</span> を選べばよい. すると、ゲームは左手番の <span class="math inline">\(A-B\)</span> である. 今 <span class="math inline">\(B \geq A\)</span> であるので、これは右必勝.</p>
+<p>以上から後手必勝.</p>
+<h3 id="打ち消し可能">打ち消し可能</h3>
+<p>左が打った手 <span class="math inline">\(A\)</span> について、左にとって、現時点よりもさらに状況が悪くなる右の応手 <span class="math inline">\(A^R\)</span> があるとき、 すなわち</p>
+<p><span class="math display">\[G \geq A^R\]</span></p>
+<p>のとき、 <span class="math inline">\(A^R\)</span> を <span class="math inline">\(A\)</span> を打ち消す (reverse) 手といい、逆に <span class="math inline">\(A\)</span> を打ち消し可能な手だと言う.</p>
+<p>このような場合に左が <span class="math inline">\(A\)</span> を打つのは、相手が <span class="math inline">\(A^R\)</span> で応じて、 その左選択肢 <span class="math inline">\(A^{RL}\)</span> (<span class="math inline">\(=(A^R)^L\)</span>) を選ぶ場合だけである.</p>
+<p>以上のことを短絡すると、 <span class="math inline">\(A\)</span> という選択肢を、<span class="math inline">\(K^L\)</span> で置き換えたゲームも等しそうである. すなわち、</p>
+<ul>
+<li><span class="math inline">\(G = \{ \mathcal{G}^L | \mathcal{G}^R \}\)</span></li>
+<li><span class="math inline">\(G&#39; = \{ A^R \cup \mathcal{G}^L \setminus A ~|~ \mathcal{G}^R \}\)</span>
+<ul>
+<li><span class="math inline">\(A \in \mathcal{G}^L\)</span></li>
+<li><span class="math inline">\(G \geq A^R\)</span></li>
+</ul></li>
+</ul>
+<p>について <span class="math inline">\(G=G&#39;\)</span> が成立する.</p>
+<h3 id="標準形">標準形</h3>
+<p>ゲーム <span class="math inline">\(G\)</span> が <strong>標準形 (canonical form)</strong> であるとは、 <span class="math inline">\(G\)</span> 及び <span class="math inline">\(G\)</span> から到達可能な全局面において、 片手枷原理で言及したような <strong>劣位な手</strong> が存在せず、また <strong>打ち消し可能な手</strong> も存在しないこと.</p>
+<h4 id="定理-4">定理</h4>
+<p><span class="math inline">\(G, H\)</span> が共に標準形で <span class="math inline">\(G=H\)</span> の場合、 集合 (あるいはゲーム木) として <span class="math inline">\(G \simeq H\)</span>.</p>
+<p>すなわち同型を除いて標準形は一意.</p>
+<h2 id="誘因-incentives">誘因 (incentives)</h2>
+<p>ゲーム <span class="math inline">\(G\)</span> に対して左選択肢 <span class="math inline">\(\mathcal{G}^L\)</span> から <span class="math inline">\(G\)</span> を引いた 集合 <span class="math inline">\(\mathcal{G}^L \setminus G\)</span> を左誘因という. 同様に <span class="math inline">\(G \setminus \mathcal{G}^R\)</span> を右誘因という.</p>
+<p>あるいは <span class="math inline">\(G^L \in \mathcal{G}^L\)</span> について ゲーム <span class="math inline">\(G^L - G\)</span> を左誘因とも言う. 同様に <span class="math inline">\(G - G^R\)</span> を右誘因という.</p>
+<p>意味としては、左にとっては左誘因が正である選択をすべき、右にとっては右誘因が正である選択をすべき (このためにマイナスが逆) で、 後述する「ゲームの値」を使うと、差が最大となる選択をすべきことが分かる.</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

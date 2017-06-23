@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Wed Jun 5 11:34:38 JST 2013</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Wed Jun 5 11:34:38 JST 2013</h1>
+</header>
+<h2 id="scheme-into-tex">scheme into tex</h2>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">gosh</span> report.scm <span class="op">&gt;</span> report.tex</code></pre></div>
+<p>文字列をいちいちダブルクオーテーションで括らないといけないのは 実用性に疑問</p>
+<p>latexを8分割で印刷させたい beamerで書いた場合に非常に有用</p>
+<pre class="make"><code>split8 :
+    platex $(FILE).tex
+    dvips $(FILE).dvi &gt; $(FILE).ps
+    pstops -pa4 &#39;8:0@.7(1cm,22.2cm)+1@.7(11.2cm,22.2cm)+2@.7(1cm,14.9cm)+3@.7(11.2cm,14.9cm)+4@.7(1cm,7.7cm)+5@.7(11.2cm,7.7cm)+6@.7(1cm,0.4cm)+7@.7(11.2cm,0.4cm)&#39; $(FILE).ps | sed &#39;s/363 273/596 842/g&#39; &gt; $(FILE)-8.ps</code></pre>
+<p>意味は全くわかってない 普通にlatex環境があれば platex, dvips はあるけど pstops だけ今入れる必要が あった</p>
+<p>以下，現時点の tex.scm</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">(<span class="kw">define-syntax</span><span class="fu"> tex</span>
+ (<span class="kw">syntax-rules</span> ()
+  ((tex x ...)
+   (map <span class="kw">display</span> (<span class="kw">list</span> x ...)))))
+<span class="co">;;;;</span>
+
+(<span class="kw">define</span><span class="fu"> </span>(x-append . args) (apply <span class="kw">string-append</span> (map x-&gt;string args)))
+(<span class="kw">define</span><span class="fu"> </span>(x-join ls del) (string-join (map x-&gt;string ls) del))
+
+<span class="co">; keyword name =&gt; \name</span>
+(<span class="kw">define</span><span class="fu"> </span>(keyword name)
+    (x-append <span class="st">&quot;</span><span class="ch">\\</span><span class="st">&quot;</span> name <span class="st">&quot; &quot;</span>))
+(<span class="kw">define</span><span class="fu"> yen </span>keyword)
+
+<span class="co">; keyword/option name option =&gt; \name[option]</span>
+(<span class="kw">define</span><span class="fu"> </span>(keyword/option name option)
+    (x-append <span class="st">&quot;</span><span class="ch">\\</span><span class="st">&quot;</span> name <span class="st">&quot;[&quot;</span> option <span class="st">&quot;]&quot;</span>))
+
+<span class="co">; tag name hoge hige =&gt; \name{hoge hige}</span>
+(<span class="kw">define</span><span class="fu"> </span>(tag name . args)
+    (let1 contents (x-join args <span class="st">&quot; &quot;</span>)
+    (x-append <span class="st">&quot;</span><span class="ch">\\</span><span class="st">&quot;</span> name <span class="st">&quot;{&quot;</span> contents <span class="st">&quot;}&quot;</span>)))
+
+(<span class="kw">define</span><span class="fu"> </span>(tag2 name arg1 arg2)
+    (x-append <span class="st">&quot;</span><span class="ch">\\</span><span class="st">&quot;</span> name <span class="st">&quot;{&quot;</span> arg1 <span class="st">&quot;}{&quot;</span> arg2 <span class="st">&quot;}&quot;</span>))
+
+<span class="co">; \name[option]{hoge hare}</span>
+(<span class="kw">define</span><span class="fu"> </span>(tag/option name option . args)
+    (let1 contents (x-join args <span class="st">&quot; &quot;</span>)
+    (x-append <span class="st">&quot;</span><span class="ch">\\</span><span class="st">&quot;</span> name <span class="st">&quot;[&quot;</span> option <span class="st">&quot;]&quot;</span> <span class="st">&quot;{&quot;</span> contents <span class="st">&quot;}&quot;</span>)))
+
+<span class="co">; env name hoge hige =&gt; \begin{name} hoge hige \end{name}</span>
+(<span class="kw">define</span><span class="fu"> </span>(env name . args)
+    (let1 contents (x-join args <span class="st">&quot;\n&quot;</span>)
+    (x-append <span class="st">&quot;</span><span class="ch">\\</span><span class="st">begin{&quot;</span> name <span class="st">&quot;}\n&quot;</span> contents <span class="st">&quot;\n</span><span class="ch">\\</span><span class="st">end{&quot;</span> name <span class="st">&quot;}\n&quot;</span>)))
+
+(<span class="kw">define</span><span class="fu"> </span>(env2 name option . args)
+  (let1 contents (x-join args <span class="st">&quot;\n&quot;</span>)
+  (x-append <span class="st">&quot;</span><span class="ch">\\</span><span class="st">begin{&quot;</span> name <span class="st">&quot;}{&quot;</span> option <span class="st">&quot;}\n&quot;</span> contents <span class="st">&quot;\n</span><span class="ch">\\</span><span class="st">end{&quot;</span> name <span class="st">&quot;}\n&quot;</span>)))
+
+<span class="co">;;;; tag</span>
+(<span class="kw">define</span><span class="fu"> </span>(jsarticle . args)
+    (<span class="kw">if</span> (<span class="kw">zero?</span> (<span class="kw">length</span> args))
+        (tag &#39;documentclass &#39;jsarticle)
+        (let1 options (x-join args <span class="st">&quot;,&quot;</span>)
+            (tag/option &#39;documentclass options &#39;jsarticle))))
+
+(<span class="kw">define</span><span class="fu"> </span>(beamer . args)
+  (x-append
+    (<span class="kw">if</span> (<span class="kw">zero?</span> (<span class="kw">length</span> args))
+        (tag &#39;documentclass &#39;beamer)
+        (let1 options (x-join args <span class="st">&quot;,&quot;</span>)
+            (tag/option &#39;documentclass options &#39;beamer)))
+    <span class="st">&quot;</span><span class="ch">\\</span><span class="st">setbeamertemplate{navigation symbols}{} &quot;</span>))
+
+(<span class="kw">define</span><span class="fu"> </span>(usetheme . args)     (tag &#39;usetheme (x-join args <span class="st">&quot;,&quot;</span>)))
+(<span class="kw">define</span><span class="fu"> </span>(usefonttheme . args) (tag &#39;usefonttheme (x-join args <span class="st">&quot;,&quot;</span>)))
+(<span class="kw">define</span><span class="fu"> </span>(usepackage . args)   (tag &#39;usepackage (x-join args <span class="st">&quot;,&quot;</span>)))
+
+(<span class="kw">define</span><span class="fu"> </span>(title . args) (apply tag &#39;title args))
+(<span class="kw">define</span><span class="fu"> </span>(author . args) (apply tag &#39;author args))
+(<span class="kw">define</span><span class="fu"> </span>(frametitle . args) (apply tag &#39;frametitle args))
+(<span class="kw">define</span><span class="fu"> </span>(date . args) (apply tag &#39;date args))
+(<span class="kw">define</span><span class="fu"> </span>(thanks . args) (apply tag &#39;thanks args))
+(<span class="kw">define</span><span class="fu"> thanx </span>thanks)
+
+(<span class="kw">define</span><span class="fu"> </span>(<span class="kw">sqrt</span> x) (tag &#39;sqrt x))
+(<span class="kw">define</span><span class="fu"> </span>(hat x)  (tag &#39;hat x))
+(<span class="kw">define</span><span class="fu"> </span>(lnot x)  (tag &#39;lnot x))
+(<span class="kw">define</span><span class="fu"> </span>(--&gt; x)  (tag &#39;xrightarrow x))
+(<span class="kw">define</span><span class="fu"> </span>(bra . args) (tag &#39;bra (x-join args <span class="st">&quot;, &quot;</span>)))
+(<span class="kw">define</span><span class="fu"> </span>(ket . args) (tag &#39;ket (x-join args <span class="st">&quot;, &quot;</span>)))
+(<span class="kw">define</span><span class="fu"> </span>(braket x y) (tag &#39;braket (x-append x <span class="st">&quot;|&quot;</span> y)))
+
+(<span class="kw">define</span><span class="fu"> </span>(over x y) (tag2 &#39;overset x y))
+(<span class="kw">define</span><span class="fu"> </span>(frac a b) (tag2 &#39;frac a b)) (<span class="kw">define</span><span class="fu"> / </span>frac)
+
+(<span class="kw">define</span><span class="fu"> sum</span>
+  (let1 pre <span class="st">&quot;</span><span class="ch">\\</span><span class="st">displaystyle </span><span class="ch">\\</span><span class="st">sum&quot;</span>
+  (case-lambda
+    (() (x-append pre))
+    ((sub) (x-append pre <span class="st">&quot;_{&quot;</span>sub<span class="st">&quot;}&quot;</span>))
+    ((sub sup) (x-append pre <span class="st">&quot;_{&quot;</span>sub<span class="st">&quot;}&quot;</span> <span class="st">&quot;^{&quot;</span>sup<span class="st">&quot;}&quot;</span>)))))
+
+(<span class="kw">define</span><span class="fu"> </span>(text . args)
+  (let1 contents (x-join args <span class="st">&quot; &quot;</span>)
+  (tag &#39;text contents)))
+
+<span class="co">;;; env</span>
+
+(<span class="kw">define</span><span class="fu"> </span>(document . args)  (apply env &#39;document args))
+(<span class="kw">define</span><span class="fu"> </span>(enumerate . args) (apply env &#39;enumerate args))
+(<span class="kw">define</span><span class="fu"> </span>(eqnarray . args)  (apply env &#39;eqnarray args))
+(<span class="kw">define</span><span class="fu"> </span>(eqnarray* . args) (apply env &#39;eqnarray* args))
+(<span class="kw">define</span><span class="fu"> </span>(equation . args)  (apply env &#39;equation args))
+(<span class="kw">define</span><span class="fu"> </span>(theorem . args) (apply env &#39;theorem args))
+(<span class="kw">define</span><span class="fu"> </span>(proof . args)   (apply env &#39;proof args))
+
+(<span class="kw">define</span><span class="fu"> </span>(frame . args)
+  (<span class="kw">cond</span> ((<span class="kw">equal?</span> (<span class="kw">car</span> args) <span class="dv">#t</span>)
+           (apply env2 &#39;frame (<span class="kw">cadr</span> args) (<span class="kw">cddr</span> args)))
+        (<span class="kw">else</span>
+          (apply env &#39;frame args))))
+
+<span class="co">;;; keywords</span>
+
+(<span class="kw">define</span><span class="fu"> titlepage </span><span class="st">&quot;</span><span class="ch">\\</span><span class="st">frame{</span><span class="ch">\\</span><span class="st">titlepage}&quot;</span>)
+(<span class="kw">define</span><span class="fu"> maketitle </span>(keyword &#39;maketitle))
+(<span class="kw">define</span><span class="fu"> newline </span>(keyword &#39;newline))
+(<span class="kw">define</span><span class="fu"> emptyline </span><span class="st">&quot;</span><span class="ch">\\</span><span class="st">;\n\n&quot;</span>)
+(<span class="kw">define</span><span class="fu"> today  </span>(keyword &#39;today))
+
+(<span class="kw">define</span><span class="fu"> </span>|\\| <span class="st">&quot;</span><span class="ch">\\\\</span><span class="st">&quot;</span>)
+(<span class="kw">define</span><span class="fu"> </span>&amp; <span class="st">&quot;&amp;&quot;</span>)
+
+(<span class="kw">define</span><span class="fu"> in     </span>(keyword &#39;in))
+(<span class="kw">define</span><span class="fu"> subset </span>(keyword &#39;subset))
+(<span class="kw">define</span><span class="fu"> forall </span>(keyword &#39;forall))
+(<span class="kw">define</span><span class="fu"> exists </span>(keyword &#39;exists))
+(<span class="kw">define</span><span class="fu"> dots </span>(keyword &#39;dots))
+(<span class="kw">define</span><span class="fu"> pm   </span>(keyword &#39;pm))
+(<span class="kw">define</span><span class="fu"> dagger </span>(keyword &#39;dagger))
+
+(<span class="kw">define</span><span class="fu"> ne   </span>(keyword &#39;ne)) (<span class="kw">define</span><span class="fu"> </span>!= ne)
+(<span class="kw">define</span><span class="fu"> le   </span>(keyword &#39;le))
+(<span class="kw">define</span><span class="fu"> ge   </span>(keyword &#39;ge))
+(<span class="kw">define</span><span class="fu"> </span>===  (keyword &#39;equiv))
+(<span class="kw">define</span><span class="fu"> -&gt;   </span>(keyword &#39;rightarrow))
+(<span class="kw">define</span><span class="fu"> &lt;-   </span>(keyword &#39;leftarrow))
+(<span class="kw">define</span><span class="fu"> </span><span class="kw">=&gt;</span>   (keyword &#39;Rightarrow))
+(<span class="kw">define</span><span class="fu"> &lt;</span>=&gt;  (keyword &#39;Leftrightarrow))
+
+(<span class="kw">define</span><span class="fu"> alpha </span>(yen &#39;alpha))
+(<span class="kw">define</span><span class="fu"> beta  </span>(yen &#39;beta))
+(<span class="kw">define</span><span class="fu"> kappa </span>(yen &#39;kappa))
+(<span class="kw">define</span><span class="fu"> varphi </span>(yen &#39;varphi))
+
+(<span class="kw">define</span><span class="fu"> </span>(diff x y) (x-append x (keyword &#39;setminus) y))
+(<span class="kw">define</span><span class="fu"> </span>(<span class="kw">max</span> . args)
+  (x-append (keyword &#39;max) <span class="st">&quot;</span><span class="ch">\\</span><span class="st">{&quot;</span> (x-join args <span class="st">&quot;,&quot;</span>) <span class="st">&quot;</span><span class="ch">\\</span><span class="st">}&quot;</span>))
+
+(<span class="kw">define</span><span class="fu"> </span>(item . args)
+  (<span class="kw">define</span><span class="fu"> </span>(opt a)
+    (<span class="kw">cond</span> ((<span class="kw">string?</span> a) `(<span class="st">&quot;[&quot;</span> ,a <span class="st">&quot;]&quot;</span>))
+          ((<span class="kw">number?</span> a) `(<span class="st">&quot;&lt;&quot;</span> ,a <span class="st">&quot;-&gt;&quot;</span>))
+          (<span class="kw">else</span> &#39;())))
+  (apply x-append (keyword &#39;item) (concatenate (map opt args))))
+
+(<span class="kw">define</span><span class="fu"> </span>(alert . args)
+  (let1 contents (x-join args <span class="st">&quot; &quot;</span>)
+  (tag &#39;alert contents)))
+
+<span class="co">;; others</span>
+(<span class="kw">define</span><span class="fu"> </span>(eqn . args)
+  (let1 contents (x-join args <span class="st">&quot; &quot;</span>)
+  (x-append <span class="st">&quot;</span><span class="ch">\\</span><span class="st">[ &quot;</span> contents <span class="st">&quot; </span><span class="ch">\\</span><span class="st">]&quot;</span>)))
+
+(<span class="kw">define</span><span class="fu"> </span>($ . args)
+  (let1 contents (x-join args <span class="st">&quot; &quot;</span>)
+  (x-append <span class="st">&quot; $&quot;</span> contents <span class="st">&quot;$ &quot;</span>)))
+
+(<span class="kw">define</span><span class="fu"> </span>(^ x t) (x-append x <span class="st">&quot;^{&quot;</span> t <span class="st">&quot;}&quot;</span>))
+(<span class="kw">define</span><span class="fu"> </span>(_ x t) (x-append x <span class="st">&quot;_{&quot;</span> t <span class="st">&quot;}&quot;</span>))
+(<span class="kw">define</span><span class="fu"> </span>(<span class="kw">+</span> . args) (x-join args <span class="st">&quot;+&quot;</span>))
+(<span class="kw">define</span><span class="fu"> </span>(* . args) (x-join args <span class="st">&quot; &quot;</span>))
+(<span class="kw">define</span><span class="fu"> </span>(times . args) (x-join args (keyword &#39;times)))
+(<span class="kw">define</span><span class="fu"> </span>(<span class="kw">-</span> . args)
+  (<span class="kw">if</span> (<span class="kw">=</span> (<span class="kw">length</span> args) <span class="dv">1</span>)
+      (x-append <span class="st">&quot;-&quot;</span> (<span class="kw">car</span> args))
+      (paren (x-join args <span class="st">&quot;-&quot;</span>))))
+(<span class="kw">define</span><span class="fu"> ++ </span><span class="st">&quot;+</span><span class="ch">\\</span><span class="st">hbox to 3pt{</span><span class="ch">\\</span><span class="st">hss +}&quot;</span>)
+
+(<span class="kw">define</span><span class="fu"> </span>(paren . args)
+  (let1 contents (x-join args <span class="st">&quot; &quot;</span>)
+  (x-append <span class="st">&quot;(&quot;</span> contents <span class="st">&quot;)&quot;</span>)))
+
+(<span class="kw">define</span><span class="fu"> </span>(comma . args) (x-join args <span class="st">&quot;, &quot;</span>))</code></pre></div>
+<h1 id="wed-jun-5-152324-jst-2013">Wed Jun 5 15:23:24 JST 2013</h1>
+<h2 id="プロジェクター実験">プロジェクター実験</h2>
+<p>先週xfceのパソコンでプロジェクタつないでもモニタは検知できても &quot;output on&quot; が出来なかった．</p>
+<p>別のパソコンで，やはりxfce ので，xrandr 使ってできた．使わなくても できたような気がすごくするけど．</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># 使える（繋がってないの含めて）モニタ出力デバイス一覧</span>
+$ <span class="ex">xrandr</span> -q
+<span class="ex">Screen</span> 0: minimum 320 x 200, current 1280 x 800, maximum 8192 x 8192
+<span class="ex">LVDS1</span> connected 1280x800+0+0 (normal left inverted right x axis y axis) <span class="ex">286mm</span> x 179mm
+   <span class="ex">1280x800</span>       60.5*+
+   <span class="ex">1024x768</span>       60.0  
+   <span class="ex">800x600</span>        60.3     56.2  
+   <span class="ex">640x480</span>        59.9  
+<span class="ex">VGA1</span> disconnected (normal left inverted right x axis y axis)
+<span class="ex">HDMI1</span> disconnected (normal left inverted right x axis y axis)
+<span class="ex">DP1</span> disconnected (normal left inverted right x axis y axis)
+<span class="ex">HDMI2</span> disconnected (normal left inverted right x axis y axis)
+<span class="ex">DP2</span> disconnected (normal left inverted right x axis y axis)
+<span class="ex">DP3</span> disconnected (normal left inverted right x axis y axis)
+<span class="ex">TV1</span> disconnected (normal left inverted right x axis y axis)</code></pre></div>
+<p>LVDS1 がおそらく組み込みの（ノートパソコンです）のモニタ VGA1 が，私がプロジェクタ出力に使ってる穴</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># 私のノートパソコンの最高解像度</span>
+$ <span class="ex">xrandr</span> --output LVDS1 --mode 1280x800</code></pre></div>
+<p>--modeの後でタブ補完すれば，使える解像度一覧がわかる．すごい遅いけど</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># これでもたぶん大丈夫</span>
+$ <span class="ex">xrandr</span> --output LVDS1 --auto
+
+<span class="co"># プロジェクタの解像度に合わせる</span>
+$ <span class="ex">xrandr</span> --output LVDS1 --mode 1024x768
+
+<span class="co"># プロジェクタに出力</span>
+$ <span class="ex">xrandr</span> --output VGA1 --mode 1024x768
+
+<span class="co"># なんか一旦別の解像度にしないと映らない</span>
+$ <span class="ex">xrandr</span> --output VGA1 --mode 800x600
+
+<span class="co"># 今度こそいける</span>
+$ <span class="ex">xrandr</span> --output VGA1 --mode 1024x768</code></pre></div>
+<hr />
+<footer>
+    <p style='text-align: right'>
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+</body>
+</html>

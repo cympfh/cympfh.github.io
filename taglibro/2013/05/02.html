@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Thu May 2 17:04:40 JST 2013</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Thu May 2 17:04:40 JST 2013</h1>
+</header>
+<h2 id="gauche-macro-error-bad-ellipsis...">Gauche Macro Error: &quot;Bad ellipsis...&quot;</h2>
+<p>In syntax-rules, we use pattern language. What the pattern language? I want to write <code>(\ x y -&gt; ...)</code> rather than <code>(lambda (x y) ...)</code> also in scheme. So I write the following macro.</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">(<span class="kw">define</span><span class="fu"> </span>(split ls)
+  (<span class="kw">if</span> (<span class="kw">eq?</span> (<span class="kw">car</span> ls) &#39;-&gt;) (<span class="kw">values</span> &#39;() (<span class="kw">cdr</span> ls))
+    (receive (a b) (split (<span class="kw">cdr</span> ls)) (<span class="kw">values</span> (<span class="kw">cons</span> (<span class="kw">car</span> ls) a) b))))
+
+(<span class="kw">define-macro</span><span class="fu"> </span>(^ . ls)
+  (receive (args body) (split ls)
+  `(<span class="kw">lambda</span> ,args ,@body)))</code></pre></div>
+<p>this works.</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">(<span class="kw">define</span><span class="fu"> f </span>(^ x y z -&gt; (* (<span class="kw">+</span> x y))))
+(f <span class="dv">1</span> <span class="dv">2</span> <span class="dv">3</span>) <span class="co">; =&gt; 9</span></code></pre></div>
+<p>fueee. Cannot I use syntax-rules??</p>
+<div class="sourceCode"><pre class="sourceCode scheme"><code class="sourceCode scheme">(<span class="kw">define-syntax</span><span class="fu"> </span>^
+  (<span class="kw">syntax-rules</span> (-&gt;)
+    ((^ x ... -&gt; body ...) (<span class="kw">lambda</span> (x ...) body ...))))</code></pre></div>
+<p>Gauche says &quot;Bad ellipsis...&quot;</p>
+<p>I cannot beleave that pattern language is turing complete.</p>
+<h3 id="追記-sun-feb-16-105343-jst-2014">追記 (Sun Feb 16 10:53:43 JST 2014)</h3>
+<p><code>...</code> というキーワードはリストの一番最後の要素としてしか置けない</p>
+<hr />
+<footer>
+    <p style='text-align: right'>
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+</body>
+</html>

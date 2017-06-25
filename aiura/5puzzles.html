@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Make 10, Eight Queens, 笑わない数学者からの挑戦状 (Mathematical Goodbye), Binary Puzzle</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="resources/index.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
+    <a href='index.html'>
+    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> aiura/
+    </a>
+</h1>
+<header>
+<h1 class="title">Make 10, Eight Queens, 笑わない数学者からの挑戦状 (Mathematical Goodbye), Binary Puzzle</h1>
+</header>
+<p class="date" style="text-align: right">
+2017-06-25 (Sun.)
+</p>
+<div class="tags" style="text-align: right">
+<p><a class=tag href=index.html#パズル>パズル</a></p>
+</div>
+<h2 id="make-10">Make 10</h2>
+<p>四則パズル、小町算とも.</p>
+<h3 id="ルール">ルール</h3>
+<p>大抵はひと桁程度の自然数が4つ与えられ、四則 (加減乗除) を補って組み合わせることで 10 を作るパズル. 私が初めて知ったバージョンでは、自然数は一列で与えられるのでその順序を変えず、 四則演算記号 <code>+-*/</code> 及び括弧 <code>()</code> を適切に挿入することで答えが 10 になる式を作るというものだった. けど順序くらい自由に変えられるのが普通のルールらしい. ということでここでは次のようなものを &quot;Make 10&quot; と呼ぶことにする.</p>
+<ol style="list-style-type: decimal">
+<li>与えられる数は整数</li>
+<li>数字を自由な順に一列に並べる</li>
+<li>答えが 10 になるような式を、四則演算及び括弧を挿入して作る
+<ul>
+<li>ただし演算は全て有理数の上で行う</li>
+</ul></li>
+</ol>
+<h3 id="例">例</h3>
+<ul>
+<li>問:
+<ul>
+<li><span class="math inline">\(9, 9, 9, 9\)</span></li>
+<li>解:
+<ul>
+<li><span class="math inline">\(\left( 9 \times 9 + 9 \right) \div 9\)</span></li>
+</ul></li>
+</ul></li>
+<li>問:
+<ul>
+<li><span class="math inline">\(1, 1, 5, 8\)</span></li>
+<li>解:
+<ul>
+<li><span class="math inline">\(8 \div \left( 1 - 1 / 5 \right)\)</span></li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="考察">考察</h3>
+<p>「記号と括弧を挿入して括弧を作る」などと言っているが、ようは次のようなことである.</p>
+<ol style="list-style-type: decimal">
+<li>数字の多重集合 (multiset) <span class="math inline">\(\mathcal{A}\)</span> がある</li>
+<li><span class="math inline">\(\mathcal{A}\)</span> のサイズが 1 より大の間、次を繰り返し行う
+<ol style="list-style-type: decimal">
+<li><span class="math inline">\(\mathcal{A}\)</span> から数を2つ取り出して <span class="math inline">\(x, y\)</span> とする</li>
+<li><span class="math inline">\(x, y\)</span> から四則で出来る数 (<span class="math inline">\(x+y, x-y, xy, x/y, y/x\)</span> のいずれか) を <span class="math inline">\(\mathcal{A}\)</span> に追加する</li>
+</ol></li>
+</ol>
+<p>そうして得た <span class="math inline">\(\mathcal{A}\)</span> の中の唯ひとつの数が式の結果である. 例えば <span class="math inline">\(\frac{8}{1 - 1 / 5}\)</span> という式は、次の手順で構成される.</p>
+<ol style="list-style-type: decimal">
+<li><span class="math inline">\(\mathcal{A} = \{ 1,1,5,8 \}\)</span> (初期)</li>
+<li><span class="math inline">\(\mathcal{A} = \{ 1,8, 1/5 \}\)</span> (<span class="math inline">\(1,5\)</span> を取り出して <span class="math inline">\(1/5\)</span> を追加)</li>
+<li><span class="math inline">\(\mathcal{A} = \{ 8, 4/5 \}\)</span> (<span class="math inline">\(1, 1/5\)</span> を取り出して <span class="math inline">\(1-1/5\)</span> を追加)</li>
+<li><span class="math inline">\(\mathcal{A} = \{ 10 \}\)</span> (<span class="math inline">\(8, (1-1/5)\)</span> を取り出して（ｒｙ)</li>
+</ol>
+<p>こうすると、<span class="math inline">\(\mathcal{A}\)</span> のことを１つの状態だと見做せて、「2つ取り出して演算結果を追加」という操作によって別の状態に遷移するということを考えられる. これで <span class="math inline">\(\{10\}\)</span> という状態に辿りつけられれば、そのパスが求める式になる.</p>
+<h3 id="解答">解答</h3>
+<ul>
+<li><a href="https://gist.github.com/cympfh/ea3a448aa841fe62bf9e">ソースコード</a></li>
+</ul>
+<h2 id="eight-queens">Eight Queens</h2>
+<h3 id="ルール-1">ルール</h3>
+<p>8x8 のマスからなるチェス盤が与えられる. ここに出来るだけ多くのクイーンを置く. ただしあるクイーンで別のクイーンを取れるような位置にあってはいけない (攻撃範囲に入ってはいけない). どう配置すればよいか.</p>
+<h3 id="考察-1">考察</h3>
+<p>行について言うと1つの行に高々1つのクイーンしか置けない. 2つ以上あったら一方のクイーンの攻撃範囲に入ってることになるので. 盤面は8x8なので8個の駒を置くことを考える.</p>
+<p>1行あたり1つ置くことになるので、何列目に置くか、という情報の持ち方で良さそう. <span class="math inline">\(i\)</span> 行目のクイーンを <span class="math inline">\(a_i\)</span> 列目に置く、ということで <span class="math display">\[a_1, a_2, \ldots a_8 ~~(1 \leq a_i \leq 8)\]</span> と書ける.</p>
+<p>もちろん列についても同じ列に複数のクイーンがあってはいけない. つまり <span class="math inline">\(a_i \ne a_j\)</span> である必要がある. とすると <span class="math inline">\(a_1, a_2, \ldots a_8\)</span> は <span class="math inline">\(1,2,\ldots,8\)</span> の置換でよい. というわけで <span class="math inline">\(8!\)</span> 通りだけ試せばよい (<span class="math inline">\(8! = 40320\)</span>).</p>
+<p>この数列 <span class="math inline">\((a_i)\)</span> について、行及び列に関してはクイーン同士は必ず交わってないので、斜めについてだけチェックする. <span class="math inline">\(|a_i - a_j| = |i-j| ~(i \ne j)\)</span> のとき、ちょうど斜め方向にクイーンが攻撃しあってるので、これが無いことを、8 クイーンの全てのペアについて調べれば良い.</p>
+<p>ちなみに NxN の盤面にはいつも N 個のクイーンを置くことができる.</p>
+<h3 id="解答-1">解答</h3>
+<ul>
+<li><a href="https://gist.github.com/cympfh/700f77492f99c6059ffc0d590e227a79">ソースコード</a></li>
+</ul>
+<h2 id="笑わない数学者からの挑戦状-mathematical-goodbye">笑わない数学者からの挑戦状 (Mathematical Goodbye)</h2>
+<p>先に紹介したパズルは初出も発案者もよくわからないけれどこのパズルは小説家の森博嗣が自身の小説 <a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> の中で登場させたもの. でも私はそういった小説は読まないので、とあるサイト <a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a> で初めてこのパズルを知った.</p>
+<h3 id="ルール-2">ルール</h3>
+<p>参考文献 <a href="#fn3" class="footnoteRef" id="fnref3"><sup>3</sup></a> にあるが、ここにも要約しておくと次の通り.</p>
+<ol style="list-style-type: decimal">
+<li>ボールが 15 個あり、それぞれ 1 から 15 の数字が書かれている</li>
+<li>これらから 5 個選び環状に並べる</li>
+<li>1 個以上の連続したボールの選び方は 21 通りあるが、それぞれのボールの和を取った時、1 のものから 21 のものまで全てが作られる</li>
+<li>このようなボールの選び方及び並べ方を求めよ</li>
+</ol>
+<h3 id="考察-2">考察</h3>
+<p>これこそ、<span class="math inline">\(\left(\begin{array}{c}15\\5\end{array}\right)\)</span> 通り試しちゃえば良いだけ. 下の解答は何も考えず全通り試しているだけ.</p>
+<p>でも敢えてより深く考察をするのなら、</p>
+<ul>
+<li>小さな数字はボール1個の和から作るしか無い
+<ul>
+<li><span class="math inline">\(1\)</span> はボール <span class="math inline">\(1\)</span> から作る</li>
+<li><span class="math inline">\(2\)</span> はボール <span class="math inline">\(2\)</span> から作る (ボール <span class="math inline">\(1\)</span> は1つしかないので <span class="math inline">\(1+1\)</span> とは出来ないので)
+<ul>
+<li>というわけで、ボール <span class="math inline">\(1, 2\)</span> は必要</li>
+</ul></li>
+</ul></li>
+<li><span class="math inline">\(4\)</span> はボール <span class="math inline">\(4\)</span> から作れるが、<span class="math inline">\(1+3\)</span> でも作れる
+<ul>
+<li>ボール <span class="math inline">\(1\)</span> は上の考察から既に必要であることがわかっている</li>
+<li>というわけで、ボール <span class="math inline">\(3\)</span> か <span class="math inline">\(4\)</span> かのいずれか一方は少なくとも必要</li>
+</ul></li>
+<li>最大の和は5つのボールの和だが、「ボールの和で 1から 21 までの数字全てを作れ」とあるので、5つの和が21に他ならない</li>
+</ul>
+<p>というわけで、有り得るボールの組み合わせは次のいずれか</p>
+<ul>
+<li><span class="math inline">\(1, 2, 3, x, (21 - (1 + 2 + 3 + x))\)</span></li>
+<li><span class="math inline">\(1, 2, 4, x, (21 - (1 + 2 + 4 + x))\)</span></li>
+</ul>
+<p>というわけで組み合わせ自体は100通り程度?に減らすことは出来る. けどその後、結局並び替えも考える必要がある.</p>
+<h3 id="解答-2">解答</h3>
+<ul>
+<li><a href="https://gist.github.com/cympfh/300600bcdcf04e6ca738403c1dcfa322">ソースコード</a>
+<ul>
+<li><a href="https://ideone.com/WXgnP1">実行結果</a></li>
+</ul></li>
+</ul>
+<h2 id="binary-puzzle">Binary Puzzle</h2>
+<p>その名の通り BinaryPuzzle.com <a href="#fn4" class="footnoteRef" id="fnref4"><sup>4</sup></a> というサイトで知った.</p>
+<h3 id="ルール-3">ルール</h3>
+<p>BinaryPuzzle.com <a href="#fn5" class="footnoteRef" id="fnref5"><sup>5</sup></a> にあるが、和訳を兼ねて要約すると、</p>
+<ol style="list-style-type: decimal">
+<li>NxN のマス目からなる盤面に 0 または 1 を埋める
+<ul>
+<li>少しだけ既に埋められた状態が与えられる</li>
+</ul></li>
+<li>同じ数字は高々2つまでしか縦横に並ばない</li>
+<li>どの行、及び列においても、0 と 1 は同じ数だけ含まれる
+<ul>
+<li>長さ <span class="math inline">\(N\)</span> は偶数であることが保証されている</li>
+</ul></li>
+<li>全く同じ01の並びを持った行 (または列) が2つ以上あることはない</li>
+</ol>
+<h3 id="考察-3">考察</h3>
+<p>同じ数字が3つ並ばないということから、</p>
+<ul>
+<li>既に同じ数字が2つ並んでるならその両端は違う数字
+<ul>
+<li><code>.00.</code> → <code>1001</code> (<code>.</code> はまだ数字が埋められていない空のマスのこと)</li>
+</ul></li>
+<li>同じ数字が1マス飛ばして2つ並んでるならその間は違う数字
+<ul>
+<li><code>0.0</code> &amp;arr; <code>010</code></li>
+</ul></li>
+</ul>
+<p>特別に考えたのはこのくらい. 他は深さ優先探索で埋めてく.</p>
+<h3 id="解答-3">解答</h3>
+<ul>
+<li><a href="https://github.com/cympfh/BinaryPuzzle">ソースコード</a></li>
+</ul>
+<h2 id="参考">参考</h2>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="https://www.amazon.co.jp/dp/B009GXMFJQ/">笑わない数学者　MATHEMATICAL GOODBYE S&amp;M | 森博嗣 | 日本の小説・文芸 | Kindleストア | Amazon</a><a href="#fnref1">↩</a></p></li>
+<li id="fn2"><p><a href="http://r27.jp/quiz/mathematical-goodbye/">Mathematical Goodbye. - 笑わない数学者からの挑戦状 : クイズ＆パズルの部屋「Quizzical Days.」</a><a href="#fnref2">↩</a></p></li>
+<li id="fn3"><p><a href="http://r27.jp/quiz/mathematical-goodbye/">Mathematical Goodbye. - 笑わない数学者からの挑戦状 : クイズ＆パズルの部屋「Quizzical Days.」</a><a href="#fnref3">↩</a></p></li>
+<li id="fn4"><p><a href="http://binarypuzzle.com/">Binary puzzles, solve online or print - BinaryPuzzle.com</a><a href="#fnref4">↩</a></p></li>
+<li id="fn5"><p><a href="http://binarypuzzle.com/">Binary puzzles, solve online or print - BinaryPuzzle.com</a><a href="#fnref5">↩</a></p></li>
+</ol>
+</div>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

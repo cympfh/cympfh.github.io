@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>シェルソートの補題の証明</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="../../css/post.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">シェルソートの補題の証明</h1>
+</header>
+<p>こんなのがあった.</p>
+<ul>
+<li><a href="http://icpc.iisf.or.jp/2017-tsukuba/domestic/messages/#dwango" class="uri">http://icpc.iisf.or.jp/2017-tsukuba/domestic/messages/#dwango</a></li>
+</ul>
+<blockquote>
+<p>シェルソートの話をします。[..]</p>
+</blockquote>
+<p>シェルソートの計算量の導出に関する証明について云々書いてあった. というわけで証明を考えてみた.</p>
+<p>以下ネタバレ.</p>
+<h2 id="シェルソートの動画">シェルソートの動画</h2>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/CmPA7zE8mx0" frameborder="0" allowfullscreen>
+</iframe>
+<p>ある位置にいる人が前に出てきて 「あろっとおーにー」とか「あろっとそーしー」みたいなことを言う. これはギャップに相当する数字を言ってるんだと思う. たぶん. これを聞くとその人よりもインデックスが <span class="math inline">\(k\)</span> だけ低い人が出てきて、ペアで大小比較を行う. 逆転してたならスワップが行われ、その時に限りさらに <span class="math inline">\(k\)</span> だけ低い人を呼び、大小比較を行う.</p>
+<h2 id="補題-0">補題 0</h2>
+<p>長さがともに <span class="math inline">\(r\)</span> 以上ある2つの数列があり、</p>
+<ul>
+<li><span class="math inline">\(x = (x_1, \ldots, x_n, x_{n+1}, \ldots, x_{n+r})\)</span>
+<ul>
+<li><span class="math inline">\(y = (y_1, \ldots, y_r, y_{r+1}, \ldots, y_m)\)</span></li>
+</ul></li>
+</ul>
+<p>今</p>
+<ul>
+<li>条件 <span class="math inline">\(P(x, y)\)</span>: <span class="math inline">\(i=1,2,\ldots,r\)</span> 全てについて <span class="math inline">\(y_i \leq x_{n+i}\)</span> が成立</li>
+</ul>
+<p>を仮定する. <span class="math inline">\(x, y\)</span> をそれぞれ昇順にソートして得た数列を</p>
+<ul>
+<li><span class="math inline">\(x&#39; = (x_1&#39;, \ldots, x_n&#39;, x_{n+1}&#39;, \ldots, x_{n+r}&#39;)\)</span>
+<ul>
+<li><span class="math inline">\(y&#39; = (y_1&#39;, \ldots, y_r&#39;, y_{r+1}&#39;, \ldots, y_m&#39;)\)</span></li>
+</ul></li>
+</ul>
+<p>とするとこれらについて条件 <span class="math inline">\(P(x&#39;, y&#39;)\)</span> が成立している.</p>
+<h3 id="証明">証明</h3>
+<p><span class="math inline">\(y_1&#39;\)</span> に注目する. <span class="math inline">\(y_1&#39; = \min \{ y_1, y_2, \ldots, y_m \}\)</span> であるので、 <span class="math display">\[y_i \geq y_1&#39;\]</span> である. 更に <span class="math inline">\(P(x,y)\)</span> より、 <span class="math display">\[x_{n+i} \geq y_i \geq y_1&#39; ~~(i=1,2,\ldots,r)\]</span> というわけで、数列 <span class="math inline">\(x\)</span> に於いて少なくとも <span class="math inline">\(r\)</span> 個は <span class="math inline">\(y_1&#39;\)</span> より大きい数がある. <span class="math inline">\(x\)</span> のソートを考えると、 <span class="math display">\[x&#39;_{n+1} \geq y_1&#39;\]</span> が分かる. なぜなら <span class="math inline">\(x&#39;_{n+1}\)</span> という数字はソートした後の数列の top <span class="math inline">\(r\)</span> の数であり、<span class="math inline">\(r\)</span> 個以上は <span class="math inline">\(y_1&#39;\)</span> より大きい数が含まれるから.</p>
+<p>というわけで、<span class="math inline">\(P(x&#39;, y&#39;)\)</span> において <span class="math inline">\(x&#39;_{n+1} \geq y_1&#39;\)</span> (つまり <span class="math inline">\(i=1\)</span> の場合) だけは示された.</p>
+<p><span class="math inline">\(y_2&#39;\)</span> 以降も同様. これより大きな数が数列 <span class="math inline">\(x\)</span> に <span class="math inline">\(r-1\)</span> 個は少なくともあるので〜って言えば良い.</p>
+<h2 id="補題-1">補題 1</h2>
+<p>略</p>
+<h3 id="証明-1">証明</h3>
+<p>数列</p>
+<ul>
+<li><span class="math inline">\(a = (a_1, a_2, \ldots, a_m)\)</span></li>
+</ul>
+<p>が既に <span class="math inline">\(x\)</span>-sort 済みだとする. すなわち、</p>
+<ul>
+<li>条件 <span class="math inline">\(Q_x(a)\)</span>: <span class="math inline">\(\forall i, a_i \leq a_{i+x}\)</span></li>
+</ul>
+<p>これが成立しているとする. 今から <span class="math inline">\(a\)</span> を <span class="math inline">\(y\)</span>-sort することを考える. <span class="math inline">\(y\)</span>-sort するとはつまり、<span class="math inline">\(a\)</span> から <span class="math inline">\(y\)</span> 個の部分列</p>
+<ul>
+<li><span class="math inline">\(\alpha_1 = (a_1, a_{1+y}, \ldots, a_{-})\)</span></li>
+<li><span class="math inline">\(\alpha_2 = (a_2, a_{2+y}, \ldots, a_{-})\)</span></li>
+<li><span class="math inline">\(\vdots\)</span></li>
+<li><span class="math inline">\(\alpha_y = (a_y, a_{y+y}, \ldots, a_{-})\)</span></li>
+</ul>
+<p>を取り出しそれらを独立にソートし、</p>
+<ul>
+<li><span class="math inline">\(\alpha_1&#39; = (a_1&#39;, a_{1+y}&#39;, \ldots, a_{-}&#39;)\)</span></li>
+<li><span class="math inline">\(\alpha_2&#39; = (a_2&#39;, a_{2+y}&#39;, \ldots, a_{-}&#39;)\)</span></li>
+<li><span class="math inline">\(\vdots\)</span></li>
+<li><span class="math inline">\(\alpha_y&#39; = (a_y&#39;, a_{y+y}&#39;, \ldots, a_{-}&#39;)\)</span></li>
+</ul>
+<p>を得て、</p>
+<ul>
+<li><span class="math inline">\(a&#39; = (a_1&#39;, a_2&#39;, \ldots, a_y&#39;, \ldots, a_m&#39;)\)</span></li>
+</ul>
+<p>を構成すること. <span class="math inline">\(a&#39;\)</span> が <span class="math inline">\(y\)</span>-sort 済みなのは自明なので、<span class="math inline">\(Q_x(a&#39;)\)</span> を示せばよい.</p>
+<p><span class="math inline">\(\alpha_i\)</span> と補題 0 を睨めば自明. すなわち、</p>
+<p><span class="math inline">\(a_i&#39;\)</span> と <span class="math inline">\(a_{i+x}&#39;\)</span> の大小比較を確かめる. インデックスの <span class="math inline">\(i\)</span> 及び <span class="math inline">\(i+x\)</span> を <span class="math inline">\(y\)</span> で割った余りを見ることで、それらが どの部分列 <span class="math inline">\(\alpha_k\)</span> に属するかが分かる.</p>
+<ol type="1">
+<li>ともに同じ <span class="math inline">\(\alpha_k\)</span> に属するとき
+<ul>
+<li>各 <span class="math inline">\(\alpha_k&#39;\)</span> はソートされるので、 <span class="math inline">\(a_i&#39; \leq a_{i+x}&#39;\)</span></li>
+</ul></li>
+<li><span class="math inline">\(a_i&#39;\)</span> は <span class="math inline">\(\alpha_{k_1}\)</span> に、 <span class="math inline">\(a_{i+x}&#39;\)</span> は <span class="math inline">\(\alpha_{k_2}\)</span> に属するとき
+<ul>
+<li>ソート前はこんな感じ:
+<ul>
+<li><span class="math inline">\(\alpha_{k_1} = (\ldots, a_{i-y}, a_i, a_{i+y}, \ldots)\)</span></li>
+<li><span class="math inline">\(\alpha_{k_2} = (\ldots, a_{i-y+x}, a_{i+x}, a_{i+y+x}, \ldots)\)</span></li>
+</ul></li>
+<li><span class="math inline">\(a\)</span> は <span class="math inline">\(x\)</span>-sorted なので、
+<ul>
+<li><span class="math inline">\(a_{i-y} \leq a_{i-y+x}\)</span></li>
+<li><span class="math inline">\(a_{i} \leq a_{i+x}\)</span></li>
+<li><span class="math inline">\(a_{i+y} \leq a_{i+y+x}\)</span></li>
+<li>前後しか書いてないけど、<span class="math inline">\(\alpha_{k_1}\)</span> の前半と <span class="math inline">\(\alpha_{k_2}\)</span> の後半で <span class="math inline">\(P\)</span> が成立してることが分かる</li>
+</ul></li>
+<li>ソートする</li>
+<li>補題 0 より <span class="math inline">\(\alpha_{k_1}&#39;, \alpha_{k_2}&#39;\)</span> で <span class="math inline">\(P\)</span> が成立してる
+<ul>
+<li>即ち <span class="math inline">\(a_i&#39; \leq a_{i+x}&#39;\)</span></li>
+</ul></li>
+</ul></li>
+</ol>
+<p>全ての <span class="math inline">\(i\)</span> についてこれが言えるので、結局 <span class="math inline">\(a&#39;\)</span> も <span class="math inline">\(x\)</span>-sort 済みであることが分かった.</p>
+<hr />
+<footer>
+    <p style='text-align: right'>
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+</body>
+</html>

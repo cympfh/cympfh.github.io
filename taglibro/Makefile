@@ -19,5 +19,5 @@ edit:
 
 git:
 	git add --all
-	git commit -a -m "taglibro: `date`"
+	git commit -a -m "taglibro/ `LANG=en date`"
 	git push

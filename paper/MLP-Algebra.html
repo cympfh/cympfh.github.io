@@ -7,29 +7,27 @@
   <title>Multilayer Perceptron Algebra</title>
   <style type="text/css">code{white-space: pre;}</style>
   <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="resources/index.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
 </head>
 <body>
-<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
-    <a href='index.html'>
-    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/
-    </a>
-</h1>
+<header class="page-header">
+    <a href='index.html'><img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/</a>
+</header>
 <header>
 <h1 class="title">Multilayer Perceptron Algebra</h1>
 </header>
 <ul>
 <li>
-url: <a href=https://arxiv.org/abs/1701.04968>https://arxiv.org/abs/1701.04968</a>
-</li>
-<li>
-tags: <span class="tag"><a href=index.html#MLP>MLP</a></span> <span class="tag"><a href=index.html#機械学習>機械学習</a></span>
+original paper: <a href=https://arxiv.org/abs/1701.04968>https://arxiv.org/abs/1701.04968</a>
 </li>
 </ul>
+<div class="is-pulled-right">
+<p><a class='tag is-blue' href=index.html#MLP>MLP</a> <a class='tag is-blue' href=index.html#機械学習>機械学習</a></p>
+</div>
 <h2 id="index">INDEX</h2>
 <div id="toc">
 
@@ -85,7 +83,7 @@ tags: <span class="tag"><a href=index.html#MLP>MLP</a></span> <span class="tag">
 <p>以上の定義は結局、関数 <span class="math inline">\(f_k\)</span> を定めるためのもので、 <span class="math inline">\(\omega_k\)</span> 及び <span class="math inline">\(\theta_k\)</span> (そしてそれらの次元を決定するための <span class="math inline">\(b_k\)</span>) はそのための <strong>パラメータ</strong> である. 本研究では、次のような状況を想定している. 即ち、まず MLP を構造を決定する <span class="math inline">\(b_k\)</span> を固定していて、 あるデータセットが与えられ、それに最適なパラメータを既に学習している. 学習済みのパラメータを含めて、MLP <span class="math inline">\(\mathcal{N}\)</span> と呼んでいる.</p>
 <p>特に <span class="math inline">\(\mathcal{N}\)</span> のパラメータ <span class="math inline">\(\omega_k\)</span> のことを <span class="math inline">\(\omega_k(\mathcal{N})\)</span> と冗長に書くことにする. <span class="math inline">\(\theta_k\)</span> も同様.</p>
 <h3 id="二値分類と多クラス分類">二値分類と多クラス分類</h3>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><p>二値分類するような <span class="math inline">\(\ell\)</span> 層 MLP <span class="math inline">\(\mathcal{N}\)</span> とは、 <span class="math inline">\(b_\ell(\mathcal{N}) = \mathbb{R}\)</span> であって、 <span class="math inline">\(\mathcal{Y} = \{+, -\}\)</span> で、 <span class="math inline">\(\mathcal{N}(x) &gt; 0.5\)</span> なら <span class="math inline">\(+ \in \mathcal{Y}\)</span> に、 さもなくば <span class="math inline">\(- \in \mathcal{Y}\)</span> に予測するもの.</p></li>
 <li><p>多クラス分類するような <span class="math inline">\(\ell\)</span> 層 MLP <span class="math inline">\(\mathcal{N}\)</span> とは、 <span class="math inline">\(b_\ell(\mathcal{N}) = \mathbb{R}^m\)</span> であって (<span class="math inline">\(m\)</span> はクラス数)、 <span class="math inline">\(\mathcal{Y} = \{1,2,\ldots,m\}\)</span> で、 <span class="math inline">\(y = \text{argmax}_i \mathcal{N}(x)_i\)</span> に分類するようなもの.</p></li>
 </ol>
@@ -148,13 +146,13 @@ tags: <span class="tag"><a href=index.html#MLP>MLP</a></span> <span class="tag">
 <p>からの有限のサンプリング (データセット)</p>
 <p><span class="math display">\[D \subset \mathcal{X}\]</span></p>
 <p>があるとする. <span class="math inline">\(\mathcal{X}\)</span> に関する特性関数とは、データ点 <span class="math inline">\(x\)</span> が <span class="math inline">\(\mathcal{X}\)</span> に属するかどうかで <span class="math inline">\(1, 0\)</span> を出力する関数であるが、 これに相当する、特性関数ならぬ <strong>特性MLP</strong> を <span class="math inline">\(D\)</span> から構成することを考える. 実際には <span class="math inline">\(\sigma\)</span> で活性化してるので厳密に <span class="math inline">\(1, 0\)</span> が出力されることはないが、 話を簡単にするために、厳密にそういう出力されるものを考える. また <span class="math inline">\(D\)</span> しか与えられないのでそから <span class="math inline">\(\mathcal{X}\)</span> を推定する必要がある. これらの事情から次の2つを要請する.</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><span class="math inline">\(D\)</span> の任意の要素 <span class="math inline">\(x\)</span> に対して <span class="math inline">\(1\)</span> を出力する</li>
 <li><span class="math inline">\(D\)</span> の任意の点とも (ユークリッド距離で) <span class="math inline">\(\epsilon\)</span> だけ離れてる点 <span class="math inline">\(x\)</span> に対して <span class="math inline">\(0\)</span> を出力する</li>
 </ol>
 <p>特にこの2つ目であるが、<span class="math inline">\(D\)</span> から <span class="math inline">\(\mathcal{X}\)</span> を推測するために、 ある程度小さい正の数 <span class="math inline">\(\epsilon\)</span> だけ、どの <span class="math inline">\(D\)</span> の要素とも離れていれば、 <span class="math inline">\(\mathcal{X}\)</span> には属さないと仮定したネガティブサンプリングを行っている. すなわち、 <span class="math inline">\(D\)</span> に対して <span class="math inline">\(\epsilon\)</span> 近傍を (<span class="math inline">\(D_\epsilon\)</span>) の補集合 <span class="math inline">\(D_\epsilon^c\)</span> からサンプリングを行う.</p>
 <p>改めて書くと、 点集合 <span class="math inline">\(D\)</span> の特性 MLP <span class="math inline">\(\mathcal{K}_D\)</span> とは、</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><span class="math inline">\(\mathcal{K}_D(D) = 1\)</span></li>
 <li><span class="math inline">\(\mathcal{K}_D(D_\epsilon^c) = 0\)</span></li>
 </ol>
@@ -172,7 +170,7 @@ tags: <span class="tag"><a href=index.html#MLP>MLP</a></span> <span class="tag">
 </ul>
 <h2 id="mlp-操作の諸定義-part-2">MLP 操作の諸定義 (part 2)</h2>
 <p>詳細は略すが他にも次のような操作を定めている.</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li>分解 (Component Net)
 <ul>
 <li>最後の次元 <span class="math inline">\(n_\ell\)</span> が <span class="math inline">\(&gt;1\)</span> の場合にその第 <span class="math inline">\(i\)</span> 成分だけ取り出すネットワークに分解できる</li>

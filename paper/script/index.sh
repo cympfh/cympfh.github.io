@@ -14,15 +14,19 @@ write-item() {
     read title; read url; read tags
 
     cat <<EOM
-    <div class="item">
-        <p class="title"><a href="$HTML">$title</a></p>
-        <p class=abst>
-$(grep '^## ' $MD | sed 's,^## ,<span class=abst>,; s,$,</span>,')
-        </p>
-        <p class="tags">
-$( echo "$tags" | awk '{ for (i=1; i<=NF; i++) print "<a href=\"#"$i"\" class=\"tag\">"$i"</a>" }' )
-        </p>
-        <p class="url"><a href="$url">$url</a></p>
+    <div class="card">
+        <header class="card-header">
+            <a href="$HTML" class="card-header-title">$title</a>
+            <p class="is-pulled-right">
+            $( echo "$tags" | awk '{ for (i=1; i<=NF; i++) print "<a href=\"#"$i"\" class=\"tag is-small is-blue\">"$i"</a>" }' )
+            </p>
+        </header>
+        <div class="card-content">
+            <p class=abst>
+            $(grep '^## ' "$MD" | sed 's,^## ,,; s,$,/,')
+            </p>
+            <p class="url"><a href="$url">$url</a></p>
+        </div>
     </div>
 EOM
     )
@@ -60,8 +64,8 @@ cat <<TEMPLATE
 <head>
   <meta charset="utf-8">
   <title>paper/</title>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="resources/index.css">
+  <link rel="stylesheet" href="../resources/css/c.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
   <style>
 TEMPLATE
 
@@ -76,20 +80,20 @@ cat <<TEMPLATE
   </style>
   </head>
 <body>
-<h1>paper/</h1>
+<h1><i class="fa fa-send-o"></i> paper/</h1>
 TEMPLATE
 
 #
 # tag list
 #
 cat <<EOM
-<div class="taglist">
-    <a class="tag" href="#">(all)</a>
+<div class="tags">
+    <a class="tag is-blue" href="#">(all)</a>
 EOM
 
 while read tag; do
     cat <<EOM
-    <a class="tag" href="#$tag">$tag</a>
+    <a class="tag is-blue" href="#$tag">$tag</a>
 EOM
 done < "$TAGLIST"
 

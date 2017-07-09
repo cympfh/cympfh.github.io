@@ -7,26 +7,21 @@
   <title>Q-learning</title>
   <style type="text/css">code{white-space: pre;}</style>
   <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="resources/index.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
 </head>
 <body>
-<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
-    <a href='index.html'>
-    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> aiura/
-    </a>
-</h1>
 <header>
 <h1 class="title">Q-learning</h1>
 </header>
 <p class="date" style="text-align: right">
 2016-01-17 (Sun.) 01:31:22 JST
 </p>
-<div class="tags" style="text-align: right">
-<p><a class=tag href=index.html#機械学習>機械学習</a></p>
+<div class="is-pulled-right">
+<p><a class='tag is-red' href=index.html#機械学習>機械学習</a></p>
 </div>
 <p>本文書ではまず <a href="https://ja.wikipedia.org/wiki/Q学習">Q-learning (Q学習)</a> の概要を述べ、次に 二人完全情報ゲームである <a href="https://ja.wikipedia.org/wiki/三目並べ">tic-tac-toe (三目並べ)</a> への適用について説明する. 実際の実装は <a href="https://github.com/cympfh/tic-tac-toe">cympfh/tic-tac-toe</a> にある.</p>
 <h2 id="強化学習の概要">強化学習の概要</h2>
@@ -98,7 +93,7 @@ reward-&gt;s'
 <p>Q 値は次のように更新 (学習) する. 状態 <span class="math inline">\(s\)</span> の時点でアクション <span class="math inline">\(a\)</span> を選び、状態 <span class="math inline">\(s&#39;\)</span> に遷移し、報酬 <span class="math inline">\(r\)</span> を受け取ったとする (報酬はアクションの遷移直後に受け取ることに註意). このアクション選択の良さ <span class="math inline">\(Q(s, a)\)</span> とは、 <span class="math inline">\(r\)</span> 及び、<span class="math inline">\(s&#39;\)</span> からとり得る最大の Q 値に凡そ比例すべきである. 従って、学習率 <span class="math inline">\(\alpha, \gamma\)</span> という2つのパラメータを以って</p>
 <p><span class="math display">\[Q(s, a) \leftarrow (1 - \alpha) Q(s, a) + \alpha \left[ r + \gamma \max_{a&#39;} Q(s&#39;, a&#39;) \right]\]</span></p>
 <p>と、このように更新をする. <span class="math inline">\(\gamma\)</span> は <span class="math inline">\(0 \leq \gamma \leq 1\)</span> であるような定数である. <span class="math inline">\(\alpha\)</span> は学習につれて小さくなるような変数であることが求められる. すなわち時刻 <span class="math inline">\(t\)</span> の関数 <span class="math inline">\(\alpha = \alpha(t)\)</span> であって、しかも次の2条件が満たされる時、Q 値は最適解に収束することが保証されている.</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><span class="math inline">\(\sum_{t=0}^\infty \alpha(t) \to \infty\)</span></li>
 <li><span class="math inline">\(\sum_{t=0}^\infty \alpha(t)^2 &lt; \infty\)</span></li>
 </ol>
@@ -107,10 +102,9 @@ reward-&gt;s'
 <p>tic-tac-toe (三目並べ) を学習させることを考えた.</p>
 <p>しかしこれは、先ほどの枠組みがそのままは使えない. 先ほどの枠組みは、エージェントは自分一人で、ただ自分がアクションを続けさえすればよかった. これは謂わば、一人用ゲームである. 今度は二人用ゲームである.</p>
 <p>普通に考えて、状態とは、3x3の盤面のことである. 初期状態は何も書かれてない3x3であって、マルかバツかが少しずつ埋まってくそれぞれが状態である. 普通に考えて、アクションとは自分一人が打つ手 (マルかバツかを一つ書く行為) のことである. そうすると状態は一つ進む. その状態に対してアクションを行うのは、今度は自分ではなく、相手になる. 報酬は？ どれに対して？</p>
-<div class="figure">
+<figure>
 <img src="http://i.imgur.com/j7hrmVI.png" />
-
-</div>
+</figure>
 <p>多少AIに甘く、設計した. 上の木はゲームツリーである. ノードは一つの状態を表す. A と書かれたノードは、「次に手を打つのはAIである」盤面に相当する. ノードから生えてるエッジは打てる手に相当する. 3本生えてるのは、打てる手が3つあって、それぞれ、打つとその先の状態に遷移する. 遷移先は黒いノードである. これは、相手の手番であることを意味する. 相手が手を打つと、また自分の手番になる.</p>
 <p>本来、報酬を決定するはずの「遷移後の状態」を、次 (黒) と次の次 (A) で決定することにした. 具体的には</p>
 <ul>

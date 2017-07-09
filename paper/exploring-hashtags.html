@@ -7,44 +7,42 @@
   <title>Exploring Twitter Hashtags</title>
   <style type="text/css">code{white-space: pre;}</style>
   <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="resources/index.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
 </head>
 <body>
-<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
-    <a href='index.html'>
-    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/
-    </a>
-</h1>
+<header class="page-header">
+    <a href='index.html'><img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/</a>
+</header>
 <header>
 <h1 class="title">Exploring Twitter Hashtags</h1>
 </header>
 <ul>
 <li>
-url: <a href=http://arxiv.org/pdf/1111.6553.pdf>http://arxiv.org/pdf/1111.6553.pdf</a>
-</li>
-<li>
-tags: <span class="tag"><a href=index.html#自然言語処理>自然言語処理</a></span> <span class="tag"><a href=index.html#twitter>twitter</a></span>
+original paper: <a href=http://arxiv.org/pdf/1111.6553.pdf>http://arxiv.org/pdf/1111.6553.pdf</a>
 </li>
 </ul>
+<div class="is-pulled-right">
+<p><a class='tag is-blue' href=index.html#自然言語処理>自然言語処理</a> <a class='tag is-blue' href=index.html#twitter>twitter</a></p>
+</div>
 <p>2011年の論文なので古い部類だろうなあ</p>
 <h2 id="intro">Intro</h2>
 <p>SMS language</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li>abbreviation (e.g. &quot;4 u&quot;)</li>
 <li>emoticons (e.g. &quot;:)&quot; )</li>
 </ol>
 <p>Twitter-specific forms</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li>@-replies</li>
 <li>hashtags</li>
 </ol>
 <h3 id="例.">例.</h3>
 <blockquote>
-<p><span class="citation">@merazindagi</span> Thanks! Will make more 4 U. Live performances in #boulder area will be on http://saxy.us :) #jazz #rock #funk #dance #livemusic</p>
+<p><span class="citation" data-cites="merazindagi">@merazindagi</span> Thanks! Will make more 4 U. Live performances in #boulder area will be on http://saxy.us :) #jazz #rock #funk #dance #livemusic</p>
 </blockquote>
 <p>ハッシュタグはそのツイートが何の目的であるかを教えてくれるが、 複数のツイートが沢山含まれるようなものは一体何なのかわからなくなる. そこで、co-occurrences に基づく辞書の構築を目指す. 分類器の構成を考え，最終的にアプリケーションを作成する</p>
 <h2 id="dataset">Dataset</h2>
@@ -65,7 +63,7 @@ s_1 \in \text{synset}(h_1),
 s_2 \in \text{synset}(h_2) \}\]</span></p>
 <p><span class="math inline">\(S&#39;\)</span> として、</p>
 <p>PythonのnltkのWordNet module には、 次の2種類が組み込まれている</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li>path distance similarity</li>
 <li>Wu-Palmer distance</li>
 </ol>
@@ -75,21 +73,21 @@ s_2 \in \text{synset}(h_2) \}\]</span></p>
 <table>
 <thead>
 <tr class="header">
-<th align="left"></th>
-<th align="left">Spath</th>
-<th align="left">Swp</th>
+<th style="text-align: left;"></th>
+<th style="text-align: left;">Spath</th>
+<th style="text-align: left;">Swp</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">共起ハッシュタグ</td>
-<td align="left">0.12</td>
-<td align="left">0.37</td>
+<td style="text-align: left;">共起ハッシュタグ</td>
+<td style="text-align: left;">0.12</td>
+<td style="text-align: left;">0.37</td>
 </tr>
 <tr class="even">
-<td align="left">Twitter (ランダムな2単語)</td>
-<td align="left">0.07</td>
-<td align="left">0.26</td>
+<td style="text-align: left;">Twitter (ランダムな2単語)</td>
+<td style="text-align: left;">0.07</td>
+<td style="text-align: left;">0.26</td>
 </tr>
 </tbody>
 </table>
@@ -99,7 +97,7 @@ s_2 \in \text{synset}(h_2) \}\]</span></p>
 <h2 id="classification">Classification</h2>
 <h3 id="hashtag-classes">hashtag classes</h3>
 <p>まあハッシュタグは何かそのものを表しているわけだけど，</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><code>organization</code></li>
 <li><code>geolocation</code></li>
 <li><code>person</code></li>
@@ -111,30 +109,30 @@ s_2 \in \text{synset}(h_2) \}\]</span></p>
 <table>
 <thead>
 <tr class="header">
-<th align="left">class</th>
-<th align="left">example hashtags</th>
+<th style="text-align: left;">class</th>
+<th style="text-align: left;">example hashtags</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">organization</td>
-<td align="left">#google, #nokia</td>
+<td style="text-align: left;">organization</td>
+<td style="text-align: left;">#google, #nokia</td>
 </tr>
 <tr class="even">
-<td align="left">geolocation</td>
-<td align="left">#europe, #uk, #graz</td>
+<td style="text-align: left;">geolocation</td>
+<td style="text-align: left;">#europe, #uk, #graz</td>
 </tr>
 <tr class="odd">
-<td align="left">person</td>
-<td align="left">#obama, #madonna</td>
+<td style="text-align: left;">person</td>
+<td style="text-align: left;">#obama, #madonna</td>
 </tr>
 <tr class="even">
-<td align="left">event</td>
-<td align="left">#christmas, #election</td>
+<td style="text-align: left;">event</td>
+<td style="text-align: left;">#christmas, #election</td>
 </tr>
 <tr class="odd">
-<td align="left">category</td>
-<td align="left">#fun, #math, #ipod</td>
+<td style="text-align: left;">category</td>
+<td style="text-align: left;">#fun, #math, #ipod</td>
 </tr>
 </tbody>
 </table>

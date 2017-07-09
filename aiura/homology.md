@@ -56,7 +56,8 @@ $$\tau \preceq \sigma$$
 例えば $\Delta^0$ は $\Delta^n$ の辺単体である.
 $\Delta^1$ はまさに $\Delta^2$ の **辺** そのものであり、3つ含まれる.
 
-<table><tr><td>
+<center>
+<table class="no-border-table"><tr><td>
 ```dot
 graph {
     rankdir=LR; bgcolor=transparent;
@@ -84,6 +85,7 @@ graph {
 }
 ```
 </td></tr></table>
+</center>
 
 ## 複体
 
@@ -97,6 +99,8 @@ $$\forall \sigma \in X. \forall \tau \preceq \sigma. \tau \in X$$
 例えば次のような内部を含まない三角形は
 
 <center>
+<table class="no-border-table"><tr><td>
+
 ```dot
 graph {
     rankdir=LR; bgcolor=transparent; splines=false;
@@ -104,7 +108,7 @@ graph {
 }
 ```
 
-$=$
+</td><td>$=$</td><td>
 
 ```dot
 graph {
@@ -117,6 +121,8 @@ graph {
     v3 -- v1 [label="e3"];
 }
 ```
+
+</td></tr></table>
 </center>
 
 - 3つの頂点 ($\Delta^0$)

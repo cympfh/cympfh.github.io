@@ -44,8 +44,8 @@ code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* Com
 code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
   </style>
   <link rel="stylesheet" href="../../../resources/css/c.css">
-  <link rel="stylesheet" href="../../css/post.css">
-  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
@@ -93,5 +93,108 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>レシートと領収書が違うことを知った。</p>
 <p>文房具屋にて、予め計算した面積に足りるだけ、 A2サイズの厚紙を3枚購入した。 支出を全て記録するために、レシートが欲しくて、 領収書をくれと、店主のおばあちゃんにいうと、 ただ数字を感熱紙に印字しただけの紙切れが欲しかったのに、 手書きで領収書を、断る暇なく、書いてくれた。 その頃の自分には、親友と呼べるような人が一人だけいた。 私は彼からかなり多くの影響を受けた。 その一つに、なんでも記録を取るというものがあった。 新聞で株価を読むという習慣を知って、 それでかつ、株価をノートに逐一、ローソク足を書き込むという習慣を身につけた。 それにしても本当に、 彼ほど、たった一日で、もう何年も前から知っていたような友達になれた人もいない。 それはやはり、中学生というものの性質なのだろう。 小学生ほどのシャイさは失われ、かわって思春期という別な種類のシャイがやってくる。 そこを中学生という未熟さと生意気さによって打ち明けてしまう。 我が悪友であった。 中学生の友達と、大人の友達とを較べてもしょうがないのかもしれないが、 親友は彼だけだったと思う。 毎週日曜日は必ず一緒に競馬の実況中継を見た。 これも彼の趣味であった。 毎週日曜日の新聞は一週間の株価がまとめて載ってある。 お互いにこれぞと思う銘柄を2つずつ選んで、 紙の上で為替取引をして勝負するのであった。 私は選んだシルバー精工が、ある時から「整理」としか表示されなくなったのを覚えている。 (いまWikipediaを見ると、2011年に上場廃止、同年破産となっている。 ただしここに書いてある思い出は、それよりずっと昔だ。) 「シルバー精工」なんて縁も馴染もない企業名を知ってるのは、ひとつ、思い出である。 そんなわけで、自分のお小遣い家計簿を事細かに記録する習慣も、 あくまでも数字を追うという趣味として確立したのだった。</p>
 <p>しかしながら、子供独特の、あるつまらない事件によって、 彼とは一切連絡が取れない状態に陥ってしまった。 喧嘩別れしたということではない。 喧嘩はいくらでもしたが、その時ばかりはもっと深刻に思えて、 喧嘩が起きる直前のような、しかしどちらとも決して攻撃には踏み込まない、 そんなピリピリした状態だった。決して彼のことを恨んではいない。 その時だって別段、できれば、さっさと解決したい、だが、 解決に必要なのはただ、時間しかないのだと思った。 こんなネット社会だから、いつか会うことがあるかもしれない、と思い続けて、 そんなことは起こりそうにない。</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
 </body>
 </html>

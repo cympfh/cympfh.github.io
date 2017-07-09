@@ -8,11 +8,15 @@ index:
 
 %.html: %.md
 	mdc $^ | \
-	pandoc -t html5 \
-		--mathjax=https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML \
+		pandoc -s -t html5 \
 		-B templates/post.header.html \
-		-A templates/index.footer.html \
-		--css=../../../resources/css/c.css --css=../../css/post.css -o $@
+		-A ../resources/js/toc.html \
+		-A templates/post.footer.html \
+		-A ../resources/js/toc.html \
+		--mathjax=https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML \
+		--css ../../../resources/css/c.css \
+		--css https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css \
+		-o $@
 
 edit:
 	bash script/edit.sh

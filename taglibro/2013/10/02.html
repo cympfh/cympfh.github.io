@@ -7,7 +7,7 @@
   <title>Wed Oct 2 10:00:59 JST 2013</title>
   <style type="text/css">code{white-space: pre;}</style>
   <link rel="stylesheet" href="../../../resources/css/c.css">
-  <link rel="stylesheet" href="../../css/post.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
@@ -145,5 +145,108 @@ IDOL M@STER ANNIVERSARY とかいうのがあってちょっと迷ったけれ�
 <p>「THE IDOLM@STER 8th ANNIVERSARY HOP!STEP!!FESTIV@L!!!」ライブビューイング * 本イベントは、パシフィコ横浜・国立大ホール及び幕張イベントホール「THE IDOLM@STER 8th ANNIVERSARY HOP!STEP!!FESTIV@L!!!」の 衛星生中継です。各映画館でのキャスト登壇はございません。予めご了承下さい。 * 本イベントは衛星生中継のため、天候等により映像・音声に乱れが生じる場合がございます。 * あらかじめご了承下さいますようお願いいたします。 * 応援やサイリウムのご使用に関して、他の方のご鑑賞の妨げにならないよう御配慮をお願いいたします。 * サイリウムは、他の方のご鑑賞の妨げにならない程度の長さ・明るさのものをご使用下さい。 * ライブビューイングは、通常の映画上映とは異なり、立ち上がってご鑑賞頂く方、サイリウムをお持ち込みされる方、声援を出される方も いらっしゃるイベントとなります。あらかじめご了承下さいますようお願いいたします。 * フラワースタンドは大変申し訳ありませんがお受け取りいたしかねます。ご理解のほどお願いいたします。 * 劇場内は、いかなる機材においても録音/録画/撮影は禁止となっております。 * 出演者は予告なく変更となる場合がございます。ご了承下さい。</p>
 <p>http://www.bandainamco-lc.co.jp/idolmaster/</p>
 <p>こういうものだったそうだ ちょっと見たかったかもしれない サイリウムなんて持ち歩いてなかったから殺されたかもしれないけれど</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
 </body>
 </html>

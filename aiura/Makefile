@@ -19,4 +19,10 @@ posts:
 	for f in *.md; do make $${f%md}html; done
 
 %.html: %.md
-	mdc <$^ | awk -f script/post.awk | pandoc -s --template resources/template.html --mathjax=https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML --css ../resources/css/c.css --css resources/index.css -A ../resources/js/toc.html -o $@
+	mdc <$^ | awk -f script/post.awk | \
+		pandoc -s -t html5 \
+		-A ../resources/js/toc.html \
+		--mathjax=https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML \
+		--css ../resources/css/c.css \
+		--css https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css \
+		-o $@

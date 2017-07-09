@@ -7,29 +7,27 @@
   <title>Adversarial Autoencoders (AAEs)</title>
   <style type="text/css">code{white-space: pre;}</style>
   <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="resources/index.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
 </head>
 <body>
-<h1 style="font-size:1em; position:absolute; left:0; top:-0.8em; font-size:2.0em !important">
-    <a href='index.html'>
-    <img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/
-    </a>
-</h1>
+<header class="page-header">
+    <a href='index.html'><img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/</a>
+</header>
 <header>
 <h1 class="title">Adversarial Autoencoders (AAEs)</h1>
 </header>
 <ul>
 <li>
-url: <a href=https://arxiv.org/abs/1511.05644>https://arxiv.org/abs/1511.05644</a>
-</li>
-<li>
-tags: <span class="tag"><a href=index.html#深層学習>深層学習</a></span> <span class="tag"><a href=index.html#オートエンコーダ>オートエンコーダ</a></span> <span class="tag"><a href=index.html#クラスタリング>クラスタリング</a></span>
+original paper: <a href=https://arxiv.org/abs/1511.05644>https://arxiv.org/abs/1511.05644</a>
 </li>
 </ul>
+<div class="is-pulled-right">
+<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#オートエンコーダ>オートエンコーダ</a> <a class='tag is-blue' href=index.html#クラスタリング>クラスタリング</a></p>
+</div>
 <h2 id="概要">概要</h2>
 <p>GAN を用いた確率的自己符号化器</p>
 <h2 id="gan-復習事項">GAN (復習事項)</h2>
@@ -66,10 +64,9 @@ tags: <span class="tag"><a href=index.html#深層学習>深層学習</a></span> 
 <li>前者である確率を <span class="math inline">\(D(z)\)</span> とする</li>
 </ul></li>
 </ul>
-<div class="figure">
+<figure>
 <img src="img/aae/aae.png" />
-
-</div>
+</figure>
 <p>先ほどの GAN の説明と、<span class="math inline">\(x\)</span> と <span class="math inline">\(z\)</span> とが入れ替わってることに註意. 従って目的関数は次のようになる.</p>
 <p><span class="math display">\[\min_G \max_D
 \left[
@@ -83,24 +80,21 @@ tags: <span class="tag"><a href=index.html#深層学習>深層学習</a></span> 
 <p>Autoencoders は教師ナシ学習の一種だが、 データ <span class="math inline">\(x\)</span> にラベルが着いてるのならばそれも有効に使いたい.</p>
 <p>論文では MNIST と SVHN を材料に、AAE と普通の自己符号化器をあわせたようなモデルで学習させた.</p>
 <p><span class="math inline">\((x, y)\)</span> について</p>
-<div class="figure">
+<figure>
 <img src="img/aae/saae.png" />
-
-</div>
+</figure>
 <p>手書き文字画像 <span class="math inline">\(x\)</span> を例に取ると、 <span class="math inline">\(G\)</span> は <span class="math inline">\(x\)</span> から何かしら <span class="math inline">\(\text{fake }z = G(x)\)</span> を生成し、 ラベル <span class="math inline">\(y\)</span> (例えば one-hot ベクトルとする) と結合したものから Decoder は元の画像 <span class="math inline">\(x\)</span> を復元しようとする. 書くべき数字はラベルから分かるので、 <span class="math inline">\(G(x)\)</span> はその他の成分、style と言われる.</p>
 <h3 id="semi-supervised-aae">Semi-supervised AAE</h3>
 <p>style を求める <span class="math inline">\(G\)</span> にクラス予測も一緒にさせる. つまり、<span class="math inline">\((\text{style}, y&#39;) = G(x)\)</span> とする. ただしクラス予測は MSE とか取るんじゃなくて、何故か知らんけどここも、<span class="math inline">\(P(y|x)\)</span> から取った <span class="math inline">\(y\)</span> と識別させるようにする. つまり全体として GAN 2つをくっつけた.</p>
-<div class="figure">
+<figure>
 <img src="img/aae/ssaae.png" />
-
-</div>
+</figure>
 <p>だんだんゴツくなってきたな...</p>
 <h3 id="unsupervised-clustering-with-aae">Unsupervised Clustering with AAE</h3>
 <p><span class="math inline">\(m\)</span> クラスにクラスタリングしたいとき、 <span class="math inline">\(y&#39; \in \mathbb{R}^m\)</span> になるように次のようなモデルを使う.</p>
-<div class="figure">
+<figure>
 <img src="img/aae/clustering.png" />
-
-</div>
+</figure>
 <p>元論文では MNIST を 16 classes (10 ではなく) にクラスタリングした結果を示している (Figure 9).</p>
 <!--
 

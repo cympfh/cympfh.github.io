@@ -329,7 +329,7 @@ $\alpha(\uparrow \delta)$ (関数適用)
 ($A$ という集合を $A(x) = 1 \text{ if } x \in A \text{ else } 0$ という関数と同一視する)、
 "John runs" の解釈は
 
-$$\left(\lambda X. \downarrow X(\text{John}))(\uparrow \text{run})
+$$\left(\lambda X. \downarrow X(\text{John})\right)(\uparrow \text{run})
 = \downarrow \uparrow \text{run}(\text{John})
 = \text{run}(\text{John})$$
 

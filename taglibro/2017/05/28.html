@@ -7,7 +7,7 @@
   <title>Sun May 28 2017</title>
   <style type="text/css">code{white-space: pre;}</style>
   <link rel="stylesheet" href="../../../resources/css/c.css">
-  <link rel="stylesheet" href="../../css/post.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
@@ -21,11 +21,108 @@
 <p>久々に流行り物に手を出してみようということで Nintendo Switch を購入することにした. 一体あれは据え置きゲーム機なのか携帯ゲームなのか良くわかっていなかったけれど、 外部ディスプレイへの出力も可能な携帯ゲームだという認識に誤りがないことを確認して、 買うことにした.</p>
 <p>思えば新しいハードが出てから買うまでの間がこんなに短いのは、 別段ゲームが好きでもない私にしては珍しい. 3DSなんかは海腹川背が出て、それをプレイするために買ったし. でもPSPは海腹川背より以前に買ってた気がする. PSP-1000も-2000も買ってた. -1000 は主に自分で書いた怪しいプログラムをその上で動かして遊んでいた. Lua もそこで覚えた. あんまり覚えてないが、なんとかchiken というプログラムを動かした後に怪しい ttf ファイルを開こうとすると root 権限が奪取できて、どんなプログラムでも動かせる状態にできるのだが、そこで lua インタプリタを起動して自分で書いたスクリプトを動かして遊んでいた. 最期は文鎮にして捨てた. -2000 はあまり遊ばず最期はブックオフに売り飛ばした. 3DSは海腹川背・旬SEも遊んだしさよなら海腹川背も遊んだし、ついでにポケモンXも遊んだし、かなり遊んだ気がするが所有してたのは大学時代で、高校時代に比べればずっと忙しかったので (家族は「大学なんて暇ばっかりなんだろう」と理解がなかったが）ゲームをする時間があんまりなくて、友人に五千円程度で引き取ってもらった.</p>
 <p>Nintendo Switch ではマリオカートを一緒に買ったのでこれで長く遊びたいと思ってる. 買ったと言っても、先日の25日に任天堂ストアでようやく再販が開始して、予約に成功したというだけで、実際に発送されて届くのは6/2以降ということになっている. きっとまだ任天堂側に実際にすぐ発送できる在庫があるわけじゃなくて一週間の間に準備できる個数を確保したというだけらしい. 来月が待ち遠しい.</p>
-<hr />
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
 <footer>
-    <p style='text-align: right'>
+    <p class="is-pulled-right">
     @cympfh / cympfh@gmail.com
     </p>
 </footer>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
 </body>
 </html>

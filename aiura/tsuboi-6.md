@@ -2,7 +2,7 @@
 % 2017-05-28 (Sun.)
 % 数学 幾何学
 
-## ベクトル場
+## 諸定義
 
 ### アイソトピー
 
@@ -22,6 +22,19 @@ $$F_t : M \to M$$
 
 このような $F_t$ が微分同相であり、かつ $F_0 = id_M$ のとき、$F_t$ のことをアイソトピーという.
 
+### フロー
+
+$t$ の定義域を $[0,1]$ に制限する前の
+$$F : \mathbb{R} \times M \to M$$
+であって、やはり
+$$F_0 = id_M$$
+であって、加えて次のような、群の作用性
+
+- $F_{-t} = F_t^{-1}$
+- $F_s \circ F_t = F_{s + t}$
+
+が満たされている $F_t(x) = F(t,x)$ のことを $M$ 上の **フロー** という.
+
 ### ベクトル場
 
 多様体 $M$ の上のベクトル場とは点 $x \in M$ にベクトルを与えるものである.
@@ -34,6 +47,18 @@ $$X : x \mapsto (u \in T_xM)$$
 
 アイソトピー $F_t$ からベクトル場 $X_t$ を導くことが出来る.
 流れとしては逆だけど「ベクトル場 **が** アイソトピーを生成する」と表現する.
+また以下の議論はフローについても全く同様に出来、従ってフローからベクトル場を導くことが出来る.
+
+アイソトピー $F_t$ についてある基点
+$$F(t_0, x_0) = y_0$$
+を1つ定める.
+
+直感的には下図のようである.
+即ち、基点から $t$ だけをほんの少し動かすと、$F$ の先もほんの少し動く ($y_1$ とする).
+$M$ の上で正にベクトル $\vec{y_0~y_1}$ が作られたことに成る.
+これを各点 $x$ について用いれば ($t_0$ は固定して)、$M$ の上のあらゆるところでベクトルが作られ、従ってベクトル場が出来る.
+
+<center>
 
 ```dot
 digraph {
@@ -42,84 +67,82 @@ digraph {
     rankdir=LR;
     x0 -> y0 [label=F];
     x1 -> y1 [label=F];
-    x0 [label="t0, x"];
-    x1 [label="t1, x"];
+    x0 [label="t_0, x_0"];
+    x1 [label="t_1, x_0"];
+    y0 [label="y_0"];
+    y1 [label="y_1"];
     y0:se -> y1:ne [color=red];
     {rank=same x0 x1}
     {rank=same y0 y1}
 }
 ```
 
-すなわち、アイソトピーとは写像が時刻に関して変化するものだと言えるが、
-定義域の点 $x$ を固定すると、時刻の変化に伴って点 $y$ が移動するものである.
-とすると、これは曲線のことであり、それは正にベクトルのことである.
+</center>
 
-基準点として $F(t_0, x) = y_0$ を取る.
+形式的には次のように書ける.
+今 $x=x_0$ を固定し、$t$ を動かすとき、これは軌道 (曲線)
+$$y(t) = F(t, x_0)$$
+を描く.
 
-これを $t$ の関数と見做し、すなわち
-$$y(t) = F(t, x) = F_t(x)$$
-と思ってこれを $t$ で微分した導関数の $t=t_0$ での値が、いま述べたベクトルである.
-そのベクトルを $X_{t_0}$ と書く.
-立式すると次の通り:
-$$X_{t_0}(x) = \frac{\partial F_t}{\partial t} (t_0, x)$$
+これは $y_0$ を通る曲線であるので、 $y_0$ の上のベクトル
+$$\frac{d}{dt} y(t) = \frac{d}{dt} F(t, x_0)$$
+と見なせる.
 
-ただしこれはベクトル場としては誤っている.
-ベクトル場は $x \in M$ を引数にし、$x$ から生えるベクトルを返す関数である.
-今の場合で言うと引数は $x$ ではなくて $y$ である必要がある.
-なぜなら返すベクトル (曲線) が通るのは $y$ だから.
-そこで $F_{t_0}(x) = y$ の逆関数を合成することで修正する:
-$$X_{t_0}(y) = \frac{\partial F_t}{\partial t} (t_0, F_{t_0}^{-1}(y))$$
-注意深くη変換すると次を得る.
+> $t \mapsto (x \in M)$ な関数 $g$ に対して
+> $\frac{d}{dt}g(t)$
+> は $M$ の上のベクトルを指す.
+> この $\frac{d}{dt}$ は実関数の (偏) 微分のことではない.
+> [4章](tsuboi-4.html) の内容であるが、
+> これは
+> $\frac{d}{dt} (\phi \circ g)(t)$
+> の値 (これは微分値) によって同一視して出来る多様体の上のベクトルのことである.
+> なので $g$ が $g(t, x)$ といった多変数関数であっても
+> $\frac{\partial}{\partial t}g$
+> ではなく
+> $\frac{d}{dt}g$
+> と書く.
 
-$$X_{t_0} = \frac{\partial F_t}{\partial t} (t_0) \circ F_{t_0}^{-1}$$
-$t_0$ を一般にパラメータ $t$ と書きなおして
-$$X_{t} = \frac{\partial F_s}{\partial s} (t) \circ F_{t}^{-1}$$
+ベクトル場としては、$M$ の上の点 $y$ を与えた時に $y$ を通るベクトルを返す関数である必要がある.
+そこで
+$x_0 = F_{t_0}^{-1}(y_0)$
+を前に挟む必要がある.
+$$X_{t_0}(y) = \frac{dF}{dt} (t_0, F_{t_0}^{-1}(y))$$
+すなわち、
+$$X_{t_0} = \frac{dF}{dt} (t_0) \circ F_{t_0}^{-1}.$$
+
+紛らわしいが次のように書くこともある:
+$$X_{t} = \frac{dF_t}{dt} \circ F_{t}^{-1}.$$
 
 #### 展開
 
-これをより分解した形に展開することを考える.
-
-$t$ を $(t_0 - \epsilon, t_0 + \epsilon)$ の範囲で動かした時に
-$F(t, x)$
-が描く曲線は
-$$\gamma(t) = F(t, x) = F_t(x)$$
-で、これは $y_0 = F(t_0, x)$ を通る.
-
-この $\gamma$ は暗にパラメータ $x$ を取ってるがベクトル場を作ることを見越して、
-パラメータ $y$ を取るようにしておくと先ほどと同様に
-$$\gamma_y(t) = \gamma(t, y) = F(t, F_{t_0}^{-1}(y)) = F_t \circ F_{t_0}^{-1}$$
-とする.
+次を使う.
 
 <div class="thm">
 **復習**
 
-多様体 $M$ の上で、
-値が局所座標 $(U, \varphi=(x_1, x_2, \ldots, x_m))$ に収まってるような曲線 $\gamma$
-($\gamma(t_0) = x_0$ とする) があるとする.
-これをベクトル $u \in T_{x_0}M$ とするとき、基底表示すると次のようになる.
+$m$ 次元多様体 $M$ の上の曲線 $\gamma : [0,1] \to M$ を局所座標を用いて成分表示をする.
+すなわち、
+$$f = \phi \circ \gamma$$
+$$f_i = \phi_i \circ \gamma ~~(i=1,2,\ldots,m)$$
+ここで $f_i$ は $\mathbb{R}^m \to \mathbb{R}$ なる実関数に過ぎないことに註意.
+これを用いて、$\gamma$ が表現するベクトルは
 
-- $f = \varphi \circ \gamma : [0,1] \to \mathbb{R}^m$ とおく
-    - 値の第$i$成分へのみの写像を $f_i$ で書く
-
-$$u = \sum_i \frac{d f_i}{dt}(t\!=\!t_0) \frac{\partial}{\partial x_i}$$
+$$\left[\gamma\right] = \sum_{i=1}^m \frac{df_i}{dt}(t_0) \frac{\partial}{\partial x_i}$$
 </div>
 
-$\gamma_y(t)$ をベクトル場として書く.
-$f(t, y) = \varphi \circ F_t \circ F_{t_0}^{-1}$
-と置いて
-$$X_{t_0} = \sum_i \frac{d f_i(t;y)}{dt}(t_0) \frac{\partial}{\partial x_i}.$$
+$X_t$ にこれを適用する.
+$$f(t, y) = (\phi \circ F_t \circ F_{t_0}^{-1})(y)$$
+と置くとき、
+$$X_{t_0} = \sum_i \frac{d f_i(t, y)}{dt}(t_0) \frac{\partial}{\partial x_i}.$$
 
-> ただし $f_i(t;y)$ は $y$ を与えた下で $t$ 1引数の関数というニュアンスで書いたけど、要するに
-> $\frac{d f_i(t;y)}{dt} = \frac{\partial f_i(t, y)}{\partial t}$ です.
+ただし、$y \in M$ を引数にするよりも、その局所座標 $y_1, y_2, \ldots, y_m$ を引数にする方が便利かもしれない.
+だって上の $f_i$ は $[0,1] \times M \to \mathbb{R}$ であって陽に書けず、微分の計算をするときに想像力が必要となるから.
 
-というわけで、アイソトピー $F_t$ があって、適当な $t_0$ を与えると、そこからベクトル場 $X_{t_0}$ を導ける.
-
-これは $y \in M$ が与えられた時に $X_{t_0}(y) \in T_yM$ となる形で書いているが、
-$y$ はその局所座標 $y_1, y_2, \ldots, y_m$ で与えられることが普通なので、次の形で書くほうが便利かもしれない.
-
-$f = \varphi \circ F_t \circ F_{t_0}^{-1} \circ \varphi^{-1}$
-について
-$$X_{t_0} = \sum_i \frac{d f_i(t; y_1, y_2, \ldots, y_m)}{dt}(t\!=\!t_0) \frac{\partial}{\partial x_i}.$$
+そのときは
+$$f(t, y_1, \ldots, y_m) = (\phi \circ F_t \circ F_{t_0}^{-1} \circ \psi^{-1})(y_1, \ldots, y_m)$$
+に対して
+$$X_{t_0} = \sum_i \frac{d f_i(t, y_1, \ldots, y_m)}{dt}(t_0) \frac{\partial}{\partial x_i}.$$
+と出来る.
 
 #### 例
 
@@ -129,49 +152,81 @@ $$F_t(x, y) = (e^t x, e^{-t}y)$$
 が導くベクトル場がどんなものか考える.
 
 1. $f = \varphi \circ F_t \circ F_{t_0}^{-1} \circ \varphi^{-1} = (e^{t - t_0} x, e^{t_0 - t}y)$.
-1. $X_{t_0} = \left( e^{t - t_0}(t\!=\!t_0) ~ x, e^{t_0 - t}(t\!=\!t_0) ~ y \right) = (x, y)$.
+1. $X_{t_0} = \left( e^{t - t_0}(t_0) ~ x, e^{t_0 - t}(t_0) ~ y \right) = (x, y)$.
 
 ベクトル場 $X_{t_0}$ を求めた時点でパラメータ $t_0$ を改めて $t$ と置いて $X_t$ などと書くが、
 この例では $X_t = (x, y)$ となって $t$ に依存しない形に偶然なった.
 
-## フロー
+## フローの性質
 
-アイソトピー $F_t$ のパラメータ $t$ を $[0,1]$ に制限していたが $\mathbb{R}$ 全体で考える.
-$F_t$ が群 $\mathbb{R}$ の $M$ への作用になっているとする.
-すなわち、 $F_0$ が恒等写像で (これは定義から既に成立している)、
-$F_s \circ F_t = F_{s + t}$ となっていること.
-特に $F_{-t}$ が $F_{t}$ の逆写像.
-このような $\mathbb{R}$ の作用のことをフローと呼ぶ.
+上の議論から、フロー $F_t$ からベクトル場 $X_t$ を導くこともできるのだが、重要な性質として、
+フローを生成するようなベクトル場 $X_t$ は $t$ に依存しない.
 
-フローはやはり先程と同様にあるベクトル場によって生成される.
+### 証明
 
-<div class="thm">
 フローの性質から
-$$F_t(x_0) = F_{t - t_0}(F_{t_0}(x_0)).$$
-両辺を $t$ で偏微分すると
-$$\frac{\partial F(t, x_0)}{\partial t} = \frac{\partial F(t - t_0, F_{t_0}(x_0))}{\partial t}.$$
-これに $t=t_0$ を代入すると
-$$\frac{\partial F}{\partial t}(t_0, x_0) = \frac{\partial F}{\partial t}(0, F_{t_0}(x_0)).$$
+$$F_t(x_0) = F_{t - t_0}(F_{t_0}(x_0))$$
+$$\iff F(t, x_0) = F(t - t_0, F_{t_0}(x_0)).$$
+両辺を $t$ についての軌道と見做し $t=t_0$ の時のベクトルを取る.
+$$\frac{dF}{dt}(t_0, x_0) = \frac{dF}{dt}(0, F_{t_0}(x_0)).$$
 ここで、$F_{t_0}(x_0) = y_0 \iff x_0 = F_{t_0}^{-1}(y_0)$ と置けば、
-$$\frac{\partial F}{\partial t}(t_0, F_{t_0}^{-1}(y_0)) = \frac{\partial F}{\partial t}(0, y_0)$$
+$$\frac{dF}{dt}(t_0, F_{t_0}^{-1}(y_0)) = \frac{dF}{dt}(0, y_0)$$
 を得る.
 更に更に $F_0$ が恒等写像であることを思い出して、
-$$\frac{\partial F}{\partial t}(t_0, F_{t_0}^{-1}(y_0)) = \frac{\partial F}{\partial t}(0, F_0^{-1}(y_0)).$$
-これに前の章の一番最後の「ところで」を適当することで
+$$\frac{dF}{dt}(t_0, F_{t_0}^{-1}(y_0)) = \frac{dF}{dt}(0, F_0^{-1}(y_0)).$$
+ここで $dF/dt=X_t \circ F$ のあの式を適用すると
 $$X_{t_0}(y_0) = X_0(y_0)$$
 を得る.
 $y_0$ は $t_0$ と独立に決められるので一般に
 $$X_{t_0} = X_0$$
 となる. $t_0$ も自由に決められるので、結局、ベクトル場 $X_t$ は $t$ に依存しない形になっている.
 
-これがフローの重要な性質.
-</div>
+### 例
+
+フロー
+$$F_t : \mathbb{R} \to \mathbb{R}$$
+$$F_t(x) = x + t$$
+が導くベクトル場を考える.
+$F_t$ の成分を与える実関数は
+
+- $f(t, x) = (\psi \circ F_t \circ F_{t_0}^{-1} \circ \phi^{-1})(x) = x + t - t_0$
+
+局所座標としてはそのまんまの座標を与えた.
+$\frac{\partial f}{\partial t}(t, x) = 1$
+から
+$X_{t_0}(x) = 1 \cdot \frac{\partial}{\partial x}$.
+確かに $t$ に依存しない.
+
+### 例
+
+フロー
+$$F_t : \mathbb{R}^2 \to \mathbb{R}^2$$
+$$F_t(x, y) = (x \cdot \exp(t), y \cdot \exp(t))$$
+
+- $f_1(t, x) = x \cdot \exp(t - t_0)$
+    - $\frac{\partial}{\partial t}f_1(t, x) = x \cdot \exp(t - t_0)$
+- $f_2(t, y) = y \cdot \exp(t - t_0)$
+    - $\frac{\partial}{\partial t}f_2(t, y) = y \cdot \exp(t - t_0)$
+
+$t=t_0$ の時の微分値を成分にするので、結局
+$$X_{t_0} = x \frac{\partial}{\partial x} + y \frac{\partial}{\partial y}$$
+となる.
+やはり確かに $X_t$ は $t$ に依存しない.
 
 ## ベクトル場からフローの導出
 
 先程はアイソトピーからベクトル場を導いた.
 従ってフローからベクトル場を導くこともできる.
 ここでは逆に、一定の条件下でベクトル場 $X_t$ からフロー $F_t$ を導けることを言う.
+
+> 言ってしまえばこれは
+> $F(t_0, x) = x$ の初期条件下で
+> $\frac{d}{dt} F(t, x) = X_t(t, F(t, x))$
+> という微分方程式の解 $F$ を求めることに他ならない
+
+### 存在と一意性
+
+一定の条件下で解 $F$ は存在して一意である.
 
 <div class=thm>
 開区間 $(a,b) \subset \mathbb{R}$ と
@@ -186,10 +241,65 @@ $$F: (t - \epsilon, t + \epsilon) \times K \to U$$
 であって
 
 - $F(t_0, x) = x$
-- $\frac{\partial F}{\partial t}(t, x) = X(t, F(x, t))$
+- $\frac{dF}{dt}(t, x) = X(t, F(x, t))$
 
 なるものが存在する.
 ただし $K$ は任意の $U$ の部分コンパクト集合.
 ($\forall K, \exists \epsilon, \exists F$.)
 </div>
 
+証明は略.
+微分方程式を頑張って解くだけ.
+
+### 導出
+
+実際に導く過程は、フローからベクトル場を導いた過程の逆をするだけ.
+
+ベクトル場 $X_t : M \to M$ について、これを
+$$X_t(x) = \sum_i \xi_i(t, x) \frac{\partial}{\partial x_i}$$
+という成分表示する.
+
+求めたいフロー $F_t$ について、適当な局所座標で挟んで
+$$\left(\psi \circ F_t \circ F_{t_0}^{-1} \circ \phi^{-1}\right) = f(t, x) =
+\left[ \begin{array}{c} f_1(t, x) \\ \vdots \\ f_m(t, x) \\ \end{array} \right]$$
+とする.
+$f_i$ は $[0, 1] \times \mathbb{R}^m \to \mathbb{R}$ という実関数である.
+
+このとき、
+$$\frac{\partial}{\partial t} f_i(t, \xi_i(t, x)) = \xi_i(t, x)$$
+ただし初期条件 $f_{t_0}^i(x) = x$ の下で解いて更に $f_i$ から $F_t$ を求める.
+
+割と気合だけど、
+一意性だけは保証されているので、頑張って1つ見つければよい.
+
+### 例
+
+例題として、$\mathbb{R}$ の上のベクトル場
+$$X_t(x) = \frac{\partial}{\partial x}$$
+を考える.
+
+$X_t$ を成分表示すると $\xi(t, x) = 1$ なる定数関数なので
+$\frac{\partial}{\partial t} f(t, \xi(t, x)) = \frac{\partial}{\partial t} f(t, x)$.
+従って $f(xt, ) = t + C$ (積分定数).
+初期条件より $f(t, x) = t - t_0 + x$.
+$F_t(x) = t + x$ とすると (天啓)、
+$F_t(F_{t_0}^{-1}(x)) = F_t(- t_0 + x) = t - t_0 + x = f(t, x)$ と合ってるのでこれが解.
+
+### (出来ない) 例
+
+あくまでも一定の条件下でしかフローは導けない.
+次は出来ない例.
+$$X_t(x) = x^2 \frac{\partial}{\partial x}$$
+
+成分表示をして
+$$\xi(t, x) = x^2.$$
+
+$\frac{\partial}{\partial t} f(t, \xi(t, x)) = \xi(t, x)$
+すなわち
+$\frac{\partial}{\partial t} f(t, x^2) = x^2$
+の解は実は
+$$f(t, x) = \frac{x}{1 - xt} + C$$
+である.
+
+これを用いてフロー $F_t(x)$ を探したいが、
+それよりも $f$ が $t=1/x$ の時に定義されてないのでダメ.

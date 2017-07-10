@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>[1706.05125] Deal or No Deal? End-to-End Learning for Negotiation Dialogues</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/</a>
+</header>
+<header>
+<h1 class="title">[1706.05125] Deal or No Deal? End-to-End Learning for Negotiation Dialogues</h1>
+</header>
+<ul>
+<li>
+original paper: <a href=https://arxiv.org/abs/1706.05125>https://arxiv.org/abs/1706.05125</a>
+</li>
+</ul>
+<div class="is-pulled-right">
+<p><a class='tag is-blue' href=index.html#言語獲得>言語獲得</a> <a class='tag is-blue' href=index.html#ゲーム>ゲーム</a></p>
+</div>
+<h2 id="概要">概要</h2>
+<p>新しいタスクの提案. 及びベースラインとなるようなAIの実装の公開. 自然言語による対話を必要とするゲームをAI同士にプレイさせる. 評価はゲームの利得で行えるので定量的に評価が出来る.</p>
+<h2 id="ソースコードデータセット">ソースコード・データセット</h2>
+<ul>
+<li><a href="https://github.com/facebookresearch/end-to-end-negotiator" class="uri">https://github.com/facebookresearch/end-to-end-negotiator</a></li>
+</ul>
+<h2 id="ゲーム-タスク-の概要">ゲーム (タスク) の概要</h2>
+<p>&quot;multi issue bargaining&quot; [Fershtman 1990] をベースにした <a href="https://www.aaai.org/ocs/index.php/SSS/SSS15/paper/view/10335">Toward Natural Turn-Taking in a Virtual Human Negotiation Agent</a> の更にその一例を採用したとのこと. の一例を使ったとのこと. ルールは次の通り.</p>
+<p>2人ゲーム. いくつかのアイテムのセットが二人の前に提示されるので、2人は交渉をしてアイテムを2人の間で分割する. アイテムには種類毎に一個当りの利得が定まっており、獲得したアイテムの利得の和の最大化を目指す. 利得はプレイヤーごとに異なる値がランダムに定まる. 自分にとっての利得は自分だけが知っており、相手は知らないし、相手にとっての利得を自分は知らない.</p>
+<p>今考えるタスクではアイテムの種類は本、帽子、ボールという3つだけ. これらを合計 5-7 個、適当に提示する.</p>
+<p>交渉は必ずお互いが納得する形に落とさない限り、分割は行われず、決裂した場合、2人の利得はゼロとする.</p>
+<blockquote>
+<p>&quot;I want the books and the hats, you get the rest.&quot; と言った具合.</p>
+</blockquote>
+<h3 id="データセット">データセット</h3>
+<p>人間同士でこのゲームを行わせた. クラウドソーシングしたそう. 上に貼った github のレポジトリの中に含まれる.</p>
+<h2 id="手法">手法</h2>
+<h3 id="データの表現">データの表現</h3>
+<p>まず、入力として、ゲームの初期状態がある. これは提示されたアイテム (3種類) の個数及び (自分にとっての) 利得という計6つの整数の列. これを <span class="math inline">\(g\)</span> とする.</p>
+<p>会話は全てトークンの列とする. 例えば、まず相手が &quot;I want all.&quot; と言って、自分が &quot;Ok, deal&quot; と返し、そこで会話が終わったとすると、学習するトークン列は <strong>read</strong> I want all <strong>write</strong> ok deal <strong>end-of-dialogue</strong> となる. ここで <strong>bold</strong> で書かれたものはスペシャルトークンであることを示す. 会話の終端記号として <strong>end-of-dialogue</strong> がある. この列を <span class="math inline">\(x=x_1 \ldots x_T\)</span> と書く. 会話が終わった時点で合意に達したモノと仮定する.</p>
+<p>ゲームの出力として、2人がそれぞれ獲得したアイテムの個数がある. 計 6 つの整数のリストで表現され <span class="math inline">\(o\)</span> と書く.</p>
+<h3 id="教師アリ学習">教師アリ学習</h3>
+<p>ひとまず、人間のプレイを模倣することを目指す. すなわち、条件 <span class="math inline">\(g\)</span> の下でトークン列 <span class="math inline">\(x\)</span> の学習/予測をする.</p>
+<ul>
+<li>行列 <span class="math inline">\(E\)</span>
+<ul>
+<li>トークンのエンコーダー・デコーダー
+<ul>
+<li>エンコード: <span class="math inline">\(h = E x\)</span></li>
+<li>デコード: <span class="math inline">\(x = E^T h\)</span></li>
+</ul></li>
+</ul></li>
+<li><span class="math inline">\(GRU_g\)</span>
+<ul>
+<li>goal (6つの自然数) をエンコードする用</li>
+<li><span class="math inline">\(h^g = GRU_g(g)\)</span></li>
+</ul></li>
+<li><span class="math inline">\(GRU_w\)</span>
+<ul>
+<li><span class="math inline">\(h^g\)</span> 及びそれまでのトークンの断片 <span class="math inline">\(x_1 \ldots x_t\)</span> を読んで内部表現 <span class="math inline">\(h_t\)</span> を得る
+<ul>
+<li><span class="math inline">\(h_t = GRU_w(h_{t-1}; Ex_t, h^g)\)</span></li>
+</ul></li>
+<li><span class="math inline">\(h_t\)</span> を使って次のトークンの予測をする
+<ul>
+<li><span class="math inline">\(p(x_t|\ldots) \propto \exp(E^T h_t)\)</span></li>
+</ul></li>
+<li>また、列 <span class="math inline">\(h_1 \ldots h_T\)</span> を出力して <span class="math inline">\(GPU_o\)</span> に渡す</li>
+</ul></li>
+<li><span class="math inline">\(GRU_o\)</span>
+<ul>
+<li>これだけ bidirection</li>
+<li><span class="math inline">\((x_1, h_1) \ldots (x_T, h_T)\)</span> を双方向から読む
+<ul>
+<li><a href="https://arxiv.org/abs/1409.0473">[1409.0473] Neural Machine Translation by Jointly Learning to Align and Translate</a> にある &quot;attention mechanism&quot; を持たせる</li>
+</ul></li>
+<li>最終的に一個の <span class="math inline">\(h^s\)</span> なる実ベクトルを出力して、これを使って
+<ul>
+<li><span class="math inline">\(p(o_i|\ldots) \propto \exp(W h^s)\)</span></li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="ゴールベース学習">ゴールベース学習</h3>
+<p>とりあえず人間の模倣だけをさせたので次に利得最大化を学習させる. というわけで強化学習を行う. (こういう教師あり事前学習から強化学習をするのを &quot;two-stage learning strategies&quot; などと言うらしい [Li et al 2016] [Das et al 2017].)</p>
+<p>まだ読みかけ!!</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

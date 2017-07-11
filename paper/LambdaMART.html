@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>From RankNet to LambdaRank to LambdaMART: An Overview - Microsoft Research</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/</a>
+</header>
+<header>
+<h1 class="title">From RankNet to LambdaRank to LambdaMART: An Overview - Microsoft Research</h1>
+</header>
+<ul>
+<li>
+original paper: <a href=https://www.microsoft.com/en-us/research/publication/from-ranknet-to-lambdarank-to-lambdamart-an-overview/#>https://www.microsoft.com/en-us/research/publication/from-ranknet-to-lambdarank-to-lambdamart-an-overview/#</a>
+</li>
+</ul>
+<div class="is-pulled-right">
+<p><a class='tag is-blue' href=index.html#ランク学習>ランク学習</a></p>
+</div>
+<h2 id="概要">概要</h2>
+<p><a href="ranknet.html">RankNet</a> というのがあった. 大小比較に関する確率をスコアの差で表現するというやつだった. それをベースにした LambdaRank があり、さらにそれを決定木にしたのが <strong>LambdaMART</strong> というやつ. &quot;2010 Yahoo! Learning To Rank Challenge&quot; とかいうやつの 1 位.</p>
+<h2 id="ranknet">RankNet</h2>
+<p>アイテム <span class="math inline">\(x_i, x_j\)</span> に対してスコア <span class="math inline">\(s_i, s_j\)</span> を算出する. この算出する過程を訓練可能なものにする. このスコアから確率 <span class="math display">\[P_{ij} = Pr\left[x_i \succ x_j\right] = \sigma(-k (s_i - s_j))\]</span> を仮定して学習を行う. ここで <span class="math inline">\(\sigma\)</span> はシグモイド関数. <a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> でもオリジナル論文 <a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a> でも、シグモイド関数として <span class="math inline">\(\sigma\)</span> を使ってないばかりか、 パラメータ (実数) として <span class="math inline">\(\sigma\)</span> を使っている、のだが個人的に紛らわしいので、シグモイド関数は <span class="math inline">\(\sigma\)</span> とするし、パラメータは <span class="math inline">\(k\)</span> とする. オリジナル論文ではパラメータなんてものはそもそも無かったと思うけど.</p>
+<p>教師信号として、 <span class="math inline">\(\bar{P}_{ij} \in \{ 0, 1/2, 1\}\)</span> を使う. <span class="math inline">\(x_i \succ x_j\)</span> が与えられてたら <span class="math inline">\(\bar{P}_{ij} = 1\)</span>. <span class="math inline">\(\bar{P}_{ij} = 1/2 \iff i=j\)</span>. こんな感じで.</p>
+<p>損失関数は交差エントロピー. <span class="math display">\[C = - \bar{P_{ij}} \log P_{ij} - (1 - \bar{P_{ij}}) \log (1 - P_{ij})\]</span></p>
+<p><span class="math inline">\(C\)</span> からスコアまでの勾配を求めると、 <span class="math display">\[\frac{\partial C}{\partial s_i}
+= k \left( 1 - \bar{P}_{ij} - \sigma( - k (s_i - s_j) ) \right)
+= - \frac{\partial C}{\partial s_j}\]</span></p>
+<p><span class="math inline">\(x_i\)</span> からスコアを算出する機械に関する勾配は、そのパラメータ <span class="math inline">\(w\)</span> に就いて、 <span class="math display">\[\delta w
+= \eta \frac{\partial C}{\partial w}
+= \eta \left[
+\frac{\partial C}{\partial s_i} \frac{\partial s_i}{\partial w}
++ \frac{\partial C}{\partial s_j} \frac{\partial s_j}{\partial w}
+\right]\]</span> これで <span class="math inline">\(w \leftarrow w - \delta w\)</span> とかやって更新できる. ここで <span class="math inline">\(\eta\)</span> は適当な学習係数.</p>
+<h3 id="学習の高速化">学習の高速化</h3>
+<p>我々は <span class="math inline">\(C\)</span> の値そのものではなく、その勾配に興味がある.</p>
+<p>データセットを <span class="math inline">\(I = \{ (i,j) : x_i \succ x_j \}\)</span> というペアの集合だとする. 予め <span class="math inline">\(\delta w\)</span></p>
+<p>データセット <span class="math inline">\(I\)</span> 中の全てのペアについて上の <span class="math inline">\(\delta w\)</span> を求めて <span class="math inline">\(w\)</span> を更新するのは、結局、 予め全てのペアについて <span class="math display">\[\delta w = \eta \sum_{(i,j) \in I}
+\left[
+\lambda_{ij} \frac{\partial s_i}{\partial w} + \lambda_{ji} \frac{\partial s_j}{\partial w}
+\right]\]</span> という和を計算して使うのと同じ.</p>
+<p>ここで、先程の <span class="math inline">\(\frac{\partial C}{\partial s_i}\)</span> を <span class="math inline">\(\lambda_{ij}\)</span> と書いている. さらに、 <span class="math display">\[\lambda_i = \sum_{j, (i,j) \in I} \lambda_{ij} - \sum_{j, (j,i) \in I} \lambda_{ij}\]</span> とすると、 <span class="math display">\[\delta w = \eta \lambda_{i} \frac{\partial s_i}{\partial w}\]</span> となる. この等号は分かりにくい.</p>
+<h2 id="lambdarank">LambdaRank</h2>
+<p>RankNet において</p>
+<p><span class="math display">\[\lambda_{ij}
+= \frac{\partial C}{\partial s_i}
+= k \left( 1 - \bar{P}_{ij} - \sigma( - k (s_i - s_j) ) \right)\]</span></p>
+<p>だったわけだが、これを簡略化して <span class="math display">\[\lambda_{ij} = - k ~ \sigma( - k (s_i - s_j) ) |\Delta Z|\]</span> としてしまったほうが経験的に良いらしい. ここで <span class="math inline">\(\Delta Z\)</span> は NDCG (そういう名前のランキングの指標があるらしい <a href="#fn3" class="footnoteRef" id="fnref3"><sup>3</sup></a>) の変化率. 他にも ERR なりなんなりでも良いらしい <a href="#fn4" class="footnoteRef" id="fnref4"><sup>4</sup></a>. 要するに最終的な評価指標の勾配 (の絶対値) を直接ここに入れてしまう.</p>
+<p>これは <span class="math inline">\((i, j) \in I\)</span> に対して <span class="math display">\[C_{ij} = \log (1 + \exp( - (s_i - s_j) ) ) |\Delta Z|\]</span> を損失関数にしたときのそれに相当するそう.</p>
+<p>これが LambdaRank.</p>
+<h2 id="lambdamart">LambdaMART</h2>
+<p>LambdaMART は LambdaRank に MART という boosted tree model を組み合わせたものらしい.</p>
+<h3 id="mart">MART</h3>
+<p>読む</p>
+<h3 id="lambdamart-1">LambdaMART</h3>
+<p>読む</p>
+<h2 id="参考文献">参考文献</h2>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="https://www.microsoft.com/en-us/research/publication/from-ranknet-to-lambdarank-to-lambdamart-an-overview/#">From RankNet to LambdaRank to LambdaMART: An Overview - Microsoft Research</a><a href="#fnref1">↩</a></p></li>
+<li id="fn2"><p><a href="http://icml.cc/2015/wp-content/uploads/2015/06/icml_ranking.pdf">RankNet のオリジナル論文</a><a href="#fnref2">↩</a></p></li>
+<li id="fn3"><p><a href="http://szdr.hatenablog.com/entry/2017/02/24/235539">予測ランキング評価指標：NDCGの2つの定義と特徴の比較 - 人間だったら考えて</a><a href="#fnref3">↩</a></p></li>
+<li id="fn4"><p><a href="http://blog.csdn.net/huagong_adu/article/details/40710305">Learning To Rank之LambdaMART的前世今生 - Stay hungry, Stay foolish - CSDN博客</a><a href="#fnref4">↩</a></p></li>
+</ol>
+</section>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

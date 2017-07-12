@@ -47,7 +47,7 @@ original paper: <a href=https://arxiv.org/abs/1706.05125>https://arxiv.org/abs/1
 <h2 id="手法">手法</h2>
 <h3 id="データの表現">データの表現</h3>
 <p>まず、入力として、ゲームの初期状態がある. これは提示されたアイテム (3種類) の個数及び (自分にとっての) 利得という計6つの整数の列. これを <span class="math inline">\(g\)</span> とする.</p>
-<p>会話は全てトークンの列とする. 例えば、まず相手が &quot;I want all.&quot; と言って、自分が &quot;Ok, deal&quot; と返し、そこで会話が終わったとすると、学習するトークン列は <strong>read</strong> I want all <strong>write</strong> ok deal <strong>end-of-dialogue</strong> となる. ここで <strong>bold</strong> で書かれたものはスペシャルトークンであることを示す. 会話の終端記号として <strong>end-of-dialogue</strong> がある. この列を <span class="math inline">\(x=x_1 \ldots x_T\)</span> と書く. 会話が終わった時点で合意に達したモノと仮定する.</p>
+<p>会話は全てトークンの列とする. 例えば、まず相手が &quot;I want all.&quot; と言って、自分が &quot;Ok, deal&quot; と返し、そこで会話が終わったとすると、学習するトークン列は I want all <strong>turn-end</strong> ok deal <strong>end-of-dialogue</strong> となる. ここで <strong>bold</strong> で書かれたものはスペシャルトークンであることを示す. 会話の終端記号として <strong>end-of-dialogue</strong> がある. この列を <span class="math inline">\(x=x_1 \ldots x_T\)</span> と書く. 会話が終わった時点で合意に達したモノと仮定する.</p>
 <p>ゲームの出力として、2人がそれぞれ獲得したアイテムの個数がある. 計 6 つの整数のリストで表現され <span class="math inline">\(o\)</span> と書く.</p>
 <h3 id="教師アリ学習">教師アリ学習</h3>
 <p>ひとまず、人間のプレイを模倣することを目指す. すなわち、条件 <span class="math inline">\(g\)</span> の下でトークン列 <span class="math inline">\(x\)</span> の学習/予測をする.</p>
@@ -92,7 +92,24 @@ original paper: <a href=https://arxiv.org/abs/1706.05125>https://arxiv.org/abs/1
 </ul>
 <h3 id="ゴールベース学習">ゴールベース学習</h3>
 <p>とりあえず人間の模倣だけをさせたので次に利得最大化を学習させる. というわけで強化学習を行う. (こういう教師あり事前学習から強化学習をするのを &quot;two-stage learning strategies&quot; などと言うらしい [Li et al 2016] [Das et al 2017].)</p>
-<p>まだ読みかけ!!</p>
+<p>プレイヤー A と B を用意する. A はこれから学習させる AI. B は人間でもなんでも良いが、彼らの実験ではここまでで学習して得た (初めは人間を模倣するだけの) AI を使う (これは学習させない).</p>
+<p>ゲームの入力 <span class="math inline">\(g\)</span> を入れて、ターン制でお互いに発話させる. <strong>turn-end</strong> を出力する毎に発話を交代させる. お互いに <strong>end-of-dialogue</strong> を出力した時点で交渉を終え、お互いにゲームの出力 <span class="math inline">\(o\)</span> を返す. <span class="math inline">\(o\)</span> は交渉の結果お互いが獲得したアイテムの個数であったわけだが、お互いの <span class="math inline">\(o\)</span> が一致しなかった場合、報酬をゼロとする. (交渉で合意に至らなかったと解釈する.)</p>
+<blockquote>
+<p>会話だけ適当にやって、アイテムを全て自分のものだと主張する、という学習を、これで避けるのだろう. 相手 AI である B は不取敢はゲームのルールに忠実に従っているはずだから.</p>
+</blockquote>
+<p>獲得した利得 (スコア) <span class="math inline">\(r\)</span> をそのまま報酬に与える. ただし報酬がいつも非負なのはなんか良くないらしい. 過去のプレイから利得の平均 <span class="math inline">\(\mu\)</span> を見積もって、<span class="math inline">\(r-\mu\)</span> を報酬に与える. ただし列の位置によって減衰させて、 出力した列 <span class="math inline">\(x_t\)</span> について <span class="math display">\[R(x_t) = \gamma^{T-t} (r - \mu)\]</span> こんな感じか.</p>
+<p>発話する際の次トークン予測に関する最適化の目的関数は <span class="math inline">\(p_\theta(x_t | x_0\ldots x_{t-1}, g; \theta)\)</span> に就いて <span class="math display">\[L_\theta = \mathbb{E}_{x_t} R(x_t)\]</span> これの最大化. この勾配は <span class="math display">\[\nabla_\theta L_\theta = \sum_{x_t} \mathbb{E}_{x_t} \left[ R(x_t) \nabla_\theta \log p_\theta(x_t|\ldots) \right]\]</span> になるそうです <a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a>. この参考文献もいつか読もう.</p>
+<h2 id="結果">結果</h2>
+<p>とりあえず人間を模倣するだけのAIには大体勝てる. しかし、そもそも交渉が合意に至る割合が87-94% 程度しかない.</p>
+<p>次に対人間とのプレイの結果. 強化学習だけではそんな強いのが作れて無くて、Rollouts とかいうよくわからん謎技法を加えてようやく、対等くらい. ただし合意に至る割合が低くなっていて、57% 程度. 「自分に不利な場合、合意に至らない」という戦略があるのかな? いや、でも、報酬は単に自分の利得であって相手の利得は見てないから、そんなポジティブに捉えていい結果ではない.</p>
+<p>実際の動作例を見るとめっちゃ強く見える.</p>
+<h2 id="参考文献">参考文献</h2>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="http://www-anw.cs.umass.edu/~barto/courses/cs687/williams92simple.pdf">&quot;Ronald J Williams. 1992. Simple Statistical Gradient-following Algorithms for Connectionist Reinforcement Learning,&quot; Machine learning, 8(3-4):229–256. http://www-anw.cs.umass.edu/~barto/courses/cs687/williams92simple.pdf</a><a href="#fnref1">↩</a></p></li>
+</ol>
+</section>
 <!--
 
   HTML として pandoc -B で include する.

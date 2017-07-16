@@ -51,7 +51,7 @@
 "I want all."
 と言って、自分が
 "Ok, deal" と返し、そこで会話が終わったとすると、学習するトークン列は
-**read** I want all **write** ok deal **end-of-dialogue**
+I want all **turn-end** ok deal **end-of-dialogue**
 となる.
 ここで **bold** で書かれたものはスペシャルトークンであることを示す.
 会話の終端記号として **end-of-dialogue** がある.
@@ -92,4 +92,50 @@
 というわけで強化学習を行う.
 (こういう教師あり事前学習から強化学習をするのを "two-stage learning strategies" などと言うらしい [Li et al 2016] [Das et al 2017].)
 
-まだ読みかけ!!
+プレイヤー A と B を用意する.
+A はこれから学習させる AI.
+B は人間でもなんでも良いが、彼らの実験ではここまでで学習して得た (初めは人間を模倣するだけの) AI を使う (これは学習させない).
+
+ゲームの入力 $g$ を入れて、ターン制でお互いに発話させる.
+**turn-end** を出力する毎に発話を交代させる.
+お互いに **end-of-dialogue** を出力した時点で交渉を終え、お互いにゲームの出力 $o$ を返す.
+$o$ は交渉の結果お互いが獲得したアイテムの個数であったわけだが、お互いの $o$ が一致しなかった場合、報酬をゼロとする.
+(交渉で合意に至らなかったと解釈する.)
+
+> 会話だけ適当にやって、アイテムを全て自分のものだと主張する、という学習を、これで避けるのだろう.
+> 相手 AI である B は不取敢はゲームのルールに忠実に従っているはずだから.
+
+獲得した利得 (スコア) $r$ をそのまま報酬に与える.
+ただし報酬がいつも非負なのはなんか良くないらしい.
+過去のプレイから利得の平均 $\mu$ を見積もって、$r-\mu$ を報酬に与える.
+ただし列の位置によって減衰させて、
+出力した列 $x_t$ について
+$$R(x_t) = \gamma^{T-t} (r - \mu)$$
+こんな感じか.
+
+発話する際の次トークン予測に関する最適化の目的関数は
+$p_\theta(x_t | x_0\ldots x_{t-1}, g; \theta)$
+に就いて
+$$L_\theta = \mathbb{E}_{x_t} R(x_t)$$
+これの最大化.
+この勾配は
+$$\nabla_\theta L_\theta = \sum_{x_t} \mathbb{E}_{x_t} \left[ R(x_t) \nabla_\theta \log p_\theta(x_t|\ldots) \right]$$
+になるそうです [^1].
+この参考文献もいつか読もう.
+
+## 結果
+
+とりあえず人間を模倣するだけのAIには大体勝てる.
+しかし、そもそも交渉が合意に至る割合が87-94% 程度しかない.
+
+次に対人間とのプレイの結果.
+強化学習だけではそんな強いのが作れて無くて、Rollouts とかいうよくわからん謎技法を加えてようやく、対等くらい.
+ただし合意に至る割合が低くなっていて、57% 程度.
+「自分に不利な場合、合意に至らない」という戦略があるのかな?
+いや、でも、報酬は単に自分の利得であって相手の利得は見てないから、そんなポジティブに捉えていい結果ではない.
+
+実際の動作例を見るとめっちゃ強く見える.
+
+## 参考文献
+
+[^1]: ["Ronald J Williams. 1992. Simple Statistical Gradient-following Algorithms for Connectionist Reinforcement Learning," Machine learning, 8(3-4):229–256. http://www-anw.cs.umass.edu/~barto/courses/cs687/williams92simple.pdf](http://www-anw.cs.umass.edu/~barto/courses/cs687/williams92simple.pdf)

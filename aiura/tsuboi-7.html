@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>坪井 多様体 §7 - 多様体の計量</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<h1 class="title">坪井 多様体 §7 - 多様体の計量</h1>
+</header>
+<p class="date" style="text-align: right">
+2017-07-17 (Mon.)
+</p>
+<div class="is-pulled-right">
+<p><a class='tag is-red' href=index.html#数学>数学</a> <a class='tag is-red' href=index.html#幾何学>幾何学</a></p>
+</div>
+<h2 id="ユークリッド空間の長さ">ユークリッド空間の長さ</h2>
+<p>まずはユークリッド空間の中の多様体だけを考える.</p>
+<h3 id="曲線の長さの定義">曲線の長さの定義</h3>
+<p>曲線 <span class="math display">\[c : [0, 1] \to \mathbb{R}^m\]</span> の長さを <span class="math display">\[L(c) = \int_0^1 \left\| \frac{dc}{dt} \right\| dt\]</span> で与える.</p>
+<p>次は長さではないけど長さの上限を与える. <span class="math display">\[A(c) = \int_0^1 \left\| \frac{dc}{dt} \right\|^2 dt\]</span></p>
+<p>一般に <span class="math inline">\(\int f(t)^2 dt \geq \left[ \int f(t) dt \right]^2\)</span> だから <span class="math display">\[A(c) \geq L(c)^2\]</span> という上界を与える. それにノルムは自乗の方が計算がしやすいので.</p>
+<h3 id="定理">定理</h3>
+<div class="thm">
+ユークリッド空間の2点 <span class="math inline">\(x_0, x_1\)</span> を通る曲線で <span class="math inline">\(c(0)=x_0\)</span>, <span class="math inline">\(c(1)=x_1\)</span> となるようなもので、 <span class="math inline">\(L(c)\)</span> に最小を与える曲線は2点をつなぐ直線 <span class="math inline">\(c(t) = x_0 + t (x_1 - x_0)\)</span> である.
+</div>
+<div class="thm">
+同様に2点をつなぐ直線で <span class="math inline">\(A(c)\)</span> に最小を与える直線は、 やはり <span class="math inline">\(c(t) = x_0 + t (x_1 - x_0)\)</span> である.
+</div>
+<h3 id="距離の定義">距離の定義</h3>
+<p>多様体 <span class="math inline">\(M\)</span> の2点 <span class="math inline">\(x_0, x_1\)</span> の距離を、これらをつなぐ曲線の長さの下限で定める. <span class="math display">\[d(x_0, x_1) = \inf \{ L(c) : c(0)=x_0, c(1)=x_1 \}\]</span> 最小値じゃなくて下限になってるのは距離そのものを与える曲線が存在しなくても良いから.</p>
+<h2 id="リーマン計量">リーマン計量</h2>
+<h3 id="多様体のパラメータ表示">多様体のパラメータ表示</h3>
+<p><span class="math inline">\(m\)</span> 次元多様体 <span class="math inline">\(M \subseteq \mathbb{R}^m\)</span> にパラメータ表示 <span class="math display">\[\Phi : W \to \mathbb{R}^m\]</span> <span class="math display">\[W \subseteq \mathbb{R}^p\]</span> <span class="math display">\[\text{rank} \Phi = p\]</span> を与える. このときに曲線 <span class="math inline">\(c : [0, 1] \to M\)</span> の <span class="math display">\[\left\| \frac{dc}{dt} \right\|\]</span> を次のように計算する.</p>
+<p><span class="math display">\[c = \Phi \circ \Phi^{-1} \circ c\]</span> <span class="math display">\[\frac{dc}{dt}(t) = (D\Phi)(x) \frac{d (\Phi^{-1} \circ c)}{dt}(t)\]</span> ただしここで <span class="math inline">\(x = (\Phi^{-1} \circ c)(t)\)</span>.</p>
+<blockquote>
+<p>このようにわざわざ <span class="math inline">\(W\)</span> を経由することの意義は、 後でいつか <span class="math inline">\(M\)</span> をユークリッド空間とは限らない空間の多様体にしたいから. <span class="math inline">\(M\)</span> がユークリッド空間でなくても、 <span class="math inline">\((D\Phi)(x)\)</span> は接写像の行列だし、 <span class="math inline">\(\frac{d (\Phi^{-1} \circ c)}{dt}(t)\)</span> は <span class="math inline">\([0,1]\)</span> からユークリッド空間 <span class="math inline">\(\mathbb{R}^p\)</span> への写像の微分なので問題なく計算できる.</p>
+</blockquote>
+<p><span class="math display">\[\left\| \frac{dc}{dt}(t) \right\|^2 =
+\left(\frac{d (\Phi^{-1} \circ c)}{dt}(t)\right)^T
+(D\Phi)(x)^T
+(D\Phi)(x) \frac{d (\Phi^{-1} \circ c)}{dt}(t)\]</span></p>
+<p>こんな風に書ける. ここで</p>
+<ul>
+<li><span class="math inline">\((D\Phi)(x)^T (D\Phi)(x)\)</span> は <span class="math inline">\(p\times p\)</span> 行列でしかも転置を掛けてるから正値対称行列
+<ul>
+<li><span class="math inline">\(\Rightarrow\)</span> <span class="math inline">\(A = A(x)\)</span> と置く</li>
+</ul></li>
+<li><span class="math inline">\(\frac{d (\Phi^{-1} \circ c)}{dt}(t)\)</span> は長さ <span class="math inline">\(p\)</span> の列ベクトル
+<ul>
+<li><span class="math inline">\(\Rightarrow\)</span> <span class="math inline">\(v = v(t)\)</span> と置く</li>
+</ul></li>
+</ul>
+<p><span class="math display">\[\left\| \frac{dc}{dt}(t) \right\|^2 = v^T A v\]</span> と書き直せる.</p>
+<p>コレは正に内積 (や双一次形式) と呼ばれる <span class="math display">\[(u,v) \to u^TAv\]</span> という形をしている.</p>
+<p>行列 <span class="math inline">\(A=(A_{ij})\)</span> と列ベクトル <span class="math inline">\(v=(v_i)\)</span> について <span class="math display">\[v^TAv = \sum_{i,j} A_{ij} v_i v_j\]</span> であるが、正値行列の固有値は全て正で、その最小値を <span class="math inline">\(\lambda\)</span> とすると <span class="math display">\[v^TAv = \sum_{i,j} A_{ij} v_i v_j \geq \lambda v_i^2 = \lambda v^T v\]</span> となる. つまり <span class="math inline">\(v(t)\)</span> を <span class="math inline">\(W\)</span> の上のベクトルだと思って、そのノルム自乗が元のノルム自乗 <span class="math inline">\((v^TAv)\)</span> の下界を与えている.</p>
+<h3 id="リーマン計量の定義">リーマン計量の定義</h3>
+<div class="thm">
+<p>多様体 <span class="math inline">\(M\)</span> について、 正値対称双一次形式 <span class="math display">\[g(x) : T_x \times T_x \to \mathbb{R}\]</span> これを <strong>リーマン計量</strong> と呼ぶ.</p>
+<p>ついでにノルムの自乗に相当する <span class="math display">\[q(x) : T_xM \to \mathbb{R}\]</span> <span class="math display">\[q(x)(v) = g(x)(v, v)\]</span> も定義しておく.</p>
+</div>
+<p>リーマン計量 <span class="math inline">\(g\)</span> は先ほどの行列 <span class="math inline">\(A=A(x)\)</span> に相当していて、 <span class="math inline">\(T_x\)</span> は行列のインデックスに相当している. つまり <span class="math display">\[A(x)_{ij} = g(x) \left( \frac{\partial}{\partial x_i}, \frac{\partial}{\partial x_j} \right)\]</span> ということ.</p>
+<p>便利なので <span class="math display">\[g_{ij}(x) = g(x) \left( \frac{\partial}{\partial x_i}, \frac{\partial}{\partial x_j} \right)\]</span> で <span class="math display">\[g_{ij} : U \to \mathbb{R}\]</span> を定める.</p>
+<h2 id="リーマン多様体">リーマン多様体</h2>
+<p>リーマン計量 <span class="math inline">\(g\)</span> を導入した多様体のことを <strong>リーマン多様体</strong> という.</p>
+<h3 id="リーマン多様体の上の曲線の長さ">リーマン多様体の上の曲線の長さ</h3>
+<p>要するにノルムの大きさを <span class="math inline">\(\|\frac{dc}{dt}\|^2 = q\left(\frac{dc}{dt}\right) = g\left(\frac{dc}{dt}, \frac{dc}{dt}\right)\)</span> とすればよい.</p>
+<p><span class="math display">\[L(c) = \int_0^1 \sqrt{ q\left(\frac{dc}{dt}\right) } dt = \int_0^1 \sqrt{ g\left(\frac{dc}{dt}, \frac{dc}{dt}\right) } dt\]</span></p>
+<p>実際には <span class="math inline">\(g\)</span> は <span class="math inline">\(U_i\)</span> ごとに定められるので、曲線を適当に分割して各 <span class="math inline">\(g\)</span> で積分した値を足して計算する.</p>
+<h3 id="距離の定義-1">距離の定義</h3>
+<p>やはり同様に2点間の距離を <span class="math display">\[dist(x, y) = \inf \{ L(c) \}\]</span> で定める.</p>
+<p>これは対称律、三角不等式とかの距離の公理を満たしている.</p>
+<p>前回の <span class="math inline">\(v^TAv = \sum_{i,j} A_{ij} v_i v_j \geq \lambda v_i^2 = \lambda v^T v\)</span> から <span class="math inline">\(dist(x, y) = \inf \{L(c)\} \geq \lambda \| \varphi(x) - \varphi(y) \|\)</span> と、ユークリッド空間上での距離を下界にできる. これを使うと <span class="math inline">\(dist(x,y)=0 \implies \| \varphi(x) - \varphi(y) \| =0 \implies x=y\)</span> とできて対称律を確かめられる.</p>
+<h2 id="測地線">測地線</h2>
+<p>2点 <span class="math inline">\(x_0, x_1\)</span> を繋ぐもので、 長さ <span class="math inline">\(L(c)\)</span> の最小 (極小) を与えるような曲線を考える.</p>
+<h3 id="速度パラメータ">速度パラメータ</h3>
+<p>連続で <span class="math inline">\(d\tau/dt&gt;0\)</span> であるような関数 <span class="math inline">\(\tau : [0, 1] \to [0, 1]\)</span> を用いて、 曲線 <span class="math inline">\(c\)</span> を <span class="math inline">\(c \circ \tau\)</span> とすることで同じ像を持つが速度が異なるような曲線を作ることができる. この長さを考えると <span class="math display">\[\begin{align*}
+L(c \circ \tau)
+&amp; = \int_0^1 \sqrt{ q\left(\frac{d(c \circ \tau)}{ds}\right) } ds \\
+&amp; = \int_0^1 \sqrt{ q\left(\frac{dc}{dt} \frac{d\tau}{ds} \right) } ds \\
+&amp; = \int_0^1 \sqrt{ q\left(\frac{dc}{dt} \right) } \frac{d\tau}{ds} ds \\
+&amp; = \int_0^1 \sqrt{ q\left(\frac{dc}{dt} \right) } dt \\
+&amp; = L(c)
+\end{align*}\]</span></p>
+<p><span class="math inline">\(L\)</span> は曲線の像のみによって決まり、その速度には依らないことを示している. ただし <span class="math inline">\(A\)</span> の方はそんなことはない.</p>
+<p>特に <span class="math inline">\(\tau\)</span> を上手く作ることで等速の曲線を作ることが出来る. 曲線 <span class="math inline">\(c\)</span> に対して <span class="math display">\[\tau(t) = \frac{1}{L(c)} \int_0^t \sqrt{q\left(\frac{dc}{dt}\right)} dt\]</span> こうすれば <span class="math inline">\(c&#39; = c \circ \tau\)</span> の速度 <span class="math inline">\(\| \frac{dc&#39;}{dt} \}\)</span> は等速で <span class="math inline">\(t\)</span> に依らない.</p>
+<p><span class="math inline">\(t\)</span> に非依存ということは積分の中の自乗と外の自乗を入れ替えられて <span class="math display">\[\int_0^1 q\left(\frac{dc}{dt}\right)dt = \left[ \int_0^1 \sqrt{ q\left(\frac{dc}{dt}\right) } dt \right]^2\]</span> となるんで <span class="math display">\[L(c&#39;)^2 = A(c&#39;)\]</span> と出来る. しかも <span class="math inline">\(L(c) = L(c&#39;)\)</span>.</p>
+<p>以上から、 曲線 <span class="math inline">\(c\)</span> が与えられた時、その像を変えずに長さの自乗と一致する <span class="math inline">\(A(c&#39;)\)</span> を与える <span class="math inline">\(c&#39;\)</span> を構成することが出来る. これを使うと次が言える.</p>
+<div class="thm">
+<p><span class="math inline">\(A\)</span> に最小を与える曲線 <span class="math inline">\(c\)</span> は同時に <span class="math inline">\(L\)</span> にも最小を与える.</p>
+</div>
+<p>初めにも述べたように <span class="math inline">\(L\)</span> を直接計算するよりも <span class="math inline">\(A\)</span> を計算するほうが式が (<span class="math inline">\(\sqrt{}\)</span> が付かない分) 簡単なので、 こちらを使う.</p>
+<h3 id="測地線-1">測地線</h3>
+<p>多様体 <span class="math inline">\(M \subset \mathbb{R}^m\)</span> に就いて、 その上にある 2 点 <span class="math inline">\(x_0, x_1\)</span> を繋ぐもので、 <span class="math inline">\(A\)</span> の極小を与えるような曲線を考える.</p>
+<p>変分法を使う.</p>
+<p><span class="math inline">\(c(0)=x_0, c(1)=x_1\)</span> なる曲線に対して、 任意の曲線 <span class="math inline">\(\epsilon\)</span> 、ただし <span class="math inline">\(\epsilon(0) = \epsilon(1) = 0\)</span> なるもので僅かに変化させて <span class="math display">\[c + h\epsilon\]</span> という曲線を考える. 多様体はユークリッド空間の中にあるので曲線同士が足せる.</p>
+<p>で、 <span class="math display">\[\frac{\delta}{\delta h} \left. A(c + h\epsilon) \right|_{h=0} = 0\]</span> を満たすような <span class="math inline">\(c\)</span> が正に <span class="math inline">\(A\)</span> に極小を与える曲線である. このような曲線を <strong>測地線</strong> という.</p>
+<blockquote>
+<p>測地線であることは <span class="math inline">\(L, A\)</span> が最小であるための必要条件であり、 単に極小であることしか言っていないことに註意.</p>
+</blockquote>
+<p>先の方程式を具体的に解いていく.</p>
+<p><span class="math inline">\(g(x)\)</span> の行列表示 <span class="math inline">\((g_{ij})\)</span> を使って <span class="math display">\[A(c + h\epsilon) = \int_0^1 \sum_{i,j} g_{ij}\left(c + h\epsilon\right) \frac{d(c_i + h\epsilon_i)}{dt} \frac{d(c_j + h\epsilon_j)}{dt}\]</span></p>
+<p>右辺を実際に <span class="math inline">\(h\)</span> で微分する. 各部品の微分を予め計算しておくと</p>
+<p><span class="math display">\[\left. \frac{\delta}{\delta h} \right|_{h=0} g_{ij}\left(c + h\epsilon\right) = \sum_k \frac{\partial g_{ij}(c(t))}{\partial x_k}\epsilon_k\]</span> <span class="math display">\[\left. \frac{\delta}{\delta h} \right|_{h=0} \frac{d(c_i + h\epsilon_i)}{dt} = \frac{d \epsilon_i}{dt}\]</span> (微分の線形性に註意)</p>
+<p>あとはなんか部分積分とか駆使すると</p>
+<p><span class="math display">\[\begin{align*}
+\frac{\delta}{\delta h} \left. A(c + h\epsilon) \right|_{h=0}
+&amp; = \int_0^1
+\left[
+\sum_{i,j} \sum_k \frac{\partial g_{ij}(c(t))}{\partial x_k} \epsilon_k \frac{dc_i}{dt} \frac{dc_j}{dt}
++ 2 \sum_{i,j} g_{ij}(c) \frac{dc_i}{dt} \frac{d\epsilon_j}{dt}
+\right] dt \\
+&amp; = \int_0^1
+\left[
+\sum_{i,j} \sum_k \frac{\partial g_{ij}(c)}{\partial x_k} \epsilon_k \frac{dc_i}{dt} \frac{dc_j}{dt}
+- 2 \sum_{i,j} \frac{d}{dt} \left( g_{ij}(c(t)) \frac{d c_i}{dt} \right) \epsilon_j
+\right] dt
++ 2 \sum_{i,j} \left[ g_{ij}(c) \frac{dc_i}{dt} \epsilon_j \right]_0^1 \\
+&amp; = \int_0^1
+\left[
+\sum_{i,j} \sum_k \frac{\partial g_{ij}(c)}{\partial x_k} \epsilon_k \frac{dc_i}{dt} \frac{dc_j}{dt}
+- 2 \sum_{i,j} \frac{d}{dt} \left( g_{ij}(c(t)) \frac{d c_i}{dt} \right) \epsilon_j
+\right] dt
+\end{align*}\]</span></p>
+<p><span class="math inline">\(\epsilon\)</span> の添字を合わせれば <span class="math display">\[\frac{\delta}{\delta h} \left. A(c + h\epsilon) \right|_{h=0}
+= \int_0^1 \sum_k \epsilon_k
+\left[
+\sum_{i,j} \frac{\partial g_{ij}(c)}{\partial x_k} \frac{dc_i}{dt} \frac{dc_j}{dt}
+- 2 \sum_{i} \frac{d}{dt} \left( g_{ik}(c(t)) \frac{d c_i}{dt} \right)
+\right]\]</span></p>
+<p>これの <span class="math inline">\(=0\)</span> を考えるわけだが、<span class="math inline">\(\epsilon_k\)</span> は任意の曲線なので、これが成立するためにはその <span class="math inline">\([]\)</span> の中がゼロである必要がある. つまり、 <span class="math display">\[\begin{align*}
+0
+&amp; = \sum_{i,j} \frac{\partial g_{ij}(c)}{\partial x_k} \frac{dc_i}{dt} \frac{dc_j}{dt}
+- 2 \sum_{i} \frac{d}{dt} \left( g_{ik}(c(t)) \frac{d c_i}{dt} \right) \\
+&amp; = \sum_{i,j} \frac{\partial g_{ij}(c)}{\partial x_k} \frac{dc_i}{dt} \frac{dc_j}{dt}
+- 2 \sum_{i,j} \frac{\partial g_{ik}}{\partial x_j} \frac{dc_j}{dt} \frac{dc_i}{dt}
+- 2 \sum_{i} g_{ik}(c(t)) \frac{d^2 c_i}{dt^2} \\
+\end{align*}\]</span></p>
+<p><span class="math display">\[
+\iff
+\sum_i g_{ik}(c(t)) \frac{d^2 c_i}{dt^2}
+=
+\sum_{i,j}
+    \left( \frac{1}{2} \frac{\partial g_{ik}}{\partial x_j} - \frac{\partial g_{ik}}{\partial x_j} \right)
+    \frac{dc_j}{dt}
+    \frac{dc_i}{dt}
+\]</span></p>
+<p>とこうなる.</p>
+<p>行列 <span class="math inline">\((g_{ij})\)</span> の逆行列を <span class="math inline">\((g^{ij})\)</span> と書くことにすると</p>
+<p><span class="math display">\[
+\frac{d^2c_\ell}{dt^2}
+=
+\sum_k g^{k\ell}
+\sum_i g_{ik} \frac{d^2 c_i}{dt^2}
+=
+\sum_k g^{k\ell}
+\sum_{i,j}
+    \left( \frac{1}{2} \frac{\partial g_{ik}}{\partial x_j} - \frac{\partial g_{ik}}{\partial x_j} \right)
+    \frac{dc_j}{dt}
+    \frac{dc_i}{dt}
+\]</span></p>
+<p>これを満たす曲線が測地線.</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

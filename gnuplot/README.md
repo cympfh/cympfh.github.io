@@ -18,6 +18,7 @@
 # 二次元
 
 - [散布図](2d.scatter.html)
+- [ヒストグラム](2d.histogram.html)
 - [箱ひげ図, box plot, box-and-whisker](2d.box.html)
 - [誤差付きプロット, yerrorbars](2d.yerrorbars.html)
 

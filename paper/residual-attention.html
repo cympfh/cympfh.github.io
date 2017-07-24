@@ -84,6 +84,19 @@ original paper: <a href=https://arxiv.org/abs/1704.06904>https://arxiv.org/abs/1
 <h3 id="提案手法">提案手法</h3>
 <p>マスクの最後に要素ごとの sigmoid を掛けて <span class="math display">\[M : \mathbb{R}^{H \times W \times C} \to [0, 1]^{H&#39; \times W&#39; \times C&#39;}\]</span> として、 <span class="math display">\[H_{i,c} = (1 + M_{i,c}) \cdot F_{i,c}\]</span> とする. この <span class="math inline">\(H\)</span> の学習を彼らは &quot;residual attention laerning&quot; と呼んでいる.</p>
 <p>実際には <span class="math inline">\(F, M\)</span> を複数個 residual unit を積んで構成している (Figure 2).</p>
+<h3 id="soft-mask-branch">Soft Mask Branch</h3>
+<p>マスク <span class="math inline">\(M\)</span> を構成する.</p>
+<ul>
+<li>Residual Networks 本体では使われなかった max pooling を使う
+<ul>
+<li>最初の入力だけ</li>
+</ul></li>
+<li>前半は Conv で後半は Deconv</li>
+<li>最終層は sigmoid
+<ul>
+<li>三通り試したが結局 sigmoid が最も良かったそう</li>
+</ul></li>
+</ul>
 <!--
 
   HTML として pandoc -B で include する.

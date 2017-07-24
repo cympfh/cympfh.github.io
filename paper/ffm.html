@@ -32,6 +32,11 @@ original paper: <a href=http://www.csie.ntu.edu.tw/~cjlin/papers/ffm.pdf>http://
 <p><a href="FM.html">Factorization Machines (FMs)</a> の改良.</p>
 <p>FMs では性別だろうが地名だろうがお構いなしに、one hot vector でエンコードしたものを並べたものを入力 <span class="math inline">\(x\)</span> として <span class="math display">\[\phi : \mathbb{R}^N \to \mathbb{R}\]</span> <span class="math display">\[\phi(x) = b + \sum_i w_i x_i + \sum_{i &lt; j} \langle v_i, v_j \rangle x_i x_j\]</span> としたのだった. ここで <span class="math inline">\(w_i\)</span> はスカラー値で、<span class="math inline">\(v_i\)</span> は適当な <span class="math inline">\(k\)</span> 次元のベクトル.</p>
 <p>FFMs はその入力のフィールド (e.g. 性別, 地名) まで考慮しようというもの. その分パラメータは増えるが.</p>
+<h2 id="実装">実装</h2>
+<p>作者等による <a href="https://www.csie.ntu.edu.tw/~cjlin/libffm/">LIBFFM</a> がある.</p>
+<p>この <code>Download</code> のとこを見ると</p>
+<pre><code>Warning: FFM is prone to overfitting. See README in the package before using. </code></pre>
+<p>という警告がある. なるほど.</p>
 <h2 id="ffms">FFMs</h2>
 <p>入力 <span class="math inline">\(x\)</span> の成分に関してフィールドが <span class="math inline">\(F\)</span> 個 (<span class="math inline">\(f_1, f_2, \ldots, f_F\)</span>) あるとする. FMs の肝は相互作用 <span class="math inline">\(\langle v_i, v_j \rangle\)</span> であるが、これに、相手のフィールドを考慮させる. すなわち、<span class="math inline">\(x_i\)</span> に対応するベクトル <span class="math inline">\(v_i\)</span> に、どのフィールドへの作用かの情報を持たせる. 今まで <span class="math inline">\(v_i\)</span> 一個だったのを、 <span class="math display">\[v_{i,1}, \ldots, v_{i,f}\]</span> と、<span class="math inline">\(F\)</span> 個にして、 <span class="math display">\[\phi(x) = b + \sum_i w_i x_i + \sum_{i &lt; j} \langle v_{i,f_j}, v_{j,f_i} \rangle x_i x_j\]</span> とする. ここで <span class="math inline">\(f_j, f_i\)</span> はそれぞれ、<span class="math inline">\(x_j, x_i\)</span> に対応するフィールド. <span class="math inline">\(v_{i, f_j}\)</span> は <span class="math inline">\(x_i\)</span> のフィールド <span class="math inline">\(f_j\)</span> への作用に相当する.</p>
 <h2 id="パラメータ数計算量">パラメータ数、計算量</h2>

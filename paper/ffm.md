@@ -15,6 +15,20 @@ $$\phi(x) = b + \sum_i w_i x_i + \sum_{i < j} \langle v_i, v_j \rangle x_i x_j$$
 FFMs はその入力のフィールド (e.g. 性別, 地名) まで考慮しようというもの.
 その分パラメータは増えるが.
 
+## 実装
+
+作者等による
+[LIBFFM](https://www.csie.ntu.edu.tw/~cjlin/libffm/)
+がある.
+
+この `Download` のとこを見ると
+
+```
+Warning: FFM is prone to overfitting. See README in the package before using. 
+```
+
+という警告がある. なるほど.
+
 ## FFMs
 
 入力 $x$ の成分に関してフィールドが $F$ 個 ($f_1, f_2, \ldots, f_F$) あるとする.

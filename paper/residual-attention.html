@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>[1704.06904] Residual Attention Network for Image Classification</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/</a>
+</header>
+<header>
+<h1 class="title">[1704.06904] Residual Attention Network for Image Classification</h1>
+</header>
+<ul>
+<li>
+original paper: <a href=https://arxiv.org/abs/1704.06904>https://arxiv.org/abs/1704.06904</a>
+</li>
+</ul>
+<div class="is-pulled-right">
+<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#物体認識>物体認識</a></p>
+</div>
+<h2 id="概要">概要</h2>
+<p>ResNet に attention を盛り込んだ. <span class="math inline">\(N\)</span> 層 Resnet を <code>ResNet-N</code> と呼称するのと同様に <code>Attention-N</code> と呼称している.</p>
+<h3 id="benchmark">Benchmark</h3>
+<p>パラメータ数とエラー率. Attention-452 で ResNet-1001 を超えている.</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Network</th>
+<th style="text-align: right;">#parameters</th>
+<th style="text-align: right;">CIFAR-10</th>
+<th style="text-align: right;">CIFAR-100</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">ResNet-1001</td>
+<td style="text-align: right;">10.3e6</td>
+<td style="text-align: right;">4.64</td>
+<td style="text-align: right;">22.71</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">WRN-28-10</td>
+<td style="text-align: right;">36.5e6</td>
+<td style="text-align: right;">4.17</td>
+<td style="text-align: right;">20.50</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Attention-92</td>
+<td style="text-align: right;">1.9e6</td>
+<td style="text-align: right;">4.99</td>
+<td style="text-align: right;">21.71</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Attention-236</td>
+<td style="text-align: right;">5.1e6</td>
+<td style="text-align: right;">4.14</td>
+<td style="text-align: right;">21.16</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Attention-452</td>
+<td style="text-align: right;">8.6e6</td>
+<td style="text-align: right;">3.90</td>
+<td style="text-align: right;">20.45</td>
+</tr>
+</tbody>
+</table>
+<h2 id="手法---attention-learning">手法 - attention learning</h2>
+<p>詳細は Figure 2 をよく見ればいいと思う.</p>
+<h3 id="notation">notation</h3>
+<p>画像を <span class="math inline">\(x \in \mathbb{R}^{H \times W \times C}\)</span> で表す. 空間上の位置 <span class="math inline">\(i \in \{1, \ldots, H\} \times \{1,\ldots,W\}\)</span> とチャンネル <span class="math inline">\(c \in \{1,\ldots,C\}\)</span> で <span class="math display">\[x_{i,c} \in \mathbb{R}\]</span> を指す. 関数の成分についても同様に.</p>
+<h3 id="通常の-attention-module">通常の attention module</h3>
+<p>普通に <span class="math inline">\(x\)</span> から特徴を取り出す <span class="math display">\[T : \mathbb{R}^{H \times W \times C} \to \mathbb{R}^{H&#39; \times W&#39; \times C&#39;}\]</span> に同型のマスク関数 <span class="math inline">\(M\)</span> を掛けて <span class="math display">\[H_{i,c} = M_{i,c} \cdot T_{i,c}\]</span> とする.</p>
+<p>順伝播でも <span class="math inline">\(M\)</span> がマスクとして機能するだけでなく、 <span class="math inline">\(T\)</span> の更新のための逆伝播においても、そのパラメータを <span class="math inline">\(\phi\)</span> とすると <span class="math display">\[\frac{\partial H}{\partial \phi}(x) = M(x) \frac{\partial T}{\partial \phi}\]</span> となって、同様にマスクが機能する. これによってノイズラベルに強くなるらしい.</p>
+<h3 id="提案手法">提案手法</h3>
+<p>マスクの最後に要素ごとの sigmoid を掛けて <span class="math display">\[M : \mathbb{R}^{H \times W \times C} \to [0, 1]^{H&#39; \times W&#39; \times C&#39;}\]</span> として、 <span class="math display">\[H_{i,c} = (1 + M_{i,c}) \cdot F_{i,c}\]</span> とする. この <span class="math inline">\(H\)</span> の学習を彼らは &quot;residual attention laerning&quot; と呼んでいる.</p>
+<p>実際には <span class="math inline">\(F, M\)</span> を複数個 residual unit を積んで構成している (Figure 2).</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

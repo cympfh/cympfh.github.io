@@ -1,6 +1,6 @@
 % Shake-Shake Regularization
 % https://github.com/xgastaldi/shake-shake
-% 深層学習
+% 深層学習 物体認識
 
 ## 概要
 

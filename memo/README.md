@@ -8,6 +8,10 @@
 - [J言語](j/index.html)
 - [LaTeX](latex/)
 
+### ライブラリ
+
+- [Pillow (PIL fork)](pillow.html)
+
 ## ツール
 
 ### 機械学習系

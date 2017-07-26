@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Pillow</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<h1 class="title">Pillow</h1>
+</header>
+<p>私の場合、言語に Python を採用する上に画像の読み込みをするなんて機械学習をする場合しかないので、その文脈で.</p>
+<h2 id="index">index</h2>
+<div id="toc">
+
+</div>
+<h2 id="参考ページ">参考ページ</h2>
+<ul>
+<li><a href="https://pillow.readthedocs.io/en/4.2.x/">Pillow - Pillow (PIL Fork) 4.2.1 documentation</a>
+<ul>
+<li>公式ドキュメント</li>
+</ul></li>
+<li><a href="https://librabuch.jp/blog/2013/05/python_pillow_pil/">Python 3.5 対応画像処理ライブラリ Pillow (PIL) の使い方 - Librabuch</a>
+<ul>
+<li>一般のブログ</li>
+</ul></li>
+</ul>
+<h2 id="thumbnail-縮小">thumbnail: 縮小</h2>
+<p>リサイズするには <code>im.resize</code> があるが、縮小を目的とする場合、その綺麗さから <code>Image.ANTIALIAS</code> で <code>im.thumbnail</code> するに限る.</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">from</span> PIL <span class="im">import</span> Image
+im <span class="op">=</span> Image.<span class="bu">open</span>(<span class="st">&#39;path.jpg&#39;</span>)
+im.thumbnail((W, H), Image.ANTIALIAS)</code></pre></div>
+<h2 id="paste-貼り付け">paste: 貼り付け</h2>
+<p>ある画像の上に別の画像を貼り付ける. 土台となる画像と上に載せる画像の2つを用意する.</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">W <span class="op">=</span> <span class="dv">60</span>
+H <span class="op">=</span> <span class="dv">100</span>
+white <span class="op">=</span> (<span class="dv">255</span>, <span class="dv">255</span>, <span class="dv">255</span>)
+canvas <span class="op">=</span> Image.new(<span class="st">&#39;RGBA&#39;</span>, (W, H), white)
+
+img <span class="op">=</span> Image.<span class="bu">open</span>(<span class="st">&#39;icon.png&#39;</span>)
+
+left <span class="op">=</span> <span class="dv">5</span>
+top <span class="op">=</span> <span class="dv">30</span>
+canvas.paste(img, (left, top))
+
+canvas.save(<span class="st">&#39;out.png&#39;</span>)</code></pre></div>
+<p>上に載せる画像に透過ピクセルが使われている場合、予想に反した出来になるだろう. この場合 <code>paste</code> の第三引数に <code>mask</code> を与える必要がある.</p>
+<ul>
+<li><a href="https://stackoverflow.com/questions/5324647/how-to-merge-a-transparent-png-image-with-another-image-using-pil">python - How to merge a transparent png image with another image using PIL - Stack Overflow</a></li>
+<li><a href="http://effbot.org/imagingbook/image.htm#tag-Image.Image.paste" class="uri">http://effbot.org/imagingbook/image.htm#tag-Image.Image.paste</a></li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">canvas.paste(img, (left, top), img)</code></pre></div>
+<h2 id="pil.imagedraw-テキストの描画">PIL.ImageDraw: テキストの描画</h2>
+<p><code>.text</code> の <code>font</code> オプションを省略するとデフォルトのフォントが選択されるが、その場合フォントサイズも自動で選ばれる. フォントサイズを指定するには <code>ImageFont</code> を用いてしかもフォント名を指定する必要がある.</p>
+<p>フォント名は、ファイル名から拡張子を除いたもの. 以下のように truetype を使うなら</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">locate</span> .ttf <span class="kw">|</span> <span class="fu">sed</span> <span class="st">&#39;s,.*/,,g&#39;</span> <span class="kw">|</span> <span class="fu">sed</span> <span class="st">&#39;s/\.ttf$//g&#39;</span></code></pre></div>
+<p>で列挙されるものから選ぶ必要がある.</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">from</span> PIL <span class="im">import</span> Image, ImageDraw, ImageFont
+
+
+W <span class="op">=</span> <span class="dv">200</span>
+H <span class="op">=</span> <span class="dv">28</span>
+white <span class="op">=</span> (<span class="dv">255</span>, <span class="dv">255</span>, <span class="dv">255</span>)
+canvas <span class="op">=</span> Image.new(<span class="st">&#39;RGBA&#39;</span>, (W, H), white)
+
+font <span class="op">=</span> ImageFont.truetype(font<span class="op">=</span><span class="st">&#39;Osaka&#39;</span>, size<span class="op">=</span><span class="dv">18</span>)
+d <span class="op">=</span> ImageDraw.Draw(canvas)
+
+left <span class="op">=</span> <span class="dv">10</span>
+top <span class="op">=</span> <span class="dv">5</span>
+black <span class="op">=</span> (<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>)
+d.text((left, top), <span class="st">&#39;Hello&#39;</span>, fill<span class="op">=</span>black, font<span class="op">=</span>font)
+
+canvas.save(<span class="st">&#39;out.png&#39;</span>)</code></pre></div>
+<h2 id="numpy.ndarray-への相互変換">numpy.ndarray への相互変換</h2>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">identify</span> test.png
+<span class="ex">test.png</span> PNG 640x480 640x480+0+0 8-bit sRGB 13KB 0.000u 0:00.000</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> numpy
+<span class="im">from</span> PIL <span class="im">import</span> Image
+
+<span class="co"># open as PIL.Image</span>
+img <span class="op">=</span> Image.<span class="bu">open</span>(<span class="st">&#39;test.png&#39;</span>)  <span class="co"># &lt;PIL.PngImagePlugin.PngImageFile image mode=RGB size=640x480 at 0x101C49E80&gt;</span>
+img.size  <span class="co"># (640, 480) == (width, height)</span>
+
+<span class="co"># PIL.Image =&gt; numpy.ndarray</span>
+arr <span class="op">=</span> numpy.array(img)
+arr.shape  <span class="co"># (480, 640, 3) == (height, width, ch)</span>
+<span class="bu">type</span>(arr), arr.dtype  <span class="co"># &lt;class &#39;numpy.ndarray&#39;&gt; uint8</span>
+
+<span class="co"># dummy RGB numpy-array</span>
+arr <span class="op">=</span> numpy.zeros((<span class="dv">10</span>, <span class="dv">30</span>, <span class="dv">3</span>), dtype<span class="op">=</span>numpy.uint8)
+arr[:, :<span class="dv">10</span>, <span class="dv">0</span>] <span class="op">=</span> <span class="dv">255</span>  <span class="co"># R</span>
+arr[:, <span class="dv">10</span>:<span class="dv">20</span>, <span class="dv">1</span>] <span class="op">=</span> <span class="dv">255</span>  <span class="co"># G</span>
+arr[:, <span class="dv">20</span>:<span class="dv">30</span>, <span class="dv">2</span>] <span class="op">=</span> <span class="dv">255</span>  <span class="co"># B</span>
+
+<span class="co"># numpy.ndarray =&gt; PIL.Image</span>
+img <span class="op">=</span> Image.fromarray(arr)
+img.show()</code></pre></div>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

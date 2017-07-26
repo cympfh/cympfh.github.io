@@ -18,5 +18,5 @@ index.html: README.md
 
 git:
 	git add --all
-	git commit -a -m "`date`"
+	git commit -a -m "memo/ `date`"
 	git push

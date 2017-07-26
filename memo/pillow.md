@@ -13,6 +13,16 @@
 - [Python 3.5 対応画像処理ライブラリ Pillow (PIL) の使い方 - Librabuch](https://librabuch.jp/blog/2013/05/python_pillow_pil/)
     - 一般のブログ
 
+## 壊れた画像も強引に開く
+
+いまいち正確な意味を把握してないけど大体そんな感じ.
+`Image.open` で実行時エラーを出すような画像も、下のコードを先に実行しておくと大丈夫になる.
+
+```python
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
+```
+
 ## thumbnail: 縮小
 
 リサイズするには `im.resize` があるが、縮小を目的とする場合、その綺麗さから

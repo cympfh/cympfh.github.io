@@ -23,7 +23,7 @@ posts:
 		pandoc -s -t html5 \
 		-B resources/header.html \
 		-A ../resources/js/toc.html \
-		--mathjax=https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML \
+		--mathjax=https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML \
 		--css ../resources/css/c.css \
 		--css https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css \
 		-o $@

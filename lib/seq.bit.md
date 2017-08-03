@@ -6,22 +6,24 @@
 
 ## 概要
 
-- 長さ $n$ の数列: $v = \{ v_0, v_1, \ldots, v_{n-1} \} = \{0,0,\ldots,0\}$
-- 次の2つの操作が許される
-    1. `add(i, x)`: $v_i \leftarrow v_i + x$
-    1. `sum(m)`: $v_0 + v_1 + \cdots + v_m$ を返す
-        - N.B. $v_m$ を含む
-- 時間計算量: 共に $O(log(n))$
-- 空間計算量: 数列の長さ $n$ 程度の配列.
+- 初期状態
+    - 長さ $n$ の数列: $v = \{ v_0, v_1, \ldots, v_{n-1} \} = \{0,0,\ldots,0\}$
+- 次の2つの操作が出来る
+    1. $v_i \leftarrow v_i + x$
+    1. $v_0 + v_1 + \cdots + v_{m-1}$
+        - 特に2つ目から、任意区間の総和が算出できる
+- 計算量
+    - 時間計算量: 共に $O(log(n))$
+    - 空間計算量: 数列の長さ $n$ 程度の配列.
+
+## [seq.bit.rs](seq.bit.rs)
+
+@[rust](seq.bit.rs)
+
+@[rust](seq.bit.ex.rs)
 
 ## [seq.bit.cc](seq.bit.cc)
 
 @[cpp](seq.bit.cc)
 
-## Example
-
 @[cpp](seq.bit.ex.cc)
-
-## [seq.bit.rs](seq.bit.rs)
-
-@[rust](seq.bit.rs)

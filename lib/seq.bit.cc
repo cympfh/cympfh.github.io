@@ -14,11 +14,14 @@ struct BIT {
       ar[x] += w;
     }
   }
-  int sum(int idx) {
+  int sum_up(int idx) {
     int ret = 0;
-    for (int x = idx + 1; x > 0; x -= x&-x) {
+    for (int x = idx; x > 0; x -= x&-x) {
       ret += ar[x];
     }
     return ret;
+  }
+  int sum(int left, int right) {  // [left, right)
+      return sum_up(right) - sum_up(left);
   }
 };

@@ -1,25 +1,27 @@
-auto bit = BIT(10);
-// 0 0 0 0
+int main() {
 
-bit.add(0, 1);
-// 1 0 0 0
-cout << bit.sum(0) << endl; // 1
-cout << bit.sum(1) << endl; // 1
+    auto bit = BIT(5);
 
-bit.add(1, 1);
-// 1 1 0 0
-bit.add(3, 1);
-// 1 1 0 1
-cout << bit.sum(0) << endl; // 1
-cout << bit.sum(1) << endl; // 2
-cout << bit.sum(2) << endl; // 2
-cout << bit.sum(3) << endl; // 3
+    bit.add(0, 1);
+    bit.add(4, 1);  // [1, 0, 0, 0, 1]
+    trace(bit.sum(0, 0));  // 0
+    trace(bit.sum(0, 1));  // 1
+    trace(bit.sum(0, 2));  // 1
+    trace(bit.sum(0, 3));  // 1
+    trace(bit.sum(0, 4));  // 1
+    trace(bit.sum(0, 5));  // 2
+    trace(bit.sum(1, 4));  // 0
+    trace(bit.sum(1, 5));  // 1
+    trace(bit.sum(2, 5));  // 1
 
-bit.add(1, 1);
-// 1 2 0 1
-bit.add(2, -1);
-// 1 2 -1 1
-cout << bit.sum(0) << endl; // 1
-cout << bit.sum(1) << endl; // 3
-cout << bit.sum(2) << endl; // 2
-cout << bit.sum(3) << endl; // 3
+    bit.add(4, -1);
+    bit.add(3, 1);
+    bit.add(2, 2);  // [1, 0, 2, 1, 0]
+    trace(bit.sum(0, 1));  // 1
+    trace(bit.sum(0, 2));  // 1
+    trace(bit.sum(0, 3));  // 3
+    trace(bit.sum(0, 4));  // 4
+    trace(bit.sum(2, 5));  // 3
+
+    return 0;
+}

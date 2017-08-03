@@ -10,9 +10,8 @@ src:
 	ls -1 *.md | grep -v README.md | sed 's/.*/make &/; s/.md$$/.html/g' | sh
 
 %.html: %.md
-	mdc <$^ \
+	mdc <$^ |\
 		pandoc -s -t html5 \
-		-B resources/header.html \
 		-A ../resources/js/toc.html \
 		--mathjax=https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML \
 		--css ../resources/css/c.css \

@@ -1,3 +1,4 @@
+use std::ops::Range;
 struct BIT { size: usize, array: Vec<i32> }
 impl BIT {
     fn new(n: usize) -> BIT {
@@ -11,14 +12,17 @@ impl BIT {
             x += (xi&-xi) as usize;
         }
     }
-    fn sum(&self, idx: usize) -> i32 {
+    fn sum_up(&self, idx: usize) -> i32 { // [0, idx)
         let mut sum = 0;
-        let mut x = idx + 1;
+        let mut x = idx;
         while x > 0 {
             sum += self.array[x];
             let xi = x as i32;
             x -= (xi&-xi) as usize;
         }
         sum
+    }
+    fn sum(&self, range: Range<usize>) -> i32 {
+        self.sum_up(range.end) - self.sum_up(range.start)
     }
 }

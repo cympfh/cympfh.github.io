@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>[1708.04552] Improved Regularization of Convolutional Neural Networks with Cutout</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/</a>
+</header>
+<header>
+<h1 class="title">[1708.04552] Improved Regularization of Convolutional Neural Networks with Cutout</h1>
+</header>
+<ul>
+<li>
+original paper: <a href=https://arxiv.org/abs/1708.04552>https://arxiv.org/abs/1708.04552</a>
+</li>
+</ul>
+<div class="is-pulled-right">
+<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#物体認識>物体認識</a></p>
+</div>
+<h2 id="概要">概要</h2>
+<p>CNN において Dropout や Denoising と同様な正則化 (regularization) 或いはデータ水増し (data augmentation) のためのテクニック、Cutout を提案する. Cutout は Dropout の一種だと見ることもできるが、Figure 1 にあるように、入力からその空間的にある一箇所のデータを完全に落としてしまう.</p>
+<p><img src="http://i.imgur.com/gcMpxCx.png" /> 画像は全て <a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> からの引用です.</p>
+<h2 id="実装">実装</h2>
+<p>ランダムな箇所の矩形領域をエポック毎に選択し、画素をゼロで埋める (zero-mask) ことをする. Dropout とは異なり、テスト時のための特別なことはしない.</p>
+<p>矩形領域の形よりもその領域の大きさのほうが重要であると彼らは主張している. なので領域の形は矩形でしかも正方形に限った. Figure 3 ではその大きさ (一辺の長さ, Patch length) を変えた場合の性能をグラフにして示している. 性能を最高にする適切な大きさというのがあるらしい.</p>
+<h2 id="参考">参考</h2>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="https://arxiv.org/pdf/1708.04552.pdf">論文のpdfファイルへのリンク</a><a href="#fnref1">↩</a></p></li>
+</ol>
+</section>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Tue Aug 22 2017</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Tue Aug 22 2017</h1>
+</header>
+<h2 id="計画">計画</h2>
+<h3 id="related-work-元ネタ">Related Work (元ネタ)</h3>
+<ol type="1">
+<li><a href="http://cympfh.cc/paper/lang2prog.html">[1704.07926] From Language to Programs: Bridging Reinforcement Learning and Maximum Marginal Likelihood</a>
+<ul>
+<li>再実装する</li>
+<li>これは実質、自然言語から (単純な) プログラミング言語への翻訳とみなせる</li>
+<li>Interpreter が Oracle</li>
+</ul></li>
+<li><a href="http://cympfh.cc/paper/negotiation-learning.html">[1706.05125] Deal or No Deal? End-to-End Learning for Negotiation Dialogues</a>
+<ul>
+<li>初めに人間の模倣をする事前学習</li>
+<li>Interpreter は互いに持ち合う
+<ul>
+<li>AはBの発言を解釈し、BはAの発言を解釈する</li>
+</ul></li>
+</ul></li>
+</ol>
+<h3 id="提案テーマ">提案テーマ</h3>
+<ul>
+<li>人工言語を作る.
+<ul>
+<li>文法は LSTM でトークンの列を吐かせるだけで構成したいという制約のために大変簡単にする.
+<ul>
+<li>表層に意味はなく、例えば格変化もない</li>
+</ul></li>
+<li>言語の解釈は [2] と同様に、仮想世界に対する操作でいい.</li>
+</ul></li>
+</ul>
+<h4 id="面白さ">面白さ</h4>
+<ul>
+<li>ゴールは2人が同じ解釈を持つこと
+<ul>
+<li>Aさんが言いたかったことをBさんも正しく解釈できること</li>
+<li>これを以って言語が完成したと言う</li>
+</ul></li>
+<li>ただし2人は発言以外でコミュニケーションをしない.
+<ul>
+<li>つまりBの解釈からAの発言は逆伝播できない.</li>
+</ul></li>
+</ul>
+<p>ただこのゴールだと、NOP (なにも操作しない) といった単純な解釈に落ち着いてしまいそう (縮退). 単純のために発言はただただランダムなものをと考えてたが、言おうとしたことが在ってから、発言させることにする.</p>
+<p>世界の状態を <span class="math inline">\(\mathrm{World}\)</span> とする. 操作前の世界と後の世界の組みから発言をする.</p>
+<p>生成系: <span class="math display">\[G: \mathrm{World} \times \mathrm{World} \to Sentence\]</span></p>
+<p>解釈系とはまさにこの逆写像に相当する: <span class="math display">\[I: Sentence \to \mathrm{World} \to \mathrm{World}\]</span></p>
+<h3 id="学習方法">学習方法</h3>
+<p>エージェントとして Aさんと Bさんとを用意する:</p>
+<ul>
+<li>Aさん
+<ul>
+<li>解釈系 <span class="math inline">\(I_A\)</span></li>
+<li>生成系 <span class="math inline">\(G_A\)</span></li>
+</ul></li>
+<li>Bさん
+<ul>
+<li>解釈系 <span class="math inline">\(I_B\)</span></li>
+<li>生成系 <span class="math inline">\(G_B\)</span></li>
+</ul></li>
+</ul>
+<p>適用に用意した <span class="math inline">\(w_1, w_2 \in \mathrm{World}\)</span> について、Aさんの発言 <span class="math inline">\(G_A(w_1, w_2)\)</span> を生成する.</p>
+<ol type="1">
+<li>意図通りに自分自身が発言できていること
+<ul>
+<li><span class="math inline">\(I_A(G_A(w_1, w_2)) \approx w_2\)</span>
+<ul>
+<li>ここは end-to-end に NNs を更新して学習できる</li>
+</ul></li>
+</ul></li>
+<li>意図通りに相手が解釈してくれること
+<ul>
+<li><span class="math inline">\(I_B(G_A(w_1, w_2)) \approx I_A(G_A(w_1, w_2))\)</span></li>
+<li>或いは <span class="math inline">\(I_B(G_A(w_1, w_2)) \approx w_2\)</span>
+<ul>
+<li>ここは強化学習なりが出来たらいいな</li>
+<li>ここも end-to-end にしてしまうと面白みが半減する</li>
+</ul></li>
+</ul></li>
+</ol>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

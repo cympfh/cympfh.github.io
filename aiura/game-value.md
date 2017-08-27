@@ -23,6 +23,21 @@
 2. $g_1, \ldots, g_n, h_1, \ldots, h_m$ がゲームであるとき、 $$\{g_1, \ldots, g_n | h_1, \ldots, h_m\}$$ もまたゲームである
     - 略記法として、集合 $G=\{g_1, \ldots, g_n\}, H=\{h_1, \ldots, h_m\}$ として $\{G|H\}$ とも書く
 
+### 等価性、順序
+
+[ゲームの代数](game-algebra.html) 参照のこと.
+
+重要な性質としては
+
+- ゲーム $G$ は後手必勝
+    - $\iff G = 0$
+- $G$ は先手必勝
+    - $\iff G \| 0$ (比較不能)
+- $G$ は左必勝
+    - $\iff G > 0$
+- $G$ は右必勝
+    - $\iff G < 0$
+
 ## ゲームの値
 
 ゲームに値を対応させる.
@@ -239,3 +254,139 @@ $G^R + x > 0$.
 以上から $G + x > 0$. $\iff -x < G$.
 同様に $G < x$ を示して無限小であることがわかる.
 
+### $\uparrow$, $\ast$ の比較
+
+<div class=thm>
+$$\downarrow \| \ast \| \uparrow$$
+</div>
+
+ゲームの差 $G = \uparrow - \ast$ を考える.
+これが $0$ と比較不能であればいい. つまり先手必勝.
+
+$\ast = -\ast$ を使うと $G$ は
+$G = \uparrow + \ast$
+と和の形に書き直せる.
+和にすれば具体的に考えることができて、
+左の先手なら $\uparrow$ に手を打てば $G^L=0$ とできて勝ち.
+右の選定なら $\ast$ に手を打てばやはり $G^R=0$ とできて勝つ.
+従って、$G$ は先手必勝なので
+$$\uparrow - \ast \| 0.$$
+差がゼロと比較不能なので
+$$\uparrow \| \ast.$$
+
+$\downarrow = - \uparrow$ についても全く同様に示せる.
+
+<div class=thm>
+$$\downarrow + \downarrow < \ast < \uparrow + \uparrow$$
+</div>
+
+$\downarrow, \uparrow$ は一つだけだと比較不能だけど2つ (以上) の和だとこのように順序付けることが可能.
+
+差
+$G = \uparrow + \uparrow - \ast = \uparrow + \uparrow + \ast$
+について
+$G > 0$ を示せばよい.
+(これが示せれば $-G < 0 \iff \downarrow + \downarrow - \ast < 0$ も導かれる.)
+
+ゼロより大きいことは左必勝に等しいので、3つのゲーム和 $G = \uparrow + \uparrow + \ast$ が左必勝であることを具体的に示す.
+
+左先手のとき下のゲームグラフが描けるが、左は赤いエッジを辿ってれば絶対勝てる.
+ただしここで、$\uparrow + \uparrow + \ast$ を $\uparrow\uparrow\ast$ のように $+$ を省略して記述している.
+
+```dot
+digraph {
+    bgcolor=transparent;
+    rankdir=LR;
+    "↑↑*" [shape=doublecircle];
+
+    "↑↑*" -> "↑↑" [label=L color=red];
+    "↑↑*" -> "↑*" [label=L color=gray];
+
+    "↑*" -> { "**" "↑" } [label=R color=gray];
+    "↑↑" -> "↑*" [label=R];
+
+    "**" -> "*" [label=L color=gray];
+    "↑" -> 0 [label=L color=gray];
+    "↑*" -> "*" [label=L color=gray];
+    "↑*" -> "↑" [label=L color=red];
+
+    "*" -> 0 [label=R color=gray];
+    "↑" -> "*" [label=R];
+
+    "*" -> 0 [label=L color=red];
+
+    {rank=same "↑↑" "↑*" "↑"}
+    {rank=same "**" "*" "0"}
+}
+```
+
+左が後手のときは下図のように.
+
+```dot
+digraph {
+    bgcolor=transparent;
+    rankdir=LR;
+    "↑↑*" [shape=doublecircle];
+
+    "↑↑*" -> "↑↑" [label=R];
+    "↑↑*" -> "↑**" [label=R];
+
+    "↑**" -> "**" [label=L color=red];
+    "↑**" -> "↑*" [label=L color=gray];
+    "↑↑" -> "↑" [label=L color=red];
+
+    "↑" -> "*" [label=R];
+    "**" -> "*" [label=R];
+    "↑*" -> "**" [label=R color=gray];
+    "↑*" -> "↑"  [label=R] color=gray;
+
+    "*" -> 0 [label=L color=red]
+    "**" -> "*" [label=L color=gray]
+    "↑" -> 0 [label=L color=gray];
+
+    "*" -> 0 [label=R color=gray];
+
+    {rank=same "↑**" "↑↑" "**"}
+    {rank=same "↑" "↑*"}
+    {rank=same "*" 0}
+}
+```
+
+というわけで差が左必勝なので、その順序が成立する.
+
+$0<\uparrow$ なので、$\uparrow\uparrow < \uparrow\uparrow\uparrow$ が成り立ち、
+
+$$\downarrow\downarrow\downarrow < \downarrow\downarrow < 0 < \uparrow\uparrow < \uparrow\uparrow\uparrow$$
+が成立する.
+
+## ゲームの自然数倍
+
+ゲームのスカラー倍とその記法を定義する.
+ゲーム $G$ と 1 以上の自然数 $n$ に対して、$G$ の $n$ 個の和
+$$G + G + \cdots + G$$
+を
+$$n\cdot G$$
+と書く.
+
+これに加えて
+$$0\cdot G = 0$$
+$$(-n) \cdot G = n\cdot (-G)$$
+も定義することで、ゲームの自然数倍を定義する.
+
+結合優先度として、$\cdot$ は $+$ より高いものとする.
+例えば
+$n \cdot \uparrow \ast$
+($n \cdot \uparrow + \ast$ のこと)
+は
+$n \cdot (\uparrow \ast)$ **ではなく**
+($n \cdot \uparrow) \ast$ である.
+
+演算子を省略してゲームを並べる場合 $+$ を省略したものとしているので、$\cdot$ は省略しない.
+
+### $n \cdot \uparrow$ の標準形
+
+明らかに劣位な選択肢を予め除去し、打ち消し可能な手を予め打ち消しておいた形を標準形というのだった [[aiura/game-algebra]](./game-algebra.html#6).
+
+ここでは $n \cdot \uparrow$ $(n \geq 1)$ の標準形を調べる.
+$$n \cdot \uparrow = \{ (n-1) \cdot \uparrow | (n-1) \cdot \uparrow\ast\}$$
+なので、$(n-1) \cdot \uparrow \ast$ の標準形を先に考える.

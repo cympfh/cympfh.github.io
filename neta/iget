@@ -9,9 +9,12 @@ upload() {
 }
 
 TMPFILE=/tmp/description
-: > $TMPFILE
+cat <<EOM >$TMPFILE
+
+# $1
+EOM
 vim $TMPFILE
-description="$(< $TMPFILE tr '[A-Z]\n' '[a-z] ' | sed 's/  */ /g; s/ *$//g')"
+description="$(sed 's/^#.*$//g' $TMPFILE | tr '[A-Z]\n' '[a-z] ' | sed 's/  */ /g; s/ *$//g; s/^ *//g')"
 url=$(upload "$1")
 
 echo "{\"url\": \"${url}\", \"description\": \"${description}\"}" |

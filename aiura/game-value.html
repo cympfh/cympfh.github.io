@@ -380,8 +380,28 @@
 <p>結合優先度として、<span class="math inline">\(\cdot\)</span> は <span class="math inline">\(+\)</span> より高いものとする. 例えば <span class="math inline">\(n \cdot \uparrow \ast\)</span> (<span class="math inline">\(n \cdot \uparrow + \ast\)</span> のこと) は <span class="math inline">\(n \cdot (\uparrow \ast)\)</span> <strong>ではなく</strong> (<span class="math inline">\(n \cdot \uparrow) \ast\)</span> である.</p>
 <p>演算子を省略してゲームを並べる場合 <span class="math inline">\(+\)</span> を省略したものとしているので、<span class="math inline">\(\cdot\)</span> は省略しない.</p>
 <h3 id="n-cdot-uparrow-の標準形"><span class="math inline">\(n \cdot \uparrow\)</span> の標準形</h3>
-<p>明らかに劣位な選択肢を予め除去し、打ち消し可能な手を予め打ち消しておいた形を標準形というのだった <a href="./game-algebra.html#6">[aiura/game-algebra]</a>.</p>
-<p>ここでは <span class="math inline">\(n \cdot \uparrow\)</span> <span class="math inline">\((n \geq 1)\)</span> の標準形を調べる. <span class="math display">\[n \cdot \uparrow = \{ (n-1) \cdot \uparrow | (n-1) \cdot \uparrow\ast\}\]</span> なので、<span class="math inline">\((n-1) \cdot \uparrow \ast\)</span> の標準形を先に考える.</p>
+<p>明らかに劣位な選択肢を予め除去し、打ち消し可能な手を予め打ち消しておいた形を標準形というのだった <a href="./game-algebra.html#6">[aiura/game-algebra]</a>. 標準形はあくまでもこの2つのルールを繰り返し適用して導出される.</p>
+<p>ここでは <span class="math inline">\(n \cdot \uparrow\)</span> <span class="math inline">\((n \geq 1)\)</span> の標準形を調べる. 選択肢はどちらにしろ、<span class="math inline">\(n\)</span> 個ある <span class="math inline">\(\uparrow\)</span> から一つの <span class="math inline">\(\uparrow\)</span> を選んで手を進めるだけなので、 <span class="math display">\[n \cdot \uparrow = \{ (n-1) \cdot \uparrow | (n-1) \cdot \uparrow\ast\}\]</span></p>
+<p>まず片手枷原理をチェックする. 左右とも選択肢は1つずつなのでこれは適用できない.</p>
+<p>次に打ち消し可能な手を探す. まず右についてだが、左の応手は <span class="math display">\[(n-2)\cdot\uparrow, (n-1)\cdot \uparrow\]</span> (一旦十分大きい <span class="math inline">\(n\)</span> を用いている) であり、元のゲーム <span class="math inline">\(n \cdot \uparrow\)</span> と比べて、どちらも大きくなっている (即ち右にとって劣位) ということは無い. なので右の手を打ち消すような手は無い.</p>
+<p>一方で左の <span class="math inline">\((n-1)\cdot\uparrow\)</span> というのは打ち消し可能で、 右は <span class="math inline">\((n-2)\cdot\uparrow\ast\)</span> という手で打ち消す (それしか選択肢がないわけだが). <span class="math display">\[\ast &lt; 2\cdot\uparrow\]</span> であることに註意すると <span class="math display">\[(n-2)\cdot\uparrow\ast &lt; (n-1)\cdot\uparrow\]</span> であり打ち消すことがわかる. というわけで、これの左選択肢 <span class="math display">\[(n-3)\cdot\uparrow\ast, (n-2)\cdot\cdot\uparrow\]</span> で短絡できる.</p>
+<p><span class="math display">\[\begin{align*}
+n \cdot \uparrow
+&amp; = \{ (n-1) \cdot \uparrow ~|~ \cdots \} \\
+&amp; = \{ (n-2) \cdot \uparrow, (n-3) \cdot \uparrow\ast ~|~ \cdots \}
+\end{align*}\]</span></p>
+<p>さて左選択肢に再び「<span class="math inline">\(\uparrow\)</span> の整数倍」が登場するので、再び同様の短絡が出来る.</p>
+<p><span class="math display">\[\begin{align*}
+n \cdot \uparrow
+&amp; = \{ (n-1) \cdot \uparrow ~|~ \cdots \} \\
+&amp; = \{ (n-2) \cdot \uparrow, (n-3) \cdot \uparrow\ast ~|~ \cdots \}
+&amp; = \cdots \\
+&amp; = \{ \uparrow, 1\cdot\uparrow\ast, 2\cdot\uparrow\ast, \cdots, (n-4)\cdot\uparrow\ast, (n-3)\cdot\uparrow\ast ~|~ \cdots \}
+\end{align*}\]</span></p>
+<p>さて、次に左選択肢の <span class="math inline">\(m\cdot\uparrow\ast\)</span> (<span class="math inline">\(m \leq n-3\)</span>) について考える. これも右にとって打ち消し可能な手である. すなわち、</p>
+<p><span class="math display">\[n\cdot\uparrow \to^L m\cdot\uparrow\ast \to^R m\cdot\uparrow\]</span> について <span class="math display">\[m\cdot\uparrow &lt; n\cdot\uparrow\]</span> である (<span class="math inline">\(m &lt;n\)</span> なので). なので、やはり左の <span class="math inline">\(m\cdot\uparrow\ast\)</span> という手は、 <span class="math inline">\(m\cdot\uparrow\)</span> に対する左の選択肢で置き換えて短絡する. 左の選択肢はただ1つしかなく、しかもそれは <span class="math inline">\((m-1)\cdot\uparrow\)</span> である. というわけでたくさんある <span class="math display">\[1\cdot\uparrow\ast, 2\cdot\uparrow\ast, \cdots, (n-4)\cdot\uparrow\ast, (n-3)\cdot\uparrow\ast\]</span> という選択肢の係数を 1 ずつ減らしていって、結局すべてをゼロにしてしまえる. <span class="math display">\[n \cdot \uparrow = \{ \uparrow, 0 ~|~ (n-1)\cdot\uparrow\ast \}\]</span></p>
+<p>最後に <span class="math inline">\(0&lt;\uparrow\)</span> なので、 <span class="math display">\[n \cdot \uparrow = \{ 0 ~|~ (n-1)\cdot\uparrow\ast \}\]</span> とまで出来る.</p>
+<p>さて <span class="math inline">\(n-3\)</span> というが出てきてるので以上の考察は <span class="math inline">\(n\geq3\)</span> くらい大きい数を考えている. 小さい <span class="math inline">\(n\)</span> については個別に調べれば、やはり今の結論と同じ形をしていることがわかる.</p>
 <!--
 
   HTML として pandoc -B で include する.

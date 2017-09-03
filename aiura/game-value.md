@@ -386,7 +386,66 @@ $n \cdot (\uparrow \ast)$ **ではなく**
 ### $n \cdot \uparrow$ の標準形
 
 明らかに劣位な選択肢を予め除去し、打ち消し可能な手を予め打ち消しておいた形を標準形というのだった [[aiura/game-algebra]](./game-algebra.html#6).
+標準形はあくまでもこの2つのルールを繰り返し適用して導出される.
 
 ここでは $n \cdot \uparrow$ $(n \geq 1)$ の標準形を調べる.
+選択肢はどちらにしろ、$n$ 個ある $\uparrow$ から一つの $\uparrow$ を選んで手を進めるだけなので、
 $$n \cdot \uparrow = \{ (n-1) \cdot \uparrow | (n-1) \cdot \uparrow\ast\}$$
-なので、$(n-1) \cdot \uparrow \ast$ の標準形を先に考える.
+
+まず片手枷原理をチェックする.
+左右とも選択肢は1つずつなのでこれは適用できない.
+
+次に打ち消し可能な手を探す.
+まず右についてだが、左の応手は
+$$(n-2)\cdot\uparrow, (n-1)\cdot \uparrow$$
+(一旦十分大きい $n$ を用いている) であり、元のゲーム $n \cdot \uparrow$ と比べて、どちらも大きくなっている (即ち右にとって劣位) ということは無い.
+なので右の手を打ち消すような手は無い.
+
+一方で左の $(n-1)\cdot\uparrow$ というのは打ち消し可能で、
+右は $(n-2)\cdot\uparrow\ast$ という手で打ち消す (それしか選択肢がないわけだが).
+$$\ast < 2\cdot\uparrow$$
+であることに註意すると
+$$(n-2)\cdot\uparrow\ast < (n-1)\cdot\uparrow$$
+であり打ち消すことがわかる.
+というわけで、これの左選択肢
+$$(n-3)\cdot\uparrow\ast, (n-2)\cdot\cdot\uparrow$$
+で短絡できる.
+
+$$\begin{align*}
+n \cdot \uparrow
+& = \{ (n-1) \cdot \uparrow ~|~ \cdots \} \\
+& = \{ (n-2) \cdot \uparrow, (n-3) \cdot \uparrow\ast ~|~ \cdots \}
+\end{align*}$$
+
+さて左選択肢に再び「$\uparrow$ の整数倍」が登場するので、再び同様の短絡が出来る.
+
+$$\begin{align*}
+n \cdot \uparrow
+& = \{ (n-1) \cdot \uparrow ~|~ \cdots \} \\
+& = \{ (n-2) \cdot \uparrow, (n-3) \cdot \uparrow\ast ~|~ \cdots \}
+& = \cdots \\
+& = \{ \uparrow, 1\cdot\uparrow\ast, 2\cdot\uparrow\ast, \cdots, (n-4)\cdot\uparrow\ast, (n-3)\cdot\uparrow\ast ~|~ \cdots \}
+\end{align*}$$
+
+さて、次に左選択肢の $m\cdot\uparrow\ast$ ($m \leq n-3$) について考える.
+これも右にとって打ち消し可能な手である.
+すなわち、
+
+$$n\cdot\uparrow \to^L m\cdot\uparrow\ast \to^R m\cdot\uparrow$$
+について
+$$m\cdot\uparrow < n\cdot\uparrow$$
+である ($m <n$ なので).
+なので、やはり左の $m\cdot\uparrow\ast$ という手は、
+$m\cdot\uparrow$ に対する左の選択肢で置き換えて短絡する.
+左の選択肢はただ1つしかなく、しかもそれは $(m-1)\cdot\uparrow$ である.
+というわけでたくさんある
+$$1\cdot\uparrow\ast, 2\cdot\uparrow\ast, \cdots, (n-4)\cdot\uparrow\ast, (n-3)\cdot\uparrow\ast$$
+という選択肢の係数を 1 ずつ減らしていって、結局すべてをゼロにしてしまえる.
+$$n \cdot \uparrow = \{ \uparrow, 0 ~|~ (n-1)\cdot\uparrow\ast \}$$
+
+最後に $0<\uparrow$ なので、
+$$n \cdot \uparrow = \{ 0 ~|~ (n-1)\cdot\uparrow\ast \}$$
+とまで出来る.
+
+さて $n-3$ というが出てきてるので以上の考察は $n\geq3$ くらい大きい数を考えている.
+小さい $n$ については個別に調べれば、やはり今の結論と同じ形をしていることがわかる.

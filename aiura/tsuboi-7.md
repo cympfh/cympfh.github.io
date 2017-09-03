@@ -161,7 +161,7 @@ $dist(x,y)=0 \implies \| \varphi(x) - \varphi(y) \| =0 \implies x=y$
 ## 測地線
 
 2点 $x_0, x_1$ を繋ぐもので、
-長さ $L(c)$ の最小 (極小) を与えるような曲線を考える.
+長さ $L(c)$ の最小 (極小) を与えるような曲線 $c$ を考える.
 
 ### 速度パラメータ
 
@@ -210,7 +210,7 @@ $A$ に最小を与える曲線 $c$ は同時に $L$ にも最小を与える.
 
 多様体 $M \subset \mathbb{R}^m$ に就いて、
 その上にある 2 点 $x_0, x_1$ を繋ぐもので、
-$A$ の極小を与えるような曲線を考える.
+$A(c)$ の極小を与えるような曲線 $c$ を考える.
 
 変分法を使う.
 
@@ -288,7 +288,7 @@ $$
 \sum_i g_{ik}(c(t)) \frac{d^2 c_i}{dt^2}
 =
 \sum_{i,j}
-    \left( \frac{1}{2} \frac{\partial g_{ik}}{\partial x_j} - \frac{\partial g_{ik}}{\partial x_j} \right)
+    \left( \frac{1}{2} \frac{\partial g_{ij}}{\partial x_k} - \frac{\partial g_{ik}}{\partial x_j} \right)
     \frac{dc_j}{dt}
     \frac{dc_i}{dt}
 $$
@@ -305,9 +305,138 @@ $$
 =
 \sum_k g^{k\ell}
 \sum_{i,j}
-    \left( \frac{1}{2} \frac{\partial g_{ik}}{\partial x_j} - \frac{\partial g_{ik}}{\partial x_j} \right)
+    \left( \frac{1}{2} \frac{\partial g_{ij}}{\partial x_k} - \frac{\partial g_{ik}}{\partial x_j} \right)
     \frac{dc_j}{dt}
     \frac{dc_i}{dt}
 $$
 
-これを満たす曲線が測地線.
+移項して、
+
+<div class=thm>
+測地線の方程式:
+$$
+\frac{d^2c_\ell}{dt^2}
+-
+\sum_k g^{k\ell}
+\sum_{i,j}
+    \left( \frac{1}{2} \frac{\partial g_{ij}}{\partial x_k} - \frac{\partial g_{ik}}{\partial x_j} \right)
+    \frac{dc_j}{dt}
+    \frac{dc_i}{dt}
+=0$$
+これを満たす曲線 $c(t)$ を正に **測地線** と呼ぶ.
+</div>
+
+ここからこの方程式の簡略化を行う.
+
+まず
+$\frac{1}{2} \frac{\partial g_{ij}}{\partial x_k} - \frac{\partial g_{ik}}{\partial x_j}$
+の部分であるが、$i,j$ の対称式になっていない.
+ただ、どうせ $\sum_{ij}$ を取るのだから、
+
+$$\sum_{ij}
+\frac{\partial g_{ik}}{\partial x_j}
+=
+\sum_{ij}
+\frac{1}{2} \left(
+\frac{\partial g_{ik}}{\partial x_j}
++
+\frac{\partial g_{jk}}{\partial x_i}
+\right)$$
+
+これを使うと
+$$
+\sum_k g^{k\ell}
+\sum_{i,j}
+    \left( \frac{1}{2} \frac{\partial g_{ij}}{\partial x_k} - \frac{\partial g_{ik}}{\partial x_j} \right)
+    \frac{dc_j}{dt}
+    \frac{dc_i}{dt}
+$$
+は、
+$$
+\sum_k g^{k\ell}
+\sum_{i,j}
+\frac{1}{2}
+\left(
+\frac{\partial g_{ij}}{\partial x_k}
+- \frac{\partial g_{ik}}{\partial x_j}
+- \frac{\partial g_{jk}}{\partial x_i}
+\right)
+    \frac{dc_j}{dt}
+    \frac{dc_i}{dt}
+$$
+と出来る.
+個々の項は $i,j$ に関して対称式になっているのでキレイ.
+そこで
+$$\Gamma^\ell_{ij} = -
+\frac{1}{2}
+\sum_k g^{k\ell}
+\left(
+\frac{\partial g_{ij}}{\partial x_k}
+- \frac{\partial g_{ik}}{\partial x_j}
+- \frac{\partial g_{jk}}{\partial x_i}
+\right)
+$$
+を定めて (符号に註意) 、測地線の方程式を次のように書き改める.
+
+<div class=thm>
+測地線の方程式:
+$$\frac{d^2c_\ell}{dt^2}
++ \sum_{i,j} \Gamma^\ell_{ij} \frac{dc_j}{dt} \frac{dc_i}{dt}
+= 0$$
+</div>
+
+この $\Gamma^\ell_{ij}$ のことを、
+**クリストッフェルの記号**
+とゆう.
+
+### 平行移動
+
+測地線の方程式に就いて、一旦測地線のことを忘れて
+
+曲線 $c$,
+点 $c(t)$ からのベクトルを与える関数 $v(t)$ ($v(t) \in T_{c(t)}M$)
+に関する微分方程式
+$$\frac{dv_\ell}{dt}
++ \sum_{i,j} \Gamma^\ell_{ij} \frac{dc_i}{dt} v_i
+= 0$$
+を考える.
+
+> これに更に条件 $v_i = \frac{d c_i}{dt}$ を付け加えれば測地線の方程式そのものである.
+> あるが、一旦このことは忘れる.
+
+リーマン計量 $g$ を与えれば $\Gamma^\ell_{ij}$ は定まり、
+さらに曲線 $c$ を与えた時、この方程式を満たす $v$ が解として求まる.
+このとき、
+$$v_0 \in T_0M \mapsto v(t) \in T_{c(t)}M$$
+を **平行移動** という.
+
+これはベクトル $v(t)$ が曲線に沿って、(そのリーマン計量の下で) 平行に移動している様子である.
+
+#### 例
+
+$M=\mathbb{R}^2$, $g(x)=1_2$ での平行移動を考える.
+$g$ が $x$ に依らず定数ならクリストッフェルの記号はいつもゼロである.
+$\Gamma^\ell_{ij}=0$.
+これを代入すると微分方程式は
+$$\frac{dv_\ell}{dt}=0$$
+従って $v(t)=Const$.
+
+このリーマン計量の下では平行移動とは想像通りの平行移動のことを指す.
+ベクトルとして全く固定のものが $c(t)$ から生えてる感じ.
+
+#### 問 7.3.1
+
+ベクトルのノルム $q(v)=g(v,v)$ を考える.
+平行移動の中でベクトル $v(t)$ のノルム $q(v(t))$ は $t$ に関して一定である.
+
+> ベクトルの平行移動の中でその大きさは不変
+
+まず $g,q$ の定義から
+$$q(v)=g(v,v)=\sum_{ij} g_{ij}(x) v_i v_j$$
+これが $t$ に関して不変なので
+$$\frac{d}{dt} q(v) = \sum_{ij} \frac{d}{dt} \left[ g_{ij}(x) v_i v_j \right]$$
+これがゼロであることを示せばいい.
+$x$ とあるが $x=c(t)$ のことなので、これについても微分する必要があることに註意.
+あの微分方程式を代入して頑張れば求まるj
+
+<!-- 2017/08/23 -->

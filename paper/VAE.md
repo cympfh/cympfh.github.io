@@ -2,13 +2,34 @@
 % https://arxiv.org/abs/1606.05908
 % 深層学習 オートエンコーダ
 
+## index
+
+<div id=toc></div>
+
+## 参考文献
+
+- [1] [[1406.5298] Semi-Supervised Learning with Deep Generative Models](https://arxiv.org/abs/1406.5298)
+    - オリジナル論文 (2014)
+- [2] [[1606.05908] Tutorial on Variational Autoencoders](https://arxiv.org/abs/1606.05908)
+    - 再解釈論文 (2016)
+- [3] [Semi-Supervised Learning with Deep Generative Models [arXiv:1406.5298] - ご注文は機械学習ですか？](http://musyoku.github.io/2016/07/02/semi-supervised-learning-with-deep-generative-models/)
+    - [1] の解説ブログ. chainer による実装もアリ
+
 ## 概要
 
-VAEs (Variational Autoencoders; 変分自己符号化器) とは生成モデルの枠組みで自己符号化器 (Autoencoders) を解釈したもので、
+VAEs (Variational Autoencoders; 変分自己符号化器) は [1] で提案されたものだが、
+[2] ではこれに別な解釈を与え直したもので、今回は主にこちらを参考にしている.
+(ていうか [1] の説明がいちいち雑すぎる.)
+
+[2] によれば VAE とは生成モデルの枠組みで自己符号化器 (Autoencoders) を解釈したもので、
 生成モデルで言う潜在変数を観測データの符号と見做す.
 すなわち、観測データから潜在変数を推定する手続きが符号化であり、その逆が復号化である.
 
-## (Standard) VAEs
+[1] では大きく二通りのモデルが提案されており、1つはシンプルな M1、2つめはこれに条件を加えた M2.
+M1 のことをスタンダードな VAE 、M2 を Conditional VAE (CVAE) として紹介する.
+[1] ではさらにこの2つのハイブリッドモデルも示されている.
+
+## VAE (M1)
 
 次のような単純な生成モデルを考える.
 
@@ -149,45 +170,123 @@ Decoder $R$ に入れるだけで良い.
 とは言え、適当なノイズを入れただけではやはり平均的な、
 例えば MNIST ならボヤケた画像が、出て来るだけになる.
 
-## Conditional Variational Autoencoders (CVAEs)
+## Conditional Variational Autoencoders (CVAE, M2)
 
 データ $x$ にラベル $y$ があるとしてそれを活用したい.
-先の VAE で $x$ としていたのを $y$ にして、代わりにエンコーダーにもデコーダーにも $x$ を入れることにする.
 
-次のモデルを用いる.
+次のグラフィカルモデルを用いる.
+すなわち、今までは単に潜在変数 $z$ から生成されるとしていたが、それに条件 (condition) $y$ を与える.
 
-<figure>
-<img width="300px" src="img/vae/cmodel.png" />
-<img width="400px" src="img/vae/cvae.png" />
-</figure>
+```dot
+digraph {
+    rankdir=TB;
+    bgcolor=transparent;
+    subgraph cluster_A {
+        N -> z [style=dotted];
+        {z y} -> x;
+        N [label="N(0, 1)" shape=plaintext];
+    }
+    theta -> x;
+    theta [label="θ"];
+}
+```
 
-このようにすると、この testing は
+先程と同様にエンコーダ $Q$ とデコーダ $R$ を用意する.
+ただしそれぞれは条件 $y$ が与えられたときの確率分布を表す.
 
-- 入力 $x$ に対して
-- ノイズ $z \sim \mathcal{N}(0, 1)$ を用いて
-    - $y = R(x, z)$
+```dot
+digraph CVAE {
+    rankdir=LR;
+    bgcolor=transparent;
+    subgraph cluster_CVAE {
+        graph [label="CVAE"];
+        {x y} -> Encoder -> Pr;
+        Pr [label="Pr(z|x,y)"];
+        Pr -> z [style=dotted];
+        {z "y'"} -> Decoder -> "x'";
+        Encoder [shape=rect label="Encoder (Q)"];
+        Decoder [shape=rect label="Decoder (R)"];
+        {rank=same x y}
+        {rank=same z "y'"}
+        "y'" [label=y];
+    }
+}
+```
 
-として、「$x$ から $y$ を予測するモデル」として使うことが出来て楽しい.
+すなわち、
 
-損失関数は
+- $Q(x, y) \approx Pr(z | x, y)$
+- $R(z, y) \approx Pr(x | z, y)$
 
-$$\begin{eqnarray}
-\mathcal{L}(x; Q,R)
- & = \text{KL}(Q(z|x,y) \| Pr(z|x,y)) - \log Pr(y|x)
- & = \text{KL}(Q(z|x,y) \| Pr(z|x)) - \mathbb{E}_{z \sim Q(z|x,y)} \left[ \log Pr(y|z,x) \right]
-\end{eqnarray}$$
+を目指す.
+テストをするには、適当に $\mathcal{N}$ からサンプリングして得たノイズ $z$ を $y$ と併せて $R$ に入れることで $x$ を生成することで試す.
+
+```dot
+digraph CVAE {
+    rankdir=LR;
+    bgcolor=transparent;
+    subgraph cluster_test {
+        graph [label="(testing mode)"];
+        Normal -> z [style=dotted];
+        {z y} -> Decoder_t -> "x'";
+        Decoder_t [shape=rect label="Decoder (R)"];
+        Normal [label="N(0, 1)"];
+    }
+}
+```
+
+損失関数は先ほどのやつに $y$ を適切に入れればよくて、
+
+$$\begin{align*}
+\mathcal{L}(x, y; Q,R)
+ & = \text{KL}(Q(z|x,y) \| Pr(z|x,y)) - \log Pr(x|y) \\
+ & = \text{KL}(Q(z|x,y) \| Pr(z|x)) - \mathbb{E}_{z \sim Q(z|x,y)} \left[ \log Pr(x|z,y) \right]
+\end{align*}$$
 
 となる.
-註意すべき点として $x$ と $z$ は独立だとしているので相変わらず
-
+ここで $z$ は他の変数とは独立なノイズで、
 $$Pr(z|x) = Pr(z) = \mathcal{N}(0,1)$$
+である.
+これを代入しておくと、
+損失関数は改めて書くと
+$$\mathcal{L}(x, y; Q,R)
+  = \text{KL}(Q(z|x,y) \| \mathcal{N}(0, 1)) - \mathbb{E}_{z \sim Q(z|x,y)} \left[ \log Pr(x|z,y) \right]$$
+とし、この最小化を目指す.
 
-のまま. 損失関数は改めて書くと
+### 半教師アリ学習としての CVAE (M2)
 
-$$\mathcal{L}(x; Q,R)
-  = \text{KL}(Q(z|x,y) \| \mathcal{N}(0, 1)) - \mathbb{E}_{z \sim Q(z|x,y)} \left[ \log Pr(y|z,x) \right]$$
+参考文献 [2] には CVAE (M2) で半教師アリ学習をすることについては触れられていなかったので、 [1] で該当場所を読んで補足、、、
+したいのだが、本当に説明が雑すぎる.
+[3] も併せて読む.
 
-としてこれを最適化する.
+ラベル付きデータ $(x,y)$ については上の $\mathcal{L}(x,y)$ を用いる.
+ラベルなしデータ $(x, \bot)$ については、仕方ないので $Pr(y|x)$ を学習し、その上の $y$ を使う.
+
+ということで、以下を目指すような新たにニューラルネット $q$ を1つ追加する.
+$$q(x) \approx Pr(y|x)$$
+
+$\mathcal{L}$ の中の
+$$\mathbb{E}_{z \sim Q(z|x,y)} \left[ \log Pr(x|z,y) \right]$$
+の部分を
+$$\mathbb{E}_{y \sim q(x)} \mathbb{E}_{z \sim Q(z|x,y)} \left[ \cdots \right]$$
+で置き換えたものを
+$$\mathcal{U}(x)$$
+とし、ラベルなしデータのための損失関数とする.
+
+結局
+$$\mathcal{J} = \mathcal{L}(\mathcal{D}) =
+\sum_{\text{labeled} \mathcal{D}} \mathcal{L}(x,y) +
+\sum_{\text{unlabeled} \mathcal{D}} \mathcal{U}(x)$$
+を全体の損失関数に使う.
+
+### 半教師アリ分類学習への適用
+
+副作用的に $q(x) = Pr(y|x)$ が手に入ったので、これを使って $x$ からラベル $y$ を予測できる、ようになるが、
+先ほどの損失関数だと、$q$ はラベルなしの $\mathcal{U}$ の方にしか登場しない.
+つまり、ラベルなしデータのみから学習してるわけだが、普通に考えて雑魚なので、ラベルありデータからも学習するように、
+$$\mathcal{J} - \alpha \cdot \mathbb{E}_{\text{labeled} \mathcal{D}} \log q(x)$$
+のようにする.
+[3] では、$\mathcal{J}$ の学習と、ラベルデータからの $q$ の学習を完全に分けて行ったが上手く行ったそう.
 
 ## MNIST 実験
 

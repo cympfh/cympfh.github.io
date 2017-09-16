@@ -152,5 +152,3 @@
     - [回答](https://gist.github.com/cympfh/6a1fbd8b8f2c9b292ee3)
 - [円周率](misc.pi.html)
 
-# [テスト環境](test.html)
-

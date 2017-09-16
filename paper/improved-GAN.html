@@ -8,7 +8,7 @@
   <style type="text/css">code{white-space: pre;}</style>
   <link rel="stylesheet" href="../resources/css/c.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
@@ -29,13 +29,14 @@ original paper: <a href=https://arxiv.org/abs/1606.03498>https://arxiv.org/abs/1
 <p><a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#GAN>GAN</a></p>
 </div>
 <h2 id="概要">概要</h2>
-<p>GANのテクニック集</p>
+<p>GANのテクニック集、応用例</p>
 <p><span class="math display">\[\text{GAN}: z \rightarrow^G x \rightarrow^D [0,1]\]</span></p>
-<h2 id="feature-matching">Feature matching</h2>
+<h2 id="テクニック">テクニック</h2>
+<h3 id="feature-matching">Feature matching</h3>
 <p>識別器の中の入力から適当な中間層までの計算を <span class="math inline">\(f\)</span> とするとき</p>
 <p><span class="math display">\[\left\lVert f(x_{\text{real}}) - f(G(z_{\text{noise}})) \right\rVert^2\]</span></p>
 <p>の最小化を目的関数に加える. これは <span class="math inline">\(G\)</span> を強くするのが目的で、普通の画像の基本的な特徴を持った画像は安定して作れるようにする.</p>
-<h2 id="minibatch-discrimination">Minibatch discrimination</h2>
+<h3 id="minibatch-discrimination">Minibatch discrimination</h3>
 <p>GAN の大きな問題として縮退 (collapse) が挙げられる. それはすなわち、GANを訓練していくと生成器 <span class="math inline">\(G\)</span> がいつの間にか入力のノイズを無視して定数を出力するような状態に収束してしまう現象のこと. <span class="math inline">\(G\)</span> としてはミニバッチごとに異なる画像を出す必要がないので、そうなるのが当然.</p>
 <p>ミニバッチの中では異なる入力が与えられるのだから出力も異なることを保証するような制約を設けるのが minibatch discrimination で、ミニバッチごとの <span class="math inline">\(G\)</span> の出力における多様性を <span class="math inline">\(D\)</span> にヒントとして入力を与える. <span class="math inline">\(G\)</span> はこれを騙すには多様な出力をする必要がある.</p>
 <p>多様性は次のように表現する.<br />
@@ -48,11 +49,38 @@ original paper: <a href=https://arxiv.org/abs/1606.03498>https://arxiv.org/abs/1
 <li><span class="math inline">\(o(i) = [ o_1(i), o_2(i), \ldots, o_B(i) ]\)</span></li>
 </ul>
 <p>この <span class="math inline">\(o(i)\)</span> を <span class="math inline">\(f\)</span> の継続への入力に ( <span class="math inline">\(x_i\)</span> に対応するところに) 追加する.</p>
-<h2 id="one-sided-label-smoothing">One-sided label smoothing</h2>
+<h3 id="one-sided-label-smoothing">One-sided label smoothing</h3>
 <p>正負ラベルを <span class="math inline">\(1.0\)</span>, <span class="math inline">\(0.0\)</span> に対応させる代わりに <span class="math inline">\(0.9\)</span>, <span class="math inline">\(0.1\)</span> くらいに対応させるほうが良い結果が得られることは 1980 年から知られていた (!!). このテクニックを Label smoothing という.</p>
 <p>なんか分からんけど正データだけ <span class="math inline">\(0.9\)</span> くらいにして負データは <span class="math inline">\(0.0\)</span> にしただけの片側ラベルスムージングが良いらしい.</p>
-<h2 id="virtual-batch-normalization">Virtual batch normalization</h2>
+<h3 id="virtual-batch-normalization">Virtual batch normalization</h3>
 <p>DCGAN においても batch normalization は品質向上に貢献してきたが、 バッチごとに他の値に入力するのは問題なので、 batch normalization が参照するバッチは初めに一個決めてずっと固定して使う.</p>
+<h2 id="半教師あり学習-画像の分類問題">半教師あり学習 (画像の分類問題)</h2>
+<p>画像の <span class="math inline">\(k\)</span> クラス分類の半教師あり学習を考える. ラベルありのデータセット <span class="math inline">\(D_L = \{(x,y)\}\)</span> と <span class="math inline">\(D_U=\{x\}\)</span> がある.</p>
+<p><span class="math inline">\(D_L\)</span> からは通常の <span class="math inline">\(k\)</span> クラス分類を行う. すなわち、適当な NN を組んで出力として <span class="math inline">\(k\)</span> 次元の値 <span class="math display">\[l_1,l_2,\ldots,l_k\]</span> を出して、これの softmax <span class="math display">\[\mathrm{softmax}(l_1,\ldots,l_k) = \frac{\left(\exp l_i\right)_i}{\sum_i \exp l_i} = \left( p_1,\ldots,p_k \right)
+~~
+0&lt;p_i, \sum_i p_i=1\]</span> の <span class="math inline">\(p_i\)</span> を <span class="math inline">\(i\)</span> 番目のクラスに属する確率だとして、教師ありで学習する.</p>
+<p>これにGANの構造を追加する. すなわち、画像をノイズから生成するNN <span class="math inline">\(G\)</span> (生成器) を加える. また出力を <span class="math inline">\(k\)</span> 次元から <span class="math inline">\(k+1\)</span> 次元 <span class="math display">\[l_1,l_2,\ldots,l_k, l_{k+1}\]</span> に増やす. この <span class="math inline">\(l_i (1\leq i \leq k)\)</span> は今まで通りだが、新しく加えた <span class="math inline">\(l_{k+1}\)</span> は入力が <span class="math inline">\(G\)</span> によって生成されたことを表す. すなわちこの分類器は、自然画像の何番目のクラスか、または人工画像か、を分類する.</p>
+<p>ここで注意として、softmax は定数の加算に対して不変性を持つ. つまり、 <span class="math display">\[\mathrm{softmax}(l_1,\ldots,l_k) = \mathrm{softmax}(l_1+c,\ldots,l_k+c)\]</span> である. 従って、実は、<span class="math inline">\(l_{k+1}=0\)</span> としておけばよい. 実際に NN に <span class="math inline">\(k+1\)</span> 個目の出力を加える必要はなく、計算の中でゼロがあるものとすればよい.</p>
+<p>半教師あり学習としての肝は</p>
+<ol type="1">
+<li>ラベルありからは通常通り、ラベル <span class="math inline">\(1,2,\ldots,k\)</span> を正しく学習
+<ul>
+<li><span class="math inline">\(k+1\)</span> 番目は無視していい</li>
+</ul></li>
+<li>ノイズから、
+<ul>
+<li>ラベルが <span class="math inline">\(k+1\)</span> になるように生成 (<span class="math inline">\(G\)</span> の学習)</li>
+<li>ラベルが <span class="math inline">\(k+1\)</span> にならないように分類 (分類器の学習)</li>
+</ul></li>
+<li>ラベルなしから、ラベルが <span class="math inline">\(k+1\)</span> にならないように分類</li>
+</ol>
+<p>以上. <span class="math inline">\(k+1\)</span> 番目を無視するか含むかで <span class="math inline">\(p\)</span> を <span class="math inline">\(p^k, p^{k+1}\)</span> とかき分けることにする. 右上の数字は次数のつもり. 適当に損失関数の式を写すと、</p>
+<ul>
+<li><span class="math inline">\(\mathcal{L} = - \mathbb{E}_{(x,y) \sim L} \log p^k(y|x)\)</span></li>
+<li><span class="math inline">\(\mathcal{U} = - \mathbb{E}_{x \sim U} \log p^{k+1}(y \ne k+1|x)\)</span></li>
+<li><span class="math inline">\(\mathcal{V} = - \mathbb{E}_{z \sim \mathrm{noise}} \log p^{k+1}(y \ne k+1|G(z))\)</span></li>
+</ul>
+<p>に対して、分類器の損失関数は <span class="math inline">\(\mathcal{L}+\mathcal{U}+\mathcal{V}\)</span>、生成器側の損失関数は <span class="math inline">\(-\mathcal{V}\)</span>.</p>
 <!--
 
   HTML として pandoc -B で include する.

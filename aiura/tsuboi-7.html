@@ -8,7 +8,7 @@
   <style type="text/css">code{white-space: pre;}</style>
   <link rel="stylesheet" href="../resources/css/c.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
@@ -81,7 +81,7 @@
 <p>これは対称律、三角不等式とかの距離の公理を満たしている.</p>
 <p>前回の <span class="math inline">\(v^TAv = \sum_{i,j} A_{ij} v_i v_j \geq \lambda v_i^2 = \lambda v^T v\)</span> から <span class="math inline">\(dist(x, y) = \inf \{L(c)\} \geq \lambda \| \varphi(x) - \varphi(y) \|\)</span> と、ユークリッド空間上での距離を下界にできる. これを使うと <span class="math inline">\(dist(x,y)=0 \implies \| \varphi(x) - \varphi(y) \| =0 \implies x=y\)</span> とできて対称律を確かめられる.</p>
 <h2 id="測地線">測地線</h2>
-<p>2点 <span class="math inline">\(x_0, x_1\)</span> を繋ぐもので、 長さ <span class="math inline">\(L(c)\)</span> の最小 (極小) を与えるような曲線を考える.</p>
+<p>2点 <span class="math inline">\(x_0, x_1\)</span> を繋ぐもので、 長さ <span class="math inline">\(L(c)\)</span> の最小 (極小) を与えるような曲線 <span class="math inline">\(c\)</span> を考える.</p>
 <h3 id="速度パラメータ">速度パラメータ</h3>
 <p>連続で <span class="math inline">\(d\tau/dt&gt;0\)</span> であるような関数 <span class="math inline">\(\tau : [0, 1] \to [0, 1]\)</span> を用いて、 曲線 <span class="math inline">\(c\)</span> を <span class="math inline">\(c \circ \tau\)</span> とすることで同じ像を持つが速度が異なるような曲線を作ることができる. この長さを考えると <span class="math display">\[\begin{align*}
 L(c \circ \tau)
@@ -100,7 +100,7 @@ L(c \circ \tau)
 </div>
 <p>初めにも述べたように <span class="math inline">\(L\)</span> を直接計算するよりも <span class="math inline">\(A\)</span> を計算するほうが式が (<span class="math inline">\(\sqrt{}\)</span> が付かない分) 簡単なので、 こちらを使う.</p>
 <h3 id="測地線-1">測地線</h3>
-<p>多様体 <span class="math inline">\(M \subset \mathbb{R}^m\)</span> に就いて、 その上にある 2 点 <span class="math inline">\(x_0, x_1\)</span> を繋ぐもので、 <span class="math inline">\(A\)</span> の極小を与えるような曲線を考える.</p>
+<p>多様体 <span class="math inline">\(M \subset \mathbb{R}^m\)</span> に就いて、 その上にある 2 点 <span class="math inline">\(x_0, x_1\)</span> を繋ぐもので、 <span class="math inline">\(A(c)\)</span> の極小を与えるような曲線 <span class="math inline">\(c\)</span> を考える.</p>
 <p>変分法を使う.</p>
 <p><span class="math inline">\(c(0)=x_0, c(1)=x_1\)</span> なる曲線に対して、 任意の曲線 <span class="math inline">\(\epsilon\)</span> 、ただし <span class="math inline">\(\epsilon(0) = \epsilon(1) = 0\)</span> なるもので僅かに変化させて <span class="math display">\[c + h\epsilon\]</span> という曲線を考える. 多様体はユークリッド空間の中にあるので曲線同士が足せる.</p>
 <p>で、 <span class="math display">\[\frac{\delta}{\delta h} \left. A(c + h\epsilon) \right|_{h=0} = 0\]</span> を満たすような <span class="math inline">\(c\)</span> が正に <span class="math inline">\(A\)</span> に極小を与える曲線である. このような曲線を <strong>測地線</strong> という.</p>
@@ -150,7 +150,7 @@ L(c \circ \tau)
 \sum_i g_{ik}(c(t)) \frac{d^2 c_i}{dt^2}
 =
 \sum_{i,j}
-    \left( \frac{1}{2} \frac{\partial g_{ik}}{\partial x_j} - \frac{\partial g_{ik}}{\partial x_j} \right)
+    \left( \frac{1}{2} \frac{\partial g_{ij}}{\partial x_k} - \frac{\partial g_{ik}}{\partial x_j} \right)
     \frac{dc_j}{dt}
     \frac{dc_i}{dt}
 \]</span></p>
@@ -164,11 +164,85 @@ L(c \circ \tau)
 =
 \sum_k g^{k\ell}
 \sum_{i,j}
-    \left( \frac{1}{2} \frac{\partial g_{ik}}{\partial x_j} - \frac{\partial g_{ik}}{\partial x_j} \right)
+    \left( \frac{1}{2} \frac{\partial g_{ij}}{\partial x_k} - \frac{\partial g_{ik}}{\partial x_j} \right)
     \frac{dc_j}{dt}
     \frac{dc_i}{dt}
 \]</span></p>
-<p>これを満たす曲線が測地線.</p>
+<p>移項して、</p>
+<div class="thm">
+<p>測地線の方程式: <span class="math display">\[
+\frac{d^2c_\ell}{dt^2}
+-
+\sum_k g^{k\ell}
+\sum_{i,j}
+    \left( \frac{1}{2} \frac{\partial g_{ij}}{\partial x_k} - \frac{\partial g_{ik}}{\partial x_j} \right)
+    \frac{dc_j}{dt}
+    \frac{dc_i}{dt}
+=0\]</span> これを満たす曲線 <span class="math inline">\(c(t)\)</span> を正に <strong>測地線</strong> と呼ぶ.</p>
+</div>
+<p>ここからこの方程式の簡略化を行う.</p>
+<p>まず <span class="math inline">\(\frac{1}{2} \frac{\partial g_{ij}}{\partial x_k} - \frac{\partial g_{ik}}{\partial x_j}\)</span> の部分であるが、<span class="math inline">\(i,j\)</span> の対称式になっていない. ただ、どうせ <span class="math inline">\(\sum_{ij}\)</span> を取るのだから、</p>
+<p><span class="math display">\[\sum_{ij}
+\frac{\partial g_{ik}}{\partial x_j}
+=
+\sum_{ij}
+\frac{1}{2} \left(
+\frac{\partial g_{ik}}{\partial x_j}
++
+\frac{\partial g_{jk}}{\partial x_i}
+\right)\]</span></p>
+<p>これを使うと <span class="math display">\[
+\sum_k g^{k\ell}
+\sum_{i,j}
+    \left( \frac{1}{2} \frac{\partial g_{ij}}{\partial x_k} - \frac{\partial g_{ik}}{\partial x_j} \right)
+    \frac{dc_j}{dt}
+    \frac{dc_i}{dt}
+\]</span> は、 <span class="math display">\[
+\sum_k g^{k\ell}
+\sum_{i,j}
+\frac{1}{2}
+\left(
+\frac{\partial g_{ij}}{\partial x_k}
+- \frac{\partial g_{ik}}{\partial x_j}
+- \frac{\partial g_{jk}}{\partial x_i}
+\right)
+    \frac{dc_j}{dt}
+    \frac{dc_i}{dt}
+\]</span> と出来る. 個々の項は <span class="math inline">\(i,j\)</span> に関して対称式になっているのでキレイ. そこで <span class="math display">\[\Gamma^\ell_{ij} = -
+\frac{1}{2}
+\sum_k g^{k\ell}
+\left(
+\frac{\partial g_{ij}}{\partial x_k}
+- \frac{\partial g_{ik}}{\partial x_j}
+- \frac{\partial g_{jk}}{\partial x_i}
+\right)
+\]</span> を定めて (符号に註意) 、測地線の方程式を次のように書き改める.</p>
+<div class="thm">
+<p>測地線の方程式: <span class="math display">\[\frac{d^2c_\ell}{dt^2}
++ \sum_{i,j} \Gamma^\ell_{ij} \frac{dc_j}{dt} \frac{dc_i}{dt}
+= 0\]</span></p>
+</div>
+<p>この <span class="math inline">\(\Gamma^\ell_{ij}\)</span> のことを、 <strong>クリストッフェルの記号</strong> とゆう.</p>
+<h3 id="平行移動">平行移動</h3>
+<p>測地線の方程式に就いて、一旦測地線のことを忘れて</p>
+<p>曲線 <span class="math inline">\(c\)</span>, 点 <span class="math inline">\(c(t)\)</span> からのベクトルを与える関数 <span class="math inline">\(v(t)\)</span> (<span class="math inline">\(v(t) \in T_{c(t)}M\)</span>) に関する微分方程式 <span class="math display">\[\frac{dv_\ell}{dt}
++ \sum_{i,j} \Gamma^\ell_{ij} \frac{dc_i}{dt} v_i
+= 0\]</span> を考える.</p>
+<blockquote>
+<p>これに更に条件 <span class="math inline">\(v_i = \frac{d c_i}{dt}\)</span> を付け加えれば測地線の方程式そのものである. あるが、一旦このことは忘れる.</p>
+</blockquote>
+<p>リーマン計量 <span class="math inline">\(g\)</span> を与えれば <span class="math inline">\(\Gamma^\ell_{ij}\)</span> は定まり、 さらに曲線 <span class="math inline">\(c\)</span> を与えた時、この方程式を満たす <span class="math inline">\(v\)</span> が解として求まる. このとき、 <span class="math display">\[v_0 \in T_0M \mapsto v(t) \in T_{c(t)}M\]</span> を <strong>平行移動</strong> という.</p>
+<p>これはベクトル <span class="math inline">\(v(t)\)</span> が曲線に沿って、(そのリーマン計量の下で) 平行に移動している様子である.</p>
+<h4 id="例">例</h4>
+<p><span class="math inline">\(M=\mathbb{R}^2\)</span>, <span class="math inline">\(g(x)=1_2\)</span> での平行移動を考える. <span class="math inline">\(g\)</span> が <span class="math inline">\(x\)</span> に依らず定数ならクリストッフェルの記号はいつもゼロである. <span class="math inline">\(\Gamma^\ell_{ij}=0\)</span>. これを代入すると微分方程式は <span class="math display">\[\frac{dv_\ell}{dt}=0\]</span> 従って <span class="math inline">\(v(t)=Const\)</span>.</p>
+<p>このリーマン計量の下では平行移動とは想像通りの平行移動のことを指す. ベクトルとして全く固定のものが <span class="math inline">\(c(t)\)</span> から生えてる感じ.</p>
+<h4 id="問-7.3.1">問 7.3.1</h4>
+<p>ベクトルのノルム <span class="math inline">\(q(v)=g(v,v)\)</span> を考える. 平行移動の中でベクトル <span class="math inline">\(v(t)\)</span> のノルム <span class="math inline">\(q(v(t))\)</span> は <span class="math inline">\(t\)</span> に関して一定である.</p>
+<blockquote>
+<p>ベクトルの平行移動の中でその大きさは不変</p>
+</blockquote>
+<p>まず <span class="math inline">\(g,q\)</span> の定義から <span class="math display">\[q(v)=g(v,v)=\sum_{ij} g_{ij}(x) v_i v_j\]</span> これが <span class="math inline">\(t\)</span> に関して不変なので <span class="math display">\[\frac{d}{dt} q(v) = \sum_{ij} \frac{d}{dt} \left[ g_{ij}(x) v_i v_j \right]\]</span> これがゼロであることを示せばいい. <span class="math inline">\(x\)</span> とあるが <span class="math inline">\(x=c(t)\)</span> のことなので、これについても微分する必要があることに註意. あの微分方程式を代入して頑張れば求まるj</p>
+<!-- 2017/08/23 -->
 <!--
 
   HTML として pandoc -B で include する.

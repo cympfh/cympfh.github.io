@@ -98,7 +98,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h2 id="実装-rust">実装 (Rust)</h2>
 <h3 id="定義">定義</h3>
 <p>5種の関数を <code>PR</code> という名前の型で <code>enum</code> として定義する</p>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">)]</span>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">,</span> <span class="bu">Clone</span><span class="at">)]</span>
 <span class="kw">enum</span> PR {
     Const,
     Successor,
@@ -176,9 +176,9 @@ eval Successor [1]
 <h4 id="例-2">例</h4>
 <p><code>Recursive</code> を使う例として、加算を定義してみる. つまり、</p>
 <div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust">{
-    <span class="kw">let</span> g = PR::Projector(<span class="dv">0</span>); <span class="co">// Identity</span>
+    <span class="kw">let</span> id = PR::Projector(<span class="dv">0</span>); <span class="co">// Identity</span>
     <span class="kw">let</span> h = PR::Successor;
-    <span class="kw">let</span> plus = PR::Recursive(<span class="dt">Box</span>::new(g), <span class="dt">Box</span>::new(h));
+    <span class="kw">let</span> plus = PR::Recursive(<span class="dt">Box</span>::new(id), <span class="dt">Box</span>::new(h));
     <span class="pp">println!</span>(<span class="st">&quot;{:?}&quot;</span>, plus);
     <span class="pp">println!</span>(<span class="st">&quot;{:?}&quot;</span>, eval(&amp;plus, <span class="pp">vec!</span>[<span class="dv">3</span>, <span class="dv">5</span>]));
 }</code></pre></div>
@@ -202,6 +202,33 @@ eval Successor [<span class="dv">6</span>]
 eval Successor [<span class="dv">7</span>]
 [<span class="dv">8</span>]</code></pre></div>
 <p>関数 <code>eval</code> 自体が再帰関数であるので、 <code>y</code> から 1 を減ずる処理 (<code>plus</code> の再帰) が 3 回あってから、そのあと、<code>h</code> で結果に 1 を加える処理が 3 回ある.</p>
+<h4 id="例-3">例</h4>
+<p>今の <code>plus</code> を使うと、引数を2倍にして返す <span class="math inline">\(\mathbb{N} \to \mathbb{N}; x \mapsto 2x\)</span> が定義出来る. すなわち、 <code>id</code> 2つと合成することで <span class="math inline">\((plus \circ (id,id))(x) = plus(x,x)=2x\)</span> と定義できる. 翻訳すると次の通り (<code>Clone</code> はこのために必要).</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust">{
+    <span class="kw">let</span> id = PR::Projector(<span class="dv">0</span>);
+    <span class="kw">let</span> h = PR::Successor;
+    <span class="kw">let</span> plus = PR::Recursive(<span class="dt">Box</span>::new(id.clone()), <span class="dt">Box</span>::new(h));
+    <span class="kw">let</span> double = PR::Compose(<span class="dt">Box</span>::new(plus), <span class="dt">Box</span>::new(<span class="pp">vec!</span>[id.clone(), id.clone()]));
+    <span class="pp">println!</span>(<span class="st">&quot;{:?}&quot;</span>, double);
+    <span class="pp">println!</span>(<span class="st">&quot;{:?}&quot;</span>, eval(&amp;double, <span class="pp">vec!</span>[<span class="dv">5</span>]));
+}</code></pre></div>
+<pre><code>Compose(Recursive(Projector(0), Successor), [Projector(0), Projector(0)])
+eval Compose(Recursive(Projector(0), Successor), [Projector(0), Projector(0)]) [5]
+eval Projector(0) [5]
+eval Projector(0) [5]
+eval Recursive(Projector(0), Successor) [5, 5]
+eval Recursive(Projector(0), Successor) [4, 5]
+eval Recursive(Projector(0), Successor) [3, 5]
+eval Recursive(Projector(0), Successor) [2, 5]
+eval Recursive(Projector(0), Successor) [1, 5]
+eval Recursive(Projector(0), Successor) [0, 5]
+eval Projector(0) [5]
+eval Successor [5]
+eval Successor [6]
+eval Successor [7]
+eval Successor [8]
+eval Successor [9]
+10</code></pre>
 <h2 id="自動生成">自動生成</h2>
 <p>真面目にやると相当面倒なので、あまり質にこだわらずにやってみる. 要するに 5 種からランダムに選んで関数を作る. それが <code>Compose</code> か <code>Recursive</code> なら、さらにパラメータとなる関数を作る. 単に1/5の確率で選ぶと木が延々深くなって止まらなくなる. (3/5の確率で止まるが、一度爆発すると、全ての枝で 3/5 が選ばれないといけないので、収束は絶望的.) ある程度深くなったら <code>Compose</code> 及び <code>Recursive</code> は選ばなく成る/選ぶ確率が減る、等の工夫は必要.</p>
 <p>何も考えずに PR を作るには arity (引数の次数) だけを渡して、5種から選んで再帰的に構築すればよい. 注意点として、 <code>Const</code> <code>Successor</code> の arity は 1 に限る (ということにした) こと. <code>Recursive</code> の arity は 2 以上であること.</p>

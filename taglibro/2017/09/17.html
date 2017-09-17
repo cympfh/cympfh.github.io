@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sun Sep 17 2017</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Sun Sep 17 2017</h1>
+</header>
+<p>適度な複雑さを持った <span class="math inline">\(\mathbb{N} \to \mathbb{N}\)</span> な関数をランダムに自動生成したい欲求がある.</p>
+<h2 id="primitive-recursive">Primitive Recursive</h2>
+<p>自然数の <span class="math inline">\(m\)</span> つ組 <span class="math inline">\(\mathbb{N}^m\)</span> (<span class="math inline">\(m\geq 1\)</span>) の上の関数 <span class="math inline">\(\mathbb{N}^m \to \mathbb{N}\)</span> として、次の5つを認める. ただし <span class="math inline">\(\mathbb{N}\)</span> と <span class="math inline">\(\mathbb{N}^1\)</span> は同一視する.</p>
+<h4 id="ゼロ関数-const">ゼロ関数 (Const)</h4>
+<ul>
+<li><span class="math inline">\(C : \mathbb{N} \to \mathbb{N}\)</span></li>
+<li><span class="math inline">\(C : x \mapsto 0\)</span></li>
+</ul>
+<h4 id="後続関数-successor">後続関数 (Successor)</h4>
+<ul>
+<li><span class="math inline">\(S : \mathbb{N} \to \mathbb{N}\)</span></li>
+<li><span class="math inline">\(S : x \mapsto x+1\)</span></li>
+</ul>
+<h4 id="射影関数-projector">射影関数 (Projector)</h4>
+<ul>
+<li><span class="math inline">\(p^i : \mathbb{N}^m \to \mathbb{N}\)</span></li>
+<li><span class="math inline">\(p^i : (x_1,\ldots,x_m) \mapsto x_i\)</span></li>
+</ul>
+<p>ただし <span class="math inline">\(1 \leq i \leq m\)</span> であること.</p>
+<h4 id="合成関数-compose">合成関数 (Compose)</h4>
+<ul>
+<li><span class="math inline">\(compose: \mathbb{N}^n \to \mathbb{N}\)</span></li>
+<li><span class="math inline">\(compose(x) = g(h_1(x), \ldots, h_m(x))\)</span>
+<ul>
+<li><span class="math inline">\(g: \mathbb{N}^m \to \mathbb{N}\)</span></li>
+<li><span class="math inline">\(h_i: \mathbb{N}^n \to \mathbb{N} ~~(i=1,2,\ldots,m)\)</span></li>
+</ul></li>
+</ul>
+<p>ただしここで <span class="math inline">\(n\)</span> つ組 <span class="math inline">\((x_1,\ldots,x_n)\)</span> を簡単のため単に <span class="math inline">\(x\)</span> と書いた.</p>
+<h4 id="再帰関数-recursive">再帰関数 (Recursive)</h4>
+<ul>
+<li><span class="math inline">\(rec : \mathbb{N}^{m+1} \to \mathbb{N}\)</span></li>
+<li><span class="math inline">\(rec(0,x) = g(x)\)</span></li>
+<li><span class="math inline">\(rec(y,x) = h(rec(y-1,x))\)</span>
+<ul>
+<li><span class="math inline">\(g : \mathbb{N}^m \to \mathbb{N}\)</span></li>
+<li><span class="math inline">\(h : \mathbb{N} \to \mathbb{N}\)</span></li>
+</ul></li>
+</ul>
+<p>ただしここで <span class="math inline">\(m+1\)</span> つ組 <span class="math inline">\((x_1,\ldots,x_{m+1})\)</span> の1つめを <span class="math inline">\(y\)</span> と、2つめ以降の部分 <span class="math inline">\((x_2,\ldots,x_{m+1})\)</span> のことを簡単のため単に <span class="math inline">\(x\)</span> と書いた.</p>
+<h2 id="実装-rust">実装 (Rust)</h2>
+<h3 id="定義">定義</h3>
+<p>5種の関数を <code>PR</code> という名前の型で <code>enum</code> として定義する</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">)]</span>
+<span class="kw">enum</span> PR {
+    Const,
+    Successor,
+    Projector(<span class="dt">usize</span>),
+    Compose(<span class="dt">Box</span>&lt;PR&gt;, <span class="dt">Box</span>&lt;<span class="dt">Vec</span>&lt;PR&gt;&gt;),
+    Recursive(<span class="dt">Box</span>&lt;PR&gt;, <span class="dt">Box</span>&lt;PR&gt;),
+}</code></pre></div>
+<p>パラメータはそれぞれ、評価をする際に必要な情報だけを持っておくことにする. <code>Projector</code> は引数の何番目 (0-indexed) を射影するかを持っている. <code>Compose</code> は、<span class="math inline">\(g, (h_1,\ldots,h_m)\)</span> をそれぞれ持っておく. 同様に <code>Recursive</code> は <span class="math inline">\(g, h\)</span> を持つ.</p>
+<h4 id="例">例</h4>
+<p>いちいち <code>Box</code> に囲む必要がある事情で冗長だが、</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust">{
+    <span class="kw">let</span> f = PR::Compose(
+                <span class="dt">Box</span>::new(PR::Successor),
+                <span class="dt">Box</span>::new(<span class="pp">vec!</span>[
+                         PR::Compose(
+                             <span class="dt">Box</span>::new(PR::Successor),
+                             <span class="dt">Box</span>::new(<span class="pp">vec!</span>[
+                                      PR::Const
+                             ]))
+                ]));
+    <span class="pp">println!</span>(<span class="st">&quot;{:?}&quot;</span>, f);
+}</code></pre></div>
+<pre><code>Compose(Successor, [Compose(Successor, [Const])])</code></pre>
+<p>これは <span class="math inline">\(S \circ S \circ C = S^2 \circ C\)</span> を表す.</p>
+<h3 id="評価">評価</h3>
+<p>まず自然数 <span class="math inline">\(\mathbb{N}\)</span> は <code>u32</code> (符号なし32bit整数) で表現する. 引数は一般に <span class="math inline">\(\mathbb{N}^n\)</span> であるので <code>Vec&lt;u32&gt;</code> (符号なし32bit整数の配列) ということにする. 出力は <span class="math inline">\(\mathbb{N}\)</span> に限ってるので単に <code>u32</code>.</p>
+<p>実装は定義をほぼそのまま Rust に翻訳するだけ.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> eval(f: &amp;PR, xs: <span class="dt">Vec</span>&lt;<span class="dt">u32</span>&gt;) -&gt; <span class="dt">u32</span> {
+    <span class="co">// println!(&quot;eval {:?} {:?}&quot;, f, xs);</span>
+    <span class="kw">match</span> *f {
+        PR::Const =&gt; <span class="dv">0</span>,
+        PR::Successor =&gt; xs[<span class="dv">0</span>] + <span class="dv">1</span>,
+        PR::Projector(n) =&gt; xs[n],
+        PR::Compose(<span class="kw">ref</span> g, <span class="kw">ref</span> hs) =&gt; {
+            <span class="kw">let</span> <span class="kw">mut</span> ys = <span class="pp">vec!</span>[];
+            <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.hs.len() {
+                <span class="kw">let</span> y = eval(&amp;hs[i], xs.clone());
+                ys.push(y);
+            }
+            eval(&amp;g, ys)
+        },
+        PR::Recursive(<span class="kw">ref</span> g, <span class="kw">ref</span> h) =&gt; {
+            <span class="kw">if</span> xs[<span class="dv">0</span>] == <span class="dv">0</span> {
+                <span class="kw">let</span> rest = (<span class="dv">1.</span>.xs.len()).map(|i| xs[i]).collect();
+                eval(&amp;g, rest)
+            } <span class="kw">else</span> {
+                <span class="kw">let</span> <span class="kw">mut</span> ys = xs.clone();
+                ys[<span class="dv">0</span>] -= <span class="dv">1</span>;
+                eval(&amp;h, <span class="pp">vec!</span>[eval(&amp;f, ys)])
+            }
+        },
+    }
+}</code></pre></div>
+<p><code>Recursive</code> の解釈では引数 <code>xs</code> の頭 <code>xs[0]</code> がゼロであるかどうかをチェックする. ゼロならば 2 つめ以降の部分を <code>rest</code> として確保し、それを <code>g</code> に渡す. ゼロでないなら 1 だけ減らした引数を <code>mut ys</code> として確保し、これを再帰的に自身 <code>f</code> に渡す (そして <code>h</code> に渡す).</p>
+<h4 id="例-1">例</h4>
+<p>先の</p>
+<pre><code>Compose(Successor, [Compose(Successor, [Const])])</code></pre>
+<p>なる関数 <code>f</code> について</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust">    <span class="pp">println!</span>(<span class="st">&quot;{:?}&quot;</span>, eval(&amp;f, <span class="pp">vec!</span>[<span class="dv">3</span>]));</code></pre></div>
+<p>として引数 <code>3</code> を渡して解釈した結果を見る.</p>
+<pre><code>eval Compose(Successor, [Compose(Successor, [Const])]) [3]
+eval Compose(Successor, [Const]) [3]
+eval Const [3]
+eval Successor [0]
+eval Successor [1]
+[2]</code></pre>
+<p>これは</p>
+<ul>
+<li><span class="math inline">\(S \circ S \circ C (3)\)</span></li>
+<li><span class="math inline">\(S \circ S (0)\)</span></li>
+<li><span class="math inline">\(S (1)\)</span></li>
+<li><span class="math inline">\((2)\)</span></li>
+</ul>
+<p>という過程を表している. <code>Compose</code> なんかは正しく動いていそう.</p>
+<h4 id="例-2">例</h4>
+<p><code>Recursive</code> を使う例として、加算を定義してみる. つまり、</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust">{
+    <span class="kw">let</span> g = PR::Projector(<span class="dv">0</span>); <span class="co">// Identity</span>
+    <span class="kw">let</span> h = PR::Successor;
+    <span class="kw">let</span> plus = PR::Recursive(<span class="dt">Box</span>::new(g), <span class="dt">Box</span>::new(h));
+    <span class="pp">println!</span>(<span class="st">&quot;{:?}&quot;</span>, plus);
+    <span class="pp">println!</span>(<span class="st">&quot;{:?}&quot;</span>, eval(&amp;plus, <span class="pp">vec!</span>[<span class="dv">3</span>, <span class="dv">5</span>]));
+}</code></pre></div>
+<p>ここで定義している <code>PR::Projector(0)</code> すなわち <span class="math inline">\(p^0\)</span> の引数は実は単に <span class="math inline">\(\mathbb{N}=\mathbb{N}^1\)</span> なので、 単なる恒等関数 <span class="math inline">\(x \mapsto x\)</span> として振る舞う. 数式で書き改めると</p>
+<ul>
+<li><span class="math inline">\(g(x) = x\)</span></li>
+<li><span class="math inline">\(h(x) = x + 1\)</span></li>
+<li><span class="math inline">\(plus(0, x) = g(x) = x\)</span></li>
+<li><span class="math inline">\(plus(y, x) = h(plus(y - 1, x)) = plus(y - 1, x) + 1\)</span></li>
+</ul>
+<p>というわけで <span class="math inline">\(plus(y,x)=y+x\)</span> なることが <span class="math inline">\(y\)</span> に関する帰納法から明らか.</p>
+<p>上のコードを実行してみると次のように:</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust">Recursive(Projector(<span class="dv">0</span>), Successor)
+eval Recursive(Projector(<span class="dv">0</span>), Successor) [<span class="dv">3</span>, <span class="dv">5</span>]
+eval Recursive(Projector(<span class="dv">0</span>), Successor) [<span class="dv">2</span>, <span class="dv">5</span>]
+eval Recursive(Projector(<span class="dv">0</span>), Successor) [<span class="dv">1</span>, <span class="dv">5</span>]
+eval Recursive(Projector(<span class="dv">0</span>), Successor) [<span class="dv">0</span>, <span class="dv">5</span>]
+eval Projector(<span class="dv">0</span>) [<span class="dv">5</span>]
+eval Successor [<span class="dv">5</span>]
+eval Successor [<span class="dv">6</span>]
+eval Successor [<span class="dv">7</span>]
+[<span class="dv">8</span>]</code></pre></div>
+<p>関数 <code>eval</code> 自体が再帰関数であるので、 <code>y</code> から 1 を減ずる処理 (<code>plus</code> の再帰) が 3 回あってから、そのあと、<code>h</code> で結果に 1 を加える処理が 3 回ある.</p>
+<h2 id="自動生成">自動生成</h2>
+<p>真面目にやると相当面倒なので、あまり質にこだわらずにやってみる. 要するに 5 種からランダムに選んで関数を作る. それが <code>Compose</code> か <code>Recursive</code> なら、さらにパラメータとなる関数を作る. 単に1/5の確率で選ぶと木が延々深くなって止まらなくなる. (3/5の確率で止まるが、一度爆発すると、全ての枝で 3/5 が選ばれないといけないので、収束は絶望的.) ある程度深くなったら <code>Compose</code> 及び <code>Recursive</code> は選ばなく成る/選ぶ確率が減る、等の工夫は必要.</p>
+<p>何も考えずに PR を作るには arity (引数の次数) だけを渡して、5種から選んで再帰的に構築すればよい. 注意点として、 <code>Const</code> <code>Successor</code> の arity は 1 に限る (ということにした) こと. <code>Recursive</code> の arity は 2 以上であること.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> make_tree() -&gt; PR {
+    make_subtree(<span class="dv">1</span>, <span class="dv">0</span>)
+}
+
+<span class="kw">fn</span> make_subtree(arity: <span class="dt">usize</span>, depth: <span class="dt">usize</span>) -&gt; PR {
+    <span class="kw">if</span> depth &lt; <span class="dv">5</span> {
+        <span class="kw">if</span> arity == <span class="dv">1</span> {
+            <span class="kw">match</span> rand::random::&lt;<span class="dt">u32</span>&gt;() % <span class="dv">100</span> {
+                <span class="dv">0.</span>..<span class="dv">9</span> =&gt; PR::Const,
+                <span class="dv">10.</span>..<span class="dv">19</span> =&gt; PR::Successor,
+                <span class="dv">20.</span>..<span class="dv">89</span> =&gt; make_compose(arity, depth),
+                _ =&gt; PR::Projector(<span class="dv">0</span>)
+            }
+        } <span class="kw">else</span> {
+            <span class="kw">match</span> rand::random::&lt;<span class="dt">u32</span>&gt;() % <span class="dv">100</span> {
+                <span class="dv">0.</span>..<span class="dv">34</span> =&gt; make_compose(arity, depth),
+                <span class="dv">35.</span>..<span class="dv">69</span> =&gt; make_recur(arity, depth),
+                _ =&gt; PR::Projector(rand::random::&lt;<span class="dt">usize</span>&gt;() % arity)
+            }
+        }
+    } <span class="kw">else</span> {
+        <span class="kw">if</span> arity == <span class="dv">1</span> {
+            <span class="kw">match</span> rand::random::&lt;<span class="dt">u32</span>&gt;() % <span class="dv">100</span> {
+                <span class="dv">0.</span>..<span class="dv">9</span> =&gt; PR::Const,
+                <span class="dv">10.</span>..<span class="dv">79</span> =&gt; PR::Successor,
+                _ =&gt; PR::Projector(<span class="dv">0</span>)
+            }
+        } <span class="kw">else</span> {
+            PR::Projector(rand::random::&lt;<span class="dt">usize</span>&gt;() % arity)
+        }
+    }
+}
+
+<span class="kw">fn</span> make_compose(arity: <span class="dt">usize</span>, depth: <span class="dt">usize</span>) -&gt; PR {
+    <span class="kw">let</span> m = <span class="dv">1</span> +  rand::random::&lt;<span class="dt">usize</span>&gt;() % <span class="dv">3</span>;
+    <span class="kw">let</span> g = make_subtree(m, depth + <span class="dv">1</span>);
+    <span class="kw">let</span> <span class="kw">mut</span> hs = <span class="pp">vec!</span>[];
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="dv">0.</span>.m {
+        <span class="kw">let</span> h = make_subtree(arity, depth + <span class="dv">1</span>);
+        hs.push(h);
+
+    }
+    PR::Compose(<span class="dt">Box</span>::new(g), <span class="dt">Box</span>::new(hs))
+}
+
+<span class="kw">fn</span> make_recur(arity: <span class="dt">usize</span>, depth: <span class="dt">usize</span>) -&gt; PR {
+    <span class="pp">assert!</span>(arity &gt; <span class="dv">1</span>);
+    <span class="kw">let</span> g = make_subtree(arity - <span class="dv">1</span>, depth + <span class="dv">1</span>);
+    <span class="kw">let</span> h = make_subtree(<span class="dv">1</span>, depth + <span class="dv">1</span>);
+    PR::Recursive(<span class="dt">Box</span>::new(g), <span class="dt">Box</span>::new(h))
+}</code></pre></div>
+<h4 id="結果">結果</h4>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">for</span> _ <span class="kw">in</span> <span class="dv">0.</span>.<span class="dv">5</span> {
+    <span class="kw">let</span> f = make_tree();
+    <span class="pp">println!</span>(<span class="st">&quot;{:?}&quot;</span>, f);
+    <span class="pp">println!</span>(<span class="st">&quot;{:?}&quot;</span>, eval(&amp;f, <span class="pp">vec!</span>[<span class="dv">3</span>]));
+}</code></pre></div>
+<pre><code>f = Compose(Projector(1), [Successor, Compose(Recursive(Compose(Compose(Projector(1), [Successor, Successor, Projector(0)]), [Projector(1)]), Compose(Projector(2), [Const, Compose(Projector(0), [Successor, Successor]), Compose(Const, [Projector(0)])])), [Compose(Projector(1), [Compose(Compose(Projector(0), [Projector(0)]), [Compose(Projector(1), [Projector(0), Successor, Successor]), Successor]), Compose(Recursive(Projector(1), Successor), [Compose(Projector(1), [Successor, Projector(0)]), Compose(Projector(0), [Successor, Successor, Successor]), Const]), Compose(Recursive(Projector(0), Projector(0)), [Compose(Projector(1), [Successor, Successor]), Compose(Projector(0), [Successor]), Compose(Successor, [Successor])])]), Compose(Recursive(Compose(Projector(0), [Successor, Successor]), Compose(Projector(0), [Successor, Projector(0)])), [Compose(Recursive(Projector(1), Successor), [Compose(Successor, [Successor]), Const, Compose(Successor, [Const])]), Compose(Compose(Projector(0), [Projector(2), Projector(0), Projector(2)]), [Compose(Projector(2), [Successor, Const, Successor]), Successor, Const])]), Compose(Successor, [Compose(Compose(Projector(0), [Projector(2), Projector(1), Projector(2)]), [Compose(Projector(0), [Successor, Successor, Successor]), Compose(Successor, [Projector(0)]), Const])])]), Projector(0)])
+f 3 = 0
+---
+f = Compose(Projector(1), [Const, Compose(Projector(0), [Compose(Projector(0), [Compose(Projector(2), [Compose(Projector(1), [Successor, Projector(0), Successor]), Successor, Successor]), Compose(Compose(Projector(0), [Projector(0), Successor]), [Compose(Successor, [Successor])])])])])
+f 3 = 4
+---
+f = Compose(Compose(Recursive(Compose(Compose(Successor, [Projector(1)]), [Projector(0), Compose(Projector(0), [Successor, Successor, Successor])]), Compose(Compose(Projector(0), [Projector(0)]), [Compose(Successor, [Const]), Compose(Projector(2), [Successor, Successor, Successor])])), [Compose(Compose(Compose(Projector(1), [Successor, Successor]), [Compose(Projector(0), [Projector(1), Projector(0), Projector(2)])]), [Projector(0), Projector(1), Projector(1)]), Projector(1)]), [Successor, Compose(Recursive(Recursive(Const, Compose(Projector(0), [Successor, Successor])), Compose(Recursive(Successor, Successor), [Compose(Projector(0), [Successor, Successor, Projector(0)]), Successor])), [Successor, Const, Compose(Compose(Compose(Successor, [Successor]), [Compose(Const, [Projector(0)])]), [Compose(Compose(Projector(2), [Projector(0), Projector(1), Projector(1)]), [Compose(Projector(1), [Projector(0), Successor, Const]), Compose(Projector(1), [Successor, Projector(0), Successor])]), Compose(Compose(Projector(1), [Projector(0), Successor, Const]), [Compose(Projector(1), [Const, Const])])])])])
+f 3 = 1
+---
+f = Compose(Recursive(Compose(Projector(0), [Compose(Recursive(Projector(1), Successor), [Projector(0), Compose(Successor, [Const]), Compose(Projector(0), [Successor, Successor])])]), Compose(Projector(0), [Compose(Projector(0), [Successor]), Compose(Compose(Successor, [Projector(1)]), [Compose(Projector(1), [Successor, Projector(0)]), Successor, Compose(Projector(0), [Successor, Projector(0), Successor])])])), [Compose(Projector(0), [Compose(Recursive(Compose(Projector(2), [Projector(1), Projector(0), Projector(0)]), Projector(0)), [Successor, Successor, Compose(Recursive(Projector(1), Projector(0)), [Successor, Compose(Successor, [Projector(0)]), Compose(Projector(1), [Successor, Successor, Successor])])])]), Compose(Compose(Projector(0), [Successor, Compose(Projector(0), [Compose(Successor, [Successor]), Compose(Projector(0), [Successor, Successor]), Const]), Successor]), [Compose(Recursive(Projector(1), Compose(Successor, [Successor])), [Compose(Compose(Projector(1), [Projector(1), Projector(0)]), [Compose(Projector(0), [Const, Projector(0)]), Compose(Projector(1), [Successor, Successor, Successor])]), Compose(Recursive(Projector(0), Projector(0)), [Compose(Successor, [Successor]), Compose(Projector(0), [Successor])]), Compose(Compose(Projector(0), [Successor, Successor]), [Compose(Projector(0), [Const, Projector(0), Successor])])])])])
+f 3 = 9
+---
+f = Compose(Successor, [Compose(Compose(Compose(Successor, [Compose(Projector(1), [Successor, Successor])]), [Successor]), [Compose(Compose(Recursive(Projector(1), Successor), [Compose(Successor, [Successor]), Compose(Successor, [Successor]), Compose(Projector(1), [Successor, Const])]), [Compose(Compose(Successor, [Projector(0)]), [Projector(0)])])])])
+f 3 = 10
+---
+cargo run  0.07s user 0.02s system 88% cpu 0.095 total</code></pre>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

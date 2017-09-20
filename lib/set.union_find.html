@@ -44,6 +44,8 @@ code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* Com
 code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
   </style>
   <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="../resources/css/d.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.cs">
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
@@ -56,6 +58,74 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <ul>
 <li><a href="http://www.prefield.com/algorithm/container/union_find.html" class="uri">http://www.prefield.com/algorithm/container/union_find.html</a></li>
 </ul>
+<h2 id="set.union_find.rs"><a href="set.union_find.rs" class="uri">set.union_find.rs</a></h2>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">,</span> <span class="bu">Clone</span><span class="at">)]</span>
+<span class="kw">enum</span> UF { Root(<span class="dt">usize</span>), Child(<span class="dt">usize</span>) }
+
+<span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">)]</span>
+<span class="kw">struct</span> UnionFind { table: <span class="dt">Vec</span>&lt;UF&gt; }
+<span class="kw">impl</span> UnionFind {
+
+    <span class="kw">fn</span> new(n: <span class="dt">usize</span>) -&gt; UnionFind {
+        UnionFind { table: <span class="pp">vec!</span>[UF::Root(<span class="dv">1</span>); n], }
+    }
+
+    <span class="kw">fn</span> root(&amp;<span class="kw">mut</span> <span class="kw">self</span>, x: <span class="dt">usize</span>) -&gt; <span class="dt">usize</span> {
+        <span class="kw">match</span> <span class="kw">self</span>.table[x] {
+            UF::Root(_) =&gt; x,
+            UF::Child(parent) =&gt; {
+                <span class="kw">let</span> root = <span class="kw">self</span>.root(parent);
+                <span class="kw">self</span>.table[x] = UF::Child(root);
+                root
+            }
+        }
+    }
+
+    <span class="kw">fn</span> is_same(&amp;<span class="kw">mut</span> <span class="kw">self</span>, x: <span class="dt">usize</span>, y: <span class="dt">usize</span>) -&gt; <span class="dt">bool</span> {
+        <span class="kw">self</span>.root(x) == <span class="kw">self</span>.root(y)
+    }
+
+    <span class="kw">fn</span> size(&amp;<span class="kw">mut</span> <span class="kw">self</span>, x: <span class="dt">usize</span>) -&gt; <span class="dt">usize</span> {
+        <span class="kw">let</span> r = <span class="kw">self</span>.root(x);
+        <span class="kw">match</span> <span class="kw">self</span>.table[r] {
+            UF::Root(size) =&gt; size,
+            UF::Child(_) =&gt; <span class="dv">0</span>
+        }
+    }
+
+    <span class="kw">fn</span> merge(&amp;<span class="kw">mut</span> <span class="kw">self</span>, x: <span class="dt">usize</span>, y: <span class="dt">usize</span>) {
+        <span class="kw">let</span> root_x = <span class="kw">self</span>.root(x);
+        <span class="kw">let</span> root_y = <span class="kw">self</span>.root(y);
+        <span class="kw">if</span> root_x != root_y {
+            <span class="kw">let</span> size_x = <span class="kw">self</span>.size(root_x);
+            <span class="kw">let</span> size_y = <span class="kw">self</span>.size(root_y);
+            <span class="kw">let</span> (i, j) = <span class="kw">if</span> size_x &gt; size_y {
+                (root_x, root_y)
+            } <span class="kw">else</span> {
+                (root_y, root_x)
+            };
+            <span class="kw">self</span>.table[i] = UF::Root(size_x + size_y);
+            <span class="kw">self</span>.table[j] = UF::Child(i);
+        }
+    }
+}
+
+
+<span class="co">// sample</span>
+<span class="kw">fn</span> main() {
+    <span class="kw">let</span> <span class="kw">mut</span> uf = UnionFind::new(<span class="dv">10</span>);
+    <span class="pp">println!</span>(<span class="st">&quot;{:?}&quot;</span>, uf);
+    uf.merge(<span class="dv">0</span>, <span class="dv">1</span>);
+    <span class="pp">println!</span>(<span class="st">&quot;{:?}&quot;</span>, uf);
+    <span class="pp">println!</span>(<span class="st">&quot;{:?}&quot;</span>, uf.is_same(<span class="dv">0</span>, <span class="dv">1</span>));
+    <span class="pp">println!</span>(<span class="st">&quot;{:?}&quot;</span>, uf.is_same(<span class="dv">0</span>, <span class="dv">2</span>));
+    uf.merge(<span class="dv">2</span>, <span class="dv">3</span>);
+    uf.merge(<span class="dv">2</span>, <span class="dv">4</span>);
+    <span class="pp">println!</span>(<span class="st">&quot;{:?}&quot;</span>, uf);
+    uf.merge(<span class="dv">0</span>, <span class="dv">3</span>);
+    <span class="pp">println!</span>(<span class="st">&quot;{:?}&quot;</span>, uf);
+
+}</code></pre></div>
 <h2 id="set.union_find.cc"><a href="set.union_find.cc" class="uri">set.union_find.cc</a></h2>
 <div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="co">/*</span>
 <span class="co"> * 参考; http://www.prefield.com/algorithm/container/union_find.html</span>
@@ -79,40 +149,54 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
   }
 };
  </code></pre></div>
-<h2 id="set.union_find.rs"><a href="set.union_find.rs" class="uri">set.union_find.rs</a></h2>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">struct</span> UnionFind { table: <span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt; }
-<span class="kw">impl</span> UnionFind {
+<!--
 
-    <span class="kw">fn</span> new(n: <span class="dt">usize</span>) -&gt; UnionFind {
-        UnionFind { table: <span class="pp">vec!</span>[-<span class="dv">1</span>; n], }
-    }
+  HTML として pandoc -B で include する.
 
-    <span class="kw">fn</span> root(&amp;<span class="kw">mut</span> <span class="kw">self</span>, x: <span class="dt">i32</span>) -&gt; <span class="dt">i32</span> {
-        <span class="kw">if</span> <span class="kw">self</span>.table[x <span class="kw">as</span> <span class="dt">usize</span>] &lt; <span class="dv">0</span> {
-            x
-        } <span class="kw">else</span> {
-            <span class="kw">let</span> px = <span class="kw">self</span>.table[x <span class="kw">as</span> <span class="dt">usize</span>];
-            <span class="kw">let</span> r = <span class="kw">self</span>.root(px);
-            <span class="kw">self</span>.table[x <span class="kw">as</span> <span class="dt">usize</span>] = r;
-            r
-        }
-    }
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
 
-    <span class="kw">fn</span> merge(&amp;<span class="kw">mut</span> <span class="kw">self</span>, x: <span class="dt">i32</span>, y: <span class="dt">i32</span>) {
-        <span class="kw">let</span> <span class="kw">mut</span> rx = <span class="kw">self</span>.root(x) <span class="kw">as</span> <span class="dt">usize</span>;
-        <span class="kw">let</span> <span class="kw">mut</span> ry = <span class="kw">self</span>.root(y) <span class="kw">as</span> <span class="dt">usize</span>;
-        <span class="kw">if</span> rx != ry {
-            <span class="kw">if</span> <span class="kw">self</span>.table[ry] &lt; <span class="kw">self</span>.table[rx] { <span class="pp">swap!</span>(rx, ry) }
-            <span class="kw">self</span>.table[rx] += <span class="kw">self</span>.table[ry];
-            <span class="kw">self</span>.table[ry] = rx <span class="kw">as</span> <span class="dt">i32</span>;
-        }
-    }
+```
+## INDEX
+<div id=toc></div>
+```
 
-    <span class="kw">fn</span> size(&amp;<span class="kw">mut</span> <span class="kw">self</span>, x: <span class="dt">i32</span>) -&gt; <span class="dt">i32</span> {
-        <span class="kw">let</span> r = <span class="kw">self</span>.root(x);
-        <span class="kw">return</span> -<span class="kw">self</span>.table[r <span class="kw">as</span> <span class="dt">usize</span>]
-    }
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
 
-}</code></pre></div>
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
 </body>
 </html>

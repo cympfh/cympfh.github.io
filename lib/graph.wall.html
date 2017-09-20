@@ -44,6 +44,8 @@ code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* Com
 code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
   </style>
   <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="../resources/css/d.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.cs">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
@@ -53,27 +55,98 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <header>
 <h1 class="title">graph.wall</h1>
 </header>
-<h2 id="graph.wall.cc"><a href="graph.wall.cc" class="uri">graph.wall.cc</a></h2>
+<p><span class="math inline">\(n\)</span> 頂点有向グラフの各辺に整数コストが与えられた時、 全点対の最小コストを <span class="math inline">\(O(n^3)\)</span> で求める.</p>
+<h2 id="前提">前提</h2>
+<p><span class="math inline">\(d\)</span> を <span class="math inline">\(n \times n\)</span> のテーブル (二重配列) とする.</p>
 <ul>
-<li>入力;
-<ul>
-<li>距離 (コスト) テーブル <code>d</code>
-<ul>
-<li><code>d[i][i] = cost</code>: 辺 <span class="math inline">\((i,j)\)</span> が存在するとき</li>
-<li><code>d[i][j] = inf</code>: 辺 <span class="math inline">\((i,j)\)</span> が存在しないとき</li>
-</ul></li>
-</ul></li>
-<li>出力 (<code>d</code> の上書き);
-<ul>
-<li><code>d[i][j]</code>: パス <span class="math inline">\(i \rightarrow j\)</span> があるとき、最短距離 (最小コスト)</li>
-<li><code>d[i][j] = inf</code>: パス <span class="math inline">\(i \rightarrow j\)</span> が存在しないとき</li>
-</ul></li>
+<li><span class="math inline">\(d[i][i] = 0\)</span> (自己ループ辺)</li>
+<li>辺 <span class="math inline">\((i,j)\)</span> が存在するとき <span class="math inline">\(d[i][j]\)</span> はそのコスト (整数値)</li>
+<li>辺 <span class="math inline">\((i,j)\)</span> が存在しないとき <span class="math inline">\(d[i][j] = \infty\)</span></li>
 </ul>
+<p>以下のライブラリはどちらも <span class="math inline">\(d\)</span> を与えると破壊的に更新して、</p>
+<ul>
+<li>点 <span class="math inline">\(i\)</span> から点 <span class="math inline">\(j\)</span> へ到達可能ならば <span class="math inline">\(d[i][j]\)</span> はその最小コスト</li>
+<li>到達不可能ならば <span class="math inline">\(d[i][j] = \infty\)</span></li>
+</ul>
+<h2 id="graph.wall.rs"><a href="graph.wall.rs" class="uri">graph.wall.rs</a></h2>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">use</span> std::cmp::min;
+<span class="kw">fn</span> wall(d: &amp;<span class="kw">mut</span> <span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt;&gt;) {
+    <span class="kw">let</span> n = d.len();
+    <span class="kw">for</span> k <span class="kw">in</span> <span class="dv">0.</span>.n {
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.n {
+            <span class="kw">for</span> j <span class="kw">in</span> <span class="dv">0.</span>.n {
+                d[i][j] = min::&lt;<span class="dt">i32</span>&gt;(
+                    d[i][j],
+                    d[i][k] + d[k][j]
+                );
+            }
+        }
+    }
+}
+
+<span class="kw">fn</span> main() {
+    <span class="kw">let</span> <span class="kw">mut</span> d = <span class="pp">vec!</span>[
+        <span class="pp">vec!</span>[<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>],
+        <span class="pp">vec!</span>[<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>],
+        <span class="pp">vec!</span>[<span class="dv">4</span>, <span class="dv">2</span>, <span class="dv">0</span>]
+    ];
+    wall(&amp;<span class="kw">mut</span> d);
+    <span class="pp">println!</span>(<span class="st">&quot;{:?}&quot;</span>, d);
+}</code></pre></div>
+<h2 id="graph.wall.cc"><a href="graph.wall.cc" class="uri">graph.wall.cc</a></h2>
 <div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="dt">void</span> wall(vvi&amp;d) {
   <span class="dt">int</span> n = d.size();
-  rep (i, n) d[i][i] = <span class="dv">0</span>;
   rep (k, n) rep (i, n) rep (j, n)
     d[i][j] = min(d[i][j], d[i][k] + d[k][j]);
 }</code></pre></div>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
 </body>
 </html>

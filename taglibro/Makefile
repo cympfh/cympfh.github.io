@@ -22,6 +22,6 @@ edit:
 	bash script/edit.sh
 
 git:
-	git add --all
+	git add .
 	git commit -a -m "taglibro/ `LANG=en date`"
 	git push

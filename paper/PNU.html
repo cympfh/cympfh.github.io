@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>[1605.06955] Semi-Supervised Classification Based on Classification from Positive and Unlabeled Data</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/</a>
+</header>
+<header>
+<h1 class="title">[1605.06955] Semi-Supervised Classification Based on Classification from Positive and Unlabeled Data</h1>
+</header>
+<ul>
+<li>
+original paper: <a href=https://arxiv.org/abs/1605.06955>https://arxiv.org/abs/1605.06955</a>
+</li>
+</ul>
+<div class="is-pulled-right">
+<p><a class='tag is-blue' href=index.html#分類器>分類器</a> <a class='tag is-blue' href=index.html#半教師アリ学習>半教師アリ学習</a></p>
+</div>
+<h2 id="リンク">リンク</h2>
+<ol type="1">
+<li><a href="https://arxiv.org/abs/1605.06955">[1605.06955] Semi-Supervised Classification Based on Classification from Positive and Unlabeled Data</a></li>
+<li><a href="https://www.slideshare.net/tomoya-sakai/20170918-sakai">夏のトップカンファレンス論文読み会 (9/18, 2017): Semi-Supervised Classification Based …</a></li>
+</ol>
+<h2 id="概要">概要</h2>
+<p>半教師アリ学習をする. 典型的な PU 学習 (Positive and Unlabeled classification learning) は、ラベル無しデータについて何かしら分布に仮定がないと解けない. 提案手法はラベル無しデータに分布を仮定しない半教師アリ学習を解く.</p>
+<h2 id="background">Background</h2>
+<p>まず典型的な PN, PU, NU 学習を確認する.</p>
+<h3 id="notation">Notation</h3>
+<p><span class="math inline">\(y \in \{+1,-1\}\)</span> に対して、Positive, Negative, Unlabeled データは</p>
+<ul>
+<li><span class="math inline">\(\mathcal{X}_P = \{x^P_i \in \mathcal{X} \}_i \sim p_P(x) = p(x | y=+1)\)</span></li>
+<li><span class="math inline">\(\mathcal{X}_N = \{x^N_i \in \mathcal{X} \}_i \sim p_N(x) = p(x | y=-1)\)</span></li>
+<li><span class="math inline">\(\mathcal{X}_U = \{x^U_i \in \mathcal{X} \}_i \sim p(x) = \theta_P p_P(x) + \theta_N p_N(x)\)</span>
+<ul>
+<li><span class="math inline">\(\theta_P = p(y=+1), \theta_N = p(y=-1)\)</span></li>
+<li><span class="math inline">\(\theta_P + \theta_N = 1\)</span></li>
+</ul></li>
+</ul>
+<p>予測器として実関数 <span class="math inline">\(g: \mathcal{X} \to \mathbb{R}\)</span> とその上の損失関数 <span class="math inline">\(\ell: \mathbb{R} \to \mathbb{R}\)</span> を定める. ここで <span class="math inline">\(\ell(m)\)</span> は <span class="math inline">\(m=1\)</span> の時に最小を撮るような関数だとする. 予測値が負である場合は <span class="math inline">\(\ell(-m)\)</span> と使うことにする (つまり <span class="math inline">\(\ell(y,g(x))=\ell(yg(x))\)</span> としている). これを考慮して risk 関数を次のように定義する.</p>
+<ul>
+<li><span class="math inline">\(R_P(g) = \mathbb{E}_P \left[ \ell(g(x)) \right]\)</span></li>
+<li><span class="math inline">\(R_N(g) = \mathbb{E}_N \left[ \ell(-g(x)) \right]\)</span></li>
+<li><span class="math inline">\(R_{U,P}(g) = \mathbb{E}_U \left[ \ell(g(x)) \right]\)</span></li>
+<li><span class="math inline">\(R_{U,N}(g) = \mathbb{E}_U \left[ \ell(-g(x)) \right]\)</span></li>
+</ul>
+<h3 id="pn-学習">PN 学習</h3>
+<p>Positive と Negative だけで学習するもので、普通の教師アリ学習のこと. 目標は risk を最小化する <span class="math inline">\(g\)</span> を見つけること. 全体のrisk を次のように、データの分布に従って足す. <span class="math display">\[R_{PN}(g) = \theta_P R_P(g) + \theta_N R_N(g) \tag{1}\]</span> ちなみに、もし <span class="math inline">\(\ell(m)\)</span> としてヒンジ関数 <span class="math inline">\(\max(0,1-m)\)</span> を採用すると、これはSVMになる.</p>
+<h3 id="pu-学習">PU 学習</h3>
+<p>Positive と Unlabeled とだけがある場合の学習. <a href="http://www.ms.k.u-tokyo.ac.jp/2014/NIPS2014b.pdf">du Plessis らによる方法</a> では、<span class="math inline">\(p_N(x)\)</span> が出現しないように PN risk を設計して、これを使う.</p>
+<p>Unlabeled を Negative であると分類することを考える. このときの risk は、確かに Negative を Negative であると正しく分類する場合と、 Positive を Negative であると誤る場合とがあるとして、 <span class="math display">\[\mathbb{E}_U \left[ \ell(-g(x)) \right]
+= \theta_P \mathbb{E}_P \left[ \ell(-g(x)) \right]
++ \theta_N \mathbb{E}_N \left[ \ell(-g(x)) \right]\]</span> だとする. これを &quot;negative sample&quot; だと表現しているが、その意味はよくわからない. 元論文読まないとね.</p>
+<p>これを式 (1) に代入して <span class="math display">\[R_{PU}(g)
+= \theta_P \mathbb{E}_P \left[ \ell(g(x) - \ell(-g(x)) \right]
++ \mathbb{E}_U \left[ \ell(-g(x)) \right]\]</span> ここで <span class="math inline">\(\tilde{\ell}(m) = \ell(m) - \ell(-m)\)</span>, <span class="math inline">\(R^C_P(g) = \mathbb{E}_P\left[\tilde{\ell}(g(x))\right]\)</span> と置いて式を簡単にすると <span class="math display">\[R_{PU}(g) = \theta_P R^C_P(g) + R_{U,N}(g) \tag{2}\]</span></p>
+<h4 id="non-convex-approach">Non-Convex Approach</h4>
+<p>損失関数が <span class="math inline">\(\ell(m) + \ell(-m)=1\)</span> を満たすとすると、 <span class="math inline">\(\tilde{\ell}(m) = 2 \ell(m) - 1\)</span>. これを式 (2) に入れると、 <span class="math display">\[R_{PU}&#39;(g) = \theta_P (2 R_P(g) - 1) + R_{U,N}(g)\]</span> <span class="math inline">\(P:U\)</span> のデータが <span class="math inline">\(2\theta_P:1\)</span> の重みで扱われていることが分かる.</p>
+<p>先の条件を満たすような損失関数としてランプ関数 <span class="math display">\[\ell(m) = \frac{1}{2} \max(0, \min(2, 1-m))\]</span> がある.</p>
+<?xml version="1.0" encoding="utf-8"  standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="600" height="480" viewBox="0 0 600 480" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<title>
+Gnuplot
+</title>
+<desc>Produced by GNUPLOT 5.0 patchlevel 5 </desc><g id="gnuplot_canvas"><rect x="0" y="0" width="600" height="480" fill="none"/><defs> <circle id='gpDot' r='0.5' stroke-width='0.5'/> <path id='gpPt0' stroke-width='0.222' stroke='currentColor' d='M-1,0 h2 M0,-1 v2'/> <path id='gpPt1' stroke-width='0.222' stroke='currentColor' d='M-1,-1 L1,1 M1,-1 L-1,1'/> <path id='gpPt2' stroke-width='0.222' stroke='currentColor' d='M-1,0 L1,0 M0,-1 L0,1 M-1,-1 L1,1 M-1,1 L1,-1'/> <rect id='gpPt3' stroke-width='0.222' stroke='currentColor' x='-1' y='-1' width='2' height='2'/> <rect id='gpPt4' stroke-width='0.222' stroke='currentColor' fill='currentColor' x='-1' y='-1' width='2' height='2'/> <circle id='gpPt5' stroke-width='0.222' stroke='currentColor' cx='0' cy='0' r='1'/> <use xlink:href='#gpPt5' id='gpPt6' fill='currentColor' stroke='none'/> <path id='gpPt7' stroke-width='0.222' stroke='currentColor' d='M0,-1.33 L-1.33,0.67 L1.33,0.67 z'/> <use xlink:href='#gpPt7' id='gpPt8' fill='currentColor' stroke='none'/> <use xlink:href='#gpPt7' id='gpPt9' stroke='currentColor' transform='rotate(180)'/> <use xlink:href='#gpPt9' id='gpPt10' fill='currentColor' stroke='none'/> <use xlink:href='#gpPt3' id='gpPt11' stroke='currentColor' transform='rotate(45)'/> <use xlink:href='#gpPt11' id='gpPt12' fill='currentColor' stroke='none'/> <path id='gpPt13' stroke-width='0.222' stroke='currentColor' d='M0,1.330 L1.265,0.411 L0.782,-1.067 L-0.782,-1.076 L-1.265,0.411 z'/> <use xlink:href='#gpPt13' id='gpPt14' fill='currentColor' stroke='none'/> <filter id='textbox' filterUnits='objectBoundingBox' x='0' y='0' height='1' width='1'> <feFlood flood-color='white' flood-opacity='1' result='bgnd'/> <feComposite in='SourceGraphic' in2='bgnd' operator='atop'/> </filter> <filter id='greybox' filterUnits='objectBoundingBox' x='0' y='0' height='1' width='1'> <feFlood flood-color='lightgrey' flood-opacity='1' result='grey'/> <feComposite in='SourceGraphic' in2='grey' operator='atop'/> </filter></defs><g fill="none" color="white" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter"> <path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M53.9,444.0 L575.0,444.0  '/></g><g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"> <path stroke='black'  d='M53.9,444.0 L62.9,444.0 M575.0,444.0 L566.0,444.0  '/> <g transform="translate(45.6,447.9)" stroke="none" fill="black" font-family="Arial" font-size="12.00"  text-anchor="end"> <text><tspan font-family="Arial" >-0.2</tspan></text> </g></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter"> <path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M53.9,383.0 L575.0,383.0  '/></g><g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"> <path stroke='black'  d='M53.9,383.0 L62.9,383.0 M575.0,383.0 L566.0,383.0  '/> <g transform="translate(45.6,386.9)" stroke="none" fill="black" font-family="Arial" font-size="12.00"  text-anchor="end"> <text><tspan font-family="Arial" > 0</tspan></text> </g></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter"> <path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M53.9,321.9 L575.0,321.9  '/></g><g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"> <path stroke='black'  d='M53.9,321.9 L62.9,321.9 M575.0,321.9 L566.0,321.9  '/> <g transform="translate(45.6,325.8)" stroke="none" fill="black" font-family="Arial" font-size="12.00"  text-anchor="end"> <text><tspan font-family="Arial" > 0.2</tspan></text> </g></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter"> <path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M53.9,260.9 L575.0,260.9  '/></g><g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"> <path stroke='black'  d='M53.9,260.9 L62.9,260.9 M575.0,260.9 L566.0,260.9  '/> <g transform="translate(45.6,264.8)" stroke="none" fill="black" font-family="Arial" font-size="12.00"  text-anchor="end"> <text><tspan font-family="Arial" > 0.4</tspan></text> </g></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter"> <path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M53.9,199.8 L575.0,199.8  '/></g><g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"> <path stroke='black'  d='M53.9,199.8 L62.9,199.8 M575.0,199.8 L566.0,199.8  '/> <g transform="translate(45.6,203.7)" stroke="none" fill="black" font-family="Arial" font-size="12.00"  text-anchor="end"> <text><tspan font-family="Arial" > 0.6</tspan></text> </g></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter"> <path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M53.9,138.8 L575.0,138.8  '/></g><g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"> <path stroke='black'  d='M53.9,138.8 L62.9,138.8 M575.0,138.8 L566.0,138.8  '/> <g transform="translate(45.6,142.7)" stroke="none" fill="black" font-family="Arial" font-size="12.00"  text-anchor="end"> <text><tspan font-family="Arial" > 0.8</tspan></text> </g></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter"> <path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M53.9,77.7 L575.0,77.7  '/></g><g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"> <path stroke='black'  d='M53.9,77.7 L62.9,77.7 M575.0,77.7 L566.0,77.7  '/> <g transform="translate(45.6,81.6)" stroke="none" fill="black" font-family="Arial" font-size="12.00"  text-anchor="end"> <text><tspan font-family="Arial" > 1</tspan></text> </g></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter"> <path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M53.9,16.7 L575.0,16.7  '/></g><g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"> <path stroke='black'  d='M53.9,16.7 L62.9,16.7 M575.0,16.7 L566.0,16.7  '/> <g transform="translate(45.6,20.6)" stroke="none" fill="black" font-family="Arial" font-size="12.00"  text-anchor="end"> <text><tspan font-family="Arial" > 1.2</tspan></text> </g></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter"> <path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M53.9,444.0 L53.9,16.7  '/></g><g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"> <path stroke='black'  d='M53.9,444.0 L53.9,435.0 M53.9,16.7 L53.9,25.7  '/> <g transform="translate(53.9,465.9)" stroke="none" fill="black" font-family="Arial" font-size="12.00"  text-anchor="middle"> <text><tspan font-family="Arial" >-2</tspan></text> </g></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter"> <path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M119.0,444.0 L119.0,16.7  '/></g><g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"> <path stroke='black'  d='M119.0,444.0 L119.0,435.0 M119.0,16.7 L119.0,25.7  '/> <g transform="translate(119.0,465.9)" stroke="none" fill="black" font-family="Arial" font-size="12.00"  text-anchor="middle"> <text><tspan font-family="Arial" >-1.5</tspan></text> </g></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter"> <path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M184.2,444.0 L184.2,16.7  '/></g><g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"> <path stroke='black'  d='M184.2,444.0 L184.2,435.0 M184.2,16.7 L184.2,25.7  '/> <g transform="translate(184.2,465.9)" stroke="none" fill="black" font-family="Arial" font-size="12.00"  text-anchor="middle"> <text><tspan font-family="Arial" >-1</tspan></text> </g></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter"> <path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M249.3,444.0 L249.3,16.7  '/></g><g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"> <path stroke='black'  d='M249.3,444.0 L249.3,435.0 M249.3,16.7 L249.3,25.7  '/> <g transform="translate(249.3,465.9)" stroke="none" fill="black" font-family="Arial" font-size="12.00"  text-anchor="middle"> <text><tspan font-family="Arial" >-0.5</tspan></text> </g></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter"> <path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M314.5,444.0 L314.5,16.7  '/></g><g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"> <path stroke='black'  d='M314.5,444.0 L314.5,435.0 M314.5,16.7 L314.5,25.7  '/> <g transform="translate(314.5,465.9)" stroke="none" fill="black" font-family="Arial" font-size="12.00"  text-anchor="middle"> <text><tspan font-family="Arial" > 0</tspan></text> </g></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter"> <path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M379.6,444.0 L379.6,16.7  '/></g><g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"> <path stroke='black'  d='M379.6,444.0 L379.6,435.0 M379.6,16.7 L379.6,25.7  '/> <g transform="translate(379.6,465.9)" stroke="none" fill="black" font-family="Arial" font-size="12.00"  text-anchor="middle"> <text><tspan font-family="Arial" > 0.5</tspan></text> </g></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter"> <path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M444.7,444.0 L444.7,16.7  '/></g><g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"> <path stroke='black'  d='M444.7,444.0 L444.7,435.0 M444.7,16.7 L444.7,25.7  '/> <g transform="translate(444.7,465.9)" stroke="none" fill="black" font-family="Arial" font-size="12.00"  text-anchor="middle"> <text><tspan font-family="Arial" > 1</tspan></text> </g></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter"> <path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M509.9,444.0 L509.9,43.7 M509.9,25.7 L509.9,16.7  '/></g><g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"> <path stroke='black'  d='M509.9,444.0 L509.9,435.0 M509.9,16.7 L509.9,25.7  '/> <g transform="translate(509.9,465.9)" stroke="none" fill="black" font-family="Arial" font-size="12.00"  text-anchor="middle"> <text><tspan font-family="Arial" > 1.5</tspan></text> </g></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter"> <path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M575.0,444.0 L575.0,16.7  '/></g><g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"> <path stroke='black'  d='M575.0,444.0 L575.0,435.0 M575.0,16.7 L575.0,25.7  '/> <g transform="translate(575.0,465.9)" stroke="none" fill="black" font-family="Arial" font-size="12.00"  text-anchor="middle"> <text><tspan font-family="Arial" > 2</tspan></text> </g></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"> <path stroke='black'  d='M53.9,16.7 L53.9,444.0 L575.0,444.0 L575.0,16.7 L53.9,16.7 Z  '/></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g> <g id="gnuplot_plot_1" >
+<title>
+ramp(x)
+</title>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"> <g transform="translate(507.9,38.6)" stroke="none" fill="black" font-family="Arial" font-size="12.00"  text-anchor="end"> <text>ramp(x)</text> </g></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"> <path stroke='rgb(148,   0, 211)'  d='M516.2,34.7 L558.4,34.7 M53.9,77.7 L59.2,77.7 L64.4,77.7 L69.7,77.7 L75.0,77.7 L80.2,77.7     L85.5,77.7 L90.7,77.7 L96.0,77.7 L101.3,77.7 L106.5,77.7 L111.8,77.7 L117.1,77.7 L122.3,77.7        L127.6,77.7 L132.9,77.7 L138.1,77.7 L143.4,77.7 L148.6,77.7 L153.9,77.7 L159.2,77.7 L164.4,77.7     L169.7,77.7 L175.0,77.7 L180.2,77.7 L185.5,79.3 L190.8,85.5 L196.0,91.6 L201.3,97.8 L206.5,103.9        L211.8,110.1 L217.1,116.3 L222.3,122.4 L227.6,128.6 L232.9,134.8 L238.1,140.9 L243.4,147.1 L248.7,153.3     L253.9,159.4 L259.2,165.6 L264.4,171.8 L269.7,177.9 L275.0,184.1 L280.2,190.3 L285.5,196.4 L290.8,202.6     L296.0,208.8 L301.3,214.9 L306.6,221.1 L311.8,227.3 L317.1,233.4 L322.3,239.6 L327.6,245.8 L332.9,251.9     L338.1,258.1 L343.4,264.3 L348.7,270.4 L353.9,276.6 L359.2,282.8 L364.5,288.9 L369.7,295.1 L375.0,301.3     L380.2,307.4 L385.5,313.6 L390.8,319.8 L396.0,325.9 L401.3,332.1 L406.6,338.3 L411.8,344.4 L417.1,350.6     L422.4,356.8 L427.6,362.9 L432.9,369.1 L438.1,375.2 L443.4,381.4 L448.7,383.0 L453.9,383.0 L459.2,383.0     L464.5,383.0 L469.7,383.0 L475.0,383.0 L480.3,383.0 L485.5,383.0 L490.8,383.0 L496.0,383.0 L501.3,383.0     L506.6,383.0 L511.8,383.0 L517.1,383.0 L522.4,383.0 L527.6,383.0 L532.9,383.0 L538.2,383.0 L543.4,383.0     L548.7,383.0 L553.9,383.0 L559.2,383.0 L564.5,383.0 L569.7,383.0 L575.0,383.0  '/></g> </g><g fill="none" color="white" stroke="rgb(148,   0, 211)" stroke-width="2.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="currentColor" stroke-width="2.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="black" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"> <path stroke='black'  d='M53.9,16.7 L53.9,444.0 L575.0,444.0 L575.0,16.7 L53.9,16.7 Z  '/></g><g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter"></g></g>
+</svg>
+<h4 id="convex-approach">Convex Approach</h4>
+<p>今度は損失関数が <span class="math inline">\(\ell(m)-\ell(-m)=-m\)</span> を満たすとする. つまり <span class="math inline">\(\tilde{\ell}(m) = -m\)</span> だとすると、 <span class="math display">\[R_{PU}&#39;&#39;(g) = \theta_P \mathbb{E}_P \left[ -g(x) \right] + R_{U,N}(g)\]</span> を得る.</p>
+<p>簡単のために <span class="math inline">\(R^L_P(g) = \mathbb{E}_P \left[ -g(x) \right]\)</span> と置くことで (これは <span class="math inline">\(\ell(m) = -m\)</span> なる損失関数を用いた場合の risk) <span class="math display">\[R_{PU}&#39;&#39;(g) = \theta_P R^L_P(g) + R_{U,N}(g)\]</span> とする.</p>
+<h3 id="nu-学習">NU 学習</h3>
+<p>PU 学習の対称版だから、対称的に <span class="math display">\[R_{NU}(g) = \theta_N R^C_N(g) + R_{U,P}(g) \tag{2}\]</span> を得る. またnon-convex, convex 版として <span class="math display">\[R_{NU}&#39;(g) = \theta_P (2 R_N(g) - 1) + R_{U,P}(g)\]</span> <span class="math display">\[R_{NU}&#39;&#39;(g) = \theta_N R^L_N(g) + R_{U,P}(g)\]</span></p>
+<h2 id="提案される半教師アリ学習">提案される半教師アリ学習</h2>
+<p>Positive, Negative, Unlabeled データがそれぞれ与えられた場合の半教師アリ学習として、 PN, PU, NU を組み合わせた <strong>PUNU 学習</strong> と <strong>PNU 学習</strong> という2つを提案する.</p>
+<h3 id="punu-学習">PUNU 学習</h3>
+<p>PU と NU を組み合わせたもので、 <span class="math inline">\(0 \leq \gamma \leq 1\)</span> について <span class="math display">\[R^\gamma_{PUNU}(g) = (1-\gamma) R_{PU}(g) + \gamma R_{NU}(g)\]</span> とするもの.</p>
+<p>non-convex 版を考えると、 <span class="math display">\[R^\gamma_{PUNU}(g) =
+2(1-\gamma)\theta_P R_P(g)
++ 2\gamma\theta_N R_N(g)
++ \mathbb{E}_U \left[ (1-\gamma) \ell(-g(x)) + \gamma \ell(g(x)) \right]
+- (1-\gamma) \theta_P
+- \gamma \theta_N\]</span></p>
+<p><span class="math inline">\(\gamma=1/2\)</span> とすると、 <span class="math inline">\(\left[ (1-\gamma) \ell(-g(x)) + \gamma \ell(g(x)) \right]\)</span> はちょうど <span class="math inline">\(\left(\ell(g(x)) + \ell(-g(x))\right)/2\)</span> で、仮定から定数. 他の定数部分も無視すれば (最適化問題なので) <span class="math display">\[R^\gamma_{PUNU}(g) = \theta_P R_P(g) + \theta_N R_N(g) + \mathrm{Const}\]</span> これは結局、 PN 学習と一致する.</p>
+<p>同様に convex 版を考える. <span class="math display">\[R^\gamma_{PUNU}(g) =
+(1-\gamma) \theta_P R^L_P(g) + \gamma \theta_N R^L_N(g)
++ \mathbb{E}_U \left[ (1-\gamma) \ell(g(x)) + \gamma \ell(-g(x)) \right]\]</span></p>
+<p>です。 例えば <span class="math inline">\(\gamma &lt; 1/2\)</span> とすると、PU の方の risk をより優先するので Negative に分類され易くなる.</p>
+<h3 id="pnu-学習">PNU 学習</h3>
+<p>別な方法として PN と PU (または NU) を組み合わせることが考えられる. すなわち、</p>
+<ul>
+<li><span class="math inline">\(R_{PNPU}(g) = (1-\gamma) R_{PN}(g) + \gamma R_{PU}(g)\)</span></li>
+<li><span class="math inline">\(R_{PNNU}(g) = (1-\gamma) R_{PN}(g) + \gamma R_{NU}(g)\)</span></li>
+</ul>
+<p>ということ. 実用的にはこの2つをさらに組み合わせる (それを PNU と呼んでいる).</p>
+<p><span class="math display">\[R^\eta_{PNU}(g) = \begin{cases}
+R^\eta_{PNPU}(g) &amp; \eta \geq 0 \\
+R^\eta_{PNNU}(g) &amp; \eta &lt; 0
+\end{cases}\]</span></p>
+<p>ここで <span class="math inline">\(\eta\)</span> はまた新しいパラメータで、 <span class="math inline">\(-1 \leq \eta \le 1\)</span> の範囲で取り得るものとする.</p>
+<p>例えば</p>
+<ul>
+<li><span class="math inline">\(R^1_{PNU}(g)=R_{PU}(g)\)</span></li>
+<li><span class="math inline">\(R^0_{PNU}(g)=R_{PN}(g)\)</span></li>
+<li><span class="math inline">\(R^{-1}_{PNU}(g)=R_{NU}(g)\)</span></li>
+</ul>
+<h2 id="解析">解析</h2>
+<p>まだ読んでない</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>坪井 多様体 §8 - 多様体の上のベクトル場</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<h1 class="title">坪井 多様体 §8 - 多様体の上のベクトル場</h1>
+</header>
+<p class="date" style="text-align: right">
+2017-09-30 (Sat.)
+</p>
+<div class="is-pulled-right">
+<p><a class='tag is-red' href=index.html#数学>数学</a> <a class='tag is-red' href=index.html#幾何学>幾何学</a></p>
+</div>
+<h2 id="index">index</h2>
+<div id="toc">
+
+</div>
+<h2 id="ベクトル場に沿う偏微分">ベクトル場に沿う偏微分</h2>
+<p>多様体 <span class="math inline">\(M\)</span> の上にフロー <span class="math inline">\(F_t: M \to M\)</span> 及び、それを生成するようなベクトル場 <span class="math inline">\(X = \frac{dF_t}{dt} \circ F_t^{-1}\)</span> があるとする.</p>
+<p><span class="math inline">\(M\)</span> 上の実関数 <span class="math inline">\(f: M \to \mathbb{R}\)</span> に就いて、 <span class="math inline">\(Xf\)</span> を次で定義する.</p>
+<p><span class="math inline">\(X(x)\)</span> はベクトルなので一般に <span class="math display">\[X(x) = \sum_i \xi_i(x) \frac{\partial}{\partial x_i}\]</span> と書ける. これに対して <span class="math display">\[Xf(x) := \sum_i \xi_i(x) \frac{\partial f}{\partial x_i}(x)\]</span> と定める.</p>
+<p>ここに出現する <span class="math inline">\(\frac{\partial f}{\partial x_i}\)</span> は点を座標に移してから実数として微分するもので、 <span class="math inline">\(\frac{\partial (f \circ \varphi^{-1})}{\partial x_i}\)</span> のことである. 個々の値は座標のとり方で変わるが、全体 (<span class="math inline">\(Xf\)</span>) は変わらないことに註意.</p>
+<h3 id="定理">定理</h3>
+<span class="math inline">\(Xf\)</span> に就いて、次が成立する.
+<div class="thm">
+<p><span class="math display">\[\frac{d}{dt} f(F_t(x)) = Xf(F_t(x))\]</span></p>
+</div>
+<p>右辺に定義の式を代入することで確認する. <span class="math inline">\(y=F_t(x)\)</span> とおくと、 <span class="math display">\[\begin{align*}
+X(y)
+&amp; = \left( \frac{dF_t}{dt} \circ F_t^{-1} \right) (y) \\
+&amp; = \frac{dF_t}{dt} \left( F_t^{-1}(y) \right) \\
+&amp; = \sum_i \left( \frac{dF_t}{dt} \left( F_t^{-1}(y) \right) \right)_{.i} \frac{\partial}{\partial y_i} \\
+&amp; = \sum_i \left( \frac{dF_t}{dt} (x) \right)_{.i} \frac{\partial}{\partial y_i}
+\end{align*}\]</span> ここで <span class="math inline">\(\_.i\)</span> はタプルの第 <span class="math inline">\(i\)</span> 成分への射影関数.</p>
+<p>とベクトルは表現されるので、これに対して <span class="math display">\[\begin{align*}
+Xf(y)
+&amp; = \sum_i \left( \frac{dF_t}{dt} (x) \right)_{.i} \frac{\partial f}{\partial y_i}(y) \\
+&amp; = \sum_i \left( \frac{d y_i}{dt} \right) \frac{\partial f}{\partial y_i}(y) \\
+&amp; = \frac{d f(y)}{dt} \\
+&amp; = \frac{d f(F_t(x))}{dt}
+\end{align*}\]</span></p>
+<p>と確認できた. この定理を座標を決めない場合の <span class="math inline">\(Xf\)</span> の定義とする.</p>
+<h3 id="問-8.1.2">問 8.1.2</h3>
+<p>コンパクト多様体の上のベクトル場 <span class="math inline">\(X\)</span> と実関数 <span class="math inline">\(f\)</span> について <span class="math inline">\(Xf=f\)</span> が成り立っているとする.</p>
+<p>まず、コンパクト性故 <span class="math inline">\(f(X) \subset \mathbb{R}\)</span> もまたコンパクトであるが、 実空間のコンパクト部分集合は有界である. すなわち、最小元と最大元を持つ.</p>
+<p>次に <span class="math inline">\(Xf=f\)</span> について調べる. これもコンパクト性故 <span class="math inline">\(X\)</span> によって生成されるフロー <span class="math inline">\(F_t\)</span> が存在する. 点 <span class="math inline">\(x=F_t(y)\)</span> について、 <span class="math display">\[\begin{align*}
+f(F_t(y))
+&amp; = Xf(F_t(y)) \tag{仮定より} \\
+&amp; = \frac{d}{dt}f(F_t(y)) \tag{定理}
+\end{align*}\]</span></p>
+<p>今、点 <span class="math inline">\(y\)</span> を固定して <span class="math inline">\(f(F_t(y))\)</span> を <span class="math inline">\(t\)</span> の関数 <span class="math inline">\(g(t)\)</span> とみなせば、 <span class="math display">\[g(t) = \frac{d}{dt}g(t)\]</span> を得たことになる. この微分方程式を解けば <span class="math display">\[g(t) = A \exp(t)\]</span> ちなみに初期値は <span class="math inline">\(g(0)=f(F_0(y))=f(y)\)</span>. 以上から <span class="math display">\[f(F_t(y)) = f(y) \exp(t)\]</span> を得る. ところで <span class="math inline">\(t\)</span> は <span class="math inline">\(\mathbb{R}\)</span> 全体を取り得るが、このままだと <span class="math inline">\(f(F_t(y))\)</span> の取り得る値の範囲は <span class="math inline">\(f(y)&gt;0\)</span> なら <span class="math inline">\((0,\infty)\)</span> となる. これは先程の <span class="math inline">\(f\)</span> は最大元を持つという事実と反する. 同様に最小限を持つ事実も考慮すると、結局 <span class="math inline">\(f(y)=0\)</span> である必要があり、 <span class="math display">\[f(F_t(y)) = 0\]</span> が言える.</p>
+<p>任意の <span class="math inline">\(y\)</span> について同じことが言えるので結局 <span class="math display">\[f(x)=0\]</span> が言える.</p>
+<h2 id="フローとベクトル場">フローとベクトル場</h2>
+<p>普通の偏微分 <span class="math inline">\(\frac{\partial}{\partial x_i}\)</span>, <span class="math inline">\(\frac{\partial}{\partial x_j}\)</span> は可換で、 <span class="math inline">\(\frac{\partial^2 f}{\partial x_i \partial x_j} = \frac{\partial^2 f}{\partial x_j \partial x_i}\)</span> が一般に成立する. 先程見たベクトル場に沿う偏微分について同じことは言えるだろうか. すなわち、 <span class="math display">\[X(Yf) =^? Y(Xf)\]</span> だろうか.</p>
+<p><span class="math inline">\(M\)</span> 上の2つのベクトル場 <span class="math inline">\(X,Y\)</span> がそれぞれ <span class="math inline">\(F_t, G_s\)</span> というフローを生成するとする. <span class="math inline">\((F_t)_*\)</span> は単に <span class="math inline">\(TM\to TM\)</span> の接写像だが、 <span class="math display">\[(F_t)_*Y : M \to TM\]</span> <span class="math display">\[x \mapsto (F_t)_* ( Y( F_{-t}(x) ))\]</span> と定める. すなわち、 <span class="math display">\[((F_t)_* Y)(x) = (F_t)_*(Y(F_{-t}(x))).\]</span> <span class="math inline">\(t\)</span> を <span class="math inline">\(-t\)</span> に置き換えて、 <span class="math display">\[((F_{-t})_* Y)(x) = (F_{-t})_*(Y(F_t(x))).\]</span> 右辺をよく見るとこのベクトルは <span class="math inline">\(x\)</span> から生えているので <span class="math inline">\(\in T_xM\)</span> である.</p>
+<p>適当な座標を与えて、</p>
+<ul>
+<li><span class="math inline">\(X(x) = \sum_i X_i(x) \frac{\partial}{\partial x_i}\)</span></li>
+<li><span class="math inline">\(Y(x) = \sum_i Y_i(x) \frac{\partial}{\partial x_i}\)</span></li>
+<li><span class="math inline">\(F_t = (x_1^t, \ldots, x_m^t)\)</span>
+<ul>
+<li><span class="math inline">\(x_i^t : \mathbb{R}^m \to \mathbb{R}\)</span></li>
+</ul></li>
+</ul>
+<p>と書き直す.</p>
+<p><span class="math display">\[\begin{align*}
+((F_{-t})_* Y)(x)
+&amp; = (F_{-t})_*(Y(F_t(x))) \tag{先の式} \\
+&amp; = (F_{-t})_* \sum_i \left( Y_i(F_t(x)) \frac{\partial}{\partial x_i} \right) \tag{$Y$ の座標表示} \\
+&amp; = \sum_i \left( Y_i(F_t(x)) (F_{-t})_*\left(\frac{\partial}{\partial x_i} \right)\right) \tag{ベクトル線形性} \\
+&amp; = \sum_i Y_i(F_t(x)) \sum_j \left(D(F_{-t})\right)_{i,j} \frac{\partial}{\partial x_j} \tag{ヤコビアン行列} \\
+&amp; = \sum_i Y_i(F_t(x)) \sum_j \frac{\partial x_j^{-t}}{\partial x_i} \frac{\partial}{\partial x_j}
+\end{align*}\]</span></p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

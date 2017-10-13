@@ -21,7 +21,7 @@ index:
 edit:
 	bash script/edit.sh
 
-git:
+git: index
 	git add .
 	git commit -a -m "taglibro/ `LANG=en date`"
 	git push

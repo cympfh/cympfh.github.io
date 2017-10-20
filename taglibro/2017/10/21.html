@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sat Oct 21 2017</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Sat Oct 21 2017</h1>
+</header>
+<h2 id="運算-再帰部分関数による矛盾の導出">運算: 再帰部分関数による矛盾の導出</h2>
+<p><span class="math inline">\(t, f\)</span> はそれぞれ真偽を示すシンボルとする. <span class="math inline">\(\top, \bot\)</span> などとも書かれる.</p>
+<p>if 式とは <span class="math inline">\(\mathrm{if}~a~b~c\)</span> と書かれる式のこと. 第一引数 <span class="math inline">\(a\)</span> を条件部という. <span class="math inline">\(b\)</span> が Then 部、<span class="math inline">\(c\)</span> が Else 部という. 式全体の値は、<span class="math inline">\(a=t\)</span> なら <span class="math inline">\(b\)</span> 、<span class="math inline">\(a=f\)</span> なら <span class="math inline">\(c\)</span>. <span class="math inline">\(a\)</span> がそれ以外の値を取ることはないようにする.</p>
+<h3 id="公理">公理</h3>
+<p>およそ直感的に正しそうな公理をいくつか用いるが、 一度に説明をするのは面倒くさいのでその時その時に言う.</p>
+<div class="thm">
+<p>ところで式 <span class="math inline">\(X\)</span> を次のようなものとして定義する: <span class="math display">\[X \equiv \mathrm{if}~X ~ f ~ t\]</span></p>
+<p><span class="math inline">\(X\)</span> は if の第一引数 (条件部) にあるので <span class="math inline">\(t\)</span> または <span class="math inline">\(f\)</span> である.</p>
+</div>
+<h3 id="定理">定理</h3>
+<p><span class="math inline">\(t=f\)</span> を示す.</p>
+<div class="thm">
+<h4 id="公理1">公理1</h4>
+<p>任意の <span class="math inline">\(a,b\)</span> について <span class="math display">\[b \equiv \mathrm{if}~a ~ b ~ b\]</span> が成立する. これはつまり、条件部がなんであろうが Then 部も Else 部も同じ値なら if 全体もその値であると言っている.</p>
+</div>
+<p>公理1により <span class="math display">\[f \equiv \mathrm{if}~X ~ f ~ f\]</span></p>
+<div class="thm">
+<h4 id="公理2">公理2</h4>
+<p>if 文の第二引数 (Then部) では第一引数 (条件部) が <span class="math inline">\(t\)</span> であることを用いて良い. 例えば次が成立する. <span class="math display">\[\mathrm{if}~a~b~c
+\equiv
+\mathrm{if}~a~(\mathrm{if}~a~b~d)~c\]</span></p>
+</div>
+<div class="thm">
+<h4 id="公理2-1">公理2'</h4>
+<p>同様に、if文の第三引数 (Else部) は第一引数 (条件部) が <span class="math inline">\(f\)</span> であることを用いて良い. <span class="math display">\[\mathrm{if}~a~b~c
+\equiv
+\mathrm{if}~a~b~(\mathrm{if}~a~d~c)\]</span></p>
+</div>
+<p>これらを順に用いて、 <span class="math display">\[\begin{align*}
+f
+&amp; \equiv \mathrm{if}~X ~ f ~ t \\
+&amp; \equiv \mathrm{if}~X ~ (\mathrm{if}~X~f~t) ~ t \\
+&amp; \equiv \mathrm{if}~X ~ (\mathrm{if}~X~f~t) ~ (\mathrm{if}~X~t~f)
+\end{align*}\]</span></p>
+<p>次に、中の深いところの2つの <span class="math inline">\(X\)</span> を定義 <span class="math inline">\(\mathrm{if}~X~f~t\)</span> で置き換える.</p>
+<p><span class="math display">\[\begin{align*}
+f
+&amp; \equiv \mathrm{if}~X ~ (\mathrm{if}~
+\color{red}{(\mathrm{if}~X~f~t)}
+~f~t) ~ (\mathrm{if}~
+\color{blue}{(\mathrm{if}~X~f~t)}
+~t~f)
+\end{align*}\]</span></p>
+<p>1つめの <span class="math inline">\(\color{red}{(\mathrm{if}~X~f~t)}\)</span> に公理2 を適用する. つまりこの <span class="math inline">\(X\)</span> は最も外側の if の Then 部にあるから <span class="math inline">\(X=t\)</span> である. 従って <span class="math inline">\(\color{red}{(\mathrm{if}~X~f~t)} \equiv \color{red}{t}\)</span> だとしてよい. というわけで、</p>
+<p><span class="math display">\[\begin{align*}
+f
+&amp; \equiv \mathrm{if}~X ~ (\mathrm{if}~
+\color{red}{(\mathrm{if}~X~f~t)}
+~f~t) ~ (\mathrm{if}~
+\color{blue}{(\mathrm{if}~X~f~t)}
+~t~f) \\
+&amp; \equiv \mathrm{if}~X ~ (\mathrm{if}~\color{red}{f}~f~t) ~ (\mathrm{if}~
+\color{blue}{(\mathrm{if}~X~f~t)}
+~t~f)
+\end{align*}\]</span></p>
+<p>同様に公理2'から、 <span class="math inline">\(\color{blue}{(\mathrm{if}~X~f~t)}\)</span> は <span class="math inline">\(\color{blue}{t}\)</span> だとしてよい.</p>
+<p><span class="math display">\[\begin{align*}
+f
+&amp; \equiv \mathrm{if}~X ~ (\mathrm{if}~\color{red}{f}~f~t) ~ (\mathrm{if}~\color{blue}{t}~t~f)
+\end{align*}\]</span></p>
+<p>2つある if 文は条件部が明らかなので評価する</p>
+<p><span class="math display">\[\begin{align*}
+f
+&amp; \equiv \mathrm{if}~X ~ (\mathrm{if}~\color{red}{f}~f~t) ~ (\mathrm{if}~\color{blue}{f}~t~f) \\
+&amp; \equiv \mathrm{if}~X ~ t ~ t
+\end{align*}\]</span></p>
+<p>最後に公理1を再び適用すると、</p>
+<p><span class="math display">\[\begin{align*}
+f
+&amp; \equiv \mathrm{if}~X ~ t ~ t \\
+&amp; \equiv t
+\end{align*}\]</span></p>
+<p>というわけで <span class="math display">\[f=t\]</span> を得た.</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

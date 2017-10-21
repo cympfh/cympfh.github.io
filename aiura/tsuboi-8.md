@@ -119,11 +119,14 @@ $\frac{\partial^2 f}{\partial x_i \partial x_j} = \frac{\partial^2 f}{\partial x
 $$X(Yf) =^? Y(Xf)$$
 だろうか.
 
+### ブラケット積
+
 $M$ 上の2つのベクトル場 $X,Y$ がそれぞれ $F_t, G_s$ というフローを生成するとする.
 $(F_t)_*$ は単に $TM\to TM$ の接写像だが、
+次のようなベクトル場への作用
 $$(F_t)_*Y : M \to TM$$
 $$x \mapsto (F_t)_* ( Y( F_{-t}(x) ))$$
-と定める.
+を定める.
 すなわち、
 $$((F_t)_* Y)(x) = (F_t)_*(Y(F_{-t}(x))).$$
 $t$ を $-t$ に置き換えて、
@@ -147,5 +150,145 @@ $$\begin{align*}
 & = (F_{-t})_* \sum_i \left( Y_i(F_t(x)) \frac{\partial}{\partial x_i} \right) \tag{$Y$ の座標表示} \\
 & = \sum_i \left( Y_i(F_t(x)) (F_{-t})_*\left(\frac{\partial}{\partial x_i} \right)\right) \tag{ベクトル線形性} \\
 & = \sum_i Y_i(F_t(x)) \sum_j \left(D(F_{-t})\right)_{i,j} \frac{\partial}{\partial x_j} \tag{ヤコビアン行列} \\
-& = \sum_i Y_i(F_t(x)) \sum_j \frac{\partial x_j^{-t}}{\partial x_i} \frac{\partial}{\partial x_j}
+& = \sum_i Y_i(F_t(x)) \sum_j \frac{\partial x_j^{-t}}{\partial x_i} \frac{\partial}{\partial x_j} \\
+& = \sum_{i,j} Y_i(F_t(x)) \frac{\partial x_j^{-t}}{\partial x_i} \frac{\partial}{\partial x_j}
 \end{align*}$$
+
+$x$ を固定して、$t$ で微分する
+
+$$\begin{align*}
+\frac{d}{dt} ((F_{-t})_* Y)(x)
+& = \sum_{i,j} \left[
+\frac{d}{dt} Y_i(F_t(x)) \frac{\partial x_j^{-t}}{\partial x_i} \frac{\partial}{\partial x_j}
++
+Y_i(F_t(x)) \frac{d}{dt}\frac{\partial x_j^{-t}}{\partial x_i} \frac{\partial}{\partial x_j}
+\right] \\
+& = \sum_{i,j} \left[
+\sum_k \frac{\partial Y_i}{\partial x_k} \frac{\partial x_k^t}{\partial t} \frac{\partial x^{-t}_j}{\partial x_i} \frac{\partial}{\partial x_j}
++
+Y_i(F_t(x)) \frac{\partial}{\partial x_i} \frac{\partial x_j^{-t}}{\partial t} \frac{\partial}{\partial x_j}
+\right] \\
+\end{align*}$$
+
+$\frac{\partial x_j^{-t}}{\partial t}$
+について.
+$F_t$ は $X$ のフローなので、
+$X = \frac{\partial F_t}{\partial t} \circ F_{-t}$
+(生成するフローの定義).
+逆向きのフローを考えれば ($F_t \mapsto F_{-t}$)、
+$-X = \frac{\partial F_{-t}}{\partial t} \circ F_{t}$.
+$-X \circ F_{-t} = \frac{\partial F_{-t}}{\partial t}$.
+$j$ 番目の成分だけ取って
+$-X_j \circ F_{-t} = \frac{\partial x^{-t}_j}{\partial t}$.
+
+これを用いて、
+
+$$\frac{d}{dt} ((F_{-t})_* Y)(x) =
+\sum_j\left[
+\sum_{i,k}
+\frac{\partial Y_i}{\partial x_k} \frac{\partial x_k^t}{\partial t}
+\frac{\partial x^{-t}_j}{\partial x_i}
+-
+\sum_i
+Y_i(F_t(x)) \frac{\partial}{\partial x_i}(X_j(F_{-t}(x)))
+\right]\frac{\partial}{\partial x_j}$$
+
+この $t=0$ での微分値を考える.
+$$\left.\frac{\partial x^t_k}{\partial t} \right|_{t=0}=X_j$$
+$$\left. F_t(x) \right|_{t=0}=x,
+\left. F_{-t}(x) \right|_{t=0}=x$$
+なので
+
+$$\begin{align*}
+\left.\frac{d}{dt}\right|_{t=0} ((F_{-t})_* Y)(x)
+&=
+\sum_j\left[
+\sum_{i,k}
+\frac{\partial Y_i}{\partial x_k} X_k(x)
+\delta_{i,j}
+-
+\sum_i Y_i(x) \frac{\partial X_j}{\partial x_i}
+\right]\frac{\partial}{\partial x_j}
+\\
+&=
+\sum_j\left[
+\sum_k
+\frac{\partial Y_j}{\partial x_k} X_k(x)
+-
+\sum_i Y_i(x) \frac{\partial X_j}{\partial x_i}
+\right]\frac{\partial}{\partial x_j}
+\\
+\end{align*}$$
+
+この値を $\left[X,Y\right]$ と書いて、
+$X,Y$
+のブラケット積 (括弧積) と呼ぶ.
+
+<div class=thm>
+#### 定義
+2つのベクトル場 $X,Y$ の **ブラケット積** とは
+$X$ が生成するフローを $F_t$ とするとき、
+$$\begin{align*}
+\left[ X,Y \right]
+& \equiv
+\left.\frac{d}{dt}\right|_{t=0} ((F_{-t})_* Y)(x) \\
+& =
+\sum_j\left[
+\sum_k \frac{\partial Y_j}{\partial x_k} X_k(x)
+- \sum_i Y_i(x) \frac{\partial X_j}{\partial x_i}
+\right]\frac{\partial}{\partial x_j}
+\end{align*}$$
+</div>
+
+ブラケット積もまたベクトル場になっている.
+
+<div class=thm>
+#### 諸性質
+- 交代性: $\left[ X,Y \right] = - \left[ Y,X \right]$
+- 線形性: $\left[ kX,Y\right] = k\left[ X,Y \right]$
+
+これらは定義から容易にわかる.
+</div>
+
+関数 $f: M \to \mathbb{R}$ に対して $M$ 上のベクトル場 $X$ で
+$$Xf : M \to \mathbb{R}$$
+が定まることは前の章で述べた.
+
+<div class=thm>
+#### 定理
+$$\left[X,Y\right]f = X(Yf) - Y(Xf)$$
+
+これは正に初めに述べた、
+ベクトル場に沿った微分の可換性についての答えになっている.
+
+#### 証明
+ほぼほぼ、定義のまま.
+
+$$\begin{align*}
+\left[X,Y\right]f
+& =
+\sum_j\left[
+\sum_k \frac{\partial Y_j}{\partial x_k} X_k
+- \sum_i Y_i \frac{\partial X_j}{\partial x_i}
+\right]\frac{\partial f}{\partial x_j} \\
+& =
+\sum_k X_k \frac{\partial}{\partial x_k} (Yf)
+- \sum_i Y_i \frac{\partial}{\partial x_i} (Xf) \\
+& =
+X(Yf)-Y(Xf)
+\end{align*}$$
+</div>
+
+<div class=thm>
+#### ヤコビ恒等式:
+$$\left[\left[ X,Y \right], Z \right] +\left[\left[ Y,Z \right], X \right] +\left[\left[ Z,X \right], Y \right]=0$$
+
+#### 証明
+ベクトル場 $K$ がゼロであることを示すのに、一般の関数 $f$ に対して
+$$Kf=0$$
+であるのを示せばよい.
+直前の定理を用いて
+$$\left[\left[ X,Y \right], Z \right]f+\left[\left[ Y,Z \right], X \right]f+\left[\left[ Z,X \right], Y \right]f = 0$$
+を言えばよい.
+式展開するだけなので略.
+</div>

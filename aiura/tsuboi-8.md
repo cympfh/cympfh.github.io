@@ -292,3 +292,47 @@ $$\left[\left[ X,Y \right], Z \right]f+\left[\left[ Y,Z \right], X \right]f+\lef
 を言えばよい.
 式展開するだけなので略.
 </div>
+
+### 例
+
+多様体 $M=\mathbb{R}^2$ の上の2つのベクトル場
+$X=\frac{\partial}{\partial x_1}$,
+$Y=x_1 \frac{\partial}{\partial x_2}$
+を考える.
+2つが生成するフローはそれぞれ
+
+- by $X$
+    - $F_t(x_1, x_2) = (x_1 + t, x_2)$
+- by $Y$
+    - $G_s(x_1, x_2) = (x_1, x_2 + x_1s)$
+
+ブラケット積を定義どおり素朴に算出してみる.
+$$\begin{align*}
+Y(F_t(x)) & = Y(x_1+t, x_2) \\
+          & = (x_1+t) \frac{\partial}{\partial x_2} \\
+(F_{-t})_* (Y(F_t(x))) & = (x_1+t) \frac{\partial}{\partial x_2} \\
+\left.\frac{d}{dt}\right|_{t=0} & = \frac{\partial}{\partial x_2}
+\end{align*}$$
+というわけで
+$X,Y = \frac{\partial}{\partial x_2}$
+が確認できた.
+
+次に交代した
+$[Y,X]$
+を今度も定義から素朴に計算してみる.
+
+$$\begin{align*}
+X(G_s(x)) & = \frac{\partial}{\partial x_1} \\
+(G_{-s})_* (X(G_s(x))) & =
+    \left[\begin{array}{cc} 1 & 0 \\ -s & 1 \end{array}\right]
+    \left[\begin{array}{c} 1 \\ 0 \end{array}\right] \\
+    & =
+    \left[\begin{array}{c} 1 \\ -s \end{array}\right] \\
+    & =
+    \frac{\partial}{\partial x_1} -s \frac{\partial}{\partial x_2} \\
+\left.\frac{d}{dt}\right|_{t=0}
+    & = -\frac{\partial}{\partial x_2}
+\end{align*}$$
+というわけで確かに
+$[Y,X] = - [X,Y]$
+であることが確認できた.

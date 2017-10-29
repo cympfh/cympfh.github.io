@@ -336,3 +336,204 @@ X(G_s(x)) & = \frac{\partial}{\partial x_1} \\
 というわけで確かに
 $[Y,X] = - [X,Y]$
 であることが確認できた.
+
+## 例題 8.2.6
+
+Lie群 $G$ について.
+
+### (1)
+
+$G$ 上の左不変ベクトル場とは、
+$$\forall g \in G, (L_g)_* \xi = \xi$$
+なる $\xi$ である.
+ただしここで
+$L_g$ とは $L_g(h)=gh : G \to G$ なる関数のことであった.
+
+また、接写像のベクトル場への作用とは、次のようなものであった.
+$$\color{red}{((L_g)_* \xi)} \left( L_g(h) \right) \equiv (L_g)_* \left( \xi(h) \right)$$
+この $\xi$ が左不変ベクトル場であるとき、
+$$\begin{align*}
+(L_g)_* \left( \xi(h) \right)
+& = \color{red}{((L_g)_* \xi)} \left( L_g(h) \right) \\
+& = \xi (L_g(h)) \\
+& = \xi(gh)
+\end{align*}$$
+
+ここで $h$ に単位元 $1\in G$ を代入することで
+$$\xi(g) = (L_g)_* (\xi(1)) \tag{1.1}$$
+を得る.
+ここで右辺を見ると、$\xi$ に依存して存在する値は
+$\xi(1)$
+のみであるから、
+結局、任意の $\xi(g)$ の値は $\xi(1)$ だけに依存して決定する.
+
+すなわち、
+この等式 (1.1) によって、
+左不変ベクトル場について、
+$\xi \mapsto \xi(1)$
+という写像が単射であることが言える.
+
+逆に、等式 (1.1) によって、$\xi(1)$ の値と $L_g$ で、ベクトル場 $\xi$ を構成することが出来る.
+そしてそうやって構成したベクトル場は左不変である.
+
+$$\begin{align*}
+\color{red}{((L_g)_* \xi)} \left( L_g(h) \right)
+& = (L_g)_* \left( \xi(h) \right) \\
+& = (L_g)_* \left( (L_h)_* \xi(1) \right) \\
+& = (L_{gh})_* \left( \xi(1) \right) \\
+& = \xi(gh) \\
+& = \xi(L_g(h)) \\
+\end{align*}$$
+
+これが任意の $L_g(h) (=gh)$ の値に対して成り立つので
+$(L_g)_* \xi = \xi$
+が成り立つ.
+即ち $\xi$ は左不変である.
+
+このような左不変ベクトル場全体を
+Lie 環 (或いは Lie 代数) $\mathfrak{g}$ という.
+
+左不変ベクトル場は今見てきたように、$1 \in G$ でのベクトルで決まるから、
+$\mathfrak{g}$ は $T_1G$ と同型であることが分かる.
+
+<div class=thm>
+#### Remark
+$$\mathrm{dim}~\mathfrak{g} = \mathrm{dim}~G$$
+</div>
+
+### Thm
+
+左不変ベクトル場 $\xi$ が生成するフローを $\varphi_t$ とする.
+このとき、
+$L_g \circ \varphi_t \circ L_g^{-1}$
+というフローは実は $\varphi_t$ と一致する.
+これを確認するため、逆にこれを生成するベクトル場を算出する.
+
+$$\begin{align*}
+\left( \left. \frac{d}{dt} \right|_{t=0} L_g \circ \varphi_t \circ L_g^{-1} \right)
+\left( L_g \circ \varphi_t \circ L_g^{-1} \right)^{-1} (h)
+& =
+\left( \left. \frac{d}{dt} \right|_{t=0} L_g \circ \varphi_t \circ L_g^{-1} \right)
+\left( L_g \circ \varphi_t^{-1} \circ L_g^{-1} \right) (h) \\
+& =
+\left( \left. \frac{d}{dt} \right|_{t=0} L_g \circ \varphi_t \right)
+\varphi_t^{-1}(g^{-1}h) \\
+& =
+(L_g)_* \frac{d \varphi_t}{dt}
+\varphi_t^{-1}(g^{-1}h)
+\tag{接射像の定義} \\
+& =
+(L_g)_* \left( \xi (g^{-1}h) \right)
+\tag{フローの生成} \\
+& =
+\xi(h) \tag{左不変性} \\
+\end{align*}$$
+
+一番最後のは、
+$\xi(h) = ((L_g)_* \xi)(h) = (L_g)_* (\xi (L_g^{-1}(h)))$
+を用いた.
+
+というわけで、
+2つのフロー $\varphi_t$ と $L_g \circ \varphi_t \circ L_g^{-1}$ を生成するベクトル場はどちらも $\xi$ である.
+従って２つは一致する.
+
+<div class=thm>
+$$L_g \circ \varphi_t \circ L_g^{-1} = \varphi_t \tag{$\ast$}$$
+</div>
+
+### (2)
+
+2つの左不変ベクトル場
+$\xi, \eta \in \mathfrak{g}$
+が生成するフローをそれぞれ
+$\varphi_t, \psi_t$
+とする.
+ブラケット積 $[\xi, \eta]$ を考える.
+
+$$\begin{align*}
+[\xi, \eta]
+& = \left.\frac{d}{dt}\right|_{t=0} \left( (\varphi_{-t})_* \eta \right) \\
+(L_g)_* [\xi, \eta]
+& = (L_g)_* \left.\frac{d}{dt}\right|_{t=0} \left( (\varphi_{-t})_* \eta \right) \\
+& = \left.\frac{d}{dt}\right|_{t=0} (L_g)_* \left( (\varphi_{-t})_* \eta \right) \tag{$(L_g)_*$ は $t$ に依存しないので} \\
+\end{align*}$$
+
+定理 (*) より
+$L_g \circ \varphi_{-t} = \varphi_{-t} \circ L_g$
+で、これを微分して接写像にした版
+$(L_g)_* \circ (\varphi_{-t})_* = (\varphi_{-t})_* \circ (L_g)_*$
+も得られる.
+これを使うと
+
+$$\begin{align*}
+(L_g)_* [\xi, \eta]
+& = \left.\frac{d}{dt}\right|_{t=0} (\varphi_{-t})_* ((L_g)_* \eta) \\
+& = [\xi, (L_g)_* \eta]
+\end{align*}$$
+
+を得る.
+次に $\eta$ の左不変性から
+$(L_g)_* \eta=\eta$
+を代入し、結局次を得る.
+
+<div class=thm>
+$$(L_g)_* [\xi, \eta] = [\xi, \eta]$$
+</div>
+
+次のように言い換えられる.
+
+<div class=thm>
+#### Thm
+2つの左不変ベクトル場のブラケット積もまた、左不変ベクトル場である.
+</div>
+
+### (3)
+
+定理 (*) は
+$$L_g \circ \varphi_t \circ L_g^{-1} = \varphi_t \tag{$\ast$}$$
+というものだった.
+両辺を $g$ に適用すると
+$$g \varphi_t(1) = \varphi_t(g)$$
+を得る.
+
+従ってフロー $\varphi_t$ という値は $\varphi_t(1)$ だけ決めれば決まる.
+($g$ を左から掛けるという操作はベクトル場には依存しないので.)
+
+$\varphi_t(1)$ を $\exp(t\xi)$ と書いて **指数関数** と呼ぶ.
+
+ベクトル場をスカラー倍するのと、フローの時刻パラメータをスカラー倍するのは一致するので.
+
+### (4)
+
+$\exp$ はベクトル場をフローの値、すなわち点に写す.
+$$\exp : \mathfrak{g} \to G$$
+また $\exp(0) = id(1)=1$ であるので、その周りでは接写像
+$$T\exp : T_0\mathfrak{g} \to T_1G$$
+がある.
+
+$$T_1G \cong^{(1)} \mathfrak{g} \cong T_0\mathfrak{g} \to T_1G$$
+
+実際に $T\exp$ を計算してみる.
+(1) で示したように、左不変ベクトル場は $\xi(1)$ での値さえ決めればよかった.
+すなわち、
+あるベクトル $v \in T_1G$ を選んで
+$\xi(g) = (L_g)_* v$
+によってベクトル場 $\xi \in \mathfrak{g}$ が構成できるのだった.
+
+$T_0\mathfrak{g}$ におけるベクトル $xi$ に対応する曲線は、
+$c(t)=t\xi$
+である
+($\frac{dc}{dt}(0)=\xi$).
+これを $\exp$ で写して得る曲線が
+$\exp(c(t)) = \exp(t\xi) = \varphi_t(1)$.
+この曲線に対応するベクトルは、$t=0$ での微分値であって
+$\left. \frac{d}{dt} \varphi_t(1) \right|_{t=0} = \xi(1)=v$.
+
+以上から、$T\exp(\xi) = v$ が分かった.
+結局、$\xi$ を $\xi(1)$ に写している.
+
+<div class=thm>
+$\exp$ は $0 \in \mathfrak{g}$ の近傍を $1 \in G$ の近傍に写す微分同相写像.
+</div>
+
+

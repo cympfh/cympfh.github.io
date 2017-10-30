@@ -44,6 +44,8 @@ code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* Com
 code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
   </style>
   <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="../resources/css/d.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.cs">
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
@@ -56,11 +58,16 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="http://www.gnuplot.info/demo/timedat.html">gnuplot demo script: timedat.dem</a></li>
 </ul>
 <p>日付時刻をデータに使う.</p>
+<p>読み込むデータの <code>x</code> 及び <code>y</code> が日付時刻であることを宣言するには</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">set</span> <span class="ex">xdata</span> time
 <span class="kw">set</span> <span class="ex">ydata</span> time</code></pre></div>
-<p>で <code>x</code> または <code>y</code> が日付時刻であることを宣言する. データのフォーマットはデフォルトでは <code>&quot;%d/%m/%y,%H:%M&quot;</code> である必要がある (<code>%-</code>指定子の意味は後述).</p>
+<p>を用いる. データのフォーマットはデフォルトでは <code>&quot;%d/%m/%y,%H:%M&quot;</code> である必要がある (<code>%-</code>指定子の意味は後述).</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">set</span> <span class="ex">timefmt</span> <span class="op">&lt;</span>format<span class="op">&gt;</span></code></pre></div>
 <p>を用いて自由にフォーマットを変更できる.</p>
+<p>また <code>xtics</code> <code>ytics</code> の表示は基本的にはデータに揃えて自動的に時刻表示になるが、 そのフォーマットもまた別途指定する必要がある (データに勝手に揃う気がしてたんだけど、バージョンによるのかもしれない).</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">set</span> <span class="ex">format</span> x <span class="op">&lt;</span>format<span class="op">&gt;</span>
+<span class="kw">set</span> <span class="ex">format</span> y <span class="op">&lt;</span>format<span class="op">&gt;</span></code></pre></div>
+<p>この <code>&lt;format&gt;</code> も先ほどのと同じ、%-指定子を用いた文字列である.</p>
 <h2 id="timeformat--指定子">timeformat <code>%-</code>指定子</h2>
 <table>
 <thead>
@@ -117,29 +124,96 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </tbody>
 </table>
 <h2 id="example">example</h2>
-<p>よくわからんけど時刻を使うときは <code>using 1:2</code> を明示しないと困惑するらしい.</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">set</span> <span class="ex">terminal</span> pngcairo
-<span class="kw">set</span> <span class="ex">output</span> <span class="st">&#39;timefmt.png&#39;</span>
+<p>時刻表示の中にスペース文字など、通常区切り文字として使われるようなものが含まれることが多々ある. そういうときのために <code>using 1:2</code> などを明示的に指定する必要がある.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">set</span> <span class="ex">terminal</span> pngcairo size 700,400
+<span class="kw">set</span> <span class="ex">output</span> <span class="st">&#39;data.timefmt.png&#39;</span>
 
 <span class="kw">set</span> <span class="ex">xdata</span> time
-<span class="kw">set</span> <span class="ex">timefmt</span> <span class="st">&#39;%m/%d&#39;</span>
-
+<span class="kw">set</span> <span class="ex">timefmt</span> <span class="st">&#39;%Y/%m&#39;</span>
+<span class="kw">set</span> <span class="ex">format</span> x <span class="st">&#39;%Y/%m&#39;</span>
 <span class="kw">set</span> <span class="ex">grid</span>
-<span class="ex">plot</span> <span class="st">&#39;timefmt.dat&#39;</span> u 1:2 smooth cspline ,\
-                <span class="st">&#39;&#39;</span> u 1:2:1 with labels point pt 7 left offset 1</code></pre></div>
-<pre class="dat"><code># date y
-1/1 1
-2/3 2
-4/12 3
-5/1 5
-5/21 5
-6/8 10
-7/29 8
-8/1 4
-8/11 3
+<span class="ex">plot</span> <span class="st">&#39;data.timefmt.dat&#39;</span> u 1:2 smooth cspline</code></pre></div>
+<pre class="dat"><code># data.timefmt.dat
+2015/07 2677
+2015/08 5065
+2015/09 3763
+2015/10 3732
+2015/11 2990
+2015/12 5449
+2016/01 4932
+2016/02 6653
+2016/03 2899
+2016/04 3968
+2016/05 2497
+2016/06 2729
+2016/07 2890
+2016/08 3106
+2016/09 3797
+2016/10 2929
+2016/11 2634
+2016/12 3288
+2017/01 3397
+2017/02 4581
+2017/03 4567
+2017/04 3535
+2017/05 4122
+2017/06 2998
+2017/07 3491
+2017/08 4481
+2017/09 4054
+2017/10 3459
 </code></pre>
 <figure>
 <img src="data.timefmt.png" />
 </figure>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
 </body>
 </html>

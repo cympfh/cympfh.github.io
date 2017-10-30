@@ -20,3 +20,8 @@ posts:
 		--css ../resources/css/d.css \
 		--css https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.cs \
 		-o $@
+
+git:
+	git add --all
+	git commit -a -m "gnuplot/ `date`"
+	git push

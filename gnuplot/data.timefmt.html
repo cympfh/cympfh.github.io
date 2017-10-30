@@ -54,17 +54,19 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <header>
 <h1 class="title">日付時刻データ</h1>
 </header>
-<ul>
-<li><a href="http://www.gnuplot.info/demo/timedat.html">gnuplot demo script: timedat.dem</a></li>
-</ul>
-<p>日付時刻をデータに使う.</p>
-<p>読み込むデータの <code>x</code> 及び <code>y</code> が日付時刻であることを宣言するには</p>
+<h2 id="index">index</h2>
+<div id="toc">
+
+</div>
+<h2 id="timefmt-を使う方法">timefmt を使う方法</h2>
+<p>用いるデータの中に出現する日付時刻のフォーマットがただ一通りの場合に有効.</p>
+<p>まず、 読み込むデータの <code>x</code> 及び <code>y</code> が日付時刻であることを宣言する必要がある.</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">set</span> <span class="ex">xdata</span> time
 <span class="kw">set</span> <span class="ex">ydata</span> time</code></pre></div>
-<p>を用いる. データのフォーマットはデフォルトでは <code>&quot;%d/%m/%y,%H:%M&quot;</code> である必要がある (<code>%-</code>指定子の意味は後述).</p>
+<p>日付時刻データのフォーマットはデフォルトでは <code>&quot;%d/%m/%y,%H:%M&quot;</code> である. <code>%-</code>指定子の意味は後述. C言語の printf みたいな感じでフォーマットを作って、</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">set</span> <span class="ex">timefmt</span> <span class="op">&lt;</span>format<span class="op">&gt;</span></code></pre></div>
 <p>を用いて自由にフォーマットを変更できる.</p>
-<p>また <code>xtics</code> <code>ytics</code> の表示は基本的にはデータに揃えて自動的に時刻表示になるが、 そのフォーマットもまた別途指定する必要がある (データに勝手に揃う気がしてたんだけど、バージョンによるのかもしれない).</p>
+<p>また <code>xtics</code> <code>ytics</code> の表示に関しても、そのフォーマットを別途指定する必要がある (<code>timefmt</code> に勝手に揃う気がしてたんだけど、バージョンによるのかもしれない).</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">set</span> <span class="ex">format</span> x <span class="op">&lt;</span>format<span class="op">&gt;</span>
 <span class="kw">set</span> <span class="ex">format</span> y <span class="op">&lt;</span>format<span class="op">&gt;</span></code></pre></div>
 <p>この <code>&lt;format&gt;</code> も先ほどのと同じ、%-指定子を用いた文字列である.</p>
@@ -123,7 +125,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </tr>
 </tbody>
 </table>
-<h2 id="example">example</h2>
+<h3 id="例">例</h3>
 <p>時刻表示の中にスペース文字など、通常区切り文字として使われるようなものが含まれることが多々ある. そういうときのために <code>using 1:2</code> などを明示的に指定する必要がある.</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">set</span> <span class="ex">terminal</span> pngcairo size 700,400
 <span class="kw">set</span> <span class="ex">output</span> <span class="st">&#39;data.timefmt.png&#39;</span>
@@ -165,6 +167,36 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </code></pre>
 <figure>
 <img src="data.timefmt.png" />
+</figure>
+<h2 id="異なるフォーマットを共存させるには">異なるフォーマットを共存させるには</h2>
+<p><code>x</code> と <code>y</code> が異なるフォーマットの日付時刻データである、 あるいは複数のデータを同時にプロットさせるに当たって別のフォーマットが使われてるなどの場合、 異なるフォーマットを指定したい. <code>set timefmt</code> は設定を上書きするだけで、 <code>plot</code> 時点での設定が使われるので、 基本的に1つのフォーマットしか使えない.</p>
+<p>StackOverFlow の &quot;Plot two files in gnuplot with different timefmt&quot; という質問にあった回答の <a href="https://stackoverflow.com/a/31009235" class="uri">https://stackoverflow.com/a/31009235</a> で出来た. <code>using</code> の中で <code>strptime</code> 関数を直接呼び出せばよい. <code>gnuplot 5.0</code> 以上ならより簡素な <code>timecolumn</code> 関数の方が便利</p>
+<h3 id="例-1">例</h3>
+<p><code>timecolumn</code> 関数を使って、x, y で別のフォーマットが使われているデータをプロットする.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">set</span> <span class="ex">terminal</span> pngcairo size 700,400
+<span class="kw">set</span> <span class="ex">output</span> <span class="st">&#39;data.timefmt2.png&#39;</span>
+
+<span class="va">$data</span> &lt;&lt; EOD
+2017-10-23 13:43:00
+2017-10-24 14:37:45
+2017-10-25 14:18:06
+2017-10-26 14:31:48
+2017-10-27 12:12:41
+2017-10-30 13:56:49
+EOD
+
+se<span class="op">t</span> <span class="ex">xdata</span> time
+set yd<span class="op">a</span><span class="ex">ta</span> time
+
+xform<span class="op">a</span><span class="ex">t</span> = <span class="st">&#39;%Y-%m-%d&#39;</span>  <span class="co"># parse format (for timecolumn)</span>
+yforma<span class="op">t</span> = <span class="st">&#39;%H:%M:%S&#39;</span>
+
+se<span class="op">t</span> <span class="ex">format</span> x <span class="st">&#39;%m/%d&#39;</span>  <span class="co"># tics format</span>
+se<span class="op">t</span> <span class="ex">format</span> y <span class="st">&#39;%H:%M&#39;</span>
+
+plo<span class="op">t</span> <span class="va">$data</span> <span class="ex">using</span> (timecolumn(1, xformat))<span class="bu">:</span>(timecolumn(2, yformat)) <span class="fu">w</span> lp</code></pre></div>
+<figure>
+<img src="data.timefmt2.png" />
 </figure>
 <!--
 

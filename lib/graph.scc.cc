@@ -23,7 +23,7 @@ struct StronglyConnectedComponents {
     }
   }
 
-  /* N.B. 隣接リストを渡す */
+  /* cmp の構成 */
   StronglyConnectedComponents(vector<vector<int>>&d) {
     N = d.size();
 
@@ -49,7 +49,7 @@ struct StronglyConnectedComponents {
     K = k;
   }
 
-  /* K * K の隣接グラフ */
+  /* 隣接リスト dag */
   vector<vector<int>> dag()
   {
     vector<vector<int>> d(K, vector<int>(K, 0));
@@ -60,7 +60,13 @@ struct StronglyConnectedComponents {
         if (u2 != v2) d[cmp[u]][cmp[v]] = 1;
       }
     }
-    return d;
+    vector<vector<int>> neigh(K);
+    rep (u, K) {
+        rep (v, K) {
+            if (u != v && d[u][v]) neigh[u].push_back(v);
+        }
+    }
+    return neigh;
   }
 
 };

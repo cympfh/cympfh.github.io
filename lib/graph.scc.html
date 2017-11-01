@@ -44,6 +44,8 @@ code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* Com
 code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
   </style>
   <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="../resources/css/d.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.cs">
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
@@ -52,7 +54,82 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <header>
 <h1 class="title">graph.scc</h1>
 </header>
+<p>有向グラフの強連結成分分解を行い、DAG を作る. 大まかにすることは、 元のグラフの頂点番号と、生成されたDAGの頂点番号を対応付けるベクトル <code>cmp</code> を見つけること. DAG は元のグラフの隣接関係と <code>cmp</code> を見て構成できる.</p>
+<h2 id="graph.scc.rs"><a href="graph.scc.rs" class="uri">graph.scc.rs</a></h2>
+<p>Rust 実装. グラフを隣接リストとして表現し、有向グラフを与えると <code>cmp</code> と DAG の組みを返す.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// convert a DiGraph to a DAG</span>
+<span class="co">/// scc: (neigh) -&gt; (cmp, dag)</span>
+<span class="co">///   where</span>
+<span class="co">///     neigh is a neigh list of DiGraph</span>
+<span class="co">///     cmp is mapping vector; cmp[DiGraph-Vertex-Index] = DAG-Vertex-Index</span>
+<span class="co">///     dag is a neigh list of DAG</span>
+<span class="kw">fn</span> scc(neigh: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt;&gt;) -&gt; (<span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt;, <span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt;&gt;) {
+
+    <span class="kw">let</span> n = neigh.len();
+
+    <span class="co">// Post-order traversal</span>
+    <span class="kw">let</span> <span class="kw">mut</span> po = <span class="pp">vec!</span>[];
+    {
+        <span class="kw">let</span> <span class="kw">mut</span> used = <span class="pp">vec!</span>[<span class="cn">false</span>; n];
+        <span class="kw">for</span> u <span class="kw">in</span> <span class="dv">0.</span>.n {
+            <span class="kw">let</span> <span class="kw">mut</span> stack = <span class="pp">vec!</span>[u];
+            <span class="kw">let</span> <span class="kw">mut</span> pre = <span class="pp">vec!</span>[];
+            <span class="kw">while</span> <span class="kw">let</span> <span class="cn">Some</span>(v) = stack.pop() {
+                <span class="kw">if</span> used[v] { <span class="kw">continue</span> }
+                used[v] = <span class="cn">true</span>;
+                pre.push(v);
+                <span class="kw">for</span> &amp;w <span class="kw">in</span> neigh[v].iter() { stack.push(w) }
+            }
+            pre.reverse(); po.extend(pre);
+        }
+    }
+
+    <span class="kw">let</span> <span class="kw">mut</span> neigh_r = <span class="pp">vec!</span>[<span class="pp">vec!</span>[]; n];
+    <span class="kw">for</span> u <span class="kw">in</span> <span class="dv">0.</span>.n {
+        <span class="kw">for</span> &amp;v <span class="kw">in</span> neigh[u].iter() {
+            neigh_r[v].push(u);
+        }
+    }
+
+    <span class="co">// Components</span>
+    <span class="kw">let</span> <span class="kw">mut</span> cmp = <span class="pp">vec!</span>[<span class="dv">0</span>; n];
+    <span class="kw">let</span> m;
+    {
+        <span class="kw">let</span> <span class="kw">mut</span> used = <span class="pp">vec!</span>[<span class="cn">false</span>; n];
+        <span class="kw">let</span> <span class="kw">mut</span> k = <span class="dv">0</span>;
+        po.reverse();
+        <span class="kw">for</span> &amp;u <span class="kw">in</span> po.iter() {
+            <span class="kw">let</span> <span class="kw">mut</span> stack = <span class="pp">vec!</span>[u];
+            <span class="kw">if</span> used[u] { <span class="kw">continue</span> }
+            <span class="kw">while</span> <span class="kw">let</span> <span class="cn">Some</span>(v) = stack.pop() {
+                <span class="kw">if</span> used[v] { <span class="kw">continue</span> }
+                used[v] = <span class="cn">true</span>;
+                cmp[v] = k;
+                <span class="kw">for</span> &amp;w <span class="kw">in</span> neigh_r[v].iter() { stack.push(w) }
+            }
+            k += <span class="dv">1</span>;
+        }
+        m = k;
+    }
+
+    <span class="co">// DAG</span>
+    <span class="kw">let</span> <span class="kw">mut</span> dag = <span class="pp">vec!</span>[<span class="pp">vec!</span>[]; m];
+    <span class="kw">for</span> u <span class="kw">in</span> <span class="dv">0.</span>.n {
+        <span class="kw">let</span> u2 = cmp[u];
+        <span class="kw">for</span> &amp;v <span class="kw">in</span> neigh[u].iter() {
+            <span class="kw">let</span> v2 = cmp[v];
+            <span class="kw">if</span> u2 != v2 { dag[u2].push(v2) }
+        }
+    }
+    <span class="kw">for</span> u <span class="kw">in</span> <span class="dv">0.</span>.m {
+        dag[u].sort();
+        dag[u].dedup();
+    }
+
+    (cmp, dag)
+}</code></pre></div>
 <h2 id="graph.scc.cc"><a href="graph.scc.cc" class="uri">graph.scc.cc</a></h2>
+<p>C++ 実装. class として定義してあり、コンストラクタで <code>cmp</code> のみ構成する. <code>.dag()</code> メソッドで DAG を返す. グラフは全て隣接リスト.</p>
 <div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="kw">struct</span> StronglyConnectedComponents {
   <span class="dt">int</span> N, K;
 
@@ -78,7 +155,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
     }
   }
 
-  <span class="co">/* N.B. 隣接リストを渡す */</span>
+  <span class="co">/* cmp の構成 */</span>
   StronglyConnectedComponents(vector&lt;vector&lt;<span class="dt">int</span>&gt;&gt;&amp;d) {
     N = d.size();
 
@@ -104,7 +181,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
     K = k;
   }
 
-  <span class="co">/* K * K の隣接グラフ */</span>
+  <span class="co">/* 隣接リスト dag */</span>
   vector&lt;vector&lt;<span class="dt">int</span>&gt;&gt; dag()
   {
     vector&lt;vector&lt;<span class="dt">int</span>&gt;&gt; d(K, vector&lt;<span class="dt">int</span>&gt;(K, <span class="dv">0</span>));
@@ -115,9 +192,64 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
         <span class="cf">if</span> (u2 != v2) d[cmp[u]][cmp[v]] = <span class="dv">1</span>;
       }
     }
-    <span class="cf">return</span> d;
+    vector&lt;vector&lt;<span class="dt">int</span>&gt;&gt; neigh(K);
+    rep (u, K) {
+        rep (v, K) {
+            <span class="cf">if</span> (u != v &amp;&amp; d[u][v]) neigh[u].push_back(v);
+        }
+    }
+    <span class="cf">return</span> neigh;
   }
 
 };</code></pre></div>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
 </body>
 </html>

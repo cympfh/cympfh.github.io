@@ -4,7 +4,7 @@ all:
 	cat Makefile
 
 index:
-	sh script/index.sh > index.html
+	bash script/index.sh > index.html
 
 %.html: %.md
 	mdc $^ | \

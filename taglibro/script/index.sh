@@ -1,5 +1,32 @@
 #!/bin/bash
 
+## helpers
+
+title() {
+    head -1 "$1" | sed 's/^[#%] *//g'
+}
+
+summary() {
+    grep '^## ' "$1" | sed 's,^## ,,; s,$,/,'
+}
+
+write-item() {
+    MD=$1
+    HTML=${MD%md}html
+    cat <<EOM
+    <div class="card">
+        <header class="card-header">
+            <a class="card-header-title" href="$HTML">$(title "$MD")</a>
+        </header>
+        <div class="card-content">
+            $(summary "$MD")
+        </div>
+    </div>
+EOM
+}
+
+## entry
+
 cat <<EOM
 <!DOCTYPE html>
 <html>
@@ -15,19 +42,7 @@ EOM
 
 find . -name '*.md' | sort -r |
 while read f; do
-    MD=$f
-    HTML=${f%md}html
-    cat <<EOM
-    <div class="card">
-        <header class="card-header">
-            <a class="card-header-title" href="$HTML">$(head -1 "$MD" | sed 's/^..//g')</a>
-        </header>
-        <div class="card-content">
-            $(grep '^## ' "$MD" | sed 's,^## ,,; s,$,/,')
-        </div>
-    </div>
-EOM
-
+    write-item "$f"
 done
 
 cat <<EOM

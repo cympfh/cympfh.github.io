@@ -6,32 +6,24 @@
 
 <div id=toc></div>
 
-## ベクトル場に沿う偏微分
+## ベクトル、ベクトル場に沿う偏微分
 
-多様体 $M$ の上にフロー
-$F_t: M \to M$
-及び、それを生成するようなベクトル場
-$X = \frac{dF_t}{dt} \circ F_t^{-1}$
-があるとする.
-
-$M$ 上の実関数
-$f: M \to \mathbb{R}$
-に就いて、
-$Xf$
-を次で定義する.
-
-$X(x)$ はベクトルなので一般に
-$$X(x) = \sum_i \xi_i(x) \frac{\partial}{\partial x_i}$$
-と書ける.
-これに対して
-$$Xf(x) := \sum_i \xi_i(x) \frac{\partial f}{\partial x_i}(x)$$
+多様体 $M$ の上の実関数 $f : M \to \mathbb{R}$ とあるベクトル
+$X \in T_xM$
+があり、
+$X$ を成分表示すると
+$X = \sum_i \xi_i \frac{\partial}{\partial x_i}$
+であるとき、
+$f$ の (点 $x$ での) $X$ での微分を
+$$Xf \equiv \sum_i \xi_i \frac{\partial f}{\partial x_i}$$
 と定める.
 
-ここに出現する
-$\frac{\partial f}{\partial x_i}$
-は点を座標に移してから実数として微分するもので、
-$\frac{\partial (f \circ \varphi^{-1})}{\partial x_i}$
-のことである.
+同様に、ベクトル場 $X(x)$ での微分を
+$X(x) = \sum_i \xi_i(x) \frac{\partial}{\partial x_i}$
+に対して
+$$Xf \equiv \sum_i \xi_i(x) \frac{\partial f}{\partial x_i}$$
+で定める.
+
 個々の値は座標のとり方で変わるが、全体 ($Xf$) は変わらないことに註意.
 
 ### 定理
@@ -536,4 +528,250 @@ $\left. \frac{d}{dt} \varphi_t(1) \right|_{t=0} = \xi(1)=v$.
 $\exp$ は $0 \in \mathfrak{g}$ の近傍を $1 \in G$ の近傍に写す微分同相写像.
 </div>
 
+## 行列群の計量
 
+正規行列の集合
+$G = \mathrm{GL}(n;\mathbb{R})$
+は、
+$n^2$ 次元ユークリッド空間の開部分集合なので簡単に多様体であるが、
+ここに適当なリーマン計量を入れてみる.
+
+曲線 $c(t) \in G$, ベクトル $dc/dt (\in G)$ (実数の微分なので) に対して
+$$q\left( \frac{dc}{dt} \right) \equiv
+\mathrm{tr}\left[
+\left( c^{-1} \frac{dc}{dt} \right)^\top
+\left( c^{-1} \frac{dc}{dt} \right)
+\right]$$
+によってリーマン計量 $q$ を与える.
+ここで
+$\mathrm{tr}\left[ - \right]$ は行列のトレース、
+$-^\top$ は転置.
+
+転置を分解すると
+$$q\left( \frac{dc}{dt} \right) \equiv
+\mathrm{tr}\left[
+\frac{dc}{dt}^\top (c^{-1})^\top c^{-1} \frac{dc}{dt}
+\right]$$
+であるが、ここで $c(t) = 1 \in G$ のところを考えると、
+これは
+$\mathrm{tr}\left[
+\frac{dc}{dt}^\top \frac{dc}{dt}
+\right]
+= \sum_i \left( \frac{dc_i}{dt} \right)^2$
+となり、普通のユークリッド空間での計量と一致する.
+
+さてこの計量での測地線を考える.
+定義から追って計算する.
+
+$c(0)=1, c(1)=A$ なる曲線 $c$ に任意の曲線 $\epsilon$ を僅かに加える変分法を行う.
+すなわち、
+$$0 = \left.\frac{d}{ds}\right|_{s=0}
+\int_0^1 dt~~
+\mathrm{tr}\left[
+\frac{d(c+s\epsilon)}{dt}^\top ((c+s\epsilon)^{-1})^\top (c+s\epsilon)^{-1} \frac{d(c+s\epsilon)}{dt}
+\right]$$
+を解く.
+$s$ での微分と $t$ での積分とを交換して、$\mathrm{tr}$ の中身を先に $s$ で微分する.
+
+注意深く解くと
+$$-\frac{d}{dt} \left[ (c^{-1})^\top c^{-1} \frac{dc}{dt} \right]
+-(c^{-1})^\top c^{-1}
+\left(\frac{dc}{dt}\right)
+\left(\frac{dc}{dt}\right)^\top (c^{-1})^\top =0$$
+を得る.
+これが、この空間での測地線の方程式である.
+
+#### 例題 8.3.1
+
+曲線 $c(t) = \exp(tA)$ はある条件下で測地線になる.
+
+ただし $\exp(tA) = \sum_i (tA)^i / i!$ で定義されるもので、
+$A \exp(tA) = \exp(tA) A$
+という交換ができる.
+また $\exp(tA)$ の逆行列としていつも $\exp(-tA)$ が存在する ($A\ne 0$ とする).
+
+先程得た方程式に代入してみる.
+$$\begin{align*}
+0 & =
+-\frac{d}{dt} \left[ (\exp(-tA))^\top \exp(-tA) (A \exp(tA)) \right]
+- (\exp(-tA))^\top \exp(-tA)
+(A \exp(tA))
+(A \exp(tA))^\top
+(\exp(-tA))^\top \\
+& =
+- \frac{d}{dt} \left[\exp(-tA)^\top A\right]
+- (\exp(-tA))^\top A A^\top \\
+& =
+(\exp(-tA))^\top A^\top A - (\exp(-tA))^\top A A^\top \\
+\iff 0 & = A^\top A - A A^\top \\
+\end{align*}$$
+というわけで、
+
+$A^\top A = AA^\top$ のとき ($A$ が正規行列のとき)
+$c(t)=\exp(tA)$
+はこの計量空間の測地線となる.
+
+## 行列群の計量 2
+
+$G = \mathrm{GL}(n;\mathbb{R})$
+に今度はリーマン計量ではない計量を与える.
+すなわち、距離が負を取り得る.
+
+$$q\left( \frac{dc}{dt} \right) \equiv
+\mathrm{tr}\left[
+\left( c^{-1} \frac{dc}{dt} \right)^2
+\right]
+=
+\mathrm{tr}\left[
+c^{-1} \frac{dc}{dt}
+c^{-1} \frac{dc}{dt}
+\right]$$
+
+先ほどと同様にこの計量について測地線の方程式を求めるとそれは
+$$\frac{d}{dt} \left[ c^{-1} \frac{dc}{dt} \right] = 0$$
+となる.
+
+$c(t)=\exp(tA)$ なる曲線をこれに代入すると
+$\frac{d}{dt} \left[ \exp(-tA) (A \exp(tA)) \right] = \frac{d}{dt} A = 0$
+となって常に満たされるので、この曲線はこの計量の下ではいつも測地線である.
+
+> !! このように、多様体の上で測地線を与える関数を **指数関数** という !!
+
+## $k$-枠場 ($k$-frame field)
+
+多様体 $M$ の上の $k$ 個のベクトル場の組
+$(\xi_1, \xi_2, \ldots, \xi_k)$
+であって、各点 $x\in M$ で
+$(\xi_1(x), \xi_2(x), \ldots, \xi_k(x))$
+が一次独立であって、どのベクトルもゼロにならないようなものを、
+**k-枠場**
+という.
+
+$k$-枠場は常に存在するとは限らない.
+球面上 ($S^2$) に 2-枠場は存在しない.
+これは地球上で無風地点が存在する (ベクトルがゼロになる) という事実に依る.
+
+$n$ 次元多様体であって $n$-枠場が存在するとき、 **平行化可能** であると表現する.
+
+## 勾配ベクトル場 (grad)
+
+リーマン多様体 $(M,g)$ とその上の実ベクトル $f: M \to \mathbb{R}$ について.
+勾配 (grad) を次のように定める.
+
+<div class=thm>
+#### 定義
+$$\mathrm{grad}f(x) \in T_xM$$
+任意の $X \in T_xM$ に対して
+$$Xf = g(X, \mathrm{grad}f(x))$$
+</div>
+
+陽に定義していないが、実際に成分表示してみるとわかる.
+
+- $X = \sum_i a_i \partial/\partial x_i$
+- $\mathrm{grad}f = \sum_i k_i \partial/\partial x_i$
+
+$a=(a_i), k=(k_i)$ とすると、
+
+- $g(X, \mathrm{grad}f) = a^\top G k$
+    - $G$ は $g$ 相当の行列
+- $Xf = a (\partial f/\partial x_i)$
+
+この2つが任意の $a$ に対して成立するには
+$$(\partial f/\partial x_i) = G k$$
+$$\iff k = G^{-1} (\partial f/\partial x_i)$$
+grad とは単にこれのことである.
+
+<div class=thm>
+#### 補題
+
+多様体 $M$ とその上の実関数 $f: M \to \mathbb{R}$.
+$f^{-1}(a) (= \{x: f(x)=a\})$
+が $M$ の部分集合であるとする.
+
+このとき
+$$v \in T_xf^{-1}(a) \iff f_* v = 0.$$
+
+#### 証明 $(\Rightarrow)$
+
+$v \in T_xN$ であるとは, $N$ の上の曲線 $c$ があって
+$\left. \frac{d}{dt} \right|_{t=0} c$
+で同値類を取った代表元を $v$ だと呼ぶのであった
+(実際には座標を取って $\mathbb{R} \to \mathbb{R}$ にしてから微分する).
+
+今の場合、
+ベクトル $v$ に対して曲線
+$c, \{c(t) : -\epsilon < t < \epsilon\} \subset f^{-1}(a)$
+がある.
+
+$f_*v$ とは $c$ を $f(c(t))$ に写すものなので
+$f(c(t)) = f(f^{-1}(a)) = a$
+の一点に写す.
+従って $f_*v$ は $\left. \frac{d}{dt} \right|_{t=0} a = 0$ に相当する.
+
+```dot
+digraph {
+    rankdir=LR;
+    bgcolor=transparent;
+    node [shape=plaintext];
+
+    subgraph cluster_1 {
+        TxM -> TxR [label=Txf];
+        TxM -> "Tx(f^-1(a))" [dir=back];
+        TxR -> 0 [dir=back];
+        "Tx(f^-1(a))" -> 0 [label=Txf];
+        {rank=same TxM "Tx(f^-1(a))"}
+        {rank=same TxR 0}
+    }
+
+    subgraph cluster_0 {
+        M -> R [label=f];
+        M -> "f^-1(a)" [dir=back];
+        R -> a [dir=back];
+        "f^-1(a)" -> a [label=f];
+        {rank=same M "f^-1(a)"}
+        {rank=same R a}
+    }
+
+}
+```
+
+実は $T_x$ の関手性からも明らか.
+$f_*v$ は $f^{-1}(a) \to \mathbb{R}$ を $T_x$ で写したものだけど途中で
+$T_xa = 0$
+を通るから.
+
+#### 証明 $(\Leftarrow)$
+
+成分表示 $v = \sum_i v_i \frac{\partial}{\partial x_i}$ について.
+$f_*v$ は線形変換 $(Df) (v_i)$ で表現される.
+
+んー。わからん。
+
+</div>
+
+<div class=thm>
+#### 定理
+
+多様体 $M$ とその上の実関数 $f: M \to \mathbb{R}$.
+$f^{-1}(a) (= \{x: f(x)=a\})$
+が $M$ の部分集合であるとする.
+
+$N = f^{-1}(a)$
+の上の任意のベクトル $v$ と
+$\mathrm{grad}(f)$
+は直交する. すなわち、
+$$g(v, \mathrm{grad}(f)) = 0$$
+が成立する.
+
+定義より
+$\mathrm{grad}(f) = G^{-1} = \sum_{i,j} g^{ij} \frac{\partial f}{\partial x_j} \frac{\partial}{\partial x_i}$
+であるのでこれを代入すると
+
+$$g(v, \mathrm{grad}(f))
+= \sum_{i,j,k} v_i g_{ij} g^{jk} \frac{\partial f}{\partial x_k}
+= \sum_{i,j,k} v_i \frac{\partial f}{\partial x_k}$$
+
+補題より
+$\sum_{i,j,k} v_i \frac{\partial f}{\partial x_k} = 0$
+である.
+</div>

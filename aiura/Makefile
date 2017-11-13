@@ -8,7 +8,7 @@ index: *.md
 edit:
 	bash script/edit.sh
 
-git:
+git: index
 	git add --all
 	git commit -a -m "aiura/ `date`"
 	git push

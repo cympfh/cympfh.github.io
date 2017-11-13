@@ -5,6 +5,7 @@
 ## index
 
 <div id=toc></div>
+$\def\Ker{\mathrm{Ker}}\def\grad{\mathrm{grad}}$
 
 ## ベクトル、ベクトル場に沿う偏微分
 
@@ -715,10 +716,10 @@ digraph {
     node [shape=plaintext];
 
     subgraph cluster_1 {
-        TxM -> TxR [label=Txf];
+        TxM -> TxR [label="f*"];
         TxM -> "Tx(f^-1(a))" [dir=back];
         TxR -> 0 [dir=back];
-        "Tx(f^-1(a))" -> 0 [label=Txf];
+        "Tx(f^-1(a))" -> 0 [label="f*"];
         {rank=same TxM "Tx(f^-1(a))"}
         {rank=same TxR 0}
     }
@@ -742,10 +743,29 @@ $T_xa = 0$
 
 #### 証明 $(\Leftarrow)$
 
-成分表示 $v = \sum_i v_i \frac{\partial}{\partial x_i}$ について.
-$f_*v$ は線形変換 $(Df) (v_i)$ で表現される.
+$f_*$ が常にゼロ写像のとき.
+$Df$ がゼロなので $f$ は定数関数.
+従って $f^{-1}(a)=M$.
+従って任意のベクトル $v$ は $v \in T_xf^{-1}(a)$.
 
-んー。わからん。
+$f_*$ がゼロ写像でないとする.
+$Df$ が正則だから、$T_xf^{-1}(a)$ は $M$ からちょうど $a$ の分だけ落ちて $n-1$ 次元.
+$\Ker f_*$ を考える.
+先ほどの $(\Rightarrow)$ は示されてるので、その結果より、
+$\Ker f_* \supseteq T_xf^{-1}(a)$.
+
+$\Ker f_*$ が $T_xM$ そのものと一致すると $f_*$ がゼロ写像であることになるから、$T_xM$ の真の部分集合.
+従って $n-1$ 次元以下.
+$\supseteq$ の関係で、左が $n-1$ 次元以下で右が $n-1$ 次元ちょうどなので、方眼関係を満たすために両方 $n-1$ 次元である.
+部分ベクトル空間であって、次元が元のと一致してるので、結局一致して、
+$\Ker f_* = T_xf^{-1}(a)$.
+
+
+#### 補足
+
+2つのベクトル空間 $V \supseteq W$ の次元が共に同じなら、2つは同じ空間である.
+$W$ の方が例えば $n$ 次元なら、$n$ 個のベクトルからなる基底が取れる.
+包含関係より、それらはそのまま $V$ の基底となる.
 
 </div>
 
@@ -771,7 +791,64 @@ $$g(v, \mathrm{grad}(f))
 = \sum_{i,j,k} v_i g_{ij} g^{jk} \frac{\partial f}{\partial x_k}
 = \sum_{i,j,k} v_i \frac{\partial f}{\partial x_k}$$
 
-補題より
+補題の $(\Rightarrow)$ より
 $\sum_{i,j,k} v_i \frac{\partial f}{\partial x_k} = 0$
 である.
 </div>
+
+## 例 8.5.1: 勾配ベクトル場、勾配フロー
+
+球面 $S^2$ の2次元パラメータ表示
+$$(x,y,z) = (\cos \theta \cos \phi, \sin \theta \cos \phi, \sin \phi)$$
+の上の関数
+$$f(x,y,z) = z = \sin \phi$$
+この grad を考える.
+
+計量を入れる必要があって、普通にユークリッド空間由来のリーマン計量を
+$(\theta, \phi)$ 座標に対して求めると
+$$g = \left[\begin{array}{cc}
+\cos^2 \phi & \\ & 1
+\end{array}\right]$$
+である.
+
+grad はこの逆行列を使って、
+$$\begin{align*}
+\grad f & = g^{-1} \left[\begin{array}{c}
+\frac{\partial f}{\partial \theta} \\
+\frac{\partial f}{\partial \phi}
+\end{array}\right] \\
+& = \left[\begin{array}{c}
+0 \\ \cos \phi
+\end{array}\right] \\
+& =
+\cos \phi \frac{\partial}{\partial \phi}
+\end{align*}$$
+と求まる.
+
+この grad は一般に座標 $(\theta, \phi)$ に対して計算したが、これを引数と見做すことで、
+**勾配ベクトル場** $\grad f$ と呼ぶ.
+また、勾配ベクトル場が生成するフローを **勾配フロー** と呼ぶ.
+
+ところで $\grad f=0$ なる点のことを **臨界点** という.
+臨界点においてのみ勾配フローは恒等写像になっている.
+
+## 例 8.5.2
+
+二次元ユークリッド空間 $M=\mathbb{R}^2$ 上の実関数 $f$ と、曲線 $c(t) = (x(t), y(t))$ について次の式が成り立っているとする.
+$$\frac{d}{dt}
+\left[\begin{array}{c}x\\y\end{array}\right] =
+\left[\begin{array}{c}
+\frac{\partial}{\partial x}\\
+\frac{\partial}{\partial y}
+\end{array}\right]$$
+この曲線上の $f$ の値を考える.
+
+$$\frac{d}{dt} f(c(t)) =
+\frac{\partial f}{\partial x} \frac{dx}{dt} +
+\frac{\partial f}{\partial y} \frac{dy}{dt}
+=
+\left(\frac{\partial f}{\partial x}\right)^2 +
+\left(\frac{\partial f}{\partial y}\right)^2$$
+
+実数の自乗の和なので、
+$f(c(t))$ という値は $t$ に関して (広義) 単調増加することが分かる.

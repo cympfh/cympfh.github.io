@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Thu Nov 16 2017</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Thu Nov 16 2017</h1>
+</header>
+<h2 id="twitter-bot-イライザの開発">Twitter bot イライザの開発</h2>
+<h3 id="かつて">かつて</h3>
+<p>イライザ (<span class="citation" data-cites="ampeloss">@ampeloss</span>) という人口無能 bot を開発していた. イライザという名前が指すように、当初は、超単純な正規表現パターンでマッチさせて会話をするようなものを作って遊ぶおもちゃだったが、 いつからか対話はどうでもよくなって、単に、「天気を教えて」とリプライをすると今現在の天気をどこからか取得して〜といった便利使いするためのものになった.</p>
+<p>ところでイライザというのは本当にただ1個のスクリプトで元々はできていて、 「天気を教えて」 にマッチできるようなパターンマッチから、実際に天気を取得するコードまでを中にハードコーディングしていた. ようやくライブラリ化を覚えて天気を取得するコードは別個にするようにしていったが、 「天気を教えて」パターンはやはり、メインループのなかにベタ書きしていた. 要するに、機能をあれもこれも増やす中でコードがめちゃくちゃになっていった.</p>
+<p>ライブラリをもっと形式的なものにする必要があった. 例えば <code>modules/forecast/</code> というディレクトリを切って、その中に天気を取得する <code>main.js</code> (node で書いているので) と、 発動するパターンを列挙した <code>patterns.json</code> を置いておく. こういうふうにすればマシではある.</p>
+<p>しかし機能ごとにパターンを考えるのは面倒だ. パターンを舐める順番によってこれは発動するがアレが発動しない、といったスパゲッティ状態もしばしば起こっていた.</p>
+<p><a href="https://github.com/cympfh/eliza" class="uri">https://github.com/cympfh/eliza</a> 昨日の数だけディレクトリや <code>hogehoge.js</code> が並んでいて目も当てられない.</p>
+<h3 id="いま">いま</h3>
+<p>まず、イライザは一つのプロジェクトではなく、機能ごとに別々のレポジトリで管理するような集合体にした. 例えば一つは見ているアニメの時間の五分前になったらリプライで知らせる、という機能がある. これはシェルスクリプトで実装してある. <code>anime-notify.sh</code> という名前なのだが、この機能を実行するためにはこのスクリプトを起動させておく.</p>
+<p>ということは機能の数だけプロセスを実行する必要がある. 機能が N 個ある場合、イライザを完全な状態で立ち上げるためには N 回起動する必要がある.</p>
+<p>今のところ、N は 3 なので、実際、手でそうしてある. とはいえいつか辛くなることは目に見えているのでその場合は、そのようなスクリプトを書くだけだと思っている.</p>
+<h4 id="twitter-shellbot">twitter-shellbot</h4>
+<p>N が 3 だと言ったが、その中の一つがメインで、これで多くの機能をカバーするつもりなので、本当に機能が3つしかないわけではない. これには <a href="https://github.com/cympfh/twitter-shellbot">twitter-shellbot</a> という名前をつけている. あんまりネーミングセンスはない. これはTwitter上の対話で、ある機能を呼び出し、その結果をリプライ等の形で受け取る. まさに天気予報を取得してもらう機能などはこれで実現している. しかも、基本的には、設定を少し書き換えるだけで、新しく機能を追加できる. つまり新しい機能を <code>twitter-shellbot</code> の中に追加実装する、という形はとっていない. どうするかと言えば、機能を全て、CUIコマンドとして実装する形を取っている. 例えば現在の天気、天気予報を取得するコマンドは、この中には入っておらず、全然別なところにある. CUIのコマンドなので、イライザを介す必要も実はない.</p>
+<p><code>tenki</code> というコマンド名で、叩くと、現在の東京の天気を取得する. 現在ではなく、一週間の予報とか、場所の変更などもできる. この中身はというと、 openweathermap が提供しているAPIを叩いているだけである (curl して jq するだけ).</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">tenki</span>
+<span class="ex">Tokyo</span>,JP
+<span class="ex">10.9</span>°C (10°C/13°C)
+<span class="ex">1010hPa</span>
+<span class="ex">Clouds</span> (few clouds)</code></pre></div>
+<p>Twitter 上でイライザにフォローされている状態で <code>~tenki</code> というツイートを見かけたとする. ここで <code>~</code> は今適当に指定しているプレフィックスで、設定から自由に変更できる. とにかく、イライザへのコマンドであることがわかればいい. イライザはそのようなツイートを見かけたら、 プレフィックスを除去し、 また <code>#</code> より後ろの文字列をコメントアウトし、そしてまんまプロセスの実行をする. シェルでのプロセスの実行と同じなので <code>~tenki -f Kyoto</code> みたいにコマンドライン引数を与えて実行もできる. プロセスの出力をリプライで返す.</p>
+<p>シェルとして〜とは言ったが、シェルスクリプト特有の文法、たとえばパイプやリダイレクトは対応していない. もしそういうのに対応したいなら、内部で bash を呼んでしまえばいいが (よくある) 脆弱性が怖いのでしてない.</p>
+<p>脆弱性で言うと、なんでもかんでもコマンドを許すのも嫌なので、ホワイトリスト方式で実行を許すコマンドのリストを設定に書いてある. <code>PATH</code> が通ってて、かつ、ホワイトリストの中に入ってあるコマンド全てが実行可能である. あと加えて、その場の <code>./bin</code> の下にあるスクリプトは無条件で実行可能にする (<code>PATH</code> への追加もしてある).</p>
+<p>このイライザの設計の良さは、機能をイライザのためだけに実装するのではなく、 普段から自分で使えるCUIコマンドを実装すれば副次的にイライザにも追加できることにある. イライザのためだけに特別に作成した機能は <code>./bin</code> に入れておけばいい.</p>
+<h4 id="その他">その他</h4>
+<p>このままだとテキストのリプライしかできない. 出力をイライザ用の形式にすることにする.</p>
+<p>出力が <code>RT</code> から始まる場合、それはテキストのリプライではなく、RTをするというアクションの指示であると見做す. まだ必要に迫られてないので考えてないが画像をツイートするようなフォーマットもあると良さそう.</p>
+<p>どのフォーマットにも当てはまらない場合は、ただそのテキストをツイートする. あくまでもただのコマンドとして利用できることを目指している.</p>
+<h4 id="まとめ">まとめ</h4>
+<p>機能を追加する場合には、 CUIコマンドとして実装して、PATH の通ったところに置いておいて、設定にコマンド名を一つ追加するだけでよい. 拡張性に優れた設計であると今のところ信じている.</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

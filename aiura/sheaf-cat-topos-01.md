@@ -118,3 +118,53 @@ $\left(F, r = \{ r_{UV} : U, V \in \O(X) \}\right)$
     - $E(f \rceil U) = V = U \cap Ef$
 3. $(f \rceil U) \rceil V = f \rceil (U \cap V)$
     - 大体同様に
+
+## 両立 (compatible)
+
+前層 $A$ の2つの元 $f, g \in A$ が **両立** するとは、
+$$f \rceil Eg = g \rceil Ef$$
+とあること.
+
+関数集合の例でいうと、
+定義域の交わる部分で関数の値が一致することを表す.
+
+## 層 (sheaf)
+
+やはり二通りの定義を与える.
+
+### 定義1
+
+$X$ の上の前層 $A$ が次を満たすとき、$A$ を $X$ の上の **層** と呼ぶ.
+
+- $\forall f,g \in F$ が両立するような $F \subset A$ に対して、次の2つを成立させる $g$ が唯一つ存在すること
+    1. $\forall f \in F, g \rceil Ef = f$
+    1. $Eg = \bigcup_{f \in F} Ef$
+        - このような $g$ を $F$ に対して $\cup F$ と書く
+
+#### 例
+
+前に述べた関数の例は層である
+
+### 定義2
+
+定義1と同値な定義を与える.
+
+位相空間 $X$ に対して
+位相空間 $S$ と局所同相写像 $p: S \to X$ があるとき、
+$(S, p)$ を $X$ の上の **層** という.
+
+#### 定義2 → 定義1
+
+$X$ 上の層 $(S,p)$ から $(A,E,\rceil)$ の形の層を次のようにして構成できる.
+
+$U \in \O(X)$
+について
+$$\Gamma(U) = \{ f : f:U \to S, p \circ f = id \}$$
+として
+
+1. $A = \bigcup \Gamma(U)$
+1. $Ef=U \iff f \in \Gamma(U)$
+1. $f \rceil V = f \lceil (V \cap Ef)$
+    - 右辺は単なる関数の制限
+
+定義2 であっても前層でかつ定義1の層と一致することがわかる.

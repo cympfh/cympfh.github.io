@@ -21,6 +21,7 @@
 - [ヒストグラム](2d.histogram.html)
 - [箱ひげ図, box plot, box-and-whisker](2d.box.html)
 - [誤差付きプロット, yerrorbars](2d.yerrorbars.html)
+- [陰関数](2d.implicit.html)
 
 # 三次元
 

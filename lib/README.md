@@ -15,8 +15,7 @@
 ## 木
 - [木の高さ (全ての点を根とする最大距離)](graph.tree.height.html)
 
-## 最大流量
-- [Ford-Fulkerson](graph.maxflow.html)
+## [最大流量](graph.maxflow.html)
 
 ## [トポロジカルソート](graph.topological.html)
 

@@ -1,6 +1,22 @@
 % graph.maxflow
 
+## [graph.maxflow.rs](graph.maxflow.rs)
+
+Dinic 法の実装
+
+- 入力;
+    - 重み付き隣接リスト `g`
+        - 辺 $u \longrightarrow^w v$ を `g[u] = [(v, w)]` とする
+    - 始点 `s`
+    - 終点 `t`
+- 出力;
+    - `Dinic::flow(g, s, t)`
+
+@[rust](graph.maxflow.rs)
+
 ## [graph.maxflow.cc](graph.maxflow.cc)
+
+Ford-Fulkerson 法の実装
 
 - 入力;
     - 隣接リスト `d`

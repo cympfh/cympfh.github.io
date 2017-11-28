@@ -44,6 +44,9 @@ code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* Com
 code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
   </style>
   <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="../resources/css/d.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.cs">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
@@ -52,7 +55,106 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <header>
 <h1 class="title">graph.maxflow</h1>
 </header>
+<h2 id="graph.maxflow.rs"><a href="graph.maxflow.rs" class="uri">graph.maxflow.rs</a></h2>
+<p>Dinic 法の実装</p>
+<ul>
+<li>入力;
+<ul>
+<li>重み付き隣接リスト <code>g</code>
+<ul>
+<li>辺 <span class="math inline">\(u \longrightarrow^w v\)</span> を <code>g[u] = [(v, w)]</code> とする</li>
+</ul></li>
+<li>始点 <code>s</code></li>
+<li>終点 <code>t</code></li>
+</ul></li>
+<li>出力;
+<ul>
+<li><code>Dinic::flow(g, s, t)</code></li>
+</ul></li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">mod</span> Dinic {
+    <span class="kw">use</span> std::collections::VecDeque;
+    <span class="kw">use</span> std::cmp::min;
+
+    <span class="kw">pub</span> <span class="kw">type</span> Weight = <span class="dt">i32</span>;
+    <span class="kw">pub</span> <span class="kw">type</span> WeightedGraph = <span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;(<span class="dt">usize</span>, Weight)&gt;&gt;; <span class="co">// [u][] = (v, w)</span>
+
+    <span class="kw">fn</span> levelize(g: &amp;WeightedGraph, s: <span class="dt">usize</span>, t: <span class="dt">usize</span>, cap: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;Weight&gt;&gt;, flw: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;Weight&gt;&gt;) -&gt; <span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt; {
+        <span class="kw">let</span> n = g.len();
+        <span class="kw">let</span> <span class="kw">mut</span> level = <span class="pp">vec!</span>[-<span class="dv">1</span>; n];
+        <span class="kw">let</span> <span class="kw">mut</span> q = VecDeque::new(); q.push_back(s);
+        <span class="kw">while</span> <span class="kw">let</span> <span class="cn">Some</span>(u) = q.pop_front() {
+            <span class="kw">if</span> u == t { <span class="kw">break</span> }
+            <span class="kw">for</span> &amp;(v, _) <span class="kw">in</span> g[u].iter() {
+                <span class="kw">if</span> level[v] == -<span class="dv">1</span> &amp;&amp; cap[u][v] - flw[u][v] != <span class="dv">0</span> {
+                    level[v] = level[u] + <span class="dv">1</span>;
+                    q.push_back(v);
+                }
+            }
+        }
+        level
+    }
+
+    <span class="kw">fn</span> augment(limit: Weight,
+               level: &amp;<span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt;, <span class="kw">mut</span> used: &amp;<span class="kw">mut</span> <span class="dt">Vec</span>&lt;<span class="dt">bool</span>&gt;,
+               g: &amp;WeightedGraph, u: <span class="dt">usize</span>, t: <span class="dt">usize</span>,
+               cap: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;Weight&gt;&gt;, <span class="kw">mut</span> flw: &amp;<span class="kw">mut</span> <span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;Weight&gt;&gt;) -&gt; Weight {
+        <span class="kw">if</span> u == t {
+            limit
+        } <span class="kw">else</span> <span class="kw">if</span> used[u] || limit == <span class="dv">0</span> {
+            <span class="dv">0</span>
+        } <span class="kw">else</span> {
+            used[u] = <span class="cn">true</span>;
+            <span class="kw">for</span> &amp;(v, _) <span class="kw">in</span> g[u].iter() {
+                <span class="kw">if</span> level[v] &gt; level[u] {
+                    <span class="kw">let</span> limit2 = min(limit, cap[u][v] - flw[u][v]);
+                    <span class="kw">let</span> f = augment(limit2, &amp;level, &amp;<span class="kw">mut</span> used, &amp;g, v, t, &amp;cap, &amp;<span class="kw">mut</span> flw);
+                    <span class="kw">if</span> f &gt; <span class="dv">0</span> {
+                        flw[u][v] += f; flw[v][u] -= f;
+                        used[u] = <span class="cn">false</span>;
+                        <span class="kw">return</span> f;
+                    }
+                }
+            }
+            <span class="dv">0</span>
+        }
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> flow(g: &amp;WeightedGraph, s: <span class="dt">usize</span>, t: <span class="dt">usize</span>) -&gt; Weight {
+
+        <span class="kw">let</span> n = g.len();
+
+        <span class="kw">let</span> <span class="kw">mut</span> cap = <span class="pp">vec!</span>[<span class="pp">vec!</span>[<span class="dv">0</span>; n]; n];
+        <span class="kw">let</span> <span class="kw">mut</span> flw = <span class="pp">vec!</span>[<span class="pp">vec!</span>[<span class="dv">0</span>; n]; n];
+        <span class="kw">for</span> u <span class="kw">in</span> <span class="dv">0.</span>.n { <span class="kw">for</span> &amp;(v, w) <span class="kw">in</span> g[u].iter() { cap[u][v] = w; } }
+
+        <span class="kw">let</span> inf = Weight::max_value() / <span class="dv">8</span>;
+        <span class="kw">let</span> <span class="kw">mut</span> sum = <span class="dv">0</span>;
+        <span class="kw">while</span> <span class="cn">true</span> {
+            <span class="kw">let</span> level = levelize(&amp;g, s, t, &amp;cap, &amp;flw);
+            <span class="kw">if</span> level[t] == -<span class="dv">1</span> { <span class="kw">break</span> }
+            <span class="kw">let</span> <span class="kw">mut</span> used = <span class="pp">vec!</span>[<span class="cn">false</span>; n];
+            sum += augment(inf, &amp;level, &amp;<span class="kw">mut</span> used, &amp;g, s, t, &amp;cap, &amp;<span class="kw">mut</span> flw);
+        }
+        sum
+    }
+}
+
+<span class="kw">fn</span> main() {
+    <span class="kw">let</span> <span class="kw">mut</span> sc = Scanner::new();
+    <span class="kw">let</span> n: <span class="dt">usize</span> = sc.cin();
+    <span class="kw">let</span> m: <span class="dt">usize</span> = sc.cin();
+    <span class="kw">let</span> <span class="kw">mut</span> g: Dinic::WeightedGraph = <span class="pp">vec!</span>[<span class="pp">vec!</span>[]; n];
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="dv">0.</span>.m {
+        <span class="kw">let</span> u = sc.cin::&lt;<span class="dt">usize</span>&gt;() - <span class="dv">1</span>;
+        <span class="kw">let</span> v = sc.cin::&lt;<span class="dt">usize</span>&gt;() - <span class="dv">1</span>;
+        <span class="kw">let</span> w: Dinic::Weight = sc.cin();
+        g[u].push((v, w));
+    }
+    <span class="pp">trace!</span>( Dinic::flow(&amp;g, <span class="dv">0</span>, n - <span class="dv">1</span>) );
+}</code></pre></div>
 <h2 id="graph.maxflow.cc"><a href="graph.maxflow.cc" class="uri">graph.maxflow.cc</a></h2>
+<p>Ford-Fulkerson 法の実装</p>
 <ul>
 <li>入力;
 <ul>
@@ -190,5 +292,54 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
   <span class="cf">return</span> <span class="dv">0</span>;
 }</code></pre></div>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
 </body>
 </html>

@@ -1,4 +1,5 @@
 % J言語
+% 言語
 
 ## index
 
@@ -65,7 +66,7 @@ plot _5 5; 'sin,cos'
 
 `sin` `cos` は plotアドオンを読み込むと定義される
 
-![](img/plot-cossin.png)
+![](https://i.imgur.com/nHh1ldH.png)
 
 ### 点列を与える
 
@@ -73,7 +74,7 @@ plot _5 5; 'sin,cos'
 plot *: i.100
 ```
 
-![](img/plot-sq100.png)
+![](https://i.imgur.com/3kEd6nb.png)
 
 点と点の間は直線によって補完される.
 

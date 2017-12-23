@@ -6,52 +6,75 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>libsvm</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <!--[if lt IE 9]>
-    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
   <style type="text/css">
+div.sourceCode { overflow-x: auto; }
 table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
   margin: 0; padding: 0; vertical-align: baseline; border: none; }
 table.sourceCode { width: 100%; line-height: 100%; }
 td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
 td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; }
-code > span.dt { color: #902000; }
-code > span.dv { color: #40a070; }
-code > span.bn { color: #40a070; }
-code > span.fl { color: #40a070; }
-code > span.ch { color: #4070a0; }
-code > span.st { color: #4070a0; }
-code > span.co { color: #60a0b0; font-style: italic; }
-code > span.ot { color: #007020; }
-code > span.al { color: #ff0000; font-weight: bold; }
-code > span.fu { color: #06287e; }
-code > span.er { color: #ff0000; font-weight: bold; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
   </style>
   <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
 </head>
 <body>
 <header>
 <h1 class="title">libsvm</h1>
 </header>
+<div class="is-pulled-right">
+<p><a class='tag is-green' href=index.html#機械学習>機械学習</a></p>
+</div>
+<h2 id="概要">概要</h2>
 <p>svmの実装といえば、 <a href="https://www.csie.ntu.edu.tw/~cjlin/libsvm/">libsvm</a> か <a href="http://svmlight.joachims.org/">SVMlight</a> の2つ (だけじゃないが).</p>
 <p>名前通り、確かに後者の方が早い気がする. それで別に、早いほうが精度が悪いかといえば必ずしもそうではないし. ただ、オプションの豊富さとか他ツールの豊富さは libsvm だから、 まずこちらを試すのが良いと思う.</p>
-<h1 id="参考">参考</h1>
+<h3 id="参考">参考</h3>
 <p><a href="http://www.okuma.nuee.nagoya-u.ac.jp/~sakaguti/wiki/index.php?LibSVM" class="uri">http://www.okuma.nuee.nagoya-u.ac.jp/~sakaguti/wiki/index.php?LibSVM</a></p>
 <h2 id="訓練テストデータのフォーマット">訓練/テストデータのフォーマット</h2>
 <p>以下の javascript コードはテストデータ形式にそったテキストを出力する。</p>
-<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// test.js</span>
-<span class="kw">for</span> (<span class="kw">var</span> i=<span class="dv">0</span>; i&lt;<span class="dv">100</span>; ++i) {
-  <span class="kw">var</span> a = [];
-  <span class="kw">for</span> (<span class="kw">var</span> j=<span class="dv">0</span>; j&lt;<span class="dv">10</span>; ++j) {
-    a[j] = <span class="ot">Math</span>.<span class="fu">round</span>(<span class="ot">Math</span>.<span class="fu">random</span>());
-  }
-  <span class="kw">var</span> t = <span class="ot">a</span>.<span class="fu">reduce</span>(<span class="kw">function</span>(x,y){<span class="kw">return</span> x+y});
-  t = t &gt; <span class="dv">5</span> ? <span class="dv">1</span> : -<span class="dv">1</span>;
-  <span class="ot">console</span>.<span class="fu">log</span>(<span class="st">&quot;%d %s&quot;</span>
-           , t
-           , <span class="ot">a</span>.<span class="fu">map</span>(<span class="kw">function</span>(x, i){<span class="kw">return</span> (i<span class="dv">+1</span>)+<span class="st">&#39;:&#39;</span>+x}).<span class="fu">join</span>(<span class="st">&#39; &#39;</span>));
-}</code></pre>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="co">// test.js</span>
+<span class="cf">for</span> (<span class="kw">var</span> i<span class="op">=</span><span class="dv">0</span><span class="op">;</span> i<span class="op">&lt;</span><span class="dv">100</span><span class="op">;</span> <span class="op">++</span>i) <span class="op">{</span>
+  <span class="kw">var</span> a <span class="op">=</span> []<span class="op">;</span>
+  <span class="cf">for</span> (<span class="kw">var</span> j<span class="op">=</span><span class="dv">0</span><span class="op">;</span> j<span class="op">&lt;</span><span class="dv">10</span><span class="op">;</span> <span class="op">++</span>j) <span class="op">{</span>
+    a[j] <span class="op">=</span> <span class="va">Math</span>.<span class="at">round</span>(<span class="va">Math</span>.<span class="at">random</span>())<span class="op">;</span>
+  <span class="op">}</span>
+  <span class="kw">var</span> t <span class="op">=</span> <span class="va">a</span>.<span class="at">reduce</span>(<span class="kw">function</span>(x<span class="op">,</span>y)<span class="op">{</span><span class="cf">return</span> x<span class="op">+</span>y<span class="op">}</span>)<span class="op">;</span>
+  t <span class="op">=</span> t <span class="op">&gt;</span> <span class="dv">5</span> <span class="op">?</span> <span class="dv">1</span> : <span class="op">-</span><span class="dv">1</span><span class="op">;</span>
+  <span class="va">console</span>.<span class="at">log</span>(<span class="st">&quot;%d %s&quot;</span>
+           <span class="op">,</span> t
+           <span class="op">,</span> <span class="va">a</span>.<span class="at">map</span>(<span class="kw">function</span>(x<span class="op">,</span> i)<span class="op">{</span><span class="cf">return</span> (i<span class="dv">+1</span>)<span class="op">+</span><span class="st">&#39;:&#39;</span><span class="op">+</span>x<span class="op">}</span>).<span class="at">join</span>(<span class="st">&#39; &#39;</span>))<span class="op">;</span>
+<span class="op">}</span></code></pre></div>
 <h2 id="カーネル選択">カーネル選択</h2>
 <pre><code>-t &lt;type-number&gt;</code></pre>
 <p>例えば <code>-t 0</code> で線形カーネルを使う. デフォルトは <code>-t 2</code> のrbfカーネル.</p>
@@ -80,17 +103,17 @@ Cross Validation Accuracy = 100%</code></pre>
 <p>簡単すぎたようだ.</p>
 <h3 id="入力の次元を倍">入力(の次元)を倍</h3>
 <p>先程は、訓練データの中の一つのデータは10次元であった. 20次元にしてみる.</p>
-<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">for</span> (<span class="kw">var</span> i=<span class="dv">0</span>; i&lt;<span class="dv">100</span>; ++i) {
-  <span class="kw">var</span> a = [];
-  <span class="kw">for</span> (<span class="kw">var</span> j=<span class="dv">0</span>; j&lt;<span class="dv">20</span>; ++j) {
-    a[j] = <span class="ot">Math</span>.<span class="fu">round</span>(<span class="ot">Math</span>.<span class="fu">random</span>());
-  }
-  <span class="kw">var</span> t = <span class="ot">a</span>.<span class="fu">reduce</span>(<span class="kw">function</span>(x,y){<span class="kw">return</span> x+y});
-  t = t &gt; <span class="dv">10</span> ? <span class="dv">1</span> : -<span class="dv">1</span>;
-  <span class="ot">console</span>.<span class="fu">log</span>(<span class="st">&quot;%d %s&quot;</span>
-           , t
-           , <span class="ot">a</span>.<span class="fu">map</span>(<span class="kw">function</span>(x, i){<span class="kw">return</span> (i<span class="dv">+1</span>)+<span class="st">&#39;:&#39;</span>+x}).<span class="fu">join</span>(<span class="st">&#39; &#39;</span>));
-}</code></pre>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="cf">for</span> (<span class="kw">var</span> i<span class="op">=</span><span class="dv">0</span><span class="op">;</span> i<span class="op">&lt;</span><span class="dv">100</span><span class="op">;</span> <span class="op">++</span>i) <span class="op">{</span>
+  <span class="kw">var</span> a <span class="op">=</span> []<span class="op">;</span>
+  <span class="cf">for</span> (<span class="kw">var</span> j<span class="op">=</span><span class="dv">0</span><span class="op">;</span> j<span class="op">&lt;</span><span class="dv">20</span><span class="op">;</span> <span class="op">++</span>j) <span class="op">{</span>
+    a[j] <span class="op">=</span> <span class="va">Math</span>.<span class="at">round</span>(<span class="va">Math</span>.<span class="at">random</span>())<span class="op">;</span>
+  <span class="op">}</span>
+  <span class="kw">var</span> t <span class="op">=</span> <span class="va">a</span>.<span class="at">reduce</span>(<span class="kw">function</span>(x<span class="op">,</span>y)<span class="op">{</span><span class="cf">return</span> x<span class="op">+</span>y<span class="op">}</span>)<span class="op">;</span>
+  t <span class="op">=</span> t <span class="op">&gt;</span> <span class="dv">10</span> <span class="op">?</span> <span class="dv">1</span> : <span class="op">-</span><span class="dv">1</span><span class="op">;</span>
+  <span class="va">console</span>.<span class="at">log</span>(<span class="st">&quot;%d %s&quot;</span>
+           <span class="op">,</span> t
+           <span class="op">,</span> <span class="va">a</span>.<span class="at">map</span>(<span class="kw">function</span>(x<span class="op">,</span> i)<span class="op">{</span><span class="cf">return</span> (i<span class="dv">+1</span>)<span class="op">+</span><span class="st">&#39;:&#39;</span><span class="op">+</span>x<span class="op">}</span>).<span class="at">join</span>(<span class="st">&#39; &#39;</span>))<span class="op">;</span>
+<span class="op">}</span></code></pre></div>
 <pre><code>$ svm-train -t 0 -v 10 train.scale
 
 (前略)
@@ -104,65 +127,65 @@ Cross Validation Accuracy = 99%</code></pre>
 <p>次元数に余裕があるのがSVMである.</p>
 <h3 id="パリティ-xor">パリティ (xor)</h3>
 <p>意味のある訓練データとして、パリティを学習させてみる. ちなみにパリティは線形分離不能なデータとして定番である.</p>
-<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">for</span> (<span class="kw">var</span> i=<span class="dv">0</span>; i&lt;<span class="dv">100</span>; ++i) {
-  <span class="kw">var</span> a = [];
-  <span class="kw">for</span> (<span class="kw">var</span> j=<span class="dv">0</span>; j&lt;<span class="dv">10</span>; ++j) {
-    a[j] = <span class="ot">Math</span>.<span class="fu">round</span>(<span class="ot">Math</span>.<span class="fu">random</span>());
-  }
-  <span class="kw">var</span> t = <span class="ot">a</span>.<span class="fu">reduce</span>(<span class="kw">function</span>(x,y){<span class="kw">return</span> x+y});
-  t = t % <span class="dv">2</span> ? <span class="dv">1</span> : -<span class="dv">1</span>;
-  <span class="ot">console</span>.<span class="fu">log</span>(<span class="st">&quot;%d %s&quot;</span>
-           , t
-           , <span class="ot">a</span>.<span class="fu">map</span>(<span class="kw">function</span>(x, i){<span class="kw">return</span> (i<span class="dv">+1</span>)+<span class="st">&#39;:&#39;</span>+x}).<span class="fu">join</span>(<span class="st">&#39; &#39;</span>));
-}</code></pre>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="cf">for</span> (<span class="kw">var</span> i<span class="op">=</span><span class="dv">0</span><span class="op">;</span> i<span class="op">&lt;</span><span class="dv">100</span><span class="op">;</span> <span class="op">++</span>i) <span class="op">{</span>
+  <span class="kw">var</span> a <span class="op">=</span> []<span class="op">;</span>
+  <span class="cf">for</span> (<span class="kw">var</span> j<span class="op">=</span><span class="dv">0</span><span class="op">;</span> j<span class="op">&lt;</span><span class="dv">10</span><span class="op">;</span> <span class="op">++</span>j) <span class="op">{</span>
+    a[j] <span class="op">=</span> <span class="va">Math</span>.<span class="at">round</span>(<span class="va">Math</span>.<span class="at">random</span>())<span class="op">;</span>
+  <span class="op">}</span>
+  <span class="kw">var</span> t <span class="op">=</span> <span class="va">a</span>.<span class="at">reduce</span>(<span class="kw">function</span>(x<span class="op">,</span>y)<span class="op">{</span><span class="cf">return</span> x<span class="op">+</span>y<span class="op">}</span>)<span class="op">;</span>
+  t <span class="op">=</span> t <span class="op">%</span> <span class="dv">2</span> <span class="op">?</span> <span class="dv">1</span> : <span class="op">-</span><span class="dv">1</span><span class="op">;</span>
+  <span class="va">console</span>.<span class="at">log</span>(<span class="st">&quot;%d %s&quot;</span>
+           <span class="op">,</span> t
+           <span class="op">,</span> <span class="va">a</span>.<span class="at">map</span>(<span class="kw">function</span>(x<span class="op">,</span> i)<span class="op">{</span><span class="cf">return</span> (i<span class="dv">+1</span>)<span class="op">+</span><span class="st">&#39;:&#39;</span><span class="op">+</span>x<span class="op">}</span>).<span class="at">join</span>(<span class="st">&#39; &#39;</span>))<span class="op">;</span>
+<span class="op">}</span></code></pre></div>
 <h3 id="カーネル選択-1">カーネル選択</h3>
 <pre><code>-t 0 : linear
 -t 1 : poly
 -t 2 : RBF</code></pre>
-<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">svm-train</span> -t 0 -v 10 train.scale
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">svm-train</span> -t 0 -v 10 train.scale
 
-<span class="kw">(前略)</span>
-<span class="kw">.........*</span>
-<span class="kw">optimization</span> finished, <span class="co">#iter = 860</span>
-<span class="kw">nu</span> = 0.669745
-<span class="kw">obj</span> = -59.094108, rho = 0.338879
-<span class="kw">nSV</span> = 65, nBSV = 53
-<span class="kw">Total</span> nSV = 65
-<span class="kw">Cross</span> Validation Accuracy = 61%</code></pre>
+<span class="kw">(</span>前略<span class="kw">)</span>
+<span class="ex">.........*</span>
+<span class="ex">optimization</span> finished, <span class="co">#iter = 860</span>
+<span class="ex">nu</span> = 0.669745
+<span class="ex">obj</span> = -59.094108, rho = 0.338879
+<span class="ex">nSV</span> = 65, nBSV = 53
+<span class="ex">Total</span> nSV = 65
+<span class="ex">Cross</span> Validation Accuracy = 61%</code></pre></div>
 <p><em>多項式</em></p>
-<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">svm-train</span> -t 1 -v 10 train.scale
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">svm-train</span> -t 1 -v 10 train.scale
 
-<span class="kw">(前略)</span>
-<span class="kw">.*</span>
-<span class="kw">optimization</span> finished, <span class="co">#iter = 139</span>
-<span class="kw">nu</span> = 0.710394
-<span class="kw">obj</span> = -43.537098, rho = 0.154695
-<span class="kw">nSV</span> = 81, nBSV = 40
-<span class="kw">Total</span> nSV = 81
-<span class="kw">Cross</span> Validation Accuracy = 41%</code></pre>
+<span class="kw">(</span>前略<span class="kw">)</span>
+<span class="ex">.*</span>
+<span class="ex">optimization</span> finished, <span class="co">#iter = 139</span>
+<span class="ex">nu</span> = 0.710394
+<span class="ex">obj</span> = -43.537098, rho = 0.154695
+<span class="ex">nSV</span> = 81, nBSV = 40
+<span class="ex">Total</span> nSV = 81
+<span class="ex">Cross</span> Validation Accuracy = 41%</code></pre></div>
 <p><em>RBF</em></p>
-<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">svm-train</span> -t 1 -v 10 train.scale
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">svm-train</span> -t 1 -v 10 train.scale
 
-<span class="kw">(前略)</span>
-<span class="kw">*.*</span>
-<span class="kw">optimization</span> finished, <span class="co">#iter = 104</span>
-<span class="kw">nu</span> = 0.778061
-<span class="kw">obj</span> = -51.085066, rho = 0.243366
-<span class="kw">nSV</span> = 86, nBSV = 52
-<span class="kw">Total</span> nSV = 86
-<span class="kw">Cross</span> Validation Accuracy = 59%</code></pre>
+<span class="kw">(</span>前略<span class="kw">)</span>
+<span class="ex">*.*</span>
+<span class="ex">optimization</span> finished, <span class="co">#iter = 104</span>
+<span class="ex">nu</span> = 0.778061
+<span class="ex">obj</span> = -51.085066, rho = 0.243366
+<span class="ex">nSV</span> = 86, nBSV = 52
+<span class="ex">Total</span> nSV = 86
+<span class="ex">Cross</span> Validation Accuracy = 59%</code></pre></div>
 <h3 id="もっと簡単なパリティ">もっと簡単なパリティ</h3>
-<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">for</span> (<span class="kw">var</span> i=<span class="dv">0</span>; i&lt;<span class="dv">100</span>; ++i) {
-  <span class="kw">var</span> a = [];
-  <span class="kw">for</span> (<span class="kw">var</span> j=<span class="dv">0</span>; j&lt;<span class="dv">10</span>; ++j) {
-    a[j] = <span class="ot">Math</span>.<span class="fu">round</span>(<span class="ot">Math</span>.<span class="fu">random</span>());
-  }
-  <span class="kw">var</span> t = <span class="ot">a</span>.<span class="fu">slice</span>(<span class="dv">0</span>,<span class="dv">2</span>).<span class="fu">reduce</span>(<span class="kw">function</span>(x,y){<span class="kw">return</span> x+y});
-  t = t % <span class="dv">2</span> ? <span class="dv">1</span> : -<span class="dv">1</span>;
-  <span class="ot">console</span>.<span class="fu">log</span>(<span class="st">&quot;%d %s&quot;</span>
-           , t
-           , <span class="ot">a</span>.<span class="fu">map</span>(<span class="kw">function</span>(x, i){<span class="kw">return</span> (i<span class="dv">+1</span>)+<span class="st">&#39;:&#39;</span>+x}).<span class="fu">join</span>(<span class="st">&#39; &#39;</span>));
-}</code></pre>
+<div class="sourceCode"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="cf">for</span> (<span class="kw">var</span> i<span class="op">=</span><span class="dv">0</span><span class="op">;</span> i<span class="op">&lt;</span><span class="dv">100</span><span class="op">;</span> <span class="op">++</span>i) <span class="op">{</span>
+  <span class="kw">var</span> a <span class="op">=</span> []<span class="op">;</span>
+  <span class="cf">for</span> (<span class="kw">var</span> j<span class="op">=</span><span class="dv">0</span><span class="op">;</span> j<span class="op">&lt;</span><span class="dv">10</span><span class="op">;</span> <span class="op">++</span>j) <span class="op">{</span>
+    a[j] <span class="op">=</span> <span class="va">Math</span>.<span class="at">round</span>(<span class="va">Math</span>.<span class="at">random</span>())<span class="op">;</span>
+  <span class="op">}</span>
+  <span class="kw">var</span> t <span class="op">=</span> <span class="va">a</span>.<span class="at">slice</span>(<span class="dv">0</span><span class="op">,</span><span class="dv">2</span>).<span class="at">reduce</span>(<span class="kw">function</span>(x<span class="op">,</span>y)<span class="op">{</span><span class="cf">return</span> x<span class="op">+</span>y<span class="op">}</span>)<span class="op">;</span>
+  t <span class="op">=</span> t <span class="op">%</span> <span class="dv">2</span> <span class="op">?</span> <span class="dv">1</span> : <span class="op">-</span><span class="dv">1</span><span class="op">;</span>
+  <span class="va">console</span>.<span class="at">log</span>(<span class="st">&quot;%d %s&quot;</span>
+           <span class="op">,</span> t
+           <span class="op">,</span> <span class="va">a</span>.<span class="at">map</span>(<span class="kw">function</span>(x<span class="op">,</span> i)<span class="op">{</span><span class="cf">return</span> (i<span class="dv">+1</span>)<span class="op">+</span><span class="st">&#39;:&#39;</span><span class="op">+</span>x<span class="op">}</span>).<span class="at">join</span>(<span class="st">&#39; &#39;</span>))<span class="op">;</span>
+<span class="op">}</span></code></pre></div>
 <p>10次元のうち、実は2次元で答えが決まっている.</p>
 <table>
 <thead>
@@ -193,5 +216,54 @@ Cross Validation Accuracy = 99%</code></pre>
 <li>AUC</li>
 </ul>
 <p>が選べるようになる. ただしコンパイル時点で選ばないといけないけど.</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
 </body>
 </html>

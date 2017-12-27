@@ -4,16 +4,22 @@
   <meta charset="utf-8">
   <meta name="generator" content="pandoc">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title></title>
+  <title>Dot 言語処理系</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <!--[if lt IE 9]>
-    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
   <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
 </head>
 <body>
-<h1 id="dot言語処理系変換器">Dot言語処理系(変換器)</h1>
-<p>dot言語(あるいはその拡張)から画像へ変換するツールのメモです</p>
+<header>
+<h1 class="title">Dot 言語処理系</h1>
+</header>
+<div class="is-pulled-right">
+<p><a class='tag is-green' href=index.html#言語>言語</a></p>
+</div>
+<p>dot言語 (あるいはその拡張) から画像へ変換するツールのメモです</p>
 <h2 id="graphviz">graphviz</h2>
 <p><a href="http://www.graphviz.org/" class="uri">http://www.graphviz.org/</a></p>
 <p>おそらくに一番古いもの. 純粋にグラフの絵を出力させる目的にはおそらくいちばん最適．</p>
@@ -31,5 +37,54 @@
 <h2 id="mscgen">Mscgen</h2>
 <p><a href="http://www.mcternan.me.uk/mscgen/">Mscgen: A Message Sequence Chart Renderer</a></p>
 <p>こちらはグラフではなくて，MSC． まだ使う機会は無さそうだし使ったこと無いけれどメモ程度に．</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
 </body>
 </html>

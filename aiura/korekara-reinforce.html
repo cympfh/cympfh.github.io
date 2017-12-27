@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>強化学習</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<h1 class="title">強化学習</h1>
+</header>
+<p class="date" style="text-align: right">
+2017-12-16 (Sat.)
+</p>
+<div class="is-pulled-right">
+<p><a class='tag is-red' href=index.html#強化学習>強化学習</a></p>
+</div>
+<h2 id="教科書">教科書</h2>
+<p>「これからの強化学習」</p>
+<h2 id="状態遷移モデル">状態遷移モデル</h2>
+<p>略</p>
+<h2 id="定義">定義</h2>
+<h3 id="報酬-reward">報酬 (reward)</h3>
+<p><span class="math inline">\(r(s, a, s&#39;)\)</span> で表される関数</p>
+<h3 id="収益-g">収益 (G)</h3>
+<ul>
+<li>ある時点 (時刻) での収益 <span class="math inline">\(G\)</span> とは、それ以降で得られる報酬の見込み
+<ul>
+<li>例えばそれ以降 T ステップで得られる報酬の平均など</li>
+</ul></li>
+<li>基本的にこれの最大化を目指す最適化を行う</li>
+</ul>
+<p>例えば</p>
+<ul>
+<li><span class="math inline">\(s_0\)</span></li>
+<li><span class="math inline">\(s_{t+1} = a_t(s_t)\)</span> (アクション <span class="math inline">\(a\)</span> は遷移関数、または確率分布)</li>
+<li><span class="math inline">\(R_t = r(s_{t-1}, a_t, s_t)\)</span></li>
+</ul>
+<p>という収益に対して、</p>
+<p><strong>割引報酬和 (discounted total reward)</strong> とは、定数 <span class="math inline">\(0 &lt; \gamma &lt; 1\)</span> に対して <span class="math display">\[G_t = \sum_{i=0}^\infty \gamma^i R_{t+1} = R_t + \gamma R_{t+1} + \gamma^2 R_{t+2} + \cdots\]</span> というもので、これがよく使われる.</p>
+<h3 id="方策-pi">方策 (<span class="math inline">\(\pi\)</span>)</h3>
+<p>アクション <span class="math inline">\(a\)</span> の選び方のルールのこと. 便宜上、アクション集合の上の確率分布として与える.</p>
+<h3 id="状態価値関数-v">状態価値関数 (<span class="math inline">\(V\)</span>)</h3>
+<p>状態 <span class="math inline">\(s\)</span> の良さを収益 <span class="math inline">\(G\)</span> 及び方策 <span class="math inline">\(\pi\)</span> の下で計るもの. <span class="math display">\[V^\pi(s) = \mathbb{E}^\pi \left[ G_t : s_t = s \right]\]</span> すなわち、状態が <span class="math inline">\(s\)</span> の時点での <span class="math inline">\(G_t\)</span> の平均で、ただし方策として <span class="math inline">\(\pi\)</span> を採用したもの.</p>
+<h3 id="行動価値関数-q">行動価値関数 (<span class="math inline">\(Q\)</span>)</h3>
+<p>状態 <span class="math inline">\(s\)</span> の時点でアクション <span class="math inline">\(a\)</span> を採用することの良さを、<span class="math inline">\(V\)</span> と同様に計るもの. <span class="math display">\[Q^\pi(s, a) = \mathbb{E}^\pi \left[ G_t : s_t = s, a_t = a \right]\]</span></p>
+<h3 id="最適---関数">最適 - 関数</h3>
+<p><span class="math inline">\(V, Q\)</span> は共に方策 <span class="math inline">\(\pi\)</span> を取る. 値を最大化するような <span class="math inline">\(\pi\)</span> を採用するものを、最適状態価値、最適行動価値という. <span class="math display">\[V^*(s) = \max_\pi V^\pi(s)\]</span> <span class="math display">\[Q^*(s, a) = \max_\pi Q^\pi(s, a)\]</span></p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

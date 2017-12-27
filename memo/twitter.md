@@ -1,4 +1,7 @@
 % Twitter API
+% API
+
+## API
 
 - `.user`
     - `.user.name` ← ニックネーム

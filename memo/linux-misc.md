@@ -1,4 +1,5 @@
-% Debian GNU/Linux
+% Linux misc
+% linux
 
 ## INDEX
 
@@ -69,7 +70,7 @@ xinput --set-prop "SynPS/2 Synaptics TouchPad" "Synaptics Off" 0
 
 で解除する.
 
-## Debian への Flash インストール/アップデート
+## Flash のインストール/アップデート (Debian)
 
 ```
 sudo apt-get update
@@ -104,11 +105,11 @@ sudo apt-get install lame
 1つ目の `freedb.freedb.org:8880` はデフォルトのもので、
 2つ目の `freedbtest.dyndns.org:80` は自分で追加したもの.
 
-![](img/asunder.2.jpg)
+![](https://i.imgur.com/c5B0SJg.jpg)
 
 日本語のアニソンでも問題なく.
 
-![](img/asunder.1.jpg)
+![](https://i.imgur.com/YMIDe0Y.png)
 
 ### ID3タグ
 

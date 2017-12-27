@@ -6,37 +6,60 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>MeCab using UTF-8</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <!--[if lt IE 9]>
-    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
   <style type="text/css">
+div.sourceCode { overflow-x: auto; }
 table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
   margin: 0; padding: 0; vertical-align: baseline; border: none; }
 table.sourceCode { width: 100%; line-height: 100%; }
 td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
 td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; }
-code > span.dt { color: #902000; }
-code > span.dv { color: #40a070; }
-code > span.bn { color: #40a070; }
-code > span.fl { color: #40a070; }
-code > span.ch { color: #4070a0; }
-code > span.st { color: #4070a0; }
-code > span.co { color: #60a0b0; font-style: italic; }
-code > span.ot { color: #007020; }
-code > span.al { color: #ff0000; font-weight: bold; }
-code > span.fu { color: #06287e; }
-code > span.er { color: #ff0000; font-weight: bold; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
   </style>
   <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
 </head>
 <body>
 <header>
 <h1 class="title">MeCab using UTF-8</h1>
 </header>
+<div class="is-pulled-right">
+<p><a class='tag is-green' href=index.html#自然言語処理>自然言語処理</a></p>
+</div>
 <h2 id="インストール">インストール</h2>
 <h3 id="ダウンロード">ダウンロード</h3>
-<p>必要なファイルは MeCab 本体と、そのための辞書<br />辞書には複数種類があるが、IPA辞書が推奨とされている</p>
+<p>必要なファイルは MeCab 本体と、そのための辞書<br />
+辞書には複数種類があるが、IPA辞書が推奨とされている</p>
 <p>いつのまにか Google Code から Github にプロジェクトが移ってて、</p>
 <ul>
 <li>https://github.com/taku910/mecab.git</li>
@@ -45,24 +68,25 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <p>以下、LinuxまたはMacOSで文字コードをUTF-8に縛って利用するためのビルド方法を書く</p>
 <h3 id="cd-mecab-0.996">cd mecab-0.996</h3>
 <p>MeCab本体のインストールを行う</p>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">./configure</span> --with-charset=utf8 --enable-utf8-only
-<span class="kw">sudo</span> make install</code></pre>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">./configure</span> --with-charset=utf8 --enable-utf8-only
+<span class="fu">sudo</span> make install</code></pre></div>
 <p>辞書がない状態でmecabを起動するとこうなる</p>
-<pre class="sourceCode bash"><code class="sourceCode bash">   <span class="kw">mecab</span>
-<span class="kw">param.cpp</span>(69) [<span class="kw">ifs</span>] no such file or directory: /usr/local/lib/mecab/dic/ipadic/dicrc</code></pre>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="ex">mecab</span>
+<span class="ex">param.cpp</span>(69) [<span class="ex">ifs</span>] no such file or directory: /usr/local/lib/mecab/dic/ipadic/dicrc</code></pre></div>
 <h3 id="cd-mecab-ipadic-2.7.0-20070801">cd mecab-ipadic-2.7.0-20070801</h3>
 <p>次にMeCabで利用するための辞書をインストールする</p>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">./configure</span> --with-charset=utf8
-<span class="kw">sudo</span> ldconfig
-<span class="kw">sudo</span> make install</code></pre>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">./configure</span> --with-charset=utf8
+<span class="fu">sudo</span> ldconfig
+<span class="fu">sudo</span> make install</code></pre></div>
 <h3 id="試用">試用</h3>
 <p>正しくインストールされたか見てみる</p>
-<pre class="sourceCode bash"><code class="sourceCode bash">   mecab <span class="kw">&lt;&lt;</span>&lt; <span class="st">&quot;こんにちわ&quot;</span>
-こんにちわ      感動詞,*,*,*,*,*,こんにちわ,コンニチワ,コンニチワ
-<span class="kw">EOS</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="ex">mecab</span> <span class="op">&lt;&lt;&lt;</span> <span class="st">&quot;こんにちわ&quot;</span>
+こんにちわ      感動詞,<span class="ex">*</span>,*,*,*,*,こんにちわ,コンニチワ,コンニチワ
+<span class="ex">EOS</span></code></pre></div>
 <p>「こんにちわ」は感動詞である。</p>
 <h2 id="オプション">オプション</h2>
-<p><code>man</code> 見ても何かあんまり説明が足りてない<br />次のサイトは大変詳細に書いてある</p>
+<p><code>man</code> 見ても何かあんまり説明が足りてない<br />
+次のサイトは大変詳細に書いてある</p>
 <ul>
 <li><a href="http://www.mwsoft.jp/programming/munou/mecab_command.html">MeCabのコマンドライン引数一覧とその実行例 | mwSoft</a></li>
 </ul>
@@ -96,7 +120,57 @@ EOS&#39;
 て      助詞,接続助詞,*,*,*,*,て,テ,テ
 いる    動詞,非自立,*,*,一段,基本形,いる,イル,イル
 EOS</code></pre>
-<p>ただし、「せもぽぬめ」が複数出現する場合<br />そのたびに上のような置換を行わなければならない</p>
+<p>ただし、「せもぽぬめ」が複数出現する場合<br />
+そのたびに上のような置換を行わなければならない</p>
 <p>小さい辞書をテキストで書いて追加に使うにはどうしたら良いんだろう？</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
 </body>
 </html>

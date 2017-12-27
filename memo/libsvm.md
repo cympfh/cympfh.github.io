@@ -1,4 +1,7 @@
 % libsvm
+% 機械学習
+
+## 概要
 
 svmの実装といえば、
 [libsvm](https://www.csie.ntu.edu.tw/~cjlin/libsvm/)
@@ -11,7 +14,7 @@ svmの実装といえば、
 ただ、オプションの豊富さとか他ツールの豊富さは libsvm だから、
 まずこちらを試すのが良いと思う.
 
-# 参考
+### 参考
 
 [http://www.okuma.nuee.nagoya-u.ac.jp/~sakaguti/wiki/index.php?LibSVM](http://www.okuma.nuee.nagoya-u.ac.jp/~sakaguti/wiki/index.php?LibSVM)
 

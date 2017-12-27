@@ -1,12 +1,13 @@
 % imagemagick
-
-## 参考
-
-- \[1\] [須崎純一, "ImageMagickによる基本的な画像処理"](http://www.envinfo.uee.kyoto-u.ac.jp/user/susaki/image/magick_process.html)
+% linux
 
 ## INDEX
 
 <div id=toc></div>
+
+## 参考
+
+- \[1\] [須崎純一, "ImageMagickによる基本的な画像処理"](http://www.envinfo.uee.kyoto-u.ac.jp/user/susaki/image/magick_process.html)
 
 ## 余白を付け足す
 
@@ -47,19 +48,19 @@ convert -background "#ffffff" -gravity north -splice 0x300 "-" out.jpg
 
 オリジナル:
 
-![](img/september.jpg)
+![](https://i.imgur.com/KerSP5h.jpg)
 
 ```bash
 convert -type GrayScale -contrast -contrast
 ```
 
-![](img/september.grayscale.contrast.contrast.jpg)
+![](https://i.imgur.com/Jx93TRV.jpg)
 
 ```bash
 convert -type GrayScale -contrast -contrast -contrast -contrast
 ```
 
-![](img/september.grayscale.contrast.contrast.contrast.contrast.jpg)
+![](https://i.imgur.com/xLxTTlm.jpg)
 
 オプションは先頭から順に実行される?
 
@@ -67,11 +68,11 @@ convert -type GrayScale -contrast -contrast -contrast -contrast
 
 オリジナル:
 
-![](img/yume_org.png)
+![](https://i.imgur.com/mqtXdWt.png)
 
 ```bash
 convert -modulate 200 -type GrayScale -contrast -contrast -contrast
 ```
 
-![](img/yume_out.png)
+![](https://i.imgur.com/Ac8BUTh.png)
 

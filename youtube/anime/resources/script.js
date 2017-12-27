@@ -104,7 +104,8 @@ function show(keyword) {
 
 // anime list menu
 function make_menu() {
-  get('./db/list', function (lines) {
+  path = `./db/list?${(Math.random() * 10000)|0}`
+  get(path, function (lines) {
     lines = lines.split("\n").filter(function (line) { return line.length > 2 });
     var buf = '';
     var id = '';

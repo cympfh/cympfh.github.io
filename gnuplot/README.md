@@ -22,6 +22,7 @@
 - [箱ひげ図, box plot, box-and-whisker](2d.box.html)
 - [誤差付きプロット, yerrorbars](2d.yerrorbars.html)
 - [陰関数](2d.implicit.html)
+- [等高線](2d.contour.html)
 
 # 三次元
 

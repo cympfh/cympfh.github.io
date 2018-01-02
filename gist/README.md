@@ -2,6 +2,15 @@
 
 GithubとかGistに書き散らしたものを整理する
 
+## Twitter
+
+- tw-clean: https://gist.github.com/cympfh/4afe53d47c0ddd5fe9607dcb07b5a861
+    - 10分ごとにチェックして20分より昔のツイートを全部消す。画像を含むツイートは消さない
+- 田村ゆかりのリプライ先: https://gist.github.com/cympfh/1753c3b4a8a0b5010f0c
+- 声優誕生日カレンダー: https://gist.github.com/cympfh/24f564698549a4975d21
+- ツイート長の分布: https://gist.github.com/cympfh/195c9ded06521188ebc3
+- webstream の監視: https://gist.github.com/cympfh/54260f85da7e6a470bb2
+
 ## 自然言語処理
 
 - nlptk: https://github.com/cympfh/nlptk
@@ -27,13 +36,6 @@ GithubとかGistに書き散らしたものを整理する
 ## メール
 
 - check_gmail.coffee: https://gist.github.com/cympfh/2c6052d5a42986aa3d8e
-
-## Twitter
-
-- 田村ゆかりのリプライ先: https://gist.github.com/cympfh/1753c3b4a8a0b5010f0c
-- 声優誕生日カレンダー: https://gist.github.com/cympfh/24f564698549a4975d21
-- ツイート長の分布: https://gist.github.com/cympfh/195c9ded06521188ebc3
-- webstream の監視: https://gist.github.com/cympfh/54260f85da7e6a470bb2
 
 ### fav
 

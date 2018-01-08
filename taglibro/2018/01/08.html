@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Mon Jan 08 2018</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Mon Jan 08 2018</h1>
+</header>
+<h2 id="日記---年末年始">日記 - 年末年始</h2>
+<h3 id="section">12/29</h3>
+<p>三越前駅で降りて散歩した. 日本銀行がやっているという貨幣博物館を見つけたが、ちょうど29日から1/3までの年末年始は休館だった. いつか行ってみたい. ついでに、東京駅に行って、買ってほしいと頼まれていたお土産を、大丸に行って買ってきた.</p>
+<p>帰省のためのカバンをどうするか迷ったが、結局、大荷物はキャリーバッグにして、近所のファミマから、宅配してもらった. 希望の到着日付時刻を、30日にしたかったが、手配したのが遅すぎたらしく、結局31日の夕方にしてもらった.</p>
+<h3 id="section-1">12/30</h3>
+<p>ショルダーバッグに本を四冊詰めて、1430の新幹線で帰った.</p>
+<h3 id="section-2">01/02</h3>
+<p>結局持ってきた本はほとんど読まなかった. 本をキャリーバッグに詰めて、駅の近くのローソンから宅配してもらった. 今度は次の日の朝を指定でき、実際届いた.</p>
+<p>帰りの新幹線は 1930 だったが、博多から来る新幹線 (つまり新大阪発ではない) は全て遅れているようで、結局 105 分待たされた. こういう場合、自由席なら時間を気にせず、今あるものに乗れるから良い. もちろん満員であったが. 東京駅に着いたのが 2350 くらいで、少し急いで丸ノ内線に乗った. そちらは問題なかったが、乗り換えた後乗った電車は最終電車だったので、ギリギリだった.</p>
+<h2 id="ゲームaiの開発-6x6">ゲームAIの開発: <code>6x6</code></h2>
+<p>状態や手の記述が単純なので、練習がてら、6x6のオセロのAIを書いた. それは最近の話じゃなくて、去年の4月だけど (https://github.com/cympfh/6x6/commits/master).</p>
+<p>普通AIを書くというとどこまでを実装するかわからないが、この <code>6x6</code> というAIは、UIの部分を全く持たないし、ゲームの状態も持たない. １つの状態を (標準入力で) 与えると、最善手を (標準出力で) 返す、という風にコア部分だけが、１つのコマンドとして実装してある. オマケ機能として、手を打ったあとの状態を返す機能、ゲームが終了したか (決着が着いたか)チェックする機能も実装してあるので、 UI が <code>6x6</code> をエンジンとして利用できるようにしてある.</p>
+<p>UIがすべきことは、盤面の状態を持っておくこと、次の手番がどちらか持っておくこと、 その他、盤面の表示や、プレイヤーの手の入力を受け取ることなど.</p>
+<h3 id="概念図">概念図</h3>
+<pre><code>UI -&gt;
+    1. 初期盤面を作成して 盤面.txt として保存
+    2. 人間とAIの先行後攻を決定
+    3. 以下をループ
+        1. 盤面の表示
+        2. 人間のターンのとき
+             - 人間に手を決定させ入力を促す
+             - `6x6 put` で次の盤面をもらう (invalid かのチェックもこの機能にある)
+             - valid なら 盤面.txt として上書き保存
+             - invalid ならもう一度入力させる
+        2. AI のターンのとき
+             - `6x6 solve` で次の最善手をもらう (valid な手のはず)
+             - `6x6 put` でその手を打つ
+        3. ターンを人間とAIで入れ替える
+
+6x6 solve -&gt;
+    - 盤面の状態と次のプレイヤーがどっちかの情報をもらう
+    - そのプレイヤーにとっての最善手を調べる
+        - 主にモンテカルロ
+
+6x6 put -&gt;
+    1. 今の盤面の状態と、次打つ手をもらう
+    2. その手が妥当か調べる
+        - 妥当なら、打ったあとの盤面を出力
+        - 妥当でないなら invalid と出力
+
+6x6 check -&gt;
+    1. 今の盤面をもらう
+    2. どちらにとっても打てる場所がないなら、ゲームは終了している
+        - どちらが勝ったか出力
+        - さもなくば、ゲーム続行であることを出力</code></pre>
+<p>ゲームAIとして普通の設計なのかどうなのか全くわからないけど、 機能がキレイに分離していて、気持ち良い.</p>
+<p>例えば twitter bot としてオセロAIを立てることも、TwitterAPIを捌くことだけに集中すれば出来る.</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

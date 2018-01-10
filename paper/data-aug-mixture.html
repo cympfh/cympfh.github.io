@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Data Augmentation by Pairing Samples for Images Classification</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/</a>
+</header>
+<header>
+<h1 class="title">Data Augmentation by Pairing Samples for Images Classification</h1>
+</header>
+<ul>
+<li>
+original paper: <a href=https://arxiv.org/abs/1801.02929>https://arxiv.org/abs/1801.02929</a>
+</li>
+</ul>
+<div class="is-pulled-right">
+<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#物体認識>物体認識</a> <a class='tag is-blue' href=index.html#データ水増し>データ水増し</a></p>
+</div>
+<h2 id="概要">概要</h2>
+<blockquote class="twitter-tweet" data-lang="en">
+<p lang="ja" dir="ltr">
+arxivにData Augmentationについての論文を公開しました．画像認識タスクで学習時にトレーニングセットの画像を2枚ランダムで選んで重ね合わせてみたら，びっくりするくらいエラー率が減った話です（ImageNetやCIFAR-10で15％くらい，最大で30％近く） <a href="https://t.co/pEumNkVquw">https://t.co/pEumNkVquw</a>
+</p>
+— Hiroshi (Taku) Inoue (<span class="citation" data-cites="inoueh">@inoueh</span>) <a href="https://twitter.com/inoueh/status/950927417501089792?ref_src=twsrc%5Etfw">January 10, 2018</a>
+</blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>画像認識のためのデータ水増しのテクニック. 異なる2枚の画像を重ねて (mixture) 、それを学習データに追加する (SamplePairing). 単純にデータ数が自乗に増える.</p>
+<h2 id="方法">方法</h2>
+<p>異なる画像を (ラベルを気にせず) 2枚選ぶ. 重ねて出来た画像に元の画像の一方のラベルを与えて学習する.</p>
+<p>NOTE: 著者によれば、同じラベルのペアに限定する方法も試したそう (https://twitter.com/inoueh/status/950990313371222016) だが、 全て使ってしまったほうが良いらしい.</p>
+<h2 id="他">他</h2>
+<blockquote class="twitter-tweet" data-lang="en">
+<p lang="ja" dir="ltr">
+実験的には3個合成よりは2個のほうが良かったです．直感的には合成しすぎると，何がなんだかわからなくなる気がしますしｗ 濃度を変えて混ぜるとかもやったんですが，結局単純な2個平均がベストだったので・・・．
+</p>
+— Hiroshi (Taku) Inoue (<span class="citation" data-cites="inoueh">@inoueh</span>) <a href="https://twitter.com/inoueh/status/950986159919788032?ref_src=twsrc%5Etfw">January 10, 2018</a>
+</blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

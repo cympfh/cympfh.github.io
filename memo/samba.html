@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Samba Server &amp; Client in Ubuntu</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<h1 class="title">Samba Server &amp; Client in Ubuntu</h1>
+</header>
+<div class="is-pulled-right">
+<p><a class='tag is-green' href=index.html#samba>samba</a> <a class='tag is-green' href=index.html#linux>linux</a> <a class='tag is-green' href=index.html#ubuntu>ubuntu</a></p>
+</div>
+<div id="toc">
+
+</div>
+<h2 id="server-on-ubuntu">Server on Ubuntu</h2>
+<p>以下のコマンドで鯖デーモン <code>smbd</code> が入る. インストールした時点から勝手に動く.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sudo</span> apt install samba</code></pre></div>
+<p>ubuntu のバージョンによるが、16くらいなら</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sudo</span> systemctl status smbd
+<span class="fu">sudo</span> systemctl restart smbd</code></pre></div>
+<p>でデーモンを操作する.</p>
+<h3 id="設定ファイルについて">設定ファイルについて</h3>
+<p><code>smbd</code> は起動時に設定ファイル</p>
+<pre><code>/etc/samba/smb.conf</code></pre>
+<p>を読む.</p>
+<p>この設定ファイルはおそらく気づいたら既にある. 注意点として、 <code>samba</code> のインストールの際に生成されるなどということは無いということ. それどころか、この設定ファイルが存在しないと、起動に失敗する. <code>apt install samba</code> するとき、勝手に起動しようとするので、エラーを吐くことになる.</p>
+<p>雛形として <code>/usr/share/samba/smb.conf</code> がある.</p>
+<p>もし設定ファイルを誤って消したか、何故か無かったら、以下のようにただコピーしてくればよい:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sudo</span> mkdir -p /etc/samba
+<span class="fu">sudo</span> cp /usr/share/samba/smb.conf /etc/samba/</code></pre></div>
+<h3 id="ユーザーの追加">ユーザーの追加</h3>
+<p>サーバに <code>cympfh</code> というユーザーが既にいて、クライアントからはこれで samba にアクセスするとする. 次のように追加する.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sudo</span> pdbedit -a cympfh</code></pre></div>
+<p>確かパスワードもここで設定する.</p>
+<h3 id="共有ディレクトリの設定">共有ディレクトリの設定</h3>
+<p>断然おすすめは <code>system-config-samba</code> というGUIツールを使うこと. こちらも <code>apt install</code> で入る.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sudo</span> system-config-samba</code></pre></div>
+<p>で立ち上げて、共有するディレクトリと名前を与えるだけ. どういう設定の書き換えをするかを見れば、実際単純なので、もう手で変更できるようになる.</p>
+<p><em>NOTE</em>: 初回はたぶん <code>/etc/libuser.conf</code> が無いというエラーが出る. <code>sudo touch /etc/libuser.conf</code> で空ファイルを一度作ってから起動するだけで問題ない.</p>
+<p><em>NOTE</em>: 手で設定ファイルをいじると警告が出る. 初めは雛形をコピーして <code>system-config-samba</code> で設定し、 一度直接手で変更するようになった以降はずっと <code>system-config-samba</code> を使うのをやめたらよいと思う.</p>
+<h4 id="例">例</h4>
+<p>以下は私の実際の設定ファイル. 以下のような5行が <code>/etc/samba/smb.conf</code> の末尾に付け足された. 意味は次のようなものである. <code>share</code> という名前の共有設定を新しく定義する. サーバの <code>/media/cympfh/Volume</code> というディレクトリ下を共有する. クライアントはこの下に書き込むことが出来る (<code>writeable</code>). この設定をクライアントは見ることは出来ず <code>share</code> という名前を知っておく必要がある. 行頭の <code>;</code> を外せば <code>share</code> という設定があることが見える. アクセスが許されているユーザーは <code>cympfh</code> ただ1人. この <code>cympfh</code> はサーバに既にあるユーザーであり、先程 <code>pdbedit</code> で追加した.</p>
+<pre><code>[share]
+    path = /media/cympfh/Volume
+    writeable = yes
+;   browseable = yes
+    valid users = cympfh</code></pre>
+<h3 id="他の設定項目">他の設定項目</h3>
+<p><code>[global]</code> の下に</p>
+<pre><code>   dos charset = CP932
+   unix charset = UTF8
+   display charset = UTF8
+
+   mangled names = no
+
+   vfs objects = catia
+   catia:mappings = 0x3a:0x7e</code></pre>
+<p><em>NOTE</em>: 上の3行は文字コードの設定.</p>
+<p><em>NOTE</em>: 4行目. 互換性のために長いファイル名を短縮する mangle というものがあるらしい. それをさせない.</p>
+<p><em>NOTE</em>: 名前にコロン <code>:</code> を含むディレクトリ下、ファイルにアクセスできない問題がある. 下の二行はそれを解決する. <a href="https://evren-yurtesen.blogspot.jp/2017/04/how-to-access-files-with-colon-in.html" class="uri">https://evren-yurtesen.blogspot.jp/2017/04/how-to-access-files-with-colon-in.html</a></p>
+<h2 id="clients-on-ubuntu">Clients on Ubuntu</h2>
+<p>mount して使う.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sudo</span> apt install cifs-utils</code></pre></div>
+<p><code>mount.cifs</code> コマンド、または <code>mount -t cifs</code> または単に <code>mount</code> コマンドでマウントできる. 例えばサーバが <code>192.168.0.6</code> だとする. ここに <code>cympfh</code> ユーザーで <code>share</code> という共有にアクセスするには</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sudo</span> mkdir /mnt/smb
+<span class="fu">sudo</span> mount //192.168.0.6/share /mnt/smb -o user=cympfh</code></pre></div>
+<p>パスワードが求められるので入れる. あるいは</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sudo</span> mount //192.168.0.6/share /mnt/smb -o user=cympfh,pass=YOURPASS</code></pre></div>
+<p>と直接入れることもできる.</p>
+<p>アンマウントも普通に</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sudo</span> umount /mnt/smb</code></pre></div>
+<p>で良い.</p>
+<h2 id="clients-on-macos">Clients on MacOS</h2>
+<p><code>open smb://hogehogefugafuga</code> ってしたら開いた記憶がある.</p>
+<h2 id="clients-on-android">Clients on Android</h2>
+<p>&quot;AndSMB (samba client)&quot; <a href="https://play.google.com/store/apps/details?id=lysesoft.andsmb&amp;hl=ja" class="uri">https://play.google.com/store/apps/details?id=lysesoft.andsmb&amp;hl=ja</a> というアプリを使ってる.</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

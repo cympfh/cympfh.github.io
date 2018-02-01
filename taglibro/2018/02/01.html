@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Thu Feb 01 2018</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Thu Feb 01 2018</h1>
+</header>
+<h2 id="wacomペンタブレットの無線化モジュールを買った">wacomペンタブレットの無線化モジュールを買った</h2>
+<p>去年にwacomのペンタブレットの &quot;Intuos Draw&quot; を買った. そのMサイズというやつ. このペンタブレットは裏に蓋があって、空けると謎の空洞がある. 調べると、別売りの無線化モジュールを購入してここにセットすると、無線で使えるようになるらしい.</p>
+<p>amazonで調べると 「Wacom ペンタブレットオプション ワイヤレスキット ACK-40401」 が出てきた. Amazonページの説明だと、対応製品のリストの中に自分のが乗っていなかったが、 wacomの製品ページを見ると (https://store.wacom.jp/detail/1554) &quot;Intuos Draw&quot; がそこにあったので、購入することした.</p>
+<p>使用OSは Ubuntu 16.04. 普通の無線マウスと同じで、特別に何もしなくても問題なく使用できた. 当然ながらちゃんと筆圧も取れる. ぺんたぶについてあるボタンはそういえば私は使用してないので、無線化してからは試してない.</p>
+<h2 id="gnu-screen-256色">GNU screen 256色</h2>
+<p>環境によっては GNU screen 越しのターミナル/シェルで、256色の発色が有効でない物がある. 256色が確かに有効かどうかは ASCII sequence を実際に出力すればよい. 大したものではないので載せると、</p>
+<script src="https://gist.github.com/cympfh/b1abcde9ff1904889cb59fc8fc77be57.js"></script>
+<p>こんな感じ. リンクは <a href="https://gist.github.com/cympfh/b1abcde9ff1904889cb59fc8fc77be57" class="uri">https://gist.github.com/cympfh/b1abcde9ff1904889cb59fc8fc77be57</a> これ. 実際に有効なターミナルで実行した結果のキャプチャもリンク先に載せてある.</p>
+<p>さて何故か有効にならない場合は次の2点を確かめれば良い.</p>
+<ol type="1">
+<li><code>$TERM</code> 変数</li>
+</ol>
+<p>screen を呼ぶタイミングでの環境変数の <code>TERM</code> が関わる.</p>
+<pre><code>export TERM=xterm-256color</code></pre>
+<p>としろという記事もあるが、私は</p>
+<pre><code>export TERM=screen-256color-bce</code></pre>
+<p>これを <code>.bashrc</code> でも <code>.zshrc</code> でも書いてある.</p>
+<p>試しに</p>
+<pre><code>TERM=screen-256color-bce screen</code></pre>
+<p>で screen を起動して 256 色が有効か確かめるとよい.</p>
+<ol start="2" type="1">
+<li>そもそもscreenが対応しているか</li>
+</ol>
+<p>コンパイル時点で256色に対応してない場合がある. screen は configure で Makefile 作るタイプだから、</p>
+<pre><code>./configure --enable-colors256
+make</code></pre>
+<p>とする必要があるかもしれない.</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

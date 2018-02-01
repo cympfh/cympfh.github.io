@@ -32,6 +32,7 @@ GithubとかGistに書き散らしたものを整理する
 
 - fuck_mouse.sh: https://gist.github.com/cympfh/659d05a96ee412d19318
 - hash (a shell): https://gist.github.com/cympfh/70033b9347d5064172cffdb389c633b0
+- ターミナルで256色が有効か確認する.sh: https://gist.github.com/cympfh/b1abcde9ff1904889cb59fc8fc77be57
 
 ## メール
 

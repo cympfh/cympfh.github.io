@@ -7,11 +7,7 @@ listup() {
 }
 
 datetitle() {
-    if [ "$(uname)" = "Darwin" ]; then
-        LANG=en date -j -f "%Y/%m/%d" "$1" "+%a %b %d %Y"
-    else
-        LANG=en date -d "$1" "+%a %b %d %Y"
-    fi
+    LANG=en date -d "$1" "+%a %b %d %Y"
 }
 
 TOKEN=$(listup | peco)

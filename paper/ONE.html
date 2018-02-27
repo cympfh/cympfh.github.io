@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>One Big Net For Everything: ONE</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/</a>
+</header>
+<header>
+<h1 class="title">One Big Net For Everything: ONE</h1>
+</header>
+<ul>
+<li>
+original paper: <a href=https://arxiv.org/abs/1802.08864>https://arxiv.org/abs/1802.08864</a>
+</li>
+</ul>
+<div class="is-pulled-right">
+<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#強化学習>強化学習</a></p>
+</div>
+<h2 id="概要">概要</h2>
+<p>2018.02 時点のテクニカルレポート.</p>
+<ul>
+<li>&quot;learning to think&quot; (2015, 彼ら) に &quot;PowerPlay&quot; (2011) を加えることで発展させたい</li>
+<li>任意のタスクを学習可能なネットワークを構築したい (ONE)
+<ul>
+<li>現状ある中で有力なのはRNNだろう
+<ul>
+<li>現実的には、RNNとはLSTMのことを指す</li>
+<li>CNNとLSTMの組み合わせ等も含む
+<ul>
+<li>十分大きなLSTMによって表現可能である</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>タスクの形には大きく、教師あり学習と強化学習とがある
+<ul>
+<li>前者については勾配法によって比較的易しく学習書き出る</li>
+<li>後者は比較的難しい
+<ul>
+<li>十分小さなLSTMでないと学習してくれない</li>
+</ul></li>
+</ul></li>
+<li>真のAIを目指している
+<ul>
+<li>真のAIは絶えず学習を行うものである</li>
+<li>経験の中で学習をしてほしい
+<ul>
+<li>もちろん教師などなしに</li>
+<li>従って教師あり学習を解くことは避けられない</li>
+</ul></li>
+<li>&quot;絶えず新しいタスクを学習し、かつ、前に学習したことは忘れない&quot;
+<ul>
+<li>ただし、自身の複製 (copy of ONE) という操作を許す?</li>
+</ul></li>
+</ul></li>
+</ul>
+<h2 id="basic-ideas">Basic Ideas</h2>
+<h3 id="goal-input-vectors">1. goal input vectors</h3>
+<h3 id="incremental-black-box-optimization">2. Incremental black box optimization</h3>
+<p>既にいくつかのタスクを獲得した時点で新しいタスクを学習する時、以前の状態のONEを複製して、 そこから学習を始めることで高速にタスクの獲得が完了する. 自動的な転移学習 (algorithmic transfer learning) である.</p>
+<h3 id="cm-system">3. CM system</h3>
+<p>&quot;learning to think&quot; を読め</p>
+<p>読みます。</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

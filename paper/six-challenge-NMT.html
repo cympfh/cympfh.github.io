@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Six Challenges for Neural Machine Translation</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/</a>
+</header>
+<header>
+<h1 class="title">Six Challenges for Neural Machine Translation</h1>
+</header>
+<ul>
+<li>
+original paper: <a href=https://arxiv.org/abs/1706.03872>https://arxiv.org/abs/1706.03872</a>
+</li>
+</ul>
+<div class="is-pulled-right">
+<p><a class='tag is-blue' href=index.html#自然言語処理>自然言語処理</a> <a class='tag is-blue' href=index.html#自動翻訳>自動翻訳</a></p>
+</div>
+<h2 id="概要">概要</h2>
+<p>NMTにある6つの課題を調査した.</p>
+<ol type="1">
+<li>domain mismatch,
+<ul>
+<li>自然さのためにはドメインを絞って学習したいが</li>
+</ul></li>
+<li>amount of training data,
+<ul>
+<li>学習曲線はデータ量に関して急勾配 (steeper) である</li>
+</ul></li>
+<li>rare words,
+<ul>
+<li>sub-word の概念で改善はしているが、低頻度の動詞はまだ弱い</li>
+</ul></li>
+<li>long sentences,
+<ul>
+<li>60語程度以上で死ぬ</li>
+</ul></li>
+<li>word alignment,</li>
+<li>beam search
+<ul>
+<li>探索範囲を広げると結果がむしろ悪化する</li>
+</ul></li>
+</ol>
+<h2 id="実験環境">実験環境</h2>
+<p>NMT は Nematus (2017) っていうツールが現時点で最強らしい. (中身は attention 付き encoder-decoder でいいのかな?) 基本、デフォルトの設定で使う. 語彙数が 50,000 になるように subword の数を設定する.</p>
+<p>SMT として Moses (2007) を使う. この論文の著者の Philipp Koehn が作者だった. もっと他にもいいのがあるよと言ってるが、Statisticalなのはもう全部2007年で終わってる.</p>
+<p>データには, 単なる翻訳タスクには WMT (<a href="http://www.statmt.org/wmt17/" class="uri">http://www.statmt.org/wmt17/</a>) を、 ドメインでの違いを調べる用には OPUS corpus (<a href="http://opus.lingfil.uu.se/" class="uri">http://opus.lingfil.uu.se/</a>) を用いた.</p>
+<h2 id="実験">実験</h2>
+<h3 id="domain-mismatch">Domain Mismatch</h3>
+<figure>
+<img src="https://i.imgur.com/efWsZmr.png" />
+</figure>
+<p>例えば二行目は Law で学習した結果を各ジャンルに適用した結果. 各項目で左（黄緑）がNMTでの結果で、右（青）がSMT. NMTの方がドメインの違いに弱いことがよく分かる. Figure 2 の Medical とかもなかなかすごい.</p>
+<h3 id="amount-of-training-data">Amount of Training Data</h3>
+<figure>
+<img src="https://i.imgur.com/ZuHIqRU.png" />
+</figure>
+<p>上がり方は NMT の方が顕著. 語彙数が少ない時は SMT の方がマシで、 2 billion 単語数 (2e9) 程度でSMTに打ち勝てる.</p>
+<h3 id="rare-words">Rare Words</h3>
+<p>知らん</p>
+<h3 id="long-sentences">Long Sentences</h3>
+<figure>
+<img src="https://i.imgur.com/hrDUtM4.png" />
+</figure>
+<p>文長と精度は関係がある. よく言われているのは、encoder-decoder はあんまり長い文を正しく変換する能力はない.</p>
+<h3 id="word-alignment">Word Alignment</h3>
+<h3 id="beam-search">Beam Search</h3>
+<p>実際の予測時、高い確率を持つ列をサンプリングするのにビームサーチが普通使われる. 一般にビームサイズを増やせば増やすほど最適解に近づくはずだが、BLEUで測ると上に凸の折れ線グラフを描く.</p>
+<figure>
+<img src="https://i.imgur.com/6CIR05Y.png" />
+</figure>
+<p>ビームサイズは凡そ4から30程度が最適らしい. 詳しく書いてないけど、文長によって normalize する手法があるらしい.</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

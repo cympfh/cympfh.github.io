@@ -58,9 +58,9 @@ def DE(target, ranges, np=40, cr=0.5, f=0.5, loop=10, verbose=False) -> Tuple[nu
     for _ in range(loop):
         for i in range(np):
             j1, j2, j3 = random.sample(range(np - 1), 3)
-            a = xs[(j1 + 1) % np]
-            b = xs[(j2 + 1) % np]
-            c = xs[(j3 + 1) % np]
+            a = xs[(i + j1 + 1) % np]
+            b = xs[(i + j2 + 1) % np]
+            c = xs[(i + j3 + 1) % np]
             x_new = xs[i] + 0.0
             # cross
             k = random.choice(range(len(ranges)))

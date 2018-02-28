@@ -26,7 +26,7 @@ scipy に実装があります.
 (参考文献 [1] だと $[0,1)$ でしか探索してない?)
 
 
-```
+```python
 import random
 from typing import Tuple
 

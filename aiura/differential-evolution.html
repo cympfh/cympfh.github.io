@@ -6,6 +6,43 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Differential Evolution (差分進化)</title>
   <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
   <link rel="stylesheet" href="../resources/css/c.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
@@ -40,61 +77,61 @@
 <h2 id="実装">実装</h2>
 <p>勉強のために実装してみた. 参考文献 [1] 先と同様に Ackley 関数を最適化してみる. この関数は少し外だと基本 cos なので勾配法だと死ぬ.</p>
 <p>見たとおり Ackley 関数はゼロで最小なのだが、この少し周りだと全然ただの凸関数になってるので、 初めからゼロ付近に検討を付けて最適化を始めると実際より簡単になってしまう. (参考文献 [1] だと <span class="math inline">\([0,1)\)</span> でしか探索してない?)</p>
-<pre><code>import random
-from typing import Tuple
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> random
+<span class="im">from</span> typing <span class="im">import</span> Tuple
 
-import numpy
-
-
-def Ackley(x: numpy.array) -&gt; float:
-    a = 20
-    b = 0.2
-    c = 2 * numpy.pi
-    ret = a - a * numpy.exp(-b * numpy.sqrt(numpy.sum(x ** 2) / len(x))) \
-        + numpy.e - numpy.exp(numpy.sum(numpy.cos(c * x)) / len(x))
-    return ret
+<span class="im">import</span> numpy
 
 
-def DE(target, ranges, np=40, cr=0.5, f=0.5, loop=10, verbose=False) -&gt; Tuple[numpy.array, float]:
-
-    def make_random():
-        x = numpy.array([numpy.random.uniform(left, right) for left, right in ranges])
-        return x
-
-    xs = [make_random() for _ in range(np)]
-    ys = [target(x) for x in xs]
-    mini = ys[0]
-    min_index = 0
-
-    for _ in range(loop):
-        for i in range(np):
-            j1, j2, j3 = random.sample(range(np - 1), 3)
-            a = xs[(j1 + 1) % np]
-            b = xs[(j2 + 1) % np]
-            c = xs[(j3 + 1) % np]
-            x_new = xs[i] + 0.0
-            # cross
-            k = random.choice(range(len(ranges)))
-            for j in range(len(ranges)):
-                if j == k or random.random() &lt; cr:
-                    x_new[j] = a[j] + f * (b[j] - c[j])
-            x_new = numpy.array(x_new)
-
-            y_new = target(x_new)
-            if y_new &lt; ys[i]:
-                xs[i] = x_new
-                ys[i] = y_new
-                if y_new &lt; mini:
-                    mini = y_new
-                    min_index = i
-                    if verbose:
-                        print(mini)
-
-    return xs[min_index], ys[min_index]
+<span class="kw">def</span> Ackley(x: numpy.array) <span class="op">-&gt;</span> <span class="bu">float</span>:
+    a <span class="op">=</span> <span class="dv">20</span>
+    b <span class="op">=</span> <span class="fl">0.2</span>
+    c <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> numpy.pi
+    ret <span class="op">=</span> a <span class="op">-</span> a <span class="op">*</span> numpy.exp(<span class="op">-</span>b <span class="op">*</span> numpy.sqrt(numpy.<span class="bu">sum</span>(x <span class="op">**</span> <span class="dv">2</span>) <span class="op">/</span> <span class="bu">len</span>(x))) <span class="op">\</span>
+        <span class="op">+</span> numpy.e <span class="op">-</span> numpy.exp(numpy.<span class="bu">sum</span>(numpy.cos(c <span class="op">*</span> x)) <span class="op">/</span> <span class="bu">len</span>(x))
+    <span class="cf">return</span> ret
 
 
-result = DE(Ackley, [[0, 20], [-100, 100]], loop=100, verbose=True)
-print(result)</code></pre>
+<span class="kw">def</span> DE(target, ranges, np<span class="op">=</span><span class="dv">40</span>, cr<span class="op">=</span><span class="fl">0.5</span>, f<span class="op">=</span><span class="fl">0.5</span>, loop<span class="op">=</span><span class="dv">10</span>, verbose<span class="op">=</span><span class="va">False</span>) <span class="op">-&gt;</span> Tuple[numpy.array, <span class="bu">float</span>]:
+
+    <span class="kw">def</span> make_random():
+        x <span class="op">=</span> numpy.array([numpy.random.uniform(left, right) <span class="cf">for</span> left, right <span class="kw">in</span> ranges])
+        <span class="cf">return</span> x
+
+    xs <span class="op">=</span> [make_random() <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(np)]
+    ys <span class="op">=</span> [target(x) <span class="cf">for</span> x <span class="kw">in</span> xs]
+    mini <span class="op">=</span> ys[<span class="dv">0</span>]
+    min_index <span class="op">=</span> <span class="dv">0</span>
+
+    <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(loop):
+        <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(np):
+            j1, j2, j3 <span class="op">=</span> random.sample(<span class="bu">range</span>(np <span class="op">-</span> <span class="dv">1</span>), <span class="dv">3</span>)
+            a <span class="op">=</span> xs[(j1 <span class="op">+</span> <span class="dv">1</span>) <span class="op">%</span> np]
+            b <span class="op">=</span> xs[(j2 <span class="op">+</span> <span class="dv">1</span>) <span class="op">%</span> np]
+            c <span class="op">=</span> xs[(j3 <span class="op">+</span> <span class="dv">1</span>) <span class="op">%</span> np]
+            x_new <span class="op">=</span> xs[i] <span class="op">+</span> <span class="fl">0.0</span>
+            <span class="co"># cross</span>
+            k <span class="op">=</span> random.choice(<span class="bu">range</span>(<span class="bu">len</span>(ranges)))
+            <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(ranges)):
+                <span class="cf">if</span> j <span class="op">==</span> k <span class="kw">or</span> random.random() <span class="op">&lt;</span> cr:
+                    x_new[j] <span class="op">=</span> a[j] <span class="op">+</span> f <span class="op">*</span> (b[j] <span class="op">-</span> c[j])
+            x_new <span class="op">=</span> numpy.array(x_new)
+
+            y_new <span class="op">=</span> target(x_new)
+            <span class="cf">if</span> y_new <span class="op">&lt;</span> ys[i]:
+                xs[i] <span class="op">=</span> x_new
+                ys[i] <span class="op">=</span> y_new
+                <span class="cf">if</span> y_new <span class="op">&lt;</span> mini:
+                    mini <span class="op">=</span> y_new
+                    min_index <span class="op">=</span> i
+                    <span class="cf">if</span> verbose:
+                        <span class="bu">print</span>(mini)
+
+    <span class="cf">return</span> xs[min_index], ys[min_index]
+
+
+result <span class="op">=</span> DE(Ackley, [[<span class="dv">0</span>, <span class="dv">20</span>], [<span class="op">-</span><span class="dv">100</span>, <span class="dv">100</span>]], loop<span class="op">=</span><span class="dv">100</span>, verbose<span class="op">=</span><span class="va">True</span>)
+<span class="bu">print</span>(result)</code></pre></div>
 <p>例えば探索範囲を 100 くらいにまで広げると、ループ回数が 10 とかだと全然到達できないが、100 までにしとけば大体安定する.</p>
 <!--
 

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Differential Evolution (差分進化)</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<h1 class="title">Differential Evolution (差分進化)</h1>
+</header>
+<p class="date" style="text-align: right">
+2018-02-28 (Wed.)
+</p>
+<div class="is-pulled-right">
+<p><a class='tag is-red' href=index.html#最適化>最適化</a></p>
+</div>
+<h2 id="参考文献">参考文献</h2>
+<ol type="1">
+<li><a href="http://wildpie.hatenablog.com/entry/20151003/1443863102">Differential Evolutionで大域的最適化</a>
+<ul>
+<li>わかりやすい</li>
+</ul></li>
+<li><a href="http://www.sfu.ca/~ssurjano/ackley.html" class="uri">http://www.sfu.ca/~ssurjano/ackley.html</a>
+<ul>
+<li>Ackley 関数の定義が書いてある</li>
+</ul></li>
+</ol>
+<p>Wikipedia は読まなくていいです.</p>
+<h2 id="scipy">scipy</h2>
+<p>scipy に実装があります.</p>
+<h2 id="実装">実装</h2>
+<p>勉強のために実装してみた. 参考文献 [1] 先と同様に Ackley 関数を最適化してみる. この関数は少し外だと基本 cos なので勾配法だと死ぬ.</p>
+<p>見たとおり Ackley 関数はゼロで最小なのだが、この少し周りだと全然ただの凸関数になってるので、 初めからゼロ付近に検討を付けて最適化を始めると実際より簡単になってしまう. (参考文献 [1] だと <span class="math inline">\([0,1)\)</span> でしか探索してない?)</p>
+<pre><code>import random
+from typing import Tuple
+
+import numpy
+
+
+def Ackley(x: numpy.array) -&gt; float:
+    a = 20
+    b = 0.2
+    c = 2 * numpy.pi
+    ret = a - a * numpy.exp(-b * numpy.sqrt(numpy.sum(x ** 2) / len(x))) \
+        + numpy.e - numpy.exp(numpy.sum(numpy.cos(c * x)) / len(x))
+    return ret
+
+
+def DE(target, ranges, np=40, cr=0.5, f=0.5, loop=10, verbose=False) -&gt; Tuple[numpy.array, float]:
+
+    def make_random():
+        x = numpy.array([numpy.random.uniform(left, right) for left, right in ranges])
+        return x
+
+    xs = [make_random() for _ in range(np)]
+    ys = [target(x) for x in xs]
+    mini = ys[0]
+    min_index = 0
+
+    for _ in range(loop):
+        for i in range(np):
+            j1, j2, j3 = random.sample(range(np - 1), 3)
+            a = xs[(j1 + 1) % np]
+            b = xs[(j2 + 1) % np]
+            c = xs[(j3 + 1) % np]
+            x_new = xs[i] + 0.0
+            # cross
+            k = random.choice(range(len(ranges)))
+            for j in range(len(ranges)):
+                if j == k or random.random() &lt; cr:
+                    x_new[j] = a[j] + f * (b[j] - c[j])
+            x_new = numpy.array(x_new)
+
+            y_new = target(x_new)
+            if y_new &lt; ys[i]:
+                xs[i] = x_new
+                ys[i] = y_new
+                if y_new &lt; mini:
+                    mini = y_new
+                    min_index = i
+                    if verbose:
+                        print(mini)
+
+    return xs[min_index], ys[min_index]
+
+
+result = DE(Ackley, [[0, 20], [-100, 100]], loop=100, verbose=True)
+print(result)</code></pre>
+<p>例えば探索範囲を 100 くらいにまで広げると、ループ回数が 10 とかだと全然到達できないが、100 までにしとけば大体安定する.</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>One pixel attack for fooling deep neural networks</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/</a>
+</header>
+<header>
+<h1 class="title">One pixel attack for fooling deep neural networks</h1>
+</header>
+<ul>
+<li>
+original paper: <a href=https://arxiv.org/abs/1710.08864>https://arxiv.org/abs/1710.08864</a>
+</li>
+</ul>
+<div class="is-pulled-right">
+<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#物体認識>物体認識</a></p>
+</div>
+<h2 id="概要">概要</h2>
+<p>DNNによる多クラス分類としての物体認識. 70.97% の画像は、入力画像の 1 pixel を変更するだけで、恣意的に選んだ別なクラスに 97.47% の確信度で以って惑わすことが可能であることを示した.</p>
+<figure>
+<img src="https://i.imgur.com/wIrXVmx.png" />
+</figure>
+<p>1 pixel の変更で全く別物に予測させられる.</p>
+<h2 id="github">Github</h2>
+<p><a href="https://github.com/Hyperparticle/one-pixel-attack-keras">Hyperparticle/one-pixel-attack-keras</a></p>
+<h2 id="手法">手法</h2>
+<p>使ってる画像は CIFAR-10. 画像サイズは 28x28 で各ピクセルは 0以上255以下の整数の三組 (RGB). 1 pixel の修正は <span class="math inline">\(X \times Y \times R \times G \times B\)</span> で表される. これは離散空間で、濃度は <span class="math inline">\(32\times32\times256\times256\times256 = 17,179,869,184 = 1e10\)</span>. 全通り試すのはちょっと無理で、この空間の上の最適化問題と見做して解いている.</p>
+<p>Differential Evolution (DE) という最適化手法があって、彼らはそれを用いている (<code>from scipy.optimize import differential_evolution</code>).</p>
+<p>元の正しいラベルへの確信度を下げる方のアタック (Non-targeted) と、選んだ偽のラベルへの確信度を上げる方のアタック (Targeted) を試してる.</p>
+<h2 id="結果">結果</h2>
+<p>1 pixel だけでも全体の7割程度はラベルをtargetedに変えることが出来てる. ただし、変えることの出来るターゲットラベルには大きく偏りがある (ある一つのラベルには変えやすい). 3 pixel も変えれば、どのラベルにも変更可能である.</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

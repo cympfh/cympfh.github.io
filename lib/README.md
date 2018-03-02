@@ -43,6 +43,7 @@
 # 行列
 
 - [行列の表現](matrix.html)
+- [基本演算](matrix.ops.html)
 
 ## 行列式
 - [定義に拠る算法](mat.det.naiiv.html)

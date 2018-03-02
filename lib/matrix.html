@@ -44,6 +44,8 @@ code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* Com
 code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
   </style>
   <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="../resources/css/d.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.cs">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
@@ -51,18 +53,73 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </head>
 <body>
 <h1 id="行列">行列</h1>
-<p>m×n行列 (<span class="math inline">\(1 \leq m, n\)</span>) を、</p>
-<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="kw">template</span>&lt;<span class="kw">typename</span> Number&gt;
-vector&lt;vector&lt;Number&gt;&gt;(m, vector&lt;Number&gt;(n))</code></pre></div>
-<p>によって表現する。</p>
-<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="kw">using</span> Number = <span class="dt">int</span>;
+<h2 id="rust">Rust</h2>
+<p><span class="math inline">\(m \times n\)</span> 行列を</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">type</span> Matrix = <span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;<span class="dt">f64</span>&gt;&gt;;
+<span class="kw">let</span> a: Matrix = <span class="pp">vec!</span><span class="op">[</span><span class="pp">vec!</span><span class="op">[</span><span class="dv">0.0</span>; n<span class="op">]</span>; m<span class="op">]</span>;</code></pre></div>
+<p>とする.</p>
+<h2 id="c">C++</h2>
+<p><span class="math inline">\(m \times n\)</span> 行列を</p>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="kw">using</span> Number = <span class="dt">float</span>;
 <span class="kw">using</span> Vektor = vector&lt;Number&gt;;
 <span class="kw">using</span> Matrix = vector&lt;Vektor&gt;;
 
-<span class="dt">void</span> print_matrix(Matrix a) {
+<span class="kw">template</span>&lt;<span class="kw">typename</span> Number&gt;
+vector&lt;vector&lt;Number&gt;&gt;(m, vector&lt;Number&gt;(n))</code></pre></div>
+<p>とする.</p>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="dt">void</span> print_matrix(Matrix a) {
   <span class="cf">for</span> (<span class="kw">auto</span>&amp;l : a) {
     cout &lt;&lt; <span class="st">&quot;| &quot;</span> &lt;&lt; l &lt;&lt; <span class="st">&#39;|&#39;</span> &lt;&lt; endl;
   }
 }</code></pre></div>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
 </body>
 </html>

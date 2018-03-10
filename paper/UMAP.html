@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>[1802.03426] UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/</a>
+</header>
+<header>
+<h1 class="title">[1802.03426] UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction</h1>
+</header>
+<ul>
+<li>
+original paper: <a href=https://arxiv.org/abs/1802.03426>https://arxiv.org/abs/1802.03426</a>
+</li>
+</ul>
+<div class="is-pulled-right">
+<p><a class='tag is-blue' href=index.html#多様体学習>多様体学習</a> <a class='tag is-blue' href=index.html#次元圧縮>次元圧縮</a></p>
+</div>
+<h2 id="実装">実装</h2>
+<p><a href="https://github.com/lmcinnes/umap">lmcinnes/umap</a></p>
+<h2 id="概要">概要</h2>
+<p>データの次元圧縮として t-SNE や PCA など他諸々あり、特に可視化を目的としたとき、t-SNE が特に優っている. 多様体学習という点で t-SNE に似てるが UMAP を提案する. t-SNE に優っている点として、視覚的に分かり良いプロットが出来上がること、 大域的な構造が保たれること、データサイズが t-SNE のときより多くても計算可能であること (計算量が少ない?) を挙げている.</p>
+<h2 id="アルゴリズム">アルゴリズム</h2>
+<p><span class="math inline">\(\def\M{\mathcal{M}}\def\R{\mathbb{R}}\def\P{\mathcal{P}}\)</span></p>
+<p>まずはじめに、データが乗っている多様体自体を推定する必要がある. 多様体は既知のもの (例えば <span class="math inline">\(\R^n\)</span>) としてしまう場合もある. さもなくばデータから推定する. そしてリーマン計量を推定してリーマン多様体とする.</p>
+<p>データは実際 <span class="math inline">\(\R^n\)</span> の点として与えられるので、多様体は <span class="math inline">\(\R^n\)</span> の中に埋め込まれたもののようであるが、 ただし計量は別である. つまり外側では普通のユークリッド距離を用いる.</p>
+<h3 id="lemma-1">Lemma 1</h3>
+<p>リーマン多様体 <span class="math inline">\((\M,g)\)</span> を考える. ただし <span class="math inline">\(\M \subset \R^n\)</span> とする. 点 <span class="math inline">\(p \in \M\)</span> について、十分小さな近傍 <span class="math inline">\(U\)</span> を取ると、<span class="math inline">\(g\)</span> は <span class="math inline">\(U\)</span> の中では定数でしかも対角行列と見なせると仮定する (!!) <span class="math display">\[g_{i,j} = k \cdot \delta_{i,j}\]</span> <span class="math inline">\(p\)</span> を中心とする開球 <span class="math inline">\(B \subset U\)</span> をさらにとる. <span class="math inline">\(B\)</span> は <span class="math inline">\(\R^n\)</span> で測って半径 <span class="math inline">\(r\)</span> の図形だとする.</p>
+<p>外側の <span class="math inline">\(\R^n\)</span> での座標を <span class="math inline">\(x^1,\ldots,x^n\)</span> とすると、<span class="math inline">\(B\)</span> の <span class="math inline">\(\M\)</span> での体積は、計量 <span class="math inline">\(g\)</span> を用いて <span class="math display">\[V(B) = \int_B \sqrt{\mathrm{det}(g)} dx^1 \cdots dx^n\]</span> と表される.</p>
+<p>今 <span class="math inline">\(B\)</span> の中で <span class="math inline">\(g\)</span> は定数だとしているので、<span class="math inline">\(g\)</span> の項は外に出せて、 <span class="math display">\[V(B) = \sqrt{\mathrm{det}(g)} \int_B dx^1 \cdots dx^n\]</span> となって、結局 <span class="math inline">\(\R^n\)</span> での体積に係数を掛けただけのものになっている.</p>
+<p>一般に <span class="math inline">\(\R^n\)</span> での半径 <span class="math inline">\(r\)</span> の球の超体積は、 <span class="math display">\[\frac{\pi^{n/2} r^n}{\Gamma(n/2 + 1)}\]</span> である.</p>
+<p>というわけで、 <span class="math display">\[V(B) = \sqrt{\mathrm{det}(g)} \frac{\pi^{n/2} r^n}{\Gamma(n/2 + 1)}\]</span></p>
+<p><span class="math inline">\(B\)</span> の半径を慎重に調整することで <span class="math display">\[V(B) = \frac{\pi^{n/2}}{\Gamma(n/2 + 1)}\]</span> に出来たとする. 即ち、 <span class="math display">\[\mathrm{det}(g) = \frac{1}{r^{2n}}\]</span> とできたとする. この時の半径 <span class="math inline">\(r\)</span> を用いると、計量 <span class="math inline">\(g\)</span> は、その対角成分が定数だと仮定してるので、 <span class="math display">\[g_{i,j} = \frac{1}{r^2} \delta_{i,j}\]</span> と表される.</p>
+<p>曲線の長さは、内積の平方根の積分で与えられるものであるので、 <span class="math inline">\(\M\)</span> 上の <span class="math inline">\(g\)</span> の下での距離は、<span class="math inline">\(\R^n\)</span> での距離の <span class="math inline">\(\sqrt{g}\)</span> 倍. 即ち、2点 <span class="math inline">\(p,q \in \M\)</span> の間の距離は、 <span class="math display">\[d_{\M}(p,q) = \frac{1}{r} d_{\R^n}(p,q)\]</span> で求まる.</p>
+<p>以上が Lemma 1. <span class="math inline">\(\M\)</span> から一様にデータがサンプリングされたとする (<span class="math inline">\(X = X_1,\ldots,X_m\)</span>). <span class="math inline">\(X\)</span> から <span class="math inline">\(k\)</span> 近傍法を用いて、点 <span class="math inline">\(X_i\)</span> を中心とする開球を推定する. <span class="math inline">\(k\)</span> 番目までの (<span class="math inline">\(\R^n\)</span> での) 距離を半径 <span class="math inline">\(r\)</span> として、<span class="math inline">\(\M\)</span> での <span class="math inline">\(X_i\)</span> の周りでの計量を、 Lemma 1 で近似する.</p>
+<h3 id="definition-1">Definition 1</h3>
+<p>ここでは、圏 <span class="math inline">\(\Delta\)</span> とは、有限の順序付き集合 <span class="math display">\[[n] = \{1,\ldots,n\}\]</span> の全体 (<span class="math inline">\([0],[1],\ldots,[n],\ldots\)</span>) で、射はその間の (non-strictly に) 順序を保つような写像であるようなものとして定義する.</p>
+<blockquote>
+<p>ここらへんの理論は David I Spivak. &quot;Metric realization of fuzzy simplicial sets.&quot; で作られている.</p>
+</blockquote>
+<h3 id="definition-2">Definition 2</h3>
+<p>simplicial set (簡易版集合?) とは、 <span class="math inline">\(\Delta^{op}\)</span> から Sets への関手のこととして定義する. Sets は対象が集合で射が写像の圏.</p>
+<h3 id="definition-3">Definition 3</h3>
+<p><span class="math inline">\(I\)</span> を区間 <span class="math inline">\((0,1] \subset \R\)</span> とする. 位相として <span class="math inline">\((0,a) : a \in (0,1]\)</span> を入れる. 開集合を対象とし、包含関係を射として位相空間を圏と見做す.</p>
+<p><span class="math inline">\(I\)</span> 上の前層 (presheaf) <span class="math inline">\(\P\)</span> を、<span class="math inline">\(I^{op}\)</span> から Sets への関手と定義する. fuzzy set とは、 <span class="math inline">\(I\)</span> 上の前層であって、単射であるものと定義する.</p>
+<h2 id="読みかけ">読みかけ</h2>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

@@ -1,7 +1,6 @@
 <div class="tabs is-centered">
 <ul>
 < cat ls | sort | sed 's,.*,<li><a href="\0">\0/</a></li>,g'
-<li><a href="https://gist.github.com/cympfh/b40230daa51c95a1dc03673aec6260cd">contact/</a></li>
 </ul>
 </div>
 

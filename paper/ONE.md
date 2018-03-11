@@ -1,6 +1,6 @@
 % One Big Net For Everything: ONE
 % https://arxiv.org/abs/1802.08864
-% 深層学習 強化学習
+% 深層学習 強化学習 読みかけ
 
 ## 概要
 

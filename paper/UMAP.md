@@ -1,6 +1,6 @@
 % [1802.03426] UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction
 % https://arxiv.org/abs/1802.03426
-% 多様体学習 次元圧縮
+% 多様体学習 次元圧縮 読みかけ
 
 ## 実装
 
@@ -96,4 +96,23 @@ $I$ を区間 $(0,1] \subset \R$ とする.
 $I$ 上の前層 (presheaf) $\P$ を、$I^{op}$ から Sets への関手と定義する.
 fuzzy set とは、 $I$ 上の前層であって、単射であるものと定義する.
 
-## 読みかけ
+### Definition 6
+
+extended-psuedo-metric space (拡張擬距離空間?) とは次の $(X,d)$ と定義する.
+
+集合 $X$, $d:X \times X \to \R_{\geq 0}\cup\{\infty\}$ について次が成り立っている:
+
+1. $d(x,y) \geq 0$ and $x=y \Rightarrow d(x,y)=0$
+2. $d(x,y)=d(y,x)$
+3. $d(x,z) \leq d(x,y) + d(y,z)$
+
+つまり $d(x,y)=0 \Rightarrow x=y$ だけが無い距離空間.
+
+対象を拡張擬距離空間とし、射をその間の non-expansive mapping
+($d(f(x), g(y)) \leq d(x,y)$ なる $f$)
+を射とする圏を
+*EPMet*
+と呼ぶことにする.
+EPMet の部分圏であって、対象を有限集合に限ったものを
+*FinEPMet*
+と呼ぶことにする.

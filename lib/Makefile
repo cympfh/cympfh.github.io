@@ -18,3 +18,8 @@ src:
 		--css ../resources/css/d.css \
 		--css https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.cs \
 		-o $@
+
+git: index
+	git add -A .
+	git commit -m "lib/ `date`"
+	git push

@@ -1,9 +1,19 @@
-mod Dinic {
+mod dinic {
     use std::collections::VecDeque;
     use std::cmp::min;
 
     pub type Weight = i32;
     pub type WeightedGraph = Vec<Vec<(usize, Weight)>>; // [u][] = (v, w)
+    pub type Edge = (usize, usize, Weight);
+
+    pub fn new(n: usize, es: &Vec<Edge>) -> WeightedGraph {
+        let mut g: WeightedGraph = vec![vec![]; n];
+        for &(u, v, w) in es.iter() {
+            g[u].push((v, w));
+            g[v].push((u, 0));
+        }
+        g
+    }
 
     fn levelize(g: &WeightedGraph, s: usize, t: usize, cap: &Vec<Vec<Weight>>, flw: &Vec<Vec<Weight>>) -> Vec<i32> {
         let n = g.len();
@@ -56,7 +66,7 @@ mod Dinic {
 
         let inf = Weight::max_value() / 8;
         let mut sum = 0;
-        while true {
+        loop {
             let level = levelize(&g, s, t, &cap, &flw);
             if level[t] == -1 { break }
             let mut used = vec![false; n];
@@ -70,12 +80,16 @@ fn main() {
     let mut sc = Scanner::new();
     let n: usize = sc.cin();
     let m: usize = sc.cin();
-    let mut g: Dinic::WeightedGraph = vec![vec![]; n];
+
+    let mut edges = vec![];
     for _ in 0..m {
         let u = sc.cin::<usize>() - 1;
         let v = sc.cin::<usize>() - 1;
-        let w: Dinic::Weight = sc.cin();
-        g[u].push((v, w));
+        let w: dinic::Weight = sc.cin();
+        edges.push((u, v, w));
     }
-    trace!( Dinic::flow(&g, 0, n - 1) );
+
+    let g = dinic::new(n, &edges);
+    let max_flow = dinic::flow(&g, 0, n - 1);
+    put!(max_flow);
 }

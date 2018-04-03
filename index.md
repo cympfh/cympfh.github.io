@@ -12,3 +12,4 @@
 </div>
 
 <hr/>
+<script src="resources/js/search.js"></script>

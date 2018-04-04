@@ -34,7 +34,7 @@ $z$ は自由変数.
 
 - $FV(x) = \{x\}$
     - $x \in \text{Var}$
-- $FV(\lambda x. M) = FV(M) \setminus \{ M \}$
+- $FV(\lambda x. M) = FV(M) \setminus \{ x \}$
 - $FV(M N) = FV(M) \cup FV(N)$
 
 ## SKIコンビネータ
@@ -89,7 +89,7 @@ $$X = \lambda x. xKSK$$
 
 そのことを確認するには、 $X$ ただ一つで $S$ と $K$ が表現できることを確認すればよく、
 
-1. $XX = XKSK = \lambda x. K$
+0. $XX=XKSK=(KKSK)SK=KKSK=KK=\lambda x. K$
 1. $XXX = (\lambda x. K) X = K$
 1. $X(XX) = X(\lambda x. K) = KSK = S$
 

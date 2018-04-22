@@ -1,6 +1,6 @@
 % ゲームの値
 % 2016-11-23 (Wed.), 2017-08-09 (Wed.)
-% 数学 ゲーム理論
+% ゲーム理論
 % ゲームの値
 
 これは [game-class.html](game-class.html) とか [game-algebra.html](game-algebra.html) の続き

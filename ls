@@ -1,11 +1,13 @@
-aiura
-paper
-taglibro
-gnuplot
-neta
-youtube
-lib
-memo
-gist
-photos
-study
+aiura	aiura/
+books	http://s.cympfh.cc/books
+taglibro	taglibro/
+photos	photos/
+youtube	youtube/
+anime	youtube/anime/
+paper	paper/
+gnuplot	gnuplot/
+neta	neta/
+lib	lib/
+memo	memo/
+gist	gist/
+study	study/

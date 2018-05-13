@@ -1,6 +1,6 @@
 <div class="tabs is-centered">
 <ul>
-< cat ls | sort | sed 's,.*,<li><a href="\0">\0/</a></li>,g'
+< cat ls | awk '{print "<li><a href=\""$2"\">"$1"</a></li>"}'
 </ul>
 </div>
 

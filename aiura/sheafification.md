@@ -3,23 +3,37 @@
 % 層
 
 位相空間 $X$ の上の前層について考える.
-前層があるとき、以下のステップを踏むことで層に誘導できる.
+前層があるとき、以下のステップを踏むことでまず中間層に誘導し、さらにそれを層に誘導できる.
 この手続きを層化という.
 
-## Def. 前層
+1. <a href="#step1">前層・層の定義</a>
+1. <a href="#step2">諸定義</a>
+1. <a href="#step3">中間層の定義</a>
+1. <a href="#step4">前層から中間層への誘導</a>
+1. <a href="#step5">誘導されたそれが中間層であることの確認</a>
+1. <a href="#step6">中間層から層への誘導</a>
+1. <a href="#step7">誘導されたそれが層であることの確認</a>
 
-[前記事](sheaf.html) の一番最初に書いた.
+<a name="step1"></a>
+
+## Def. 前層、層
+
+[前記事](sheaf.html) に書いた.
+
+<a name="step2"></a>
 
 ## 諸定義
 
 層 $A$ の2元 $f,g$ について
-$$[f=g] \equiv \bigcup \{ U : f \rceil U = g \rceil U \}$$
+$$[f=g] := \bigcup \{ U : f \rceil U = g \rceil U \}$$
 と定める.
 $U$ についての和を取っていることに註意.
 特に $[f=f] = X$ (全体) である.
 
 2元 $f,g$ が互いのドメインで制限したときに等しいことを「両立している」と表現する.
 すなわち $$f \rceil Eg = g \rceil Ef$$ のことである.
+
+<a name="step3"></a>
 
 ## Def. 中間層
 
@@ -28,7 +42,9 @@ $$\forall f,g \in A, Ef \cap Eg \subseteq [f=g] \implies f\rceil Eg=g\rceil Ef$$
 が成立するものを中間層と言う.
 (逆は一般の前層で成立する.)
 
-## 前層から中間層
+<a name="step4"></a>
+
+## 前層から中間層への誘導
 
 前層 $A$ に次の同値関係を入れる.
 $$f \equiv g \iff Ef=Eg \subseteq [f=g]$$
@@ -42,7 +58,9 @@ E \varphi(f) = Ef \\
 とする.
 この $\hat{A}$ が中間層になっている.
 
-### 確認
+<a name="step5"></a>
+
+## 誘導されたそれが中間層であることの確認
 前層であることまでは自明だとして、中間層としての条件が満たされてることだけ確認する.
 
 すなわち、任意の2元 $f,g \in A$ に対する $\varphi(f), \varphi(g) \in \hat{A}$ について
@@ -130,3 +148,266 @@ $$
 
 というわけで、 $\hat{A}$ は中間層である.
 (背理法の中で更に背理法を使ってしまった.)
+
+<a name="step6"></a>
+
+## 中間層から層への誘導
+
+中間層 $A$ があるとき、
+$$\mathcal{F} = \{ F \subseteq A | F \text{の2元は両立} \}$$
+を定める.
+この上に関数 $E, \rceil$ を次のように定める.
+
+- $EF = \bigcup_{f \in F} Ef$
+- $F \rceil U = \{ f \rceil U | f \in F\}$
+
+$\mathcal F$ が層であるかなどは見ないが
+$E(F \rceil U) = EF \cap U$
+などは成り立つ.
+
+$\mathcal F$ 上に同値関係を次のように定める.
+
+$F_1, F_2 \in \mathcal F$ について
+$$F_1 \equiv F_2
+\iff
+EF_1 = EF_2
+\land
+F_1 \cup F_2 \in \mathcal F$$
+
+$\mathcal F$ の定義ゆえ、
+$F_1 \cup F_2 \in \mathcal F$
+とは、$F_1$ の任意の元と $F_2$ の任意の元とが両立することであることに註意.
+
+また中間層故、この $\equiv$ は確かに同値関係になる.
+
+以上から
+$\def\FS{\mathcal F\!/\!\!\equiv}\FS$
+が定まる.
+$\varphi$ を商を取る関数 $$\varphi : \mathcal F \to \FS$$ とする.
+
+$\FS$ 上の $E, \rceil$ は $\varphi$ によって自然に導かれる.
+すなわち、
+
+- $E(\varphi F) = \bigcup_{f \in F} Ef$
+- $(\varphi F) \rceil U = \varphi (F \rceil U)$
+
+このとき
+$\langle \FS, E, \rceil \rangle$
+は層となる.
+
+<a name="step7"></a>
+
+## 誘導されたそれが層であることの確認
+
+中間層 $A$ から誘導して得た
+$\langle \FS, E, \rceil \rangle$
+が層であることを確認する.
+
+まず前層であることを簡単に見ていって、加えて、層であることを確認する
+
+### notations
+
+主に $\varphi$ を省略したいので、紛らわしくない限り次の略記法を用いる.
+
+$F \in \mathcal F$ について
+$$E(\varphi F) = EF = \bigcup_f Ef$$
+であるので、
+$E(\varphi F)$ を単に $EF$ と書く.
+
+$\varphi$ の切断を $\psi$ とする.
+ここで切断とは
+$$\forall F \in \FS,~ \varphi (\psi F) = F$$
+となるような $\psi : \FS \to \mathcal F$ のこと.
+つまり、代表元を1つ取ってくるような関数のこと.
+
+### 前層であることの確認
+
+前層の公理を満たすことを実際に確かめる
+
+1. $\forall F \in \mathcal F, (\varphi F) \rceil \emptyset = \{ \ast \}$
+    - ただしここで $f \in A, f \rceil \emptyset = \ast$ とした
+1. $(\varphi F) \rceil EF = \varphi \{ f \rceil EF | f \in F \} = \varphi \{ f | f \in F \} = \varphi F$
+1. $E(F \rceil U) = \bigcup_f E(f \rceil U) = \bigcup_f (Ef \cap U) = \bigcup_f Ef \cap U = EF \cap U$
+1. $(F \rceil U) \rceil V = \{f \rceil U | f \in F\}=\{f \rceil U \cap V | f \in F\}=F \rceil (U \cap V)$
+
+以上から前層であることが確かめられた.
+
+### 層であることの確認
+
+前層であることは確かめたので、次を確かめればよい.
+
+> 任意の $\mathcal G \subseteq \mathcal F$ について、
+> $\mathcal G/\!\equiv$ の任意の2元が両立するならば、
+> 唯一の和 $$\bigcup \mathcal G$$ が存在する.
+
+まず、和として満たすべき性質を満たす集合が作れること (存在性) を示す.
+次に、その存在が唯一なものであること (唯一性) を示す.
+
+#### 1. 存在性
+
+$$\bar{G} = \varphi \left( \bigcup_{G \in \mathcal G} G \right)$$
+これが和としての性質を満たすことを確かめる.
+和としての性質とは次の2つである.
+
+1. $E\bar{G} = \bigcup_{G \in \mathcal G/\!\equiv} EG$
+1. $G \in \mathcal G/\!\equiv \implies \bar{G} \rceil EG = G$
+
+確認する.
+1つ目は $\bar{G}$ の作り方から明らか.
+
+2つ目.
+$\varphi G_0 \in \mathcal G/\!\equiv$ について、
+$$\begin{align*}
+\bar{G} \rceil EG_0
+& = \varphi \left( \bigcup_{G \in \mathcal G} G \right) \rceil EG_0 \\
+& = \varphi \left(
+    \{ g \rceil EG_0 | G \in \mathcal G, g \in G \}
+\right) ~~~\text{ ...$E$ の定義より} \\
+& = \varphi \left(
+    \bigcup_{G \in \mathcal G} (G \rceil EG_0)
+\right) ~~~\text{ ...$G$ ごとにまとめた} \\
+& = \varphi \left(
+    \bigcup_{G \in \mathcal G} (G_0 \rceil EG)
+\right) ~~~\text{ ...$\varphi G$ と $\varphi G_0$ は両立してるので (ただしそんなに自明ではない)} \\
+& = \varphi \left(
+    G_0 \cup \bigcup_{G \ne G_0} (G_0 \rceil EG)
+\right) ~~~\text{ ...後の説明の便宜上 $G=G_0$ の場合とそれ以外とに分けた} \\
+& = \varphi G_1 \text{ とおく}
+\end{align*}$$
+
+示したいのは $\varphi G_0 = \varphi G_1$ であること.
+すなわち $$G_0 \equiv G_1$$ であること.
+$\equiv$ であることを示すには次の2つを見れば良いのだった.
+
+i. $EG_0 = EG_1$
+i. $G_0 \cup G_1 \in \mathcal F$
+
+##### i.
+
+$$\begin{align*}
+EG_1
+& = E\left( G_0 \cup \bigcup_{G \ne G_0} (G_0 \rceil EG) \right) \\
+& = EG_0 \cup \bigcup_{G \ne G_0} E(G_0 \rceil EG) \\
+& = EG_0 \cup \bigcup_{G \ne G_0} (EG_0 \cap EG) \\
+& = EG_0
+    ~~~\text{... $EG_0 \supseteq (EG_0 \cap EG)$ より}
+\end{align*}$$
+
+##### ii.
+
+$$\begin{align*}
+G_0 \cup G_1
+& = G_0 \cup \left( G_0 \cup \bigcup_{G \ne G_0} (G_0 \rceil EG) \right) \\
+& = \left( G_0 \cup \bigcup_{G \ne G_0} (G_0 \rceil EG) \right) \\
+& = G_1
+\end{align*}$$
+
+というわけで $G_0 \cup G_1 = G_1$ なので $G_1 \in \mathcal F$ であることを確かめればよい.
+$$\varphi G_1 = \varphi \left(
+    \bigcup_{G \in \mathcal G} \psi(G_0 \rceil EG)
+\right)$$
+であったことを思い出すと、
+2元 $f, g \in G_1$ は
+
+- $\exists F \in \mathcal{G}, f \in (G_0 \rceil EF)$
+- $\exists G \in \mathcal{G}, g \in (G_0 \rceil EG)$
+
+と書ける.
+$(G_0 \rceil EF)$ などは単なる集合なので更に次のように書き換えられる.
+
+- $\exists F \in \mathcal{G}, \exists f' \in G_0,~ f = f' \rceil EF$
+- $\exists G \in \mathcal{G}, \exists g' \in G_0,~ g = g' \rceil EG$
+
+このときに $f, g$ が両立していることを見たい.
+ここで $f', g'$ は $G_0$ の元であって $G_0$ は $\mathcal F$ の元である.
+$\mathcal F$ の作り方を思い出すと、 $f', g'$ は両立しているのだった.
+これを利用する.
+
+$$\begin{align*}
+f \rceil Eg
+& = (f' \rceil EF) \rceil Eg \\
+& = (f' \rceil EF) \rceil Eg' \rceil EG \\
+& = (g' \rceil Ef') \rceil EF \rceil EG ~~~\text{... 両立性より} \\
+& = g \rceil Ef' \rceil EF ~~~\text{... 戻していく} \\
+& = g \rceil Ef
+\end{align*}$$
+
+というわけで $f, g$ は両立している.
+というわけで $G_0 \cup G_1 = G_1$ の任意の2元はつねに両立している.
+なので $G_0 \cup G_1 \in \mathcal F$ である.
+
+以上 i. ii. より、$\varphi G_0 = \varphi G_1$ である.
+
+以上より $\bar{G}$ は和としての性質を満たしている.
+
+#### 2. 唯一性
+
+他に和としての性質を満たす $$\varphi H \in \FS$$ があるとする.
+このとき
+$$\varphi H = \bar{G}$$
+であることを示すことで、和が唯一であって
+$$\bigcup \mathcal G = \FS$$
+であることが証明できたことになる.
+
+やっていく.
+
+##### i.
+
+どちらも和としての性質を満たすことを仮定しているので
+$$EH = \bigcup EG = E \bar{G}$$
+
+##### ii.
+
+$H \cup \psi \bar{G} = H \cup \bigcup_{G \in \mathcal G} G$
+の任意の2元が両立することを見る.
+
+###### 1.
+$g_1, g_2 \in \bigcup_{G \in \mathcal G} G$ が両立することは、
+$\bar{G}$ が和の性質を満たすことを示すときに、さっき示した.
+
+###### 2.
+$h_1, h_2 \in H$ が両立すること.
+これは $H \in \mathcal F$ であることから自明.
+
+###### 3.
+というわけで本題は、
+
+> $g \in \bigcup_{G \in \mathcal G} G$ と $h \in H$ とが両立すること.
+
+$g$ についてはある $G \in \mathcal G$ があって
+$g \in G \in \mathcal G$
+である.
+
+$H$ は $\mathcal G$ の和なので、そのような $G$ を用いて、
+$$H \rceil EG = G$$
+となる.
+左辺は
+$$\{ h' \rceil EG | h' \in H \}$$
+なので、$h$ について
+$h \rceil EG$
+という値は、$H \rceil EG$ に属する.
+従って $G$ にも属する.
+というわけで、
+$$\exists g' \in G,~ h \rceil EG = g'$$
+
+まずこの式の両辺の $E$ の値を取ることで
+$$Eh \cap EG = Eg'$$
+を得る.
+
+また両辺に $\rceil Eg$ を掛けることで
+$$\begin{align*}
+h \rceil Eg
+& = h \rceil EG \rceil Eg ~~~\text{... $Eg \subset EG$ なので} \\
+& = g' \rceil Eg \\
+& = g \rceil Eg' ~~~\text{... $G$ の2元は両立してる} \\
+& = g \rceil (Eh \cap EG) ~~~\text{... すぐ上で求めた値を代入した} \\
+& = (g \rceil EG) \rceil Eh
+& = g \rceil Eh
+\end{align*}$$
+というわけで $h \rceil Eg = g \rceil Eh$ が得られ、 $g, h$ も無事両立している.
+
+というわけで $H \cap \psi \bar{G}$ の2元はいつも両立している.
+
+というわけで $$\varphi H = \bar{G}$$ が得られた!!
+
+以上.

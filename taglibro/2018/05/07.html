@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Mon May 07 2018</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Mon May 07 2018</h1>
+</header>
+<h2 id="gnu-screen-をデプロイ場所に使う">GNU screen をデプロイ場所に使う</h2>
+<p>趣味サーバの上でいくつものサービスプログラムを動かしたい. 業務だと、プログラムの依存関係の衝突だとか、自動で再起動とかのために、このためにdockerを使うが、趣味サーバでそこまで大袈裟なことをしたくない. 今までどうやっていたかと言えば、GNU screen を適宜ジャンルごとに立てて、その中の window ごとにプロセスを手で動かしていた. これを ansible とかでシミュレーションするようにしておけばいい.</p>
+<h3 id="デプロイに使うための-screen-を作っておく">デプロイに使うための screen を作っておく</h3>
+<p>仮に <code>deploy</code> という名前の screen を起動しておく.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">screen</span> -S deploy</code></pre></div>
+<p>これをずっと残しておいて、この中に1つずつプログラムを生やしていく.</p>
+<h3 id="デプロイする">デプロイする</h3>
+<p><code>deploy</code> の中で window を立てて、コマンドを入力する. window には一意な名前を与えて管理するのが良いと思う. 下の例では仮に <code>test</code> としておく.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># test という名前の window を開いて bash を exec する</span>
+<span class="co"># 最後の bash を省略すればデフォルトの shell が起動するのでそれでいいならそれでいい</span>
+<span class="ex">screen</span> -S deploy -X screen -t test bash
+
+<span class="co"># -p test で test を選んで (pre-select) stuff コマンドで文字列を入力する</span>
+<span class="co"># 最後に改行を入れれば、通常のシェルへの入力のように、コマンドが実行される</span>
+<span class="co"># $&#39;...&#39; は \n が改行になるための構文</span>
+<span class="ex">screen</span> -S deploy -p test -X stuff <span class="st">$&#39;while :; do date; sleep 1; done</span><span class="dt">\n</span><span class="st">&#39;</span></code></pre></div>
+<p>もっといい方法があるなら知りたいです.</p>
+<p><code>man screen</code> すると <code>-p</code> オプションにはもっと特別な文字を与えることで、window を新しく開いてそこでコマンドを実行できるという風に書いてると思うのだが、これは上手く動かなかったので、わざわざ window を開くためのことをする. 注意として、開くだけだと、</p>
+<ol type="1">
+<li>number が適当に振られるだけ
+<ul>
+<li>何番か知るすべがない</li>
+<li>なので <code>-t</code> で title (=window name) を付けておく</li>
+</ul></li>
+<li>次のコマンド実行時には、最近開いた window が選択されている状態ではない
+<ul>
+<li><code>-p</code> で window を指定する</li>
+<li>先ほどの付けた title を指定すればよい</li>
+</ul></li>
+</ol>
+<h3 id="ところで">ところで</h3>
+<p>window title (name) に私は current directory を表示するようにしていた. zsh 側の設定で. zsh を開き終わった時点で勝手に name が変わるので、 <code>-p</code> で指定しても Cound not find と言われて詰まってた. 幸い bash を開けば回避できるので、上の例では bash を開くようにしている.</p>
+<p><code>&lt;ESCAPE_SEQUENCE&gt; &quot;</code> で window list が表示できて、確かに <code>-t</code> で指定した name の window が生えてるかを確かめる必要がある. <code>-p</code> で指定できるのは ここにある番号または name である.</p>
+<figure>
+<img src="https://i.imgur.com/Ld5fmcG.png" />
+</figure>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

@@ -6,6 +6,43 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>[1802.03426] UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction</title>
   <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
   <link rel="stylesheet" href="../resources/css/c.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
@@ -65,7 +102,31 @@ original paper: <a href=https://arxiv.org/abs/1802.03426>https://arxiv.org/abs/1
 </ol>
 <p>つまり <span class="math inline">\(d(x,y)=0 \Rightarrow x=y\)</span> だけが無い距離空間.</p>
 <p>対象を拡張擬距離空間とし、射をその間の non-expansive mapping (<span class="math inline">\(d(f(x), g(y)) \leq d(x,y)\)</span> なる <span class="math inline">\(f\)</span>) を射とする圏を <em>EPMet</em> と呼ぶことにする. EPMet の部分圏であって、対象を有限集合に限ったものを <em>FinEPMet</em> と呼ぶことにする.</p>
-<h2 id="読みかけ">読みかけ</h2>
+<p>...わからん</p>
+<h2 id="使ってみる">使ってみる</h2>
+<p>ほぼほぼ https://www.kaggle.com/mrisdal/dimensionality-reduction-with-umap-on-mnist のコピペだけど。</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">pip</span> install mnist
+<span class="ex">pip</span> install umap-learn  # not <span class="kw">`</span><span class="ex">umap</span><span class="kw">`</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> mnist
+<span class="im">import</span> umap
+
+M <span class="op">=</span> <span class="dv">10000</span>  <span class="co"># 数秒でやるにはこのくらいの数が限度</span>
+X <span class="op">=</span> mnist.train_images()[:M]
+X <span class="op">=</span> X.reshape((X.shape[<span class="dv">0</span>], X.shape[<span class="dv">1</span>] <span class="op">*</span> X.shape[<span class="dv">2</span>]))
+y <span class="op">=</span> mnist.train_labels()[:M]
+
+embedding <span class="op">=</span> umap.UMAP(n_neighbors<span class="op">=</span><span class="dv">5</span>,
+                      min_dist<span class="op">=</span><span class="fl">0.3</span>,
+                      metric<span class="op">=</span><span class="st">&#39;correlation&#39;</span>).fit_transform(X)
+
+<span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt
+
+plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>,<span class="dv">12</span>))
+plt.scatter(embedding[:, <span class="dv">0</span>], embedding[:, <span class="dv">1</span>], c<span class="op">=</span>y)
+plt.axis(<span class="st">&#39;off&#39;</span>)<span class="op">;</span></code></pre></div>
+<figure>
+<img src="https://i.imgur.com/wDbuyYN.png" />
+</figure>
 <!--
 
   HTML として pandoc -B で include する.

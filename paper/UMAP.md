@@ -1,6 +1,6 @@
 % [1802.03426] UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction
 % https://arxiv.org/abs/1802.03426
-% 多様体学習 次元圧縮 読みかけ
+% 多様体学習 次元圧縮
 
 ## 実装
 
@@ -116,3 +116,38 @@ extended-psuedo-metric space (拡張擬距離空間?) とは次の $(X,d)$ と�
 EPMet の部分圏であって、対象を有限集合に限ったものを
 *FinEPMet*
 と呼ぶことにする.
+
+...わからん
+
+## 使ってみる
+
+ほぼほぼ
+https://www.kaggle.com/mrisdal/dimensionality-reduction-with-umap-on-mnist
+のコピペだけど。
+
+```bash
+pip install mnist
+pip install umap-learn  # not `umap`
+```
+
+```python
+import mnist
+import umap
+
+M = 10000  # 数秒でやるにはこのくらいの数が限度
+X = mnist.train_images()[:M]
+X = X.reshape((X.shape[0], X.shape[1] * X.shape[2]))
+y = mnist.train_labels()[:M]
+
+embedding = umap.UMAP(n_neighbors=5,
+                      min_dist=0.3,
+                      metric='correlation').fit_transform(X)
+
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(12,12))
+plt.scatter(embedding[:, 0], embedding[:, 1], c=y)
+plt.axis('off');
+```
+
+![](https://i.imgur.com/wDbuyYN.png)

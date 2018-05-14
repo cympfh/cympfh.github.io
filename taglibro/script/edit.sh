@@ -10,7 +10,7 @@ datetitle() {
     LANG=en date -d "$1" "+%a %b %d %Y"
 }
 
-TOKEN=$(listup | peco)
+TOKEN=$(listup | peco $@)
 
 if [ "$TOKEN" = today ]; then
     TOKEN=$(date +"%Y/%m/%d")

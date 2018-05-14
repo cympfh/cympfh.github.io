@@ -55,10 +55,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h1 class="title">Mon May 14 2018</h1>
 </header>
 <h2 id="日記---zsh-c-o-で-rprompt-の表示非表示をトグルする">日記 - Zsh: C-o で RPROMPT の表示・非表示をトグルする</h2>
-<p>日記です。</p>
-<p>Macだとデスクトップのカスタマイズに制限がありすぎて、デスクトップの右上（ステータスメニューみたいなところ）に好きな文字列を表示させるのすらつらい。 ターミナルならいつも開いているので、その中に表示させることにする。 ターミナルの中で GNU screen を開いてその中で zsh がいつも起動している。 GNU screen の表示は必要最小限にすると決めているので zsh の中に表示することにする。 となるとプロンプトをいじる。 zsh のプロンプトには普通の <code>PROMPT</code> と、右端に寄せて表示してくれる <code>RPROMPT</code> とがある。 わたしは <code>RPROMPT</code> は使ってこなかった。 理由としては、ごちゃごちゃさせたくないのと、ターミナルの上でテキストコピーさせると、 <code>RPROMPT</code> が表示されていると、大量に並んだスペース記号のあとに <code>PROMPT</code> の中身まで一緒にコピーされてしまうから。</p>
-<p>そこでタイトルのようにする。 見たいときだけ <code>C-o</code> で一時的に表示してすぐ消すという使い方ができる。</p>
-<p>書いてて本当に便利なのか疑問が生じてきた。 一週間くらい使ってみて感想を書きます。</p>
+<p>日記です.</p>
+<p>Macだとデスクトップのカスタマイズに制限がありすぎて、デスクトップの右上（ステータスメニューみたいなところ）に好きな文字列を表示させるのすらつらい. ターミナルならいつも開いているので、その中に表示させることにする. ターミナルの中で GNU screen を開いてその中で zsh がいつも起動している. GNU screen の表示は必要最小限にすると決めているので zsh の中に表示することにする. となるとプロンプトをいじる. zsh のプロンプトには普通の <code>PROMPT</code> と、右端に寄せて表示してくれる <code>RPROMPT</code> とがある. わたしは <code>RPROMPT</code> は使ってこなかった. 理由としては、ごちゃごちゃさせたくないのと、ターミナルの上でテキストコピーさせると、 <code>RPROMPT</code> が表示されていると、大量に並んだスペース記号のあとに <code>PROMPT</code> の中身まで一緒にコピーされてしまうから.</p>
+<p>そこでタイトルのようにする. 見たいときだけ <code>C-o</code> で一時的に表示してすぐ消すという使い方ができる.</p>
+<p>書いてて本当に便利なのか疑問が生じてきた. 一週間くらい使ってみて感想を書きます.</p>
 <p>以下コード</p>
 <div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="co"># .zshrc</span>
 
@@ -73,6 +73,36 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="kw">}</span>
 <span class="ex">zle</span> -N rprompt-toggle
 <span class="ex">bindkey</span> <span class="st">&quot;^O&quot;</span> rprompt-toggle</code></pre></div>
+<h2 id="日記---gnu-screen-zsh-で-hardstatusline-の中に文字列の表示非表示をトグルする">日記 - GNU Screen + Zsh で hardstatusline の中に文字列の表示・非表示をトグルする</h2>
+<p>上に書いたのはやっぱ不便そう.消すのを忘れたままコマンドを実行したりすると、表示が残るのが嫌だ. あと、zsh を起動したてだと <code>C-o</code> 押しても RPROMPT が表示されない. <code>reset-prompt</code> が効いてないように見える.</p>
+<p>というわけで、表示する箇所はただ一箇所なのがいい. 幸運にも私は基本的にいつも GNU screen を使っていて、一番したの行のステータスライン、つまり hardstatusline をいつも表示させている. いつもはここには、開いているウィンドウの番号の名前の一覧を並べてるだけだが、この右端に、任意の文字列を表示させるための小窓を設けることにする.</p>
+<pre class="screen"><code># .screenrc
+
+# before
+hardstatus alwayslastline &#39;%-w%{=b dR}%n %t%{-}%+w`
+
+# after
+hardstatus alwayslastline &#39;%-w%{=b dR}%n %t%{-}%+w%=%1`&#39;</code></pre>
+<p><code>%=</code> はめいっぱい広げるためのスペーサー. `%1`` が今回追加した部分. いわば小窓であるが、<a href="https://www.gnu.org/software/screen/manual/html_node/Backtick.html">backtick</a> という screen の機能.</p>
+<p>backtick の 1番を登録する</p>
+<pre class="screen"><code># .screenrc
+backtick 1 0 2 bash -c &quot;[ -f /tmp/screen.memo.txt ] &amp;&amp; tail -1 /tmp/screen.memo.txt&quot;</code></pre>
+<p>このコマンドは次のように読む. 「backtick の 1番を登録する. 起動してから 0 秒後に 2 秒毎に次のコマンドを実行する. <code>bach -c &quot;...&quot;</code>.」</p>
+<p>というわけで、 <code>/tmp/screen.memo.txt</code> というファイルが存在すれば、その一番最後の行を出力する.</p>
+<p>ここからは zsh の設定.</p>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="co"># .zshrc</span>
+<span class="fu">toggle-screen-memo()</span> <span class="kw">{</span>
+    <span class="va">FILE=</span>/tmp/screen.memo.txt
+    <span class="kw">if</span><span class="bu"> [</span> <span class="ot">-f</span> <span class="va">$FILE</span><span class="bu"> ]</span>; <span class="kw">then</span>
+        <span class="fu">rm</span> <span class="va">$FILE</span>
+    <span class="kw">else</span>
+        <span class="va">TWITTER=$(</span> <span class="fu">cat</span> ~/.twurlrc <span class="kw">|</span> <span class="fu">grep</span> -A 1 default_profile <span class="kw">|</span> <span class="fu">tail</span> -1 <span class="kw">|</span> <span class="fu">sed</span> <span class="st">&#39;s/ *- *//g&#39;</span> <span class="va">)</span>
+        <span class="bu">echo</span> <span class="st">&quot;@</span><span class="va">$TWITTER</span><span class="st">&quot;</span> <span class="op">&gt;</span> /tmp/screen.memo.txt
+    <span class="kw">fi</span>
+<span class="kw">}</span>
+<span class="ex">zle</span> -N toggle-screen-memo
+<span class="ex">bindkey</span> <span class="st">&quot;^O&quot;</span> toggle-screen-memo</code></pre></div>
+<p><code>C-o</code> を押すと、表示させたいものを <code>/tmp/screen.memo.txt</code> に書き込むか、または消す (トグル式). ただしこれは zsh のプロンプト待機状態でしか発動しない. この処理も GNU screen 側でやって、任意のタイミングで発動させたいが、やり方がわからない.</p>
 <!--
 
   HTML として pandoc -B で include する.

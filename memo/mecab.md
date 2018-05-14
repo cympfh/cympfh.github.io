@@ -54,6 +54,20 @@ EOS
 
 「こんにちわ」は感動詞である。
 
+### 追加の辞書: [ipadic-neologd](https://github.com/neologd/mecab-ipadic-neologd)
+
+ipadic辞書utf-8版が入っているとき、この辞書を追加で入れても良い.
+この辞書は新語が週2ペースで追加されているらしい.
+その代わり辞書のサイズが膨大.
+[README.ja](https://github.com/neologd/mecab-ipadic-neologd/blob/master/README.ja.md)
+の通りにやればインストールできる.
+
+また、この辞書を使って mecab を動かすには
+`mecab -d /usr/local/lib/mecab/dic/mecab-ipadic-neologd`
+という風に `-d` オプションが必要.
+
+意外な語が固有名詞として登録されていたりするので注意が必要.
+
 ## オプション
 
 `man` 見ても何かあんまり説明が足りてない  
@@ -107,3 +121,20 @@ EOS
 そのたびに上のような置換を行わなければならない
 
 小さい辞書をテキストで書いて追加に使うにはどうしたら良いんだろう？
+
+## Python3 バインディング
+
+```bash
+pip install mecab-python3
+mecab-config --libs-only-L | sudo tee /etc/ld.so.conf.d/mecab.conf && sudo ldconfig  # https://qiita.com/sogawa@github/items/fd9bdaf8df27335f9a65
+```
+
+### 試用
+
+わかち書きをさせてみる.
+
+```python
+import MeCab
+mecab = MeCab.Tagger('-Owakati -d /usr/local/lib/mecab/dic/mecab-ipadic-neologd')
+mecab.parse('今日はいい天気ですね').split()  # => ['今日', 'は', 'いい', '天気', 'です', 'ね']
+```

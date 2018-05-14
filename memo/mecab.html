@@ -84,6 +84,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 こんにちわ      感動詞,<span class="ex">*</span>,*,*,*,*,こんにちわ,コンニチワ,コンニチワ
 <span class="ex">EOS</span></code></pre></div>
 <p>「こんにちわ」は感動詞である。</p>
+<h3 id="追加の辞書-ipadic-neologd">追加の辞書: <a href="https://github.com/neologd/mecab-ipadic-neologd">ipadic-neologd</a></h3>
+<p>ipadic辞書utf-8版が入っているとき、この辞書を追加で入れても良い. この辞書は新語が週2ペースで追加されているらしい. その代わり辞書のサイズが膨大. <a href="https://github.com/neologd/mecab-ipadic-neologd/blob/master/README.ja.md">README.ja</a> の通りにやればインストールできる.</p>
+<p>また、この辞書を使って mecab を動かすには <code>mecab -d /usr/local/lib/mecab/dic/mecab-ipadic-neologd</code> という風に <code>-d</code> オプションが必要.</p>
+<p>意外な語が固有名詞として登録されていたりするので注意が必要.</p>
 <h2 id="オプション">オプション</h2>
 <p><code>man</code> 見ても何かあんまり説明が足りてない<br />
 次のサイトは大変詳細に書いてある</p>
@@ -123,6 +127,14 @@ EOS</code></pre>
 <p>ただし、「せもぽぬめ」が複数出現する場合<br />
 そのたびに上のような置換を行わなければならない</p>
 <p>小さい辞書をテキストで書いて追加に使うにはどうしたら良いんだろう？</p>
+<h2 id="python3-バインディング">Python3 バインディング</h2>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">pip</span> install mecab-python3
+<span class="ex">mecab-config</span> --libs-only-L <span class="kw">|</span> <span class="fu">sudo</span> tee /etc/ld.so.conf.d/mecab.conf <span class="kw">&amp;&amp;</span> <span class="fu">sudo</span> ldconfig  # https://qiita.com/sogawa@github/items/fd9bdaf8df27335f9a65</code></pre></div>
+<h3 id="試用-1">試用</h3>
+<p>わかち書きをさせてみる.</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> MeCab
+mecab <span class="op">=</span> MeCab.Tagger(<span class="st">&#39;-Owakati -d /usr/local/lib/mecab/dic/mecab-ipadic-neologd&#39;</span>)
+mecab.parse(<span class="st">&#39;今日はいい天気ですね&#39;</span>).split()  <span class="co"># =&gt; [&#39;今日&#39;, &#39;は&#39;, &#39;いい&#39;, &#39;天気&#39;, &#39;です&#39;, &#39;ね&#39;]</span></code></pre></div>
 <!--
 
   HTML として pandoc -B で include する.

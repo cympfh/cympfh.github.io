@@ -29,6 +29,7 @@
 ## 最長増加部分列 (LSI)
 - [Young Tableaux アルゴリズム](seq.lsi.html)
 
+## [累積和](seq.cumsum.html)
 ## [Binary Indexed Tree (Fenwick Tree)](seq.bit.html)
 
 ## 区間木

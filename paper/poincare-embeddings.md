@@ -21,13 +21,13 @@ $r$ は $u,v$ に依存しない定数ベクトルで、埋め込み表現と一
 $\|x\|$ とあるとき、ユークリッド空間の普通のノルムのことを表す.
 
 $d$ 次元ユークリッド空間 $\mathbb{R}^d$ の中の開球
-$$\mathcal{B}^d = \{ x \in \mathbb{R}^d : \|x\|x < 1 \}$$
+$$\mathcal{B}^d = \{ x \in \mathbb{R}^d : \|x\| < 1 \}$$
 に、次のリーマン計量を入れる:
 $$g_x = \left( \frac{2}{1 - \|x\|^2} \right)^2 g^E$$
 ここで $g^E$ はユークリッド空間のリーマン計量で、普通の基底を入れてれば単位行列.
-この $\mathcal{B}^d$ をポアンカレ空間と呼ぶ.
+この $\mathcal{B}^d$ をポアンカレ空間 (円板) と呼ぶ.
 
-この空間の距離は次のように計算される.
+この空間における2点 $u,v$ 間の距離は次のように計算される.
 $$d(u,v) = \mathrm{arcosh} \left(
 1 + 2 \frac{\|u-v\|^2}{(1-\|u\|)^2 (1-\|v\|)^2}
 \right)$$
@@ -73,4 +73,36 @@ $$\theta \leftarrow \mathrm{proj} \left( \theta - \alpha \frac{(1 - \|\theta\|^2
 200次元のユークリッド空間より5次元の Translational のほうが良く、
 200次元の Translational より 5次元のポアンカレ空間のが良い.
 
+## 実装
+
+[facebookresearch/poincare-embeddings](https://github.com/facebookresearch/poincare-embeddings)
+
+見てみると、直接距離を学習するようなモデルを実装してる.
+
+```dot
+digraph {
+    rankdir=LR;
+    bgcolor=transparent;
+    x1 -> z1 [label="embedding"];
+    x2 -> z2 [label="embedding"];
+    z1 -> u1 [label="injection"]
+    z2 -> u2 [label="injection"]
+    {u1 u2} -> d;
+    x1 [ shape=rect ];
+    x2 [ shape=rect ];
+    z1 [ shape=rect ];
+    z2 [ shape=rect ];
+    u1 [ shape=circle ];
+    u2 [ shape=circle ];
+    d [shape=plaintext ];
+}
+```
+
+この $x_1$ や $z_1$ までがユークリッド空間の点で、これを埋め込む操作は単なる埋込なので (円板の中にありさえすれば) 座標は変えないが、
+空間は歪んでるので偏微分したときの値がここで変わる.
+最後の $d$ は2点 $u_1, u_2$ 間の距離だが、ポアンカレ空間上での距離を計算する.
+
+## 感想
+
+途中でポアンカレ空間に埋め込んで教師あり学習をするようなモデルを組みたい…。
 

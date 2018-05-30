@@ -1,6 +1,6 @@
 % One pixel attack for fooling deep neural networks
 % https://arxiv.org/abs/1710.08864
-% 深層学習 物体認識
+% 深層学習 画像認識
 
 ## 概要
 

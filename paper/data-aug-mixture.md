@@ -1,6 +1,6 @@
 % Data Augmentation by Pairing Samples for Images Classification
 % https://arxiv.org/abs/1801.02929
-% 深層学習 物体認識 データ水増し
+% 深層学習 画像認識 データ水増し
 
 ## 概要
 

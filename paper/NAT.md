@@ -1,6 +1,6 @@
 % Unsupervised Learning by Predicting Noise
 % https://arxiv.org/abs/1704.05310
-% 深層学習 物体認識 FAIR
+% 深層学習 画像認識 FAIR
 
 ## 概要
 

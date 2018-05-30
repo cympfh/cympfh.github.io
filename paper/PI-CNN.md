@@ -1,6 +1,6 @@
 % Facial Attractiveness Prediction using Psychologically Inspired Convolutional Neural Network (PI-CNN)
 % https://pdfs.semanticscholar.org/886f/891eb99170220fb98a523c8e6f5b31ddbb38.pdf
-% 深層学習 物体認識
+% 深層学習 画像認識
 
 ## 備考
 

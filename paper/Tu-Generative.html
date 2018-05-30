@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Learning Generative Models via Discriminative Approaches (Tu's generative model)</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/</a>
+</header>
+<header>
+<h1 class="title">Learning Generative Models via Discriminative Approaches (Tu's generative model)</h1>
+</header>
+<ul>
+<li>
+original paper: <a href=http://pages.ucsd.edu/~ztu/publication/cvpr07_gdl.pdf>http://pages.ucsd.edu/~ztu/publication/cvpr07_gdl.pdf</a>
+</li>
+</ul>
+<div class="is-pulled-right">
+<p><a class='tag is-blue' href=index.html#生成モデル>生成モデル</a></p>
+</div>
+<h2 id="概要">概要</h2>
+<p>(主に画像の) 生成モデルを作りたい. 分類モデルを同時に学ぶことで強い生成モデルを作る.</p>
+<h2 id="手法">手法</h2>
+<p>教師あり学習 <span class="math inline">\((X=\mathbb R^n) \to (Y=\{-1,+1\})\)</span> を考える. 目標は生成モデル <span class="math inline">\(p(x|y=+1)\)</span> の獲得である. しかし同時に分類モデル <span class="math inline">\(p(y|x)\)</span> の学習も行うことは次のような理由で意味がある.</p>
+<p>普通のベイズの定理に従って: <span class="math display">\[p(y=+1|x)=\frac{p(x|y=+1)p(y=+1)}{p(x)} \\
+p(y=-1|x)=\frac{p(x|y=-1)p(y=-1)}{p(x)}\]</span> この2つから <span class="math display">\[p(x|y=+1)=
+\frac{
+p(y=+1|x) p(y=-1)
+}{
+p(y=-1|x) p(y=+1)
+}
+p(x|y=-1)\]</span> を得る.</p>
+<p>事前知識として <span class="math inline">\(p(y=+1), p(y=-1)\)</span> の比を見積もっておく. 簡単に <span class="math inline">\(1:1\)</span> だと都合よく仮定すると、 <span class="math display">\[p(x|y=+1) = \frac{p(y=+1|x)}{p(y=-1|x)} p(x|y=-1)\]</span> になる.</p>
+<p>この <span class="math inline">\(p(x|y=-1)\)</span> を <span class="math inline">\(p^r(x)\)</span> と書いて <strong>参照分布 (reference distribution)</strong> と呼ぶ. また参照分布からサンプリングして得たデータを <strong>疑似負例 (pseudo-negatives)</strong> と呼ぶ. <span class="math display">\[p(x|y=+1) = \frac{p(y=+1|x)}{p(y=-1|x)} p^r(x)\]</span></p>
+<p>さて広大な空間の <span class="math inline">\(X\)</span> からサンプリングして学習するわけにはいかない. 限られたデータだけを選択していく必要がある.</p>
+<p>時刻 <span class="math inline">\(t (=1,2,\ldots)\)</span> の時点で学習された参照分布を <span class="math inline">\(p^r_t\)</span> と書くことにする. 同様に、分類器 <span class="math inline">\(p(y|x)\)</span> の時刻 <span class="math inline">\(t\)</span> 時点でのモデルを <span class="math inline">\(q_t\)</span> とする.</p>
+<p>初期の参照分布 <span class="math inline">\(p^r_1\)</span> は適当に設定するが、論文では、正例集合 <span class="math inline">\(D\)</span> に対して、 <span class="math display">\[p^r_1(x) = \beta \frac{1}{|D|} \sum_{x&#39; \in D} \delta(x-x&#39;) + (1-\beta) U(x)\]</span> などとしている. ここで <span class="math inline">\(\delta\)</span> は indicator 関数 (<span class="math inline">\(\delta(0)=1, \delta(x)=0 \iff x \ne 0\)</span>)、<span class="math inline">\(U(x)\)</span> は一様分布. 特に <span class="math inline">\(D\)</span> のようなものが無いときは <span class="math inline">\(\beta=0\)</span> としたとある.</p>
+<p>さてここから <span class="math inline">\(p^r\)</span> を正例の分布に近づけるように学習にする. それには上の式を更新式として用いればよい. <span class="math display">\[p^r_{t+1}(x) = \frac{1}{Z} \frac{q_1(y=+1|x)}{q_1(y=-1|x)} p^r_t(x)\]</span> ここで <span class="math inline">\(Z\)</span> は、左辺が確率分布になるようになるための正規化項 (<span class="math inline">\(\int p^r_{t+1}(x) dx=1\)</span>).</p>
+<p>厳密に <span class="math inline">\(Z\)</span> を計算するには右辺を積分することになるが、 実装上は、モンテカルロ法で見積もったと論文にはある. たまたま見つけた<a href="https://gist.github.com/betatim/5fae2137d83c9964bbedd8d8fd646111">野良実装</a> ではそもそも分布を、点集合として持っている.</p>
+<p>また <span class="math inline">\(q_{t+1}\)</span> は <span class="math inline">\(p^r_t(x)\)</span> からの疑似負例を参照して <span class="math inline">\(q_t\)</span> から更に強くしてく.</p>
+<div class="thm">
+<h3 id="定理">定理</h3>
+<p><span class="math display">\[KL\left( p(x|y=+1) \| p^r_{t+1}(x) \right)
+\leq
+KL\left( p(x|y=+1) \| p^r_t(x) \right)\]</span></p>
+<p>証明は論文にあるので省略.</p>
+</div>
+<p>これがあるので、更新を繰り返して行けば <span class="math inline">\(p^r_t\)</span> は真の生成モデル <span class="math inline">\(p(x|y=+1)\)</span> に近づく.</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

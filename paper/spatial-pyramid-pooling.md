@@ -1,6 +1,6 @@
 % [1406.4729] Spatial Pyramid Pooling in Deep Convolutional Networks for Visual Recognition
 % https://arxiv.org/abs/1406.4729
-% 深層学習 物体認識
+% 深層学習 画像認識
 
 ## 概要
 

@@ -1,6 +1,6 @@
 % [1704.06904] Residual Attention Network for Image Classification
 % https://arxiv.org/abs/1704.06904
-% 深層学習 物体認識
+% 深層学習 画像認識
 
 ## 概要
 

@@ -1,6 +1,6 @@
 % Representation Learning by Learning to Count
 % http://openaccess.thecvf.com/content_ICCV_2017/papers/Noroozi_Representation_Learning_by_ICCV_2017_paper.pdf
-% 物体認識 教師ナシ学習
+% 画像認識 教師ナシ学習
 
 - [YouTube](https://www.youtube.com/watch?v=ZmaXDb9akEI)
 - [論文 (pdf)](http://openaccess.thecvf.com/content_ICCV_2017/papers/Noroozi_Representation_Learning_by_ICCV_2017_paper.pdf)

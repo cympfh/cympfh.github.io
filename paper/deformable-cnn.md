@@ -1,6 +1,6 @@
 % Deformable Convolutional Networks
 % https://arxiv.org/abs/1703.06211
-% 深層学習 物体認識
+% 深層学習 画像認識
 
 ## links
 

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>[1806.05236] Manifold Mixup: Encouraging Meaningful On-Manifold Interpolation as a Regularizer</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/</a>
+</header>
+<header>
+<h1 class="title">[1806.05236] Manifold Mixup: Encouraging Meaningful On-Manifold Interpolation as a Regularizer</h1>
+</header>
+<ul>
+<li>
+original paper: <a href=https://arxiv.org/abs/1806.05236>https://arxiv.org/abs/1806.05236</a>
+</li>
+</ul>
+<div class="is-pulled-right">
+<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#データ水増し>データ水増し</a></p>
+</div>
+<h2 id="概要">概要</h2>
+<p>より少ないデータ数、ラベル数で CIFAR-10 をやる. 2点の内点を取って <span class="math inline">\(((x_i, x_j) \mapsto \lambda x_i + (1-\lambda) x_j)\)</span> データ水増しするというのがあるが、これをNN内部の値に対しても行う.</p>
+<h2 id="手法">手法</h2>
+<p>NNの内部の層から適切な複数の層を予め選んでおき、バッチ学習のたびにランダムに層を選ぶ. (選ぶ候補には入力層自体も入れる.) NNの全体の計算を <span class="math inline">\(y=f(x)\)</span> と置くと、この選んだ層の前後で計算 <span class="math inline">\(f\)</span> は <span class="math inline">\(y=g_k(h_k(x))\)</span> と分解できる. (入力層が選ばれたならば <span class="math inline">\(h_k=1, g_k=f\)</span>.) 2つの入力データ <span class="math inline">\(x_i, x_j\)</span> に対して <span class="math inline">\(h_k\)</span> までは通常通り演算して <span class="math inline">\(h_k(x_i), h_k(x_j)\)</span> を得るが、それ移行は mixup (つまり内点を取る) する: <span class="math display">\[\hat{y} = g_k( \lambda h_k(x_i) + (1-\lambda) h_k(x_j))\]</span> ここで <span class="math inline">\(\lambda\)</span> は <span class="math inline">\(0 \leq \lambda \leq 1\)</span> なパラメータであるが、適当なベータ分布から、特に彼らは <span class="math inline">\(Beta(\alpha,\alpha)\)</span> という形の分布からランダムに選んできたという. 下図は <span class="math inline">\(\alpha=2\)</span> のときのベータ分布. <span class="math inline">\(\alpha=1\)</span> のときは完全に一様分布で、<span class="math inline">\(\alpha\)</span> が大きくなるとこれが細長くなってく.</p>
+<figure>
+<img src="https://i.imgur.com/706hvgs.png" />
+</figure>
+<p>この予測値 <span class="math inline">\(\hat{y}\)</span> に対して教師を <span class="math inline">\(\tilde{y} = \lambda y_i + (1-\lambda) y_j\)</span> だとして学習させる.</p>
+<h2 id="実験">実験</h2>
+<h3 id="教師あり学習の正則化として">教師あり学習の正則化として</h3>
+<p>CIFAR-10 で教師あり学習の性能が mixup しない場合に比べて向上した. モデルは PreActResNet{18,152}.</p>
+<h3 id="半教師あり学習への適用">半教師あり学習への適用</h3>
+<p>Appendix-Bを見よ.</p>
+<p>ラベル付きのデータとラベルなしのデータを1つずつ持ってきて学習を行う. ラベルなしのデータにはその時点の学習済みモデルで予測したラベルを擬似ラベルとして用いる. ラベル付きによるロスを <span class="math inline">\(L_l\)</span>, なしによるロスを <span class="math inline">\(L_u\)</span> とすると、この和として <span class="math inline">\(L_l + \pi L_u\)</span> をロスにしてからパラメータの更新を行う. ここで <span class="math inline">\(\pi\)</span> は consistency coefficient と呼ばれるもので、 0 からスタートして徐々に上がる値. [Oliver et al., 2018] による方法らしいのでそっちを読んだほうが良さそう.</p>
+<p>CIFAR-10 では VAT に勝ってる. SVHN では VAT-EM がさいつよ. 大差はないが.</p>
+<h3 id="adversarial-examples">Adversarial Examples</h3>
+<p>略</p>
+<h3 id="gan">GAN</h3>
+<p>普通の GAN の判別機は、入力が real か fake かの2値分類だが、この入力を混ぜて、その混合率を当てるように改造する. つまり <span class="math display">\[\max_G \min_D \ell( D(\lambda x + (1-\lambda) G(z)), \lambda )\]</span> ただし <span class="math inline">\(\lambda\)</span> はやはり <span class="math inline">\(\mathrm{Beta}(\alpha, \alpha)\)</span> からランダムサンプリングしてきた値.</p>
+<p>しかしこのままでは上手く行かなかったそう (non-crisp looking). 以下の変更を加えた.</p>
+<ol type="1">
+<li>純粋に real なものだけを <span class="math inline">\(1\)</span> にして、少しでも mix したものはすべて <span class="math inline">\(0\)</span> (fake) とした</li>
+<li>generator に discriminator を騙させるのはやめた</li>
+</ol>
+<p>そして最初の mixup 同様に、 D からランダムに層 <span class="math inline">\(k\)</span> を選んで次のように分解する: <span class="math display">\[D = d_k \circ h_k\]</span> 混ぜるのは入力とは限らず中間層でも混ぜる. <span class="math display">\[d_k ( \lambda h_k(x) + (1-\lambda) h_k(G(z)))\]</span> 目的関数には純 real と純 fake のロスも足して <span class="math display">\[\min_D \ell(D(x), 1) + \ell(D(G(z)), 0) + \ell(d_k( \lambda h_k(x) + (1-\lambda) h_k(G(z))), 0)\]</span></p>
+<blockquote>
+<p>論文だと最初の2項の <span class="math inline">\(D\)</span> (っていうか <span class="math inline">\(d\)</span>) が <span class="math inline">\(d_k\)</span> になってるけど誤植だと思う</p>
+</blockquote>
+<blockquote>
+<p>感想 : <span class="math inline">\(G\)</span> はもはや何の学習もしないのでノイズ発生器にしかなってない？</p>
+</blockquote>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

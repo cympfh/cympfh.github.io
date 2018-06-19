@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Wed Jun 20 2018</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Wed Jun 20 2018</h1>
+</header>
+<h2 id="日記---ここ数ヶ月">日記 - ここ数ヶ月</h2>
+<p>自分が追ってる分野は機械学習・自然言語処理なのだが、論文を読んでいると、大げさな命名に辟易する. ましてや、実質的にただ過去手法を引用してるだけなのに、勝手に改名してみたり.</p>
+<h3 id="introspective-neural-network">Introspective Neural Network</h3>
+<p>真面目な解説は <a href="http://cympfh.cc/paper/ST-INN.html">paper/ST-INN</a> に書いた. ここでは数式を省略して気持ちベースで説明する.</p>
+<p>この提案手法は Introspective Learning をベースとする. 勝手に対訳をつけるなら「内省学習」とでも言おうか. &quot;ナニナニ learning&quot; という命名もよくある. 大抵、その &quot;ナニナニ&quot; には、日本人には馴染みのない、直観に訴えるような、術語らしくない語が入る.</p>
+<p>そしてその「内省学習」を行うための Neural Network だから、 Introspective Neural Network ということらしい. 提案手法の名前はまるで広く使われているのだから当然であるかのように、頭文字を取って省略するのが普通だ. この場合は INN となる.</p>
+<p>さてこの INN が何かと言えば、Tu の生成モデルである. ちなみに Tu の論文では Introspective なんていう語は登場しない.</p>
+<p>Tu は、生成モデルと分類モデルが密接に関係することを発見した. 分かりやすいから、画像の生成モデル/分類モデルの例で言う. それも2値分類で言うことにする.</p>
+<p>C という物体が描かれている画像であるかどうか (C とは例えば「猫」) を判定するための機械が「分類モデル」であり、 C という物体が描かれている画像を生成する機械 (ランダムに色んなバリエーションを生み出すのが望ましい) が「生成モデル」である.</p>
+<p>どちらにしても問題がある. <strong>「画像」</strong> とは何か. ピクセルが並んだ行列だと説明できる. 画像サイズ、つまり行列の大きさも無限通りあるが、これは便宜上固定するのが通例である. 適当に切り取ったり伸縮したりする. しかしだとしても、そのバリエーションは膨大である. なんせ、1ピクセルだけでもRGBの色がそれぞれ256通りあるから. つまり言いたいのは、 <strong>「画像空間」</strong> は膨大に広いのだということ.</p>
+<p>素朴な機械学習では、事例 (sample) を用いる. つまり、どこかから拾ってきた C の画像、Cでない画像を沢山集めてくる. しかし、膨大過ぎる「画像空間」はまるで網羅できないだろう.</p>
+<p>ところで「画像」が何であるかを決めていなかった. 何でもありにしたからこそ、「画像空間」が膨大になってしまった. 例えば白と黒がランダムに並んだ画像 (ノイズ) は画像だろうか. 画像といえばもちろん画像だろうが...</p>
+<p>アプリケーションを考えてしまうのも、1つの手だ. 実際には、分類モデルに、そんな砂嵐のようなノイズ画像を入力するだろうか. また、生成したい画像は C の画像である. 砂嵐画像を考慮する必要があるだろうか.</p>
+<p><strong>イイエ</strong> が答えだとして話を進める. 入力される画像は少なくとも文脈から切り離して人間が見て解釈ができる画像だとする. 何かの物体が描かれているとか、風景の写真だとかだ. 抽象画だって、ノイズに比べれば、「線がつながっている」くらいの合理性はある (それでもあまり考慮したくないが).</p>
+<p>というわけで、出来るだけ C であるような画像を集めることに意味がある. 犬の写真だっていい. ランダムに生成したノイズ画像に比べればずっと猫らしい.</p>
+<p>Tu の生成モデルはこうだ. 初めは何でもありの画像空間を構成する. 各ピクセルは同様の確からしさで値を持つ. ほとんどの場合、ただのノイズで、奇跡的な確率で C を描く. そこからランダムに画像を繰り返し抽出し、C である確率を計算する. その確率が高い方高い方に、画像空間を狭めていく. いわばその空間そのものが C の生成モデルとなる. これが生成モデルの作り方.</p>
+<p>今の説明の中で、C である確率を計算する必要があった. これが分類モデルの仕事である. 分類モデルはまず、普通に集めた事例から作る. その事例は、まさに C である画像と C ではない画像を集めたものである. しかしまだ、画像空間は膨大で、それに対して事例はあまりにも少なく、従ってそこから作った分類モデルも貧弱に違いない. そこで先程の生成モデルを活用する. 生成モデルは、ノイズよりは少しはマシな C らしい画像を作り上げる. これを C ではない画像だとして事例に加える. 生成モデルはまだ初めは貧弱だから、C ではないことが多いだろうから.</p>
+<p>つまりこうだ. 生成モデルを作るためには弱い分類モデルが必要で、分類モデルを作るためには弱い生成モデルが必要である. 従って、その2つを交互に鍛えていけばいい. この作り方で果たして真の分類モデル/生成モデルに収束するのかという問題については、Tu の論文を参照してほしいが、収束するというのが答えだ.</p>
+<p>ここまでが INN の話で、更にコレに ST の部分を付け加えて ST-INN というのが提案手法なのだが、飽きたのでここで話は終わり.</p>
+<h2 id="日記---ここ2年">日記 - ここ2年</h2>
+<p>法律というのは基本的に、我々の預かり知らぬところで発案されて議論されて、そうして決定したりするものだ. 新しい法が決定されれば、我々はそれに従うことが要請される. 議論に参加したものにとっては普及に努めるのが当然だし自分たちもそれに従うのだろうが、こちらとしては、どこまでも、知ったことではない. 議論に参加したかった、という、嫉妬なのかもしれない.</p>
+<p>ところでコンサル出身というのは厄介だぞ.</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

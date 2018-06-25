@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Mon Jun 25 2018</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Mon Jun 25 2018</h1>
+</header>
+<h2 id="zsh-の起動の大半が-pyenv-init-だったので遅延させる">zsh の起動の大半が pyenv init だったので遅延させる</h2>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="bu">time</span> zsh -i -c <span class="st">&quot;exit&quot;</span>
+<span class="fu">zsh</span> -i -c <span class="st">&quot;exit&quot;</span>  0.67s user 0.19s system 99% cpu 0.863 total</code></pre></div>
+<p>こんな環境だった. この内のおよそ 0.7 程度が <code>pyenv init</code> だった. env 系をいくつも使ってる人は anyenv にまとめるのが有効らしいが、私は pyenv くらいしか使ってない.</p>
+<p>問題は、シェルを起動したからといっていつも python を呼ぶわけではないということ. そのために人生の貴重な 0.7 秒が費やされているのがいけない. というわけで python を使うシェルの中だけで <code>pyenv init</code> することにする. python を使うかどうかを見分ける方法は結局、 <code>python</code> を叩くかどうかだ. あるいは <code>pip</code> を.</p>
+<p>というわけで次のような解決法を提案する:</p>
+<div class="thm">
+そのシェルの中で初めて <code>python</code> (または <code>pip</code> ) を叩くときに <code>pyenv init</code> する操作を差し込む
+</div>
+<p>まずはいつも <code>pyenv init</code> するようなコードを <code>pyenv-init</code> という関数にしておく. ついでに <code>pyenv</code> 自体へのパスを通すとかも一緒にしてる. あと pyenv を入れてない環境でも死なないようにするとかしてる (すべての環境で同一の設定ファイルを適用したいので、私は).</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">pyenv-init()</span> <span class="kw">{</span>
+    <span class="kw">if</span><span class="bu"> [</span> <span class="ot">-d</span> ~/.pyenv<span class="bu"> ]</span>; <span class="kw">then</span>
+        <span class="bu">export</span> <span class="va">PYENV_ROOT=</span><span class="st">&quot;</span><span class="va">$HOME</span><span class="st">/.pyenv&quot;</span>
+        <span class="bu">export</span> <span class="va">PATH=</span><span class="st">&quot;</span><span class="va">$HOME</span><span class="st">/.pyenv/bin:</span><span class="va">$PATH</span><span class="st">&quot;</span>
+        [ <span class="ex">-d</span> <span class="va">$PYENV_ROOT</span> ] <span class="kw">&amp;&amp;</span> <span class="bu">eval</span> <span class="st">&quot;</span><span class="va">$(</span><span class="ex">pyenv</span> init -<span class="va">)</span><span class="st">&quot;</span>
+    <span class="kw">fi</span>
+<span class="kw">}</span></code></pre></div>
+<p>これを python を呼んだら呼ばせたい. <code>python</code> という関数で定義すると次のようになる.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">python()</span> <span class="kw">{</span>
+    <span class="ex">pyenv-init</span>
+    <span class="bu">command</span> python <span class="st">&quot;</span><span class="va">$@</span><span class="st">&quot;</span>
+<span class="kw">}</span></code></pre></div>
+<p>中で <code>python</code> を呼ぶのに、引数をそのまま渡すのに <code>$@</code> を与えてるのと、 あと同一名の関数を今定義したので、再帰呼び出しで無限ループにならないように <code>command</code> というコマンドを使ってる.</p>
+<p>ところでこれだと、<code>python</code> を呼ぶたびに <code>pyenv-init</code> が走ってしまう. 一回走らせてしまったらもう不要なので、走らせたかどうかをフラグとして持っておく必要がある. 簡単な方法としては <code>python</code> という関数が存在するかをフラグにしてしまうことだ. 初めは設定ファイルの中で上に書いたような <code>python</code> という関数が定義して存在するので、まだ <code>pyenv-init</code> は走っていない. <code>python</code> を呼ぶと関数が存在するので <code>python</code> 関数が呼ばれる. 今、 <code>python</code> 関数の中に <code>python</code> 関数を削除するという操作を追加することにする. すると次回移行、<code>python</code> を呼ぶと関数が存在しないので実行ファイルとしての <code>python</code> を見つけてそれを実行することになる. そのときには既に <code>pyenv-init</code> は実行済みであることが保証されている.</p>
+<p>というわけで次のようにする</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">python()</span> <span class="kw">{</span>
+    <span class="ex">pyenv-init</span>
+    <span class="ex">unfunction</span> python
+    <span class="ex">python</span> <span class="st">&quot;</span><span class="va">$@</span><span class="st">&quot;</span>
+<span class="kw">}</span></code></pre></div>
+<p><code>unfunction</code> を実行した時点で <code>python</code> という関数は存在しない. なので <code>command</code> を付けなくてももはや再帰呼出しではなくなっている.</p>
+<p><code>python</code> と同様のことを <code>pip</code> にも作ってあげる. そしてこの場合、<code>python</code> または <code>pip</code> を一度でも呼んだら <code>pyenv-init</code> は不要なので、 両方共を <code>unfunction</code> する.</p>
+成果物は次のとおりです.
+<script src="https://gist.github.com/cympfh/3d5c36cebe65c83f3c9325c8822847a6.js"></script>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

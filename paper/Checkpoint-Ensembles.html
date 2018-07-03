@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>[1710.03282] Checkpoint Ensembles: Ensemble Methods from a Single Training Process</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/</a>
+</header>
+<header>
+<h1 class="title">[1710.03282] Checkpoint Ensembles: Ensemble Methods from a Single Training Process</h1>
+</header>
+<ul>
+<li>
+original paper: <a href=https://arxiv.org/abs/1710.03282>https://arxiv.org/abs/1710.03282</a>
+</li>
+</ul>
+<div class="is-pulled-right">
+<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#アンサンブル学習>アンサンブル学習</a></p>
+</div>
+<h2 id="概要">概要</h2>
+<p>一つの学習の中での異なるチェックポイント時点でのモデルを組み合わせてアンサンブル予測する.</p>
+<p>学習の過程で複数の極値が有ってその間を行き来することがある. そのような場合、一方は入力空間のうちのある部分空間について特に上手く予測が出来、もう一方はまた別のある部分空間については上手く予測が出来る、ということがある. 従ってそれらを組み合わせて何方の空間でも上手く予測ができるモデルを構成しようとするのは自然である (Figure 2B).</p>
+<p>また一つの極値に落ち込んでる場合でも、モデルの平均を取ることは過学習を防ぐ意味で有効である (Figure 2A).</p>
+<h2 id="既存手法">既存手法</h2>
+<p>ここでの <code>train</code> は early stopping を行い、毎エポック後のモデルの列を返すとする.</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> train(early_stop: <span class="bu">int</span>) <span class="op">-&gt;</span> List[Model]:
+    model <span class="op">=</span> Model()
+    models <span class="op">=</span> []
+    <span class="cf">for</span> epoch <span class="kw">in</span> <span class="bu">range</span>(Infity):
+        model.train()
+        <span class="cf">if</span> model.early_stop(early_stop):
+            <span class="cf">break</span>
+        models.append(model.copy())
+    <span class="cf">return</span> models</code></pre></div>
+<p>普通NNで使われるのが Minimum validation model selection (MV). バリデーション用のスコアをチェックポイント毎 (普通エポック毎) に測って、最良のものを一つだけ選んで使う方法.</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> validation(models: List[Model]) <span class="op">-&gt;</span> List[<span class="bu">float</span>]:
+    <span class="cf">return</span> [validation_score(m) <span class="cf">for</span> m <span class="kw">in</span> models]
+
+<span class="kw">def</span> best(models: List[Model]) <span class="op">-&gt;</span> Model:
+    <span class="cf">return</span> <span class="bu">min</span>(<span class="bu">zip</span>(validation(models), models))[<span class="dv">1</span>]
+
+<span class="kw">def</span> MV(early_stop: <span class="bu">int</span>) <span class="op">-&gt;</span> Model:
+    models <span class="op">=</span> train(early_stop)
+    <span class="cf">return</span> best(models)</code></pre></div>
+<p>Last k smoothers (LKS). smoothing というのは、複数モデルのその重み (パラメータ) の平均を取ることを言う. LKS ではバリデーションスコアが良いものから固定で k 個取るとする.</p>
+<p>Checkpoint smoothers (CS) ではこの k を固定にしないで <span class="math inline">\(k=\min (a+5,b,n)\)</span> で決める. ここで <span class="math inline">\(a\)</span> は early stopping round (<span class="math inline">\(a\)</span> エポック連続でバリデーションスコアが向上しなかったら学習を打ち切る). <span class="math inline">\(b\)</span> はバリデーションスコアが最良を出したときのエポック. <span class="math inline">\(n\)</span> はトータルのエポック.</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> Smoothing(method, early_stop<span class="op">=</span><span class="dv">10</span>) <span class="op">-&gt;</span> Model:
+
+    models <span class="op">=</span> train(early_stop)
+    scores <span class="op">=</span> validation(models)
+    result <span class="op">=</span> <span class="bu">sorted</span>(<span class="bu">zip</span>(scores, models))  <span class="co"># 良い順に</span>
+
+    n <span class="op">=</span> <span class="bu">len</span>(models)
+    b <span class="op">=</span> <span class="bu">min</span>(<span class="bu">zip</span>(scores, <span class="bu">range</span>(<span class="dv">1</span>, n <span class="op">+</span> <span class="dv">1</span>)))[<span class="dv">1</span>]  <span class="co"># best epoch</span>
+    a <span class="op">=</span> early_stop
+
+    <span class="cf">if</span> method <span class="op">==</span> LKS:
+        k <span class="op">=</span> LKS.k
+    <span class="cf">else</span>:
+        k <span class="op">=</span> <span class="bu">min</span>(a <span class="op">+</span> <span class="dv">5</span>, b, n)
+
+    models <span class="op">=</span> models[:k]
+    <span class="cf">return</span> avg(models)</code></pre></div>
+<p>Random initialization ensembles (RIE). いわゆるアンサンブル学習を行う. LKS, CS では一回の学習過程を使うけど、今度は k 回学習を回してそれぞれの最良のモデルを選ぶ. 重みの平均を取らず、全て持っておいて、予測のときに予測値の平均を取る.</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> RIE(early_stop<span class="op">=</span><span class="dv">10</span>, k<span class="op">=</span><span class="dv">5</span>) <span class="op">-&gt;</span> List[Model]:
+    <span class="cf">return</span> [best(train(early_stop)) <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(k)]
+    <span class="cf">return</span> avg(models)
+
+<span class="kw">def</span> RIE_predict(models: List[Model], x: Input) <span class="op">-&gt;</span> Output:
+    <span class="cf">return</span> avg(m.predict(x) <span class="cf">for</span> m <span class="kw">in</span> models)</code></pre></div>
+<h2 id="提案手法">提案手法</h2>
+<p>Checkpoint Ensembles (CE) は大体 Checkpoint smoothers (CS) と同じだが、最後で重みの平均を取るのではなくて、 すべてのモデルは持っておいて、予測のときに予測値の平均を取る.</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> CE(early_stop<span class="op">=</span><span class="dv">10</span>) <span class="op">-&gt;</span> List[Model]:
+
+    models <span class="op">=</span> train(early_stop)
+    scores <span class="op">=</span> validation(models)
+    result <span class="op">=</span> <span class="bu">sorted</span>(<span class="bu">zip</span>(scores, models))  <span class="co"># 良い順に</span>
+
+    n <span class="op">=</span> <span class="bu">len</span>(models)
+    a <span class="op">=</span> early_stop
+    b <span class="op">=</span> <span class="bu">min</span>(<span class="bu">zip</span>(scores, <span class="bu">range</span>(<span class="dv">1</span>, n <span class="op">+</span> <span class="dv">1</span>)))[<span class="dv">1</span>]  <span class="co"># best epoch</span>
+
+    k <span class="op">=</span> <span class="bu">min</span>(a <span class="op">+</span> <span class="dv">5</span>, b, n)
+    <span class="cf">return</span> models[:k]
+
+<span class="kw">def</span> CE_predict(models: List[Model], x: Input) <span class="op">-&gt;</span> Output:
+    <span class="cf">return</span> avg(m.predict(x) <span class="cf">for</span> m <span class="kw">in</span> models)</code></pre></div>
+<h2 id="実験">実験</h2>
+<p>Reuter と CIFAR-10 で実験をして <code>MV &lt; CE &lt; RIE(k=5)</code>.</p>
+<p>学習時間に糸目を着けないのなら素直に <code>RIE</code> したほうが良い. また学習率を小さくしすぎると <code>CE</code> と <code>MV</code> の区別がなくなる (悪くなることはない).</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

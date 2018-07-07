@@ -141,10 +141,10 @@ $X = TS$ とできる.
 
 あるベクトルの集合 $S = \{ x_1, \ldots, x_\ell \}$ の **グラム行列** $G$ とは
 $\ell \times \ell$ 行列であって
-$G_{i,j} = \langle x_i, x_j \rangle$
+$$G_{i,j} = \langle x_i, x_j \rangle$$
 のこと.
 $x \in X$ を特徴空間に写す $\phi$ に対応するようなカーネル関数 $\kappa$ を考慮するとき、これに関するグラム行列 $G$ とは
-$G_{i,j} = \kappa(x_i, x_j)$
+$$G_{i,j} = \kappa(x_i, x_j)$$
 だと再定義する.
 グラム行列が対称行列 ($G_{i,j} = G_{j,i}$) であることは自明.
 
@@ -162,21 +162,26 @@ $$Ax=0$$
 行列 $A$ について、$Av=\lambda v$ を満たす実数 $\lambda$ を固有値 (eigenvalue)、列ベクトル $v$ を固有ベクトル (eigenvector) という.
 行ベクトルを左から掛けた $v' v$ が実数であることに註意すると
 
-$$\frac{v'Av}{v'v} = \lambda.$$
+$$\frac{v'Av}{v'v} = \frac{\lambda v'v}{v'v} = \lambda.$$
 
-この左辺を **レイリー商 (Rayleigh quotient)** という.
+この値を **レイリー商 (Rayleigh quotient)** という.
 この式からも固有値は固有ベクトルのスカラー倍に関して普遍であることは自明なので、これ以降、固有ベクトルの大きさは $|v| = 1$ だとする.
 
-行列 $A$ が対称行列のとき $A' = A$.
-$A$ の<u>異なる</u>固有値 $\lambda_1$, $\lambda2$ とそれぞれに対応する固有ベクトル $v_1$, $v_2$ について
+行列 $A$ を対称行列とする. すなわち $A' = A$ だとする.
+$A$ の2つの固有値 $\lambda_1$, $\lambda_2$ と、それぞれに対応する固有ベクトル $v_1$, $v_2$ があるとするとき、
 
-- $\lambda_1 \langle v_1, v_2 \rangle = (\lambda_1 v_1)' \cdot v_2$
-- $= (A v_1)' \cdot v_2$
-- $= v_1' A' v_2 = v_1' A v_2$
-- $= v_1' (\lambda_2 v_2) = \lambda_2 \langle v_1, v_2 \rangle$
+$$\begin{align*}
+\lambda_1 \langle v_1, v_2 \rangle
+& = (\lambda_1 v_1)' \cdot v_2 \\
+& = (A v_1)' \cdot v_2 \\
+& = v_1' A' v_2\\
+& = v_1' A v_2\\
+& = v_1' (\lambda_2 v_2)\\
+& = \lambda_2 \langle v_1, v_2 \rangle
+\end{align*}$$
 
-従って $\lambda_1 \ne \lambda_2 \Rightarrow \langle v_1, v_2 \rangle = 0$.
-即ち、対称行列の異なる2つの固有ベクトルは直交する.
+従って $\lambda_1 \ne \lambda_2 \implies \langle v_1, v_2 \rangle = 0$ を得る.
+即ち、対称行列の異なる2つの固有ベクトルはいつも直交する.
 このことは、$n \times n$ 行列の相異なる固有ベクトルは高々 $n$ 個だということも示す.
 
 行列 $A$ の一つの固有ベクトル $v$ と対応する固有値 $\lambda$ を以って
@@ -184,9 +189,10 @@ $A$ の<u>異なる</u>固有値 $\lambda_1$, $\lambda2$ とそれぞれに対�
 $$A \mapsto \tilde{A} = A - \lambda v v'$$
 
 という操作を **deflation** という.
-この操作に依って $v$ は固有ベクトルではなくなる (since $\tilde{A}v = Av-\lambda vv'v = 0$).
+$\tilde{A}v=Av-\lambda v'vv=0$ より、$v$ は $\tilde{A}$ の固有ベクトルではなくなった.
 $A$ が full rank であったとしても $\tilde{A}$ は線形従属な列ベクトルを持つので確実に full rank ではなくなった.
-一方で$A$ の他の固有ベクトル $v_2$ は尚も $\tilde{A}$ の固有ベクトルである (since $v' v_2 = 0$).
+一方で$A$ の他の固有ベクトル $v_2$ は尚も $\tilde{A}$ の固有ベクトルである.
+なぜなら $\tilde{A}v_2 = Av_2 - \lambda v \langle v, v_2 \rangle = Av_2$ だから.
 
 非決定的にただひとつ固有ベクトルを探すアルゴリズムがあるとき、deflation という操作を繰り返すことで、全ての固有ベクトルを列挙することが可能.
 
@@ -241,22 +247,25 @@ $$v' A v > 0$$
 
 が成り立つこと.
 
-#### Prop 3.7
+### Prop 3.7
 
 グラム行列は半正定値行列.
 
-##### 証明
+#### 証明
 
-- $v'Gv = \sum_i \sum_j v_i v_j G_{i,j} = \sum_i \sum_j v_i v_j \langle \phi(x_i), \phi(x_j) \rangle$
-- $= \langle \sum_i v_i \phi(x_i), \sum_j v_j \phi(x_j) \rangle$
-- $= \langle \_, \_ \rangle$
-- $\geq 0$
+$$\begin{align*}
+v'Gv
+& = \sum_i \sum_j v_i v_j G_{i,j} \\
+& = \sum_i \sum_j v_i v_j \langle \phi(x_i), \phi(x_j) \rangle \\
+& = \langle \sum_i v_i \phi(x_i), \sum_j v_j \phi(x_j) \rangle \\
+& \geq 0 \\
+\end{align*}$$
 
-#### Prop 3.8
+### Prop 3.8
 
 行列 $A$ が半正定値行列であることは、ある実行列$B$ が存在して $A=B'B$ と書けることと同値.
 
-##### 証明
+#### 証明
 $A=B'B$ を仮定したとき、
 任意のベクトル $v$ を以って
 $v'Av = v'B'Bv = |Bv|^2 \geq 0$
@@ -270,11 +279,11 @@ $A$ が半正定値行列のとき、
 これを満たす $B$ は一般に一意ではない.
 上三角行列 $R$ を以って $A = R' R$ と書くのを Cholesky 分解という.
 
-#### Prop 3.9
+### Prop 3.9
 
 (半) 正定値行列 $A$ iff $A$ の任意の主小行列 (principal minor) は (半) 正定値行列.
 
-##### 証明
+#### 証明
 
 $A \in R^{n \times n}$ についてその主小行列 $M \in R^{m \times m}$ とは、$1 \leq k_1 < k_2 < \ldots < k_m \leq n$ を選んで
 $M_{i,j} = A_{k_i, k_j}$.
@@ -289,7 +298,7 @@ $v'Av \geq 0$ より $u'Mu \geq 0$.
 
 ### 行列式とトレース
 
-製法行列 $A$ の **行列式 (determinant)** $det(A)$ とは $A$ の固有値の積であると定義する.
+正方行列 $A$ の **行列式 (determinant)** $det(A)$ とは $A$ の固有値の積であると定義する.
 従って正定値の行列式は必ず正となる.
 また特異行列の行列式はゼロになる.
 

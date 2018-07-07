@@ -13,13 +13,13 @@
 
 **パターン** と呼ぶものを具体的に定義する.
 
-1. (データ $x$ に関する) general exact pattern とは $f(x) = 0$ を満たす自明でない関数 $f$ のこと
+1. (データ $x$ に関する) 一般完全パターン (general exact pattern) とは $f(x) = 0$ を満たす自明でない関数 $f$ のこと
     - 理想環境下での物理法則などがふさわしい
-1. general approximate pattern とは $f(x) \approx 0$ となる非自明な関数 $f$ のこと
+1. 一般近似パターン (general approximate pattern) とは $f(x) \approx 0$ となる非自明な関数 $f$ のこと
     - この $\approx$ は文字通り approximately equal である
     - 定義としては曖昧である
-1. general statistical pattern とは $\mathcal{E}_x f(x) \approx 0$
-    - ここで $\mathcal{E}$ は期待値を表す
+1. 一般統計パターン (general statistical pattern) とは $\mathbb{E}_x f(x) \approx 0$
+    - ここで $\mathbb{E}$ は期待値を表す
     - $x$ の事前分布は与えられているものとする
 
 ## パターン解析アルゴリズム
@@ -97,10 +97,11 @@ $g$ による予測が正しい時に限り $\mathcal{L}(y, g(x))$ はゼロを�
 これは与えられるデータはほとんど全てが同質であると仮定してそこから大きく外れたデータを検出するタスクである.
 例えばある一つの機械の動作を監視し続け、異常を検知する、という適用が考えられる.
 
-他に次元圧縮がある. $X$ よりも低い次元空間 $V$ に押しやる $Pv: X \rightarrow V$ を以って
-$$f(x) = | Pv(x) - x |^2$$
+他に次元圧縮がある.
+データが乗る空間 $X$ のその部分空間 $V$ に押しやる射影関数 $P_V: X \rightarrow V (\subseteq X)$ によって
+$$f(x) = | P_V(x) - x |^2$$
 をパターンとして発見する.
 PCA (主成分分析; principal components analysis) はこれである.
 CCS (canonical correlation analysis) はこれと似ているが、データ $x_1, x_2$ のペアをデータ $x = (x_1, x_2)$ として、
 2つの関係のみを調べる:
-$$f(x) = f(x_1, x_2) = | Pv^1(x_1) - Pv^2(x_2) |^2$$
+$$f(x) = f(x_1, x_2) = | P_V^1(x_1) - P_V^2(x_2) |^2$$

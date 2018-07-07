@@ -18,10 +18,8 @@ $\mathbb{R}$ 上のベクトル空間 $X$ が **内積空間 (inner product spac
 この関数を **内積 (inner product)** という.
 
 加えて
-
 $$\langle x,x \rangle = 0 \iff x = 0$$
-
-が成り立つ内積を **strict** な内積 (strict inner product) であるという.
+が成り立つ内積を狭義の内積 (strict inner product) という.
 
 また $x \in X$ のノルムを
 
@@ -31,17 +29,16 @@ $$|x| = \sqrt{\langle x,x \rangle}$$
 
 ## ヒルベルト空間
 
-内積空間であって分離可能 (separable) かつ完備 (complete) なものヒルベルト空間 $\mathcal{F}$ という.
+狭義の内積空間であって可分 (separable) かつ完備 (complete) なものヒルベルト空間 $\mathcal{F}$ という.
 
-完備であるとは、任意のコーシー列 $\{ h_i \in \mathcal{F} : i \in \mathbb{N} \}$ はある値 $h \in \mathcal{F}$ に収束すること.
+空間 $\mathcal F$ が完備であるとは、任意のコーシー列 $\{ h_i \in \mathcal{F} : i \in \mathbb{N} \}$ がある値 $h \in \mathcal{F}$ に収束すること.
 ここでコーシー列とは
-
 $$\sup_{m>n} | h_n - h_m | \rightarrow 0 ~~ (n \rightarrow \infty)$$
-
 であった.
-また、分離可能であるとは、
 
-$$\forall \epsilon>0, \exists N \in \mathbb{N}, \exists h_1,\ldots,h_N \in \mathcal{F}, \forall h \in \mathcal{F}, \min_{i=1,\ldots,N} | h_i - h | < \epsilon.$$
+また、空間 $\mathcal F$ が可分であるとは、可算な部分集合が稠密であること. すなわち、
+$$\forall \epsilon>0, \exists \{h_1,\ldots,h_N,\ldots\} \subset \mathcal{F}, \forall h \in \mathcal{F}, \min_{i=1,\ldots,N} | h_i - h | < \epsilon$$
+となること.
 
 ### 例. $L_2$ 空間
 

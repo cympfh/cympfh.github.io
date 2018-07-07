@@ -8,7 +8,7 @@
   <style type="text/css">code{white-space: pre;}</style>
   <link rel="stylesheet" href="../resources/css/c.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
@@ -31,18 +31,18 @@
 <p><strong>パターン解析</strong> はデータからパターンを自動的に獲得することを目指す. これはデータを生成するブラックボックスに関する振る舞いを自動的に学習することである.</p>
 <p><strong>パターン</strong> と呼ぶものを具体的に定義する.</p>
 <ol type="1">
-<li>(データ <span class="math inline">\(x\)</span> に関する) general exact pattern とは <span class="math inline">\(f(x) = 0\)</span> を満たす自明でない関数 <span class="math inline">\(f\)</span> のこと
+<li>(データ <span class="math inline">\(x\)</span> に関する) 一般完全パターン (general exact pattern) とは <span class="math inline">\(f(x) = 0\)</span> を満たす自明でない関数 <span class="math inline">\(f\)</span> のこと
 <ul>
 <li>理想環境下での物理法則などがふさわしい</li>
 </ul></li>
-<li>general approximate pattern とは <span class="math inline">\(f(x) \approx 0\)</span> となる非自明な関数 <span class="math inline">\(f\)</span> のこと
+<li>一般近似パターン (general approximate pattern) とは <span class="math inline">\(f(x) \approx 0\)</span> となる非自明な関数 <span class="math inline">\(f\)</span> のこと
 <ul>
 <li>この <span class="math inline">\(\approx\)</span> は文字通り approximately equal である</li>
 <li>定義としては曖昧である</li>
 </ul></li>
-<li>general statistical pattern とは <span class="math inline">\(\mathcal{E}_x f(x) \approx 0\)</span>
+<li>一般統計パターン (general statistical pattern) とは <span class="math inline">\(\mathbb{E}_x f(x) \approx 0\)</span>
 <ul>
-<li>ここで <span class="math inline">\(\mathcal{E}\)</span> は期待値を表す</li>
+<li>ここで <span class="math inline">\(\mathbb{E}\)</span> は期待値を表す</li>
 <li><span class="math inline">\(x\)</span> の事前分布は与えられているものとする</li>
 </ul></li>
 </ol>
@@ -98,7 +98,7 @@
 <p>対応するラベルがついてるデータと、ついていないデータ両方を用いる方法のこと. 大抵、目的は教師アリと同様にラベルの予測. ラベルのついていないデータなら大量に手に入るのでデータの事前分布を推定することで汎化性能を上げることが期待できる.</p>
 <h2 id="教師ナシ-unsupervised-タスク">教師ナシ (unsupervised) タスク</h2>
 <p>データには全てラベルがついていない場合のタスクを教師ナシという. この状況下でのタスクの一つにクラスタリングがある. データ <span class="math inline">\(x\)</span> のみを比較することで同質なグループに分けるタスクである. 異常検出 (Anomaly, novely-detection) も教師ナシタスクの一つである. これは与えられるデータはほとんど全てが同質であると仮定してそこから大きく外れたデータを検出するタスクである. 例えばある一つの機械の動作を監視し続け、異常を検知する、という適用が考えられる.</p>
-<p>他に次元圧縮がある. <span class="math inline">\(X\)</span> よりも低い次元空間 <span class="math inline">\(V\)</span> に押しやる <span class="math inline">\(Pv: X \rightarrow V\)</span> を以って <span class="math display">\[f(x) = | Pv(x) - x |^2\]</span> をパターンとして発見する. PCA (主成分分析; principal components analysis) はこれである. CCS (canonical correlation analysis) はこれと似ているが、データ <span class="math inline">\(x_1, x_2\)</span> のペアをデータ <span class="math inline">\(x = (x_1, x_2)\)</span> として、 2つの関係のみを調べる: <span class="math display">\[f(x) = f(x_1, x_2) = | Pv^1(x_1) - Pv^2(x_2) |^2\]</span></p>
+<p>他に次元圧縮がある. データが乗る空間 <span class="math inline">\(X\)</span> のその部分空間 <span class="math inline">\(V\)</span> に押しやる射影関数 <span class="math inline">\(P_V: X \rightarrow V (\subseteq X)\)</span> によって <span class="math display">\[f(x) = | P_V(x) - x |^2\]</span> をパターンとして発見する. PCA (主成分分析; principal components analysis) はこれである. CCS (canonical correlation analysis) はこれと似ているが、データ <span class="math inline">\(x_1, x_2\)</span> のペアをデータ <span class="math inline">\(x = (x_1, x_2)\)</span> として、 2つの関係のみを調べる: <span class="math display">\[f(x) = f(x_1, x_2) = | P_V^1(x_1) - P_V^2(x_2) |^2\]</span></p>
 <!--
 
   HTML として pandoc -B で include する.

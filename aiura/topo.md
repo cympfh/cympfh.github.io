@@ -8,60 +8,49 @@
 
 ## 位相の定義
 
-集合 $X$ に対して位相空間とは、 $X$ に就いて **位相 (近傍系)**  $O_X$ を導入したものである.
-そして位相 $O_X$ とは
-$O_X \subseteq P(X)$ (冪集合)
-であって、
+位相空間 $X$ とは、集合 $X$ に **位相 (開集合系)** $\mathcal O_X$ を与えたもののことである.
+ただし、位相 $\mathcal O_X$ とは
+$\mathcal O_X \subseteq P(X)$ (冪集合)
+であって、次の3つを要請するもの
 
-1. $\emptyset, X \in O_X$
-1. **有限** の添字族 $I$ について $\forall i \in I, O_i \in O_X \Rightarrow \bigcap_{i \in I} O_i \in O_X$
-1. (無限を許す) 添字族 $I$ について $\forall i \in I, O_i \in O_X \Rightarrow \bigcup_{i \in I} O_i \in O_X$
+1. $\emptyset, X \in \mathcal O_X$
+1. **有限** の添字族 $\Lambda$ について $\forall \lambda \in \Lambda, U_\lambda \in \mathcal O_X \implies \bigcap_{\lambda \in \Lambda} U_\lambda \in \mathcal O_X$
+1. (無限を許す) 添字族 $\Lambda$ について $\forall \lambda \in \Lambda, U_\lambda \in \mathcal O_X \implies \bigcup_{\lambda \in \Lambda} U_\lambda \in \mathcal O_X$
 
-$O_X$ の元を 「$X$ の開集合 (open set)」と言う.
 
-### 閉集合 (closed set)
+$\mathcal O_X$ の元のことを $X$ の開集合 (open set) と言う.
+また補集合が開集合であるもののことを閉集合 (closed set) と言う.
 
-$O$ が $X$ の開集合の時に限って
-$X \setminus O$
-を閉集合という.
+- $U \in O_X \iff U$ is open
+- $X \setminus U \in O_X \iff U$ is closed
 
-従って、$\emptyset, X$ は常に開集合でありかつ、閉集合である.
+注意として、開集合でかつ閉集合であるということがある.
+その自明なものとして $\emptyset, X$.
 
 ### (註) 無限個の積について
 
 有限個の開集合の積は開集合とし、
 無限 (以下) 個の開集合の和を開集合とする.
 
-直感的に、開集合とは、実数空間で言うと、
-開空間 $(a, b)$ のようなものである.
-
-$O_n = (-1/n, 1/n)$
-に関して、これの無限個の積
-
-$$\bigcap_{n=1}^\infty O_n$$
-
-は $\{0\}$ になるが、これを開集合として認めたくない.
+直感的に、開集合とは、実数空間で言うと (例えば) 開区間 $(a, b)$ のようなものである.
+$U_n = (-1/n, 1/n)$
+それぞれは開集合であるが、これの可算無限個の積
+$$\bigcap_{n=1}^\infty U_n = \{0\}$$
+を開集合として認めたくない.
 
 ## 連続写像の定義
 
 集合 $X, Y$ 間の写像
-
 $$f: X \to Y$$
-
-に就いて、
-
-$$f^{-1}: P(Y) \to P(X)$$
+に対して、逆像
 $$f^{-1}(V) = \{ x \in X : f(x) \in V \}$$
-
 を定義する.
-これは $f^{-1}(f(x)) = x$ なる **逆写像** とは異なることに註意.
+これは点を点に写すような $f^{-1}: Y \to X$ なる逆写像とは異なることに註意.
 
 このような $f^{-1}$ が、$Y$ における開集合を$X$ における開集合に写すとき、
 すなわち、
-
-$$\forall V \in O_Y, f^{-1}(V) \in O_X$$
-
-のとき、$f$ を **連続写像** という.
+$$\forall V \in \mathcal O_Y, f^{-1}(V) \in \mathcal O_X$$
+となるとき、$f$ を **連続写像** という.
 
 ## 部分位相
 
@@ -69,16 +58,16 @@ $$\forall V \in O_Y, f^{-1}(V) \in O_X$$
 
 <div class="thm">
 集合 $X$ に関して2つの位相
-$O_X, O_X'$
+$\mathcal O_X, \mathcal O_X'$
 があるとき、この積
-$O_X \cap O_X'$
+$\mathcal O_X \cap \mathcal O_X'$
 もまた位相である.
 </div>
 
-1. $(\emptyset, X \in O_X) \land (\emptyset, X \in O_X')$ より $\emptyset, X \in O_X \cap O_X'$
-1. $\forall i \in I, (U_i \in O_X) \land (U_i \in O_X')$ のとき、
-    - $\bigcap_i U_i \in O_X \land \bigcap_i U_i \in O_X'$
-    - したがって、 $\bigcap_i U_i \in O_X \bigcap O_X'$
+1. $(\emptyset, X \in \mathcal O_X) \land (\emptyset, X \in \mathcal O_X')$ より $\emptyset, X \in \mathcal O_X \cap \mathcal O_X'$
+1. $\forall i \in I, (U_i \in \mathcal O_X) \land (U_i \in \mathcal O_X')$ のとき、
+    - $\bigcap_i U_i \in \mathcal O_X \land \bigcap_i U_i \in \mathcal O_X'$
+    - したがって、 $\bigcap_i U_i \in \mathcal O_X \cap \mathcal O_X'$
 1. $\bigcup$ も同様
 
 ### 部分位相の定義
@@ -88,7 +77,7 @@ $Y$ に **自然に** 位相を導入することができる.
 これを **部分位相** という.
 すなわち、
 
-$$O_Y = \{ U \cap Y : U \in O_X \}$$
+$$\mathcal O_Y = \{ U \cap Y : U \in \mathcal O_X \}$$
 
 と定める.
 これが位相であることは確認できる.
@@ -101,7 +90,7 @@ $$p : X \to Y$$
 
 があるとき、次のように $Y$ に位相を導入することが出来る.
 
-$$O_Y = \{ p(U) : U \in O_X \}$$
+$$\mathcal O_Y = \{ p(U) : U \in \mathcal O_X \}$$
 
 これが位相であることは確認でき、この位相のとき $p$ は連続写像になる.
 この位相は、$p$ を連続たらしめる位相の中に (包含に関して) 最大の位相である (小さいほど連続になりやすいことに註意).
@@ -279,7 +268,7 @@ $$f : X \to Y$$
 を考える.
 これが連続写像であることから、自然に
 
-$$f^{-1} : O_Y \to O_X$$
+$$f^{-1} : \mathcal O_Y \to \mathcal O_X$$
 
 が定まる.
 同相であることを示すには逆写像も連続であることを示せばよい.
@@ -290,8 +279,8 @@ $$f(U) = \{ f(x) : x \in U \}$$
 
 これが開集合を保つ、つまり、
 
-$$f : O_X \to O_Y$$
-$$\forall U \in O_X, f(U) \in O_Y$$
+$$f : \mathcal O_X \to \mathcal O_Y$$
+$$\forall U \in \mathcal O_X, f(U) \in \mathcal O_Y$$
 
 と、開集合を開集合に写していればよい.
 

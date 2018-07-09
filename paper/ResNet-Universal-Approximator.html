@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>[1806.10909] ResNet with one-neuron hidden layers is a Universal Approximator</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/</a>
+</header>
+<header>
+<h1 class="title">[1806.10909] ResNet with one-neuron hidden layers is a Universal Approximator</h1>
+</header>
+<ul>
+<li>
+original paper: <a href=https://arxiv.org/abs/1806.10909>https://arxiv.org/abs/1806.10909</a>
+</li>
+</ul>
+<div class="is-pulled-right">
+<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a></p>
+</div>
+<h2 id="概要">概要</h2>
+<p>ResNet の残渣を求めるところは、隠れ層にノードがただ1個さえあれば (下図)、活性化関数に relu を使うことで、 任意のルベーグ積分可能関数 (<span class="math inline">\(\ell_1(\mathbb R^d)\)</span>) を近似 (uniformly approximate) できる.</p>
+<figure>
+<img src="https://i.imgur.com/6NbUuVi.png" />
+<caption>
+論文より引用
+</caption>
+</figure>
+<blockquote>
+<p>ただし彼らの言う ResNet とは Figure.1 で示されるブロックを縦に積んだものに限っていて、 例えば畳み込み層などは気にしていない.</p>
+</blockquote>
+<h2 id="万能関数近似性">万能関数近似性</h2>
+<p>よく知られたものは、3層 (隠れ層がただ1つのもの) のニューラルネットワークで、 隠れ層に十分ノードがあれば (fat であれば)、あるクラスの関数を近似できるという定理だった.</p>
+<p>一方で深い (tall) ニューラルネットワークについては、この性質についての解析がまだなされていなかったが、 この論文は ResNet がその性質を持つことを示した.</p>
+<p>浅いNNではその必要となるノード数が精度に対して指数的に必要になるのに対して、 深さを優先したNNでは必要となるノード数は多項式かせいぜい線形にしか増えないという利点がある.</p>
+<blockquote>
+<p>だからこそ、経験的に、より深いNNを採用してきたわけだが</p>
+</blockquote>
+<h3 id="定理">定理</h3>
+<p>任意のルベーグ積分可能関数 <span class="math inline">\(f: \mathbb{R}^d \to \mathbb R\)</span> と 任意の正数 <span class="math inline">\(\epsilon &gt; 0\)</span> に対して、 ある ResNet <span class="math inline">\(R\)</span> が存在して <span class="math display">\[\int_{\mathbb R^d} \left| f(x) - R(x) \right| dx \leq \epsilon\]</span> とできる.</p>
+<h2 id="resnet-の構成">ResNet の構成</h2>
+<p>彼らの構成するResNetはFigure1に示したようなブロック (residual block) を縦に積み重ねる. 一つのブロックは次のように定式化される: <span class="math display">\[T : \mathbb R^d \to \mathbb R^d\]</span> <span class="math display">\[T(x; V,U,u) = V ~ \mathrm{relu}(Ux+u)\]</span> ただし、 <span class="math inline">\(V \in \mathbb R^{d \times 1}\)</span>, <span class="math inline">\(U \in \mathbb R^{1 \times d}\)</span>, <span class="math inline">\(u \in \mathbb R\)</span>. <span class="math inline">\(\mathrm{relu}\)</span> は <span class="math inline">\(x \mapsto \max \{0,x \}\)</span> なる関数.</p>
+<p>各々がパラメータを伴った関数 <span class="math inline">\(N\)</span> 個のブロック <span class="math inline">\(T_0, T_1, \ldots, T_N\)</span> を用いて、 ResNet 全体は次のようなものとして定める. <span class="math display">\[R(x) = L \circ (1 + T_N) \circ \cdots (1 + T_2) \circ \cdots (1 + T_1)\]</span> ただし <span class="math inline">\(1\)</span> は恒等写像. また最後の <span class="math inline">\(L\)</span> は <span class="math inline">\(\mathbb R^d \to \mathbb R\)</span> なる線形関数.</p>
+<p>(Figure.2 は、普通のNNが、1層あたりのノードを増やさない限りいくら深くしても表現力を増さないことを示している.)</p>
+<h2 id="証明の概要-理解する自信ない">証明の概要 (理解する自信ない)</h2>
+<p>まず用いる事実として次の定理がある.</p>
+<div class="thm">
+<p>ルベーグ積分可能な関数のクラス <span class="math inline">\(\ell_1(\mathbb R^d)\)</span> は、 piecewise constant function (区分的定数関数?) で稠密である.</p>
+</div>
+<p>簡単のために (理解できないので) <span class="math inline">\(d=1\)</span> の場合に限って読む.</p>
+<p>piecewise constant function とは、 有限個の点 <span class="math inline">\(a_0 &lt; a_1 &lt; \cdots &lt; a_M\)</span> と、それぞれに対応する実数 <span class="math inline">\(h_i\)</span> を以て <span class="math display">\[h(x) = \sum_{i=1}^M h_i 1[a_{i-1} \leq x &lt; a_i]\]</span> で表現される関数 <span class="math inline">\(h\)</span> のこと. ただしここで <span class="math inline">\(1[P(x)]\)</span> は <span class="math inline">\(P(x)\)</span> が成立するときだけ <span class="math inline">\(1\)</span> を取るようなインディケータ.</p>
+<blockquote>
+<p>いわゆる <a href="https://en.wikipedia.org/wiki/Step_function">階段関数</a> のことか. ただし台は有界.</p>
+</blockquote>
+<p>これで稠密だというので、近似したい関数は piecewise constant function によっていくらでも近似できる. そしてその piecewise constant function を ResNet によって近似できることを示す.</p>
+<p>ただし piecewise constant function は有限箇所 <span class="math inline">\((x=a_i)\)</span> で値が飛ぶような不連続であるが、 trapezoid (台形のこと) に変形することで、少しだけ連続に変形させたものを使う.</p>
+<blockquote>
+<p>いかにも relu が役立ちそうな形だ</p>
+</blockquote>
+<figure>
+<img src="https://i.imgur.com/YNZPqoa.png" />
+</figure>
+<p>この幅 <span class="math inline">\(\delta\)</span> の極限を取ることで、もとの piecewise constant function を得る.</p>
+<ol type="1">
+<li>ResNet で trapezoid function を近似</li>
+<li><span class="math inline">\(\delta \to 0\)</span></li>
+<li>piecewise constant function を近似</li>
+<li>もとの関数を近似</li>
+</ol>
+<p>という流れ.</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

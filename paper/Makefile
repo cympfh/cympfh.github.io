@@ -1,6 +1,6 @@
-.PHONY: all index posts new
+.PHONY: index posts edit
 
-all: index posts
+.DEFAULT_GOAL := posts
 
 index: *.md
 	bash script/index.sh >index.html
@@ -8,7 +8,7 @@ index: *.md
 edit:
 	bash script/edit.sh
 
-git: index
+git: index posts
 	git add --all
 	git commit -a -m "paper/ `date`"
 	git push

@@ -130,6 +130,8 @@ digraph {
     FB -> GB [label="α_B"];
     FA -> FB [label=Ff];
     GA -> GB [label=Gf];
+    {rank=same FA FB}
+    {rank=same GA GB}
 }
 ```
 
@@ -147,6 +149,8 @@ digraph {
     B -> PB [label="η_B"];
     A -> B [label=f];
     PA -> PB [label=Pf];
+    {rank=same A B}
+    {rank=same PA PB}
 }
 ```
 
@@ -162,16 +166,19 @@ digraph {
 
 1. $C$ から $C$ への (自己) 関手 $T$
 1. 自然変換 $\eta: 1 \to T$
+    - すなわち対象 $A$ に対して射 $\eta_A : A \to TA$ を与える
 1. 自然変換 $\mu: T \circ T \to T$
+    - すなわち対象 $A$ に対して射 $\eta_A : T^2A \to TA$ を与える
 
 ただし、次の２つの図式を可換にすることを要請する:
 
-[TODO: ここに図式を書く. それまでは画像検索してもらうこと.]
+[TODO: ここに図式を書く. それまでは画像検索してもらうこと.
+例えば [https://tnomura9.exblog.jp/15292357/](https://tnomura9.exblog.jp/15292357/) の "定義7" ]
 
 Kleisli triple とモナドは等価で、違いは $f^\#$ と $\mu$ だが、それらは
 
-- $\mu_{T^2A} = 1_{TA}^\#$
-- $f^\# = \mu_{T^2B} \circ Tf$
+- $\mu_A = 1_{TA}^\#$
+- $f^\# = \mu_B \circ Tf$
 
 で変換可能.
 

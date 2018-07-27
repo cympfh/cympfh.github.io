@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Deep Representation Learning with Target Coding</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/</a>
+</header>
+<header>
+<h1 class="title">Deep Representation Learning with Target Coding</h1>
+</header>
+<ul>
+<li>
+original paper: <a href=http://personal.ie.cuhk.edu.hk/~ccloy/files/aaai_2015_target_coding.pdf>http://personal.ie.cuhk.edu.hk/~ccloy/files/aaai_2015_target_coding.pdf</a>
+</li>
+</ul>
+<div class="is-pulled-right">
+<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a></p>
+</div>
+<blockquote>
+<p>この引用の形になって書かれてる文は私の感想です. それ以外は論文に書かれている内容です. 特に図表は論文からの引用です.</p>
+</blockquote>
+<h2 id="概要">概要</h2>
+<p>ラベルの符号化 (Target Coding) の重要性</p>
+<figure>
+<img src="https://i.imgur.com/vTLv5is.png" />
+</figure>
+<p>果たして 1-of-K coding が最良の方法だろうか.</p>
+<h2 id="準備">準備</h2>
+<h3 id="target-coding">Target Coding</h3>
+<p>Target Coding を定義する.</p>
+<p>シンボル (有限) 集合 <span class="math inline">\(T\)</span> を用意する. 典型的には binary alphabet set <span class="math inline">\(T=\{0,1\}\)</span> がある.</p>
+<p>ラベルの数に相当する <span class="math inline">\(n\)</span> と一つの code の長さに相当する <span class="math inline">\(\ell\)</span> について <span class="math display">\[S \in T^{n \times \ell}\]</span> なる行列 <span class="math inline">\(S\)</span> を code と呼ぶ. <span class="math inline">\(S\)</span> の各行を codeword という. つまり <span class="math inline">\(S\)</span> は <span class="math inline">\(n\)</span> 個の codeword を含んでいて、各 codeword は長さ <span class="math inline">\(\ell\)</span> の <span class="math inline">\(T\)</span> の列である.</p>
+<!--
+code $S$ に対してシンボルの行/列ごとの出現数を $A, B$ として持っておく.
+すなわち、
+
+- $A = \{\alpha_i\}_{i=1}^n$
+    - $\alpha_{i,k}$ は $S_{i \cdot}$ に $T_k$ ($k$ 個目のシンボル) が出現する回数
+- $B = \{\beta_j\}_{j=1}^\ell$
+    - $\beta_{j,k}$ は $S_{\cdot j}$ に $T_k$ が出現する回数
+
+-->
+<h4 id="of-k-coding">1-of-K coding</h4>
+<p>ラベルの数が <span class="math inline">\(K\)</span> のとき、</p>
+<ul>
+<li><span class="math inline">\(T=\{0,1\}\)</span></li>
+<li><span class="math inline">\(S \in T^{K \times K}\)</span> (<span class="math inline">\(n=\ell=K\)</span>)
+<ul>
+<li><span class="math inline">\(S_{ij} = \delta_{i,j}\)</span> (単位行列)</li>
+</ul></li>
+</ul>
+<p>なる code を 1-of-K coding という.</p>
+<h4 id="hadamard-code">Hadamard code</h4>
+<p>アダマール行列を code として用いる. アダマール行列とは次のようなもの.</p>
+<p><span class="math display">\[H^2 = \left[
+\begin{array}{cc}
++ &amp; + \\
++ &amp; - \\
+\end{array}
+\right]\]</span> <span class="math display">\[\begin{align*}
+H^4 &amp; = H^2 \otimes H^2 \\
+&amp; = \left[
+\begin{array}{cccc}
++ &amp; + &amp; + &amp; + \\
++ &amp; - &amp; + &amp; - \\
++ &amp; + &amp; - &amp; - \\
++ &amp; - &amp; - &amp; + \\
+\end{array}
+\right]\]</span> <span class="math display">\[H^{2m} = H^m \otimes H^2\]</span></p>
+<p>として <span class="math inline">\(H^m \in \{+,-\}^{m\times m}\)</span> が定義される. ただし <span class="math inline">\(m\)</span> は2の累乗. ここで <span class="math inline">\(+,-\)</span> は <span class="math inline">\(+1,-1\)</span> のこと. <span class="math inline">\(\otimes\)</span> とは要素ごとの積 (Kronecker product, tensor product).</p>
+<p><span class="math inline">\(H^m\)</span> から次の手順で code にする</p>
+<ol type="1">
+<li>1行目と1列目 (全部 <span class="math inline">\(+\)</span>) を消して <span class="math inline">\(\{+,-\}^{m-1 \times m-1}\)</span> にする</li>
+<li>要素の <span class="math inline">\(+,-\)</span> それぞれを <span class="math inline">\(0,1\)</span> に写す <span class="math inline">\((+ \mapsto 0, - \mapsto 1)\)</span></li>
+<li><span class="math inline">\(K\)</span> 行を選んで <span class="math inline">\(\{0,1\}^{K \times m-1}\)</span> にする <span class="math inline">\((K \leq m-1)\)</span>
+<ul>
+<li>選び方? (後述)</li>
+</ul></li>
+</ol>
+<p>以上で code <span class="math inline">\(\{0,1\}^{K \times m-1}\)</span> を手に入れる. 従って codeword の長さはいつも2の累乗から1引いた数になる (e.g. 127, 255).</p>
+<blockquote>
+<p>ところではじめの <span class="math inline">\(H^2\)</span> を単位行列に取り替えれば同じ作り方で 1-of-K が作れるな</p>
+</blockquote>
+<h5 id="アダマール行列の性質">アダマール行列の性質</h5>
+<ol type="1">
+<li><strong>Uniformness</strong> どの行/列にも <span class="math inline">\(1 \in T\)</span> が <span class="math inline">\(m/2\)</span> 個以上含まれる</li>
+<li>どの codeword 同士を比較しても、ハミング距離が全て等しく <span class="math inline">\(m/2\)</span></li>
+</ol>
+<h5 id="k-行の選び方"><span class="math inline">\(K\)</span> 行の選び方</h5>
+<p><span class="math inline">\(T^{m-1 \times m-1}\)</span> から <span class="math inline">\(K\)</span> 行を選ぶ必要がある. この指標として、各列について <span class="math inline">\(1\)</span> を含む割合が uniform であることがある. 思想的にはラベルの数のちょうど半分 (<span class="math inline">\(K/2\)</span>) 個だけが、各列に <span class="math inline">\(1\)</span> があるのが理想. その方法として貪欲法で行を取ってく方法と、単にランダムに選ぶ方法を試している.</p>
+<figure>
+<img src="https://i.imgur.com/YJjhjzj.png" />
+</figure>
+<p>貪欲でもこのくらいは大体理想状態にできる.</p>
+<h2 id="実験">実験</h2>
+<h3 id="特徴ベクトル">特徴ベクトル</h3>
+<p>CIFAR-100 のうちから特に似てる tigar, lion, leopard の3クラスについて CNN (Figure 3) で分類学習を行う. CNN の最後の4層 (全結合してる) それぞれでのベクトルをプロットして獲得した表現を調べる.</p>
+<figure>
+<img src="https://i.imgur.com/IoeeTVc.png" />
+</figure>
+<p>HC-127 は codeword の長さが 127 の Hadamard code. -255 は長さが 255 のそれ.</p>
+<blockquote>
+<p>最後手前まではどれも変わらない. HC-127 はこれは改良になってるのかよくわからんな. HC-255 までくると良くなってそうだけど、HC の良さなのか codeword の長さの良さなのかわからん. 1-of-K の codeword は長さ <span class="math inline">\(K=3\)</span> なわけだし. とは言え良くなる気持ちはわかる. ラベルが完全に排他的ではなく、lion or leopard というラベルが新しく着けられるわけだから.</p>
+</blockquote>
+<h3 id="k-行の選び方-1"><span class="math inline">\(K\)</span> 行の選び方</h3>
+<p>貪欲法とランダムを比較したが、分類性能ではわずかに貪欲法のが良かった.</p>
+<blockquote>
+<p>本当に僅かだったので、どうでもいいっぽい. となるとますます HC の良さが分からなくなるな. 例えば列方向に冗長性をもたせた 1-of-K でいいのでは？</p>
+</blockquote>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

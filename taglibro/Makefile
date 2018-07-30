@@ -10,7 +10,6 @@ index:
 	mdc $^ | \
 		pandoc -s -t html5 \
 		-B templates/post.header.html \
-		-A ../resources/js/toc.html \
 		-A templates/post.footer.html \
 		-A ../resources/js/toc.html \
 		--mathjax=https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML \

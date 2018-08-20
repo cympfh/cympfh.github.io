@@ -4,19 +4,26 @@
 
 ## 層の定義
 
-ここでは第一の定義の形で表されるものを対象にする.
-即ち, 位相空間 $(X, \mathcal O_X)$ の上の層 $A$ とは集合 $A$ に
+ここでは次のような形のものを層と呼ぶ.
+
+<div class=thm>
+位相空間 $(X, \mathcal O_X)$ の上の層 $A$ とは集合 $A$ に
 
 - 関数 $E : A \to \mathcal O_X$
 - 二項演算 $\rceil : A \times \mathcal O_X \to A; a \rceil U \in A$
 
-を与えたもの.
+を加えたもののこと.
 ただし次の4つが要請される.
 
 1. 任意の $a, b \in A$ に対して、$a \rceil \emptyset = b \rceil \emptyset$
 1. $a \rceil (Ea) = a$
 1. $E (a \rceil U) = Ea \cap U$
 1. $(a \rceil U) \rceil V = a \rceil (U \cap V)$
+
+</div>
+
+ちなみに演算の優先度は,
+$E$ (関数適用) $>$ $\cap > ~ \rceil$ .
 
 ## 層の射
 
@@ -360,3 +367,13 @@ $$Hom(A \times C, B) \simeq Hom(C, B^A)$$
 $$Hom(F(C), B) \simeq Hom(C, G(B))$$
 と書き直せる.
 これを随伴 [wikipedia](https://ja.wikipedia.org/wiki/%E9%9A%8F%E4%BC%B4%E9%96%A2%E6%89%8B) という. $F,G$ を随伴関手という.
+
+### メモ
+
+今の定理はカリーハワード対応を書いてやると
+
+- 論理
+    - $\left( (A \land C) \implies B \right) \iff \left( C \implies A \implies B \right)$
+- プログラム (Haskell)
+    - `(a, c) -> b` $\iff$ `c -> a -> b`
+    - 左から右をカリー化という

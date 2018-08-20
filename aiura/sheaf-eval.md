@@ -210,16 +210,16 @@ digraph {
 #### 証明・存在性
 
 まず関数 $h : C \to B^A$ を定義して, これが確かに射であることを確認する.
-関数としてはつまり $c \in C$ に対して $f_c \in B^A$ とその $Ef_c$ (あるいは $(f_c, Ef_c) \in B^A$) を, 先の図式が可換になるように割り当ててやればよい.
+関数としては $c \in C$ に対して $f_c \in B^A$ とその $Ef_c$ (あるいは $(f_c, Ef_c) \in B^A$) を, 先の図式が可換になるように割り当ててやればよい.
 
-つまり, $(a, c) \in A \times C$ について次の2つが等しい
+可換であるとはつまり, $(a, c) \in A \times C$ について次の2つ
 
-- $g(a, c)$
+- $g(a, c)$,
 - $ev((1 \times h)(a, c)) = ev(a, hc) = (hc)(a) = f_c(a)$
 
-ようにしたいので, そのまま,
+が等しいこと. そのようにしたいので, これをそのまま
 $$f_c(a) = g(a, c)$$
-とすればよい (仮の定義).
+として $f_c$ を定めればよい (仮の定義).
 
 ただし注意として, 今考えた $(a, c)$ は直積から取ってきた点であるので $Ea=Ec$ という制約があり,
 全ての点の $a$ について $f_c(a)$ の値が定まっているわけではない.
@@ -227,7 +227,7 @@ $$f_c(a) = g(a, c)$$
 
 修正をします.
 $$f_c(a) = g(a \rceil Ec, c \rceil Ea)$$
-注意として $(a,c) \in A \times C \iff Ea=Ec$ ならば, 値は変わらず $f_c(a)=g(a,c)$ を満たしているので可換性は守られている.
+注意として $(a,c) \in A \times C (\iff Ea=Ec)$ については, 相変わらず $f_c(a)=g(a,c)$ を満たしているので可換性は守られている.
 
 というわけで $c \in C$ に対して関数
 $$f_c : A \to B$$
@@ -245,7 +245,7 @@ $$E(hc)=Ec$$
 $$h(c) = (f_c, Ef_c) = (f_c, Ec)$$
 とすればよい.
 ただしこれが well-defined であることを確認する必要がある.
-つまり $f_c \in B^A$ であるかがそんなに自明ではない.
+つまり $f_c \in B^A$ であるかだが, これは下のように確かめられる.
 
 <div class=thm>
 $f_c \in B^A$ の証明.
@@ -279,7 +279,84 @@ f_c(a \rceil U)
 以上で関数
 $$h : C \to B^A$$
 $$h(c) = (f_c, Ef_c)$$
-が定義された.
+が定義された!
+
+次に $h$ が射であることを確認する.
+
+i. $E(hc) = Ef_c=Ec$
+i. $h(c \rceil U) = (f_{c \rceil U}, Ef_{c \rceil U}) = (f_{c \rceil U}, E(c \rceil U))$
+    - $f_{c \rceil U}(a) = g(a \rceil Ec \cap U, c \rceil U \rceil Ea) = f_c(a) \rceil U = (f_c \rceil U)(a)$
+        - よって (関数として) $f_{c \rceil U} = f_c \rceil U$
+    - $Ef_{c \rceil U} = E(c \rceil U) = Ec \cap U = E(f_c \rceil U)$
+        - 以上2つより $h(c \rceil U) = hc \rceil U$
+
+であるので確かに,
+<center>
+```dot
+digraph {
+    graph [bgcolor=transparent];
+    node [shape=plaintext];
+    edge [arrowhead=vee];
+    rankdir=LR;
+    "A×C" -> B [label=g];
+    "A×C" -> "A×B^A" [label="1×h"];
+    "A×B^A" -> B [label=ev];
+    { rank=same; "A×C" "A×B^A" }
+}
+```
+</center>
+を可換にするような射 $h : C \to B^A$ は少なくとも一つは存在する.
 
 #### 証明・唯一性
 
+与えられた $g$ に対してこのような $h$ は唯一しか存在しない.
+これを示す常套的手段として次のような方法を取る.
+今 $h$ の他に $h'$ があるとき, 実は $h=h'$ であることを示す.
+これによって, 2つ以上存在することが言えなくなる.
+先ほどの存在性と合わせることで, 唯一の存在であることが言えたことになる.
+
+$h'$ もまた上の図式を可換にするような射であるとする.
+$$\forall c \in C, h(c) = h'(c)$$
+を示すことで $h=h'$ を言うことにする.
+
+自由に取ってきた $c \in C$ について, $h(c) = h'(c)$ を言う.
+注意として $h(c) \in B^A$ であるので,
+この値の等価性を示すには $h(c)=(f,Ef)$ とすると $f$ の関数としての等価性と $Ef$ の集合としての等価性を合わせて言う必要がある.
+
+i. 2つは射であるので
+$$E(hc)=Ec=E(h'c)$$
+
+ii. $h(c)=h'(c)$ を示す.
+2つは $A \to B$ な関数なので, 好きに取ってきた $a \in A$ について
+$h(c)(a) = h'(c)(a)$ を示せばよい.
+
+今もし $Ea=Ec \iff (a,c) \times A \times C$ ならば, 可換性より即座に
+$h(c)(a) = ev(a,hc)=g(a,c)=\cdots=h'(c)(a)$
+が言える.
+
+さて
+$E(h(c)(a))=E(f_c(a))=Ef_c\cap Ea=Ec \cap Ea$
+であるので
+$h(c)(a) = h(c)(a) \rceil Ec \cap Ea ( \in B)$
+であるが,
+$$\begin{align*}
+h(c)(a) \rceil Ec \cap Ea
+& = h(c) (a \rceil Ec) \rceil Ea  & \cdots \because h c \in B^A \\
+& = h(c \rceil Ea) (a \rceil Ec)  & \cdots \because h c \in B^A \\
+\end{align*}$$
+であるので結局 $(a',c')=(a \rceil Ec, c \rceil Ea)$ を $h$ に適用した場合を考えればよくて,
+このとき $Ea'=Ec'$ であるので先ほどの議論から $h$ の値と $h'$ の値は等しい.
+
+以上から $h=h'$.
+
+### メモ
+
+層 $A$ から $B$ への射全体を圏論的に $Hom(A,B)$ と書いてやると,
+今の定理はつまり
+$$Hom(A \times C, B) \simeq Hom(C, B^A)$$
+であることを主張していた.
+
+この $A$ の部分を隠してやると, 適当な $F,G$ を用いて
+$$Hom(F(C), B) \simeq Hom(C, G(B))$$
+と書き直せる.
+これを随伴 [wikipedia](https://ja.wikipedia.org/wiki/%E9%9A%8F%E4%BC%B4%E9%96%A2%E6%89%8B) という. $F,G$ を随伴関手という.

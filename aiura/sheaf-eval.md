@@ -1,4 +1,4 @@
-% 層の射、直積、べき層、evaluation
+% 層の射、直積、冪、evaluation
 % 2018-08-19 (Sun.)
 % 層
 
@@ -13,10 +13,10 @@
 を与えたもの.
 ただし次の4つが要請される.
 
-0. 任意の $a, b \in A$ に対して、$a \rceil \emptyset = b \rceil \emptyset$
-1. $a \rceil Ea = a$ ($\rceil$ の結合則は $E$ の適用より弱い)
-2. $E (a \rceil U) = E a \cap U$
-3. $(a \rceil U) \rceil V = a \rceil (U \cap V)$
+1. 任意の $a, b \in A$ に対して、$a \rceil \emptyset = b \rceil \emptyset$
+1. $a \rceil (Ea) = a$
+1. $E (a \rceil U) = Ea \cap U$
+1. $(a \rceil U) \rceil V = a \rceil (U \cap V)$
 
 ## 層の射
 
@@ -211,4 +211,3 @@ TODO(明日書きます)
 
 #### 証明・唯一性
 
-TODO(明日書きます)

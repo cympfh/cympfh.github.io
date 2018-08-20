@@ -150,16 +150,17 @@ $(f a, g c) \in B \times D$ であることが分かって well-defined であ�
 $f \in B^A$ は関数であるので $a \in A$ を関数適用することができる.
 この関数適用という操作自体が射であることを見ていく.
 
+<div class=thm>
 関数 $ev$ を次のように定める.
 $$ev : A \times B^A \to B$$
 $$ev : (a, f) \to f(a)$$
+</div>
 
 ただしこの定義域の直積は **層の直積** であることに注意.
 すなわち, $(a,f) \in A \times B^A$ には $E(a,f)=Ea=Ef$ という制約がある.
 
+<div class=thm>
 関数 $ev$ は射である.
-
-### $ev$ は射であることの証明
 
 射の定義に照らしあわせて証明する.
 
@@ -180,6 +181,7 @@ ev((a,f) \rceil U)
 & = fa \rceil U       & \cdots \because f \in B^A \\
 & = ev(a, f) \rceil U & \cdots \text{関数evを逆に使った}
 \end{align*}$$
+</div>
 
 ### 冪の普遍性
 
@@ -207,7 +209,77 @@ digraph {
 
 #### 証明・存在性
 
-TODO(明日書きます)
+まず関数 $h : C \to B^A$ を定義して, これが確かに射であることを確認する.
+関数としてはつまり $c \in C$ に対して $f_c \in B^A$ とその $Ef_c$ (あるいは $(f_c, Ef_c) \in B^A$) を, 先の図式が可換になるように割り当ててやればよい.
+
+つまり, $(a, c) \in A \times C$ について次の2つが等しい
+
+- $g(a, c)$
+- $ev((1 \times h)(a, c)) = ev(a, hc) = (hc)(a) = f_c(a)$
+
+ようにしたいので, そのまま,
+$$f_c(a) = g(a, c)$$
+とすればよい (仮の定義).
+
+ただし注意として, 今考えた $(a, c)$ は直積から取ってきた点であるので $Ea=Ec$ という制約があり,
+全ての点の $a$ について $f_c(a)$ の値が定まっているわけではない.
+しかしながら $f_c$ は一般に $A \to B$ なる関数である必要があるので, 先程の $f_c$ の定義では未だ部分関数でしかない.
+
+修正をします.
+$$f_c(a) = g(a \rceil Ec, c \rceil Ea)$$
+注意として $(a,c) \in A \times C \iff Ea=Ec$ ならば, 値は変わらず $f_c(a)=g(a,c)$ を満たしているので可換性は守られている.
+
+というわけで $c \in C$ に対して関数
+$$f_c : A \to B$$
+を定義することができた.
+
+次に $Ef_c \in \mathcal O_X$ という値を定める.
+これは $f_c$ とは独立に決めて良よくて, ここでは
+$$Ef_c = Ec$$
+と定める.
+これは, 関数 $h$ を $h(c)=f_c$ という風に定めるつもりでいるのだが, $h$ が射であるようにするために
+$$E(hc)=Ec$$
+となる必要があるので, そのために自動的に決まる.
+
+次に, 関数 $h : C \to B^A$ を定義する.
+$$h(c) = (f_c, Ef_c) = (f_c, Ec)$$
+とすればよい.
+ただしこれが well-defined であることを確認する必要がある.
+つまり $f_c \in B^A$ であるかがそんなに自明ではない.
+
+<div class=thm>
+$f_c \in B^A$ の証明.
+
+冪の定義に従って, 次の2つを確かめれば良い.
+
+i. $E(f_c(a)) = Ea \cap Ef_c$
+i. $f_c(a \rceil U) = f_c(a) \rceil U$
+
+1つ目は
+$$\begin{align*}
+E(f_c(a))
+& = E(g(a \rceil Ec, c \rceil Ea))     & \cdots f_c \text{ の定義} \\
+& = E(a \rceil Ec, c \rceil Ea)        & \cdots g \text{ は射} \\
+& = Ea \rceil Ec                       & \cdots \text{ 直積の E の定義}\\
+& = Ea \rceil Ef_c
+\end{align*}$$
+なので.
+
+2つ目は
+$$\begin{align*}
+f_c(a \rceil U)
+& = g(a \rceil U \rceil Ec, c \rceil Ea \rceil U)     & \cdots f_c \text{ の定義} \\
+& = g(a \rceil Ec, c \rceil Ea) \rceil U              & \cdots \text{ 直積の制限} \\
+& = f_c(a) \rceil U
+\end{align*}$$
+なので.
+</div>
+
+
+以上で関数
+$$h : C \to B^A$$
+$$h(c) = (f_c, Ef_c)$$
+が定義された.
 
 #### 証明・唯一性
 

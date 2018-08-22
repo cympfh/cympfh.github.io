@@ -75,16 +75,12 @@ triple における $T$ 、冪集合の例での $P$ は単に対象を対象に
 同様に射にも割り当てを構成することで (自己) 関手となる.
 それには下の図式を用いる.
 
-```dot
-digraph {
-    rankdir=LR;
-    bgcolor=transparent;
-    node [shape=plaintext];
-    A -> B [label=f]
-    B -> TB [label=eta_B]
-    TA -> TB [label="(eta_B . f)#"]
-}
-```
+$\require{AMScd}$
+$$\begin{CD}
+A    @>f>>     B           \\
+@.             @V\eta_BVV  \\
+TA   @>(\eta_B \circ f)^\#>>  TB
+\end{CD}$$
 
 即ち射 $f: A \to B$ に対して
 $$Tf := (\eta_B \circ f)^\#$$
@@ -121,38 +117,22 @@ $$\alpha_A : FA \to GA$$
 
 これを図式で書くと、下が可換であるということ
 
-```dot
-digraph {
-    rankdir=LR;
-    bgcolor=transparent;
-    node [shape=plaintext];
-    FA -> GA [label="α_A"];
-    FB -> GB [label="α_B"];
-    FA -> FB [label=Ff];
-    GA -> GB [label=Gf];
-    {rank=same FA FB}
-    {rank=same GA GB}
-}
-```
+$$\begin{CD}
+FA      @>\alpha_A>>  GA  \\
+@VFfVV                @VGfVV  \\
+FB      @>\alpha_B>>  GB  \\
+\end{CD}$$
 
 ### 冪集合の例
 
 冪集合 triple で登場した $\eta$ はそのまま、自然変換 $1 \to P$ と見做すことができる.
 即ち $\eta_A : A \to PA, a \mapsto \{a\}$ であったが、
 
-```dot
-digraph {
-    rankdir=LR;
-    bgcolor=transparent;
-    node [shape=plaintext];
-    A -> PA [label="η_A"];
-    B -> PB [label="η_B"];
-    A -> B [label=f];
-    PA -> PB [label=Pf];
-    {rank=same A B}
-    {rank=same PA PB}
-}
-```
+$$\begin{CD}
+A      @>\eta_A>>  PA  \\
+@VfVV              @VPfVV  \\
+B      @>\eta_B>>  PB  \\
+\end{CD}$$
 
 は確かに可換である.
 念の為に確認すると、
@@ -193,3 +173,7 @@ $$\begin{align*}
 \end{align*}$$
 
 です.
+
+## メモ (2018/08/23)
+
+運良くここに登場する可換図式は全て正方形の形をしていたので、AMScd パッケージを用いて出力してみた.

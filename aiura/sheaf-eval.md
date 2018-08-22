@@ -337,7 +337,7 @@ ii. $h(c)=h'(c)$ を示す.
 2つは $A \to B$ な関数なので, 好きに取ってきた $a \in A$ について
 $h(c)(a) = h'(c)(a)$ を示せばよい.
 
-今もし $Ea=Ec \iff (a,c) \times A \times C$ ならば, 可換性より即座に
+今もし $Ea=Ec \iff (a,c) \in A \times C$ ならば, 可換性より即座に
 $h(c)(a) = ev(a,hc)=g(a,c)=\cdots=h'(c)(a)$
 が言える.
 
@@ -348,8 +348,9 @@ $h(c)(a) = h(c)(a) \rceil Ec \cap Ea ( \in B)$
 であるが,
 $$\begin{align*}
 h(c)(a) \rceil Ec \cap Ea
-& = h(c) (a \rceil Ec) \rceil Ea  & \cdots \because h c \in B^A \\
-& = h(c \rceil Ea) (a \rceil Ec)  & \cdots \because h c \in B^A \\
+& = h(c) (a \rceil Ec) \rceil Ea  & \cdots h c \in B^A \text{ なので} \\
+& = (hc \rceil Ea) (a \rceil Ec)  & \cdots h c \in B^A \text{ なので} \\
+& = (h(c \rceil Ea)) (a \rceil Ec)  & \cdots h \text{ が射なので} \\
 \end{align*}$$
 であるので結局 $(a',c')=(a \rceil Ec, c \rceil Ea)$ を $h$ に適用した場合を考えればよくて,
 このとき $Ea'=Ec'$ であるので先ほどの議論から $h$ の値と $h'$ の値は等しい.

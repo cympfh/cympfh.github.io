@@ -267,8 +267,8 @@ $$\begin{align*}
 E(f_c(a))
 & = E(g(a \rceil Ec, c \rceil Ea))     & \cdots f_c \text{ の定義} \\
 & = E(a \rceil Ec, c \rceil Ea)        & \cdots g \text{ は射} \\
-& = Ea \rceil Ec                       & \cdots \text{ 直積の E の定義}\\
-& = Ea \rceil Ef_c
+& = E(a \rceil Ec)                     & \cdots \text{ 直積の E の定義}\\
+& = Ea \cap Ef_c
 \end{align*}$$
 なので.
 

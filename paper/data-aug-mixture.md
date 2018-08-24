@@ -26,3 +26,7 @@ NOTE:
 <blockquote class="twitter-tweet" data-lang="en"><p lang="ja" dir="ltr">実験的には3個合成よりは2個のほうが良かったです．直感的には合成しすぎると，何がなんだかわからなくなる気がしますしｗ 濃度を変えて混ぜるとかもやったんですが，結局単純な2個平均がベストだったので・・・．</p>&mdash; Hiroshi (Taku) Inoue (@inoueh) <a href="https://twitter.com/inoueh/status/950986159919788032?ref_src=twsrc%5Etfw">January 10, 2018</a></blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
+## 追記
+
+[mixup](https://arxiv.org/abs/1710.09412) という名前でほぼ同手法が提案されていた.
+論文はこちらが通っている.

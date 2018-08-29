@@ -1,6 +1,8 @@
 .PHONY: index posts edit
 
-.DEFAULT_GOAL := posts
+.DEFAULT_GOAL := all
+
+all: posts index
 
 index: *.md
 	bash script/index.sh >index.html

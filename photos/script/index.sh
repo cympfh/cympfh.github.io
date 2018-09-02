@@ -2,7 +2,7 @@
 
 cat resources/index.header.html
 
-ALBUMS="dosoku houbunsha tickets"
+ALBUMS="tickets dosoku houbunsha"
 for a in $ALBUMS; do
 
     HASH=$(imgur album ls | grep "$a" | awk '{print $2}')

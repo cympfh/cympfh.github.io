@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sun Sep 02 2018</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='../../index.html'><i class="fa fa-save" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">Sun Sep 02 2018</h1>
+</header>
+<h2 id="日記マジックビンゴについて">日記・マジックビンゴについて</h2>
+<blockquote class="twitter-tweet" data-lang="en">
+<p lang="und" dir="ltr">
+<a href="https://t.co/WstATHoLqE">pic.twitter.com/WstATHoLqE</a>
+</p>
+— 枚方 (cympfh) (<span class="citation" data-cites="cympfh">@cympfh</span>) <a href="https://twitter.com/cympfh/status/1036127243867643904?ref_src=twsrc%5Etfw">September 2, 2018</a>
+</blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>今年の6/30に、キズナアイのバースデーパーティーというイベントがあり、行ってきた. キズナアイと近い位置で声を出して楽しむことが出来たので楽しかった. それはどうでもいい.</p>
+<p>その中で、よくあるビンゴ大会があり、最初にビンゴをした人にプレゼントをするということだった. 最初にビンゴをした人、という点を強調してるのが不自然だった. また、抽選で選ぶ数字の発表が、予め作ってた動画の再生だったのも怪しかった. とはいえ、その場では何かを疑うなんて思いもしなかった. このイベントはバーチャルユーチューバーのイベントであり、基本的に全てがディスプレイの表示上のもので完結するのは不自然なことではなかっただろう. 公平性を演出する必要のあるビンゴでは不自然だが.</p>
+<p>リーチの声を上げる者が増える中でなかなかビンゴは出ないでいた. ついに周りに、リーチが出来てない人はいないという状態になったとき、ある数字が発表されると共に、会場の全員が同時にビンゴと声を上げた.</p>
+<p>つまり、こういうことだった</p>
+<ol type="1">
+<li>読み上げる数字の列は予め決まっていた</li>
+<li>ある数字が出るまでは誰もビンゴを完成させられず、その数字によってみんなが初めてビンゴを完成させた</li>
+</ol>
+<p>このようなビンゴはいかにして作るのか.</p>
+<p>ネタバレなのだが、適当にググると、このようなビンゴが「マジックビンゴ」という商品名で五所川原システムというところから販売されてることを知った.</p>
+<ul>
+<li><a href="http://dojibingo.ocnk.net/page/1">マジックビンゴについて</a></li>
+</ul>
+<p>さらにここでは簡単に作り方も載せられてある. このwebページの情報を総合するとこうだ.</p>
+<ol type="1">
+<li>読み上げる数字の列は予め決まっていて、27個目が51になっている
+<ul>
+<li>28 個目以上は読み上げないので存在しない</li>
+</ul></li>
+<li>普通にビンゴのシート (あの穴を開けるカード) をランダムに作る
+<ul>
+<li>目的に沿うかどうかシミュレートする
+<ul>
+<li>つまり27個目の51で初めてのビンゴになるかチェックする</li>
+</ul></li>
+<li>目的にそぐわないなら廃棄する</li>
+</ul></li>
+</ol>
+<p>ようするに乱択だ. これでも 1% 程度で成功することが経験的にかどうか分かっているらしい. なら問題なさそうだ. 自然なものの内、偶然ビンゴするものを選ぶだけなので不自然なシートになりようがない、と保証できるのも良い.</p>
+<h3 id="乱択ではないマジックビンゴの作り方">乱択ではないマジックビンゴの作り方</h3>
+<p>このwebページを見るより前に作り方を考えてた. 個々の数字の配置はランダムだけど、必ず欲しい性質（あるタイミングで初めてビンゴする）を持ったシートを作ることを目指す.</p>
+<p>読み上げる数字の列を予め決定することにする. ビンゴになる数字より後は読み上げないので、結局この数字の列は有限の長さしか持たない.</p>
+<p>ところでよくある普通の<a href="https://ja.wikipedia.org/wiki/%E3%83%93%E3%83%B3%E3%82%B4">ビンゴ</a> を想定する. シートには5行5列にマスがあり、マスには異なる数字が書かれている. ただしその真ん中は FREE と呼ばれ、数字が割り当てられないで、初めから開いてるものと扱う. また、使われる数字は 1 から 75 までの整数に限られている上に、列ごとにさらに制約がある. 第 <span class="math inline">\(n\)</span> 行には <span class="math inline">\(1+15n\)</span> から <span class="math inline">\(15(n+1)\)</span> までの整数にさらに限られている. 例えば第2行は 16 から 30 までの整数の内の5つが使われることになる. 行については何の制約もない. もっとも、この話は、ここでは本質ではない.</p>
+<p>使われる数字の集合を次のように命名する:</p>
+<ul>
+<li><span class="math inline">\(X = \bigcup_{i=0}^4 X_i\)</span>
+<ul>
+<li><span class="math inline">\(X_0 = \{1,2,\ldots,15\}\)</span></li>
+<li><span class="math inline">\(X_i = \{ n | 1+15i \leq n \leq 15(i+1) \}\)</span></li>
+<li><span class="math inline">\(X_4 = \{61, 62, \ldots, 75\}\)</span></li>
+</ul></li>
+</ul>
+<p>読み上げ列は長さに関するパラメータ <span class="math inline">\(L\)</span> を決めて</p>
+<ul>
+<li><span class="math inline">\(r \in X^{L+1}\)</span></li>
+<li><span class="math inline">\(r = A \cdot c\)</span>
+<ul>
+<li><span class="math inline">\(A \in X^L\)</span></li>
+<li><span class="math inline">\(c \in X\)</span></li>
+</ul></li>
+</ul>
+<p>と書ける. つまり長さ <span class="math inline">\(L+1\)</span> の列であって、その最後の <span class="math inline">\(c\)</span> でビンゴにしたい.</p>
+<p>ここまで形式的に真面目に解説するようなことなのか疑問に思えてきた. 要するに、読み上げ列が予め決まってるので、<span class="math inline">\(X\)</span> はビンゴになるまでに読む数字の集合 <span class="math inline">\(A\)</span> (上の列 <span class="math inline">\(A\)</span> のこと) と、 ビンゴにする数 <span class="math inline">\(c\)</span> と、絶対に読まれない数字の集合 <span class="math inline">\(B\)</span> とに <span class="math inline">\(X\)</span> を分けることが出来る、というのが重要.</p>
+<h4 id="作り方">作り方</h4>
+<ol type="1">
+<li>読み上げ列を作る
+<ul>
+<li>集合 <span class="math inline">\(A\)</span> と <span class="math inline">\(c\)</span> を決めて、<span class="math inline">\(A\)</span> をランダムに並べて列とする</li>
+<li><span class="math inline">\(A \cdot c\)</span> が読み上げ列</li>
+<li><span class="math inline">\(A\)</span> には各 <span class="math inline">\(X_i\)</span> から 5 つ以上選ばれてると、数が足りなくなることがないので便利</li>
+</ul></li>
+<li><span class="math inline">\(c\)</span> をランダムに配置する
+<ul>
+<li>ただし <span class="math inline">\(c \in X_i\)</span> によって列は <span class="math inline">\(i\)</span> で決まる</li>
+</ul></li>
+<li><span class="math inline">\(c\)</span> を通ってビンゴになる列を1本以上選ぶ</li>
+<li>そのビンゴ列の内 <span class="math inline">\(c\)</span> 以外のマスを <span class="math inline">\(A\)</span> の数字で埋める
+<ul>
+<li>１つの列でマスはたかだか5つなので、<span class="math inline">\(|A \cap X_i| \geq 5\)</span> だと必ず数字が存在して便利だっていうことをさっき言った</li>
+</ul></li>
+<li>他の埋めてないマスは、使ってない数字からランダムに選んで埋めればいい、のだが
+<ul>
+<li>もし 3 で選んでないビンゴ列を全て <span class="math inline">\(A\)</span> の中の数字だけで埋めてしまうと、期待しないビンゴが出来てしまう
+<ul>
+<li><span class="math inline">\(c\)</span> が発表される前にビンゴが出来る人が現れてしまう</li>
+</ul></li>
+<li>3 で選んでないビンゴ列全てについて、その中の少なくとも１マスには <span class="math inline">\(B\)</span> の数を埋める
+<ul>
+<li>もちろん 3 で選んだビンゴ列は壊さないようにする</li>
+</ul></li>
+</ul></li>
+</ol>
+<p>以上</p>
+<h4 id="実装">実装</h4>
+<ul>
+<li><a href="https://gist.github.com/cympfh/03829fca99d3327eddb2963b5c2ec51b" class="uri">https://gist.github.com/cympfh/03829fca99d3327eddb2963b5c2ec51b</a></li>
+</ul>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

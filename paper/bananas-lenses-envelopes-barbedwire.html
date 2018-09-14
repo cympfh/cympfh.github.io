@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Functional Programming with Bananas, Lenses, Envelopes and Barbed Wire</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-stumbleupon" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">Functional Programming with Bananas, Lenses, Envelopes and Barbed Wire</h1>
+</header>
+<p class="date" style="text-align: right">
+2018-09-08 (Sat.)
+</p>
+<div class="is-pulled-right">
+<p><a class='tag is-red' href=index.html#プログラミング>プログラミング</a> <a class='tag is-red' href=index.html#圏論>圏論</a></p>
+</div>
+<p><span class="math inline">\(\def\banana#1{(\!|#1|\!)}\)</span> <span class="math inline">\(\def\lense#1{[\!(~#1~)\!]}\)</span> <span class="math inline">\(\def\envelop#1{[\![ #1 ]\!]}\)</span> <span class="math inline">\(\def\wire#1{[\!\!\langle~#1~\rangle\!\!]}\)</span> <span class="math inline">\(\DeclareMathOperator{\cons}{cons}\)</span> <span class="math inline">\(\DeclareMathOperator{\foldr}{foldr}\)</span> <span class="math inline">\(\def\Bool{\mathrm{Bool}}\)</span> <span class="math inline">\(\def\true{\mathrm{true}}\)</span> <span class="math inline">\(\def\false{\mathrm{false}}\)</span> <span class="math inline">\(\def\const#1{#1^\bullet}\)</span> <span class="math inline">\(\def\VOID{\mathrm{VOID}}\)</span> <span class="math inline">\(\def\triangle{\mathop{}\!\mathbin\Delta\;}\)</span></p>
+<h2 id="論文リンク">論文リンク</h2>
+<ul>
+<li><a href="https://maartenfokkinga.github.io/utwente/mmf91m.pdf" class="uri">https://maartenfokkinga.github.io/utwente/mmf91m.pdf</a></li>
+</ul>
+<h2 id="概要">概要</h2>
+<p>一般の再帰的データ構造について, ちょうど, リストに対する畳み込み (fold) といったような4種類の操作 (catamorphism, anamorphism, hylomorphism, paramorphism) を統一的に与える.</p>
+<h2 id="表記">表記</h2>
+<p>この論文では独特な括弧が4種類導入されている. できるだけオリジナルの見た目を模倣して, ここでは次のように表記する.</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">名称</th>
+<th style="text-align: left;">表記</th>
+<th style="text-align: left;">備考</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">バナナ括弧</td>
+<td style="text-align: left;"><span class="math inline">\(\banana{\_}\)</span></td>
+<td style="text-align: left;">果物のバナナ</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">レンズ括弧</td>
+<td style="text-align: left;"><span class="math inline">\(\lense{\_}\)</span></td>
+<td style="text-align: left;">凹レンズ</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">封筒括弧</td>
+<td style="text-align: left;"><span class="math inline">\(\envelop{\_}\)</span></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">有刺鉄線</td>
+<td style="text-align: left;"><span class="math inline">\(\wire{\_}\)</span></td>
+<td style="text-align: left;"><span class="math inline">\([\)</span> と <span class="math inline">\(\langle\)</span> の重ねあわせ</td>
+</tr>
+</tbody>
+</table>
+<p>他にこの論文で使われてる表記で次のものをこの文書でも用いる.</p>
+<ul>
+<li><span class="math inline">\(\const{c}\)</span>
+<ul>
+<li>型 <span class="math inline">\(C\)</span> の値 <span class="math inline">\(c\)</span> (或いは <span class="math inline">\(c \in C\)</span>) と任意の型 (集合) <span class="math inline">\(A\)</span> について, <span class="math inline">\(A \to C\)</span> なる定数関数のこと</li>
+<li><span class="math inline">\(\forall a \in A, \const{c}(a)=c\)</span></li>
+</ul></li>
+</ul>
+<p>また対象 (型, 集合) に関する表記であまり一般的に思えないものについては次のように一般的表記を用いる.</p>
+<ul>
+<li><span class="math inline">\(A \times B\)</span>
+<ul>
+<li>対象 <span class="math inline">\(A, B\)</span> の積</li>
+<li>タプル型, 集合の直積</li>
+</ul></li>
+<li><span class="math inline">\(A + B\)</span>
+<ul>
+<li>対象 <span class="math inline">\(A, B\)</span> の直和</li>
+<li>直和型, 集合の直和</li>
+</ul></li>
+<li><span class="math inline">\(f \colon A \to B\)</span>
+<ul>
+<li><span class="math inline">\(f\)</span> は <span class="math inline">\(A\)</span> から <span class="math inline">\(B\)</span> への射</li>
+<li>あるいは関数, 演算</li>
+</ul></li>
+<li><span class="math inline">\([A]\)</span>
+<ul>
+<li>型 <span class="math inline">\(A\)</span> の要素に持つリストの型</li>
+</ul></li>
+</ul>
+<h2 id="リストの場合">リストの場合</h2>
+<p><span class="math inline">\([A]\)</span> 型の場合を考える.</p>
+<h3 id="catamorphism">catamorphism</h3>
+<p>&quot;cata-&quot; は catastrophic のそれであって, 下方へ, といった意味らしい. リストについての catamorphism は如何のような関数 <span class="math inline">\(h\)</span> である.</p>
+<ul>
+<li><span class="math inline">\(h \colon [A] \to B\)</span></li>
+<li><span class="math inline">\(h~[] = b\)</span></li>
+<li><span class="math inline">\(h~(\cons(a, as)) = a \oplus h(as)\)</span></li>
+</ul>
+<p>ここで <span class="math inline">\(b\)</span> は <span class="math inline">\(B\)</span> の定数. <span class="math inline">\(\oplus\)</span> は <span class="math inline">\(A \times B \to B\)</span> なる二項演算子. このような形の <span class="math inline">\(h\)</span> は Haskell のような言語では <code>foldr</code> として知られており <span class="math display">\[h = \foldr(b, \oplus)\]</span> のように書ける. すなわち <span class="math inline">\(h\)</span> という関数は <span class="math inline">\(b, \oplus\)</span> によって決定するから, ここでは <strong>バナナ括弧</strong> で括ることで <span class="math display">\[h = \banana{b, \oplus}\]</span> と書くことにする.</p>
+<p>例えばリストの長さを取る関数は <span class="math inline">\(\banana{0, (\_,n)\mapsto n+1}\)</span> と書けることが分かる. 他に <code>filter</code> もこの形で定義できる.</p>
+<h3 id="anamorphism">anamorphism</h3>
+<p>ちょうど catamorphism の逆のもので, <code>unfold</code> のような名前で知られている関数 <span class="math inline">\(h\)</span> を次のように定義する.</p>
+<ul>
+<li><span class="math inline">\(h \colon B \to [A]\)</span></li>
+<li><span class="math inline">\(h~b = \begin{cases} [] &amp; \text{ when } p~b \\ \cons(a, h~b&#39;) &amp; \text { otherwise, where } (a,b&#39;)=g~b\end{cases}\)</span></li>
+</ul>
+<p>ただしここで <span class="math inline">\(p\)</span> は <span class="math inline">\(B \to \Bool\)</span> なる述語関数 (<span class="math inline">\(\Bool\)</span> は普通の意味で). <span class="math inline">\(g\)</span> は <span class="math inline">\(B \to A \times B\)</span> なる関数.</p>
+<p>やはりこの <span class="math inline">\(h\)</span> は <span class="math inline">\(p, g\)</span> で決まる関数なので, 今度はレンズ括弧で括って <span class="math display">\[h = \lense{g, p}\]</span> と書いて表す.</p>
+<p>例えば, 関数 <span class="math inline">\(f \colon A \to A\)</span> を繰り返し適用する <code>iterate f</code> という関数 <span class="math inline">\(A \to [A]\)</span> は <span class="math inline">\(\lense{a \mapsto (a, f~a), \const{\mathrm{false}}}\)</span> と書ける.</p>
+<h4 id="map-関数">map 関数</h4>
+<p>リスト <span class="math inline">\([A]\)</span> と関数 <span class="math inline">\(f \colon A \to B\)</span> があるときに, リストの各要素に <span class="math inline">\(f\)</span> を適用することで <span class="math inline">\([A] \to [B]\)</span> という関数を構成することができる. Haskell では <code>map f</code> とこれを書くが, 論文に倣って <span class="math inline">\(f*\)</span> と書くことにする. これは <span class="math inline">\([A]\)</span> からの catamorphism として書くこともできるし, <span class="math inline">\([B]\)</span> への anamorphism と書くこともできる.</p>
+<ul>
+<li><span class="math inline">\(f* = \banana{[], (a, b) \mapsto \cons(f~a, f*b)}\)</span></li>
+<li><span class="math inline">\(f* = \lense{\cons(a, as) \mapsto (f~a, as), \mathrm{nil}}\)</span>
+<ul>
+<li>where
+<ul>
+<li><span class="math inline">\(\mathrm{nil}~[]=\mathrm{true}\)</span></li>
+<li><span class="math inline">\(\mathrm{nil}~\cons(x, xs)=\mathrm{false}\)</span></li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="hylomorphism">hylomorphism</h3>
+<p>リストに関する hylomorphism とは, 例えば木構造をリストにしてやるような「線形再帰関数」のもの. 具体的には <span class="math display">\[h : A \to C\]</span> <span class="math display">\[h~a = \begin{cases}c &amp; \text{ when } p~a\\ b \oplus h~a&#39; &amp; \text{ otherwise, where } (b,a&#39;) = g~a\end{cases}\]</span> と書き表されるもの. ここで <span class="math inline">\(c \colon C\)</span>, <span class="math inline">\(g \colon A \to B \times A\)</span>, <span class="math inline">\(\oplus \colon B \times C \to C\)</span> であって <span class="math inline">\(h \colon A \to C\)</span> である.</p>
+<p>今度の <span class="math inline">\(h\)</span> は <span class="math inline">\(c,\oplus, g,p\)</span> によって決定されるので <span class="math display">\[h=\envelop{(c,\oplus), (g,p)}\]</span> と書き表すことにする.</p>
+<p>そしてこれは明らかに <span class="math display">\[\envelop{(c,\oplus), (g,p)} = \banana{c,\oplus} \circ \lense{g,p}\]</span> という合成の形に分解できる. この証明は論文にはあるが省略. リストが一見登場しないが, この合成の形を見れば, 中間でリストを経由してることが分かる.</p>
+<p>例えば自然数の階乗を計算する関数 <span class="math inline">\(\mathbb N \to \mathbb N\)</span> は <span class="math inline">\(\envelop{(1,\times), ((1+n) \mapsto (1+n, n), \mathrm{zero})}\)</span> と書ける. ここで <span class="math inline">\(\mathrm{zero}\)</span> は引数がゼロかを判定する述語とする. つまり <span class="math inline">\(\lense{g,\mathrm{zero}}(m)=[m,m-1,\ldots,1]\)</span> であって <span class="math inline">\(\banana{1,\times}\)</span> はそれを乗算しながら畳み込む関数である.</p>
+<h3 id="paramorphism">paramorphism</h3>
+<p>原始再帰のパターンを提供するのが paramorphism であって, リストに関する paramorphism は 次のように定義される.</p>
+<ul>
+<li><span class="math inline">\(h \colon [A] \to B\)</span></li>
+<li><span class="math inline">\(h~[]=b\)</span></li>
+<li><span class="math inline">\(h~\cons(a,as)= a \oplus (as, h~as)\)</span></li>
+</ul>
+<p>ここで <span class="math inline">\(b\colon B\)</span>, <span class="math inline">\(\oplus\colon A \times([A]\times B) \to B\)</span> である. このような <span class="math inline">\(h\)</span> はやはり <span class="math inline">\(b,\oplus\)</span> で決定されるので, <span class="math display">\[h=\wire{b, \oplus}\]</span> と書くことにする.</p>
+<p><span class="math inline">\(\oplus\)</span> の型が豪華になったので, 値を蓄積しながらのような関数が書けるようになった. 例えば <code>tails</code> は <span class="math inline">\(\wire{\cons(Nil,Nil), (a\oplus(as,ac)=\cons(\cons(a,as),ac))}\)</span> と書ける.</p>
+<h2 id="代数的データ型-algebraic-data-types">代数的データ型 (Algebraic data types)</h2>
+<h3 id="双関手-bifunctor">双関手 (bifunctor)</h3>
+<p>双関手とは2つの対象の組を対象に写して2つの射の組を射に写すようなもので, <span class="math inline">\(f\colon A\to B\)</span> と <span class="math inline">\(g\colon C\to D\)</span> を <span class="math inline">\(f \dagger g \colon A \dagger C \to B \dagger D\)</span> とするような <span class="math inline">\(\dagger\)</span> といったもの. ただし <span class="math inline">\(1\dagger 1=1\)</span>, <span class="math inline">\(f\dagger g \circ h \dagger j = fh \dagger gj\)</span> となるもの. 双関手の変数として <span class="math inline">\(\dagger, \ddagger\)</span> を用いる.</p>
+<h3 id="積">積</h3>
+<p>2つの対象 <span class="math inline">\(A,B\)</span> の積とは <span class="math inline">\(A \times B\)</span> なる対象. <span class="math inline">\(f \colon A \to B\)</span> と <span class="math inline">\(g \colon C \to D\)</span> との積として <span class="math inline">\(f \times g \colon A \times C \to B \times D\)</span> を定める. 射影関数 <span class="math inline">\(\pi_1 : A \times C \to A\)</span>, <span class="math inline">\(\pi_2 : B \times D \to A\)</span> を伴う.</p>
+<p>関数的に書くと</p>
+<ul>
+<li><span class="math inline">\((f \times g)(x, x&#39;)=(fx gx&#39;)\)</span></li>
+<li><span class="math inline">\(\pi_1(x,x&#39;)=x\)</span></li>
+<li><span class="math inline">\(\pi_2(x,x&#39;)=x&#39;\)</span></li>
+</ul>
+<p>また二項演算子 <span class="math inline">\(\triangle\)</span> を</p>
+<ul>
+<li><span class="math inline">\((f \triangle g) x = (fx, gx)\)</span></li>
+</ul>
+<p>と定める. 例えば <span class="math inline">\(f \times g = (f\pi_1) \triangle (g\pi_2)\)</span> である. また簡単に <span class="math inline">\(\triangle\)</span> を単項コンビネータとして用いて <span class="math inline">\(\triangle x = (x,x)\)</span> とする. これを用いると <span class="math inline">\(f \triangle g = (f \times g) \triangle\)</span> と書ける.</p>
+<h3 id="和">和</h3>
+<p>対象 <span class="math inline">\(A\)</span> と <span class="math inline">\(B\)</span> の和を, <span class="math inline">\(A\)</span> と <span class="math inline">\(B\)</span> と加えて <span class="math inline">\(\{\bot\}\)</span> との直和として定める. <span class="math display">\[A+B = A \amalg B \amalg \{\bot\}\]</span> <span class="math inline">\(f\colon A \to B, g \colon C \to D\)</span> に対して <span class="math inline">\(f+g \colon A+C \to B+D\)</span> を定める. これは関数的に書くと, <span class="math inline">\(A\)</span> のものは <span class="math inline">\(f\)</span> によって <span class="math inline">\(B\)</span> に, <span class="math inline">\(C\)</span> のものは <span class="math inline">\(g\)</span> によって<span class="math inline">\(D\)</span> に, そして <span class="math inline">\(\bot\)</span> は <span class="math inline">\(\bot\)</span> に写すもの.</p>
+<ul>
+<li><span class="math inline">\((f+g) \colon A+C \to B+D\)</span></li>
+<li><span class="math inline">\((f+g) a = f a\)</span></li>
+<li><span class="math inline">\((f+g) c = g c\)</span></li>
+<li><span class="math inline">\((f+g) \bot = \bot\)</span></li>
+</ul>
+<p>自明な埋め込み射 <span class="math inline">\(A \to A+B\)</span> と <span class="math inline">\(B \to A+B\)</span> が存在する.</p>
+<ul>
+<li><span class="math inline">\(i_1 : A \to A+B\)</span></li>
+<li><span class="math inline">\(i_1 a = a\)</span></li>
+<li><span class="math inline">\(i_2 : B \to A+B\)</span></li>
+<li><span class="math inline">\(i_2 b = b\)</span></li>
+</ul>
+<p>積の時と同様に <span class="math inline">\(\triangledown\)</span> という射に関する二項演算子を導入する. これは選択的に射を適用するようなもので <span class="math inline">\(f\colon A \to B, g \colon C \to B\)</span> について</p>
+<ul>
+<li><span class="math inline">\((f \triangledown g) \colon A+C \to B\)</span></li>
+<li><span class="math inline">\((f \triangledown g) a = fa\)</span></li>
+<li><span class="math inline">\((f \triangledown g) c = gc\)</span></li>
+</ul>
+<p>のようなもの.</p>
+<p>例えば <span class="math inline">\(f\colon A \to B, g \colon C \to D\)</span> について 後ろに <span class="math inline">\(i\)</span> を合成すれば <span class="math inline">\(f+g = i_1 f \triangledown i_2 g\)</span> と書ける. そしてやはり単項コンビネータとしても流用して,</p>
+<ul>
+<li><span class="math inline">\(\triangledown \bot=\bot\)</span></li>
+<li><span class="math inline">\(\triangledown (a \in A+C) = (a \in A)\)</span></li>
+<li><span class="math inline">\(\triangledown (c \in A+C) = (c \in C)\)</span></li>
+</ul>
+<p>のように使う.</p>
+<h3 id="矢印">矢印</h3>
+<p>二項演算子 <span class="math inline">\(\to\)</span> を定める. 対象 <span class="math inline">\(A,B\)</span> について <span class="math inline">\(A\to B\)</span> はまた対象で, <span class="math inline">\(A\)</span> から <span class="math inline">\(B\)</span> への射全体の集まりを表す. 2つの射 <span class="math inline">\(f \colon A \to C\)</span> と <span class="math inline">\(g \colon C&#39; \to B\)</span> について <span class="math display">\[(f \to g) \colon (C \to C&#39;) \to (A \to B)\]</span> <span class="math display">\[(f \to g) h = g \circ h \circ f\]</span> を定める.</p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.38.0 (20140413.2041)
+ -->
+<!-- Title: %3 Pages: 1 -->
+<svg width="351pt" height="44pt" viewBox="0.00 0.00 351.00 44.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 40)">
+<title>
+%3
+</title>
+<!-- A -->
+<g id="node1" class="node">
+<title>
+A
+</title>
+<text text-anchor="middle" x="27" y="-14.3" font-family="Times,serif" font-size="14.00">A</text> </g> <!-- C --> <g id="node2" class="node">
+<title>
+C
+</title>
+<text text-anchor="middle" x="122" y="-14.3" font-family="Times,serif" font-size="14.00">C</text> </g> <!-- A&#45;&gt;C --> <g id="edge1" class="edge">
+<title>
+A-&gt;C
+</title>
+<path fill="none" stroke="black" d="M54.4013,-18C63.8074,-18 74.5721,-18 84.665,-18"/> <polygon fill="black" stroke="black" points="84.8546,-21.5001 94.8546,-18 84.8545,-14.5001 84.8546,-21.5001"/> <text text-anchor="middle" x="74.5" y="-21.8" font-family="Times,serif" font-size="14.00">f</text> </g> <!-- C&#39; --> <g id="node3" class="node">
+<title>
+C'
+</title>
+<text text-anchor="middle" x="219" y="-14.3" font-family="Times,serif" font-size="14.00">C'</text> </g> <!-- C&#45;&gt;C&#39; --> <g id="edge2" class="edge">
+<title>
+C-&gt;C'
+</title>
+<path fill="none" stroke="black" d="M149.211,-18C159.283,-18 170.965,-18 181.811,-18"/> <polygon fill="black" stroke="black" points="181.875,-21.5001 191.875,-18 181.875,-14.5001 181.875,-21.5001"/> <text text-anchor="middle" x="170.5" y="-21.8" font-family="Times,serif" font-size="14.00">h</text> </g> <!-- B --> <g id="node4" class="node">
+<title>
+B
+</title>
+<text text-anchor="middle" x="316" y="-14.3" font-family="Times,serif" font-size="14.00">B</text> </g> <!-- C&#39;&#45;&gt;B --> <g id="edge3" class="edge">
+<title>
+C'-&gt;B
+</title>
+<path fill="none" stroke="black" d="M246.211,-18C256.283,-18 267.965,-18 278.811,-18"/> <polygon fill="black" stroke="black" points="278.875,-21.5001 288.875,-18 278.875,-14.5001 278.875,-21.5001"/> <text text-anchor="middle" x="267.5" y="-21.8" font-family="Times,serif" font-size="14.00">g</text> </g> </g>
+</svg>
+<p><span class="math inline">\((g \leftarrow f)\)</span> を <span class="math inline">\((f \to g)\)</span> と同じ意味で用いる.</p>
+<p>関手 <span class="math inline">\(F\)</span> について <span class="math display">\[(f \xrightarrow{F} g) = g \circ Fh \circ f\]</span> で用いる.</p>
+<p>また次の合成則がある. <span class="math display">\[(f \to g) \circ (h \to j) = (h \circ f) \to (g \circ j)\]</span></p>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.38.0 (20140413.2041)
+ -->
+<!-- Title: %3 Pages: 1 -->
+<svg width="536pt" height="44pt" viewBox="0.00 0.00 536.00 44.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 40)">
+<title>
+%3
+</title>
+<!-- A -->
+<g id="node1" class="node">
+<title>
+A
+</title>
+<text text-anchor="middle" x="27" y="-14.3" font-family="Times,serif" font-size="14.00">A</text> </g> <!-- B --> <g id="node2" class="node">
+<title>
+B
+</title>
+<text text-anchor="middle" x="122" y="-14.3" font-family="Times,serif" font-size="14.00">B</text> </g> <!-- A&#45;&gt;B --> <g id="edge1" class="edge">
+<title>
+A-&gt;B
+</title>
+<path fill="none" stroke="black" d="M54.4013,-18C63.8074,-18 74.5721,-18 84.665,-18"/> <polygon fill="black" stroke="black" points="84.8546,-21.5001 94.8546,-18 84.8545,-14.5001 84.8546,-21.5001"/> <text text-anchor="middle" x="74.5" y="-21.8" font-family="Times,serif" font-size="14.00">f</text> </g> <!-- C --> <g id="node3" class="node">
+<title>
+C
+</title>
+<text text-anchor="middle" x="219" y="-14.3" font-family="Times,serif" font-size="14.00">C</text> </g> <!-- B&#45;&gt;C --> <g id="edge2" class="edge">
+<title>
+B-&gt;C
+</title>
+<path fill="none" stroke="black" d="M149.211,-18C159.283,-18 170.965,-18 181.811,-18"/> <polygon fill="black" stroke="black" points="181.875,-21.5001 191.875,-18 181.875,-14.5001 181.875,-21.5001"/> <text text-anchor="middle" x="170.5" y="-21.8" font-family="Times,serif" font-size="14.00">h</text> </g> <!-- D --> <g id="node4" class="node">
+<title>
+D
+</title>
+<text text-anchor="middle" x="310" y="-14.3" font-family="Times,serif" font-size="14.00">D</text> </g> <!-- C&#45;&gt;D --> <g id="edge3" class="edge">
+<title>
+C-&gt;D
+</title>
+<path fill="none" stroke="black" stroke-dasharray="1,5" d="M246.222,-18C254.551,-18 263.914,-18 272.816,-18"/> <polygon fill="black" stroke="black" points="272.966,-21.5001 282.966,-18 272.966,-14.5001 272.966,-21.5001"/> </g> <!-- E --> <g id="node5" class="node">
+<title>
+E
+</title>
+<text text-anchor="middle" x="404" y="-14.3" font-family="Times,serif" font-size="14.00">E</text> </g> <!-- D&#45;&gt;E --> <g id="edge4" class="edge">
+<title>
+D-&gt;E
+</title>
+<path fill="none" stroke="black" d="M337.117,-18C346.343,-18 356.891,-18 366.802,-18"/> <polygon fill="black" stroke="black" points="366.817,-21.5001 376.817,-18 366.817,-14.5001 366.817,-21.5001"/> <text text-anchor="middle" x="357" y="-21.8" font-family="Times,serif" font-size="14.00">j</text> </g> <!-- F --> <g id="node6" class="node">
+<title>
+F
+</title>
+<text text-anchor="middle" x="501" y="-14.3" font-family="Times,serif" font-size="14.00">F</text> </g> <!-- E&#45;&gt;F --> <g id="edge5" class="edge">
+<title>
+E-&gt;F
+</title>
+<path fill="none" stroke="black" d="M431.211,-18C441.283,-18 452.965,-18 463.811,-18"/> <polygon fill="black" stroke="black" points="463.875,-21.5001 473.875,-18 463.875,-14.5001 463.875,-21.5001"/> <text text-anchor="middle" x="452.5" y="-21.8" font-family="Times,serif" font-size="14.00">g</text> </g> </g>
+</svg>
+<h3 id="恒等関手-定数関手">恒等関手, 定数関手</h3>
+<p>恒等関手 <span class="math inline">\(1\)</span> とは対象と射について恒等的に返すもので <span class="math inline">\(1D=D, 1f=f\)</span>.</p>
+<p>自由に選んだ対象 <span class="math inline">\(D\)</span> に対して, 全ての対象を <span class="math inline">\(D\)</span> に写すような関手 <span class="math inline">\(\underline{D}\)</span> がある. ただし射は全て <span class="math inline">\(1_D\)</span> に写すとする.</p>
+<h3 id="lifting">Lifting</h3>
+<p>関手 <span class="math inline">\(F, G\)</span> に対して関手 <span class="math inline">\(FG\)</span> を次のように定める:</p>
+<ul>
+<li><span class="math inline">\(FG(D) = G(FD)\)</span></li>
+<li><span class="math inline">\(FGf = G(Ff)\)</span></li>
+</ul>
+<p>また更に双関手 <span class="math inline">\(\dagger\)</span> があるときに関手 <span class="math inline">\(F \dagger G\)</span> を次で定める:</p>
+<ul>
+<li><span class="math inline">\((F \dagger G)D = FD \dagger GD\)</span></li>
+<li><span class="math inline">\((F \dagger G)f = Ff \dagger Gf\)</span></li>
+</ul>
+<h3 id="sectioning">Sectioning</h3>
+<p>二項演算子 <span class="math inline">\(\oplus\)</span> があるとき, 関数 <span class="math inline">\((a \oplus)\)</span> を <span class="math inline">\((a \oplus) b=a\oplus b\)</span> で定める. 同様に関数 <span class="math inline">\((\oplus b) a = a \oplus b\)</span> を定める. この書き方を sectioning という. 必ず括弧で括る.</p>
+<p>以上の記号を用いると, 例えば対象 <span class="math inline">\(A,B\)</span> について <span class="math inline">\((\underline{A} \dagger 1)(B)=A \dagger B=(A \dagger)B\)</span> なので <span class="math inline">\(\underline{A} \dagger 1 = (A \dagger)\)</span> だと言える.</p>
+<h3 id="その他">その他</h3>
+<p>終対象 (単集合) を <span class="math inline">\(\mathbb 1\)</span> と書く. またこれの要素を <span class="math inline">\(() \in \mathbb 1\)</span> と書いて void と呼ぶ.</p>
+<p>さて述語関数 <span class="math inline">\(p : A \to \Bool\)</span> に対して関数 <span class="math inline">\(p?\)</span> を次のように定める:</p>
+<ul>
+<li><span class="math inline">\(p? \colon A \to A+A\)</span></li>
+<li><span class="math inline">\(p? a = \begin{cases} \bot &amp; \text{ when } p~a = \bot \\ i_1 &amp; \text{ when } p~a = \true \\ i_2 &amp; \text{ when } p~a = \false \\ \end{cases}\)</span></li>
+</ul>
+<p>例えば <span class="math inline">\((f \triangledown g) \circ p?\)</span> は我々がよく知る if 文 <code>if p then f else g</code> を表現している.</p>
+<p>任意の値を <span class="math inline">\(()\)</span> に写す定数関数を <span class="math inline">\(\VOID\)</span> と呼ぶことにする. <span class="math inline">\(\VOID \circ f=\VOID\)</span> である.</p>
+<p>再帰を作るために <span class="math inline">\(\mu : (A \to A) \to A\)</span> を定義する.</p>
+<ul>
+<li><span class="math inline">\(\mu~f = x\)</span>
+<ul>
+<li>where <span class="math inline">\(x = f~x\)</span></li>
+</ul></li>
+</ul>
+<p>2つの関手 <span class="math inline">\(F,G\)</span> とがあるとき, 対象 <span class="math inline">\(A\)</span> に <span class="math inline">\(\varphi_A \colon FA \to GA\)</span> を与えるような <span class="math inline">\(\varphi\)</span> をポリモーフィズム (polymorphism, 多相関数) といい <span class="math inline">\(\varphi \colon F \to G\)</span> と書く. 自然関手とは可換性を保つポリモーフィズムだと言える. <span class="math inline">\(\varphi\)</span> が自然変換であるとはポリモーフィズムであって, 射 <span class="math inline">\(f : A \to B\)</span> があるならば, <span class="math inline">\(\varphi_B \circ Ff = Gf \circ \varphi_A\)</span> という可換性を満たすもののこと.</p>
+<h3 id="再帰型">再帰型</h3>
+<p>以上の操作を再帰的に行って得られる型を再帰型という (ってことだよね).</p>
+<p>ここで次のような定理が知られている.</p>
+<p>関手 <span class="math inline">\(F\)</span> であって連続なものを考えると, ある対象 <span class="math inline">\(L\)</span> があって, 次を満たす2つの射 <span class="math inline">\(in : FL \to L\)</span> と <span class="math inline">\(out : L \to FL\)</span> がある:</p>
+<ul>
+<li><span class="math inline">\(in \circ out = 1\)</span></li>
+<li><span class="math inline">\(out \circ in = 1\)</span></li>
+<li><span class="math inline">\(1 = \mu(in \xleftarrow{F} out)\)</span></li>
+</ul>
+<p><span class="math inline">\(F\)</span> に対して上記のような <span class="math inline">\((L,in)\)</span> のことを <span class="math inline">\(\mu_F\)</span> と書いて最小不動点と呼ぶ.</p>
+<p>例として関手 <span class="math inline">\(LX = \mathbb 1 + A \times X\)</span> を考えると, その最小不動点は <span class="math inline">\(\mu_L = ([A], (\const{Nil} \triangledown \cons))\)</span> であって正にリストとその構成を表している. 同様に <span class="math inline">\(NX= \mathbb 1 + N\)</span> の最小不動点は <span class="math inline">\((\mathbb N, (\const{0} \triangledown (1+)))\)</span> である.</p>
+<h2 id="再帰スキーム">再帰スキーム</h2>
+<p>一般の再帰型について cata-, ana-, hylo-, paramorphism を与えることをする.</p>
+<p>関手 <span class="math inline">\(F\)</span> に対して <span class="math inline">\((L,in)=\mu_F\)</span> であるとする. 3つのポリモーフィズム</p>
+<ul>
+<li><span class="math inline">\(\varphi_A \colon FA \to A\)</span></li>
+<li><span class="math inline">\(\psi_A \colon A \to FA\)</span></li>
+<li><span class="math inline">\(\xi_A \colon F(A \times L) \to A\)</span></li>
+</ul>
+<p>があるとき次を定める.</p>
+<ul>
+<li><span class="math inline">\(\banana{\varphi}_F = \mu(\varphi_A \xleftarrow{F} out)\)</span></li>
+<li><span class="math inline">\(\lense{\psi}_F = \mu(in \xleftarrow{F} \psi_A)\)</span></li>
+<li><span class="math inline">\(\envelop{\varphi, \psi}_F = \mu(\varphi_B \xleftarrow{F} \psi_A)\)</span></li>
+<li><span class="math inline">\(\wire{\xi}_F = \mu(f \mapsto \xi_A \circ F(1_A \triangle f) \circ out)\)</span></li>
+</ul>
+<p>ここで <span class="math inline">\(A, B\)</span> は任意の対象. また左辺の括弧にはどの関手によって定めるものかを表す添字 <span class="math inline">\({}_F\)</span> があるが, これは誤解がない限り省略する.</p>
+<blockquote>
+<p>1つ目の <span class="math inline">\(\varphi_L \xleftarrow{F} out\)</span> は <span class="math inline">\(f \colon L \to A\)</span> を取って <span class="math inline">\(A \xleftarrow{\varphi_A} FA \xleftarrow{Ff} FL \xleftarrow{out} L\)</span> の合成を返す関数. これの <span class="math inline">\(\mu\)</span> なので <span class="math inline">\(f = \varphi_L \circ Ff \circ out\)</span> なる <span class="math inline">\(f\)</span> が <span class="math inline">\(\banana{\varphi}\)</span>.</p>
+</blockquote>
+<blockquote>
+<p>2つ目以降について型だけ書くと <span class="math inline">\(\lense{\psi} \colon A \to L\)</span>, <span class="math inline">\(\envelop{\varphi, \psi} \colon A \to B\)</span>, <span class="math inline">\(\wire{\xi} \colon L \to L\)</span>.</p>
+</blockquote>
+<p>リストの場合を思い出すと <span class="math inline">\(\banana{e, \oplus}\)</span> などと書いてたものは <span class="math inline">\(\banana{\const{e} \triangle \oplus\!}\)</span> と同等のものであったことが分かる. 同様に <span class="math inline">\(\lense{g,p}\)</span> と書いていたものは <span class="math inline">\(\lense{(\VOID + g) \circ p?}\)</span> と書き直される.</p>
+<h2 id="計算法則">計算法則</h2>
+<p>cata, ana, para については共通に Evaluation Rule (対訳不明), Uniqueness Property (唯一性?), Fusion Law (融合則) が成り立つことを見ていく. その中で次の幾つかの定理を用いる.</p>
+<div class="thm">
+<h4 id="fixed-point-fusion-free-theorem">fixed point fusion (free theorem)</h4>
+<p>関数 <span class="math inline">\(f\)</span> が正格で, <span class="math inline">\(f \circ g = h \circ f\)</span> ならば <span class="math display">\[f (\mu g) = \mu h\]</span></p>
+</div>
+<p>hylo については ana と cata とに分解できることと次の定理を利用する.</p>
+<div class="thm">
+<p><span class="math inline">\(g \circ h = 1\)</span> ならば <span class="math display">\[\mu(f \xleftarrow{F} g) \circ \mu(h \xleftarrow{F} j) = \mu(f \xleftarrow{F} j)\]</span></p>
+</div>
+<h3 id="evaluation-rule-for-catamorphism-cataeval">Evaluation Rule for catamorphism (CataEval)</h3>
+<div class="thm">
+<p>catamorphism の evaluation rule は次のようなものである:</p>
+<p>関手 <span class="math inline">\(F\)</span> とポリモーフィズム <span class="math inline">\(\varphi \colon F \to 1\)</span> とその射 <span class="math inline">\(\varphi_A : FA \to A\)</span> について, <span class="math inline">\(\mu_F=(L,in)\)</span> とすると <span class="math display">\[\banana{\varphi} \circ in = \varphi_A \circ F \banana{\varphi}\]</span></p>
+</div>
+<center>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.38.0 (20140413.2041)
+ -->
+<!-- Title: %3 Pages: 1 -->
+<svg width="179pt" height="116pt" viewBox="0.00 0.00 179.00 116.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 112)">
+<title>
+%3
+</title>
+<!-- L -->
+<g id="node1" class="node">
+<title>
+L
+</title>
+<text text-anchor="middle" x="144" y="-86.3" font-family="Times,serif" font-size="14.00">L</text> </g> <!-- A --> <g id="node2" class="node">
+<title>
+A
+</title>
+<text text-anchor="middle" x="144" y="-14.3" font-family="Times,serif" font-size="14.00">A</text> </g> <!-- L&#45;&gt;A --> <g id="edge1" class="edge">
+<title>
+L-&gt;A
+</title>
+<path fill="none" stroke="black" d="M144,-71.5867C144,-63.9407 144,-54.8916 144,-46.4274"/> <polygon fill="black" stroke="black" points="147.5,-46.1686 144,-36.1686 140.5,-46.1687 147.5,-46.1686"/> <text text-anchor="middle" x="133.5" y="-50.3" font-family="Times,serif" font-size="14.00">(|φ|)</text> </g> <!-- FL --> <g id="node3" class="node">
+<title>
+FL
+</title>
+<text text-anchor="middle" x="27" y="-86.3" font-family="Times,serif" font-size="14.00">FL</text> </g> <!-- FL&#45;&gt;L --> <g id="edge2" class="edge">
+<title>
+FL-&gt;L
+</title>
+<path fill="none" stroke="black" d="M54.0953,-90C69.5712,-90 89.4254,-90 106.444,-90"/> <polygon fill="black" stroke="black" points="106.61,-93.5001 116.61,-90 106.61,-86.5001 106.61,-93.5001"/> <text text-anchor="middle" x="85.5" y="-93.8" font-family="Times,serif" font-size="14.00">in</text> </g> <!-- FA --> <g id="node4" class="node">
+<title>
+FA
+</title>
+<text text-anchor="middle" x="27" y="-14.3" font-family="Times,serif" font-size="14.00">FA</text> </g> <!-- FL&#45;&gt;FA --> <g id="edge4" class="edge">
+<title>
+FL-&gt;FA
+</title>
+<path fill="none" stroke="black" d="M27,-71.5867C27,-63.9407 27,-54.8916 27,-46.4274"/> <polygon fill="black" stroke="black" points="30.5001,-46.1686 27,-36.1686 23.5001,-46.1687 30.5001,-46.1686"/> <text text-anchor="middle" x="16.5" y="-50.3" font-family="Times,serif" font-size="14.00">F.(|φ|)</text> </g> <!-- FA&#45;&gt;A --> <g id="edge3" class="edge">
+<title>
+FA-&gt;A
+</title>
+<path fill="none" stroke="black" d="M54.0953,-18C69.5712,-18 89.4254,-18 106.444,-18"/> <polygon fill="black" stroke="black" points="106.61,-21.5001 116.61,-18 106.61,-14.5001 106.61,-21.5001"/> <text text-anchor="middle" x="85.5" y="-21.8" font-family="Times,serif" font-size="14.00">φ_A</text> </g> </g>
+</svg>
+</center>
+<p>これは <span class="math inline">\(\banana{\varphi}\)</span> の定義から従う. <span class="math inline">\(\banana{\varphi} = \mu( \varphi_A \xleftarrow{F} out )\)</span> であったが <span class="math inline">\(\mu\)</span> の定義より <span class="math inline">\(\banana{\varphi} = \varphi_A \circ F \banana{\varphi_A} \circ out\)</span>. 両辺の右に <span class="math inline">\(in\)</span> を掛けると, <span class="math inline">\(in\)</span> は <span class="math inline">\(out\)</span> の逆射だったので <span class="math inline">\(\banana{\varphi} \circ in = \varphi_A \circ F \banana{\varphi_A}\)</span> を得る.</p>
+<p>さてこの法則は evaluation rule という名前の通り, <span class="math inline">\(\banana{\varphi}\)</span> を具体的に計算するための方法を示している.</p>
+<h4 id="例">例</h4>
+<p>リストの <code>foldr</code> は次のようなものだった</p>
+<ul>
+<li>関手 <span class="math inline">\(LX = 1+AX\)</span></li>
+<li><span class="math inline">\(\mu_L = ([A], in)\)</span>
+<ul>
+<li><span class="math inline">\(in = \const{Nil} \triangledown \cons\)</span></li>
+</ul></li>
+<li>ポリモーフィズム <span class="math inline">\(\varphi_X = \const{c} \triangledown \oplus\)</span>
+<ul>
+<li><span class="math inline">\(\const{c} \colon 1 \to X\)</span></li>
+<li><span class="math inline">\(\oplus \colon A \times X \to X\)</span></li>
+</ul></li>
+</ul>
+<p>これらに対して <span class="math inline">\(\banana{\varphi}\)</span> が foldr. では具体的な値について foldr の計算をしてみる.</p>
+<p>ただし <span class="math inline">\(L[A]=1+A[A]\)</span> について <span class="math inline">\(* \in 1\)</span> の場合と <span class="math inline">\((a,as) \in A[A]\)</span> の場合に分ける. これは <span class="math inline">\(in~* = Nil\)</span> と <span class="math inline">\(in(a,as) = \cons(a,as)\)</span> の場合に分けてるのと同等 (<span class="math inline">\(in\)</span> は同型射なので).</p>
+<p><span class="math display">\[\begin{align*}
+\banana{\varphi} Nil
+&amp; = \banana{\varphi} \circ in * \\
+&amp; = \varphi \circ L\banana{\varphi} * \\
+&amp; = \varphi \circ (1 + 1_A \banana{\varphi}) * \\
+&amp; = \varphi * \\
+&amp; = (\const{c} \triangledown \oplus) * \\
+&amp; = c
+\end{align*}\]</span></p>
+<p><span class="math display">\[\begin{align*}
+\banana{\varphi} \cons(a, as)
+&amp; = \banana{\varphi} \circ in (a,as) \\
+&amp; = \varphi \circ L\banana{\varphi} (a,as) \\
+&amp; = \varphi \circ (1 + 1_A \banana{\varphi}) (a,as) \\
+&amp; = \varphi (a, \banana{\varphi} as) \\
+&amp; = (\const{c} \triangledown \oplus) (a, \banana{\varphi} as) \\
+&amp; = a \oplus (\banana{\varphi} as)
+\end{align*}\]</span></p>
+<p>これで全ての場合を網羅できている.</p>
+<h3 id="uniqueness-property-for-catamorphism-cataup">Uniqueness Property for catamorphism (CataUP)</h3>
+<div class="thm">
+<p><span class="math display">\[f=\banana{\varphi}
+\iff
+f \bot = \banana{\varphi} \bot
+\land
+f \circ in = \varphi \circ Ff\]</span></p>
+</div>
+<p>すなわち, 先の Evaluation Rule を満たすような <span class="math inline">\(\banana{\varphi}\)</span> は唯一しか存在しないことを主張する.</p>
+<p>これもほぼ自明. <span class="math inline">\((\Rightarrow)\)</span> は Evaluation Rule のまんまなので自明. <span class="math inline">\((\Leftarrow)\)</span>. <span class="math inline">\(f~in=\varphi Ff \implies f=\varphi Ff~out \implies f = \mu(\varphi \xleftarrow{F} out) = \banana{\varphi}\)</span>.</p>
+<h3 id="fusion-law-for-catamorphism-catafusion">Fusion Law for catamorphism (CataFusion)</h3>
+<div class=thm>
+<p><span class="math inline">\(f \circ \varphi = \psi \circ Ff\)</span> のとき <span class="math display">\[f \circ \banana{\varphi} = \banana{\psi}\]</span></p>
+<center>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.38.0 (20140413.2041)
+ -->
+<!-- Title: %3 Pages: 1 -->
+<svg width="220pt" height="188pt" viewBox="0.00 0.00 219.50 188.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 184)">
+<title>
+%3
+</title>
+<!-- L -->
+<g id="node1" class="node">
+<title>
+L
+</title>
+<text text-anchor="middle" x="84.5" y="-158.3" font-family="Times,serif" font-size="14.00">L</text> </g> <!-- A --> <g id="node2" class="node">
+<title>
+A
+</title>
+<text text-anchor="middle" x="84.5" y="-86.3" font-family="Times,serif" font-size="14.00">A</text> </g> <!-- L&#45;&gt;A --> <g id="edge1" class="edge">
+<title>
+L-&gt;A
+</title>
+<path fill="none" stroke="black" d="M84.5,-143.587C84.5,-135.941 84.5,-126.892 84.5,-118.427"/> <polygon fill="black" stroke="black" points="88.0001,-118.169 84.5,-108.169 81.0001,-118.169 88.0001,-118.169"/> <text text-anchor="middle" x="74" y="-122.3" font-family="Times,serif" font-size="14.00">(|φ|)</text> </g> <!-- B --> <g id="node4" class="node">
+<title>
+B
+</title>
+<text text-anchor="middle" x="84.5" y="-14.3" font-family="Times,serif" font-size="14.00">B</text> </g> <!-- L&#45;&gt;B --> <g id="edge6" class="edge">
+<title>
+L-&gt;B
+</title>
+<path fill="none" stroke="black" d="M57.23,-145.167C36.7547,-130.181 13.7865,-106.907 23.5,-82.5 29.4733,-67.4906 40.7807,-53.9597 52.0531,-43.2125"/> <polygon fill="black" stroke="black" points="54.7074,-45.5316 59.7854,-36.2329 50.0171,-40.3353 54.7074,-45.5316"/> <text text-anchor="middle" x="27" y="-86.3" font-family="Times,serif" font-size="14.00">(|ψ|)</text> </g> <!-- FA --> <g id="node3" class="node">
+<title>
+FA
+</title>
+<text text-anchor="middle" x="184.5" y="-86.3" font-family="Times,serif" font-size="14.00">FA</text> </g> <!-- A&#45;&gt;FA --> <g id="edge2" class="edge">
+<title>
+A-&gt;FA
+</title>
+<path fill="none" stroke="black" d="M121.575,-90C133.44,-90 146.394,-90 157.374,-90"/> <polygon fill="black" stroke="black" points="121.505,-86.5001 111.505,-90 121.505,-93.5001 121.505,-86.5001"/> <text text-anchor="middle" x="134.5" y="-93.8" font-family="Times,serif" font-size="14.00">φ</text> </g> <!-- A&#45;&gt;B --> <g id="edge3" class="edge">
+<title>
+A-&gt;B
+</title>
+<path fill="none" stroke="black" d="M84.5,-71.5867C84.5,-63.9407 84.5,-54.8916 84.5,-46.4274"/> <polygon fill="black" stroke="black" points="88.0001,-46.1686 84.5,-36.1686 81.0001,-46.1687 88.0001,-46.1686"/> <text text-anchor="middle" x="74" y="-50.3" font-family="Times,serif" font-size="14.00">f</text> </g> <!-- FB --> <g id="node5" class="node">
+<title>
+FB
+</title>
+<text text-anchor="middle" x="184.5" y="-14.3" font-family="Times,serif" font-size="14.00">FB</text> </g> <!-- FA&#45;&gt;FB --> <g id="edge4" class="edge">
+<title>
+FA-&gt;FB
+</title>
+<path fill="none" stroke="black" d="M184.5,-71.5867C184.5,-63.9407 184.5,-54.8916 184.5,-46.4274"/> <polygon fill="black" stroke="black" points="188,-46.1686 184.5,-36.1686 181,-46.1687 188,-46.1686"/> <text text-anchor="middle" x="174" y="-50.3" font-family="Times,serif" font-size="14.00">Ff</text> </g> <!-- FB&#45;&gt;B --> <g id="edge5" class="edge">
+<title>
+FB-&gt;B
+</title>
+<path fill="none" stroke="black" d="M157.374,-18C146.394,-18 133.44,-18 121.575,-18"/> <polygon fill="black" stroke="black" points="121.505,-14.5001 111.505,-18 121.505,-21.5001 121.505,-14.5001"/> <text text-anchor="middle" x="134.5" y="-21.8" font-family="Times,serif" font-size="14.00">ψ</text> </g> </g>
+</svg>
+</center>
+</div>
+<p>どう証明してもいいけど, <span class="math inline">\(\banana{}\)</span> の定義のを開けば <span class="math display">\[\begin{align*}
+\banana{\varphi} &amp; = \mu(\varphi \xleftarrow{F} out) \\
+&amp; = \varphi \circ F\banana{\varphi} \circ out \\
+\end{align*}\]</span> 両辺に左から <span class="math inline">\(f\circ\)</span> を掛けて <span class="math display">\[\begin{align*}
+f \circ \banana{\varphi}
+&amp; = f \circ \varphi \circ F\banana{\varphi} \circ out \\
+&amp; = \psi \circ Ff \circ F\banana{\varphi} \circ out \\
+&amp; = \psi \circ F(f \circ \banana{\varphi}) \circ out \\
+\end{align*}\]</span> というわけで <span class="math inline">\(f \circ \banana{\varphi}\)</span> は <span class="math inline">\(\mu(\psi \xleftarrow{F} out)\)</span> である. 一方で <span class="math inline">\(\banana{\psi}\)</span> もその <span class="math inline">\(\mu\)</span> である. catamorphism の唯一性 (CataUP) よりそれらは等しく <span class="math display">\[\banana{\psi} = f \circ \banana{\varphi}\]</span> である.</p>
+<p>論文では <span class="math inline">\(f \circ (\varphi \xleftarrow{F} out) = (\psi \xleftarrow{F} out) \circ f\)</span> であることと fixed point fusion を用いて証明できる, と言っている.</p>
+<h4 id="リスト畳込み-foldr-の融合則">リスト畳込み (<code>foldr</code>) の融合則</h4>
+<p>2つのリストの畳込み <span class="math inline">\(\banana{\varphi} = \banana{c \triangledown \oplus}\)</span> と <span class="math inline">\(\banana{\psi} = \banana{d \triangledown \otimes}\)</span> について, ある <span class="math inline">\(f\)</span> があって,</p>
+<ul>
+<li><span class="math inline">\(d = fc\)</span>,</li>
+<li><span class="math inline">\(f(x \oplus xs) = y \otimes f(xs)\)</span></li>
+</ul>
+<p>のとき <span class="math display">\[f \circ \banana{\varphi} = \banana{\psi}.\]</span></p>
+<h3 id="包含射は-catamorphism">包含射は catamorphism</h3>
+<p>射 <span class="math inline">\(f \colon A \to B\)</span> に左単位射 <span class="math inline">\(g\)</span> (<span class="math inline">\(gf=1\)</span>) があるとすると, <span class="math inline">\(Fg\)</span> は <span class="math inline">\(Ff\)</span> の逆射になるので <span class="math inline">\(f \circ \varphi = (f \circ \varphi \circ Fg) \circ Ff\)</span> である. CataFusion で <span class="math inline">\(\psi = f \circ \varphi \circ Fg\)</span> を代入すれば <span class="math inline">\(f \circ \banana{\varphi} = \banana{f \circ \varphi \circ Fg}\)</span> を得る.</p>
+<center>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.38.0 (20140413.2041)
+ -->
+<!-- Title: %3 Pages: 1 -->
+<svg width="163pt" height="188pt" viewBox="0.00 0.00 163.00 188.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 184)">
+<title>
+%3
+</title>
+<!-- L -->
+<g id="node1" class="node">
+<title>
+L
+</title>
+<text text-anchor="middle" x="27" y="-158.3" font-family="Times,serif" font-size="14.00">L</text> </g> <!-- FL --> <g id="node2" class="node">
+<title>
+FL
+</title>
+<text text-anchor="middle" x="128" y="-158.3" font-family="Times,serif" font-size="14.00">FL</text> </g> <!-- L&#45;&gt;FL --> <g id="edge1" class="edge">
+<title>
+L-&gt;FL
+</title>
+<path fill="none" stroke="black" d="M64.2776,-162C76.3853,-162 89.6319,-162 100.819,-162"/> <polygon fill="black" stroke="black" points="64.0111,-158.5 54.0111,-162 64.0111,-165.5 64.0111,-158.5"/> <text text-anchor="middle" x="77.5" y="-165.8" font-family="Times,serif" font-size="14.00">in</text> </g> <!-- A --> <g id="node3" class="node">
+<title>
+A
+</title>
+<text text-anchor="middle" x="27" y="-86.3" font-family="Times,serif" font-size="14.00">A</text> </g> <!-- L&#45;&gt;A --> <g id="edge4" class="edge">
+<title>
+L-&gt;A
+</title>
+<path fill="none" stroke="black" d="M27,-143.587C27,-135.941 27,-126.892 27,-118.427"/> <polygon fill="black" stroke="black" points="30.5001,-118.169 27,-108.169 23.5001,-118.169 30.5001,-118.169"/> <text text-anchor="middle" x="16.5" y="-122.3" font-family="Times,serif" font-size="14.00">(|φ|)</text> </g> <!-- FA --> <g id="node4" class="node">
+<title>
+FA
+</title>
+<text text-anchor="middle" x="128" y="-86.3" font-family="Times,serif" font-size="14.00">FA</text> </g> <!-- FL&#45;&gt;FA --> <g id="edge3" class="edge">
+<title>
+FL-&gt;FA
+</title>
+<path fill="none" stroke="black" d="M128,-143.587C128,-135.941 128,-126.892 128,-118.427"/> <polygon fill="black" stroke="black" points="131.5,-118.169 128,-108.169 124.5,-118.169 131.5,-118.169"/> <text text-anchor="middle" x="117.5" y="-122.3" font-family="Times,serif" font-size="14.00">F(|φ|)</text> </g> <!-- A&#45;&gt;FA --> <g id="edge2" class="edge">
+<title>
+A-&gt;FA
+</title>
+<path fill="none" stroke="black" d="M64.2776,-90C76.3853,-90 89.6319,-90 100.819,-90"/> <polygon fill="black" stroke="black" points="64.0111,-86.5001 54.0111,-90 64.0111,-93.5001 64.0111,-86.5001"/> <text text-anchor="middle" x="77.5" y="-93.8" font-family="Times,serif" font-size="14.00">φ</text> </g> <!-- B --> <g id="node5" class="node">
+<title>
+B
+</title>
+<text text-anchor="middle" x="27" y="-14.3" font-family="Times,serif" font-size="14.00">B</text> </g> <!-- A&#45;&gt;B --> <g id="edge5" class="edge">
+<title>
+A-&gt;B
+</title>
+<path fill="none" stroke="black" d="M27,-71.5867C27,-63.9407 27,-54.8916 27,-46.4274"/> <polygon fill="black" stroke="black" points="30.5001,-46.1686 27,-36.1686 23.5001,-46.1687 30.5001,-46.1686"/> <text text-anchor="middle" x="16.5" y="-50.3" font-family="Times,serif" font-size="14.00">f</text> </g> <!-- FB --> <g id="node6" class="node">
+<title>
+FB
+</title>
+<text text-anchor="middle" x="128" y="-14.3" font-family="Times,serif" font-size="14.00">FB</text> </g> <!-- FA&#45;&gt;FB --> <g id="edge6" class="edge">
+<title>
+FA-&gt;FB
+</title>
+<path fill="none" stroke="black" d="M128,-61.5834C128,-53.0257 128,-43.869 128,-36.1686"/> <polygon fill="black" stroke="black" points="124.5,-61.5867 128,-71.5867 131.5,-61.5868 124.5,-61.5867"/> <text text-anchor="middle" x="117.5" y="-50.3" font-family="Times,serif" font-size="14.00">Fg</text> </g> <!-- B&#45;&gt;FB --> <g id="edge7" class="edge">
+<title>
+B-&gt;FB
+</title>
+<path fill="none" stroke="black" stroke-dasharray="1,5" d="M64.2776,-18C76.3853,-18 89.6319,-18 100.819,-18"/> <polygon fill="black" stroke="black" points="64.0111,-14.5001 54.0111,-18 64.0111,-21.5001 64.0111,-14.5001"/> </g> </g>
+</svg>
+</center>
+<p>上の図式で <span class="math inline">\(A=L, \varphi=in\)</span> の場合を考える. 唯一性より <span class="math inline">\(\banana{in}=1\)</span> を得る. これらを代入することで, <span class="math display">\[f = \banana{f \circ in \circ Fg}\]</span> を得る. これに <span class="math inline">\(B=FL, f=out, g=in\)</span> を代入すると,</p>
+<center>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+ "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Generated by graphviz version 2.38.0 (20140413.2041)
+ -->
+<!-- Title: %3 Pages: 1 -->
+<svg width="174pt" height="188pt" viewBox="0.00 0.00 174.00 188.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 184)">
+<title>
+%3
+</title>
+<!-- L -->
+<g id="node1" class="node">
+<title>
+L
+</title>
+<text text-anchor="middle" x="27" y="-158.3" font-family="Times,serif" font-size="14.00">L</text> </g> <!-- FL --> <g id="node2" class="node">
+<title>
+FL
+</title>
+<text text-anchor="middle" x="139" y="-158.3" font-family="Times,serif" font-size="14.00">FL</text> </g> <!-- L&#45;&gt;FL --> <g id="edge1" class="edge">
+<title>
+L-&gt;FL
+</title>
+<path fill="none" stroke="black" d="M64.3595,-162C79.8427,-162 97.5611,-162 111.737,-162"/> <polygon fill="black" stroke="black" points="64.0685,-158.5 54.0685,-162 64.0684,-165.5 64.0685,-158.5"/> <text text-anchor="middle" x="83" y="-165.8" font-family="Times,serif" font-size="14.00">in</text> </g> <!-- L2 --> <g id="node3" class="node">
+<title>
+L2
+</title>
+<text text-anchor="middle" x="27" y="-86.3" font-family="Times,serif" font-size="14.00">L</text> </g> <!-- L&#45;&gt;L2 --> <g id="edge4" class="edge">
+<title>
+L-&gt;L2
+</title>
+<path fill="none" stroke="black" d="M27,-143.587C27,-135.941 27,-126.892 27,-118.427"/> <polygon fill="black" stroke="black" points="30.5001,-118.169 27,-108.169 23.5001,-118.169 30.5001,-118.169"/> <text text-anchor="middle" x="16.5" y="-122.3" font-family="Times,serif" font-size="14.00">(|in|)</text> </g> <!-- FL2 --> <g id="node4" class="node">
+<title>
+FL2
+</title>
+<text text-anchor="middle" x="139" y="-86.3" font-family="Times,serif" font-size="14.00">FL</text> </g> <!-- FL&#45;&gt;FL2 --> <g id="edge3" class="edge">
+<title>
+FL-&gt;FL2
+</title>
+<path fill="none" stroke="black" d="M139,-143.587C139,-135.941 139,-126.892 139,-118.427"/> <polygon fill="black" stroke="black" points="142.5,-118.169 139,-108.169 135.5,-118.169 142.5,-118.169"/> <text text-anchor="middle" x="128.5" y="-122.3" font-family="Times,serif" font-size="14.00">F(|in|)</text> </g> <!-- L2&#45;&gt;FL2 --> <g id="edge2" class="edge">
+<title>
+L2-&gt;FL2
+</title>
+<path fill="none" stroke="black" d="M64.3595,-90C79.8427,-90 97.5611,-90 111.737,-90"/> <polygon fill="black" stroke="black" points="64.0685,-86.5001 54.0685,-90 64.0684,-93.5001 64.0685,-86.5001"/> <text text-anchor="middle" x="83" y="-93.8" font-family="Times,serif" font-size="14.00">in</text> </g> <!-- FL3 --> <g id="node5" class="node">
+<title>
+FL3
+</title>
+<text text-anchor="middle" x="27" y="-14.3" font-family="Times,serif" font-size="14.00">FL</text> </g> <!-- L2&#45;&gt;FL3 --> <g id="edge5" class="edge">
+<title>
+L2-&gt;FL3
+</title>
+<path fill="none" stroke="black" d="M27,-71.5867C27,-63.9407 27,-54.8916 27,-46.4274"/> <polygon fill="black" stroke="black" points="30.5001,-46.1686 27,-36.1686 23.5001,-46.1687 30.5001,-46.1686"/> <text text-anchor="middle" x="16.5" y="-50.3" font-family="Times,serif" font-size="14.00">out</text> </g> <!-- FFL --> <g id="node6" class="node">
+<title>
+FFL
+</title>
+<text text-anchor="middle" x="139" y="-14.3" font-family="Times,serif" font-size="14.00">FFL</text> </g> <!-- FL2&#45;&gt;FFL --> <g id="edge6" class="edge">
+<title>
+FL2-&gt;FFL
+</title>
+<path fill="none" stroke="black" d="M139,-61.5834C139,-53.0257 139,-43.869 139,-36.1686"/> <polygon fill="black" stroke="black" points="135.5,-61.5867 139,-71.5867 142.5,-61.5868 135.5,-61.5867"/> <text text-anchor="middle" x="128.5" y="-50.3" font-family="Times,serif" font-size="14.00">F.in</text> </g> <!-- FL3&#45;&gt;FFL --> <g id="edge7" class="edge">
+<title>
+FL3-&gt;FFL
+</title>
+<path fill="none" stroke="black" d="M64.3595,-18C79.8427,-18 97.5611,-18 111.737,-18"/> <polygon fill="black" stroke="black" points="64.0685,-14.5001 54.0685,-18 64.0684,-21.5001 64.0685,-14.5001"/> <text text-anchor="middle" x="83" y="-21.8" font-family="Times,serif" font-size="14.00">F.in</text> </g> </g>
+</svg>
+</center>
+<p>一番下の <span class="math inline">\(F(in) : F^2L \to FL\)</span> の catamorphism を考えることで <span class="math display">\[\banana{out \circ in \circ F(in)} = \banana{F(in)} = out\]</span> を得る.</p>
+<h3 id="catamorphism-は正格性を保つ">catamorphism は正格性を保つ</h3>
+<p>まず関手 <span class="math inline">\(F\)</span> が正格性を保つ, すなわち <span class="math inline">\(f \bot=\bot \iff Ef \bot = \bot\)</span> とする. このとき <span class="math display">\[\varphi \bot = \bot \iff \banana{\varphi}_F \bot = \bot\]</span> が成り立つ. 添字の <span class="math inline">\(F\)</span> は <span class="math inline">\(F\)</span> の下でのバナナであることを表したのに註意.</p>
+<p><span class="math inline">\((\Rightarrow)\)</span>. <span class="math inline">\(\banana{\varphi} = \bot\)</span> を仮定すると <span class="math display">\[\begin{align*}
+\bot &amp; = \banana{\varphi} \bot \\
+     &amp; = \banana{\varphi} in \bot \\
+     &amp; = \varphi F\banana{\varphi} \bot \\
+     &amp; = \varphi \bot
+\end{align*}\]</span> より従う. ここで最後の式変形には <span class="math inline">\(F\)</span> が正格性を保存することと <span class="math inline">\(\banana{\varphi}\bot=\bot\)</span> を仮定していることから <span class="math inline">\(F\banana{\varphi}\bot=\bot\)</span> を用いた.</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

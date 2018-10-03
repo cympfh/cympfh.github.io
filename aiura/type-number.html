@@ -63,7 +63,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="is-pulled-right">
 <p><a class='tag is-red' href=index.html#計算機言語>計算機言語</a> <a class='tag is-red' href=index.html#プログラミング>プログラミング</a></p>
 </div>
-<p>Haskell の知識を仮定します. <span class="math inline">\(\def\Bool{\mathrm{Bool}}\def\dd#1#2{\frac{\partial #1}{\partial #2}}\)</span></p>
+<p>Haskell の知識をちょっとだけ仮定します. <span class="math inline">\(\def\Bool{\mathrm{Bool}}\def\dd#1#2{\frac{\partial #1}{\partial #2}}\)</span></p>
 <h2 id="参考">参考</h2>
 <p>この文書に書いてある内容は全て以下に書いてあります.</p>
 <ol type="1">
@@ -71,7 +71,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="https://www.slideshare.net/JayCoskey/zippers-derivatives-of-regular-types">Zippers: Derivatives of Regular Types</a></li>
 </ol>
 <h2 id="型">型</h2>
-<p>Haskell ここでは擬似コードとして Haskell 風言語を用いる. いくつか主要な型及び型クラスがあるわけだが, この文書では以下が型だとする</p>
+<p>ここでは擬似コードとして Haskell 風言語を用いる. いくつか主要な型及び型クラスがあるわけだが, この文書では以下が型だとする</p>
 <ol type="1">
 <li>Unit型
 <ul>
@@ -126,7 +126,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </tbody>
 </table>
 <p>リスト, タプル, Maybe, Either という型は, 型を与えて型を構成するものであったので, 既に数が分かっている型を与えた場合の型の数を調べることにする.</p>
-<p>順序を変えて簡単な順に見ていく.</p>
+<p>簡単な順に見ていく.</p>
 <h2 id="タプル型の数">タプル型の数</h2>
 <p><span class="math inline">\(\tau\)</span> の数が <span class="math inline">\(t\)</span> で <span class="math inline">\(\sigma\)</span> の数が <span class="math inline">\(s\)</span> のとき <span class="math inline">\((\tau, \sigma)\)</span> を取る値はそれらの直積なので:</p>
 <table>
@@ -178,12 +178,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </table>
 <h3 id="リスト型の数">リスト型の数</h3>
 <p><span class="math inline">\(\tau\)</span> の数を <span class="math inline">\(t\)</span> とするとき <span class="math inline">\([\tau]\)</span> の数を考える. いくつか考え方はある.</p>
-<p>リストは長さを固定した場合, それがタプルと等価であることはすぐに分かるだろう. 従って, 長さが <span class="math inline">\(n\)</span> に固定されたリスト <span class="math inline">\([\tau]\)</span> の数は <span class="math inline">\(t^n\)</span> である. 実際にはリストの長さは <span class="math inline">\(0\)</span> 以上の整数全てを取るので <span class="math display">\[L(\tau) = \sum_{n\geq 0} t^n = 1 + t + t^2 + t^3 + \cdots\]</span> と書ける. もちろんこれは収束しない値だが.</p>
+<p>リストは長さを固定した場合, それがタプルと等価であることはすぐに分かるだろう (例えば <code>[a,b,c] == (a,b,c)</code>). 従って, 長さが <span class="math inline">\(n\)</span> に固定されたリスト <span class="math inline">\([\tau]\)</span> の数は <span class="math inline">\(t^n\)</span> である. 実際にはリストの長さは <span class="math inline">\(0\)</span> 以上の整数全てを取るので <span class="math display">\[L(\tau) = \sum_{n\geq 0} t^n = 1 + t + t^2 + t^3 + \cdots\]</span> と書ける. もちろんこれは収束しない値だが.</p>
 <p>あるいは次のような考え方もできる. リストとは長さが <span class="math inline">\(0\)</span> であるかそれより大きいかに場合分けできる. 空リストは <span class="math inline">\(()\)</span> と等価. 長さが <span class="math inline">\(0\)</span> より大きい時, 1つ目の要素と2つ目以降のリストとの組に分解できる.</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">f <span class="fu">:</span> [t] <span class="ot">-&gt;</span> <span class="dt">Either</span> () (t, [t])
 f [] <span class="fu">=</span> <span class="dt">Left</span> ()
 f (x<span class="fu">:</span>xs) <span class="fu">=</span> <span class="dt">Right</span> (x, xs)</code></pre></div>
-<p>この <span class="math inline">\(f\)</span> は <span class="math inline">\([\tau]\)</span> と <span class="math inline">\(\mathrm{Either}~()~(\tau, [\tau])\)</span> との同型になっている.</p>
+<p>この <span class="math inline">\(f\)</span> は <span class="math inline">\([\tau]\)</span> と <span class="math inline">\(\mathrm{Either}~()~(\tau, [\tau])\)</span> との同型になっている. つまり等価な型であり, その数も等しいはずである.</p>
 <p><span class="math inline">\([\tau]\)</span> の数を <span class="math inline">\(L\)</span> と置くと, 今タプルや Either の数は分かっているので次のように立式できる: <span class="math display">\[L = 1 + t \times L\]</span> これを解くと <span class="math display">\[L = \frac{1}{1 - t}\]</span> を得る. 右辺を級数展開すると先程の結果と一致する. <span class="math display">\[\frac{1}{1-t} = 1 + t + t^2 + \cdots\]</span> (<span class="math inline">\(-1 &lt; t &lt; 1\)</span> の範囲の実数ならだけど.)</p>
 <table>
 <thead>
@@ -223,7 +223,7 @@ lrot (<span class="dt">Zipper</span> left (x <span class="fu">:</span> right)) <
 <span class="ot">rrot ::</span> <span class="dt">Zipper</span> a <span class="ot">-&gt;</span> <span class="dt">Zipper</span> a
 rrot (<span class="dt">Zipper</span> (x <span class="fu">:</span> left) right) <span class="fu">=</span> <span class="dt">Zipper</span> left (x <span class="fu">:</span> right)</code></pre></div>
 <p>これは全体として表現するものはリストと同じであるが, リストの中のある地点 (要素と要素の境界) に注目して <code>pop</code> <code>push</code> を書き直したもの. その値を <code>pop</code> する, その左右に値を <code>push</code> する, 注目する要素を動かす (<code>rot</code>), といった操作で編集することで計算量がリストとは違う.</p>
-<p>ところでそれはいいんだけど, <code>Zipper a</code> という型の値を計算すると, <code>a</code> の値をやはり <span class="math inline">\(t\)</span> だとすると <span class="math display">\[Z(t) = L(a) \times L(a) = \frac{1}{(1-t)^2}\]</span> と書ける. そしてこれは明らかに <span class="math inline">\(\dd{L}{t}\)</span> である.</p>
+<p>ところでそれはいいんだけど, <code>Zipper a</code> という型の値を計算すると, <code>a</code> の値をやはり <span class="math inline">\(t\)</span> だとすると <span class="math display">\[Z(t) = L(t) \times L(t) = \frac{1}{(1-t)^2}\]</span> であることが分かる. そしてこれは明らかに <span class="math inline">\(\dd{L}{t}\)</span> である.</p>
 <p>Zipper はリストを分割したものであって, 分割の仕方に意味があるので (一意ではないので) リストよりも豪華になっている.</p>
 <p>まあリストの微分に対応する型がなんでもいいから知りたいなら何でも作れるし, <code>Zipper</code> とか導入しなくていい. のだけど, この事実を元にして, ある型 (データ構造) <code>T</code> の微分に対応する型 (データ構造) を <code>T-Zipper</code> と呼ぶ.</p>
 <h3 id="btree-2分木">BTree (2分木)</h3>

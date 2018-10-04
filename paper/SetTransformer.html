@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Set Transformer</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">Set Transformer</h1>
+</header>
+<ul>
+<li>
+original paper: <a href=https://arxiv.org/abs/1810.00825>https://arxiv.org/abs/1810.00825</a>
+</li>
+</ul>
+<div class="is-pulled-right">
+<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a></p>
+</div>
+<p><span class="math inline">\(\def\pool{\mathit{pool}}\def\net{\mathit{net}}\def\Att{\mathit{Att}}\def\Multihead{\mathit{Multihead}}\)</span> <span class="math inline">\(\def\MAB{\mathit{MAB}}\def\SAB{\mathit{SAB}}\def\ISAB{\mathit{ISAB}}\def\Norm{\mathit{Norm}}\def\rFF{\mathit{rFF}}\def\PMA{\mathit{PMA}}\)</span></p>
+<h2 id="概要">概要</h2>
+<p>入力が集合であるようなニューラルネットを構成したい. このための方法として set pooling があったが, これに attention つけたら最高になった.</p>
+<h2 id="集合の学習">集合の学習</h2>
+<p>事例に対してラベルを学習するような機械を考える. インスタンスの集合 <span class="math inline">\(\mathcal X\)</span> とラベルの集合 <span class="math inline">\(\mathcal Y\)</span> について通常は <span class="math display">\[\mathcal X \to \mathcal Y\]</span> を扱うが, 場合によっては入力が事例の集合であることがある. つまり <span class="math display">\[\mathcal P \mathcal X \to \mathcal Y\]</span> を考える (<span class="math inline">\(\mathcal P \mathcal X\)</span> は <span class="math inline">\(\mathcal X\)</span> のべき集合).</p>
+<p>入力が事例の列なんかの場合, 台集合を取ればこれが適用できる.</p>
+<p>集合であるということは次が成り立たなければならない.</p>
+<ol type="1">
+<li>順序不変性 (permutation invariant)
+<ul>
+<li><span class="math inline">\(\{a,b\}\)</span> と <span class="math inline">\(\{b,a\}\)</span> は同じものである</li>
+</ul></li>
+<li>サイズ可変性
+<ul>
+<li>入力は一般に <span class="math inline">\(X \in \mathcal P \mathcal X\)</span> (i.e. <span class="math inline">\(X \subset \mathcal X\)</span>) であることを要請する</li>
+<li><span class="math inline">\(X\)</span> の大きさはどんなであっても良いようにしてほしい</li>
+</ul></li>
+</ol>
+<p>NNs で機械を構成する場合, ややもすれば入力のサイズは固定になり, また RNN などを使えば順序が考慮されてしまう.</p>
+<h2 id="背景">背景</h2>
+<h3 id="set-pooling">Set Pooling</h3>
+<p>[Zaheer et al., 2017] による方式では集合に対する pooling を行って <span class="math display">\[\{x_1,\ldots,x_n\} \mapsto \rho(\pool \{ \phi(x_1),\ldots, \phi(x_n) \})\]</span> とする方法. ここで <span class="math inline">\(\phi\)</span> は embeggin とか Encoder と呼ばれるもの. また <span class="math inline">\(\pool\)</span> は例えば max や average などなど集合から特徴量を取り出すような操作. これは順序不変性やサイズ可変性を満たしている. <span class="math inline">\(\rho \circ \pool\)</span> の部分を合わせて Decoder と呼ぶ.</p>
+<p>この論文の手法もこの方式でやる.</p>
+<h3 id="attention">Attention</h3>
+<p><span class="math inline">\(n\)</span> 個のクエリがあって各クエリは <span class="math inline">\(d_q\)</span> 次元ベクトルで表現されてるとき, クエリは <span class="math inline">\(Q \in \mathbb R^{n \times d_q}\)</span> で表現される. キーバリュー <span class="math inline">\((K, V) \in (\mathbb R^{n_v \times d_q}, \mathbb R^{n_v \times d_v})\)</span> なるものを用いて, このとき attention function (注視関数?) <span class="math inline">\(\Att\)</span> とは次のようなもの: <span class="math display">\[\Att(Q,K,V;\omega) = \omega(QK^T) V\]</span> <span class="math inline">\(\omega : \mathbb R \to \mathbb R\)</span> は活性化関数でここでは要素ごとに適用することで <span class="math inline">\(\mathbb R^{n \times n_v} \to \mathbb R^{n \times n_v}\)</span> として使ってる.</p>
+<h4 id="multi-head-attention">Multi-head attention</h4>
+<p>[Vaswani et al., 2017] による拡張. <span class="math inline">\(h\)</span> 個に増やして結果を結合して使う. そのために <span class="math inline">\(Q,K,V\)</span> に右からそれぞれ <span class="math inline">\(W_j\)</span> を掛けて違う行列にして, また活性化関数 <span class="math inline">\(\omega_j\)</span> も <span class="math inline">\(h\)</span> 個用意する. <span class="math display">\[\Multihead(Q,K,V; \lambda, \omega) = concat(O_1, \ldots, O_h) W^O\]</span> ただし</p>
+<ul>
+<li><span class="math inline">\(\lambda = \{W_j^Q, W_j^K, W_j^V\}_{j=1}^h\)</span></li>
+<li><span class="math inline">\(O_j = \Att(QW_j^Q, KW_j^K, VW_j^V; \omega_j)\)</span> (<span class="math inline">\(j=1,2,\ldots,h\)</span>)</li>
+</ul>
+<p><span class="math inline">\(\lambda\)</span> も学習可能なパラメータであることに注意. また彼らは <span class="math inline">\(\omega\)</span> として scaled softmax を用いたそう.</p>
+<p>型を書いておくと <span class="math display">\[\Multihead \colon \mathbb R^{n \times d_q} \times \mathbb R^{n_v \times d_q} \times \mathbb R^{n_v \times d_v} \to \mathbb R^{n \times d_v}\]</span></p>
+<h2 id="set-transformer">Set Transformer</h2>
+<p>Attention ベースで集合を処理する機械 Set Transformer を構成する. これは Encoder と Decoder の二つの合成として表現される. まずは必要な部品を定義したあと, Encoder と Decoder をそれぞれ定義する.</p>
+<h3 id="multihead-attention-block-mab">Multihead Attention Block (MAB)</h3>
+<p>次を定義する: <span class="math display">\[\MAB \colon \mathbb R^{n \times d} \times \mathbb R^{m \times d} \to \mathbb R^{n \times d}\]</span> <span class="math display">\[\begin{align*}
+\MAB(X, Y; \lambda) &amp; = \Norm(H + \rFF(H)) \\
+\text{ where } H &amp; = \Norm(X + \Multihead(X, Y, Y; \lambda, \omega)
+\end{align*}\]</span></p>
+<p><span class="math inline">\(X, Y\)</span> の行は一つの <span class="math inline">\(d\)</span> 次元ベクトルであって, それが行数分だけある集合を表している. ここで <span class="math inline">\(\Norm\)</span> は layer normalization で <span class="math inline">\(\rFF\)</span> は行ごとの feed forward.</p>
+<h3 id="set-attention-block-sab">Set Attention Block (SAB)</h3>
+<p><span class="math inline">\(X=Y\)</span> としたときの MAB を SAB と定める. <span class="math display">\[\SAB \colon \mathbb R^{n \times d} \to \mathbb R^{n \times d}\]</span> <span class="math display">\[\SAB(X; \lambda) = \MAB(X, X; \lambda)\]</span></p>
+<h3 id="induced-set-attention-block-isab">Induced Set Attention Block (ISAB)</h3>
+<p>SAB の計算には計算コストがかかり過ぎる. どこの部分のことか言っていないが, 行列の掛け算の話だと思う. つまり <span class="math inline">\(\mathbb R^{a \times b}\)</span> と <span class="math inline">\(\mathbb R^{b \times c}\)</span> の掛け算には <span class="math inline">\(O(abc)\)</span> の計算量が係る. <span class="math inline">\(X \in \mathbb R^{n \times d}\)</span> について <span class="math inline">\(\SAB(X)\)</span> を計算するには <span class="math inline">\(O(n^2d)\)</span> が係る. 論文に書いてあるのは <span class="math inline">\(d\)</span> を定数として無視して単に <span class="math inline">\(O(n^2)\)</span> だと言っている.</p>
+<p>この計算量を削減したバージョンを作る.</p>
+<p><span class="math display">\[\ISAB \colon \mathbb R^{n \times d} \to \mathbb R^{n \times d}\]</span> <span class="math display">\[\begin{align*}
+\ISAB_m(X; \lambda) &amp; = \MAB(X, H) \\
+\text{ where } H &amp; = \MAB(I_m, X)
+\end{align*}\]</span> ここで <span class="math inline">\(I_m\)</span> は <span class="math inline">\(\mathbb R^{m \times d}\)</span> であって彼らはこれを inducing point と呼んでいる. <span class="math inline">\(H\)</span> は <span class="math inline">\(\mathbb R^{m \times d}\)</span> であるので全体の計算コストは <span class="math inline">\(O(mnd)\)</span> になる. つまり <span class="math inline">\(m\)</span> を適当に小さくすることで計算量を抑えられる.</p>
+<p>注意. <span class="math inline">\(I\)</span> 自体も訓練可能なパラメータである.</p>
+<h4 id="性質">性質</h4>
+<p><span class="math inline">\(S_n\)</span> 上の任意の置換 <span class="math inline">\(\pi\)</span> について <span class="math inline">\(f(\pi x) = \pi(fx)\)</span> となる <span class="math inline">\(f\)</span> を順序を保つと呼ぶことにする.</p>
+<p><span class="math inline">\(\SAB\)</span> と <span class="math inline">\(\ISAB\)</span> は順序を保つ.</p>
+<h3 id="encoder">Encoder</h3>
+<p>SAB または ISAB を複数縦に重ねたものを Encoder とする. 例えば2つ重ねて <span class="math display">\[\SAB(\SAB(X))\]</span> <span class="math display">\[\ISAB(\ISAB(X))\]</span> これを Encoder とする. Encoder は一つの行列を受け取って, それと同じ大きさの行列を返す.</p>
+<h3 id="decoder">Decoder</h3>
+<p>Encoder によって得た <span class="math inline">\(Z \in \mathbb R^{n \times d}\)</span> を受け取って行に関して集約する操作を行う. 集約の操作は Set Pooling を用いる. つまり行に関して平均を取ったり max を取るなどをして <span class="math inline">\(k\)</span> 種の特徴量をとるとする. これによって <span class="math inline">\(Z\)</span> から <span class="math inline">\(S \in \mathbb R^{k \times d}\)</span> が得られる.</p>
+<p><span class="math display">\[\begin{align*}
+Decoder(Z; \lambda) &amp; = \rFF(\SAB(\PMA_k(Z))) \\
+\text{ where } \PMA_k(Z) &amp; = \MAB(S, \rFF(Z)) \\
+S &amp; \leftarrow \text{ set-pooling } Z
+\end{align*}\]</span></p>
+<p>ただし彼らが言うには多くの場合, <span class="math inline">\(k=1\)</span> で十分であり, また <span class="math inline">\(\SAB\)</span> も省いてしまって十分であったらしい. simple pooling として 平均を取ることをした.</p>
+<h4 id="prop-1">Prop 1</h4>
+<p>Set Transformer は順序不変性を持つ.</p>
+<h4 id="prop-2">Prop 2</h4>
+<p>Set Transformer は順序不変性を持つ関数の万能近似である.</p>
+<h3 id="実験">実験</h3>
+<p>データの集合を与えて何かを解くようなタスクを行った.</p>
+<ol type="1">
+<li>max value regression
+<ul>
+<li>実数の集合を与えて <span class="math inline">\(\max\)</span> を学習させる
+<ul>
+<li>損失は MAE</li>
+</ul></li>
+<li>当たり前だけど pooling に max を使うのが最強だった
+<ul>
+<li><code>rFF+pooling(max)</code></li>
+</ul></li>
+</ul></li>
+<li>counting unique characters
+<ul>
+<li>Omniglot データベースを用いる</li>
+<li>手書き文字画像から20種類の文字を選ぶ</li>
+<li>ウニークなものが何種類か数えるタスク</li>
+<li>なんでも解けるけど Set Transformer が良かった</li>
+</ul></li>
+<li>混合分布の最尤推定
+<ul>
+<li>点の集合からそれを最尤する <span class="math inline">\(k\)</span> 個のガウス分布のパラメータを推定させる
+<ul>
+<li>予測は <span class="math inline">\(k\)</span> 個の <span class="math inline">\((\mu, \sigma)\)</span></li>
+</ul></li>
+<li>普通にはEMアルゴリズムで解く問題である</li>
+<li>これで画像分類をさせる (meta-clustering)
+<ul>
+<li>Synthetic 2D: 二次元データであって <span class="math inline">\(k=4\)</span> つのガウス分布に分けさせる</li>
+<li>CIFAR-100: VGG で一つの画像を 512 次元ベクトルに落としておく. 4つのクラスだけ選んで使う. <span class="math inline">\(k=4\)</span></li>
+</ul></li>
+</ul></li>
+</ol>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

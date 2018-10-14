@@ -62,11 +62,13 @@ Q(y|x) &amp; = \frac{P(x_s,y|x)}{P(x_s|x)} \\
 &amp; = P(y|x_s,x). ~~~(\ast\ast)
 \end{align*}\]</span> 独立性を仮定したのだから, 最初のようにこんな式になるはずである. 予測器 <span class="math inline">\(Q\)</span> をこのように学習/予測しようと言っている.</p>
 <p>これは次のようなモデルと解釈できそうだ. 2つのモデルを作る. 1つは <span class="math inline">\((x_s,x; y)\)</span> というラベル付きデータから教師アリ学習を行って, 真の確率分布を学習する <span class="math inline">\(P(y|x_s,x)\)</span>. もう1つは <span class="math inline">\((x; y&#39;)\)</span> というデータから教師アリ学習を行うもので, ここで <span class="math inline">\(y&#39;\)</span> は真のラベルではなく <span class="math inline">\(P(y|x_s,x)\)</span> からサンプリングしてきたもの. 1つ目が右辺であって, 2つ目が左辺の <span class="math inline">\(Q\)</span>.</p>
+<p>註意として, <span class="math inline">\(y\)</span> と <span class="math inline">\(x_s\)</span> が依存してるわけでなければ一般には <span class="math inline">\(Q(y|x) \ne P(y|x)\)</span> なので特徴量を抜いて学習して得たモデルとは一致しない.</p>
 <p>これは, 次のようなものとは異なる結果を与えるのだろうか.</p>
 <ol type="1">
 <li>学習データに <span class="math inline">\(x_s\)</span> を反転したダミーデータを混ぜて <span class="math inline">\((x_s,x;y)\)</span> で学習したモデル</li>
 <li>普通に <span class="math inline">\(P(y|x_s,x)\)</span> を学習して, 予測時には, <span class="math inline">\(x_s\)</span> に関して周辺確率をとって <span class="math inline">\(Q(y|x)= \sum_{x_s} P(x_s) P(y|x_s,x)\)</span> とするモデル</li>
 </ol>
+<p>ところで 「<span class="math inline">\(P(y|x_s,x)\)</span> からサンプリング」と言った. <span class="math inline">\(x,y\)</span> はパラメータとして必要なものが与えられるからいいが <span class="math inline">\(x_s\)</span> はどこかから降ってくる必要があり, 従って <span class="math inline">\(P(x_s)\)</span> が必要になってしまう. 私のカンでは真の <span class="math inline">\(P(x_s)\)</span> の下でサンプリングした場合、これは結局周辺確率を求めることになると思う. また, その式への変形2ステップ前の式である <span class="math inline">\(\frac{P(x_s,y|x)}{P(x_s|x)}\)</span> を用いれば, これは <span class="math inline">\(x\)</span> さえ与えられれば計算されるはずの値であるので利用できる. そのためにはこの分母と分子をそれぞれをモデルとして学習する必要がある.</p>
 <footer>
     <p class="is-pulled-right">
     @cympfh / cympfh@gmail.com

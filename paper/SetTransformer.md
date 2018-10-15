@@ -95,6 +95,11 @@ $$\begin{align*}
 $X, Y$ の行は一つの $d$ 次元ベクトルであって, それが行数分だけある集合を表している.
 ここで $\Norm$ は layer normalization で $\rFF$ は行ごとの feed forward.
 
+("Attention is All You Need" の Position-wise Feed-Forward Network を参考にすると
+$\rFF$ は relu を入れるだけの二層NNで
+$(\max(0, W_1x+b_1)W_2+b_2$
+というもの)
+
 ### Set Attention Block (SAB)
 
 $X=Y$ としたときの MAB を SAB と定める.

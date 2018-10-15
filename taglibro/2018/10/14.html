@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sun Oct 14 2018</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='../../index.html'><i class="fa fa-save" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">Sun Oct 14 2018</h1>
+</header>
+<p>註意. ここは日記である. 真実とは限らない参考文献も無いような事柄を書く.</p>
+<h2 id="ポリコレai">ポリコレAI</h2>
+<blockquote class="twitter-tweet" data-lang="en">
+<p lang="ja" dir="ltr">
+特徴量に入れないだけだと不十分（∵人間が気づかない相関を通じて見えてしまうかもしれない）ので, 特徴量には入れた上で, その属性に独立になるよう学習するのが主流ですね。 <a href="https://t.co/Lqd1ESAhx7">https://t.co/Lqd1ESAhx7</a>
+</p>
+— ™ (<span class="citation" data-cites="tmaehara">@tmaehara</span>) <a href="https://twitter.com/tmaehara/status/1051051034573983749?ref_src=twsrc%5Etfw">October 13, 2018</a>
+</blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>これを読んで.</p>
+<h3 id="あらすじ">あらすじ</h3>
+<p>Amazonが企業への人材採用を判定するような予測器を作ったところ, 性別に強く依存することがはっきりとバレてしまって, ポリコレ的に気まずくなったので運用をやめた.</p>
+<h3 id="指摘">指摘</h3>
+<p>これは推測であるが, 今までの実際の採用実績を教師データに用いたのだろう. そしてそれは実際に, 性別によって採用実績に偏りがあった為にそれを学習してしまったのだと思われる.</p>
+<p>ポリコレ的には, 例え予測結果が悪くなろうが, 採用予測が性別に依存してはいけないのである. この為にはどのような予測モデルを設定して学習すれば良かったのだろうか.</p>
+<h4 id="先のツイートの要約">先のツイートの要約:</h4>
+<ol type="1">
+<li>予測モデルに, 性別を特徴量に入れなければそれを使わないのだからこんな問題は起きなかったのではないか</li>
+<li>他の説明変数にすでに性別に依存するものがあるかも知れず, 性別を特徴量に入れないだけでは不十分
+<ul>
+<li>積極的に性別と独立であるような学習をする必要</li>
+</ul></li>
+</ol>
+<h3 id="考えたこと">考えたこと</h3>
+<p>説明変数の内, 性別のようにポリコレ的にセンシティブな変数 <span class="math inline">\(x_s\)</span> と, それ以外の <span class="math inline">\(x\)</span> とに分ける. 初め考えていた予測モデルとは <span class="math display">\[y \sim Q(y|x_s, x) = P(y|x_s, x)\]</span> という <span class="math inline">\(Q\)</span> であった.</p>
+<p>まず, 本当に <span class="math inline">\(y\)</span> が <span class="math inline">\(x_s\)</span> に依存しない場合がある. これは特徴量に <span class="math inline">\(x_s\)</span> を入れても入れなくてもいい. なぜなら <span class="math inline">\(y\)</span> と <span class="math inline">\(x_s\)</span> とは独立であるので, <span class="math display">\[P(y|x_s,x) = \frac{P(y,x_s|x)}{P(x_s|x)} = \frac{P(y|x) P(x_s|x)}{P(x_s|x)} = P(y|x)\]</span> が成り立つから.</p>
+<p>次に一般に <span class="math inline">\(y\)</span> が <span class="math inline">\(x_s\)</span> に依存する場合に (今回のケース), <span class="math inline">\(x_s\)</span> を特徴量から抜いたものと抜かないものとで何が違うか調べる.</p>
+<p><span class="math display">\[\begin{align*}
+P(y|x)
+&amp; = \frac{P(x,y)}{P(x)} \\
+&amp; = \frac{P(x_s,x,y) / P(x_s|x,y)}{P(x_s,x) / P(x_s|x)}  ~~~(\text{ベイズの定理より})\\
+&amp; = P(y|x_s,x) \frac{P(x_s|x)}{P(x_s|x,y)}. ~~~(\ast) \\
+\end{align*}\]</span></p>
+<p>右辺にある <span class="math inline">\(P(y|x_s,x)\)</span> を学習する代わりに, この式を学習することが, 特徴量から <span class="math inline">\(x_s\)</span> を抜くことである. (これ以上どう解釈したらいいんだろう???) ところで, これだけなら周辺確率を求めても同じことのはずだ. <span class="math display">\[P(y|x) = \sum_{x_s} P(x_s) P(y|x,x_s)\]</span></p>
+<p>上のツイートで <code>@tmaehara</code> 氏が指摘しているのは <span class="math inline">\(x\)</span> が <span class="math inline">\(x_s\)</span> と独立とは限らないということ. そのとき <span class="math inline">\(P(y|x)\)</span> も間接的に <span class="math inline">\(x_s\)</span> に依存していることになる. そうなるとポリコレに違反するので, <span class="math inline">\(Q(y|x)\)</span> を <span class="math inline">\(x_s\)</span> と独立であるように学習させたい.</p>
+<p><span style="color:red">以下, 致命的な誤りを修正 (2018/10/14; 10:00)</span></p>
+<p>独立であるとは <span class="math display">\[P(x_s|x) \times P(y|x) = P(x_s,y|x)\]</span> である. 実際には独立でないのでこれは成立しないが, 左辺の <span class="math inline">\(P(y|x)\)</span> を予測器 <span class="math inline">\(Q(y|x)\)</span> で置き換えて <span class="math display">\[\begin{align*}
+Q(y|x) &amp; = \frac{P(x_s,y|x)}{P(x_s|x)} \\
+&amp; = P(y|x_s,x) \frac{P(x_s,x)}{P(x)P(x_s|x)} \\
+&amp; = P(y|x_s,x). ~~~(\ast\ast)
+\end{align*}\]</span> 独立性を仮定したのだから, 最初のようにこんな式になるはずである. 予測器 <span class="math inline">\(Q\)</span> をこのように学習/予測しようと言っている.</p>
+<p>これは次のようなモデルと解釈できそうだ. 2つのモデルを作る. 1つは <span class="math inline">\((x_s,x; y)\)</span> というラベル付きデータから教師アリ学習を行って, 真の確率分布を学習する <span class="math inline">\(P(y|x_s,x)\)</span>. もう1つは <span class="math inline">\((x; y&#39;)\)</span> というデータから教師アリ学習を行うもので, ここで <span class="math inline">\(y&#39;\)</span> は真のラベルではなく <span class="math inline">\(P(y|x_s,x)\)</span> からサンプリングしてきたもの. 1つ目が右辺であって, 2つ目が左辺の <span class="math inline">\(Q\)</span>.</p>
+<p>註意として, <span class="math inline">\(y\)</span> と <span class="math inline">\(x_s\)</span> が依存してるわけでなければ一般には <span class="math inline">\(Q(y|x) \ne P(y|x)\)</span> なので特徴量を抜いて学習して得たモデルとは一致しない.</p>
+<p>これは, 次のようなものとは異なる結果を与えるのだろうか.</p>
+<ol type="1">
+<li>学習データに <span class="math inline">\(x_s\)</span> を反転したダミーデータを混ぜて <span class="math inline">\((x_s,x;y)\)</span> で学習したモデル</li>
+<li>普通に <span class="math inline">\(P(y|x_s,x)\)</span> を学習して, 予測時には, <span class="math inline">\(x_s\)</span> に関して周辺確率をとって <span class="math inline">\(Q(y|x)= \sum_{x_s} P(x_s) P(y|x_s,x)\)</span> とするモデル</li>
+</ol>
+<p>ところで 「<span class="math inline">\(P(y|x_s,x)\)</span> からサンプリング」と言った. <span class="math inline">\(x,y\)</span> はパラメータとして必要なものが与えられるからいいが <span class="math inline">\(x_s\)</span> はどこかから降ってくる必要があり, 従って <span class="math inline">\(P(x_s)\)</span> が必要になってしまう. 私のカンでは真の <span class="math inline">\(P(x_s)\)</span> の下でサンプリングした場合、これは結局周辺確率を求めることになると思う. また, その式への変形2ステップ前の式である <span class="math inline">\(\frac{P(x_s,y|x)}{P(x_s|x)}\)</span> を用いれば, これは <span class="math inline">\(x\)</span> さえ与えられれば計算されるはずの値であるので利用できる. そのためにはこの分母と分子をそれぞれをモデルとして学習する必要がある.</p>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

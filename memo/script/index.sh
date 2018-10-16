@@ -13,19 +13,22 @@ write-item() {
     head -n 3 "$MD" | sed 's/^..//g' | (
         read title; read tags
         cat <<EOM
-    <div class="card">
-        <header class="card-header">
-            <a href="$HTML" class="card-header-title">$title</a>
-            <p class="is-pulled-right">
+        <div class="card">
+          <header class="card-header">
+              <p class="card-header-title">
+                <a href="$HTML" class="card-header-title">$title</a>
+              </p>
+          </header>
+          <div class="card-content">
+            <div class="content">
+              <p class="abst">$(grep '^## ' "$MD" | sed 's,^## ,,; s,$,/,')</p>
+                <p class="tags">
     $( echo "$tags" | awk '{ for (i=1; i<=NF; i++) print "<a href=\"#"$i"\" class=\"tag is-green is-small\">"$i"</a>" }' )
-            </p>
-        </header>
-        <div class="card-content">
-            <p class=abst>
-    $(grep '^## ' "$MD" | sed 's,^## ,,; s,$,/,')
-            </p>
+                </p>
+              </p>
+            </div>
+          </div>
         </div>
-    </div>
 EOM
     )
 }
@@ -61,8 +64,9 @@ cat <<TEMPLATE
 <html>
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=0.9">
   <title>memo/</title>
-  <link rel="stylesheet" href="../resources/css/c.css" />
+  <link rel="stylesheet" href="../resources/css/bulma/bulma.css" />
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
   <style>
 TEMPLATE
@@ -78,25 +82,32 @@ cat <<TEMPLATE
   </style>
   </head>
 <body>
-<h1><i class="fa fa-sticky-note"></i> memo/</h1>
+
+  <section class="section">
+    <div class="container">
+        <h1 class="title"><i class="fa fa-sticky-note"></i> memo/</h1>
+    </div>
+  </section>
 TEMPLATE
 
 #
 # tag list
 #
 cat <<EOM
-<div class="tags">
-    <a class="tag is-green" href="#">(all)</a>
+  <section class="section">
+    <div class="container tags">
+      <a class="tag is-medium is-green" href="#">(all)</a>
 EOM
 
 while read tag; do
     cat <<EOM
-    <a class="tag is-green" href="#$tag">$tag</a>
+      <a class="tag is-medium is-green" href="#$tag">$tag</a>
 EOM
 done < "$TAGLIST"
 
 cat <<EOM
-</div>
+    </div>
+  </section>
 EOM
 
 #
@@ -104,8 +115,9 @@ EOM
 #
 while read tag; do
     cat <<EOM
-<div class="tagitem" id="$tag">
-<h3>$tag</h3>
+  <section class="section" id="$tag">
+    <div class="container">
+        <h3 class="title">$tag</h3>
 EOM
 
     < "$TABLE" awk '$1 == "'"$tag"'"{print $2}' |
@@ -114,15 +126,23 @@ EOM
     done
 
     cat <<EOM
-</div>
+    </div>
+  </section>
 EOM
 done < "$TAGLIST"
 
 #
 # all items
 #
-echo "<h3>all items</h3>"
+cat <<EOM
+  <section class="section">
+    <div class="container">
+EOM
 < "$POSTLIST" awk '{A[NR]=$0} END{for(i=NR;i>=1;--i) print(A[i])}' |  # tac
 while read id; do
     write-item "$id"
 done
+cat <<EOM
+    </div>
+  </section>
+EOM

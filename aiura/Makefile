@@ -2,7 +2,7 @@
 
 all: index posts
 
-index: *.md
+index:
 	bash script/index.sh >index.html
 
 edit:

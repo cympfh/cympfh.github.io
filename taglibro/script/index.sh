@@ -32,12 +32,19 @@ cat <<EOM
 <html>
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=0.9">
   <title>taglibro/</title>
-  <link rel="stylesheet" href="../resources/css/c.css" />
+  <link rel="stylesheet" href="../resources/css/bulma/bulma.css" />
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
 </head>
 <body class="with-bg">
-    <h1><i class="fa fa-save"></i> taglibro/</h1>
+
+  <section class="section">
+    <div class="container">
+      <h1 class="title"><i class="fa fa-save"></i> taglibro/</h1>
+    </div>
+
+    <div class="container">
 EOM
 
 find . -name '*.md' | sort -r |
@@ -46,6 +53,8 @@ while read f; do
 done
 
 cat <<EOM
+    </div>
+  </section>
 </body>
 </html>
 EOM

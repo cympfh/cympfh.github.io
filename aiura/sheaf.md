@@ -18,28 +18,31 @@ $$\def\O{\mathcal{O}}$$
 集合 $A$,
 関数 $E: A \rightarrow \O(X)$,
 関数 $\rceil: A \times \O(X) \rightarrow A$
+($(a, U) \mapsto a \rceil U$)
 からなる三組 $(A, E, \rceil)$ であって次のようなもの.
 
-0. 任意の $a, b \in A$ に対して、$a \rceil \emptyset = b \rceil \emptyset$
-1. $a \rceil Ea = a$ ($\rceil$ の結合則は $E$ の適用より弱い)
+0. 任意の $a, b \in A$ に対して $a \rceil \emptyset = b \rceil \emptyset$
+1. $a \rceil Ea = a$ $~~~$(註意: $\rceil$ の結合則は $E$ の適用より弱い)
 2. $E (a \rceil U) = E a \cap U$
-3. $(a \rceil U) \rceil V = a \rceil (U \cap V)$
+3. $(a \rceil U) \rceil V = a \rceil U \cap V$ $~~$ (註意: $\cap$ の結合則のが $\rceil$ より強い)
 </div>
 
 #### 例
 
 関数の集合 $A$,
-関数の定義域を与える手続き $E$,普通、
-(広い意味での) 関数の定義域の制限 $\rceil$.
+関数の定義域を与える手続き $E$,
+普通の意味で関数の(定義域の)制限 $\rceil$.
 
-註意すべき点として、層としての制限 $\rceil$ の右辺には $Ef$ よりも広い集合を与えても構わないということ.
-関数の制限 (これを区別する意味で $\lceil$ と書く) の右辺には普通、ドメインより広い集合のみを与える.
-
-だから例えば次のように $\rceil$ を定めればよい:
+註意すべき点として、層としての制限 $\rceil$ の右項には $Ef$ よりも広い集合を与えても構わないということ.
+関数の制限 (これを区別する意味で $\lceil$ と書く) の右項には普通、ドメインより小さい領域を与えるだろう.
+そこで次のように $\rceil$ を定め直せばよい:
 $$f \rceil U := f \lceil (Ef \cap U)$$
 
 また、ドメインが空集合な関数は空集合ただ1つである.
 $$f \rceil \emptyset = \emptyset = g \rceil \emptyset$$
+
+ドメイン (定義域) が空集合であるような関数は **存在しない** しないのではなく,
+**唯1つ** 存在することに註意 (参考; [空関数](https://ja.wikipedia.org/wiki/%E7%A9%BA%E9%96%A2%E6%95%B0)).
 
 > 明らかに前層とはこれを抽象化したものである
 
@@ -63,6 +66,8 @@ $\left(F, r = \{ r_{UV} : U, V \in \O(X) \}\right)$
 1. $r_{UU}$ は恒等写像
 2. $U \subseteq V \subseteq W$ のとき $r_{UW} = r_{UV} \circ r_{VW}$
 </div>
+
+こちらは圏論的に **関手** として前層を定義している (参考; [前層はモノイド(右)作用の一般化](http://cympfh.cc/taglibro/2018/07/17.html)).
 
 これら2つの定義が等価であることを確認する.
 
@@ -180,7 +185,7 @@ $(S, p)$ を $X$ の上の **層** という.
 $p \lceil U$
 が同相写像であること.
 
-#### 定義1 → 定義2
+### 定義1 → 定義2
 
 層 $A$ が与えられた時、
 $$\tilde{S} = \{ (x, f) ~:~ f \in A, x \in Ef \}$$
@@ -207,7 +212,7 @@ $$\{ (y, f) /\! \equiv ~:~ y \in V_x\}$$
 
 以上の $(S,p)$ が層 $A$ に対応する定義2の形の層である.
 
-#### 定義2 → 定義1
+### 定義2 → 定義1
 
 $X$ 上の層 $(S,p)$ から $(A,E,\rceil)$ の形の層を次のようにして構成できる.
 

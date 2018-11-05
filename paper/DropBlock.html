@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>[1810.12890] DropBlock: A regularization method for convolutional networks</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">[1810.12890] DropBlock: A regularization method for convolutional networks</h1>
+</header>
+<ul>
+<li>
+original paper: <a href=https://arxiv.org/abs/1810.12890>https://arxiv.org/abs/1810.12890</a>
+</li>
+</ul>
+<div class="is-pulled-right">
+<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#画像認識>画像認識</a></p>
+</div>
+<h2 id="概要">概要</h2>
+<p>汎化性能を上げるための正則化手法として DropBlock を提案する. これを使うと Imagenet/ResNet-50 において 1.6% 性能が上昇した (acc=78.13%).</p>
+<h2 id="関連">関連</h2>
+<ul>
+<li>Dropout</li>
+<li>SpatialDropout</li>
+<li>DropPath</li>
+<li>Cutout</li>
+</ul>
+<h2 id="dropblock">DropBlock</h2>
+<p>中身も使い方も Dropout によく似ている. Dropout は入力 (3次元テンソル <span class="math inline">\(X\)</span>) のうちランダムにチャンネルベクトル <span class="math inline">\(X_{i,j,\cdot}\)</span> を選んでそれをゼロにしてしまう.</p>
+<figure>
+<img src="https://i.imgur.com/RnuGrBg.png" />
+</figure>
+<p>DropBlock はチャンネルベクトルの選び方にもう少しだけ規則性を持たせる. 図のように落とすベクトルは矩形上に固まるようにする. その矩形をランダムに選ぶ.</p>
+<figure>
+<img src="https://i.imgur.com/AJFGyaE.png" />
+</figure>
+<p>入力が <span class="math inline">\((X_{ijk})\)</span> のときマスク行列 <span class="math inline">\((M_{ij})\)</span> を作る. 落とすチャンネルだけを <span class="math inline">\(M_{ij}=0\)</span> になるようにする. ベルヌーイ分布に従って独立に点を決めて, その点の周りに矩形を取って全部ゼロにする. 入力の画像に <span class="math inline">\(M\)</span> を掛けるのと, それから残った部分は落としたピクセルの数の分だけ掛けてふやしてやる.</p>
+<blockquote>
+<p>矩形を切り抜くという考え方は CutOut (とか RandomErasing) と同じだ. それを Dropout 同様に中間層にでもずこずこ使ってやろうという話.</p>
+</blockquote>
+<h3 id="その他">その他</h3>
+<p>矩形のサイズ (<code>block_size</code>) を <span class="math inline">\(1\)</span> にしてやればこれは単なる Dropout.</p>
+<p>ベルヌーイ分布のパラメータ <span class="math inline">\(\gamma\)</span> は直接与えずに, Dropout のように <span class="math inline">\(\mathit{keep_prob}\)</span> (落ちない確率) を決めて決定させた. <span class="math inline">\(\gamma\)</span> と <span class="math inline">\(\mathit{keep_prob}\)</span> の関係は <span class="math display">\[\gamma = \frac{1-\mathit{keep_prob}}{\mathit{block_size}} \frac{\mathit{feat_size}^2}{(\mathit{feat_size} - \mathit{block_size} + 1)^2}\]</span> で与えられる. <span class="math inline">\(\mathit{block_size}\)</span> は矩形の幅. <span class="math inline">\(\mathit{feat_size}\)</span> は入力画像の大きさ. 自乗してるのはたぶん縦と横.</p>
+<p><span class="math inline">\(\mathit{keep_prob}\)</span> を固定にしたままだと彼らも上手く動かせなかったらしく, スケジューリングをさせたそう. <span class="math inline">\(1.0\)</span> からスタートして徐々に目的の値まで下げると大抵上手く行ったそう. 下げ方は linear でいいと.</p>
+<h2 id="実験">実験</h2>
+<p>まあ良くなった.</p>
+<figure>
+<img src="https://i.imgur.com/T3AKwYU.png" />
+</figure>
+<p>他の似た正則化手法よりも良くなり方が大きい.</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

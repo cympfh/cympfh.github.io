@@ -1,6 +1,6 @@
 % [1810.12890] DropBlock: A regularization method for convolutional networks
 % https://arxiv.org/abs/1810.12890
-% 深層学習 画像認識
+% 深層学習 画像認識 正則化
 
 ## 概要
 
@@ -40,15 +40,15 @@ DropBlock はチャンネルベクトルの選び方にもう少しだけ規則�
 矩形のサイズ (`block_size`) を $1$ にしてやればこれは単なる Dropout.
 
 ベルヌーイ分布のパラメータ $\gamma$ は直接与えずに,
-Dropout のように $\mathit{keep_prob}$ (落ちない確率) を決めて決定させた.
-$\gamma$ と $\mathit{keep_prob}$ の関係は
-$$\gamma = \frac{1-\mathit{keep_prob}}{\mathit{block_size}} \frac{\mathit{feat_size}^2}{(\mathit{feat_size} - \mathit{block_size} + 1)^2}$$
+Dropout のように $\mathit{keep\_prob}$ (落ちない確率) を決めて決定させた.
+$\gamma$ と $\mathit{keep\_prob}$ の関係は
+$$\gamma = \frac{1-\mathit{keep\_prob}}{\mathit{block\_size}} \frac{\mathit{feat\_size}^2}{(\mathit{feat\_size} - \mathit{block\_size} + 1)^2}$$
 で与えられる.
-$\mathit{block_size}$ は矩形の幅.
-$\mathit{feat_size}$ は入力画像の大きさ.
+$\mathit{block\_size}$ は矩形の幅.
+$\mathit{feat\_size}$ は入力画像の大きさ.
 自乗してるのはたぶん縦と横.
 
-$\mathit{keep_prob}$ を固定にしたままだと彼らも上手く動かせなかったらしく, スケジューリングをさせたそう.
+$\mathit{keep\_prob}$ を固定にしたままだと彼らも上手く動かせなかったらしく, スケジューリングをさせたそう.
 $1.0$ からスタートして徐々に目的の値まで下げると大抵上手く行ったそう.
 下げ方は linear でいいと.
 

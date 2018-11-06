@@ -52,7 +52,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/</a>
+    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
 </header>
 <header>
 <h1 class="title">[1802.03426] UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction</h1>
@@ -65,48 +65,127 @@ original paper: <a href=https://arxiv.org/abs/1802.03426>https://arxiv.org/abs/1
 <div class="is-pulled-right">
 <p><a class='tag is-blue' href=index.html#多様体学習>多様体学習</a> <a class='tag is-blue' href=index.html#次元圧縮>次元圧縮</a></p>
 </div>
-<h2 id="実装">実装</h2>
-<p><a href="https://github.com/lmcinnes/umap">lmcinnes/umap</a></p>
+<p><span class="math inline">\(\def\M{\mathcal{M}}\def\R{\mathbb{R}}\def\C{\mathcal C}\def\P{\mathcal{P}}\def\op#1{#1^{\text{op}}}\def\Sets{\mathrm{Sets}}\)</span></p>
+<h2 id="リンク">リンク</h2>
+<ul>
+<li><a href="https://arxiv.org/abs/1802.03426">arxiv</a></li>
+<li><a href="https://github.com/lmcinnes/umap">github:lmcinnes/umap</a></li>
+<li><a href="https://umap-learn.readthedocs.io/en/latest/how_umap_works.html">docs</a></li>
+</ul>
 <h2 id="概要">概要</h2>
-<p>データの次元圧縮として t-SNE や PCA など他諸々あり、特に可視化を目的としたとき、t-SNE が特に優っている. 多様体学習という点で t-SNE に似てるが UMAP を提案する. t-SNE に優っている点として、視覚的に分かり良いプロットが出来上がること、 大域的な構造が保たれること、データサイズが t-SNE のときより多くても計算可能であること (計算量が少ない?) を挙げている.</p>
-<h2 id="アルゴリズム">アルゴリズム</h2>
-<p><span class="math inline">\(\def\M{\mathcal{M}}\def\R{\mathbb{R}}\def\P{\mathcal{P}}\)</span></p>
-<p>まずはじめに、データが乗っている多様体自体を推定する必要がある. 多様体は既知のもの (例えば <span class="math inline">\(\R^n\)</span>) としてしまう場合もある. さもなくばデータから推定する. そしてリーマン計量を推定してリーマン多様体とする.</p>
-<p>データは実際 <span class="math inline">\(\R^n\)</span> の点として与えられるので、多様体は <span class="math inline">\(\R^n\)</span> の中に埋め込まれたもののようであるが、 ただし計量は別である. つまり外側では普通のユークリッド距離を用いる.</p>
-<h3 id="lemma-1">Lemma 1</h3>
-<p>リーマン多様体 <span class="math inline">\((\M,g)\)</span> を考える. ただし <span class="math inline">\(\M \subset \R^n\)</span> とする. 点 <span class="math inline">\(p \in \M\)</span> について、十分小さな近傍 <span class="math inline">\(U\)</span> を取ると、<span class="math inline">\(g\)</span> は <span class="math inline">\(U\)</span> の中では定数でしかも対角行列と見なせると仮定する (!!) <span class="math display">\[g_{i,j} = k \cdot \delta_{i,j}\]</span> <span class="math inline">\(p\)</span> を中心とする開球 <span class="math inline">\(B \subset U\)</span> をさらにとる. <span class="math inline">\(B\)</span> は <span class="math inline">\(\R^n\)</span> で測って半径 <span class="math inline">\(r\)</span> の図形だとする.</p>
-<p>外側の <span class="math inline">\(\R^n\)</span> での座標を <span class="math inline">\(x^1,\ldots,x^n\)</span> とすると、<span class="math inline">\(B\)</span> の <span class="math inline">\(\M\)</span> での体積は、計量 <span class="math inline">\(g\)</span> を用いて <span class="math display">\[V(B) = \int_B \sqrt{\mathrm{det}(g)} dx^1 \cdots dx^n\]</span> と表される.</p>
-<p>今 <span class="math inline">\(B\)</span> の中で <span class="math inline">\(g\)</span> は定数だとしているので、<span class="math inline">\(g\)</span> の項は外に出せて、 <span class="math display">\[V(B) = \sqrt{\mathrm{det}(g)} \int_B dx^1 \cdots dx^n\]</span> となって、結局 <span class="math inline">\(\R^n\)</span> での体積に係数を掛けただけのものになっている.</p>
-<p>一般に <span class="math inline">\(\R^n\)</span> での半径 <span class="math inline">\(r\)</span> の球の超体積は、 <span class="math display">\[\frac{\pi^{n/2} r^n}{\Gamma(n/2 + 1)}\]</span> である.</p>
-<p>というわけで、 <span class="math display">\[V(B) = \sqrt{\mathrm{det}(g)} \frac{\pi^{n/2} r^n}{\Gamma(n/2 + 1)}\]</span></p>
-<p><span class="math inline">\(B\)</span> の半径を慎重に調整することで <span class="math display">\[V(B) = \frac{\pi^{n/2}}{\Gamma(n/2 + 1)}\]</span> に出来たとする. 即ち、 <span class="math display">\[\mathrm{det}(g) = \frac{1}{r^{2n}}\]</span> とできたとする. この時の半径 <span class="math inline">\(r\)</span> を用いると、計量 <span class="math inline">\(g\)</span> は、その対角成分が定数だと仮定してるので、 <span class="math display">\[g_{i,j} = \frac{1}{r^2} \delta_{i,j}\]</span> と表される.</p>
-<p>曲線の長さは、内積の平方根の積分で与えられるものであるので、 <span class="math inline">\(\M\)</span> 上の <span class="math inline">\(g\)</span> の下での距離は、<span class="math inline">\(\R^n\)</span> での距離の <span class="math inline">\(\sqrt{g}\)</span> 倍. 即ち、2点 <span class="math inline">\(p,q \in \M\)</span> の間の距離は、 <span class="math display">\[d_{\M}(p,q) = \frac{1}{r} d_{\R^n}(p,q)\]</span> で求まる.</p>
-<p>以上が Lemma 1. <span class="math inline">\(\M\)</span> から一様にデータがサンプリングされたとする (<span class="math inline">\(X = X_1,\ldots,X_m\)</span>). <span class="math inline">\(X\)</span> から <span class="math inline">\(k\)</span> 近傍法を用いて、点 <span class="math inline">\(X_i\)</span> を中心とする開球を推定する. <span class="math inline">\(k\)</span> 番目までの (<span class="math inline">\(\R^n\)</span> での) 距離を半径 <span class="math inline">\(r\)</span> として、<span class="math inline">\(\M\)</span> での <span class="math inline">\(X_i\)</span> の周りでの計量を、 Lemma 1 で近似する.</p>
-<h3 id="definition-1">Definition 1</h3>
-<p>ここでは、圏 <span class="math inline">\(\Delta\)</span> とは、有限の順序付き集合 <span class="math display">\[[n] = \{1,\ldots,n\}\]</span> の全体 (<span class="math inline">\([0],[1],\ldots,[n],\ldots\)</span>) で、射はその間の (non-strictly に) 順序を保つような写像であるようなものとして定義する.</p>
+<p>t-SNE のようなデータの次元圧縮の方法を提案する. 観測されるデータはあるリーマン多様体の上に一様分布にあるものだと仮定し, それを推定した上で, 低次元ユークリッドと同距離写像が引けるようにマッピングする.</p>
+<h2 id="イントロ">イントロ</h2>
+<p>データの次元圧縮として t-SNE や PCA など他諸々あり, 特に可視化を目的としたとき, t-SNE が特に優っている. 多様体学習という点で t-SNE に似てるが (結果もまあまあ似ているが) 視覚的に分かり良いプロットが出来上がること, 大域的な構造が保たれること, t-SNE よりも大きなデータサイズでも高速に計算可能であることを挙げている. それから t-SNE と違ってしっかりとした数学的背景があることを推してる.</p>
+<h2 id="アルゴリズムの概要">アルゴリズムの概要</h2>
+<p>データが乗っているリーマン多様体 <span class="math inline">\((\M, g)\)</span> を推定する. 直接のデータは <span class="math inline">\(\R^n\)</span> の点として与えられているとすると, <span class="math inline">\(\M\)</span> は <span class="math inline">\(\R^n\)</span> に埋め込んだものとみなせるが, 計量 <span class="math inline">\(g\)</span> はまた別に推定して与える. 計量の推定に次の Lemma を用いる.</p>
+<h3 id="lemma">Lemma</h3>
+<p>リーマン多様体 <span class="math inline">\((\M, g)\)</span> を考える. ただし <span class="math inline">\(\M \subset \R^n\)</span> とする.</p>
+<p>今次のような仮定を置く. すなわち, 点 <span class="math inline">\(p \in \M\)</span> について, 十分小さな近傍 <span class="math inline">\(U\)</span> を取ると, <span class="math inline">\(g\)</span> は <span class="math inline">\(U\)</span> の中ではある定数 <span class="math inline">\(k\)</span> があって次のような対角行列であるとする: <span class="math display">\[g_{i,j} = k \cdot \delta_{i,j}\]</span> <span class="math inline">\(p\)</span> を中心とする開球 <span class="math inline">\(B \subset U\)</span> をさらにとる. <span class="math inline">\(B\)</span> は <span class="math inline">\(\R^n\)</span> で測って半径 <span class="math inline">\(r\)</span> の図形だとする.</p>
+<p>外側の <span class="math inline">\(\R^n\)</span> での座標を <span class="math inline">\(x^1,\ldots,x^n\)</span> とすると, <span class="math inline">\(B\)</span> の <span class="math inline">\(\M\)</span> での体積は, 計量 <span class="math inline">\(g\)</span> を用いて <span class="math display">\[V(B) = \int_B \sqrt{\mathrm{det}(g)} dx^1 \cdots dx^n\]</span> と表される.</p>
+<p>今 <span class="math inline">\(B\)</span> の中で <span class="math inline">\(g\)</span> は定数だとしているので, <span class="math inline">\(g\)</span> の項は外に出せて, <span class="math display">\[V(B) = \sqrt{\mathrm{det}(g)} \int_B dx^1 \cdots dx^n\]</span> となって, 結局 <span class="math inline">\(\R^n\)</span> での体積に係数を掛けただけのものになっている.</p>
+<p>一般に <span class="math inline">\(\R^n\)</span> での半径 <span class="math inline">\(r\)</span> の球の超体積は, <span class="math display">\[\frac{\pi^{n/2} r^n}{\Gamma(n/2 + 1)}\]</span> である.</p>
+<p>というわけで, <span class="math display">\[V(B) = \sqrt{\mathrm{det}(g)} \frac{\pi^{n/2} r^n}{\Gamma(n/2 + 1)}\]</span></p>
+<p><span class="math inline">\(B\)</span> の半径を慎重に調整することで <span class="math display">\[V(B) = \frac{\pi^{n/2}}{\Gamma(n/2 + 1)}\]</span> に出来たとする. 即ち, <span class="math display">\[\mathrm{det}(g) = \frac{1}{r^{2n}}\]</span> とできたとする. この時の半径 <span class="math inline">\(r\)</span> を用いると, 計量 <span class="math inline">\(g\)</span> は, その対角成分が定数だと仮定してるので, <span class="math display">\[g_{i,j} = \frac{1}{r^2} \delta_{i,j}\]</span> と表される.</p>
+<p>距離を考える. <span class="math inline">\((\M, g)\)</span> での距離を <span class="math inline">\(d_\M\)</span>, 外のユークリッド空間での距離を <span class="math inline">\(d_{\R^n}\)</span> と書くことにする.</p>
+<p>曲線の長さは, 内積の平方根の積分で与えられるものであるので, <span class="math inline">\(\M\)</span> 上の <span class="math inline">\(g\)</span> の下での距離は, <span class="math inline">\(\R^n\)</span> での距離の <span class="math inline">\(\sqrt{g}\)</span> 倍. 即ち, 2点 <span class="math inline">\(p,q \in \M\)</span> の間の距離は, <span class="math display">\[d_{\M}(p,q) = \frac{1}{r} d_{\R^n}(p,q)\]</span> で求まる.</p>
+<p>この Lemma はある点 <span class="math inline">\(p\)</span> に注目したときに, <span class="math inline">\(p\)</span> の近くにある <span class="math inline">\(q\)</span> との距離を, 適切に球を取ることでユークリッド距離から計算できることを言っている. 例えば, <span class="math inline">\(\M\)</span> から一様にデータ <span class="math display">\[X = \{ X_1, \ldots, X_N \}\]</span> がサンプリングされたとする. <span class="math inline">\(X\)</span> から <span class="math inline">\(k\)</span> 近傍法を用いて, 点 <span class="math inline">\(p=X_i\)</span> についてその近傍 <span class="math display">\[p=p_0, p_1, p_2, \ldots, p_k\]</span> を得たとき, <span class="math display">\[d_\M(p, p_j) = \frac{d_{\R^n}(p, p_j)}{d_{\R^n}(p, p_k)}\]</span> とできる.</p>
+<p><span class="math inline">\(U\)</span> の中では単なるユークリッド空間の定数倍であるが, 別の点に注目した時の周りでの距離はまた別の定数倍の空間が広がっている. それらを比較することができる.</p>
+<h2 id="準備---fuzzy-topological-representation">準備 - Fuzzy topological representation</h2>
+<p>さてここからが厄介であるが, UMAP では データ (点列) を Fuzzy topological representation という方法で表現する. これを定義するに当たって, この論文では圏論の言葉で説明されている. (圏論を知らなくても読める説明は <a href="https://umap-learn.readthedocs.io/en/latest/how_umap_works.html">機械学習の数理 Advent Calendar 2018</a> に書きたいなあと思ってます.) (ただまあ自然変換まで真面目に勉強すれば読めると思う.)</p>
+<p>元ネタは <code>David I Spivak, &quot;Metric realization of fuzzy simplicial sets.&quot;</code> であるそう.</p>
+<p>ひたすら概念を定義していく.</p>
+<h4 id="圏-delta">圏 <span class="math inline">\(\Delta\)</span></h4>
+<p>有限順序集合 <span class="math inline">\([n] = \{1,\ldots,n\}\)</span> を対象にする集合. 射は順序を保つ写像 <span class="math inline">\(f : [n] \to [m], a \leq b \implies fa \leq fb\)</span>.</p>
+<h4 id="simplicial-set-単体的集合">simplicial set (単体的集合)</h4>
+<p>関手 <span class="math inline">\(\op{\Delta} \to \Sets\)</span> のこと. (<span class="math inline">\(\Sets\)</span> は集合全体からなる圏のこと.)</p>
+<p>要するに <span class="math inline">\(A\)</span> が simplicial set であるとは, <span class="math inline">\([n]\)</span> という集合について, 集合 <span class="math inline">\(A_n\)</span> を割り当てるようなもののこと.</p>
 <blockquote>
-<p>ここらへんの理論は David I Spivak. &quot;Metric realization of fuzzy simplicial sets.&quot; で作られている.</p>
+<p>集合についてその個数しか見ないという点で simplicial なのかな?</p>
 </blockquote>
-<h3 id="definition-2">Definition 2</h3>
-<p>simplicial set (簡易版集合?) とは、 <span class="math inline">\(\Delta^{op}\)</span> から Sets への関手のこととして定義する. Sets は対象が集合で射が写像の圏.</p>
-<h3 id="definition-3">Definition 3</h3>
-<p><span class="math inline">\(I\)</span> を区間 <span class="math inline">\((0,1] \subset \R\)</span> とする. 位相として <span class="math inline">\((0,a) : a \in (0,1]\)</span> を入れる. 開集合を対象とし、包含関係を射として位相空間を圏と見做す.</p>
-<p><span class="math inline">\(I\)</span> 上の前層 (presheaf) <span class="math inline">\(\P\)</span> を、<span class="math inline">\(I^{op}\)</span> から Sets への関手と定義する. fuzzy set とは、 <span class="math inline">\(I\)</span> 上の前層であって、単射であるものと定義する.</p>
-<h3 id="definition-6">Definition 6</h3>
-<p>extended-psuedo-metric space (拡張擬距離空間?) とは次の <span class="math inline">\((X,d)\)</span> と定義する.</p>
-<p>集合 <span class="math inline">\(X\)</span>, <span class="math inline">\(d:X \times X \to \R_{\geq 0}\cup\{\infty\}\)</span> について次が成り立っている:</p>
+<h4 id="unit-interval-i">unit interval <span class="math inline">\(I\)</span></h4>
+<p>実数の上の半開区間 <span class="math display">\[I=(0,1]\]</span> を考える. これはまた <span class="math inline">\(a \in I\)</span> を対象にし <span class="math inline">\(a \leq b\)</span> を射にする圏だとみなせる.</p>
+<p>この論文の書き方だと対象は <span class="math inline">\(a\)</span> ではなくて <span class="math inline">\([0,a)\)</span> だけど, ここでは前者で書くことにする.</p>
+<h4 id="前層-presheaf">前層 (presheaf)</h4>
+<p><span class="math inline">\(\P\)</span> が圏 <span class="math inline">\(\C\)</span> の上の前層であるとは <span class="math inline">\(\P\)</span> が関手 <span class="math display">\[\op{\C} \to \Sets\]</span> であること.</p>
+<h4 id="fuzzy-set">fuzzy set</h4>
+<p><span class="math inline">\(\P\)</span> が fuzzy set であるとは <span class="math inline">\(I\)</span> の上の前層であって, <span class="math inline">\(\P(a \leq b)\)</span> が包含写像であること.</p>
+<p>つまり <span class="math inline">\(I\)</span> の上では射 <span class="math inline">\(a \leq b\)</span> があり, <span class="math inline">\(\P\)</span> は関手なのでこの射を <span class="math inline">\(\Sets\)</span> の上に反対向きに写す. そのときその射が単なる包含写像であるので <span class="math display">\[\P(a) \supset \P(b)\]</span> となること.</p>
+<p>例えば実数の単調増加列 <span class="math display">\[0 &lt; a_1 \leq a_2 \leq \cdots \leq 1\]</span> に対して <span class="math display">\[\P(a_1) \supset \P(a_2) \supset \cdots \supset \P(1)\]</span> という集合の列を与えるものが &quot;fuzzy set&quot;.</p>
+<blockquote>
+<p>フィルタのような何かを思わせる.</p>
+</blockquote>
+<p>これが &quot;fuzzy set&quot; であることの気持ちを知っておく必要がある. 通常の集合 <span class="math inline">\(X\)</span> とは要は要素 <span class="math inline">\(x\)</span> に属してるかどうかだけを情報として持つ. 次のような membership 関数がある.</p>
+<p><span class="math display">\[\mu_X(x) = \begin{cases}
+1 &amp; \text{ if } x \in X \\
+0 &amp; \text{ o/w }
+\end{cases}\]</span></p>
+<p>fuzzy set の fuzzy さの所以はこの数字を <span class="math inline">\((0,1]\)</span> に拡張したことである (<span class="math inline">\(0\)</span> を許さなくなったので真の拡張ではないけど).</p>
+<p><span class="math display">\[\mu_\P(x) = \text{ strength of membership }(x \in X)\]</span></p>
+<p><span class="math inline">\(\P\)</span> 自体は「属する強さ」<span class="math inline">\(0 &lt; a \leq 1\)</span> を与えたときに, その強さ (以上) で属してる値すべてを集めてきた集合 <span class="math inline">\(X_a = \P(a)\)</span> を返すような関数と思える. だから強さが最大の <span class="math inline">\(\P(1)\)</span> は最も小さく, <span class="math inline">\(\lim_{a \to 0} \P(a) = \bigcup_{a \in I} \P(a)\)</span> が最も大きい.</p>
+<h4 id="圏-fuzz">圏 Fuzz</h4>
+<p>対象が fuzzy set 全てであるような圏を Fuzz と呼ぶ. 射は, 対象を関手と見たときの自然変換.</p>
+<h4 id="fuzzy-simplicial-set">fuzzy simplicial set</h4>
+<p><span class="math inline">\(\op{\Delta}\)</span> から Fuzz への関手のこと. Fuzz の対象は fuzzy set であって, それは <span class="math inline">\(\op{I}\)</span> から <span class="math inline">\(\Sets\)</span> への関手であった. というわけで型を書けば <span class="math display">\[\op{\Delta} \to \op{I} \to \Sets\]</span> となるが, これは <span class="math display">\[\op{(\Delta \times I)} \to \Sets\]</span> と同型.</p>
+<p>というわけで fuzzy simplicial set のことを <span class="math inline">\(\Delta \times I\)</span> の上の前層と同一視することにする. むしろこちらのほうが扱いやすい.</p>
+<h4 id="圏-defsfuzzmathrmsfuzzsfuzz">圏 <span class="math inline">\(\def\sFuzz{\mathrm{sFuzz}}\sFuzz\)</span></h4>
+<p>対象が fuzzy simplicial set であるような圏のこと. 射は, 対象を関手と見たときの自然変換.</p>
+<h4 id="extended-pseudo-metric-space">Extended-Pseudo-Metric Space</h4>
+<p>extended-pseudo-metric space とは次の <span class="math inline">\((X,d)\)</span> と定義する.</p>
+<p><span class="math inline">\(X\)</span> は集合. <span class="math inline">\(d\)</span> は <span class="math inline">\(X \times X \to \R_{\geq 0}\cup\{\infty\}\)</span>. ただし次の3つを要請する.</p>
 <ol type="1">
 <li><span class="math inline">\(d(x,y) \geq 0\)</span> and <span class="math inline">\(x=y \Rightarrow d(x,y)=0\)</span></li>
 <li><span class="math inline">\(d(x,y)=d(y,x)\)</span></li>
 <li><span class="math inline">\(d(x,z) \leq d(x,y) + d(y,z)\)</span></li>
 </ol>
-<p>つまり <span class="math inline">\(d(x,y)=0 \Rightarrow x=y\)</span> だけが無い距離空間.</p>
-<p>対象を拡張擬距離空間とし、射をその間の non-expansive mapping (<span class="math inline">\(d(f(x), g(y)) \leq d(x,y)\)</span> なる <span class="math inline">\(f\)</span>) を射とする圏を <em>EPMet</em> と呼ぶことにする. EPMet の部分圏であって、対象を有限集合に限ったものを <em>FinEPMet</em> と呼ぶことにする.</p>
-<p>...わからん</p>
+<p>すなわち <span class="math inline">\(d\)</span> の値として <span class="math inline">\(\infty\)</span> を許し, また <span class="math inline">\(d(x,y)=0 \implies x=y\)</span> を一般に要請しないような距離空間.</p>
+<p>対象を extended-pseudo-metric-space とし, その間の non-expansive mapping (<span class="math inline">\(d(f(x), g(y)) \leq d(x,y)\)</span> なる <span class="math inline">\(f\)</span>) を射とする圏を <strong>EPMet</strong> と呼ぶことにする. EPMet の部分圏であって, 対象を有限空間に限ったものを <span class="math inline">\(\def\FinEPMet{\mathrm{FinEPMet}}\FinEPMet\)</span> と呼ぶことにする.</p>
+<h4 id="関手-deffinrealmathrmfinrealfinreal">関手 <span class="math inline">\(\def\FinReal{\mathrm{FinReal}}\FinReal\)</span></h4>
+<p>関手 <span class="math inline">\(\FinReal : \sFuzz \to \FinEPMet\)</span> を定義する.</p>
+<p>まず対象の対応付を定義する. <span class="math inline">\(\FinReal\)</span> は fuzzy simplicial set をある(EPM)距離空間に写す. <span class="math inline">\(([n], a) \in \Delta \times I\)</span> を単に <span class="math inline">\(\Delta^n_a\)</span> と書くことにすると</p>
+<p><span class="math display">\[\FinReal (\Delta^n_a) = (\{x_1,\ldots,x_n\}, d_a)\]</span> ただし <span class="math display">\[d_a(x_i, x_j) = \begin{cases}
+- \log(a) &amp; \text{ if } i \ne j \\
+0 &amp; \text{ o/w }\end{cases}\]</span></p>
+<h4 id="関手-deffinsingmathrmfinsingfinsing">関手 <span class="math inline">\(\def\FinSing{\mathrm{FinSing}}\FinSing\)</span></h4>
+<p>逆向きの関手は次のように定義できる. <span class="math display">\[\FinSing : \FinEPMet \to \sFuzz\]</span> <span class="math display">\[\simeq \FinEPMet \to \op{(\Delta \times I)} \to \Sets\]</span> <span class="math display">\[\FinSing(Y)(\Delta^n_a) = \mathrm{Hom}(FinReal(\Delta^n_a), Y)\]</span></p>
+<p>さて再び現実データの話に戻る. 現実データ <span class="math inline">\(X\)</span> は先の Lemma によって距離空間にすることができるのであれば, これを <span class="math inline">\(\FinSing\)</span> によって fuzzy simplicial set に写せる.</p>
+<p>先の Lemma によって与えられる距離は <span class="math inline">\(X_i \in X\)</span> の周りで <span class="math inline">\(X_i\)</span> との距離だけであった. 他の点同士の距離を定める必要がある. <span class="math inline">\(X_i\)</span> の周りでは点は <span class="math inline">\(X_i\)</span> とだけ連結であるとし, 彼らは次のように仮定した:</p>
+<ul>
+<li><span class="math inline">\(X_i\)</span> から見て異なる二点どうしは十分離れている
+<ul>
+<li>その二点間の距離は無限</li>
+</ul></li>
+<li><span class="math inline">\(X_i\)</span> との最近傍の点との距離はゼロ</li>
+</ul>
+<p>というわけで <span class="math inline">\(X_i\)</span> の周りで見る距離 <span class="math inline">\(d_i\)</span> は, <span class="math inline">\(\M\)</span> 上での距離 <span class="math inline">\(d_\M\)</span> を用いて,</p>
+<p><span class="math display">\[d_i(X_j, X_k) = \begin{cases}
+0 &amp; \text{ if } j = k \\
+d_\M(X_i, X_k) - \rho &amp; \text{ if } j=i \\
+\infty &amp; \text{ o/w }
+\end{cases}\]</span></p>
+<p>ここで <span class="math inline">\(d_\M\)</span> は Lemma によって推定される距離であり, <span class="math inline">\(\rho\)</span> は <span class="math inline">\(X_i\)</span> との最近傍との点との <span class="math inline">\(d_\M\)</span> の値.</p>
+<h4 id="fuzzy-topological-representation">Fuzzy Topological Representation</h4>
+<p>データ <span class="math inline">\(X = \{X_1, \ldots, X_N\} \subset \R^n\)</span> について, extended-pseudo-metric space の族 <span class="math display">\[\{(X, d_i)\}_{i=1,2,\ldots,N}\]</span> を与える. ここで <span class="math inline">\(d_i\)</span> とは <span class="math inline">\(X_i\)</span> の周りでの距離であって上で定義したもの.</p>
+<p>これについて, <span class="math inline">\(X\)</span> の fuzzy topological representation とは, <span class="math display">\[\bigcup_{i=1}^N \FinSing(X, d_i).\]</span></p>
+<p>UMAP において「データセットの表現」とはこれを言う.</p>
+<blockquote>
+<p>この union はどういう意味??? <span class="math inline">\(\FinSing(X,d_i) \in \Sets\)</span> なのでこの値についての union だろうか???</p>
+</blockquote>
+<h2 id="次元削減の方法">次元削減の方法</h2>
+<p>データセット <span class="math inline">\(X\)</span> のその表現を同じ記号 <span class="math inline">\(X\)</span> で書く.</p>
+<p>これに対応する低次元のデータ <span class="math display">\[Y = \{Y_1, \ldots, Y_N \} \subset \R^d\]</span> を推定したい <span class="math inline">\((d \ll n)\)</span>. ただし <span class="math inline">\(Y\)</span> は <span class="math inline">\(\R^d\)</span> そのものを多様体とする空間の中に一様分布するものだとする. 従って距離もユークリッド距離そのもので与えられる.</p>
+<p>2つの表現 <span class="math inline">\(X, Y\)</span> があるときに, この2つの距離を, 理想的なときに最短になるように定義する. そのためにさっきやったように &quot;the strength of membership&quot; に変換して, その cross entropy を距離と定める.</p>
+<p>つまり fuzzy set <span class="math inline">\(\P\)</span> の membership 関数とは <span class="math display">\[\mu(x) = \sup \{ a \in (0,1] ~|~ x \in \P(a) \}\]</span> で与えられる.</p>
+<p>2つの表現からそれぞれの membership <span class="math inline">\(\mu, \nu\)</span> があるとき, その2つの距離を次のように定義する. ただし <span class="math inline">\(\mu, \nu\)</span> の定義域は同じ <span class="math inline">\(A=\lim \P\)</span> だとする. <span class="math display">\[C(\mu, \nu) = \sum_{a \in A}
+\mu(a) \log \frac{\mu(a)}{\nu(a)} +
+(1 - \mu(a)) \log \frac{1 - \mu(a)}{1 - \nu(a)}\]</span></p>
+<p><span class="math inline">\(X\)</span> が与えられたときに, この <span class="math inline">\(C\)</span> を最小にするような <span class="math inline">\(Y\)</span> を見つけてくればよくて, それには t-SNE と同様に確率的勾配降下法などを用いればよいらしい.</p>
+<blockquote>
+<p><span class="math inline">\(X,Y\)</span> は fuzzy simplicial set であって <span class="math inline">\(C\)</span> は fuzzy set の距離なのだが, simplicial はどこで外れた?? どこかで <span class="math inline">\(\Delta^n\)</span> を固定する必要があるのだが.</p>
+</blockquote>
 <h2 id="使ってみる">使ってみる</h2>
 <p>ほぼほぼ https://www.kaggle.com/mrisdal/dimensionality-reduction-with-umap-on-mnist のコピペだけど。</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">pip</span> install mnist
-<span class="ex">pip</span> install umap-learn  # not <span class="kw">`</span><span class="ex">umap</span><span class="kw">`</span></code></pre></div>
+<span class="ex">pip</span> install umap-learn  # not <span class="kw">`</span><span class="ex">umap</span><span class="kw">`</span> (!!)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> mnist
 <span class="im">import</span> umap
 

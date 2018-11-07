@@ -95,7 +95,7 @@ original paper: <a href=https://arxiv.org/abs/1802.03426>https://arxiv.org/abs/1
 <p>元ネタは <code>David I Spivak, &quot;Metric realization of fuzzy simplicial sets.&quot;</code> であるそう.</p>
 <p>ひたすら概念を定義していく.</p>
 <h4 id="圏-delta">圏 <span class="math inline">\(\Delta\)</span></h4>
-<p>有限順序集合 <span class="math inline">\([n] = \{1,\ldots,n\}\)</span> を対象にする集合. 射は順序を保つ写像 <span class="math inline">\(f : [n] \to [m], a \leq b \implies fa \leq fb\)</span>.</p>
+<p>有限順序集合 <span class="math inline">\([n] = \{1,\ldots,n\}\)</span> <span class="math inline">\((n \geq 1)\)</span> を対象にする集合. 射は順序を保つ写像 <span class="math inline">\(f : [n] \to [m], a \leq b \implies fa \leq fb\)</span>.</p>
 <h4 id="simplicial-set-単体的集合">simplicial set (単体的集合)</h4>
 <p>関手 <span class="math inline">\(\op{\Delta} \to \Sets\)</span> のこと. (<span class="math inline">\(\Sets\)</span> は集合全体からなる圏のこと.)</p>
 <p>要するに <span class="math inline">\(A\)</span> が simplicial set であるとは, <span class="math inline">\([n]\)</span> という集合について, 集合 <span class="math inline">\(A_n\)</span> を割り当てるようなもののこと.</p>
@@ -182,10 +182,25 @@ d_\M(X_i, X_k) - \rho &amp; \text{ if } j=i \\
 <blockquote>
 <p><span class="math inline">\(X,Y\)</span> は fuzzy simplicial set であって <span class="math inline">\(C\)</span> は fuzzy set の距離なのだが, simplicial はどこで外れた?? どこかで <span class="math inline">\(\Delta^n\)</span> を固定する必要があるのだが.</p>
 </blockquote>
+<h2 id="実装">実装</h2>
+<p>以上の理論と実際の実装はそれなりに離れてるぽい. まず 1-simplex しか実際には見ない. つまり <span class="math inline">\([2] \in \Delta\)</span> についてしか考えない. なので fuzzy simplicial set での表現してても実際には simplicial set である.</p>
+<p>学習するデータ <span class="math inline">\(X\)</span> の表現は具体的には次のようになる.</p>
+<ul>
+<li>各点 <span class="math inline">\(X_i\)</span> の周りで距離 <span class="math inline">\(d_i\)</span> を作る
+<ul>
+<li>(最近傍がゼロで <span class="math inline">\(k\)</span> 番目が <span class="math inline">\(1\)</span> になるような例のやつ)</li>
+</ul></li>
+<li>各2点 <span class="math inline">\((X_i, X_j)\)</span> を結ぶエッジ (=1-simplex) について
+<ul>
+<li>これを含む strength を <span class="math inline">\(\exp(-d_i(X_i, X_j))\)</span> とする simplicial set <span class="math inline">\(\bar{X}\)</span> を作る</li>
+</ul></li>
+</ul>
+<p><span class="math inline">\(\bar{X}\)</span> を <span class="math inline">\(X\)</span> の fuzzy topological representation とする.</p>
+<p><span class="math inline">\(Y\)</span> については, まず大雑把に <span class="math inline">\(X\)</span> を低次元ユークリッド空間に写す. これには &quot;Laplace-Beltrami operator&quot; を使ったそう. それから, 各エッジについて距離乃至 strength of membership についてのクロスエントロピーを最小化するように <span class="math inline">\(Y\)</span> を動かす. strength が正のものと, ゼロのもの (つまり距離が無限) を negative sampling して上手く選んでSGDに突っ込む.</p>
 <h2 id="使ってみる">使ってみる</h2>
 <p>ほぼほぼ https://www.kaggle.com/mrisdal/dimensionality-reduction-with-umap-on-mnist のコピペだけど。</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">pip</span> install mnist
-<span class="ex">pip</span> install umap-learn  # not <span class="kw">`</span><span class="ex">umap</span><span class="kw">`</span> (!!)</code></pre></div>
+<span class="ex">pip</span> install umap-learn  <span class="co"># not `umap` (!!)</span></code></pre></div>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> mnist
 <span class="im">import</span> umap
 

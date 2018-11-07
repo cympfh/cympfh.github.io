@@ -114,6 +114,7 @@ $U$ の中では単なるユークリッド空間の定数倍であるが,
 
 有限順序集合
 $[n] = \{1,\ldots,n\}$
+$(n \geq 1)$
 を対象にする集合.
 射は順序を保つ写像 $f : [n] \to [m], a \leq b \implies fa \leq fb$.
 
@@ -320,6 +321,27 @@ $X$ が与えられたときに, この $C$ を最小にするような $Y$ を�
 > $X,Y$ は fuzzy simplicial set であって $C$ は fuzzy set の距離なのだが,
 > simplicial はどこで外れた??
 > どこかで $\Delta^n$ を固定する必要があるのだが.
+
+## 実装
+
+以上の理論と実際の実装はそれなりに離れてるぽい.
+まず 1-simplex しか実際には見ない.
+つまり $[2] \in \Delta$ についてしか考えない.
+なので fuzzy simplicial set での表現してても実際には simplicial set である.
+
+学習するデータ $X$ の表現は具体的には次のようになる.
+
+- 各点 $X_i$ の周りで距離 $d_i$ を作る
+    - (最近傍がゼロで $k$ 番目が $1$ になるような例のやつ)
+- 各2点 $(X_i, X_j)$ を結ぶエッジ (=1-simplex) について
+    - これを含む strength を $\exp(-d_i(X_i, X_j))$ とする simplicial set $\bar{X}$ を作る
+
+$\bar{X}$ を $X$ の fuzzy topological representation とする.
+
+$Y$ については, まず大雑把に $X$ を低次元ユークリッド空間に写す.
+これには "Laplace-Beltrami operator" を使ったそう.
+それから, 各エッジについて距離乃至 strength of membership についてのクロスエントロピーを最小化するように $Y$ を動かす.
+strength が正のものと, ゼロのもの (つまり距離が無限) を negative sampling して上手く選んでSGDに突っ込む.
 
 ## 使ってみる
 

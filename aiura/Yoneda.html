@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>米田の補題</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-stumbleupon" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">米田の補題</h1>
+</header>
+<p class="date" style="text-align: right">
+2018-11-10 (Sat.)
+</p>
+<div class="is-pulled-right">
+<p><a class='tag is-red' href=index.html#圏論>圏論</a></p>
+</div>
+<p><span class="math inline">\(\def\op#1{{#1}^{\text{op}}}\def\Nat{\mathit{Nat}}\)</span> 極力, 関数適用の括弧や関数合成の <span class="math inline">\(\circ\)</span> は省略する. 例えば <span class="math inline">\((g \circ f)(x)\)</span> は単に <span class="math inline">\(gfx\)</span> と書く. また対象 <span class="math inline">\(A\)</span> の上の恒等射を <span class="math inline">\(1_A\)</span> と書き, <span class="math inline">\(A\)</span> がどうでもいいとき単に <span class="math inline">\(1\)</span> と書く.</p>
+<h2 id="関手-mathcal-c">関手 <span class="math inline">\(\mathcal C\)</span></h2>
+<p>圏 <span class="math inline">\(\def\C{\mathcal C}\C\)</span> において, その2つの対象 <span class="math inline">\(A,B \in \C\)</span> の間の射を全て集めたものを <span class="math display">\[\C(A,B)\]</span> だとか <span class="math display">\[\mathrm{Hom}(A,B)\]</span> だとか書く. 今は単にこれは集合だとする. つまり <span class="math inline">\(\def\Sets{\mathrm{Sets}}\Sets\)</span> における対象であるとする.</p>
+<p>だとすると, コレ自体が関手だと見なせる.</p>
+<h3 id="関手-ca-">関手 <span class="math inline">\(\C(A,-)\)</span></h3>
+<p>まずは <span class="math inline">\(A\)</span> の部分は固定するとして <span class="math inline">\(B\)</span> 部分を引数にする関手 <span class="math display">\[\C(A,-)\]</span> を次のように定義する. <span class="math display">\[\C(A,-) : \C \to \Sets\]</span> <span class="math display">\[\C(A,-) : B \mapsto \C(A,B)\]</span> 対象の割り当てはこのように定めるが, 射については次のようにする. <span class="math inline">\(\require{AMScd}\)</span> <span class="math display">\[\begin{CD}
+B_1 @&gt;f&gt;&gt; B_2 \in \C
+\end{CD}\]</span> について <span class="math inline">\(\C(A,B_1) \to \C(A,B_2)\)</span> なる射を与える必要があるが, 自明なものとして, <span class="math inline">\(f\)</span> を後ろに合成するという関数があり得る. <span class="math display">\[\C(A,f) : \C(A,B_1) \to \C(A,B_2)\]</span> <span class="math display">\[\C(A,f) : g \mapsto f \circ g\]</span></p>
+<p>ただしここで <span class="math inline">\(\C(A,-)(f)\)</span> を <span class="math inline">\(\C(A,f)\)</span> と書いた.</p>
+<p><span class="math display">\[\begin{CD}
+B_1 @. \C(A,B_1) \ni g \\
+@VfVV @V\C(A,f)VV \\
+B_2 @. \C(A,B_2) \ni fg \\
+\end{CD}\]</span></p>
+<p>以上で定まる <span class="math inline">\(\C(A,-)\)</span> は確かに関手である. 念の為確認しておく.</p>
+<h4 id="proof">Proof</h4>
+<p>これが関手であるとは恒等射 <span class="math inline">\(1\)</span> が <span class="math inline">\(1\)</span> に写ることと, 合成について準同型であること.</p>
+<ul>
+<li><span class="math inline">\(1 \in \C\)</span> について, <span class="math inline">\(\C(A, 1) = (g \mapsto 1g) = (g \mapsto g) = 1\)</span> なので恒等射.</li>
+<li><span class="math inline">\(f_1, f_2, f_1f_2 \in \C\)</span> について, <span class="math inline">\(\C(A, f_1f_2) = (g \mapsto (f_1f_2)g) = (g \mapsto f_1g) (g \mapsto f_2g) = \C(A,f_1) \C(A,f_2)\)</span> なので確かに準同型.</li>
+</ul>
+<p>以上よりok.</p>
+<p>というわけで, 圏 <span class="math inline">\(\C\)</span> とその中の１つの対象 <span class="math inline">\(A \in \C\)</span> について, 関手 <span class="math display">\[\C(A,-) : \C \to \Sets\]</span> が定義された.</p>
+<h3 id="関手-c-b">関手 <span class="math inline">\(\C(-,B)\)</span></h3>
+<p>今度は逆に <span class="math inline">\(\C(A,B)\)</span> という射の集合について, <span class="math inline">\(A\)</span> だけを引数にすることで, これが関手になる. ただし今度は合成するのが前からになる都合上, <span class="math display">\[\op{\C} \to \Sets\]</span> という関手として定義する. 向きだけが逆な以外は先ほどと全く同様に定義される.</p>
+<p><span class="math display">\[\begin{CD}
+A_1 @. \C(A_1,B) \ni g \\
+@AfAA @V\C(A,f)VV \\
+A_2 @. \C(A_2,B) \ni gf
+\end{CD}\]</span></p>
+<h3 id="関手-c--">関手 <span class="math inline">\(\C(-,-)\)</span></h3>
+<p>以上2つを組み合わせれば関手 <span class="math display">\[\C(-,-) : \op{\C} \times \C \to \Sets\]</span> が定義される.</p>
+<p>対象の割り当てはやはり <span class="math inline">\((A, B)\)</span> に対して <span class="math inline">\(\C(A,B)\)</span> を射の集まり (集合) として定義する.</p>
+<p>射は前後から合成する. <span class="math display">\[\begin{CD}
+A_1  @. B_1   @. \C(A_1,B_1) \ni h \\
+@AfAA   @VgVV    @V\C(f,g)VV \\
+A_2  @. B_2   @. \C(A_2,B_2) \ni ghf \\
+\end{CD}\]</span></p>
+<h2 id="米田の補題">米田の補題</h2>
+<p>関手 <span class="math inline">\(F : \op{\C} \to \Sets\)</span> について <span class="math display">\[\Sets^{\op{\C}} (\C(-, C), F) \simeq FC\]</span> ここで <span class="math inline">\(\Sets^{\op{\C}}\)</span> は関手圏である.</p>
+<p><span class="math inline">\(F\)</span> から <span class="math inline">\(G\)</span> への自然変換の集まりを <span class="math inline">\(\Nat(F,G)\)</span> と書くことにすれば, 先ほどの主張は <span class="math display">\[\Nat(\C(-, C), F) \simeq FC\]</span> とも書ける.</p>
+<p>また, これと対称的な主張として <span class="math display">\[\Sets^{\op{\C}} (\C(C,-), F) \simeq FC\]</span> <span class="math display">\[\Nat(\C(C,-), F) \simeq FC\]</span> が成り立つ.</p>
+<h3 id="proof-1">Proof</h3>
+<p>一方は他方の対称なので一方だけ証明する. 同型射 <span class="math display">\[\Phi : \Nat(\C(-, C), F) \to FC\]</span> の存在を言うことで, 2つが同型であることを示す.</p>
+<p><span class="math inline">\(s \in \Nat(\C(-,C),F)\)</span> について, <span class="math display">\[\begin{CD}
+\C(C,C)     @&gt;s_C&gt;&gt; FC \\
+\end{CD}\]</span> であって <span class="math inline">\(1_C \in \C(C,C)\)</span> なので, <span class="math inline">\(s_C(1_C) \in FC\)</span> である. そこで <span class="math display">\[\Phi(s) = s_C(1_C)\]</span> と定義すると, 実はこれが同型射になっている. 全単射であることを示す.</p>
+<h4 id="phi-は単射"><span class="math inline">\(\Phi\)</span> は単射</h4>
+<p><span class="math inline">\(s,t \in \Nat(\C(-,C),F)\)</span> について, <span class="math inline">\(\Phi(s)=\Phi(t)\)</span> を仮定して, <span class="math inline">\(s=t\)</span> を導く. すなわち, <span class="math display">\[\forall C, s_C(1_C)=t_C(1_C) \implies \forall D, s_D=t_D\]</span> を示す.</p>
+<p><span class="math inline">\(s\)</span> の自然性より <span class="math inline">\(f \in \C(D,C)\)</span> について</p>
+<p><span class="math display">\[\begin{CD}
+C     @. \C(C,C)   @&gt;s_C&gt;&gt; FC \\
+@AfAA    @V\C(f,C)VV       @VFfVV \\
+D     @. \C(D,C)   @&gt;s_D&gt;&gt; FD \\
+\end{CD}\]</span></p>
+<p>この右の四角形が <span class="math inline">\(\Sets\)</span> において可換なので <span class="math display">\[s_D f = (Ff) s_C\]</span> が成り立つ. 同様に <span class="math inline">\(t_D f = (Ff) t_C\)</span> であって, 今 <span class="math inline">\(s_C=S_D\)</span> なので <span class="math display">\[s_D f = t_D f\]</span> である. 今これは任意の <span class="math inline">\(f \in \C(D,C)\)</span> について成立するので結局 <span class="math inline">\(s_D=t_D\)</span> であって, <span class="math inline">\(D\)</span> も自由に取って良いので <span class="math display">\[s=t\]</span> が導かれた.</p>
+<p>というわけで <span class="math inline">\(\Phi\)</span> は単射.</p>
+<h4 id="phi-は全射"><span class="math inline">\(\Phi\)</span> は全射</h4>
+<p>任意の <span class="math inline">\(X \in FC\)</span> についてある自然変換 <span class="math inline">\(s\)</span> があって <span class="math inline">\(\Phi(s)=X\)</span> であることを示す. つまり, <span class="math display">\[\forall X \in FC, \exists s, s_C(1_C) = X\]</span> を示す.</p>
+<p>自然変換 <span class="math inline">\(s\)</span> を定義するには任意の対象 <span class="math inline">\(D\)</span> について, 関数 <span class="math inline">\(s_D : \C(D,C) \to FD\)</span> を定義できればよい.</p>
+<p>射 <span class="math inline">\(f : D \to C\)</span> について <span class="math display">\[Ff : FC \to FD\]</span> <span class="math inline">\(X \in FC\)</span> について <span class="math inline">\((Ff)X \in FD\)</span> だから, <span class="math display">\[s_D(f) = (Ff)(X)\]</span> と定義するのが自然. これによって定義される <span class="math inline">\(s\)</span> を用いると, <span class="math display">\[s_C(1_C) = (F1)(X) = 1(X)=X\]</span> なので, これが全射性の証拠になっている.</p>
+<p>というわけで <span class="math inline">\(\Phi\)</span> は全単射. というわけで <span class="math inline">\(\Nat(\C(-,C),F)\)</span> と <span class="math inline">\(FC\)</span> は同型.</p>
+<p>これとの対称性から <span class="math inline">\(\Nat(\C(C,-),F)\)</span> と <span class="math inline">\(FC\)</span> との同型も全く同様に示される.</p>
+<p>さらに, <span class="math display">\[\Nat(\C(-,-),F) \simeq F\]</span> も示せる.</p>
+<!--
+
+  HTML として pandoc -B で include する.
+
+  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
+  markdown で書いてるだろうから例として次のような段落を書けばよい.
+
+```
+## INDEX
+<div id=toc></div>
+```
+
+  used in
+  - /memo/gnuplot
+  - /memo/linux
+  - /memo/imagemagick
+
+-->
+<script>
+(function() {
+  var sections = document.getElementsByTagName('h2');
+  var i;
+  var OL = document.createElement('ol');
+  for (i=0; i < sections.length; ++i) {
+    var LI = document.createElement('li');
+    var A = document.createElement('a');
+    A.innerHTML = sections[i].innerHTML;
+    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+    A.href = '#' + i;
+    LI.appendChild(A);
+    OL.appendChild(LI);
+
+    var PREF = document.createElement('a');
+    PREF.name = i;
+    sections[i].appendChild(PREF);
+  }
+
+  var done = false;
+  function work() {
+    if (done) return;
+    if ( document.getElementById('toc') === null) return; // no toc element
+    document.getElementById('toc').appendChild(OL);
+    done = true;
+  };
+
+  window.onload = work;
+  setTimeout(work,800);
+}());
+</script>
+</body>
+</html>

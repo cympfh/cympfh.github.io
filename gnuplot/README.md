@@ -14,6 +14,11 @@
 ## スタイル
 
 - [linestyle](style.linestyle.html)
+- [xtics/ytics](style.xtics_ytics.html)
+
+## fitting
+
+- [fit](fit.html)
 
 # 二次元
 

@@ -5,7 +5,7 @@
 $\def\C{\mathcal C}\def\D{\mathcal D}\def\colim{\mathrm{colim}\;}\def\i{\hookrightarrow}\def\limD{D_{-\infty}}$
 
 ## INDEX
-<div id=toc></div>
+<div id=toc-level-2></div>
 
 ## 概要
 

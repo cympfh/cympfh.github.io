@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>F-代数</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-stumbleupon" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">F-代数</h1>
+</header>
+<p class="date" style="text-align: right">
+2018-11-20 (Tue.)
+</p>
+<div class="is-pulled-right">
+<p><a class='tag is-red' href=index.html#圏論>圏論</a></p>
+</div>
+<p><span class="math inline">\(\def\N{\mathbb N}\def\C{\mathcal C}\def\succ{\mathrm{succ}}\def\banana#1{(\!|#1|\!)}\)</span></p>
+<h2 id="参考">参考</h2>
+<ul>
+<li><a href="https://ja.wikipedia.org/wiki/%E5%A7%8B%E4%BB%A3%E6%95%B0">wikipedia/始代数</a></li>
+<li><a href="http://nineties.github.io/category-seminar/7.html#/43">圏論勉強会 第七回@ワークスアプリケーションズ</a>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=j3bY_djVjiQ">YouTube</a> にこの資料で講義してる動画があって, これが丁寧なので良い</li>
+</ul></li>
+<li><a href="https://maartenfokkinga.github.io/utwente/mmf91m.pdf">Functional Programming with Bananas, Lenses, Envelopes and Barbed Wire</a>
+<ul>
+<li>上の動画で紹介されてた論文</li>
+<li>ここでも &quot;Algebraic data types&quot; として紹介されてるし, catamorphism という概念が始代数に相当する</li>
+</ul></li>
+</ul>
+<h2 id="f-代数">F-代数</h2>
+<p>圏 <span class="math inline">\(\mathcal C\)</span> における <span class="math inline">\(F\)</span>-代数とは, 関手 <span class="math inline">\(F : \mathcal C \to \mathcal C\)</span> を以って, ある対象 <span class="math inline">\(X\)</span> と射 <span class="math inline">\(f : FX \to X\)</span> の組 <span class="math display">\[(X, f)\]</span> のこと. ここで <span class="math inline">\(X\)</span> をこの <span class="math inline">\(F\)</span>-代数の台という. 紛らわしくなければ単に <span class="math inline">\(X\)</span> を <span class="math inline">\(F\)</span>-代数と呼ぶ.</p>
+<h2 id="f-代数の圏">F-代数の圏</h2>
+<p>圏 <span class="math inline">\(\mathcal C\)</span> の <span class="math inline">\(F\)</span>-代数全体を対象として, 2つの <span class="math inline">\(F\)</span>-代数 <span class="math inline">\((X,f)\)</span> と <span class="math inline">\((Y,g)\)</span> について, ある射 <span class="math inline">\(h : X \to Y\)</span> が <span class="math inline">\(\mathcal C\)</span> にあって下が可換 <span class="math inline">\(\require{AMScd}\)</span> <span class="math display">\[\begin{CD}
+X @&lt;f&lt;&lt; FX \\
+@VhVV  @VFhVV \\
+Y @&lt;g&lt;&lt; FY
+\end{CD}\]</span> このとき <span class="math display">\[h : (X,f) \to (Y,g)\]</span> と書いて, これを射とするとき, これを <span class="math inline">\(F\)</span>-代数の圏と呼ぶ.</p>
+<h2 id="f-始代数">F-始代数</h2>
+<p><span class="math inline">\(F\)</span>-代数の圏の始対象を, <span class="math inline">\(F\)</span>-始代数と言う.</p>
+<h3 id="例-自然数">例: 自然数</h3>
+<p>Sets において <span class="math display">\[F : \mathrm{Sets} \to \mathrm{Sets}\]</span> <span class="math display">\[X \mapsto 1+X\]</span> を考える. ここで <span class="math inline">\(1\)</span> とは単集合 <span class="math inline">\(\{ \ast \}\)</span> であって, また <span class="math inline">\(\ast\)</span> は <span class="math inline">\(X\)</span> に (或いは他のどの集合にも) 含まれない元とする. <span class="math inline">\(+\)</span> は集合の和 <span class="math inline">\((\cup)\)</span>.</p>
+<p><span class="math inline">\(F\)</span>-始代数は <span class="math display">\[(\N, \nu)\]</span> である. ここで <span class="math display">\[\nu : 1+\N \to \N\]</span> は次のような関数. <span class="math display">\[\begin{align*}
+\nu ~ \ast &amp; = 0 &amp; \text{ when } \ast \in 1 \\
+\nu ~ m &amp; = m + 1 &amp; \text{ when } m \in \N
+\end{align*}\]</span> 全単射であることに註意.</p>
+<p>確かにこれが始対象であることを確認する.</p>
+<p>任意の <span class="math inline">\(F\)</span>-代数 <span class="math inline">\((X, f)\)</span> があるときに唯一の射 <span class="math inline">\((\N, \nu) \to (X,f)\)</span> があることを言う. このような射は <span class="math inline">\(f\)</span> に対して <span class="math inline">\(\banana{f}\)</span> と書く.</p>
+<blockquote>
+<p>この括弧は &quot;バナナ括弧&quot; として <a href="../paper/bananas-lenses-envelopes-barbedwire.html">&quot;Functional Programming with Bananas, Lenses, Envelopes and Barbed Wire&quot;</a> で導入されているものに倣った.</p>
+</blockquote>
+<p>さて仮にそのような射 <span class="math inline">\(\banana{f}\)</span> があると仮定して可換性からその構成が分かる.</p>
+<p><span class="math display">\[\begin{CD}
+\N @&lt;\nu&lt;&lt; 1+\N \\
+@V\banana{f}VV  @VF\banana{f}VV \\
+X @&lt;f&lt;&lt; 1+X
+\end{CD}\]</span></p>
+<p>可換性から <span class="math display">\[\begin{align*}
+\banana{f} ~ 0
+&amp; = \banana{f} \nu \ast \\
+&amp; = f(1+\banana{f}) \ast \\
+&amp; = f \ast \\
+\banana{f} ~ (m+1)
+&amp; = \banana{f} \nu m \\
+&amp; = f(1+\banana{f}) ~ m \\
+&amp; = f \banana{f} ~ m
+\end{align*}\]</span> これが <span class="math inline">\(\banana{f}\)</span> の定義になっている. つまり任意の <span class="math inline">\(n \in \N\)</span> は <span class="math inline">\(0\)</span> または <span class="math inline">\(m+1\)</span> の形になっているので右辺で与えられる. ただし <span class="math inline">\(\banana{f}(m+1)\)</span> の値を得るには <span class="math inline">\(\banana{f}(m)\)</span> の値を分かっている必要があるが, これはつまり自然数に関する (数学的) 帰納法から正しく定義サれていることが分かる.</p>
+<p>また結局これを満たさないといけないことから <span class="math inline">\(\banana{f}\)</span> の存在も唯一.</p>
+<h3 id="例-リスト">例: リスト</h3>
+<p>Sets (または Hask 圏) を考える. 対象 <span class="math inline">\(A\)</span> と <span class="math inline">\(X\)</span> に対して, <span class="math inline">\(1+AX\)</span> とは <span class="math inline">\(1 = \{\ast\}\)</span> と <span class="math inline">\(AX\)</span> との和であって, <span class="math inline">\(AX\)</span> とは <span class="math inline">\(A\)</span> と <span class="math inline">\(X\)</span> との直積だとする.</p>
+<p><span class="math display">\[F : X \mapsto 1+AX\]</span></p>
+<p>とするとき <span class="math inline">\(F\)</span>-始代数は, リストと呼ばれる構造 <span class="math display">\[([A], \nu)\]</span> のことである. ただしここで</p>
+<p><span class="math display">\[[A] = 1 + A + A^2 + A^3 + \cdots\]</span> <span class="math display">\[\nu : 1+A[A] \to [A]\]</span> <span class="math display">\[\nu~\ast = \ast\]</span> <span class="math display">\[\nu~(a, \ast) = a\]</span> <span class="math display">\[\nu~(a, a&#39;) = (a, a&#39;)\]</span></p>
+<p>ここで一番下の式は <span class="math inline">\((a, a&#39;) \in A \times A^m\)</span> に対して <span class="math inline">\((a, a&#39;) \in A^{m+1}\)</span> を割り当てていることに註意. そしてやはりこの <span class="math inline">\(\nu\)</span> は全単射である.</p>
+<p>自然数の場合と全く同様に, 任意の <span class="math inline">\(F\)</span>-代数 <span class="math inline">\((X, f)\)</span> に対して, 唯一の射 <span class="math display">\[\banana{f} : ([A], \nu) \to (X,f)\]</span> が存在して,</p>
+<p><span class="math display">\[\begin{CD}
+[A] @&lt;\nu&lt;&lt; 1+A[A] \\
+@V\banana{f}VV  @VF\banana{f}VV \\
+X @&lt;f&lt;&lt; 1+AX
+\end{CD}\]</span></p>
+<p>となることが分かる.</p>
+<p>念の為に書くと, <span class="math display">\[\begin{align*}
+\banana{f} ~ \ast
+&amp; = \banana{f} \nu \ast \\
+&amp; = f ~ (1+A\banana{f}) ~ \ast \\
+&amp; = f \ast \\
+\banana{f} ~ a
+&amp; = \banana{f} \nu (a, \ast) \\
+&amp; = f ~ (1+A\banana{f}) ~ (a, \ast) \\
+&amp; = f ~ (a, \banana{f}~\ast) \\
+&amp; = f ~ (a, f~\ast) \\
+\banana{f} ~ (a, a&#39;)
+&amp; = \banana{f} \nu (a, a&#39;) \\
+&amp; = f ~ (1+A\banana{f}) ~ (a, a&#39;) \\
+&amp; = f ~ (a, \banana{f} ~ a&#39;) \\
+\end{align*}\]</span></p>
+<p>これによって <span class="math inline">\(\banana{f}\)</span> が構成されて唯一. 例えば <span class="math inline">\((a,b,c) \in A^3\)</span> について, <span class="math display">\[\begin{align*}
+\banana{f} ~ (a,b,c)
+&amp; = f(a, \banana{f} ~ (b,c)) \\
+&amp; = f(a, f(b, \banana{f} ~ c)) \\
+&amp; = f(a, f(b, f(c, \banana{f} ~ \ast))) \\
+\end{align*}\]</span> 敢えて <span class="math inline">\(f(a,b) = a \oplus b\)</span> と書くことにすれば, <span class="math display">\[\banana{f}(a,b,c) = a \oplus (b \oplus (c \oplus \ast))\]</span> と書ける.</p>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

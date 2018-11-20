@@ -1,5 +1,5 @@
 % Functional Programming with Bananas, Lenses, Envelopes and Barbed Wire
-% 2018-09-08 (Sat.)
+% https://maartenfokkinga.github.io/utwente/mmf91m.pdf
 % プログラミング 圏論
 
 $\require{AMScd}$
@@ -17,10 +17,6 @@ $\def\const#1{#1^\bullet}$
 $\def\VOID{\mathit{VOID}}$
 $\def\join{\mathit{join}}$
 $\def\triangle{\mathop{}\!\mathbin\Delta\;}$
-
-## 論文リンク
-
-- [https://maartenfokkinga.github.io/utwente/mmf91m.pdf](https://maartenfokkinga.github.io/utwente/mmf91m.pdf)
 
 ## 概要
 

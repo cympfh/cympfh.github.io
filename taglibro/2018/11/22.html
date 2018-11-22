@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Thu Nov 22 2018</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='../../index.html'><i class="fa fa-save" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">Thu Nov 22 2018</h1>
+</header>
+<p>労働意欲が最低なので日記を書きます.</p>
+<h2 id="右随伴は極限を保つ">右随伴は極限を保つ</h2>
+<p>Awodey の本では Right Adjunction Preserves Limit ということで, この声質のことを RAPL と読んでるそう. Awodey さんはなんでも四文字に略そうとする.</p>
+<p>この性質は簡単に示せる大したことないことなので日記に書くことにする.</p>
+<h3 id="随伴関手">随伴関手</h3>
+<p>念のために確認しておくと, 2つの圏の間の 2つの関手 <span class="math inline">\(F : \mathcal C \to \mathcal D\)</span>, <span class="math inline">\(G : \mathcal D \to \mathcal C\)</span> があって, 次のような対応 <span class="math display">\[\forall X, Y, \mathrm{Hom}_{\mathcal C}(GY, X) \simeq \mathrm{Hom}_{\mathcal D}(Y, FX)\]</span> があるとき, <span class="math display">\[G \dashv F\]</span> と書いて, <span class="math inline">\(F, G\)</span> を随伴関手という. また <span class="math inline">\(F\)</span> を <span class="math inline">\(G\)</span> の左随伴だというのだった.</p>
+<h3 id="rapl">RAPL</h3>
+<p><span class="math inline">\(\mathcal C\)</span> におけるある部分圏 <span class="math inline">\(\mathcal E\)</span> の limit <span class="math inline">\(L\)</span> があるとき, これらを <span class="math inline">\(F\)</span> で写して, <span class="math inline">\(F(\mathcal E)\)</span> は <span class="math inline">\(\mathcal D\)</span> の部分圏であって, <span class="math inline">\(FL\)</span> がこれの limit になっている.</p>
+<p>また双対を取れば, 右随伴は colimit を保つことも言える.</p>
+<h4 id="証明">証明</h4>
+<p>基本的に関手なので可換性については自動的に成り立つ. 問題は, 任意の錐 <span class="math inline">\(Y\)</span> があったときに <span class="math inline">\(Y \to FL\)</span> が唯一にあるかどうかだが, ここで随伴の性質が効く. すなわち, <span class="math inline">\(\mathrm{Hom}(Y,FL)\)</span> は <span class="math inline">\(\mathrm{Hom}(GY, L)\)</span> と同型であり, 後者は <span class="math inline">\(GY\)</span> が尚も錐であって (<span class="math inline">\(G\)</span> が関手なので), <span class="math inline">\(L\)</span> が limit なので <span class="math inline">\(GY \to L\)</span> は唯一存在する. というわけで <span class="math inline">\(Y \to FL\)</span> も唯一存在して, <span class="math inline">\(FL\)</span> はやはり limit である.</p>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

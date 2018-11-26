@@ -8,6 +8,7 @@
   <style type="text/css">code{white-space: pre;}</style>
   <link rel="stylesheet" href="../resources/css/c.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
@@ -32,6 +33,7 @@ original paper: <a href=https://arxiv.org/abs/1811.09030>https://arxiv.org/abs/1
 <img src="https://i.imgur.com/KK7JDkD.png" />
 </figure>
 <p>つまり訓練のための画像の領域をランダムに4分割して, それぞれに別な4枚の画像からパッチを持ってきて埋める. ラベルは面積に比例して混ぜたものを使う. ある意味では mixup と同じことをやってる.</p>
+<p>ただしこの領域の分割の仕方はその割合を Beta 分布に従って行い, そのパラメータを探索したところ CIFAR-10 や CIFAR-100 で <code>Beta(0.3, .0.3)</code> くらい? が良かったぽい. Beta 分布は mixup でも使ってて, <code>Beta(alpha, beta)</code> は <code>x in [0, 1]</code> の上の分布であって, さらに<code>alpha=beta</code> のとき <span class="math inline">\(x=0\)</span> や <span class="math inline">\(x=1\)</span> の端っこのときが一番出やすいような分布. (cf. <a href="https://ja.wikipedia.org/wiki/%E3%83%99%E3%83%BC%E3%82%BF%E5%88%86%E5%B8%83">wikipedia/ベータ分布</a>)</p>
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.

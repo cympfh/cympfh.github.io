@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>[1803.05449] SentEval: An Evaluation Toolkit for Universal Sentence Representations</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">[1803.05449] SentEval: An Evaluation Toolkit for Universal Sentence Representations</h1>
+</header>
+<ul>
+<li>
+original paper: <a href=https://arxiv.org/abs/1803.05449>https://arxiv.org/abs/1803.05449</a>
+</li>
+</ul>
+<div class="is-pulled-right">
+<p><a class='tag is-blue' href=index.html#自然言語処理>自然言語処理</a> <a class='tag is-blue' href=index.html#文分散表現>文分散表現</a></p>
+</div>
+<h2 id="概要">概要</h2>
+<p>汎用な文の分散表現 (universal sentence representation) の評価ツールキット SentEval を提供する.</p>
+<h2 id="intro">Intro</h2>
+<p>単語の分散表現については成功しつつある. 次は転移学習も容易なドメインに特化しない汎用の universal sentence representation が求められている. それに備えて使いやすい評価ツールを整備しておく必要がある.</p>
+<h2 id="aims">Aims</h2>
+<p>SentEval は公平に評価するためのものであるので次を目指す.</p>
+<ol type="1">
+<li>一つの評価セットを用いる</li>
+<li>評価の中では固定したハイパーパラメータで行い, 異なる結果が報告されることのないようにする</li>
+<li>誰でも使えること
+<ul>
+<li>Python で書かれたストレードフォワードのインターフェース</li>
+<li>必要ならばデータのダウンロードや前処理を行うスクリプト</li>
+</ul></li>
+</ol>
+<h2 id="evaluations">Evaluations</h2>
+<p>大きく5種類のタスクで転移学習して評価する.</p>
+<ol type="1">
+<li>Binary and multi-class classification</li>
+<li>Entailment and semantic relatedness</li>
+<li>Semantic Textual Similarity</li>
+<li>Paraphrase detection</li>
+<li>Caption-Image retrieval</li>
+</ol>
+<h3 id="binary-and-multi-class-classification">1. Binary and multi-class classification</h3>
+<p>テキスト分類をさせる. これには次の7種類を行う.</p>
+<figure>
+<img src="https://i.imgur.com/KTOgnso.png" />
+</figure>
+<p>文ベクトルからロジスティック回帰か MLP で予測させる. MR,CR,SUBJ,MPQAについては 10-fold の <a href="https://blog.amedama.jp/entry/2018/07/23/084500">nested 交差検証</a> で評価する. TREC はただの交差検証で, SST は標準の検証 (そういうのがある?).</p>
+<h3 id="entailment-and-semantic-relatedness">2. Entailment and semantic relatedness</h3>
+<p>意味含意 (entailment) には SNLI, SICK-E データセット, Relatedness には SICK-R データセットと STB ベンチマークを用いる. Relatedness は二文の意味的関連を [0,5] のスコアで予測させる.</p>
+<h3 id="semantic-textual-similarity">3. Semantic Textual Similarity</h3>
+<p>STSタスクを用いる. 英文同士に人手で関連性を [0,5] のスコアでついており, 文ベクトルどうしの cosine 類似度とそのスコアの Peason and Spearman 相関係数を SentEval は報告する.</p>
+<p>STS は 2012 から 2016 までのバージョンがあるので, SentEval はそれらの結果の平均を取る.</p>
+<h3 id="paraphrase-detection">4. Paraphrase detection</h3>
+<p>Microsoft Research Paraphrase Corpus (MRPC) を用いる. これは web のニュース記事から人手で集めてきた, 言い換え表現の文のペアが収録されている. SentEval はこれについて二値分類 (paraphrase/not) を予測させる.</p>
+<h3 id="caption-image-retrieval">5. Caption-Image retrieval</h3>
+<p>COCO を用いる. これは 113k の画像とそれぞれに 5 つのキャプションテキストが収録されている. 行うタスクはクエリとなるキャプションから適切な画像をランク付けする Image Retrieval と, 逆に, クエリとなる画像から適切なキャプションをランク付けする Caption Retrieval.</p>
+<p>画像からベクトルには事前学習済みの ResNet-101 を用いて 2048 次元ベクトルを用いる.</p>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

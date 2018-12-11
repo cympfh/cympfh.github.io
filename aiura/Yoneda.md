@@ -75,7 +75,7 @@ $$\op{\C} \to \Sets$$
 
 $$\begin{CD}
 A_1 @. \C(A_1,B) \ni g \\
-@AfAA @V\C(A,f)VV \\
+@AfAA @V\C(f,B)VV \\
 A_2 @. \C(A_2,B) \ni gf
 \end{CD}$$
 

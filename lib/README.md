@@ -115,6 +115,10 @@
 - [permutation -- $n^m$](nat.powperm.html)
 - [combination -- ${}_nC{}_m$](nat.comb.html)
 
+# 乱数
+
+- [疑似乱数](rand.gen.html)
+
 # フーリエ変換
 - [Cooley-Tukey FFT](fft.html)
 - [畳み込み](fft.convolution.html)
@@ -127,10 +131,14 @@
 ## 回文
 - [manacher](string.manacher.html)
 
-# 暦
-- [ツェラーの公式](misc.zeller.html)
+# 時間/時刻
+
+## [制限時間付きループ](time.while.html)
+
+## 暦
+- [ツェラーの公式](cal.zeller.html)
     - [What day is today? | AOJ](http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=0027)
-- [閏年判定](misc.uruu.html)
+- [閏年判定](cal.uruu.html)
 
 # STL
 

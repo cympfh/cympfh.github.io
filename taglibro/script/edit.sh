@@ -12,6 +12,11 @@ datetitle() {
 
 TOKEN=$(listup | peco $@)
 
+if [ -z "$TOKEN" ]; then
+    echo Canceled
+    exit
+fi
+
 if [ "$TOKEN" = today ]; then
     TOKEN=$(date +"%Y/%m/%d")
 fi

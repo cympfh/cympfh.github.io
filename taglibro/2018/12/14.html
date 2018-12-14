@@ -57,6 +57,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h1 class="title">Fri Dec 14 2018</h1>
 </header>
 <h2 id="今年書いて良かった-.zshrc">今年書いて良かった .zshrc</h2>
+<blockquote>
+<p>これは &quot;今年書いて良かった dot files アドベントカレンダー&quot; 14日目の記事です.</p>
+</blockquote>
 <h3 id="準備-bindkey">準備 (bindkey)</h3>
 <p>Zsh には <code>bindkey</code> という機能があって、ターミナルから普通にコマンドを入力する以外に <code>Ctrl</code> で装飾したようなキー入力から関数を呼び出すことが出来る.</p>
 <p>例えば以下を <code>.zshrc</code> に書いておくと、<code>Ctrl-h</code> で挨拶が出来る.</p>
@@ -102,7 +105,7 @@ _</code></pre>
 <span class="ex">zle</span> -N cd-recent
 <span class="ex">bindkey</span> <span class="st">&quot;^G^R&quot;</span> cd-recent</code></pre></div>
 <p>大体最初に示した <code>bindkey</code> の使い方の通り. 実際に呼びたい関数を定義して <code>bindkey</code> でキーマッピングを設定するだけ. 最後の <code>cd-recent</code> は最近行ったことのあるディレクトリを <code>~/.zsh_pwd_history</code> に <a href="https://github.com/cympfh/dots/tree/master/sh/mru">別な設定</a> で書き出してるので、 ここから行き先を <code>peco</code> で選んで移動させるコマンド.</p>
-<p>この中で一番使ってるのは明らかに <code>cd-recent</code>. 最近の履歴を使う系は基本的に便利.</p>
+<p>どれもそれなりに使ってるけど、一番使ってるのは明らかに <code>cd-recent</code>. 最近の履歴を使う系は基本的に便利.</p>
 <h4 id="コマンド履歴">コマンド履歴</h4>
 <div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="fu">call-history()</span> <span class="kw">{</span>
     <span class="va">BUFFER=$(</span><span class="bu">history</span> -n 1 <span class="kw">|</span> <span class="fu">tac</span> <span class="kw">|</span> <span class="ex">peco</span> --query <span class="st">&quot;</span><span class="va">$BUFFER</span><span class="st">&quot;</span><span class="va">)</span>
@@ -115,7 +118,7 @@ _</code></pre>
 <p>ターミナルの入力をいじるのが目的なのに、そのためにコマンド入力をするのは不自然なので <code>bindkey</code> に仕込んだ. すでにコマンド入力されてる文字列があれば、予めその文字列で <code>history</code> をフィルタする. これは <code>peco</code> の <code>--query</code> に指定すれば実現できる.</p>
 <p>例えば、コマンドの頭だけ書いててオプション以降が思い出せない、みたいなときにその場で <code>Ctrl-r</code> を押すとそれっぽいのがズラっと出てくるので、気をつけて選べば良い. 選択した時点で実行させないのは、最後に念のために確認したり、ちょっとだけ変えたいときがあるので.</p>
 <p><code>$BUFFER</code> と <code>$CURSOR</code> という2つの変数を使っていて、 察しの通り、<code>$BUFFER</code> にはその時点でコマンド入力されている文字列が入っているし、代入すればセットできる. 長さの異なる文字列をセットしてもカーソルは変わらずそこにあるので、<code>$CURSOR</code> に <code>$BUFFER</code> の長さをセットすることでカーソルを末尾に持っていっておく.</p>
-<p>これもめちゃくちゃ使ってる.</p>
+<p>これもめちゃくちゃ使ってる. 履歴使う系は基本全部便利.</p>
 <footer>
     <p class="is-pulled-right">
     @cympfh / cympfh@gmail.com

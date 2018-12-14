@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Fri Dec 14 2018</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='../../index.html'><i class="fa fa-save" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">Fri Dec 14 2018</h1>
+</header>
+<h2 id="今年書いて良かった-.zshrc">今年書いて良かった .zshrc</h2>
+<h3 id="準備-bindkey">準備 (bindkey)</h3>
+<p>Zsh には <code>bindkey</code> という機能があって、ターミナルから普通にコマンドを入力する以外に <code>Ctrl</code> で装飾したようなキー入力から関数を呼び出すことが出来る.</p>
+<p>例えば以下を <code>.zshrc</code> に書いておくと、<code>Ctrl-h</code> で挨拶が出来る.</p>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span class="co"># test.zsh</span>
+<span class="fu">greeting()</span> <span class="kw">{</span>
+    <span class="kw">echo</span> Hello
+<span class="kw">}</span>
+<span class="kw">zle</span> -N greeting
+<span class="kw">bindkey</span> <span class="st">&quot;^H&quot;</span> greeting</code></pre></div>
+<p>これはあくまで例だから有用性はない. <code>Ctrl-h</code> するとその時点で <code>echo</code> が実行されるので邪魔.</p>
+<pre><code>cympfh% _</code></pre>
+<p>この時点で <code>Ctrl-h</code> すると、</p>
+<pre><code>cympfh% Hello
+_</code></pre>
+<p>こうなる. ここで <code>_</code> がカーソル. ちなみに <code>zle reset-prompt</code> を呼ぶとプロンプトを作り直してくれるのだが、割と使う.</p>
+<h3 id="書いてよかった設定-本題">書いてよかった設定 (本題)</h3>
+<h4 id="移動系">移動系</h4>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="fu">cd-up()</span> <span class="kw">{</span>
+    <span class="bu">cd</span> ..
+    <span class="ex">zle</span> reset-prompt
+<span class="kw">}</span>
+<span class="ex">zle</span> -N cd-up
+<span class="ex">bindkey</span> <span class="st">&quot;^G^U&quot;</span> cd-up
+
+<span class="fu">cd-old()</span> <span class="kw">{</span>
+    <span class="bu">cd</span> -
+    <span class="ex">zle</span> reset-prompt
+<span class="kw">}</span>
+<span class="ex">zle</span> -N cd-old
+<span class="ex">bindkey</span> <span class="st">&quot;^G^O&quot;</span> cd-old
+
+<span class="fu">cd-home()</span> <span class="kw">{</span>
+    <span class="bu">cd</span>
+    <span class="ex">zle</span> reset-prompt
+<span class="kw">}</span>
+<span class="ex">zle</span> -N cd-home
+<span class="ex">bindkey</span> <span class="st">&quot;^G^H&quot;</span> cd-home
+
+<span class="fu">cd-recent()</span> <span class="kw">{</span>
+    <span class="bu">cd</span> <span class="va">$(</span><span class="fu">cat</span> ~/.zsh_pwd_history <span class="kw">|</span> <span class="fu">tac</span> <span class="kw">|</span> <span class="ex">peco</span><span class="va">)</span>
+    <span class="ex">zle</span> reset-prompt
+<span class="kw">}</span>
+<span class="ex">zle</span> -N cd-recent
+<span class="ex">bindkey</span> <span class="st">&quot;^G^R&quot;</span> cd-recent</code></pre></div>
+<p>大体最初に示した <code>bindkey</code> の使い方の通り. 実際に呼びたい関数を定義して <code>bindkey</code> でキーマッピングを設定するだけ. 最後の <code>cd-recent</code> は最近行ったことのあるディレクトリを <code>~/.zsh_pwd_history</code> に <a href="https://github.com/cympfh/dots/tree/master/sh/mru">別な設定</a> で書き出してるので、 ここから行き先を <code>peco</code> で選んで移動させるコマンド.</p>
+<p>この中で一番使ってるのは明らかに <code>cd-recent</code>. 最近の履歴を使う系は基本的に便利.</p>
+<h4 id="コマンド履歴">コマンド履歴</h4>
+<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="fu">call-history()</span> <span class="kw">{</span>
+    <span class="va">BUFFER=$(</span><span class="bu">history</span> -n 1 <span class="kw">|</span> <span class="fu">tac</span> <span class="kw">|</span> <span class="ex">peco</span> --query <span class="st">&quot;</span><span class="va">$BUFFER</span><span class="st">&quot;</span><span class="va">)</span>
+    <span class="va">CURSOR=$#</span>BUFFER
+    <span class="ex">zle</span> reset-prompt
+<span class="kw">}</span>
+<span class="ex">zle</span> -N call-history
+<span class="ex">bindkey</span> <span class="st">&quot;^R&quot;</span> call-history</code></pre></div>
+<p><code>history</code> コマンドはコマンド入力履歴を出力してくれるのは便利だけど、 どうせならそこからインタラクティブに選んで、それがターミナルに入力された状態にしたい.</p>
+<p>ターミナルの入力をいじるのが目的なのに、そのためにコマンド入力をするのは不自然なので <code>bindkey</code> に仕込んだ. すでにコマンド入力されてる文字列があれば、予めその文字列で <code>history</code> をフィルタする. これは <code>peco</code> の <code>--query</code> に指定すれば実現できる.</p>
+<p>例えば、コマンドの頭だけ書いててオプション以降が思い出せない、みたいなときにその場で <code>Ctrl-r</code> を押すとそれっぽいのがズラっと出てくるので、気をつけて選べば良い. 選択した時点で実行させないのは、最後に念のために確認したり、ちょっとだけ変えたいときがあるので.</p>
+<p><code>$BUFFER</code> と <code>$CURSOR</code> という2つの変数を使っていて、 察しの通り、<code>$BUFFER</code> にはその時点でコマンド入力されている文字列が入っているし、代入すればセットできる. 長さの異なる文字列をセットしてもカーソルは変わらずそこにあるので、<code>$CURSOR</code> に <code>$BUFFER</code> の長さをセットすることでカーソルを末尾に持っていっておく.</p>
+<p>これもめちゃくちゃ使ってる.</p>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

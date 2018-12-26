@@ -10,6 +10,9 @@ index: *.md
 edit:
 	bash script/edit.sh
 
+new:
+	bash script/edit.sh new
+
 git: index posts
 	git add --all
 	git commit -a -m "paper/ `date`"

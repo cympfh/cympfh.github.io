@@ -5,7 +5,7 @@ listup() {
     cat resources/postlist | tac
 }
 
-ID=$(listup | peco)
+ID=$(listup | peco --query "$1")
 
 if [ "$ID" = "" ]; then
     echo "canceled"

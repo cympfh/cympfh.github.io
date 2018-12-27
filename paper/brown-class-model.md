@@ -2,226 +2,150 @@
 % http://dl.acm.org/citation.cfm?id=176316
 % 言語モデル 自然言語処理
 
-Brown+ら．
+Brown+ら.
 
 [Learning phrase patterns for Text Classification](memo/learning-phrase-patterns.md)
-中で、
+の中で, "単語のクラスを1次マルコフモデル尤度を最大化することによって自動分類した" とあって引用されていた.
 
-> 単語のクラスを1次マルコフモデル尤度を最大化することによって自動分類した
+## Introduction
 
-とあって引用されていた．
+noisy channel 経由で来た, 歪んだ英語の文章を元に戻したい. これが第一の議論である.
+それに関与することとして, 単語にクラスを当てはめることを統計的にしたい. これが第二の議論である.
 
-# Introduction
+## 言語モデル
 
-noisy channel 経由で来た、歪んだ英語の文章を元に戻したい．これが第一の議論である．
-それに関与することとして、単語にクラスを当てはめることを統計的にしたい．これが第二の議論である．
+次のような言語モデルを考える.
 
-# 言語モデル
+単語列 $w_1, \ldots, w_k$ を条件付き確率
+$$P(w_k | w_1, \ldots, w_{k-1})$$
+で特徴づける.
+ここで $w_1,\ldots,w_{k-1}$ のことを $w_k$ の history と呼ぶことにする.
 
-次のような言語モデルを考える．
+文章全体が出来上がる確率は先頭から順に生成されると仮定して,
+$$P(w_1,\ldots,w_k) = \prod_{i=1}^k Pr(w_k | w_1,\ldots,w_{k-1})$$
 
-English text は語の列．
+### n-gram 言語モデル
 
-```python
-w[1:k]
-```
-これを、条件付き確率
-
-```python
-Pr(w[k] | w[1:k-1])
-```
-で特徴づける．
-文章全体が出来上がる確率はこうだ．
-
-$Pr(w[1:k]) = Pr(w[1]) \cdot Pr(w[2] | w[1:1]) \cdot Pr(w[3] | w[1:2])  \cdots  Pr(w[k] | w[1:k-1])$
-
-<blockquote>
-python-like なつもりで書いたけど、
-
-```python
-w[i:j]
-```
-は、列
-
-```tex
-{w_i, w_{i+1}, ..., w_j}
-```
-を表す．
-ここで `i <= j` を暗黙的に前提する．
-</blockquote>
-
-意味を言えば、`w[1:k-1]`がhistoryであり、`w[k]`がpredictionである．
-
-## n-gram
-
-n-gram language model では、
-history の内の最後の `(n-1)` words だけを見る．
-それが同じなら同じ history だと見做す．
-
+n-gram 言語モデルでは,
+history の内の最後の $n-1$ words だけを見る.
 すなわち
+$$P(w_k | w_1,\ldots,w_{k-1}) = P(w_k | w_{k-n+1},\ldots,w_{k-1})$$
+とする.
 
-```python
-Pr(w[k] | w[1:k-1]) = Pr(w[k] | w[k-n+1 : k-1])
-```
+ただし $k < n$ のときは勝手に短くする.
 
-とする．ただし `k >= n` と仮定してる．
+では確率 $P(w_k | w_{k-n+1},\ldots,w_{k-1})$ をどっからもってくるか.
+training text における最尤推定を行う.
+すなわち数えて割合を出すことをする.
 
-そうでない場合の確率は特別に扱わなければ．
-例えば 2-gram model では、
-history には `V (V-1)` 通りある (V = size of vocabulary)．
-それと別に `Pr(w[2] | w[1])` が `V - 1` 通りある．
+training text において (連続) 部分列 $w_1,\ldots,w_k$ の頻度を $C(w_1,\ldots,w_k)$ とするとき,
+$$Pr(w_n | w_1,\ldots,w_{n-1}) = \dfrac{C(w_1,\ldots,w_n)}{\sum_v C(w_1,\ldots,w_{n-1}, v)}$$
 
-ではそれらの確率をどっからもってくるか．
-training text における最尤推定、すなわち、
-数えて割合を出すことをする．
+### interpolated estimation (Jelinek and Mercer, 1980)
 
-`C(w)` は training text における `w` の頻度数．
+語彙は十分多いことが望ましいが $n$ が増えるに従って必要な語彙数は指数的に増える.
+しかしながら精度のためには $n$ はできるだけ多い方がよい.
 
-$Pr(w[n] | w[1:n-1]) = \dfrac{C(w[1:n-1] w[n])}{\sum_w C([1:n-1] w)}$
+interpolated estimation はいくつかの言語モデル $P^{(j)}$ を構築して, それらをcombineすることで $P'$ を得る手法.
+$$P'(w_k | w_1,\ldots,w_{i-k}) = \sum_j \lambda_j(w_1,\ldots,w_{k-1}) P^{(j)}(w_k | w_1,\ldots,w_{i-k})$$
 
-ここで、`w[1:n-1] w` は、列の末尾にword を一つ追加した新しい列を意味する．
+重み $\lambda_j$ は EMアルゴリズムで作る.
 
-## interpolated estimation (Jelinek and Mercer, 1980)
+## Word Classes
 
-vocabulary は大きければ良い．
-しかしながら、n-gram の `n` が増えるにしたがって、指数的に、頻度は減っていく．
-単純に、`n`は大きいほうがモデルの精度としては上がるけれど、
-固定された語彙に対しては、信頼性が減っていく．
+意味的にか, 構造的にか, ある語とある語が似ているということがある.
+例えば `Thursday`, `Friday` とか.
 
-interpolated estimation と呼ばれるものは、
-いくつかの言語モデル $Pr^{(j)}$ を構築して、それらをcombineすることで、$Pr'$ を得る．
+vocabulary $V$, classes $C$ があって, 語 $w$ をclass $c$ に写す写像を $\pi$ とする.
+$$\pi : V \to C$$
 
-$$Pr'(w[i] | w[1:i-1]) = \sum_j \lambda_j(w[1:i-1]) Pr^{(j)}(w[i] | w[1:i-1])$$
+### n-gram class model
 
-重み $\lambda_j$ は EMアルゴリズムで作る．
+写像 $\pi$ が既に与えられた上で, クラスを用いた言語モデルを次のように定める.
+単語列 $w_1,\ldots,w_k,\ldots,w_N$ についてクラス列 $c_i = \pi(w_i)$ があって,
+$$P(w_k | w_1,\ldots,w_{k-1}) = P(w_k | c_k) P(c_k | c_1,\ldots,c_k)$$
 
-# Word Classes
+さらに n-gram クラスモデルとは, 上の history を $n-1$ に制限したもの:
+$$P(w_k | w_1,\ldots,w_{k-1}) = P(w_k | c_k) P(c_k | c_{k-n+1},\ldots,c_k)$$
 
-意味的にか、構造的にか、ある語とある語が似ているということがある．
-`(Thursday, Friday)`
-とかね．
+training text から, 右辺の2つの確率を最尤推定する.
 
-vocabulary `V`, classes `C` があって、語 `w` をclass `c` に写す写像を `pi` とする．
+1-gram であれば,
 
-```python
-pi(w) = c
-```
+- $P(w | c) = \dfrac{C(w)}{C(c)}$
+- $P(c) = \dfrac{C(c)}{C()}$
 
-## n-gram class model
+2-gram であれば,
 
-写像 `pi` が既に与えられた上で、クラスを用いた n-gram model を次のように定める．
+- $P(w | c) = \dfrac{C(w)}{C(c)}$ (同じ)
+- $P(c_2 | c_1) = \dfrac{C(c_1, c_2)}{\sum_d C(c_1, d)}$
 
-```python
-Pr(w[k] | w[1:k-1]) = Pr(w[k] | c[k]) Pr(c[k] | c[1:k-1])
-```
+ただし空列の $C()$ とは training text に登場する単語数のこと.
 
-ここで、n-gram とする以上、
+### 尤度
 
-```python
-Pr(c[k] | c[1:k-1]) = Pr(c[k] | c[k-n+1 : k-1])
-```
-とする．
+$T=C()$ として, training data 全体の単語列を $t_1,\ldots,t_T$ とする.
 
-training text から、右辺の2つの確率を最尤推定する．
+$$L(\pi) = \dfrac{1}{T-1} \log P(t_2,\ldots,t_T | t_1)$$
+を $\pi$ の尤度とする.
+2-gram model の下でこれを式変形すると,
+$$L(\pi) = \sum_{w_1, w_2} \dfrac{C(w_1 w_2)}{T-1} \log P(c_2 | c_1) P(w_2 | c_2)$$
 
-まず、簡単な 1-gram の場合は、
+さらにうわぁーってやると,
+$$L(\pi) = -H(w) + I(c1, c2)$$
+ここで, $H$はエントロピー, $I$は相互情報量.
+$w$ は training text から降ってくる.
 
-```python
-Pr(w | c) = C(w) / C(c)
-Pr(c) = C(c) / T
-```
+$L(\pi)$を最大化するような $\pi$ を選択する, というのは,
+相互情報量を最大化するようなクラス分類を選択することになる.
 
-ここで、`T` は、training text 中の word 数である．
-training text は、 `t[1:T]` と書けて、
-`C(c)`は、`length(map(pi, t))` である．
+### 最適化
 
-2-gramなら、
-$Pr(c[2] | c[1]) = \dfrac{C(c[1]c[2])}{\sum_c C(c[1] c)}$
-となる．
+$\max I$ を厳密に解くのは大変 (また最大であるかを判定するのも大変).
+貪欲法で頑張る.
 
-## 尤度
+語彙数 $V$ に対して欲しいクラスの数 $C$ を決める ($C < V$).
+始めは全ての語彙は異なるクラスにあるとし, 一個ずつマージしてクラス数が $C$ になったら止める.
+始めはクラス数が $V$ あるのでちょうど $V-k$ 回マージした時点でクラス数は $k$ 種類ある.
+それを
+$$C^k_1, \ldots,C^k_k$$
+とする.
 
-$L(pi) = (T - 1)^{-1} \log Pr(t[2:T] | t[1])$
+$1 \leq i < j \leq k$ について $C^k_i$ と $C^k_j$ とをマージすることを考える.
 
-これを尤度とする．2-gram model の下でこれを式変形すると、
+次の4つの値を導入する:
 
-$L(pi) = \sum_{w_1, w_2} \dfrac{C(w_1 w_2)}{T-1} \log Pr(c_2 | c_1) Pr(w_2 | c_2)$
+- $p_k(l,m) = P(C^k_l, C^k_m)$
+- $\def\pl{\mathrm{pl}}\pl_k(l) = \sum_m p_k(l,m)$
+- $\def\pr{\mathrm{pr}}\pr_k(m) = \sum_l p_k(l,m)$
+- $q_k(l,m) = p_k(l,m) \log \dfrac{p_k(l, m)}{\pl_k(l) \pr_k(m)}$
 
-さらにうわぁーってやると、
+こうすると $C^k$ の相互情報量は
+$$I_k = \sum_{l,m} q_k(l, m)$$
+で表される.
 
-$L(pi) = -H(w) + I(c1, c2)$
-ここで、`H`はエントロピー、`I`は相互情報量．
-`w` は training text から降ってくるから、
+さて $i$ と $j$ をマージするならば, あたらしい $i \oplus j$ クラスが出来て,
+各値は
 
-`L(pi)`を最大化するような`pi`を選択する、というのは、
-相互情報量を最大化するようなクラス分類を選択することになる．
+- $p_k(i \oplus j, m) = p_k(i, m) + p_k(j, m)$
+- $q_k(i \oplus j, m) = p_k(i \oplus j, m) + \log \dfrac{p_k(i \oplus j, m)}{\pl_k(i \oplus j) \pr_k(m)}$
 
-## Prictical
-
-We know of no practical method to find max `I`, or the `I` is the maximum or not.
-
-### greedy algorithm
-
-- goal:
-classifying `V` words into `C` classes (`V > C`)
-
-- initially, distincts words to each classes, that is there are `V` classes
-- do class merge `V-C` times (in a step, one merge be done)
-- Then, we get `C` classes remained
-
-The step is described recursively as follows.
-After `V-k` merges, we got `k` classes
-
-```
-C_k(1), C_k(2), ..., C_k(k)
-```
-
-we think of the merge of `C_k(i)` with `C_k(j)`
-where `1 <= i < j <= k`.
-
-```python
-p_k(l, m) = Pr(C_k(l), C_k(m))
-```
-
-This is the probability of that
-the class `C_k(m)` follows after the class `C_k(l)`
-in the text.
-
-let
-$pl_k(l) = \sum_m p_k(l, m)$
-
-let
-$pr_k(m) = \sum_l p_k(l, m)$
-
-let
-$q_k(l, m) = p_k(l, m) \log \dfrac{p_k(l, m)}{pl_k(l) pr_k(m)}$
-
-The mutual information of the `k` classes is denoted by
-
-$I_k = \sum_{l,m} q_k(l, m)$
-
-The new class merged `C_k(i)` and `C_k(j)` is denoted by `i + j`.
-
-$p_k(i+j, m) = p_k(i, m) + p_k(j, m)$
-$q_k(i+j, m) = p_k(i+j,m) \log \dfrac{p_k(i+j,m)}{pl_k(i+j) pr_k(m)}$
-
-and the mutual information after the merge is
-
-$I_k(i,j) = I_k - s_k(i) - s_k(j) + q_k(i,j) + q_k(j,i) + q_k(i+j,i+j) + \sum_{l \ne i,j} q_k(l, i+j) + \sum_{m \ne i,j} q_k(i+j,m)$
-
+で更新されて, 相互情報量は
+$$I' = I_k - s_k(i) - s_k(j) + q_k(i,j) + q_k(j,i) + q_k(i+j,i+j) + \sum_{l \ne i,j} q_k(l, i+j) + \sum_{m \ne i,j} q_k(i+j,m)$$
 where
 $s_k(i) = \sum_l q_k(l, i) + \sum_m q_k(i, m) - q_k(i,i)$
 
-So, we will find the pair `(i,j)`
-such that the mutual information loss
-$L_k(i,j) = I_k - I_k(i,j)$
-is least.
+というわけで $I'$ を最大化するペア $(i,j)$ を探してマージしていけばよい.
+
+> そのまま実装すると $V^2$ で大変そう.
 
 ### Classes gotten with this alogrithm
 
-- Friday, Monday, ... Sunday, weekends
-- June, March, July ...
-- people guys folks fellows ...
-- down, backwards, ashore, sideways ...
-- water, gas, coal, liquid ...
-- had, hadn't hath would've could've ...
+次のようなものが同じクラスの語彙として得られた:
+
+1. Friday, Monday, ... Sunday, weekends
+1. June, March, July ...
+1. people guys folks fellows ...
+1. down, backwards, ashore, sideways ...
+1. water, gas, coal, liquid ...
+1. had, hadn't hath would've could've ...

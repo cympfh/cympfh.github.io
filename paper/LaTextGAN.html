@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>[1810.06640] Adversarial Text Generation Without Reinforcement Learning (LaTextGAN)</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">[1810.06640] Adversarial Text Generation Without Reinforcement Learning (LaTextGAN)</h1>
+</header>
+<ul>
+<li>
+original paper: <a href=https://arxiv.org/abs/1810.06640>https://arxiv.org/abs/1810.06640</a>
+</li>
+</ul>
+<div class="is-pulled-right">
+<p><a class='tag is-blue' href=index.html#自然言語生成>自然言語生成</a> <a class='tag is-blue' href=index.html#オートエンコーダ>オートエンコーダ</a> <a class='tag is-blue' href=index.html#生成モデル>生成モデル</a></p>
+</div>
+<h2 id="概要">概要</h2>
+<p>low-dimentional representation of sentences を学習してくれるような autoencoder を作る. GAN によって分散表現を自然な文に decode する.</p>
+<h2 id="latextgan">LaTextGAN</h2>
+<h3 id="architecture">Architecture</h3>
+<figure>
+<img src="https://i.imgur.com/uEj2x9p.png" />
+</figure>
+<p>Stage 1 が autoencoder で Stage 2 が GAN.</p>
+<p>autoencoder は単語単位でLSTMで読ませる. decode 部分も LSTM で出力する. 各 time-step で確率最大の単語を選ぶ.</p>
+<p>GAN部分は全結合層で全部構成するがResNetを取り入れてる.</p>
+<h3 id="training">Training</h3>
+<p>Improved Wasserstein GAN を使う. generator は <span class="math inline">\(g : \mathbb R^m \to \mathbb R^n\)</span>, discriminator は <span class="math inline">\(f_w : \mathbb R^n \to \mathbb R\)</span> として次を目的関数にする: <span class="math display">\[\max \mathbb{E}_z f_w(g(z)) - \mathbb{E}_x f_w(x)\]</span></p>
+<blockquote>
+<p>GANの機構から Discriminator は普通に真の文かどうかを判定してくれ, Encoder は Decode しやすく Discriminator にも分かってくれるようなエンコードをしてくれる. Discriminator に分かってくれることは文の空間が密になってくれることに効くのかも??</p>
+</blockquote>
+<h3 id="results">Results</h3>
+<figure>
+<img src="https://i.imgur.com/o8M5UIT.png" />
+</figure>
+<blockquote>
+<p>うーん. まだまだだ. GAN がどう効いてくるのかも不明.</p>
+</blockquote>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

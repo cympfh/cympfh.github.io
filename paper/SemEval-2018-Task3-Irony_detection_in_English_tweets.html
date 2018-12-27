@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>SemEval-2018 Task 3: Irony detection in English tweets</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">SemEval-2018 Task 3: Irony detection in English tweets</h1>
+</header>
+<ul>
+<li>
+original paper: <a href=https://competitions.codalab.org/competitions/17468#learn_the_details>https://competitions.codalab.org/competitions/17468#learn_the_details</a>
+</li>
+</ul>
+<div class="is-pulled-right">
+<p><a class='tag is-blue' href=index.html#自然言語処理>自然言語処理</a> <a class='tag is-blue' href=index.html#感情分析>感情分析</a></p>
+</div>
+<p>これに参加した論文を集める. 43チームが参加.</p>
+<h2 id="iiidyt-at-semeval-2018-task-3-irony-detection-in-english-tweets"><a href="http://aclweb.org/anthology/S18-1087">IIIDYT at SemEval-2018 Task 3: Irony detection in English tweets</a></h2>
+<ul>
+<li>421st</li>
+<li>official F1: 0.2905</li>
+</ul>
+<h3 id="データ">データ</h3>
+<p>データはバランスされてて 2396 ironic and 2396 non-ironic tweets からなる. さらに irony の内訳は彼らの分類によれば 1278 verbal irony, 401 situational irony and the other 267 irony. verbal irony というのは字面の意味と言いたいことがちょうど反対になってるようなものが典型. &quot;I love annoying people.&quot; situational というのは, 期待する状態からかけ離れていることを説明するもの. &quot;An old man who won the lottery and died the next day.&quot;</p>
+<h3 id="前処理">前処理</h3>
+<p>ハッシュタグの削除. NLTK TweetTokenizer によるトークナイズ. two spaces を一個に置き換え. ユーザーネームとURLの削除. ステミングやトークンの小文字化 (lowercase) はやらなかった. これは意図的に全文字をキャピタライズして書かれたものもあり, そういう情報に意味がある.</p>
+<h3 id="アプローチ">アプローチ</h3>
+<p>GloVe を使う. Pre-trained は必須. vector size は小さくて全然良くて 25, 50 and 100 で実験する. 2B tweets (語彙サイズ 1.2 M tokens) で GloVe を訓練する.</p>
+<p>十分頻出するのに語彙に登場しないような未知語には <code>UNK</code> トークンを割り当てる代わりに, 次のようにしてランダムなベクトルを割り当てた. 語彙から less freq words 集合 <span class="math inline">\(S\)</span> を選ぶ. それらの各ベクトルを作る <span class="math inline">\(V = \{g(s) \mid s \n S\}\)</span>. 中心ベクトル <span class="math inline">\(c = \sum V / \# V\)</span> との平均距離 <span class="math inline">\(r = \sum_v \| v - c \| / \#V\)</span>. 中心を <span class="math inline">\(c\)</span> とし半径を <span class="math inline">\(r\)</span> とする球から一様ランダムに選んだベクトルを未知語に割り当てる. そんなに頻出しない未知語には <code>UNK</code> トークンを割り当てる.</p>
+<p>キャピタライズなどの情報を扱うために次の word-level features, sentence-level features を設定する. 単語単位で, fully lower, fully uppper, first-letter-capitalized, contains-digits の4つ. 文について, そのいずれかの単語が fully lower, fully upper, 同じ単語が複数回出現 の3つ. この level を GloVe vector に concat する.</p>
+<p>hidden vector が 150 units で dropout prob が 0.1 の BiLSTM が最良. データの 80% で訓練して 20% で validation. 全く同じネットワークを四回訓練してそれらのアンサンブルで予測.</p>
+<p>Token-level feature は無いほうが良い. Sentence-level feature は僅かに良くすると言ってるが誤差レベル.</p>
+<h2 id="semeval-2018-task-3-irony-detection-in-english-tweets"><a href="http://aclweb.org/anthology/S18-1005">SemEval-2018 Task 3: Irony Detection in English Tweets</a></h2>
+<p>irony かどうかを2値分類する Task A とどの irony type かを当てる Task B とがある. テストは 784 tweets でやる. 彼らは最高でそれぞれ F1スコアが <span class="math inline">\(0.71\)</span> と <span class="math inline">\(0.51\)</span> だった.</p>
+<p>GloVe+LSTM</p>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>[1707.05589] On the State of the Art of Evaluation in Neural Language Models</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">[1707.05589] On the State of the Art of Evaluation in Neural Language Models</h1>
+</header>
+<ul>
+<li>
+original paper: <a href=https://arxiv.org/abs/1707.05589>https://arxiv.org/abs/1707.05589</a>
+</li>
+</ul>
+<div class="is-pulled-right">
+<p><a class='tag is-blue' href=index.html#自然言語処理>自然言語処理</a> <a class='tag is-blue' href=index.html#深層学習>深層学習</a></p>
+</div>
+<h2 id="概要">概要</h2>
+<p>Neural Language Model のSOTAなアーキテクチャを同じ環境で比較実験をする</p>
+<h2 id="models">Models</h2>
+<ol type="1">
+<li>Long Short-Term Memory (LSTM) (Hochreiter &amp; Schmidhuber, 1997)</li>
+<li>Recurrent Highway Network (RHN) (Zilly+, 2016)</li>
+<li>NAS (Zoph &amp; Le, 2016)</li>
+</ol>
+<figure>
+<img src="https://i.imgur.com/81S7LOt.png" />
+</figure>
+<h2 id="dataset">Dataset</h2>
+<ol type="1">
+<li>Penn Treebank (Marcus+, 1993), preprocessed (Mikolov+, 2010)</li>
+<li>Wikitext-2 (Merity+, 2016)</li>
+<li>Enwik8 from the Hutter Prize dataset (Hutter, 2012)
+<ul>
+<li>こいつだけ char-level model にする</li>
+</ul></li>
+</ol>
+<p>内の最初の90M文字を train に用いて残りの10M文字で validation と test を作った.</p>
+<h2 id="training">Training</h2>
+<p>Penn Treebank と Wikitext-2 には以下の通りにする.</p>
+<ul>
+<li>batch size: 64</li>
+<li>Adam (Kingma &amp; Ba, 2014)
+<ul>
+<li><span class="math inline">\(\beta_1=0\)</span>
+<ul>
+<li>exponential moving average が切られるのでほぼモーメント無しの RMSProp</li>
+</ul></li>
+<li><span class="math inline">\(\beta_2 = 0.999, \epsilon=10^{-9}\)</span> (default)</li>
+</ul></li>
+</ul>
+<p>Enwik8 は char-level にしたいので以下のように変える</p>
+<ul>
+<li>batch size: 128</li>
+<li>Adam (Kingma &amp; Ba, 2014)
+<ul>
+<li><span class="math inline">\(\beta_1=0\)</span>
+<ul>
+<li>exponential moving average が切られるのでほぼモーメント無しの RMSProp</li>
+</ul></li>
+<li><span class="math inline">\(\beta_2 = 0.99, \epsilon=10^{-5}\)</span> (default)</li>
+</ul></li>
+</ul>
+<h2 id="evaluation">Evaluation</h2>
+<p>validation での perlexity が best の時点のモデルで評価する. 評価時には batch size は 1 にする. Word-level だと, 訓練のときのバッチサイズのままにすると 0.3 PPL くらい悪くなる. Char-level だと影響は無いのでどうでも良いらしい.</p>
+<h3 id="hyperparameter-tuning">Hyperparameter tuning</h3>
+<p>Google Vizier (Golovin+, 2017) を使う. こいつはブラックボックス最適化をしてくれる. 簡単のために以下に限って最適化をした:</p>
+<ol type="1">
+<li>learning rate</li>
+<li>input embedding ratio</li>
+<li>input dropout</li>
+<li>state dropout</li>
+<li>output dropout</li>
+<li>weight decay</li>
+</ol>
+<h2 id="results">Results</h2>
+<p>論文報告との比較. Perplexity なので小さい方が良い (PPL<span class="math inline">\(=2^H\)</span>).</p>
+<center>
+<figure>
+<img src="https://i.imgur.com/jJ9G5pK.png" />
+</figure>
+<figure>
+<img src="https://i.imgur.com/W9F7hZF.png" />
+</figure>
+<img src="https://i.imgur.com/8NDjRov.png" />
+</center>
+<p>パラメータを注意深く選べば報告よりも良くなる.</p>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

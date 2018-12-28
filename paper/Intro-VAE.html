@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>[1807.06358] IntroVAE: Introspective Variational Autoencoders for Photographic Image Synthesis</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">[1807.06358] IntroVAE: Introspective Variational Autoencoders for Photographic Image Synthesis</h1>
+</header>
+<ul>
+<li>
+original paper: <a href=https://arxiv.org/abs/1807.06358>https://arxiv.org/abs/1807.06358</a>
+</li>
+</ul>
+<div class="is-pulled-right">
+<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#オートエンコーダ>オートエンコーダ</a> <a class='tag is-blue' href=index.html#生成モデル>生成モデル</a></p>
+</div>
+<p><span class="math inline">\(\require{AMScd}\)</span> <span class="math inline">\(\def\KL{D_{\text{KL}}}\)</span></p>
+<p>関数適用の括弧は極力省略する.</p>
+<h2 id="概要">概要</h2>
+<p>VAE を introspective にやる.</p>
+<h2 id="introvae">IntroVAE</h2>
+<h3 id="vae">VAE</h3>
+<p>VAE を思い出すと,</p>
+<p><span class="math display">\[\begin{CD}
+X @&gt;q_\phi&gt;&gt; Z @&gt;p_\theta&gt;&gt; X
+\end{CD}\]</span></p>
+<p>encoder 部分を確率分布 <span class="math inline">\(q_\phi(z|x)\)</span>, decoder 部分を確率分布 <span class="math inline">\(p_\theta(x|z)\)</span> とし, 損失関数は</p>
+<ul>
+<li><span class="math inline">\(L_{\text{AE}} = - \mathbb{E}_{z \sim q_\phi} p_\theta(x|z)\)</span></li>
+<li><span class="math inline">\(L_{\text{REG}} = \KL(q_\phi(z|x) \| p(z))\)</span></li>
+</ul>
+<p>の和. <span class="math inline">\(p(z)\)</span> は予め (普通正規分布に) 決めておく.</p>
+<h3 id="adversarial-distribution-matching">Adversarial distribution matching</h3>
+<p>VAE に GAN を足す.</p>
+<p>実際のデータ <span class="math inline">\(x\)</span> と, <span class="math inline">\(p(z)\)</span> からサンプリングした <span class="math inline">\(z&#39;\)</span> を元に生成した <span class="math inline">\(x&#39;\)</span> とで GAN をする.</p>
+<ul>
+<li>generator <span class="math inline">\(G \colon Z \to X\)</span></li>
+<li>inference model <span class="math inline">\(E \colon X \to \mathbb R\)</span>
+<ul>
+<li><span class="math inline">\(E(x) = \KL(q_\phi(z|x) \| p(z))\)</span></li>
+</ul></li>
+</ul>
+<p>を用いて以下の損失関数を設計する:</p>
+<ul>
+<li><span class="math inline">\(L_E(x,z) = E(x) + \left[ m - EGz \right]^+\)</span>
+<ul>
+<li><span class="math inline">\(\left[ \cdot \right]^+ = \max \{ 0, \cdot \}\)</span></li>
+</ul></li>
+<li><span class="math inline">\(L_G(z) = EGz\)</span></li>
+</ul>
+<p><span class="math inline">\(L_E\)</span> の 1 項目はさっきの <span class="math inline">\(L_{\text{REG}}\)</span> で, 2 項目は生成するデータの分布が真の分布と <span class="math inline">\(m\)</span> 以下しか離れてないようにするもの. ここで <span class="math inline">\(m\)</span> は正の定数.</p>
+<p>GAN の方式で従って <span class="math display">\[\min_E \mathbb{E}_{x \sim p(x), z \sim p(z)} L_E(x,z)\]</span> <span class="math display">\[\min_G \mathbb{E}_{z \sim p(z)} L_G(z)\]</span> によってそれぞれを訓練する.</p>
+<h4 id="theorem-1">Theorem 1</h4>
+<p>ナッシュ均衡に達した時点の <span class="math inline">\((E,G)\)</span> を <span class="math inline">\((E^*, G^*)\)</span> とする. また <span class="math inline">\(\forall x \in X, p(x) &gt; 0\)</span> とする. このとき, <span class="math display">\[p(x) = p(G^*(z))\]</span> <span class="math display">\[E^*(x) = \gamma; \gamma \in [0,m], \text{fixed}\]</span></p>
+<h3 id="introspective-variational-inference">Introspective variational inference</h3>
+<p>以下のように修正する:</p>
+<ul>
+<li><span class="math inline">\(L_E(x,z) = E(x) + \left[ m - EGz \right]^+ + L_{\text{AE}}(x)\)</span></li>
+<li><span class="math inline">\(L_G(z) = EGz + L_{\text{AE}}(x)\)</span></li>
+</ul>
+<p>AE で罰金項だったのが Discriminator になってる.</p>
+<figure>
+<img src="https://i.imgur.com/sxkwju9.png" />
+</figure>
+<h2 id="results">Results</h2>
+<figure>
+<img src="https://i.imgur.com/ozHK9Rp.png" />
+</figure>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

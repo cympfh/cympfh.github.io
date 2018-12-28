@@ -1,6 +1,6 @@
 % Learning Confidence for Out-of-Distribution Detection in Neural Networks
 % https://arxiv.org/abs/1802.04865
-% 機械学習 深層学習 画像認識
+% 機械学習 深層学習 分類器
 
 ## リンク
 

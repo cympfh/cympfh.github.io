@@ -1,6 +1,6 @@
 % Variational Autoencoders (VAEs)
 % https://arxiv.org/abs/1606.05908
-% 深層学習 オートエンコーダ 生成モデル
+% 深層学習 オートエンコーダ 生成モデル VAE
 
 ## index
 

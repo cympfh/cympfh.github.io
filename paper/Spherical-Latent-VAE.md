@@ -1,13 +1,13 @@
 % Spherical Latent Spaces for Stable Variational Autoencoders
 % https://arxiv.org/abs/1808.10805
-% 深層学習 オートエンコーダ 生成モデル
+% 深層学習 オートエンコーダ 生成モデル VAE
 
 $\def\vMF#1#2{\mathrm{vMF}(#1, #2)}$
 
 ## リンク
 
-- [https://arxiv.org/abs/1808.10805](https://arxiv.org/abs/1808.10805)
-- [https://github.com/jiacheng-xu/vmf_vae_nlp](https://github.com/jiacheng-xu/vmf_vae_nlp)
+- [arxiv.org/abs/1808.10805](https://arxiv.org/abs/1808.10805)
+- [github.com/jiacheng-xu/vmf_vae_nlp](https://github.com/jiacheng-xu/vmf_vae_nlp)
 
 ## 概要
 

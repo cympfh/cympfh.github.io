@@ -1,6 +1,6 @@
 % [1807.06358] IntroVAE: Introspective Variational Autoencoders for Photographic Image Synthesis
 % https://arxiv.org/abs/1807.06358
-% 深層学習 オートエンコーダ 生成モデル
+% 深層学習 オートエンコーダ 生成モデル VAE
 
 $\require{AMScd}$
 $\def\KL{D_{\text{KL}}}$

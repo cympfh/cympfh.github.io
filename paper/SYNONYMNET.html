@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>[1901.00056] SynonymNet: Multi-context Bilateral Matching for Entity Synonyms</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">[1901.00056] SynonymNet: Multi-context Bilateral Matching for Entity Synonyms</h1>
+</header>
+<ul>
+<li>
+original paper: <a href=https://arxiv.org/abs/1901.00056>https://arxiv.org/abs/1901.00056</a>
+</li>
+</ul>
+<div class="is-pulled-right">
+<p><a class='tag is-blue' href=index.html#自然言語処理>自然言語処理</a></p>
+</div>
+<h2 id="概要">概要</h2>
+<p>2つの entity (語句?) が与えられた時にそれらがシノニムかどうかを判定する. Siamese Network 的に訓練/予測で対で比較させる.</p>
+<h2 id="synonymnet">SynonymNet</h2>
+<figure>
+<img src="https://i.imgur.com/k3vGP6u.png" />
+</figure>
+<h3 id="context-retriever">Context Retriever</h3>
+<p>entity <span class="math inline">\(e\)</span> について獲得できるコンテキストの集合 <span class="math display">\[C = \{ c_0, \ldots, c_P \}\]</span> を集める. 各コンテキスト <span class="math inline">\(c_p\)</span> は単語の列 <span class="math display">\[c_p = ( w_p^0,\ldots,w_p^T )\]</span></p>
+<h3 id="confluence-context-encoder">Confluence Context Encoder</h3>
+<p>各コンテキスト <span class="math inline">\(c_p\)</span> を BiLSTM で読ませて特徴ベクトル <span class="math inline">\(h_p\)</span> を得る. コンテキストの集合 <span class="math inline">\(C\)</span> から <span class="math inline">\(H = \{h_1,\ldots,h_P\}\)</span> を得る.</p>
+<p>ある自然数 <span class="math inline">\(d\)</span> によって <span class="math inline">\(h_p \in \mathbb R^d\)</span> だとする.</p>
+<h3 id="bilateral-matching-with-leaky-unit">Bilateral Matching with Leaky Unit</h3>
+<p>エンティティ <span class="math inline">\(e\)</span> については <span class="math inline">\(H = \{h_1,\ldots,h_P\}\)</span> が, 別なエンティティ <span class="math inline">\(k\)</span> については <span class="math inline">\(G = \{g_1,\ldots,g_Q\}\)</span> が Confluence Context Encoder によって得られたとする.</p>
+<p>このときに双方向的にマッチングをしたい.</p>
+<p><span class="math inline">\(H \to G\)</span> マッチング: 各 <span class="math inline">\(h_p \in H, g_q \in G\)</span> について <span class="math display">\[m_{p \to q} = \dfrac{\exp(h_p W g_q^\top)}{\sum_{p&#39;}\exp(h_{p&#39;} W g_q^\top)}\]</span></p>
+<p><span class="math inline">\(W\)</span> は <span class="math inline">\(\mathbb R^{d \times d}\)</span> なる重み行列. この <span class="math inline">\(W\)</span> 故にこの <span class="math inline">\(m\)</span> は非対称.</p>
+<p><span class="math inline">\(H \leftarrow G\)</span> マッチング: <span class="math display">\[m_{p \leftarrow q} = \dfrac{\exp(g_q W h_p^\top)}{\sum_{q&#39;}\exp(g_{q&#39;} W h_p^\top)}\]</span></p>
+<p>これらの2種類の <span class="math inline">\(m\)</span> は要するに <span class="math inline">\(HWG^\top\)</span> の softmax として得られる.</p>
+<p>さらに一部の context は uninformative であるから, leaky unit に掛ける. これは <span class="math inline">\(l \in \mathbb R^{1 \times d}\)</span> によって (簡単のためにゼロベクトルに固定する),</p>
+<p><span class="math display">\[m_{l \to q} = \dfrac{\exp(l W g_q^\top)}{\exp(l W g_q^\top) + \sum_{p&#39;}\exp(h_{p&#39;} W g_q^\top)}\]</span></p>
+<p>とする. つまり softmax にもう1クラスを追加したもの. さっきの <span class="math inline">\(m_{p \to q}\)</span> も次のように修正する.</p>
+<p><span class="math display">\[m_{p \to q} = \dfrac{\exp(h_p W g_q^\top)}{\exp(l W g_q^\top) + \sum_{p&#39;}\exp(h_{p&#39;} W g_q^\top)}\]</span></p>
+<h3 id="context-aggregation">Context Aggregation</h3>
+<p><span class="math inline">\(H\)</span> を畳み込む.</p>
+<ul>
+<li><span class="math inline">\(a_p = \max \{ m_{p \leftarrow q} \mid q \in Q \}\)</span></li>
+<li><span class="math inline">\(a_q = \max \{ m_{p \to q} \mid p \in P \}\)</span></li>
+</ul>
+<p>を重みにして,</p>
+<ul>
+<li><span class="math inline">\(\bar{h} = \sum_p a_p h_p\)</span></li>
+<li><span class="math inline">\(\bar{g} = \sum_q a_q g_q\)</span></li>
+</ul>
+<blockquote>
+<p>実質 Attention?</p>
+</blockquote>
+<h3 id="training">Training</h3>
+<p>Siamese または Triplet 的に学習する.</p>
+<h4 id="siamese-方式-pairwise">Siamese 方式 (Pairwise)</h4>
+<p>入力のエンティティ <span class="math inline">\(e,k\)</span> がシノニムである場合とでない場合のための損失関数をそれぞれ次のようにする.</p>
+<ul>
+<li><span class="math inline">\(L_+(e,k) = \dfrac{1}{4} \left( 1 - s(\bar{h} - \bar{g}) \right)^2\)</span></li>
+<li><span class="math inline">\(L_-(e,k) = \left( [ s(\bar{h} - \bar{g}) ]^+ \right)^2\)</span></li>
+</ul>
+<p>ここで <span class="math inline">\(s\)</span> は適当な類似度関数. また <span class="math inline">\([ \cdot ]^+ = \max(0, \cdot)\)</span>.</p>
+<p>全体としては <span class="math inline">\(y \in \{0,1\}\)</span> として <span class="math display">\[\mathcal L_s = y L_+ + (1-y) L_-\]</span> とする.</p>
+<h4 id="triplet-方式">Triplet 方式</h4>
+<p>エンティティ <span class="math inline">\(e\)</span> とそれとシノニムである <span class="math inline">\(k_+\)</span> と, でない <span class="math inline">\(k_-\)</span> とを用意して, それらから <span class="math inline">\(\bar{h}, \bar{g}_-, \bar{g}_+\)</span> が得られた時, <span class="math display">\[\mathcal L_t = [ s(\bar{h}, \bar{g}_-) - s(\bar{h}, \bar{g}_+) + m ]^+\]</span> とする.</p>
+<h3 id="inference">Inference</h3>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

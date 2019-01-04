@@ -97,6 +97,7 @@
 - [二項係数](int.binom.html)
 - [離散対数](int.dislog.html)
 - [完全順列 (撹乱順列)](int.derangement.html)
+- [オイラーの Phi 関数](int.euler_phi.html)
 
 ## 素数
 - [エラトステネスの篩](prime.sieve.html)

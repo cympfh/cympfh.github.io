@@ -11,7 +11,7 @@ edit:
 	bash script/edit.sh
 
 new:
-	bash script/edit.sh new
+	bash script/edit.sh "*new"
 
 git: index posts
 	git add --all

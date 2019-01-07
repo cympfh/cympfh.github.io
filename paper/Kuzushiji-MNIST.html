@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>[1812.01718] Deep Learning for Classical Japanese Literature</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">[1812.01718] Deep Learning for Classical Japanese Literature</h1>
+</header>
+<ul>
+<li>
+original paper: <a href=https://arxiv.org/abs/1812.01718>https://arxiv.org/abs/1812.01718</a>
+</li>
+</ul>
+<div class="is-pulled-right">
+<p><a class='tag is-blue' href=index.html#データセット>データセット</a> <a class='tag is-blue' href=index.html#画像認識>画像認識</a></p>
+</div>
+<h2 id="リンク">リンク</h2>
+<ul>
+<li><a href="https://github.com/rois-codh/kmnist">github:rois-codh/kmnist</a></li>
+</ul>
+<h2 id="概要">概要</h2>
+<p>もっと大きなベンチマークが必要. Kuzushiji-MNIST はくずし字 (cursive Japanese) を集めたデータセット. さらに大きなデータセットとして Kuzushiji-49 と Kuzushiji-Kanji も用意した.</p>
+<h2 id="データセット">データセット</h2>
+<p>Kuzushiji-MNIST は MNIST の置き換え, Kuzushiji-49 は画像がより大きく, 48の平仮名と繰り返し記号の文字がインバランスに含まれるもの, Kuzushiji-Kanji は 3832 種の漢字がインバランスに含まれるもの. 後者2つについては文字の頻度は実際のテキストでの頻度のままで調整していない.</p>
+<h3 id="kuzushiji-mnist">Kuzushiji-MNIST</h3>
+<figure>
+<img src="https://i.imgur.com/R29naXa.png" />
+</figure>
+<ul>
+<li>10 classes (変体仮名, variant kana)</li>
+<li>grayscale 28x28</li>
+</ul>
+<h3 id="kuzushiji-49">Kuzushiji-49</h3>
+<figure>
+<img src="https://i.imgur.com/Onj4k4E.png" />
+</figure>
+<ul>
+<li>49 classes (266,407 images)</li>
+<li>grayscale 28x28</li>
+</ul>
+<h3 id="kuzushiji-kanji">Kuzushiji-Kanji</h3>
+<ul>
+<li>3832 classes (140,426 images)</li>
+<li>grayscale 64x64</li>
+</ul>
+<h2 id="experiments">Experiments</h2>
+<h3 id="classification-baselines">Classification Baselines</h3>
+<p>Kuzushiji-MNIST と -49 でベースラインを作った.</p>
+<p>Kuzushiji-MNIST は98%とかそのくらい.</p>
+<h3 id="domain-transfer-from-kuzushiji-to-modern-kanji">Domain Transfer from Kuzushiji to Modern Kanji</h3>
+<p>くずし字を現代風の普通の漢字に画像として変換するタスクをやった. 結構出来てる.</p>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

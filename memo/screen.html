@@ -57,10 +57,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h1 class="title">GNU screen</h1>
 </header>
 <div class="is-pulled-right">
-<p><a class='tag is-green' href=index.html#linux>linux</a> <a class='tag is-green' href=index.html#terminal>terminal</a></p>
+<p><a class='tag is-green' href=index.html#linux>linux</a> <a class='tag is-green' href=index.html#terminal>terminal</a> <a class='tag is-green' href=index.html#ssh>ssh</a></p>
 </div>
 <p>ターミナルの様子をスクリーンショットやスニペットで貼りますが、 &quot;   &quot; (空白3つ) が私のプロンプトです.</p>
-<h2 id="日本語文字化け">日本語文字化け</h2>
+<h2 id="index">index</h2>
+<div id="toc">
+
+</div>
+<h2 id="日本語の文字化け">日本語の文字化け</h2>
 <p>たぶん <code>LC_ALL</code> が正しく設定されてない.</p>
 <p>例えば素の状態だと <code>LC_ALL</code> が空の場合がある.</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="va">LC_ALL=</span>
@@ -84,54 +88,148 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="va">LC_ALL=</span>
    <span class="ex">screen</span> -U</code></pre></div>
 <p>これでも問題ない. 既に起動してしまった screen セッションにも <code>-U</code> 付きでアタッチすれば utf-8 モードで入れる.</p>
+<h2 id="ssh-パスフレーズの省略-ssh-agent">ssh パスフレーズの省略 (ssh-agent)</h2>
+<p>(screen とは直接関係なく) <code>ssh-agent</code> コマンドを用いると, パスフレーズを一回入力することで, 次回から入力が省略できる. まず, そのよくある使い方を2通り示す. そして screen でこれをより便利に使うための手法を1つ提案する.</p>
+<h3 id="ssh-agent">ssh-agent</h3>
+<p>一つのターミナルの中で</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="bu">eval</span> <span class="va">$(</span><span class="fu">ssh-agent</span><span class="va">)</span>
+   <span class="fu">ssh-add</span> ~/.ssh/id_rsa</code></pre></div>
+<p>とすればパスフレーズの入力が促され, <code>~/.ssh/id_rsa</code> をそのターミナルの中で使う場合にはパスフレーズの入力が省略される. ただし新しく開いたターミナルでは有効ではない.</p>
+<h3 id="ssh-agent-terminal">ssh-agent terminal</h3>
+<p><code>ssh-agent</code> に引数を渡して起動すると, 引数をコマンドとして実行する.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="fu">ssh-agent</span> screen</code></pre></div>
+<p>とすれば, <code>screen</code> が立ち上がる. この screen の中では ssh-agent が有効になっており, どれかのウィンドウの中で <code>ssh-add</code> すれば, その screen の中ではずっと有効である.</p>
+<p>ただし, 別の新しく立ち上げた screen では無効だし, また一度デタッチしてまたアタッチし直した以降も無効である. この問題は以下で解決される.</p>
+<h3 id="提案-ssh_auth_sock-を使い回す">提案: SSH_AUTH_SOCK を使い回す</h3>
+<p>そもそも ssh-agent が有効な範囲がある理由をを知るには <code>ssh-agent</code> が何をやっているかを知る必要がある.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="fu">ssh-agent</span>
+<span class="va">SSH_AUTH_SOCK=</span>/var/folders/kp/xctwhj0d7p1_pfrdcx03l46w_vnlbk/T//ssh-LAbAHJgJ4olH/agent.34946; <span class="bu">export</span> <span class="va">SSH_AUTH_SOCK</span>;
+<span class="va">SSH_AGENT_PID=</span>34947; <span class="bu">export</span> <span class="va">SSH_AGENT_PID</span>;
+<span class="bu">echo</span> Agent pid 34947<span class="kw">;</span></code></pre></div>
+<p>要は <code>$SSH_AUTH_SOCK</code> と <code>$SSH_AGENT_PID</code> という2つの環境変数をセットしてるだけらしい. ならば新しいターミナルでもいちいちこの2つの変数をセットすれば良い. ただし <code>ssh-agent</code> を改めて叩くと新しい値が発行されるだけなので, 前に発行した値をどこかに保存して, それを読み込めばよい. ちなみにどうも <code>$SSH_AUTH_SOCK</code> だけで十分でもう一方は無くても問題ないらしい.</p>
+<p>例えば以下を <code>~/.bashrc</code> (or <code>~/.zshrc</code>) に書いておくとする.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">if</span><span class="bu"> [</span> <span class="ot">-f</span> ~/.ssh/auth.sock<span class="bu"> ]</span>; <span class="kw">then</span>
+    <span class="va">SSH_AUTH_SOCK=$(</span><span class="fu">cat</span> ~/.ssh/auth.sock<span class="va">)</span>
+<span class="kw">else</span>
+  <span class="bu">eval</span> <span class="va">$(</span><span class="fu">ssh-agent</span><span class="va">)</span>
+  <span class="fu">ssh-add</span> ~/.ssh/id_rsa
+  <span class="bu">echo</span> <span class="va">$SSH_AUTH_SOCK</span> <span class="op">&gt;</span> ~/.ssh/auth.sock
+<span class="kw">fi</span></code></pre></div>
+<p>これは初回時には強制的に <code>ssh-agent</code> を呼んで, 発行された <code>$SSH_AUTH_SOCK</code> を適当に保存しておく. 保存されたファイルがある場合にはそれを読んでセットする.</p>
+<p>私は else 節を関数に書き出して, 調子が悪くなったら <code>fuck-ssh</code> コマンドを叩くようにしている.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">if</span><span class="bu"> [</span> <span class="ot">-f</span> ~/.ssh/auth.sock<span class="bu"> ]</span>; <span class="kw">then</span>
+    <span class="va">SSH_AUTH_SOCK=$(</span><span class="fu">cat</span> ~/.ssh/auth.sock<span class="va">)</span>
+<span class="kw">else</span>
+    <span class="bu">echo</span> NO SSH_AUTH_SOCK FOUND
+<span class="kw">fi</span>
+<span class="kw">function</span><span class="fu"> fuck-ssh()</span> <span class="kw">{</span>
+  <span class="bu">eval</span> <span class="va">$(</span><span class="fu">ssh-agent</span><span class="va">)</span>
+  <span class="fu">ssh-add</span> ~/.ssh/id_rsa
+  <span class="bu">echo</span> <span class="va">$SSH_AUTH_SOCK</span> <span class="op">&gt;</span> ~/.ssh/auth.sock
+<span class="kw">}</span></code></pre></div>
 
 <!--
 
-  HTML として pandoc -B で include する.
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
 
-  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
-  markdown で書いてるだろうから例として次のような段落を書けばよい.
+    <div id=toc></div>
 
-```
-## INDEX
-<div id=toc></div>
-```
 
-  used in
-  - /memo/gnuplot
-  - /memo/linux
-  - /memo/imagemagick
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
 
 -->
 <script>
 (function() {
-  var sections = document.getElementsByTagName('h2');
-  var i;
-  var OL = document.createElement('ol');
-  for (i=0; i < sections.length; ++i) {
-    var LI = document.createElement('li');
-    var A = document.createElement('a');
-    A.innerHTML = sections[i].innerHTML;
-    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
-    A.href = '#' + i;
-    LI.appendChild(A);
-    OL.appendChild(LI);
 
-    var PREF = document.createElement('a');
-    PREF.name = i;
-    sections[i].appendChild(PREF);
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
   }
 
-  var done = false;
-  function work() {
-    if (done) return;
-    if ( document.getElementById('toc') === null) return; // no toc element
-    document.getElementById('toc').appendChild(OL);
-    done = true;
-  };
+  function level1() {
 
-  window.onload = work;
-  setTimeout(work,800);
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
 </body>

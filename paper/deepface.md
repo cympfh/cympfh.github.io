@@ -1,6 +1,6 @@
 % DeepFace: Closing the Gap to Human-Level Performance in Face Verification
 % https://www.cs.toronto.edu/~ranzato/publications/taigman_cvpr14.pdf
-% 顔認証 FAIR
+% 顔認証
 
 ## 概要
 

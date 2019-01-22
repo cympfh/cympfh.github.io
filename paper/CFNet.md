@@ -1,6 +1,6 @@
 % Hybrid Recommender System based on Autoencoders
 % https://arxiv.org/abs/1606.07659
-% 推薦システム 深層学習
+% 深層学習 推薦システム オートエンコーダ
 
 ## src
 

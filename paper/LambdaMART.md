@@ -1,6 +1,6 @@
 % From RankNet to LambdaRank to LambdaMART: An Overview - Microsoft Research
 % https://www.microsoft.com/en-us/research/publication/from-ranknet-to-lambdarank-to-lambdamart-an-overview/#
-% ランク学習
+% 順序学習
 
 ## 概要
 

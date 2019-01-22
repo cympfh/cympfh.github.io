@@ -1,6 +1,6 @@
 % Categorical Reparameterization with Gumbel-Softmax
 % https://arxiv.org/abs/1611.01144
-% 深層学習 sampling
+% 深層学習
 
 ## 概要
 

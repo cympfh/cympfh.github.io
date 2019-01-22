@@ -1,6 +1,6 @@
 % Combining Monads
 % http://homepages.inf.ed.ac.uk/wadler/papers/monadscomb/monadscomb.ps
-% 計算
+% 計算 圏論
 
 ## 論文リンク
 

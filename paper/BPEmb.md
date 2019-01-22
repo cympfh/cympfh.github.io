@@ -1,6 +1,6 @@
 % BPEmb: Tokenization-free Pre-trained Subword Embeddings in 275 Languages
 % https://arxiv.org/abs/1710.02187
-% 自然言語処理
+% 自然言語処理 文分散表現
 
 多くの言語についてサブワードとその意味ベクトル (BPE; Byte-Pair Encoding) を学習したモデルを公開するもの.
 [bheinzerling/bpemb](https://github.com/bheinzerling/bpemb)

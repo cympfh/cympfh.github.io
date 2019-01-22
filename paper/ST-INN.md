@@ -1,6 +1,6 @@
 % [1805.06447] Spatial Transformer Introspective Neural Network
 % https://arxiv.org/abs/1805.06447
-% 深層学習 画像認識 データ水増し
+% 深層学習 画像認識 データ水増し 正則化
 
 誤植っぽいのが多い?
 pdfのスタイルも悪いし、読みにくい.

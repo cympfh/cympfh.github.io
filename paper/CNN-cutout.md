@@ -1,6 +1,6 @@
 % [1708.04552] Improved Regularization of Convolutional Neural Networks with Cutout
 % https://arxiv.org/abs/1708.04552
-% 深層学習 画像認識 データ水増し
+% 深層学習 画像認識 データ水増し 正則化
 
 ## 概要
 

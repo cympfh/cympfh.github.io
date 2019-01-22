@@ -1,6 +1,6 @@
 % [1811.09030] Data Augmentation using Random Image Cropping and Patching for Deep CNNs
 % https://arxiv.org/abs/1811.09030
-% データ水増し 画像認識
+% 深層学習 画像認識 データ水増し 正則化
 
 Random Image Cropping And Patching (RICAP) という画像認識のためのデータ水増し手法を提案する.
 方法は以下の画像の通り

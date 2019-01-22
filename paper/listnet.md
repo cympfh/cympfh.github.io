@@ -1,6 +1,6 @@
 % Learning to Rank: From Pairwise Approach to Listwise Approach
 % http://www.machinelearning.org/proceedings/icml2007/papers/139.pdf
-% ランク学習
+% 順序学習
 
 ## 概要
 

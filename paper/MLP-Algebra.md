@@ -1,6 +1,6 @@
 % Multilayer Perceptron Algebra
 % https://arxiv.org/abs/1701.04968
-% MLP 機械学習
+% 深層学習 代数
 
 ## INDEX
 <div id=toc></div>

@@ -1,6 +1,6 @@
 % YOLOv3
 % https://pjreddie.com/media/files/papers/YOLOv3.pdf
-% 物体検出 読みかけ
+% 物体検出
 
 # links
 

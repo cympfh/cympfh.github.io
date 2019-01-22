@@ -1,6 +1,6 @@
 % Lifting Layers: Analysis and Applications
 % https://arxiv.org/abs/1803.08660
-% 深層学習
+% 深層学習 活性化関数
 
 ## 概要
 

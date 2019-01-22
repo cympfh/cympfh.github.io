@@ -1,11 +1,13 @@
 % Deep Autoencoder Topic Model for Short Texts
 % https://www.prhlt.upv.es/workshops/iwes15/pdf/iwes15-kumar-d'haro.pdf
-% 自然言語処理 深層学習 トピックモデル
+% 自然言語処理 深層学習 トピックモデル オートエンコーダ
+
+## 概要
 
 BoW からディープにトピックモデルをする話
 
 - LDA よりも Deep な Autoencoder のが Average Topic Coherence で良かったという主張
-    - 入力は BOW
+    - 入力は BoW
         - 1文あたり20words程度
     - Deep Autoencoder
         - RBM で pretraining

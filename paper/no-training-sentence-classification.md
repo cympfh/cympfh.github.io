@@ -1,6 +1,6 @@
 % No Training Required: Exploring Random Encoders for Sentence Classification
 % https://openreview.net/forum?id=BkgPajAcY7
-% 自然言語処理
+% 自然言語処理 文分散表現
 
 ## 概要
 

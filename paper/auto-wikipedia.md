@@ -1,10 +1,10 @@
 % Automatically Generating Wikipedia Artciles: A Structure-Aware Approach (Sauper+, 2009)
 % http://www.aclweb.org/anthology/P09-1024
-% 自然言語処理 自然言語生成 wikipedia 順序学習
+% 自然言語処理 自然言語生成 順序学習
 
 ##repo
 
-- [https://github.com/csauper/wikipedia](https://github.com/csauper/wikipedia)
+- [github.com/csauper/wikipedia](https://github.com/csauper/wikipedia)
 
 ## Goal
 
@@ -39,9 +39,9 @@ $$\text{[Diagnosis, Causes, Symptoms, Treatment]}$$
 
 ## 生成物
 
-- [Automatically generated Wikipedia articles: http://people.csail.mit.edu/csauper/?page_id=64](http://people.csail.mit.edu/csauper/?page_id=64)
+- [Automatically generated Wikipedia articles: people.csail.mit.edu/csauper/?page_id=64](http://people.csail.mit.edu/csauper/?page_id=64)
 - 例えば
-    - [3-M Syndrome: https://en.wikipedia.org/wiki/3-M_syndrome](https://en.wikipedia.org/wiki/3-M_syndrome)
+    - [3-M Syndrome: en.wikipedia.org/wiki/3-M_syndrome](https://en.wikipedia.org/wiki/3-M_syndrome)
 
 ## 生成物
 

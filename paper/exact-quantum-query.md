@@ -1,6 +1,6 @@
 % Exact Quantum Query Complexity of EXACT and THRESHOLD
 % http://arxiv.org/abs/1302.1235
-% 量子計算
+% 計算 量子計算
 
 qbit 列 $\{0, 1\}^n$ を入力とする、
 二つの述語

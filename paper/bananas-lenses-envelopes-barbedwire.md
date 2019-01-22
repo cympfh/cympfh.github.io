@@ -1,6 +1,6 @@
 % Functional Programming with Bananas, Lenses, Envelopes and Barbed Wire
 % https://maartenfokkinga.github.io/utwente/mmf91m.pdf
-% プログラミング 圏論
+% 計算 圏論
 
 $\require{AMScd}$
 $\def\banana#1{(\!|#1|\!)}$

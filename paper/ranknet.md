@@ -1,6 +1,6 @@
 % Learning to Rank (RankNet)
 % http://icml.cc/2015/wp-content/uploads/2015/06/icml_ranking.pdf
-% ランク学習
+% 順序学習
 
 ## ランク学習 (ランキング学習)
 

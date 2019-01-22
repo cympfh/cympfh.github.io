@@ -1,6 +1,6 @@
 % [1901.00056] SynonymNet: Multi-context Bilateral Matching for Entity Synonyms
 % https://arxiv.org/abs/1901.00056
-% 自然言語処理
+% 自然言語処理 類似度学習
 
 ## 概要
 

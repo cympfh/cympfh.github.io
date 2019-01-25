@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Tue Jan 22 2019</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='../../index.html'><i class="fa fa-save" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">Tue Jan 22 2019</h1>
+</header>
+<h2 id="自然な射の逆射は自然">自然な射の逆射は自然</h2>
+<p>自然な射, 要するに自然変換があるとする. <span class="math display">\[\alpha : F \Rightarrow G\]</span> これが自然であるとは, 任意の射 <span class="math inline">\(x : A \to B\)</span> について, 次が可換になるということ.</p>
+<p><span class="math inline">\(\require{AMScd}\)</span> <span class="math display">\[\begin{CD}
+FA @&gt;\alpha_A&gt;&gt; GA \\
+@VFxVV @VGxVV \\
+FB @&gt;\alpha_B&gt;&gt; GB
+\end{CD}\]</span></p>
+<p>この図式で <span class="math inline">\(\alpha\)</span> が2度登場するが自然射はこのように, 任意の対象 <span class="math inline">\(X\)</span> に対して <span class="math display">\[\alpha_X : FX \to GX\]</span> を与える.</p>
+<p>さて, 今, 任意の <span class="math inline">\(X\)</span> に対して <span class="math inline">\(\beta_X = \alpha_X^{-1}\)</span> なる逆射を与える <span class="math inline">\(\beta\)</span> があるとする. これは自然な射だろうか?</p>
+<p>先の <span class="math inline">\(\alpha\)</span> に関する図式を等式に書き直すと, <span class="math display">\[Gx \alpha_A = \alpha_B Fx.\]</span> この左に <span class="math inline">\(\beta_B\)</span> を掛けて右から <span class="math inline">\(\beta_A\)</span> を掛けると, <span class="math display">\[\beta_B Gx \alpha_A \beta_A = \beta_B \alpha_B Fx \beta_A.\]</span> <span class="math inline">\(\alpha\)</span> と <span class="math inline">\(\beta\)</span> で添字が揃ってて隣り合ってる部分は打ち消して良いので (逆射なので), <span class="math display">\[\beta_B Gx = Fx \beta_A.\]</span></p>
+<p>これを図式に書き直すと, つまり下が可換ということ:</p>
+<p><span class="math inline">\(\require{AMScd}\)</span> <span class="math display">\[\begin{CD}
+FA @&lt;\beta_A&lt;&lt; GA \\
+@VFxVV @VGxVV \\
+FB @&lt;\beta_B&lt;&lt; GB
+\end{CD}\]</span></p>
+<p>これはつまり <span class="math inline">\(\beta\)</span> が <span class="math inline">\(G \Rightarrow F\)</span> なる自然変換であることを言っている. というわけで, 自然な射の逆射は自然.</p>
+<p>圏論をやってると具体例なんてどうでもいいという気持ちになってきた.</p>
+<h2 id="行列や多重配列のことをテンソルと呼ぶのやめろ">行列や多重配列のことをテンソルと呼ぶのやめろ</h2>
+<p>機械学習をやってる人たちの大部分は線形代数をまともに習得していないと思う. 特にテンソルという用語を「強い行列」くらいのつもりで使っている. 行列が実数を長方形のように並べたものであるのに対して, 実数をちょうど直方体のようにに並べたもののことを3階テンソルなどと呼んでいる. そして彼らに言わせれば行列とは 2階テンソルであるらしい. どういうことなのだろうか.</p>
+<h3 id="ベクトルが何かを分かってない">ベクトルが何かを分かってない?</h3>
+<p>ベクトルとは行ベクトルとか列ベクトルのように, 実数を (有限個) 一列に並べたもののこと, ではない. それは数ベクトルと読んで1つの表現方法に過ぎない. 普通にはベクトル空間をまず定義して, その元のことをベクトルと呼ぶだろう. だから例えば級数関数もベクトルだし, 行列もベクトルである. もちろん構造 (足し算とスカラー倍) を定める必要があるけど. 別に行列はベクトルの一般化ではない.</p>
+<h3 id="もちろんテンソルが何かを分かっていない">もちろんテンソルが何かを分かっていない?</h3>
+<p><a href="https://en.wikipedia.org/wiki/Tensor">wiki/Tensor</a> の &quot;As multilinear maps&quot; を使えば, ベクトル空間 <span class="math inline">\(V\)</span> の上の <span class="math inline">\((r,s)\)</span> 型テンソルとは, <span class="math display">\[V^* \times \cdots \times V^* \times V \times \cdots V \to \mathbb R\]</span> なる多重線形写像のこと. ここで左側には <span class="math inline">\(V^*\)</span> が <span class="math inline">\(r\)</span> 個, <span class="math inline">\(V\)</span> が <span class="math inline">\(s\)</span> 個並んでいるとする. また <span class="math inline">\(\mathbb R\)</span> は実数のこと (他の体を使ってもよい).</p>
+<p><span class="math inline">\(V\)</span> に対して <span class="math inline">\(V^*\)</span> が何だったかと言えば, <span class="math inline">\(V \to \mathbb R\)</span> なる線形写像全体のことで双対空間と呼ばれるものであった. 性質として, <span class="math inline">\(V\)</span> が <span class="math inline">\(n\)</span> 次元ベクトル空間であれば, <span class="math inline">\(V^*\)</span> もまた <span class="math inline">\(n\)</span> 次元ベクトル空間である. ただしそれらは同型なものでは無い (全然違う). 双対の双対は元と同型である (<span class="math inline">\((V^*)^* \simeq V\)</span>).</p>
+<p>テンソルは単なる写像ではなくて線形写像なので, 自由度は全然なくて, 要は引数側での基底についての値だけ定めれば写像全体が定まる. <span class="math inline">\(V\)</span> の基底を <span class="math display">\[e_1,\ldots,e_n\]</span> とする. ここから導かれる <span class="math inline">\(V^*\)</span> の双対基底を <span class="math display">\[f_1,\ldots,f_n\]</span> とする.</p>
+<p>念の為. 双対基底とは <span class="math inline">\(f_i(e_j) = \delta_{i,j}\)</span> (クロネッカーのデルタ) なるもののことで, これは確かに双対空間の基底になっている.</p>
+<p>というわけで, <span class="math inline">\(\Gamma\)</span> が <span class="math inline">\(V\)</span> の上の <span class="math inline">\((r,s)\)</span> 型テンソルだとすると, <span class="math inline">\(\Gamma\)</span> の形は, <span class="math display">\[(f_{i_1}, \ldots, f_{i_r}, e_{j_1}, \ldots, e_{j_s})\]</span> の値を定めれば決まる. (一般の引数についてはこれの線形和で値が決まるので.) では上の引数に対する値を <span class="math display">\[\Gamma^{i_1, \ldots, i_r}_{j_1, \ldots, j_s}\]</span> と書くことにする. この添字の全通り, <span class="math display">\[n^{r+s}\]</span> 個の値を定めれば <span class="math inline">\(\Gamma\)</span> は決まる. ここで <span class="math inline">\(r+s\)</span> のことを <span class="math inline">\(\Gamma\)</span> の階 (rank) という.</p>
+<p>だから単に <span class="math inline">\(m\)</span> 階のテンソルと言われても <span class="math inline">\(r=0,s=m\)</span> の場合もあれば, <span class="math inline">\(r=1,s=m-1\)</span> の場合もあるわけだ.</p>
+<p>例えば 2 階テンソルは <span class="math inline">\(n^2\)</span> 個の値を定めれば決まる. <span class="math inline">\(n^2\)</span> 個の値は縦に <span class="math inline">\(n\)</span> 個, 横に <span class="math inline">\(n\)</span> 個, 正方形みたいに数を並べれば表現できる. 仮に <span class="math inline">\((0,2)\)</span> 型だとして:</p>
+<p><span class="math display">\[\left[\begin{array}{ccc}
+\Gamma_{1,1} &amp; \cdots &amp; \Gamma_{1,n} \\
+\vdots &amp; &amp; \vdots \\
+\Gamma_{n,1} &amp; \cdots &amp; \Gamma_{n,n} \\
+\end{array}\right]\]</span></p>
+<p>というわけで <span class="math inline">\(n \times n\)</span> 行列として表現できる. <span class="math inline">\(n\)</span> 次元ベクトルの上の2階テンソル全体は <span class="math inline">\(n \times n\)</span> 行列全体と同型であることが分かる.</p>
+<p>同様に <span class="math inline">\(3\)</span> 階テンソルは <span class="math inline">\(n^3\)</span> 個の値を定めれば決まるので, 数を立方体のように書けば表現できる...</p>
+<p>そこまではいいが, これはテンソルを正方行列 (や立方体行列) で表現できることを言ってるだけで, 逆はわからない. 例えば正方ではない行列をどうやってテンソルで表現するか? 自明な方法としては, その形の行列全体を一個のベクトル空間 (例えば <span class="math inline">\(\mathbb R^{n \times m}\)</span>) と思って, その上の <span class="math inline">\((0,1)\)</span> 型テンソルと言うことは出来る. …だから何だ.</p>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

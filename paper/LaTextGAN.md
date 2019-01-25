@@ -1,6 +1,6 @@
 % [1810.06640] Adversarial Text Generation Without Reinforcement Learning (LaTextGAN)
 % https://arxiv.org/abs/1810.06640
-% 自然言語生成 オートエンコーダ 生成モデル
+% 自然言語生成 オートエンコーダ 生成モデル GAN
 
 ## 概要
 

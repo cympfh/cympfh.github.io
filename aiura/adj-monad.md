@@ -199,7 +199,7 @@ $$\begin{align*}
 
 > $\mu_X = 1_{UFX}^\sharp = U(\Psi 1_{UFX})$ によってモナドでもある.
 
-## 例
+## 例 - リストモナド
 
 定番の例として自由関手と忘却関手.
 ここでは集合の圏 Sets と群からなる圏 Gr を考える.
@@ -219,9 +219,27 @@ $$UFX = \{ \epsilon, a, b, ab, ba, a^2b, aba, \ldots \}$$
 これは, 要素が $a,b$ からなる文字列のこと.
 あるいはリストのこと.
 
+## 例 - 状態モナド
+
+[状態モナド](https://wiki.haskell.org/State_Monad) もやはり随伴の組み合わせで定めることができて
+$$- \times A \dashv (-)^A$$
+を使う (参考: [冪が随伴であること](power-eval.html)).
+これによって
+$T_A = (- \times A)^A$
+がモナドであることがわかる.
+
+随伴の対応を
+$$\Phi \colon \Hom(X \times A, Y) \to \Hom(X, Y^A)$$
+とする.
+
+$\eta$ (いわゆる return) は,
+$$\eta_X \colon X \to (X \times A)^A$$
+$$\eta_X = \Phi(1_{X \times A})$$
+$$\eta_X(x) = (a \mapsto (x, a))$$
+で与えられる.
+
 以上.
 
 ---
 
-他の例を知りたい.
 逆に任意のモナドは自明でない随伴に分解出来る?

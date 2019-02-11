@@ -24,7 +24,7 @@ write-item() {
                     <p class="date">$date</p>
                     <p class="abst">$(grep '^## ' "$MD" | sed 's,^## ,,; s,$,/,')</p>
                     <p class="tags">
-    $( echo "$tags" | awk '{ for (i=1; i<=NF; i++) print "<a href=\"#"$i"\" class=\"tag is-red is-link\">#"$i"</a>" }' )
+    $( echo "$tags" | awk '{ for (i=1; i<=NF; i++) print "<a href=\"#"$i"\" class=\"tag is-red is-link\">"$i"</a>" }' )
                     </p>
                 </div>
             </div>

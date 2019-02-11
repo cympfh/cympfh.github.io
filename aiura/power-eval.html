@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>対象の冪と eval 射</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-stumbleupon" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">対象の冪と eval 射</h1>
+</header>
+<p class="date" style="text-align: right">
+2019-02-11 (Mon.)
+</p>
+<div class="is-pulled-right">
+<p><a class='tag is-red' href=index.html#圏論>圏論</a></p>
+</div>
+<h2 id="概要">概要</h2>
+<p>対象の冪を定義し eval 射との関係を見る.</p>
+<h2 id="関連">関連</h2>
+<p>昔に層の場合の冪や eval 射をやった: <a href="sheaf-eval.html">sheaf-eval</a>.</p>
+<h2 id="諸定義">諸定義</h2>
+<h3 id="対象の冪">対象の冪</h3>
+<p>随伴を使って冪を定義をする.</p>
+<p>圏 <span class="math inline">\(\mathcal C\)</span> とその対象 <span class="math inline">\(A \in \mathcal C\)</span> について, <span class="math inline">\(- \times A\)</span> なる関手 <span class="math inline">\(\mathcal C \to \mathcal C\)</span> を左随伴にするような関手 <span class="math display">\[P^A \colon \mathcal C \to \mathcal C\]</span> があるとする. このとき <span class="math inline">\(B \in A\)</span> について <span class="math inline">\(P^A(B)\)</span> を <span class="math inline">\(B^A\)</span> と書いて, これを <strong>冪</strong> (冪対象) と呼ぶ.</p>
+<blockquote>
+<p>このように <span class="math inline">\(-\)</span> を引数のためのプレースホルダーとして用いて無名関数を表現している. つまり <span class="math inline">\(- \times A\)</span> というのは引数を1つ取って <span class="math inline">\(-\)</span> のところに入れるという関数である. Scala で言うアンダースコア ( <code>_</code> ). だから例えば上で出てきた <span class="math inline">\((- \times A)\)</span> というのは, <span class="math inline">\(B\)</span> を受け取って <span class="math inline">\(B \times A\)</span> を返すモノである. ただし射については註意が必要で射 <span class="math inline">\(f\)</span> を <span class="math inline">\(f \times 1_A\)</span> に写す.</p>
+</blockquote>
+<p>関手 <span class="math inline">\(P^A\)</span> のことはこれ以降 <span class="math inline">\((-)^A\)</span> と書く. <span class="math display">\[- \times A \dashv (-)^A\]</span></p>
+<p>以上が冪の定義.</p>
+<h4 id="transpose">transpose</h4>
+<p>ところで随伴 <span class="math inline">\((\dashv)\)</span> というのは, 任意の <span class="math inline">\(X,Y \in \mathcal C\)</span> について次のような同型が自然に成り立つことだった. <span class="math display">\[\mathcal C(X \times A, Y) \simeq \mathcal C(X, Y^A)\]</span></p>
+<p>この対応を <span class="math inline">\(\hat{ }\)</span> で表すことにする. 即ち左辺から取った射 <span class="math inline">\(f\)</span> に右辺で対応するものを <span class="math inline">\(\hat{f}\)</span> と書くし, 右辺で取った <span class="math inline">\(g\)</span> に左辺で対応するものを <span class="math inline">\(\hat{g}\)</span> と書く. 特に <span class="math inline">\(\hat{\hat{f}} = f\)</span> であることに註意 (一対一対応なので).</p>
+<p>この <span class="math inline">\(\hat{f}\)</span> のことを <span class="math inline">\(f\)</span> の <strong>transpose</strong> と呼ぶそう.</p>
+<h3 id="eval-射">eval 射</h3>
+<p>随伴性より <span class="math display">\[\mathcal C(Y^A \times A, Y) \simeq \mathcal C(Y^A, Y^A)\]</span> である. 右辺には <span class="math inline">\(1_{Y^A}\)</span> があるのでこれの左辺で対応する射を <span class="math display">\[\def\eval{\mathrm{eval}}\eval \colon Y^A \times A \to Y\]</span> <span class="math display">\[\eval = \hat{1}\]</span> と定義する.</p>
+<blockquote>
+<p>Sets とかで言えば, 要は eval とは関数適用 (apply) のことに他ならない. 冪対象 <span class="math inline">\(B^A\)</span> というのは <span class="math inline">\(A\)</span> から <span class="math inline">\(B\)</span> への射全体のこと.</p>
+</blockquote>
+<h2 id="関手--a">関手 <span class="math inline">\((-)^A\)</span></h2>
+<p>ところで <span class="math inline">\((-)^A\)</span> がどのような関手であるかを見ておく. つまり射をどのように写すかをまだ見ていないがこれは随伴性から自然に導かれる.</p>
+<p><span class="math inline">\(g \colon Y \to Z\)</span> について, <span class="math inline">\(g^A \colon Y^A \to Z^A\)</span> がどのようなものであるかは次の可換図からわかる.</p>
+<p><span class="math inline">\(\require{AMScd}\)</span> <span class="math display">\[\begin{CD}
+\mathcal C(Y^A \times A, Y) \ni \eval @&gt;{\hat{ }}&gt;&gt; \mathcal C(Y^A, Y^A) \ni 1 \\
+@VVV @VVV \\
+\mathcal C(Y^A \times A, Z) @&gt;{\hat{ }}&gt;&gt; \mathcal C(Y^A, Z^A)
+\end{CD}\]</span> すなわち <span class="math display">\[g^A = \widehat{g \circ \eval}\]</span> と写すことが導かれる.</p>
+<h2 id="冪と-eval-の普遍性">冪と eval の普遍性</h2>
+<p><span class="math display">\[\eval \colon Y^A \times A \to Y\]</span> は次のような普遍性を持っている. すなわち, <span class="math display">\[\forall f \colon X \times A \to Y,
+\exists ! f&#39; \colon X \to Y^A,\]</span> <span class="math display">\[\begin{CD}
+X \times A @= X \times A \\
+@Vf&#39; \times 1VV @VfVV \\
+Y^A \times A @&gt;\eval&gt;&gt; Y
+\end{CD}\]</span></p>
+<p>もちろん, この <span class="math inline">\(f&#39;\)</span> は <span class="math inline">\(\hat{f}\)</span> のことである.</p>
+<h4 id="証明">証明</h4>
+<p><span class="math inline">\(f\)</span> について随伴性より次の可換図が成り立つ: <span class="math display">\[\begin{CD}
+\mathcal C(Y^A, Y^A) @&gt;&gt;&gt; \mathcal C(Y^A \times A, Y) \\
+@V\hat{f} \circ -VV @V(\hat{f} \times 1) \circ -VV \\
+\mathcal C(X, Y^A) @&gt;&gt;&gt; \mathcal C(X \times A, Y)
+\end{CD}\]</span> 左上の <span class="math inline">\(1_{Y^A}\)</span> から可換を回せば <span class="math inline">\(\widehat{\hat{f} \circ 1} = (\hat{f} \times 1) \circ \eval\)</span> すなわち <span class="math inline">\(f = (\hat{f} \times 1) \circ \eval\)</span> を得る. ここで二重の transpose は打ち消すことに註意.</p>
+<p>というわけで <span class="math inline">\(f&#39; = \hat{f}\)</span> とすれば先の普遍性の図式は可換になることがわかる. またこのような射が一意であることも随伴性から明らかである. 念の為に書くと, 他の <span class="math inline">\(f&#39;\)</span> についても成立すると仮定したときに <span class="math inline">\(\hat{f&#39;}\)</span> について今の証明と同じ随伴性を確かめると, <span class="math inline">\(f = (f&#39; \times 1) \eval = \hat{f&#39;}\)</span> が出てきて, <span class="math inline">\(\hat{f} = f&#39;\)</span> となる.</p>
+<p>ところで, 逆に, この普遍性を eval と冪の定義としてもよい. (実際, 層の冪なんかはそうやって定義された.) ただし射の対応を与えて適切に <span class="math inline">\((-)^A\)</span> を関手にしないと随伴性は成り立たない. 適切に与えた場合に随伴になるのは自明なので省略. 図式だけ書くと, <span class="math inline">\(g \colon Y \to Z\)</span> について次が可換になれば良い. <span class="math display">\[\begin{CD}
+X \times A @= X \times A \\
+@V\hat{f} \times 1VV @VfVV \\
+Y^A \times A @&gt;\eval&gt;&gt; Y \\
+@Vg^A \times 1VV @VgVV \\
+Z^A \times A @&gt;\eval&gt;&gt; Z
+\end{CD}\]</span></p>
+<p>左の縦の射 <span class="math inline">\((g^A \circ \hat{f}) \times 1 = (g^A \times 1) (\hat{f} \times 1) \colon X \times A \to Z^A \times A\)</span> は, 右の縦の射 <span class="math inline">\(g \circ f \colon X \times A \to Z\)</span> の transpose によって, <span class="math inline">\((g^A \circ \hat{f}) \times 1 = \widehat{gf} \times 1\)</span> と書ける. すなわち <span class="math display">\[g^A \circ \hat{f} = \widehat{gf}.\]</span></p>
+<p>この <span class="math inline">\(f\)</span> に <span class="math inline">\(\eval\)</span> を入れるとさっきのが出てくる</p>
+<h2 id="例-sets">例 (Sets)</h2>
+<p>集合と関数からなる圏 Sets での例を考える. この圏での直積 <span class="math inline">\(\times\)</span> は普通の集合の直積のこと. <span class="math display">\[\def\Sets{\mathrm{Sets}}\Sets(X \times A, Y) \simeq \Sets(X, Y^A)\]</span> この対応はいわゆるカリー化 (左辺から右辺) のこと. すなわち関数 <span class="math inline">\(f \colon X \times A \to Y\)</span> は各 <span class="math inline">\(x \in X\)</span> について, <span class="math display">\[f_x \colon A \to Y\]</span> を定めることができる <span class="math inline">\((f(x,a) = f_x(a))\)</span>. 従って, <span class="math inline">\(Y^A\)</span> というのを <span class="math inline">\(\{ g \mid g : A \to Y \}\)</span> (<span class="math inline">\(A\)</span> から <span class="math inline">\(Y\)</span> への関数全体) と定めれば, <span class="math inline">\(f\)</span> は <span class="math display">\[f_{-} \colon X \to Y^A\]</span> <span class="math display">\[f_{-} \colon x \mapsto f_x\]</span> なる関数と同一視できる.</p>
+<p>これが Sets での冪対象. 次に eval 射を見る.</p>
+<p>まず <span class="math inline">\(1 \in \Sets(Y^A, Y^A)\)</span> という恒等関数を考える. これは <span class="math inline">\(f \colon A \to Y\)</span> なる関数を受け取ったら <span class="math inline">\(f\)</span> を返す. これに対応する関数 <span class="math inline">\(\hat{1} \colon Y^A \times A \to Y\)</span> はさっき定めたことから, <span class="math display">\[\hat{1}(f, a) = \hat{1}_f(a) = f(a)\]</span> <span class="math inline">\(\hat{1}_f = f\)</span> に註意. というわけで <span class="math inline">\(\hat{1}\)</span> というのは関数 <span class="math inline">\(f\)</span> と引数 <span class="math inline">\(a\)</span> を受け取って <span class="math inline">\(f(a)\)</span> を返す関数に過ぎない. これを関数適用 (apply) という.</p>
+<hr />
+<p>なんで apply 射って呼ばないんだろう.</p>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

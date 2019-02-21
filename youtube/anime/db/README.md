@@ -11,5 +11,8 @@ anime-title2
 これらを Makefile で結合して list とする.
 
 クールごとのアニメを取得するソースとして
-http://anime.spica-net.com/cours/2016Q3.html
+
+- http://anime.spica-net.com/cours/2016Q3.html
+- https://anime.eiga.com/program/season/2018-summer/
+
 など

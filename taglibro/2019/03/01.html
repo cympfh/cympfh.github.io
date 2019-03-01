@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Fri Mar 01 2019</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='../../index.html'><i class="fa fa-save" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">Fri Mar 01 2019</h1>
+</header>
+<h2 id="日記---vim-terminal-ipython">日記 - vim, terminal, ipython</h2>
+<p>言ってしまえばこのようなことがしたかった:</p>
+<blockquote class="imgur-embed-pub" lang="en" data-id="a/Sh0LD9Z">
+<a href="//imgur.com/Sh0LD9Z"></a>
+</blockquote>
+<script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>
+<h3 id="試み1-cympfhhtty">試み1: <a href="https://github.com/cympfh/htty">cympfh/htty</a></h3>
+<p>これはサーバとして動いてREPLを子プロセスに持つ. REPLのstdioをhttpでやる.</p>
+<p>良さ. エディタと独立して動くので, vim はいつでも閉じていいし, また好きなタイミングでいくつでもアタッチできる. エディタを使わなくても curl でコマンドを送っても良い.</p>
+<p>良くなさ. セキュリティガン無視. バグってる (物によってはstdioが利用できない. ipython は使えるけど python は使えなかった). 複数REPLを起動したらいちいちどこに送るかをポートで管理する必要がある. エディタで例えば、「コードを選択してショートカットキーを押したらバッファを送信する」ことをしたいが、どこに送るかを選ぶ機構が必要になる.</p>
+<h3 id="試み2-terminal">試み2 <code>:terminal</code></h3>
+<p>vim8.1から (正確には vim8.0 からだが非推奨) <code>:terminal</code> コマンドが生えて、ターミナルを起動するバッファが開く. デフォルトではシェルが起動し、<code>:terminal ipython</code> などとして自由なREPLが起動できる. そのままでは単にvimの中にターミナルが開いたくらいで、GNU terminal や tmux くらいの良さしかない.</p>
+<p>vim のバッファの中の文字列をターミナルに送れたら便利だ.</p>
+<p>https://stackoverflow.com/questions/49318522/send-buffer-to-a-running-terminal-window-in-vim-8</p>
+<p>にその方法の例が示してあった. というわけで私も <code>.vimrc</code> に以下を追加した:</p>
+<p>https://github.com/cympfh/dots/commit/98fa73bbaa67558cfe586980318d338168658526</p>
+<p>良さ. バグってない (バグってもコミュニティにサポートされる). 例えばタブごとに <code>:terminal</code> すれば複数REPLを立ち上げておいて, それでバッファを送信する先も, 「今見えてるターミナル」 になるので分かりやすい. いちいちショートカットキーを変えなくてもいいし.</p>
+<p>良くなさ. 立ち上げた vim はRPELを落としたくない限り落とせない. またそのvimに入らないとバッファは送れない.</p>
+<h4 id="メモ">メモ</h4>
+<p>ipython は偉くて、エディタがやるように勝手にインデントの挿入をしてくれる (例えば <code>def f():</code> の次の行は必ずインデントされるはずだからインデントしてくれる). なので例えばvimから</p>
+<pre><code>def f():
+    pass</code></pre>
+<p>というバッファを送ると、ipythonがしてくれるインデントの後ろにさらにインデントを送ることになる. if 文など書くとたぶんこじれるので <code>:terminal ipython --no-autoindent</code> で起動しておくとこれが防げる.</p>
+<h2 id="日記---アインシュタインの規約">日記 - アインシュタインの規約</h2>
+<p>というものがある.</p>
+<p>2つの長さの等しい有限の数列 <span class="math inline">\(\{a^1, a^2, \ldots, a^n\}\)</span> <span class="math inline">\(\{b_1, b_2, \ldots, b_n\}\)</span>, があるとする. ここで <span class="math inline">\(a^i\)</span> の <span class="math inline">\(i\)</span> は <span class="math inline">\(b_i\)</span> の <span class="math inline">\(i\)</span> と同様に添え字であって, べき乗などではない (添字が上にあるか下にあるかは重要). これらについて <span class="math display">\[\sum_i a^i b_i\]</span> という値に興味があり, この式が頻出するとする. こういう場合に, <span class="math inline">\(\sum\)</span> の記号を省略して, <span class="math display">\[a^i b_i\]</span> と書く. これをアインシュタインの規約という.</p>
+<p>約束としては, (自由変数でもないのに) 上と下にペアで添字が出てきたら, それについて和を取っているものとして読む. またペアは和について分配する. つまり <span class="math display">\[a_i (x^i + z^i)\]</span> は <span class="math display">\[a_i x^i + a_i z^i\]</span> のこと. さらにこれは項ごとに和を取ってるので項ごとに <span class="math inline">\(i\)</span> という添字をリネームしてしまっても構わないはずだ. <span class="math display">\[a_j x^j + a_k z^k\]</span> というふうに (ここに <span class="math inline">\(j,k\)</span> は他に出現しない, しても干渉してないとする).</p>
+<p>ただし添字がちょうどペアになっていなかったらおかしい. 例えば <span class="math display">\[a_i x^i z^i\]</span> はおかしい (このようなものが出てこない計算をする).</p>
+<p>この記法が良いのは, 単純に <span class="math inline">\(\sum\)</span> を書かない分紙面が省略できることもあるが, それ以上に, また添字に関するバグが早めに検知できることがある. 上に書いたような <span class="math inline">\(a_i x^i z^i\)</span> とか <span class="math inline">\(x^i z^i\)</span> とかが出てきたらおかしい. あるいは自由変数でもないのに <span class="math inline">\(i\)</span> が一回だけしか登場してなかったらもちろんおかしい.</p>
+<p>実は上付きの添字は行ベクトルで, 下付きの添字は列ベクトルを表してる, と考えている (行と列はどっちでもよくて本質ではないけど). つまり <span class="math inline">\(i=1,2,\ldots,n\)</span> だとして <span class="math inline">\(a^i\)</span> とは <span class="math display">\[\left[ a^1, a^2, \ldots, a^n \right]\]</span> のことで <span class="math inline">\(b_i\)</span> とは <span class="math display">\[\left[\begin{array}{c}
+b_1\\ b_2 \\ \vdots\\ b_n
+\end{array}\right]\]</span> のこと. そして <span class="math inline">\(a^i b_i\)</span> とはこの２つのベクトルの掛け算 (つまり内積) のこと.</p>
+<p>話はもっと一般的で, 添字が２つなら行列と考えて差し支えない. 例えば <span class="math display">\[a^i x_i^j b_j\]</span> は <span class="math display">\[\left[ a^1, a^2, \ldots, a^n \right]
+\left[\begin{array}{ccc}
+x^1_1 &amp; \ldots &amp; x^1_n \\
+\vdots &amp; (x^i_j) &amp; \vdots \\
+x^n_1 &amp; \ldots &amp; x^n_n
+\end{array}\right]
+\left[\begin{array}{c}
+b_1\\ b_2\\ \vdots\\ b_n
+\end{array}\right]\]</span> を表している.</p>
+<p>要は「各indexについて成り立っている等式」を頭の中で行列の演算に書き換えている. 添字はより増えても構わない. <span class="math display">\[x^i z^j \xi^k \Gamma_{ijk}^\ell\]</span> このような <span class="math inline">\(\Gamma\)</span> はもはや行列では表現できなくて, テンソルと呼ばれる. 特に上に添字が 1 つあって下に添え字が 3 つあるので <span class="math inline">\((1,3)\)</span>-型テンソルと呼ばれる.</p>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

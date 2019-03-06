@@ -2,7 +2,7 @@
 % https://arxiv.org/abs/1406.4773
 % 距離学習 類似度学習 顔認証
 
-- 論文リンク: [https://arxiv.org/abs/1406.4773](https://arxiv.org/abs/1406.4773)
+- 論文リンク: [arxiv.org/abs/1406.4773](https://arxiv.org/abs/1406.4773)
 - 関連資料: [Siamese-Network-Architecture-and-Applications-in-Computer-Vision.pdf](http://vision.ia.ac.cn/zh/senimar/reports/Siamese-Network-Architecture-and-Applications-in-Computer-Vision.pdf)
 
 ## 概要

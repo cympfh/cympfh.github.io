@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Thu Mar 14 2019</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='../../index.html'><i class="fa fa-save" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">Thu Mar 14 2019</h1>
+</header>
+<h2 id="単語分散表現どうしの関係について">単語分散表現どうしの関係について</h2>
+<p><a href="http://cympfh.cc/paper/1902.09859.html">arxiv:1902.09859</a> の感想.</p>
+<p>これはそれなりに強い３つの仮定を置いてるけど, ともかくそれらを認めると, 単語 <span class="math inline">\(i\)</span> にはある <span class="math inline">\(d\)</span> 次元実ベクトル <span class="math inline">\(w_i \in \mathbb R^d\)</span> が対応していて, そして (単語に依らない) ある一つの <span class="math inline">\(d \times d\)</span> 行列 <span class="math inline">\(Q\)</span> があって,</p>
+<p>単語 <span class="math inline">\(j\)</span> の周辺 (適当に決めたウィンドウサイズの中) に, 単語 <span class="math inline">\(i\)</span> が出現する確率は, 単語 <span class="math inline">\(i\)</span> が出現する確率 <span class="math inline">\(p(i)\)</span> を以て, <span class="math display">\[p(i|j) = p(i) \cdot \exp \left[ w_i^T Q^T w_j \right]\]</span> と表される.</p>
+<p>ところで機能的によく似た語, 例えば walk と run の周辺にはそれなりに近い語が出てくるハズ... ここでこの2単語にほぼほぼ関係なくて独立な語 <span class="math inline">\(i\)</span> を考える. 単語 <span class="math inline">\(j\)</span> の周辺, 単語 <span class="math inline">\(k\)</span> の周辺に単語 <span class="math inline">\(i\)</span> が出現する確率を考えると, <span class="math inline">\(p(i|j)\)</span> や <span class="math inline">\(p(i|k)\)</span> は <span class="math inline">\(p(i)\)</span> であってほしい. <span class="math display">\[p(i|j) = p(i|k) = p(i)\]</span> 値はどうでもよくて左２つの条件付き確率が等しい状況であれば何でも良い. このことから,</p>
+<ul>
+<li><span class="math inline">\(w_i^T Q^T w_j = 0\)</span></li>
+<li><span class="math inline">\(w_i^T Q^T w_k = 0\)</span> (値は何でも良くて２つが等しい)</li>
+</ul>
+<p>が成り立つ. これの差を取ることで</p>
+<ul>
+<li><span class="math inline">\(w_i^T Q^T (w_j - w_k) = 0\)</span></li>
+</ul>
+<p>が言える. <span class="math inline">\(c_i = Q w_i\)</span> と置くと (この <span class="math inline">\(c\)</span> は context vector のこと), <span class="math inline">\((w_j - w_k)\)</span> は <span class="math inline">\(c_i\)</span> に直交する方向のベクトルと言える. 一般に <span class="math inline">\(d\)</span> 次元ベクトル <span class="math inline">\(c_i\)</span> に直交するベクトルの自由度は <span class="math inline">\(d-1\)</span>. <span class="math inline">\(w_j\)</span> と <span class="math inline">\(w_k\)</span> の間の関係は自由度 <span class="math inline">\(d-1\)</span> だけある (あるいはそれ以下).</p>
+<p><span class="math inline">\(c_\bot \in M_\bot ~ (M_\bot \simeq \mathbb R^{d-1}, M_\bot \subset \mathbb R^d)\)</span> によって, <span class="math display">\[w_k = w_j + c_\bot\]</span> みたいな.</p>
+<p>このような単語 <span class="math inline">\(i\)</span> がいくつも取れるのなら, その分だけ自由度を減らせる可能性はある.</p>
+<h3 id="ところで">ところで,</h3>
+<ul>
+<li><span class="math inline">\(w_i = A_{ij} w_j\)</span></li>
+<li><span class="math inline">\(w_i = A_{ik} w_k\)</span></li>
+</ul>
+<p>という関係を置いたとき (そういうような行列 <span class="math inline">\(A_{i\cdot}\)</span> はとりあえず何かはある), <span class="math inline">\(A_{ij}\)</span> と <span class="math inline">\(A_{ik}\)</span> との間に何か関係が言える気がする... 特に <span class="math inline">\(j\)</span> と <span class="math inline">\(k\)</span> がとても似ていて今述べたような関係で縛られている時, <span class="math inline">\(A_{ij}=A_{ik}\)</span> になるみたいな. 完全に妄想だけど.</p>
+<p><span class="math inline">\(w_j^TA_{ij}^TQ^Tw_j\)</span> という値を転置しても等しいので, <span class="math display">\[w_j^T ( A_{ij}^TQ^T - Q A_{ij}) w_j=0\]</span> これは <span class="math inline">\(i,j\)</span> の関係によらない.</p>
+<p>さっきみたいに, <span class="math display">\[w_i^TQ^Tw_j = w_i^TQ^Tw_k\]</span> という仮定を置くと, <span class="math display">\[w_k^T (A_{ik}^TQ^T - QA_{ij}) w_j = 0\]</span></p>
+<p>うーんって感じ.</p>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

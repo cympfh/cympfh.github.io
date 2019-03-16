@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>[1902.09859] Context Vectors are Reflections of Word Vectors in Half the Dimensions</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">[1902.09859] Context Vectors are Reflections of Word Vectors in Half the Dimensions</h1>
+</header>
+<ul>
+<li>
+original paper: <a href=https://arxiv.org/abs/1902.09859>https://arxiv.org/abs/1902.09859</a>
+</li>
+</ul>
+<div class="is-pulled-right">
+<p><a class='tag is-blue' href=index.html#単語分散表現>単語分散表現</a></p>
+</div>
+<h2 id="問題設定">問題設定</h2>
+<p>語彙 <span class="math inline">\(V = \{1,2,\ldots,n\} (|V| = n)\)</span> を考える. 単語 <span class="math inline">\(i \in V\)</span> に対して2つの <span class="math inline">\(d\)</span> 次元実ベクトル</p>
+<ul>
+<li>word vector <span class="math inline">\(w_i\)</span></li>
+<li>context vector <span class="math inline">\(c_i\)</span></li>
+</ul>
+<p>を割り当てる. word vector はいわゆる単語の分散表現のこと. context vector は skipgram のことを考えていて, 最後 softmax に入れる直前に入力ベクトルに掛ける行列の単語に対応するベクトルのこと.</p>
+<p>つまり, 単語 <span class="math inline">\(j\)</span> の周りの文脈（固定長の単語ウィンドウ）の中に単語 <span class="math inline">\(i\)</span> が出現する確率を, <span class="math display">\[P(i | j) \propto p_i \exp[ w_j^T c_i ]\]</span> とする (このように仮定をおく).</p>
+<p>ここで <span class="math inline">\(p_i\)</span> は単語 <span class="math inline">\(i\)</span> が出現する (uni-gram) 確率.</p>
+<h3 id="仮定">仮定</h3>
+<p>次を仮定する: <span class="math display">\[w_i \sim \mathcal N(0, \frac{1}{d} I_d)\]</span></p>
+<p>ある直交行列 <span class="math inline">\(Q\)</span> があって, <span class="math display">\[c_i = Q w_i\]</span></p>
+<p>特に2つ目の仮定から, <span class="math inline">\(c_i\)</span> も <span class="math inline">\(w_i\)</span> と同じ分布に従うことと <span class="math display">\[c_i \sim \mathcal N(0, \frac{1}{d} I_d)\]</span></p>
+<p>内積やノルムが等しいこと <span class="math display">\[c_i^T c_j = w_i^T Q^T Q w_j = w_i w_j\]</span></p>
+<p>が言える.</p>
+<h4 id="知見">知見</h4>
+<p><span class="math inline">\(w_i\)</span> と <span class="math inline">\(c_i\)</span> との関係については経験的な知見がある. [Bengio+, 2001] によれば <span class="math inline">\(c_i\)</span> と <span class="math inline">\(w_i\)</span> の間の関係に制約をもたせると良い正則化になって学習も高速化する. [Press&amp;Wolf, 2017; Gulordava+, 2018] によれば <span class="math inline">\(Q=I\)</span> すなわち <span class="math inline">\(c_i=w_i\)</span> とするのは全然駄目というのは分かっている. [Mimno&amp;Thompson, 2017; Gulordava+, 2018] によれば, 少なくとも線形変換で写るものらしい: <span class="math display">\[c_i = A w_i\]</span> この論文はこの変換 <span class="math inline">\(Q\)</span> がどういうものかを調べていると言える.</p>
+<h3 id="unigram-確率">unigram 確率</h3>
+<p>訓練データの文書から単語 <span class="math inline">\(i\)</span> が出現する確率 <span class="math inline">\(p_i\)</span> を見積もりたい.</p>
+<p>頻度で尤度を作るより frequency rank を使うのが主流らしい. つまり, 単語 <span class="math inline">\(i\)</span> の頻度が第 <span class="math inline">\(r_i\)</span> 位だとする <span class="math inline">\((r_i=1,2,\ldots)\)</span> とき, <span class="math display">\[p_i \propto r_i^{-(1-\alpha)}\]</span> とする. ここで <span class="math inline">\(\alpha\)</span> は <span class="math inline">\(0 &lt; \alpha \leq 1\)</span> なる定数. <span class="math inline">\(\alpha=0\)</span> のときがちょうど Zipf の法則になっていて, <span class="math inline">\(\alpha=1\)</span> のときがすべての単語が一様になっている. 経験的には <span class="math inline">\(\alpha=0.25\)</span> くらいがちょうど良いらしい.</p>
+<h2 id="theorem-1">Theorem 1</h2>
+<p>以上の仮定をおいた時,</p>
+<p>&quot;context vector は word vector の <span class="math inline">\(d/2\)</span> 次元での reflextion になっている.&quot;</p>
+<p>すなわち, <span class="math inline">\(w_i, c_i \in \mathbb R^d\)</span> に対応する <span class="math inline">\(\tilde{w_i}, \tilde{c_i} \in \mathbb C^{d/2}\)</span> があって (<span class="math inline">\(\mathbb R^d \simeq \mathbb C^{d/2}\)</span> なので自然な同型射がある), <span class="math inline">\(\tilde{c_i}\)</span> が <span class="math inline">\(\tilde{w_i}\)</span> の複素共役になっている.</p>
+<h3 id="証明">証明</h3>
+<p>細かいところまでは読んでないので概要だけ.</p>
+<p><span class="math inline">\(w_j, c_i\)</span> が確率変数だと思うと, <span class="math inline">\(Z_j = \sum_{i=1}^n p_i \exp[ w_j^T c_i ]\)</span> は <span class="math inline">\(Z_j \approx 1 + \frac{1}{2d}\)</span> に収束する.</p>
+<p>従って <span class="math inline">\(d\)</span> が十分大きければ, <span class="math inline">\(P(i | j) \propto p_i \exp[ w_j^T c_i ]\)</span> は正規化の必要がなく <span class="math inline">\(P(i | j) \approx p_i \exp[ w_j^T c_i ]\)</span> になる.</p>
+<p>次に <span class="math inline">\(c_i = Q w_i\)</span> のとき, <span class="math inline">\(Q\)</span> は近似的に involutary matrix (自乗して <span class="math inline">\(I\)</span> になる) である. <span class="math inline">\(P(i | j) \approx p_i \exp[ w_j^T c_i ]\)</span> から <span class="math display">\[\log \frac{P(i,j)}{p_i p_j} \approx c_i^T w_j\]</span> を得る. 左辺は単語 <span class="math inline">\(i\)</span> と <span class="math inline">\(j\)</span> の相互情報量 (PMI). 添字を走らせて行列にすると <span class="math display">\[\mathrm{PMI} \approx W Q^T W^T\]</span> と掛ける. ところで PMI は <span class="math inline">\(i,j\)</span> について対称なので, これは対称行列である. 従って自身の転置を取ったものと等しく: <span class="math display">\[W Q^T W^T  \approx  W Q W^T\]</span> <span class="math display">\[\iff W^TW Q^T W^TW  \approx  W^TW Q W^TW\]</span> <span class="math inline">\(W^TW\)</span> は <span class="math inline">\(w_i^T w_j\)</span> で各 <span class="math inline">\(w_k\)</span> は正規分布から取ってきたベクトルなので <span class="math inline">\(W^TW=\frac{1}{2}I\)</span>. これを代入すれば <span class="math inline">\(Q^T \approx Q\)</span> を得る. さらに直交行列なことを仮定したので結局 <span class="math display">\[Q^2 \approx I.\]</span></p>
+<p>任意の involutary 行列はある直交行列 <span class="math inline">\(P\)</span> を以て <span class="math display">\[P^T \mathrm{diag}(\pm 1, \ldots, \pm 1) P\]</span> で表せる.</p>
+<p>そこで</p>
+<ul>
+<li><span class="math inline">\(Q = \mathrm{diag}(\pm 1, \ldots, \pm 1)\)</span>,</li>
+<li><span class="math inline">\(\hat{w_i} = Pw_i \sim \mathcal N\)</span> (直交行列を掛けても分布は変わらない)</li>
+<li><span class="math inline">\(\hat{c_i} = Pc_i \sim \mathcal N\)</span></li>
+</ul>
+<p>と置くと, 尚 <span class="math inline">\(\hat{c_i} = Q \hat{w_i}\)</span> となっていて見た目が良いので, この <span class="math inline">\(\hat{w_i}, \hat{c_i}\)</span> を <span class="math inline">\(w_i, c_i\)</span> と置くことにして, <span class="math inline">\(Q\)</span> は対角成分が <span class="math inline">\(\pm 1\)</span> の対角行列だとする.</p>
+<p>このようにすると, context vector は word vector の成分の一部をマイナスにした (flipped) ものだと言える. PMI行列の trace が <span class="math inline">\(0\)</span> に収束するはずのことを使うとなんやかんやで, ちょうど半分個の成分がマイナスになるべきだと分かるらしい.</p>
+<h3 id="remark">Remark</h3>
+<p>つまり, <span class="math inline">\(w_i \in mathbb R^d\)</span> の内のちょうど <span class="math inline">\(d/2\)</span> 個の成分を取り出した <span class="math inline">\(x_i\)</span> と残りの <span class="math inline">\(y_i\)</span> について, <span class="math display">\[P(i | j) \approx p_i \exp[ x_j^T x_i - y_j^T y_i ]\]</span> と書ける. ここで <span class="math inline">\(w_i \mapsto (x_i, y_i)\)</span> なる射影の仕方は <span class="math inline">\(i, j\)</span> に依らず固定.</p>
+<h2 id="実験">実験</h2>
+<p>Figure 2 はよくわからんけど PMI 行列について仮定した事柄が実データセットでも成り立ってるかを見てるっぽい？</p>
+<p>4 章では, <span class="math inline">\(q \in \mathbb R^d\)</span> について <span class="math display">\[c_i = q \odot w_i\]</span> として, word2vec (SGNS; skipgram w/ negative sampling) を学習した. これは <span class="math inline">\(Q\)</span> が対角行列にしてもいいことを使ってる.</p>
+<p>学習するパラメータから <span class="math inline">\(\{c_i\}_{i=1,2,\ldots,n}\)</span> が消えた分, 全体としてパラメータ数がほぼ半分になってる. なので学習率もちょっと変えたと言ってるが, 基本的には <code>https://github.com/tensorflow/models/blob/master/tutorials/embedding/word2vec.py</code> を使ったそう.</p>
+<figure>
+<img src="https://i.imgur.com/rJDV9Dl.png" />
+</figure>
+<p><code>SGNS</code> がただの word2vec でこれと今の制約を足した <code>+WT</code> とを6つのタスクで比較してる. パラメータ数がほぼ半分なのにほぼ同程度の結果を出してるので良いだろ, という主張.</p>
+<h2 id="感想">感想</h2>
+<p>どちらかと言えば性能落ちてる. あと <span class="math inline">\(Q\)</span> が対角行列であることまで使うなら, 成分が <span class="math inline">\(\pm 1\)</span> であることまで使えばいいのに. (たぶんそこまですると目も当てられないくらい悪くなったのでは?????)</p>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

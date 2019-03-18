@@ -4,10 +4,10 @@ books	http://s.cympfh.cc/books
 dosoku	dosoku/
 gist	gist/
 gnuplot	gnuplot/
-lib	lib/
 memo	memo/
 neta	neta/
 paper	paper/
 photos	photos/
+procon	procon/
 taglibro	taglibro/
 youtube	youtube/

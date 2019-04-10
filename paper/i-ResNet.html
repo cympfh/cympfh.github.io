@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>[1811.00995] Invertible Residual Networks</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">[1811.00995] Invertible Residual Networks</h1>
+</header>
+<ul>
+<li>
+original paper: <a href=https://arxiv.org/abs/1811.00995>https://arxiv.org/abs/1811.00995</a>
+</li>
+</ul>
+<div class="is-pulled-right">
+<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a></p>
+</div>
+<p><span class="math inline">\(\def\Lip{\mathrm{Lip}}\)</span></p>
+<p>生成モデルのことを考えると, それはクラス分類モデルの逆関数なので, invertible (reversible, 全単射的) である必要がある. Figure 1 はただの ResNet だと, 詰まる部分があって逆関数が無いことになってしまうことを言っている. 提案する Invertible Residual Networks (i-ResNet) はラベルなし最尤推定で生成モデルを学習することで, 全単射的なモデルを学習する.</p>
+<figure>
+<img src="https://i.imgur.com/itccUeh.png" />
+</figure>
+<h2 id="resnet-の形式化">ResNet の形式化</h2>
+<p>インデックス (時刻) <span class="math inline">\(t\)</span> に対して, ResNet の各レイヤーは <span class="math inline">\(\Lip(g_t) &lt; 1\)</span> なるブロック <span class="math inline">\(g_t \colon \mathbb R^d \to \mathbb R^d\)</span> によって <span class="math display">\[x_{t+1} \leftarrow x_t + g_t(x_t) = (I + g_t)(x_t)\]</span> と表される. <span class="math inline">\(\Lip\)</span> はリプシッツ定数, <span class="math inline">\(I\)</span> は恒等写像.</p>
+<h3 id="theorem-1">Theorem 1</h3>
+<p><span class="math inline">\(\Lip(g)&lt;1\)</span> のとき <span class="math inline">\(I+g\)</span> は invertible.</p>
+<p><span class="math inline">\(y=(I+g)(x)\)</span> について, この逆関数を不動点として与えることが出来る. すなわち,</p>
+<ul>
+<li><span class="math inline">\(x^0 = y\)</span></li>
+<li><span class="math inline">\(x^{i+1} = y - g(x^i)\)</span></li>
+</ul>
+<p>とすると <span class="math inline">\(x^i\)</span> の収束値が <span class="math inline">\(x\)</span> になっている. 不動点自体の存在は Banach 不動点定理による (らしい).</p>
+<h3 id="lemma-2">Lemma 2</h3>
+<p><span class="math inline">\(F(x) = (I+g)(x)\)</span> で <span class="math inline">\(g\)</span> がリプシッツ連続かつ <span class="math inline">\(\Lip(g) &lt; 1\)</span> のとき, <span class="math display">\[\Lip(F) \leq 1 + \Lip(g).\]</span> また Theorem 1 から <span class="math inline">\(F\)</span> には逆関数があって, <span class="math display">\[\Lip(F^{-1}) \leq \frac{1}{1 - \Lip(g)}.\]</span></p>
+<h2 id="リプシッツ連続なresnetの構成">リプシッツ連続なResNetの構成</h2>
+<p>各ブロック <span class="math inline">\(g\)</span> は, 線形関数と非線形な関数 <span class="math inline">\(\phi\)</span> を交互に適用するものだとする. 例えば <span class="math inline">\(g = W_3 \phi W_2 \phi W_1\)</span> みたいに.</p>
+<p>各行列 <span class="math inline">\(W_i\)</span> が畳み込みだとすると, <span class="math inline">\(W_i\)</span> のスペクトルノルムが <span class="math inline">\(1\)</span> 未満であれば <span class="math inline">\(\Lip(g)\)</span> も <span class="math inline">\(1\)</span> 未満である. (本当に???????????????? <span class="math inline">\(\phi\)</span> に依らずに???????????????????)</p>
+<h2 id="生成モデル">生成モデル</h2>
+<p><span class="math display">\[p_z(z) \sim z \xrightarrow{\Phi} x\]</span> を考える. しかも <span class="math inline">\(\Phi^{-1}\)</span> が存在してそれを <span class="math inline">\(F\)</span> とする. このとき <span class="math inline">\(p_x\)</span> は <span class="math display">\[\log p_x(x) = \log p_z(z) + \log | \mathrm{det} J_F(x) |\]</span> で計算できる. ここで <span class="math inline">\(J_F\)</span> は <span class="math inline">\(F\)</span> のヤコビアン行列.</p>
+<p>行列式を真面目に計算するのは3乗の計算量が掛かって大変だが, なんやかんやあって,</p>
+<ul>
+<li><span class="math inline">\(| \mathrm{det} J_F(x) | = \mathrm{det} J_F(x)\)</span></li>
+<li><span class="math inline">\(\log \mathrm{det} J_F(x) = \mathrm{tr} (\log J_F(x))\)</span></li>
+</ul>
+<p>となって簡単に計算できる値になる. というわけで <span class="math display">\[\log p_x(x) = \log p_z(z) + \mathrm{tr} (\log (I + J_g(x)))\]</span></p>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

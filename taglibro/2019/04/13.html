@@ -57,12 +57,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <header>
 <h1 class="title">Sat Apr 13 2019</h1>
 </header>
-<h1 id="gcj-round-1a">GCJ Round 1A</h1>
+<h2 id="gcj-round-1a">GCJ Round 1A</h2>
 <p>Google Code Jam は毎度, 起床に失敗してきた. 今日は 01:00 UTC から Round 1A があり, 珍しく起床に成功できた. また, 運良く通過することが出来たので write up を書く.</p>
 <figure>
 <img src="https://i.imgur.com/KXPtabS.png" />
 </figure>
-<h2 id="pylons"><a href="https://codingcompetitions.withgoogle.com/codejam/round/0000000000051635/0000000000104e03">Pylons</a></h2>
+<h3 id="pylons"><a href="https://codingcompetitions.withgoogle.com/codejam/round/0000000000051635/0000000000104e03">Pylons</a></h3>
 <p><span class="math inline">\(R \times C\)</span> のマス目の碁盤を, 好きなところからスタートしてジャンプしてくことで, 全てのマスをちょうど一回ずつ訪れることが出来るかを判定, できるならその経路を示すという問題. ただしジャンプできるのは今いるマスから水平でも垂直でもまた対角線上でもない任意のマス (つまり飛車でも角行でも行けないマスならどこにでもジャンプできる.)</p>
 <p>スタート位置は大体どこでもいいに決まってるので分かりやすく一番隅っこ <span class="math inline">\((0,0)\)</span> スタートでいい.</p>
 <p>テストセットは Visible (smallのこと) と Hidden (large のこと) との2つがあり, それぞれ, <span class="math inline">\(R,C\)</span> が <span class="math inline">\(5\)</span> 以下と <span class="math inline">\(C\)</span> 以下である. 私は全探索する以外に方法が分からなかったので large は諦めて small さえ通ればいいという気持ちのコードを書いた.</p>
@@ -110,12 +110,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
     <span class="cf">else</span>:  <span class="co"># 関数脱出</span>
         table[i][j] <span class="op">=</span> <span class="va">None</span></code></pre></div>
 <p>さて large であるが, ある程度大きい盤面だと必ず経路は存在するようで, 適切に盤面を区切ってやって, その分割ごとに解けば良いらしい.</p>
-<h2 id="golf-gophers"><a href="https://codingcompetitions.withgoogle.com/codejam/round/0000000000051635/0000000000104f1a">Golf Gophers</a></h2>
+<h3 id="golf-gophers"><a href="https://codingcompetitions.withgoogle.com/codejam/round/0000000000051635/0000000000104f1a">Golf Gophers</a></h3>
 <p>羽数がバラバラだとなんだか難しいが, 全部揃えて <span class="math inline">\(B\)</span> 枚ずつあるとする. それで返ってきた答えが <span class="math display">\[a_1,a_2,\ldots,a_{18}\]</span> だとする. 各 <span class="math inline">\(i=1,2,\ldots,18\)</span> について, 風車がどれだけ回されたかを考えると, 大体 <span class="math inline">\(a_i\)</span> なのだが, ちょうど一周した分については観測できないので, mod を取ったものだと分かる. 従って <span class="math inline">\(i\)</span> 番目の風車がどれだけ回されたかは, ある自然数 <span class="math inline">\(m\)</span> があって <span class="math display">\[a_i + Bm\]</span> だと言える. これが全ての <span class="math inline">\(i\)</span> について言えてしかも <span class="math inline">\(B\)</span> は共通だとしたので, 全体で回された数は <span class="math display">\[\sum_i a_i + Bm&#39;\]</span> だと言える. この <span class="math inline">\(m&#39;\)</span> もやっぱり適当な自然数である. そしてこの値こそが求めたい Gophers の数でもあった.</p>
 <p>あなたが出来ることは <span class="math inline">\(n\)</span> 種類の <span class="math inline">\(B\)</span> (<span class="math inline">\(2 \leq B \leq18\)</span>) をクエリとして投げることである. それぞれの場合に <span class="math inline">\(A=\sum_i a_i\)</span> が返ってくるので, 候補として <span class="math display">\[A, A+B, A+2B,\ldots\]</span> が得られる. ところでこの数の上限は最初に入力として与えられるので候補は有限通りである.</p>
 <p>あとはいい感じに <span class="math inline">\(B\)</span> をチョイスしていって候補を絞っていけば良い.</p>
 <p>私は大して何も考えず <span class="math inline">\(B=18,17,\ldots,12\)</span> を選択したら通った. が, 互いに素な数を選択すれば良さそうではある.</p>
-<h2 id="alien-rhyme"><a href="https://codingcompetitions.withgoogle.com/codejam/round/0000000000051635/0000000000104e05">Alien Rhyme</a></h2>
+<h3 id="alien-rhyme"><a href="https://codingcompetitions.withgoogle.com/codejam/round/0000000000051635/0000000000104e05">Alien Rhyme</a></h3>
 <p>この3つの問題の中で最も簡単だったと思う.</p>
 <p><span class="math inline">\(n\)</span> つの文字列が与えられるのでできるだけ多くマッチングしていく問題. 2つの文字列をマッチングさせるとは, 空ではない共通の接尾辞 (suffix) を見出すこと. マッチングに使った文字列は他の文字列とはマッチングさせない. 別なマッチングで使った接尾辞は別なマッチングでは使えない.</p>
 <p>貪欲にマッチングさせた場合に困るのは, その接尾辞を持つ文字列が3つ以上持つ場合だろう. 例えば</p>

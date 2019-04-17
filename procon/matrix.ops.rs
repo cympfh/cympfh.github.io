@@ -26,7 +26,7 @@ fn multiply(a: &Matrix, b: &Matrix) -> Matrix {
 
 fn pow(a: &Matrix, n: usize) -> Matrix {
     if n == 0 {
-        eye(n)
+        eye(a.len())
     } else if n == 1 {
         a.clone()
     } else if n % 2 == 0 {

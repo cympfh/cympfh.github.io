@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>ルジャンドル変換</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-stumbleupon" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">ルジャンドル変換</h1>
+</header>
+<p class="date" style="text-align: right">
+2019-04-29 (Mon.)
+</p>
+<div class="is-pulled-right">
+<p><a class='tag is-red' href=index.html#最適化>最適化</a></p>
+</div>
+<p><span class="math inline">\(\def\epi{\mathrm{epi}}\def\dom{\mathrm{dom}}\def\conv{\mathrm{conv}}\def\cl{\mathrm{cl}}\)</span></p>
+<h2 id="諸定義抄">諸定義・抄</h2>
+<h3 id="関数">関数</h3>
+<p>ここでは <span class="math inline">\(\mathbb R^d \to \mathbb R \cup \{ \infty \}\)</span> なる関数を関数として考える. ここで <span class="math inline">\(d\)</span> は適当な自然数.</p>
+<p>値が有限である領域を, 実効定義域とか有効領域とかいい, <span class="math inline">\(\dom\)</span> で表す. <span class="math display">\[\dom(f) := \{ x \in \mathbb R^d \mid f(x) &lt; \infty \}\]</span></p>
+<h3 id="エピグラフ-凸関数">エピグラフ, 凸関数</h3>
+<p>関数 <span class="math inline">\(f\)</span> に対してこれのエピグラフとは次のような図形のことでこれを <span class="math inline">\(\epi(f)\)</span> と書く. <span class="math display">\[\epi(f) := \{ (x, y) \in \mathbb R^{d+1} \mid x \in \mathbb R^d, y \geq f(x) \}\]</span></p>
+<p>関数 <span class="math inline">\(f\)</span> が (下に) 凸関数であることは, <span class="math inline">\(\epi(f)\)</span> が凸集合であることと同値. <span class="math display">\[\forall x_1, x_2 \in \mathbb R^d, \forall t \in [0,1], t f(x_1) + (1-t) f(x_2) \geq f(tx_1+(1-t)x_2)\]</span> <span class="math display">\[\iff\]</span> <span class="math display">\[\forall z_1, z_2 \in \epi(f), \forall t \in [0,1], tz_1+(1-t)z_2 \in \epi(f)\]</span></p>
+<p>明らかに関数とそのエピグラフは一対一対応しているので, しばしば同一視する.</p>
+<h3 id="閉包-凸包">閉包, 凸包</h3>
+<p>集合 <span class="math inline">\(C \in \mathbb R^m\)</span> について, それを含む最小の閉集合を閉包という. 同様に, それを含む最小の凸集合を凸包という.</p>
+<p>関数のエピグラフにこの概念を適用することで, 関数の閉包と凸包を考えることが出来る. それぞれ <span class="math inline">\(\cl(f), \conv(f)\)</span> と書く (closure, convex hull). さらに <span class="math inline">\(\cl(\conv(f))\)</span> を閉凸包と言う.</p>
+<h2 id="ルジャンドル変換">ルジャンドル変換</h2>
+<p><span class="math inline">\(\dom(f) \ne \emptyset\)</span> なる関数 <span class="math inline">\(f\)</span> について, 次のような関数 <span class="math inline">\(f^*\)</span> を <span class="math inline">\(f\)</span> の <strong>共役関数</strong> という. <span class="math display">\[f^* \colon \mathbb R^d \to \mathbb R \cup \{\infty\}\]</span> <span class="math display">\[f^*(y) := \sup_{x \in \mathbb R^d} \left[ \langle x,y \rangle - f(x) \right]\]</span> ここで <span class="math inline">\(\langle x,y \rangle\)</span> は <span class="math inline">\(x\)</span> と <span class="math inline">\(y\)</span> との内積. <span class="math inline">\(f\)</span> から <span class="math inline">\(f^*\)</span> を得る操作を <strong>ルジャンドル変換</strong> という.</p>
+<h3 id="性質">性質</h3>
+<p>共役関数 <span class="math inline">\(f^*\)</span> は凸関数である.</p>
+<p><span class="math inline">\(\sup\)</span> に関して, <span class="math inline">\(\sup_x \left[F_1(x) + F_2(x)\right] \leq \sup_x F_1(x) + \sup_x F_2(x)\)</span> である性質から従う.</p>
+<h3 id="性質-1">性質</h3>
+<p><span class="math inline">\(f^{**}\)</span> (<span class="math inline">\((f^*)^*\)</span> のこと) は <span class="math inline">\(f\)</span> の閉凸包になっている. <span class="math display">\[f^{**} = \cl(\conv(f))\]</span></p>
+<p>証明...</p>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

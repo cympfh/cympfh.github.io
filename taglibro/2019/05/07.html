@@ -1,18 +1,17 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html>
 <head>
-  <meta charset="utf-8" />
-  <meta name="generator" content="pandoc" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Tue May 07 2019</title>
-  <style type="text/css">
-      code{white-space: pre-wrap;}
-      span.smallcaps{font-variant: small-caps;}
-      span.underline{text-decoration: underline;}
-      div.column{display: inline-block; vertical-align: top; width: 50%;}
-  </style>
-  <link rel="stylesheet" href="../../../resources/css/c.css" />
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
 </head>
 <body>
 <header class="page-header">
@@ -28,6 +27,13 @@
 <p>好奇心に負けて、テレビを付けてみた。 テレ東ではニュースがやっていて、淡々と、新しい世界を迎えたことを伝えた。</p>
 <p>北海道にまで行けば桜の満開をまだ見られるらしい。 しかしながら北海道までの旅費は捻出できそうにないので、中央線を乗り継ぎ乗り継ぎ、長野で妥協した。 今年の春はまだまだ寒く、理屈は分からないけれど、寒いと桜が散りにくいからまだキレイな桜が見られるんだよ、と同席したお爺さんが気安く教えてくれた。 どうして寒いと散りにくいんですか？ と私が聞くと、お爺さんは、そんな難しいことはわからんね、と機嫌を悪くした。</p>
 <p>これがこの世界での最初の思い出。</p>
+<h2 id="fasttext-の-sentence-vector-は-word-vector-の平均">fastText の sentence vector は word vector の平均</h2>
+<p>fastText は word vector の学習が教師アリでもナシでも出来るし, アリだと文書分類までがサブコマンドとしてサポートされているし, そして名前の通り本当にすべてが fast なので便利. ところで sentence vector をどうやって得てるのか知らなかった. ドキュメントにはたぶん書いてないけど, <a href="https://github.com/facebookresearch/fastText/blob/master/src/fasttext.cc#L474">source code</a> だとただの平均であることがわかった. ただし教師アリで学習したときは本当にただの平均であるが, ナシの場合は正規化してから平均しているようだ.</p>
+<p><span class="math display">\[s = ( w_1,w_2, \ldots, w_N )\]</span></p>
+<p>教師アリのときは <span class="math display">\[\frac{1}{N} \sum_i w_i\]</span></p>
+<p>ナシのときは <span class="math display">\[\frac{1}{N} \sum_i \frac{w_i}{\|w_i\|}\]</span> ただし <span class="math inline">\(\|w_i\|=0\)</span> なる単語は先に取り除いておく (<span class="math inline">\(N\)</span> も減らしておく).</p>
+<p>また <span class="math inline">\(s\)</span> の長さがゼロのときは (ナシのときはノルムが非ゼロのものだけ見て) 0ベクトルとする.</p>
+<p>正規化をするかしないかの処理や, ノルムが非ゼロかどうかチェックするなどの差異はどこから来たのだろうか.</p>
 <footer>
     <p class="is-pulled-right">
     @cympfh / cympfh@gmail.com

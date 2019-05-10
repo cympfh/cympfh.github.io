@@ -14,6 +14,7 @@
 
 ## 木
 - [木の高さ (全ての点を根とする最大距離)](graph.tree.height.html)
+- [木の直径](graph.tree.diameter.html)
 
 ## [最大流量](graph.maxflow.html)
 

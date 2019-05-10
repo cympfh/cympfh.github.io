@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="generator" content="pandoc">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>graph.dij - ダイクストラ法</title>
+  <title>graph.tree.diameter - 木の直径</title>
   <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
 div.sourceCode { overflow-x: auto; }
@@ -53,121 +53,35 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </head>
 <body>
 <header>
-<h1 class="title">graph.dij - ダイクストラ法</h1>
+<h1 class="title">graph.tree.diameter - 木の直径</h1>
 </header>
-<h2 id="graph.dij.rs"><a href="graph.dij.rs" class="uri">graph.dij.rs</a></h2>
-<ul>
-<li>入力;
-<ul>
-<li><code>type Cost = u64</code> (マイナス <code>-</code> が取れる必要)</li>
-<li>始点 <code>s: usize</code></li>
-<li>コスト付き隣接リスト
-<ul>
-<li><code>neigh: Vec&lt;Vec&lt;(usize, Cost)&gt;&gt;</code>
-<ul>
-<li><code>(j, c)</code> <span class="math inline">\(\in\)</span> <code>neigh[i]</code> <span class="math inline">\(\iff\)</span> 点 <code>i</code> から点 <code>j</code> へコスト <code>c</code> の枝が存在</li>
-</ul></li>
-</ul></li>
-</ul></li>
-<li>出力;
-<ul>
-<li>各点までの最短コストの列
-<ul>
-<li><code>d: Vec&lt;Cost&gt;</code></li>
-</ul></li>
-</ul></li>
-</ul>
+<p>木の最長距離を求める.</p>
+<p>任意の点 <span class="math inline">\(s\)</span> の最遠点を <span class="math inline">\(u\)</span> とし, <span class="math inline">\(u\)</span> の最遠点を <span class="math inline">\(v\)</span> とすれば <span class="math inline">\(d(u,v)\)</span> が最長距離であることを使う.</p>
 <div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">use</span> std::collections::BinaryHeap;
 
-<span class="kw">type</span> Cost = <span class="dt">i64</span>;
-<span class="kw">const</span> MaxCost: Cost = <span class="dv">1_000_000_000_000_000</span>;
-
-<span class="kw">fn</span> dij(s: <span class="dt">usize</span>, neigh: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;(<span class="dt">usize</span>, Cost)&gt;&gt;) -&gt; <span class="dt">Vec</span>&lt;Cost&gt; <span class="op">{</span>
-    <span class="kw">let</span> n = neigh.len();
-    <span class="kw">let</span> <span class="kw">mut</span> d: <span class="dt">Vec</span>&lt;Cost&gt; = <span class="pp">vec!</span><span class="op">[</span>MaxCost; n<span class="op">]</span>;
-    <span class="kw">let</span> <span class="kw">mut</span> q = BinaryHeap::new();
-    q.push((<span class="dv">0</span>, s));
-    d<span class="op">[</span>s<span class="op">]</span> = <span class="dv">0</span>;
-    <span class="kw">while</span> <span class="kw">let</span> <span class="cn">Some</span>((_, u)) = q.pop() <span class="op">{</span>
-        <span class="kw">for</span> &amp;(v, cost) <span class="kw">in</span> neigh<span class="op">[</span>u<span class="op">]</span>.iter() <span class="op">{</span>
-            <span class="kw">if</span> d<span class="op">[</span>v<span class="op">]</span> &gt; d<span class="op">[</span>u<span class="op">]</span> + cost <span class="op">{</span>
-                d<span class="op">[</span>v<span class="op">]</span> = d<span class="op">[</span>u<span class="op">]</span> + cost;
-                q.push((-d<span class="op">[</span>v<span class="op">]</span>, v));
+<span class="kw">fn</span> diameter(tree: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt;&gt;) -&gt; <span class="dt">usize</span> <span class="op">{</span>
+    <span class="kw">let</span> n = tree.len();
+    <span class="kw">let</span> <span class="kw">mut</span> s = <span class="dv">0</span>;
+    <span class="kw">let</span> <span class="kw">mut</span> maxd = <span class="dv">0</span>;
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="dv">0.</span>.<span class="dv">2</span> <span class="op">{</span>
+        <span class="kw">let</span> <span class="kw">mut</span> memo = <span class="pp">vec!</span><span class="op">[</span>n * <span class="dv">10</span>; n<span class="op">]</span>;
+        memo<span class="op">[</span>s<span class="op">]</span> = <span class="dv">0</span>;
+        <span class="kw">let</span> <span class="kw">mut</span> q = BinaryHeap::new();
+        q.push((<span class="dv">0</span>, s));
+        <span class="kw">while</span> <span class="kw">let</span> <span class="cn">Some</span>((_, u)) = q.pop() <span class="op">{</span>
+            <span class="kw">for</span> &amp;v <span class="kw">in</span> tree<span class="op">[</span>u<span class="op">]</span>.iter() <span class="op">{</span>
+                <span class="kw">if</span> memo<span class="op">[</span>v<span class="op">]</span> &gt; memo<span class="op">[</span>u<span class="op">]</span> + <span class="dv">1</span> <span class="op">{</span>
+                    memo<span class="op">[</span>v<span class="op">]</span> = memo<span class="op">[</span>u<span class="op">]</span> + <span class="dv">1</span>;
+                    <span class="kw">let</span> priority = - (memo<span class="op">[</span>v<span class="op">]</span> <span class="kw">as</span> <span class="dt">i32</span>);
+                    q.push((priority, v));
+                <span class="op">}</span>
             <span class="op">}</span>
         <span class="op">}</span>
+        s = (<span class="dv">0.</span>.n).map(|i| (memo<span class="op">[</span>i<span class="op">]</span>, i)).max().unwrap().<span class="dv">1</span>;
+        maxd = *memo.iter().max().unwrap();
     <span class="op">}</span>
-    d
-<span class="op">}</span>
-
-<span class="kw">fn</span> main() <span class="op">{</span>
-
-    <span class="kw">let</span> <span class="kw">mut</span> sc = Scanner::new();
-
-    <span class="kw">let</span> n: <span class="dt">usize</span> = sc.cin(); <span class="co">// nodes</span>
-    <span class="kw">let</span> m: <span class="dt">usize</span> = sc.cin(); <span class="co">// edges</span>
-    <span class="kw">let</span> <span class="kw">mut</span> neigh = <span class="pp">vec!</span><span class="op">[</span><span class="pp">vec!</span><span class="op">[]</span>; n<span class="op">]</span>;
-    <span class="kw">for</span> _ <span class="kw">in</span> <span class="dv">0.</span>.m <span class="op">{</span>
-        <span class="kw">let</span> u = sc.cin::&lt;<span class="dt">usize</span>&gt;() - <span class="dv">1</span>;
-        <span class="kw">let</span> v = sc.cin::&lt;<span class="dt">usize</span>&gt;() - <span class="dv">1</span>;
-        <span class="kw">let</span> c: Cost = sc.cin();
-        neigh<span class="op">[</span>u<span class="op">]</span>.push((v, c));
-        neigh<span class="op">[</span>v<span class="op">]</span>.push((u, c));
-    <span class="op">}</span>
-
-    <span class="kw">let</span> d = dij(<span class="dv">0</span>, &amp;neigh);
-    <span class="pp">trace!</span>(d);
-
+    maxd
 <span class="op">}</span></code></pre></div>
-<h2 id="graph.dij.cc"><a href="graph.dij.cc" class="uri">graph.dij.cc</a></h2>
-<ul>
-<li>入力;
-<ul>
-<li><code>using Cost = long long</code></li>
-<li>始点 <code>s: int</code></li>
-<li>コスト付き隣接リスト <code>vector&lt;vector&lt;pair&lt;int, Cost&gt;&gt;&gt; &amp;neigh</code></li>
-</ul></li>
-<li>出力
-<ul>
-<li>各点までの最短コストの列 <code>vector&lt;Cost&gt; d</code></li>
-</ul></li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="pp">#define inf (1e18)</span>
-<span class="kw">using</span> Cost = <span class="dt">long</span> <span class="dt">long</span>;
-
-vector&lt;Cost&gt;
-dij(<span class="dt">int</span> s, vector&lt;vector&lt;pair&lt;<span class="dt">int</span>, Cost&gt;&gt;&gt; &amp;neigh) {
-  <span class="at">const</span> <span class="dt">int</span> n = neigh.size();
-  vector&lt;Cost&gt; d(n, inf); d[s] = <span class="dv">0</span>;
-  priority_queue&lt;pair&lt;Cost, <span class="dt">int</span>&gt;&gt; q; q.push({<span class="dv">0</span>, s});
-  <span class="cf">while</span> (<span class="kw">not</span> q.empty()) {
-    <span class="dt">int</span> u = q.top().second; q.pop();
-    <span class="cf">for</span> (<span class="kw">auto</span> pair: neigh[u]) {
-      <span class="dt">int</span> v = pair.first;
-      Cost c = pair.second;
-      <span class="cf">if</span> (d[v] &gt; d[u] + c) {
-        d[v] = d[u] + c;
-        q.push({ -d[v], v });
-      }
-    }
-  }
-  <span class="cf">return</span> d;
-}
-
-<span class="dt">int</span> main() {
-  <span class="dt">int</span> n, m; cin &gt;&gt; n &gt;&gt; m;
-  vector&lt;vector&lt;pair&lt;<span class="dt">int</span>, Cost&gt;&gt;&gt; neigh(n);
-  rep (i, m) {
-    <span class="dt">int</span> u, v; cin &gt;&gt; u &gt;&gt; v; --u; --v;
-    Cost c; cin &gt;&gt; c;
-    neigh[u].emplace_back(v, c);
-    neigh[v].emplace_back(u, c);
-  }
-
-  <span class="kw">auto</span> result = dij(<span class="dv">0</span>, neigh);
-  cout &lt;&lt; result &lt;&lt; endl;
-
-  <span class="cf">return</span> <span class="dv">0</span>;
-}</code></pre></div>
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.

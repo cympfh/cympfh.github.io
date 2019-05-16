@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Thu May 16 2019</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='../../index.html'><i class="fa fa-save" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">Thu May 16 2019</h1>
+</header>
+<h2 id="index">index</h2>
+<div id="toc-level-2">
+
+</div>
+<h2 id="普遍性からのテンソル">普遍性からのテンソル</h2>
+<p>歴史的にはそもそもテンソルとはテンソル積で得られるベクトル空間の元として定義される. つまりテンソルの定義にはテンソル積の定義が先立つ.</p>
+<h3 id="関連">関連</h3>
+<p><a href="../01/22.html">行列や多重配列のことをテンソルと呼ぶのやめろ</a></p>
+<h3 id="参考">参考</h3>
+<ol type="1">
+<li><a href="http://daisy.math.sci.ehime-u.ac.jp/users/tsuchiya/math/fem/exterior/section1.pdf">ベクトル空間のテンソル積とテンソル空間</a>
+<ul>
+<li>愛媛大学の講義資料? (たぶん)</li>
+</ul></li>
+</ol>
+<h3 id="notation">notation</h3>
+<p>ベクトル空間 <span class="math inline">\(U,V,W\)</span> について, <span class="math inline">\(U \to V\)</span> と書いたら <span class="math inline">\(U\)</span> から <span class="math inline">\(V\)</span> への線形写像のこと. また <span class="math inline">\(U \times V \to W\)</span> と書いたら <span class="math inline">\(U\)</span> と <span class="math inline">\(V\)</span> との直積から <span class="math inline">\(W\)</span> への双線形写像のこととする.</p>
+<p>2つの写像 <span class="math inline">\(\alpha, \beta\)</span> について <span class="math inline">\(\alpha \beta\)</span> のように単に並べて, 合成写像 <span class="math inline">\(\alpha \circ \beta\)</span> を表す. また関数適用も <span class="math inline">\(f(x)\)</span> の代わりに単に並べて <span class="math inline">\(fx\)</span> と書く.</p>
+<p>またアインシュタインの縮約記法を採用する.</p>
+<h3 id="注意">注意</h3>
+<p>体を <span class="math inline">\(k\)</span> で固定して考える. また登場するベクトル空間はすべて有限次元とする.</p>
+<h3 id="普遍性によるテンソル積の定義">普遍性によるテンソル積の定義</h3>
+<p>ベクトル空間 <span class="math inline">\(V, W\)</span> について次のようなベクトル空間 <span class="math inline">\(U_0\)</span> が必ず存在して, それのことを <span class="math inline">\(V\)</span> と <span class="math inline">\(W\)</span> のテンソル積 <span class="math inline">\(V \otimes W\)</span> と書く. <span class="math inline">\(U_0\)</span> に要請する性質は次の通り.</p>
+<ol type="1">
+<li><span class="math inline">\(\exists \kappa \colon V \times W \to U_0\)</span></li>
+<li><span class="math inline">\(\forall U, \forall \phi \colon V \times W \to U, \exists! \overline{\phi}\colon U_0 \to U\)</span> such that <span class="math inline">\(\phi = \overline{\phi} \kappa\)</span></li>
+</ol>
+<p>2つ目が1つ目の <span class="math inline">\((U_0, \kappa)\)</span> に対する普遍性になっていることが分かる.</p>
+<h4 id="補題">補題</h4>
+<p>先の条件は次の同値な条件に書き直せる</p>
+<ol type="1">
+<li><span class="math inline">\(\kappa \colon V \times W \to U_0\)</span> があって <span class="math inline">\(U_0\)</span> は <span class="math inline">\(\kappa(V \times W)\)</span> で生成される空間である</li>
+<li><span class="math inline">\(\forall U, \forall \phi \colon V \times W \to U, \exists \overline{\phi}\colon U_0 \to U\)</span> such that <span class="math inline">\(\phi = \overline{\phi} \kappa\)</span>
+<ul>
+<li><span class="math inline">\(\exists\)</span> の <span class="math inline">\(!\)</span> が取れた</li>
+<li>それ以外は同じ</li>
+</ul></li>
+</ol>
+<p>同値なことの確認は難しくないので略.</p>
+<p><details><summary>NOTE</summary> 特に言っておくと, <span class="math inline">\(U_0\)</span> が <span class="math inline">\(\kappa(V \times W)\)</span> から生成されるとは <span class="math inline">\(\kappa\)</span> が epi であることを言っている. すなわち, <span class="math display">\[\alpha \kappa = \beta \kappa \implies \alpha = \beta.\]</span> ただし普通の写像での全射であるとまでは言ってないので注意. 生成するとは結局, <span class="math inline">\(U_0\)</span> にある基底 <span class="math inline">\(\langle g_1,\ldots,\rangle\)</span> があって, この各 <span class="math inline">\(g_i\)</span> に写す方法がありさえすればよい. 任意の <span class="math inline">\(\gamma^i g_i\)</span> に写せるとまでは言っていない (特に <span class="math inline">\(\kappa\)</span> は双線形写像なので).</p>
+<p>念のために生成することと epi であることが同値であることを見る.</p>
+<p><span class="math inline">\(V\)</span> の基底を <span class="math inline">\(\langle e_i \rangle\)</span>, <span class="math inline">\(W\)</span> の基底を <span class="math inline">\(\langle f_j \rangle\)</span>, <span class="math inline">\(U_0\)</span> の基底を <span class="math inline">\(\langle g_k \rangle\)</span> とする.</p>
+<p><span class="math inline">\(\kappa(V \times W)\)</span> が <span class="math inline">\(U_0\)</span> を生成することと, <span class="math inline">\(\alpha \kappa = \beta \kappa\)</span> を仮定するときに <span class="math inline">\(\alpha=\beta\)</span> を示す.</p>
+<p>各基底 <span class="math inline">\(g_k\)</span> について, ある <span class="math inline">\((v_k, w_k) \in V \times W\)</span> があって, <span class="math inline">\(g_k = \kappa(v_k, w_k)\)</span> である. <span class="math inline">\(U_0\)</span> の任意の元 <span class="math inline">\(u = \gamma^k g_k\)</span> について, <span class="math display">\[\begin{align*}
+\alpha u &amp; = \gamma^k \alpha g_k \\
+         &amp; = \gamma^k \alpha \kappa(v_k, w_k) \\
+         &amp; = \gamma^k \beta \kappa(v_k, w_k) \\
+         &amp; = \beta u
+\end{align*}\]</span> であるので <span class="math inline">\(\alpha = \beta\)</span>.</p>
+<p>逆は対偶で示す. 生成しないことを仮定すると, ある基底 <span class="math inline">\(g_k\)</span> を生成しないから, <span class="math inline">\(g_k\)</span> の成分だけ射影する関数 <span class="math inline">\(\alpha\)</span> とそれを2倍する関数 <span class="math inline">\(\beta=2\alpha\)</span> を用意すれば, <span class="math inline">\(\alpha \kappa = \beta \kappa ~(=0)\)</span> となるがもちろん <span class="math inline">\(\alpha \ne \beta\)</span> である. </details></p>
+<h3 id="テンソル積の存在">テンソル積の存在</h3>
+<p>テンソル積の定義を述べたが, そのような <span class="math inline">\(U = V \otimes W\)</span> は必ず存在する. 例えば次である (もちろん線形同型を除けば唯一である).</p>
+<p><span class="math inline">\(V\)</span> を <span class="math inline">\(m\)</span> 次元 <span class="math inline">\(\langle e_i \rangle\)</span>, <span class="math inline">\(W\)</span> を <span class="math inline">\(n\)</span> 次元 <span class="math inline">\(\langle f_j \rangle\)</span> とするとき, <span class="math inline">\(U\)</span> は <span class="math inline">\(mn\)</span> 次元であって, <span class="math display">\[U = \langle g_{ij} \mid 1 \leq i \leq n, 1 \leq j \leq m\rangle\]</span> <span class="math display">\[\kappa \colon V \times W \to U\]</span> <span class="math display">\[\kappa(e_i, f_j) = g_{ij}\]</span> とする.</p>
+<p>定義から明らかに <span class="math inline">\(\kappa(V \times W)\)</span> は <span class="math inline">\(U\)</span> を生成し, <span class="math inline">\(\kappa\)</span> は epi である.</p>
+<p>普遍性を確認する. つまり適当な <span class="math inline">\(U&#39;\)</span> と <span class="math inline">\(\phi \colon V \times W \to U&#39;\)</span> があるとする. このときに, <span class="math display">\[\overline{\phi} \colon U \to U&#39;\]</span> <span class="math display">\[\overline{\phi} g_{ij} = \phi(e_i, f_j)\]</span> で線形写像として定義する (基底の行き先だけを示したのであとはこれの線形結合で定義する).</p>
+<p>任意の <span class="math inline">\((v, w) = (a^i e_i, b^j f_j) \in V \times W\)</span> について, <span class="math display">\[\begin{align*}
+\overline{\phi} \kappa (v, w)
+&amp; = a^i b^j \overline{\phi} \kappa(e_i, f_j) \\
+&amp; = a^i b^j \overline{\phi} g_{ij} \\
+&amp; = a^i b^j \phi(e_i, f_j) \\
+&amp; = \phi(v, w) \\
+\end{align*}\]</span> したがって, <span class="math inline">\(\overline{\phi} \kappa = \phi\)</span>.</p>
+<p><span class="math inline">\(\overline{\phi}\)</span> が唯一であることは <span class="math inline">\(\kappa\)</span> が epi であることから従う. つまり, 他に <span class="math inline">\(\psi\)</span> があるなら <span class="math inline">\(\overline{\phi} \kappa = \psi \kappa\)</span> であるので, <span class="math inline">\(\overline{\phi} = \psi\)</span> が導かれる.</p>
+<p>というわけで普遍性は確かに満たしており, これがテンソル積であることが確認できた. 特にこの <span class="math inline">\(\kappa\)</span> のことを <strong>標準写像</strong> という.</p>
+<h3 id="テンソル">テンソル</h3>
+<p>テンソル積の元のことを <strong>テンソル</strong> と呼ぶ.</p>
+<p><span class="math inline">\(V \otimes W\)</span> 及びその写像 <span class="math inline">\(\kappa \colon V \times W \to V \otimes W\)</span> について, <span class="math inline">\(\kappa(v, w)\)</span> のことを <span class="math inline">\(v \otimes w\)</span> と書く. <span class="math inline">\(\kappa\)</span> が全射とは限らないという話から, 任意の <span class="math inline">\(V \otimes W\)</span> のテンソルがこの <span class="math inline">\(v \otimes w\)</span> という形式で書けるわけではない. (和でなら表現できる.)</p>
+<p>テンソル積やテンソルは 2 つ以上でも再帰的に定義でき, また結合則が成り立つ（らしい）ので括弧を付けずに例えば <span class="math inline">\(U \otimes V \otimes W\)</span> だとか <span class="math inline">\(u \otimes v \otimes w\)</span> だとか書ける.</p>
+<h3 id="定理">定理</h3>
+<p>体 <span class="math inline">\(k\)</span> の上のベクトル空間 <span class="math inline">\(V\)</span> に対して, 線形写像の集まり <span class="math inline">\(\{ f \mid f \colon V \to k \}\)</span> のことを <span class="math inline">\(V\)</span> の双対空間といい <span class="math inline">\(V^*\)</span> と書くのであった.</p>
+<p>ここでは便宜的に, 直積に対しては双線型写像の集まりということにして <span class="math inline">\((V \times W)^*\)</span> という書き方も許してもらうことにする.</p>
+<p>次の定理が成り立つ. <span class="math display">\[V \otimes W \simeq (V^* \times W^*)^*\]</span></p>
+<h4 id="証明">証明</h4>
+<p><span class="math inline">\((V^* \times W^*)^*\)</span> もまた <span class="math inline">\(V\)</span> と <span class="math inline">\(W\)</span> のテンソル積であることを示す. テンソル積どうしは普遍性より同型であるから, それだけ示せばok.</p>
+<p>いい感じの <span class="math display">\[\xi \colon V \times W \to (V^* \times W^*)^*\]</span> によって <span class="math inline">\(((V^* \times W^*)^*, \xi)\)</span> がテンソル積になることを示す.</p>
+<p><span class="math inline">\((v, w) \in V \times W\)</span> を <span class="math display">\[h \colon V^* \times W^* \to k\]</span> <span class="math display">\[h(f,g) = f(v) g(w)\]</span> という <span class="math inline">\(h\)</span> に対応付ける写像を <span class="math inline">\(\xi\)</span> だとする.</p>
+<p>ところで基底は双対基底にしておく. すなわち <span class="math inline">\(\langle h_{ij} \mid i, j \rangle\)</span> が基底で, <span class="math display">\[h_{ij}(f_{i&#39;}, g_{j&#39;}) = \begin{cases}
+1 &amp; \text{ when } i=i&#39; \text{ and } j=j&#39; \\
+0 &amp; \text{ otherwise }
+\end{cases}\]</span> <span class="math display">\[f_i(e_{i&#39;}) = \begin{cases}
+1 &amp; \text{ when } i=i&#39; \\
+0 &amp; \text{ otherwise }
+\end{cases}\]</span> <span class="math display">\[g_j(f_{j&#39;}) = \begin{cases}
+1 &amp; \text{ when } j=j&#39; \\
+0 &amp; \text{ otherwise }
+\end{cases}\]</span> こうすれば <span class="math inline">\(\xi(v_i, w_j) = h_{ij}\)</span>.</p>
+<p>任意の <span class="math inline">\(\phi \colon V \times W \to U\)</span> に対して, <span class="math display">\[\overline{\phi} h_{ij} = \phi(v_i, w_j)\]</span> とする（くらいしか自然な写像はない）.</p>
+<p>任意の <span class="math inline">\((v,w) \in V \times W\)</span> について, <span class="math display">\[\begin{align*}
+\overline{\phi} \xi (a^i e_i, b^j f_j)
+&amp; = a^i b^j \overline{\phi} h_{ij} \\
+&amp; = a^i b^j \phi(v_i, w_j) \\
+&amp; = \phi (a^i v_i, b^j w_j)
+\end{align*}\]</span> だから可換.</p>
+<p>普遍性は略. 気が向いたら計算する.</p>
+<p>というわけで, テンソルというとそれに対応する双線型写像があるから, 双線型写像のことをテンソルと同一視してよい.</p>
+<p>ベクトル空間 <span class="math inline">\(V_1, \ldots, V_n\)</span> があるときに, <span class="math inline">\(V_1 \otimes \cdots \otimes V_n\)</span> のテンソルに一対一対応する多重線型写像 <span class="math display">\[V_1 \times \cdots V_n \to k\]</span> がある.</p>
+<p>対応は成分ごとに <span class="math inline">\(\kappa\)</span> と <span class="math inline">\(\xi\)</span> で写せばよい??（未確認）</p>
+<p><span class="math inline">\(\require{AMScd}\)</span> <span class="math display">\[\begin{CD}
+V \otimes W @&lt;\kappa&lt;&lt; V \times W @&gt;\xi&gt;&gt; (V^* \times W^*)^*
+\end{CD}\]</span></p>
+<h3 id="おわり">おわり</h3>
+<p>前回「多次元配列のことをテンソルと呼ぶな」とか「正方行列以外は（二階）テンソルで表現できない」とか書いたけど、この定義だとテンソルは多次元配列だし一般の行列は二階テンソルだ. 例えば <span class="math inline">\(m\)</span> 次元ベクトル空間と <span class="math inline">\(n\)</span> 次元ベクトル空間によって普通の二次元配列だし, <span class="math inline">\(m \times n\)</span> 行列が表現できる. (多次元配列については適切に積の構造を入れるとして.)</p>
+<p>前回定義したテンソルは1種類の <span class="math inline">\(V\)</span> からなるテンソル及びテンソル空間であって, 特別な場合であったらしい. <a href="https://ja.wikipedia.org/wiki/%E3%83%86%E3%83%B3%E3%82%BD%E3%83%AB%E7%A9%BA%E9%96%93">wiki/テンソル空間</a> をよく読むとそんな風に読める.</p>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

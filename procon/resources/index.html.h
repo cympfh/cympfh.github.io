@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>lib/</title>
+<title>procon_library/</title>
 <link rel="stylesheet" type="text/css" href="../resources/css/d.css">
 <script src='resources/toggle_menu.js'></script>
 </head>

@@ -56,48 +56,49 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>標準には擬似乱数生成ライブラリが入ってないので. 以下は <a href="https://ja.wikipedia.org/wiki/Xorshift">Wikipedia:Xorshift</a> の <code>xor64</code> の実装.</p>
 <div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">use</span> std::<span class="dt">u64</span>;
 
-<span class="kw">pub</span> <span class="kw">trait</span> FromU64 {
+<span class="kw">pub</span> <span class="kw">trait</span> FromU64 <span class="op">{</span>
     <span class="kw">fn</span> coerce(x: <span class="dt">u64</span>) -&gt; <span class="kw">Self</span>;
-}
+<span class="op">}</span>
 
 <span class="co">// cast</span>
-<span class="kw">impl</span> FromU64 <span class="kw">for</span> <span class="dt">u64</span> { <span class="kw">fn</span> coerce(x: <span class="dt">u64</span>) -&gt; <span class="kw">Self</span> { x } }
-<span class="kw">impl</span> FromU64 <span class="kw">for</span> <span class="dt">i64</span> { <span class="kw">fn</span> coerce(x: <span class="dt">u64</span>) -&gt; <span class="kw">Self</span> { x <span class="kw">as</span> <span class="dt">i64</span> } }
-<span class="kw">impl</span> FromU64 <span class="kw">for</span> <span class="dt">u32</span> { <span class="kw">fn</span> coerce(x: <span class="dt">u64</span>) -&gt; <span class="kw">Self</span> { x <span class="kw">as</span> <span class="dt">u32</span> } }
-<span class="kw">impl</span> FromU64 <span class="kw">for</span> <span class="dt">i32</span> { <span class="kw">fn</span> coerce(x: <span class="dt">u64</span>) -&gt; <span class="kw">Self</span> { x <span class="kw">as</span> <span class="dt">i32</span> } }
+<span class="kw">impl</span> FromU64 <span class="kw">for</span> <span class="dt">u64</span> <span class="op">{</span> <span class="kw">fn</span> coerce(x: <span class="dt">u64</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span> x <span class="op">}</span> <span class="op">}</span>
+<span class="kw">impl</span> FromU64 <span class="kw">for</span> <span class="dt">i64</span> <span class="op">{</span> <span class="kw">fn</span> coerce(x: <span class="dt">u64</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span> x <span class="kw">as</span> <span class="dt">i64</span> <span class="op">}</span> <span class="op">}</span>
+<span class="kw">impl</span> FromU64 <span class="kw">for</span> <span class="dt">u32</span> <span class="op">{</span> <span class="kw">fn</span> coerce(x: <span class="dt">u64</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span> x <span class="kw">as</span> <span class="dt">u32</span> <span class="op">}</span> <span class="op">}</span>
+<span class="kw">impl</span> FromU64 <span class="kw">for</span> <span class="dt">i32</span> <span class="op">{</span> <span class="kw">fn</span> coerce(x: <span class="dt">u64</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span> x <span class="kw">as</span> <span class="dt">i32</span> <span class="op">}</span> <span class="op">}</span>
+<span class="kw">impl</span> FromU64 <span class="kw">for</span> <span class="dt">usize</span> <span class="op">{</span> <span class="kw">fn</span> coerce(x: <span class="dt">u64</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span> x <span class="kw">as</span> <span class="dt">usize</span> <span class="op">}</span> <span class="op">}</span>
+<span class="kw">impl</span> FromU64 <span class="kw">for</span> <span class="dt">bool</span> <span class="op">{</span> <span class="kw">fn</span> coerce(x: <span class="dt">u64</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span> x % <span class="dv">2</span> == <span class="dv">0</span> <span class="op">}</span> <span class="op">}</span>
 
 <span class="co">// returns [0, 1]</span>
-<span class="kw">impl</span> FromU64 <span class="kw">for</span> <span class="dt">f64</span> {
-    <span class="kw">fn</span> coerce(x: <span class="dt">u64</span>) -&gt; <span class="kw">Self</span> {
+<span class="kw">impl</span> FromU64 <span class="kw">for</span> <span class="dt">f64</span> <span class="op">{</span>
+    <span class="kw">fn</span> coerce(x: <span class="dt">u64</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span>
         (x <span class="kw">as</span> <span class="dt">f64</span>) / (<span class="dt">u64</span>::MAX <span class="kw">as</span> <span class="dt">f64</span>)
-    }
-}
-<span class="kw">impl</span> FromU64 <span class="kw">for</span> <span class="dt">f32</span> {
-    <span class="kw">fn</span> coerce(x: <span class="dt">u64</span>) -&gt; <span class="kw">Self</span> {
+    <span class="op">}</span>
+<span class="op">}</span>
+<span class="kw">impl</span> FromU64 <span class="kw">for</span> <span class="dt">f32</span> <span class="op">{</span>
+    <span class="kw">fn</span> coerce(x: <span class="dt">u64</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span>
         (x <span class="kw">as</span> <span class="dt">f32</span>) / (<span class="dt">u64</span>::MAX <span class="kw">as</span> <span class="dt">f32</span>)
-    }
-}
+    <span class="op">}</span>
+<span class="op">}</span>
 
 <span class="kw">struct</span> XorShift(<span class="dt">u64</span>);
 
-<span class="kw">impl</span> XorShift {
-    <span class="kw">fn</span> new() -&gt; <span class="kw">Self</span> {
+<span class="kw">impl</span> XorShift <span class="op">{</span>
+    <span class="kw">fn</span> new() -&gt; <span class="kw">Self</span> <span class="op">{</span>
         XorShift(<span class="dv">88172645463325252</span>)
-    }
-    <span class="kw">fn</span> next(&amp;<span class="kw">mut</span> <span class="kw">self</span>) -&gt; <span class="dt">u64</span> {
+    <span class="op">}</span>
+    <span class="kw">fn</span> next(&amp;<span class="kw">mut</span> <span class="kw">self</span>) -&gt; <span class="dt">u64</span> <span class="op">{</span>
         <span class="kw">let</span> <span class="kw">mut</span> x = <span class="kw">self</span>.<span class="dv">0</span>;
         x = x ^ (x &lt;&lt; <span class="dv">13</span>);
         x = x ^ (x &gt;&gt; <span class="dv">7</span>);
         x = x ^ (x &lt;&lt; <span class="dv">17</span>);
         <span class="kw">self</span>.<span class="dv">0</span> = x;
         x
-    }
-    <span class="kw">fn</span> gen&lt;T: FromU64&gt;(&amp;<span class="kw">mut</span> <span class="kw">self</span>) -&gt; T {
+    <span class="op">}</span>
+    <span class="kw">fn</span> gen&lt;T: FromU64&gt;(&amp;<span class="kw">mut</span> <span class="kw">self</span>) -&gt; T <span class="op">{</span>
         FromU64::coerce(<span class="kw">self</span>.next())
-    }
-}
-
-<span class="kw">fn</span> main() {
+    <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> main() <span class="op">{</span>
     <span class="kw">let</span> <span class="kw">mut</span> rand = XorShift::new();
     <span class="pp">println!</span>(<span class="st">&quot;u64: {}&quot;</span>, rand.gen::&lt;<span class="dt">u64</span>&gt;());
     <span class="pp">println!</span>(<span class="st">&quot;i64: {}&quot;</span>, rand.gen::&lt;<span class="dt">i64</span>&gt;());
@@ -105,7 +106,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
     <span class="pp">println!</span>(<span class="st">&quot;i32: {}&quot;</span>, rand.gen::&lt;<span class="dt">i32</span>&gt;());
     <span class="pp">println!</span>(<span class="st">&quot;f64: {}&quot;</span>, rand.gen::&lt;<span class="dt">f64</span>&gt;());
     <span class="pp">println!</span>(<span class="st">&quot;f32: {}&quot;</span>, rand.gen::&lt;<span class="dt">f32</span>&gt;());
-}</code></pre></div>
+<span class="op">}</span></code></pre></div>
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.

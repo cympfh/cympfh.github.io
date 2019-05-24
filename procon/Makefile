@@ -21,5 +21,5 @@ src:
 
 git: index
 	git add -A .
-	git commit -m "lib/ `date`"
+	git commit -m "procon/ `date`"
 	git push

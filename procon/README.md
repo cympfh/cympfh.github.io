@@ -125,13 +125,15 @@
 - [Cooley-Tukey FFT](fft.html)
 - [畳み込み](fft.convolution.html)
 
-# 文字列
+# 文字列 (Vector)
 
 ## 文字列検索
 - [Shift-And アルゴリズム](string.shift-and.html)
 
 ## 回文
 - [manacher](string.manacher.html)
+
+## [Run-length 圧縮](string.runlength.html)
 
 # 時間/時刻
 

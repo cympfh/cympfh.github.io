@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>mex, ニム和</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="../resources/css/c.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-stumbleupon" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">mex, ニム和</h1>
+</header>
+<p class="date" style="text-align: right">
+2019-05-27 (Mon.)
+</p>
+<div class="is-pulled-right">
+<p><a class='tag is-red' href=index.html#ゲーム理論>ゲーム理論</a></p>
+</div>
+<span class="math inline">\(\def\mex{\mathrm{mex}}\)</span>
+<div id="toc-level-2">
+
+</div>
+<h2 id="準備">準備</h2>
+<h3 id="自然数">自然数</h3>
+<p><span class="math inline">\(0\)</span> を含むことにだけ注意してもらってあとは普通の自然数全体を <span class="math inline">\(\mathbb N\)</span> と書く. <span class="math display">\[\mathbb N = \{0,1,2,\ldots\}\]</span> 普通の意味の大小関係 <span class="math inline">\(\leq\)</span> を入れる.</p>
+<h3 id="min"><span class="math inline">\(\min\)</span></h3>
+<p><span class="math inline">\(\mathbb N\)</span> の部分集合 <span class="math inline">\(X\)</span> について, その最小元を <span class="math display">\[\min X\]</span> と書く. <span class="math display">\[\min X = a \iff a \in X \land (\forall x \in X, a \leq x).\]</span></p>
+<h3 id="mex"><span class="math inline">\(\mex\)</span></h3>
+<p>最小除外数というものを定義する. <span class="math inline">\(\mathbb N\)</span> の部分集合 <span class="math inline">\(X\)</span> について <span class="math display">\[\mex X := \min (\mathbb N \setminus X)\]</span> と定義する. ここで <span class="math inline">\(\mathbb N \setminus X\)</span> は <span class="math inline">\(X\)</span> に含まれない自然数全体を意味する.</p>
+<p><span class="math display">\[\mex X = a \iff a \not\in X \land (\forall x \in \mathbb N, x \not\in X \implies a \leq x).\]</span></p>
+<p>特に, <span class="math inline">\(\mex \emptyset = \min \mathbb N = 0\)</span>.</p>
+<h2 id="諸性質">諸性質</h2>
+<h3 id="min-の性質"><span class="math inline">\(\min\)</span> の性質</h3>
+<p>大体明らかなので紹介だけ</p>
+<ul>
+<li><span class="math inline">\(x \in X \implies x \geq \min X\)</span></li>
+<li><span class="math inline">\(\min (A \cap B) \geq \min \{ \min A, \min B \}\)</span></li>
+<li><span class="math inline">\(\min (A \cup B) = \min \{ \min A, \min B \}\)</span></li>
+</ul>
+<h3 id="mex-の性質"><span class="math inline">\(\mex\)</span> の性質</h3>
+<h4 id="mex-0">mex-0</h4>
+<p><span class="math display">\[s = \mex S \iff \{0,1,\ldots,s-1\} \subset S \land s \not\in S\]</span></p>
+<p>これは定義そのままなので証明略.</p>
+<h4 id="mex-1">mex-1</h4>
+<p><span class="math display">\[x \not \in X \implies x \geq \mex X\]</span></p>
+<details>
+<summary>Proof</summary> 上の主張は, 次の同値な形に書き直せる. <span class="math display">\[x \in \mathbb N \setminus X \implies x \geq \min (\mathbb N \setminus X)\]</span> <span class="math inline">\(X\)</span> の補集合を <span class="math inline">\(Y\)</span> と改めて置くと, <span class="math display">\[x \in Y \implies x \geq \min Y\]</span> これは <span class="math inline">\(\min\)</span> の性質そのものである.
+</details>
+<h4 id="mex-2">mex-2</h4>
+<p><span class="math display">\[\mex S &lt; \mex T \implies \mex S \in T\]</span></p>
+<details>
+<p><summary>Proof</summary></p>
+<p>対偶を取ると難しくない. 今 <span class="math inline">\(\mex S \not\in T\)</span> を仮定すると, <span class="math display">\[\begin{align*}
+\mex T
+&amp; = \min ( \mathbb N \setminus T ) \\
+&amp; = \min ( (\mathbb N \setminus T) \cup \{ \mex S \} ) \\
+&amp; = \min \{ \min(\mathbb N \setminus T) , \mex S \} \\
+&amp; \leq \mex S
+\end{align*}\]</span></p>
+</details>
+<h4 id="mex-3">mex-3</h4>
+<p><span class="math display">\[S \subset T \implies \mex S \leq \mex T\]</span></p>
+<details>
+<p><summary>Proof</summary></p>
+<span class="math inline">\(s = \mex S\)</span> と置くと, これが <span class="math inline">\(S\)</span> の最小除外数であることから, <span class="math display">\[s \not\in S.\]</span> 今 <span class="math inline">\(S \subset T\)</span> を仮定すると, <span class="math display">\[s \not\in T.\]</span> mex-1 を使うと <span class="math display">\[s \geq \mex T.\]</span>
+</details>
+<h2 id="定義-ニム和-nim-sum">定義: ニム和 (Nim-sum)</h2>
+<p>ニム和 <span class="math inline">\(\oplus\)</span> を定義する. これは <span class="math display">\[\mathbb N \times \mathbb N \to \mathbb N\]</span> <span class="math display">\[(a, b) \mapsto a \oplus b\]</span> なる関数で, その値は次で与えられる. <span class="math display">\[a \oplus b := \mex (\{ a&#39; \oplus b \mid 0\leq a&#39; &lt; a \} \cup \{a \oplus b&#39; \mid 0 \leq b&#39; &lt; b \})\]</span> ここでこの右辺は少々長ったらしいので <span class="math display">\[\{ a&#39; \oplus b, a \oplus b&#39; \mid 0\leq a&#39; &lt; a, 0 \leq b&#39; &lt; b \}\]</span> とか, 更には 自然数 <span class="math inline">\(x\)</span> に対して <span class="math inline">\(x&#39;\)</span> で <span class="math inline">\(0\)</span> 以上 <span class="math inline">\(x\)</span> 未満の自然数 <strong>全て</strong> を表すということにして, <span class="math display">\[\{ a&#39; \oplus b, a \oplus b&#39; \}\]</span> と略記することにする.</p>
+<blockquote>
+<p>このプライム記号は式に対して自由に適用して良いことにする. 例えば <span class="math inline">\((x+y)&#39;\)</span> と書けば <span class="math inline">\((x+y)\)</span> 未満の自然数全てという意味.</p>
+</blockquote>
+<p>ところでこの <span class="math inline">\(\oplus\)</span> の定義はその右辺にも <span class="math inline">\(\oplus\)</span> が登場するが, これは再帰的定義になっていることに注意. すなわち, <span class="math inline">\(a \oplus b\)</span> を定義するにあたって, <span class="math inline">\(a&#39; \oplus b\)</span> と <span class="math inline">\(a \oplus b&#39;\)</span> がすでに定義済みであることを仮定している. 右辺に出てくる <span class="math inline">\(\oplus\)</span> には必ず左辺より小さい数が与えられているので, <span class="math inline">\((0,0)\)</span> から順にやっていけば求まるようになっている.</p>
+<p>特に <span class="math inline">\(0 \oplus 0 = \mex \emptyset = 0\)</span>.</p>
+<p>小さい数について <span class="math inline">\(x \oplus y\)</span> を書き出してみると</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;">x,y</th>
+<th style="text-align: center;">0</th>
+<th style="text-align: center;">1</th>
+<th style="text-align: center;">2</th>
+<th style="text-align: center;">3</th>
+<th style="text-align: center;">4</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">4</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">6</td>
+</tr>
+</tbody>
+</table>
+<p>こんな感じ. 簡単に見えてくる性質を挙げる.</p>
+<h3 id="諸性質-1">諸性質</h3>
+<h4 id="nim-1">nim-1</h4>
+<p><span class="math display">\[x \oplus y = y \oplus x\]</span></p>
+<p>これは定義の時点で対称的になってるので明らかにそう.</p>
+<h4 id="nim-2">nim-2</h4>
+<p><span class="math display">\[x \oplus 0 = x\]</span></p>
+<p>普通の和と同様に <span class="math inline">\(+0\)</span> が恒等写像になってる.</p>
+<details>
+<p><summary>Proof</summary> 帰納法で示す. <span class="math inline">\(\oplus\)</span> 自体が再帰的定義になってるから再帰的な証明になるのは仕方ないね.</p>
+<p><span class="math inline">\(x=0\)</span> のときは実際に計算すれば確かに成り立っている.</p>
+<p><span class="math inline">\(x \oplus 0\)</span> について, <span class="math inline">\(x&#39; \oplus 0 = x&#39;\)</span> がすでに成り立っているとする (<span class="math inline">\(x&#39;\)</span> で <span class="math inline">\(x\)</span> 未満の自然数全てを表すのであった). このとき, <span class="math display">\[x \oplus 0 = \mex \{ x&#39; \oplus 0 \} = \mex \{ x&#39; \} = x.\]</span></p>
+以上より示された.
+</details>
+<h4 id="nim-3">nim-3</h4>
+<p><span class="math display">\[x \oplus x = 0\]</span></p>
+<p>いわば自分自身が <strong>逆数</strong> になっている.</p>
+<details>
+<p><summary>Proof</summary> やはり帰納法で示す.</p>
+<p><span class="math inline">\(x=0\)</span> のときは成立.</p>
+<p><span class="math inline">\(x&#39;\oplus x&#39;=0\)</span> を仮定して <span class="math inline">\(x \oplus x = 0\)</span> を示す.</p>
+<p>各 <span class="math inline">\(a &lt; x\)</span> について <span class="math display">\[a \oplus x = \mex \{ a&#39; \oplus x, a \oplus x&#39; \}\]</span> であるが, <span class="math inline">\(0 = a \oplus a \in \{ a&#39; \oplus x, a \oplus x&#39; \}\)</span> なので, <span class="math inline">\(a \oplus x &gt; 0\)</span> である. (これは特に紹介した性質を使ったわけじゃないけど, <span class="math inline">\(0\)</span> を含んでればその最小除外数が <span class="math inline">\(0\)</span> ではないのは明らかでしょう.)</p>
+今度は <span class="math display">\[x \oplus x = \mex \{ x&#39; \oplus x \}\]</span> を考えると, 今さっき <span class="math inline">\(x&#39; \oplus x &gt; 0\)</span> であることを示したから, <span class="math inline">\(0 \not\in \{ x&#39; \oplus x \}\)</span>. mex-1 より, <span class="math inline">\(0 \geq x \oplus x\)</span>. <span class="math inline">\(0\)</span> 未満の数は無いのでもちろん <span class="math inline">\(0 = x \oplus x\)</span>.
+</details>
+<h2 id="ニム和と排他的論理和">ニム和と排他的論理和</h2>
+<p>実はニム和 <span class="math inline">\(x \oplus y\)</span> は <span class="math inline">\(x,y\)</span> を2進表示したときのそれらの排他的論理和 (XOR) と等しい.</p>
+<p>これを証明するのに必要なヒントとして, ニム和の表は実は左上を <span class="math inline">\((0,0)\)</span> として一辺 <span class="math inline">\(2^k\)</span> の正方形を取ると, パターンが見えてくる. 先程の表を少しずつ広げてくと,,,</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;">x,y</th>
+<th style="text-align: center;">0</th>
+<th style="text-align: center;">1</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;"><strong>1</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><strong>1</strong></td>
+<td style="text-align: center;">0</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;">x,y</th>
+<th style="text-align: center;">0</th>
+<th style="text-align: center;">1</th>
+<th style="text-align: center;">2</th>
+<th style="text-align: center;">3</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><strong>2</strong></td>
+<td style="text-align: center;"><strong>3</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;"><strong>3</strong></td>
+<td style="text-align: center;"><strong>2</strong></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">2</td>
+<td style="text-align: center;"><strong>2</strong></td>
+<td style="text-align: center;"><strong>3</strong></td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">3</td>
+<td style="text-align: center;"><strong>3</strong></td>
+<td style="text-align: center;"><strong>2</strong></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;">x,y</th>
+<th style="text-align: center;">0</th>
+<th style="text-align: center;">1</th>
+<th style="text-align: center;">2</th>
+<th style="text-align: center;">3</th>
+<th style="text-align: center;">4</th>
+<th style="text-align: center;">5</th>
+<th style="text-align: center;">6</th>
+<th style="text-align: center;">7</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;"><strong>4</strong></td>
+<td style="text-align: center;"><strong>5</strong></td>
+<td style="text-align: center;"><strong>6</strong></td>
+<td style="text-align: center;"><strong>7</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;"><strong>5</strong></td>
+<td style="text-align: center;"><strong>4</strong></td>
+<td style="text-align: center;"><strong>7</strong></td>
+<td style="text-align: center;"><strong>6</strong></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;"><strong>6</strong></td>
+<td style="text-align: center;"><strong>7</strong></td>
+<td style="text-align: center;"><strong>4</strong></td>
+<td style="text-align: center;"><strong>5</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;"><strong>7</strong></td>
+<td style="text-align: center;"><strong>6</strong></td>
+<td style="text-align: center;"><strong>5</strong></td>
+<td style="text-align: center;"><strong>4</strong></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">4</td>
+<td style="text-align: center;"><strong>4</strong></td>
+<td style="text-align: center;"><strong>5</strong></td>
+<td style="text-align: center;"><strong>6</strong></td>
+<td style="text-align: center;"><strong>7</strong></td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">5</td>
+<td style="text-align: center;"><strong>5</strong></td>
+<td style="text-align: center;"><strong>4</strong></td>
+<td style="text-align: center;"><strong>7</strong></td>
+<td style="text-align: center;"><strong>6</strong></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">6</td>
+<td style="text-align: center;"><strong>6</strong></td>
+<td style="text-align: center;"><strong>7</strong></td>
+<td style="text-align: center;"><strong>4</strong></td>
+<td style="text-align: center;"><strong>5</strong></td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">7</td>
+<td style="text-align: center;"><strong>7</strong></td>
+<td style="text-align: center;"><strong>6</strong></td>
+<td style="text-align: center;"><strong>5</strong></td>
+<td style="text-align: center;"><strong>4</strong></td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+</tr>
+</tbody>
+</table>
+<p>大体次のような形をしてそうだと分かる. つまり,</p>
+<p><span class="math inline">\(0\)</span> から <span class="math inline">\(2^k-1\)</span> の自然数からなる大きさ <span class="math inline">\(2^k \times 2^k\)</span> の対称行列 <span class="math inline">\(A\)</span> があって,</p>
+<p><span class="math display">\[\left[\begin{array}{cc}
+A &amp; A + 2^k \\
+A + 2^k &amp; A
+\end{array}\right]\]</span></p>
+<p>このことを今から示していく.</p>
+<h3 id="補題">補題</h3>
+<p>自然数 <span class="math inline">\(k\)</span> と <span class="math inline">\(0 \leq x &lt; 2^k, 0 \leq y &lt; 2^k\)</span> について, 次の2つが成り立つ:</p>
+<ol type="1">
+<li><span class="math inline">\(x \oplus (y + 2^k) = (x \oplus y) + 2^k\)</span></li>
+<li><span class="math inline">\((x + 2^k) \oplus (y + 2^k) = x \oplus y\)</span></li>
+<li><span class="math inline">\(\{ x \oplus y&#39; \mid 0 \leq y&#39; &lt; 2^k \} = \{0,1,\ldots,2^k-1\}\)</span></li>
+</ol>
+<p>この1つ目は右上（または左下）の <span class="math inline">\(A + 2^k\)</span> に対応している. 2つ目は右下が <span class="math inline">\(A\)</span> であることを言っている. 3つ目は <span class="math inline">\(A\)</span> の各行を見ると実は <span class="math inline">\(0\)</span> から <span class="math inline">\(2^k-1\)</span> の全てが出現していることを言っている</p>
+<details>
+<p><summary>Proof</summary></p>
+<p>まず <span class="math inline">\(k\)</span> に関して, 更にその中では <span class="math inline">\(x,y\)</span> に関する帰納法で示す.</p>
+<p>すなわち, <span class="math inline">\((k,x,y)\)</span> の場合を示すのに次の2つを同時に仮定する.</p>
+<ol type="1">
+<li><span class="math inline">\(\forall 0 \leq x&#39;,y&#39; &lt; 2^{k-1}\)</span>,
+<ul>
+<li><span class="math inline">\(x&#39; \oplus (y&#39; + 2^{k-1}) = (x&#39; \oplus y&#39;) + 2^{k-1}\)</span></li>
+<li><span class="math inline">\((x&#39; + 2^{k-1}) \oplus (y&#39; + 2^{k-1}) = x&#39; \oplus y&#39;\)</span></li>
+<li><span class="math inline">\(\{ x&#39; \oplus z \mid 0 \leq z &lt; 2^{k-1} \} = \{0,1,\ldots,2^{k-1}-1\}\)</span></li>
+</ul></li>
+<li><span class="math inline">\(\forall 0 \leq x&#39; &lt; x\)</span> OR <span class="math inline">\(\forall 0 \leq y&#39; &lt; y\)</span>,
+<ul>
+<li><span class="math inline">\(x&#39; \oplus (y&#39; + 2^k) = (x&#39; \oplus y&#39;) + 2^k\)</span></li>
+<li><span class="math inline">\((x&#39; + 2^k) \oplus (y&#39; + 2^k) = x&#39; \oplus y&#39;\)</span></li>
+</ul></li>
+</ol>
+<p>この仮定の下で <span class="math inline">\(x \oplus y, x \oplus (y + 2^k), (x + 2^k) \oplus (y + 2^k)\)</span> を考える.</p>
+<blockquote>
+<p>基本的に最小除外数の対象となる集合を考えて分解して帰納法の仮定が使えるところを使えば示される.</p>
+</blockquote>
+<p><span class="math inline">\(S = \{ x&#39; \oplus y, x \oplus y&#39; \}\)</span> と置くと <span class="math inline">\(x \oplus y = \mex S\)</span>. <span class="math inline">\(r = x \oplus y\)</span> と置けば <span class="math display">\[\{0,1,\ldots,r-1\} \subset S \land r \not\in S\]</span> (mex-0).</p>
+<p>次に <span class="math inline">\(T = \{ x&#39; \oplus (y+2^k), x \oplus (y+2^k)&#39; \}\)</span> と置けば <span class="math inline">\(x \oplus (y+2^k) = \mex T\)</span> である. この <span class="math inline">\(T\)</span> を更に調べると</p>
+<p><span class="math display">\[\begin{align*}
+T &amp; = \{ x&#39; \oplus (y+2^k), x \oplus (y+2^k)&#39; \} \\
+&amp; = \{ x&#39; \oplus (y+2^k), x \oplus (y&#39;+2^k) \} \cup \{ x \oplus z \mid 0 \leq z &lt; 2^k \} \\
+&amp; = \{ (x&#39; \oplus y) + 2^k, (x \oplus y&#39;) + 2^k \} \cup \{0,1,\ldots,2^k-1\} \\
+&amp; = \{ s + 2^k \mid s \in S \} \cup \{0,1,\ldots,2^k-1\} \\
+\end{align*}\]</span></p>
+<p>ということまで分かる. <span class="math inline">\(\{0,1,\ldots,r-1\} \subset S\)</span> だったので, これらに <span class="math inline">\(+2^k\)</span> して <span class="math inline">\(\{2^k,2^k+1,\ldots,2^k+r-1\} \subset T\)</span> である.</p>
+<p>したがって <span class="math inline">\(\{0,1,\ldots,2^k,2^k+1,\ldots,2^k+r-1\} \subset T\)</span> まで言える.</p>
+<p>また <span class="math inline">\(r \not\in S\)</span> だったので, <span class="math inline">\(2^k + r \not\in T\)</span>.</p>
+<p>以上から <span class="math inline">\(\mex T = 2^k + r = 2^k + (x \oplus y)\)</span> が分かった.</p>
+<p>次に <span class="math inline">\((x + 2^k) \oplus (y + 2^k)\)</span> について考える. <span class="math inline">\(U = \{(x+2^k)&#39; \oplus (y+2^k), (x+2^k) \oplus (y+2^k)&#39;\}\)</span> と置けば <span class="math inline">\((x + 2^k) \oplus (y + 2^k) = \mex U\)</span> であるわけだが</p>
+<p><span class="math display">\[\begin{align*}
+U &amp; = \{(x+2^k)&#39; \oplus (y+2^k), (x+2^k) \oplus (y+2^k)&#39;\} \\
+&amp; = \{(x&#39;+2^k) \oplus (y+2^k), (x+2^k) \oplus (y&#39; + 2^k) \}
+\cup
+\{ z \oplus (y+2^k), (x+2^k) \oplus z \mid 0 \leq z &lt; 2^k \} \\
+&amp; = \{x&#39; \oplus y, x \oplus y&#39; \}
+\cup
+\{ z \oplus (y+2^k), (x+2^k) \oplus z \mid 0 \leq z &lt; 2^k \} \\
+&amp; = \{x&#39; \oplus y, x \oplus y&#39; \}
+\cup
+\{ (z \oplus y)+2^k, (x \oplus z) + 2^k \mid 0 \leq z &lt; 2^k \} \\
+&amp; = S \cup \{ z+2^k \mid 0 \leq z &lt; 2^k \} \\
+\end{align*}\]</span></p>
+<p>というわけでやはり <span class="math inline">\(\{0,1,\ldots,r-1\} \subset U\)</span> かつ <span class="math inline">\(r \not\in U\)</span> がわかるので <span class="math inline">\(\mex U = r = x \oplus y\)</span> であることがわかる.</p>
+<p>最後に. <span class="math display">\[\begin{align*}
+\{x \oplus z \mid 0 \leq z &lt; 2^k \}
+&amp; = \{ x \oplus z \mid 0 \leq z &lt; 2^{k-1} \} \cup \{ x \oplus z \mid 2^{k-1} \leq z &lt; 2^k \} \\
+&amp; = \{ x \oplus z \mid 0 \leq z &lt; 2^{k-1} \} \cup \{ x \oplus z + 2^k \mid 0 \leq z &lt; 2^{k-1} \} \\
+&amp; = \{0,1,\ldots,2^{k-1}-1\} \cup \{2^{k-1}, 2^{k-1}+1,\ldots,2^k-1\} \\
+&amp; = \{0,1,\ldots,2^k-1\}
+\end{align*}\]</span></p>
+以上から全て示された.
+</details>
+<h3 id="定理-ニム和は排他的論理和と一致する">定理: ニム和は排他的論理和と一致する</h3>
+<div class="thm">
+<p><b>定理</b></p>
+<p>自然数 <span class="math inline">\(x,y\)</span> それぞれを</p>
+<ul>
+<li><span class="math inline">\(x = \sum_{i=0}^\infty x_i 2^i\)</span>; <span class="math inline">\(x_i \in \{0,1\}\)</span></li>
+<li><span class="math inline">\(y = \sum_{i=0}^\infty y_i 2^i\)</span>; <span class="math inline">\(y_i \in \{0,1\}\)</span></li>
+</ul>
+<p>という2進表示をした時,</p>
+<p><span class="math display">\[x \wedge y = \sum_{i=0}^\infty (x_i \wedge y_i) 2^i\]</span></p>
+<p>を <span class="math inline">\(x\)</span> と <span class="math inline">\(y\)</span> との排他的論理和と呼ぶ.</p>
+<p>ただしここで <span class="math inline">\(0 \wedge 0=0, 1 \wedge 1=0, 0 \wedge 1=1, 1 \wedge 0=1\)</span>.</p>
+<p>そしてこのとき <span class="math display">\[x \oplus y = x \wedge y\]</span> が成り立つ.</p>
+</div>
+<details>
+<p><summary>Proof</summary> 各 <span class="math inline">\(i\)</span> に関して先程の補題を適用すればいい. <span class="math inline">\(x &gt; y\)</span> だと仮定して, <span class="math inline">\(x\)</span> の最上位ビットが <span class="math inline">\(i=k\)</span> だとすると, <span class="math inline">\(x_i=1\)</span> であって</p>
+<p><span class="math display">\[x \oplus y = ((x-2^k)+2^k) \oplus ((y-y_k 2^k)+y_k 2^k)
+= ((x-2^k) \oplus y- y_k2^k) + (1-y_k) 2^k\]</span></p>
+<span class="math inline">\((x-2^k) \oplus y- y_k2^k) = (x-2^k) \wedge y- y_k2^k)\)</span> であると仮定すれば, <span class="math display">\[\begin{align*}
+x \oplus y
+&amp; = (1-y_k) 2^k + ((x-2^k) \wedge y- y_k2^k)) \\
+&amp; = (x_k \wedge y_k) 2^k + \sum_{i=0}^{k-1} (x_i \wedge y_i) 2^i \\
+&amp; = x \wedge y
+\end{align*}\]</span> というわけでビットに関する帰納法で示される.
+</details>
+<h2 id="ニム和はabel群を構成する">ニム和はAbel群を構成する</h2>
+<p><span class="math inline">\((\mathbb N, \oplus)\)</span> はAbel群を成す. 単位元 <span class="math inline">\(0\)</span> の存在, 逆元 <span class="math inline">\(-x\)</span> の存在, Abel 性はすでに mex-1,mex-2,mex-3 で示したのであとは結合性 <span class="math display">\[(x \oplus y) \oplus z = x \oplus (y \oplus z)\]</span> を示せば Abel 群であることが分かる. 結合性だけは排他的論理和で証明する.</p>
+<p>排他的論理和は各ビットの排他的論理和の級数和であったが, ただの和 (<span class="math inline">\(+\)</span>) はもちろん結合性を満たすので, 各ビットの結合性を示せば良い. つまり <span class="math inline">\(x_i, y_i, z_i \in \{0,1\}\)</span> について <span class="math display">\[(x_i \wedge y_i) \wedge z_i = x_i \wedge (y_i \wedge z_i)\]</span> が成り立つことを見ればよいが, これは <span class="math inline">\(8\)</span> 通り全てをチェックすればよくて, 実際成り立っている.</p>
+<p>以上から排他的論理和、しいてはニム和は結合性を満たす. というわけでAbel群を成す.</p>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

@@ -87,12 +87,12 @@ $$S \subset T \implies \mex S \leq \mex T$$
 
 <details><summary>Proof</summary>
 
-$s = \mex S$ と置くと, これが $S$ の最小除外数であることから,
-$$s \not\in S.$$
+$t = \mex T$ と置くと, これが $T$ の最小除外数であることから,
+$$t \not\in T.$$
 今 $S \subset T$ を仮定すると,
-$$s \not\in T.$$
+$$t \not\in S.$$
 mex-1 を使うと
-$$s \geq \mex T.$$
+$$t \geq \mex S.$$
 </details>
 
 ## 定義: ニム和 (Nim-sum)

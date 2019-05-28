@@ -1,4 +1,4 @@
-% Fenwick tree, binary indexed tree
+% Binary Indexed Tree (Fenwick Tree)
 
 ## 参考
 

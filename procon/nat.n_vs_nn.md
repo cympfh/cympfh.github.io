@@ -1,20 +1,20 @@
 % N vs N2
 
-## Thm.
+## 定理
 
-$\mathbb{N} \simeq \mathbb{N}^2$
+$$\mathbb{N} \simeq \mathbb{N}^2.$$
 
-## $\mathbb{N} \rightarrow \mathbb{N}^2$
+### $\mathbb{N} \rightarrow \mathbb{N}^2$
 
 @[cpp](nat.n_to_nn.cc)
 
-## $\mathbb{N}^2 \rightarrow \mathbb{N}$
+### $\mathbb{N}^2 \rightarrow \mathbb{N}$
 
 @[cpp](nat.nn_to_n.cc)
 
-## テスト
+### テスト
 
-### $\mathbb{N} \rightarrow \mathbb{N}^2$
+#### $\mathbb{N} \rightarrow \mathbb{N}^2$
 
 ```cpp
 rep (i, 10) cout << i << " => " << n2nn(i) << endl;
@@ -33,7 +33,7 @@ rep (i, 10) cout << i << " => " << n2nn(i) << endl;
 9 => (3, 0)
 ```
 
-### $\mathbb{N}^2 \rightarrow \mathbb{N}$
+#### $\mathbb{N}^2 \rightarrow \mathbb{N}$
 
 ```cpp
 rep (i, 10) {

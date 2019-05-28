@@ -1,7 +1,3 @@
-# テンプレート
-
-- [テンプレート](template.html)
-
 # グラフ
 
 ## 最短路
@@ -13,34 +9,26 @@
 - [Kruskal](graph.kruskal.html)
 
 ## 木
-- [木の高さ (全ての点を根とする最大距離)](graph.tree.height.html)
-- [木の直径](graph.tree.diameter.html)
+- [高さ](graph.tree.height.html)
+- [直径](graph.tree.diameter.html)
 
 ## [最大流量](graph.maxflow.html)
 
 ## [トポロジカルソート](graph.topological.html)
 
-## [橋、二重連結成分分解]()
-- [経由するトレール]()
-
 ## [強連結成分分解](graph.scc.html)
 
 # 数列
 
-## 最長増加部分列 (LSI)
-- [Young Tableaux アルゴリズム](seq.lsi.html)
-
-## [累積和](seq.cumsum.html)
-## [Binary Indexed Tree (Fenwick Tree)](seq.bit.html)
+- [最長増加部分列 (LSI)](seq.lsi.html)
+- [std::nth_element](seq.nth.html)
 
 ## 区間木
 
-- [Range Maximum Query (RMQ)](seq.rmq.html)
+- [累積和](seq.cumsum.html)
+- [BIT](seq.bit.html)
+- [RMQ](seq.rmq.html)
 - [Starry Sky Tree](seq.starry.html)
-
-## 選択アルゴリズム (n-th selection)
-
-- [std::nth_element](seq.nth.html)
 
 # 行列
 
@@ -63,28 +51,21 @@
 - [多角形の内外判定](geo.2d.isin_poly.html)
 - [多角形の面積](http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=0079)
 - [凸包](geo.2d.convex_hull.html)
-    - [輪ゴムで囲んだ釘 | AOJ](http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=0068)
 
 ## 円
 - [円の定義](geo.2d.circle.html)
 - [円と円の接触関係](geo.2d.circle.intersection.html)
-    - [Circles Intersection | AOJ](http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=0023)
-    - [solve](http://judge.u-aizu.ac.jp/onlinejudge/review.jsp?rid=1177149#1)
 
 ## 最近点対
 - [平面上の分割統治法](geo.closest_pair.html)
-
-## 線形変換
-- [線対称](http://yosshy.sansu.org/1jihenkan.htm)
 
 # 集合
 - [Union-Find](set.union_find.html)
 
 # 動的計画法
-- [01-ナップザック問題 (Knapsack problem)](dp.knapsack.01.html)
+- [01-ナップザック](dp.knapsack.01.html)
 
 # 二分探索
-- [私の書き方](bin.search.html)
 - [二分探索](bin.search.html)
 - [出現回数](bin.count.html)
 
@@ -97,8 +78,8 @@
 - [パスカルの三角形](misc.pascal_triangle.html)
 - [二項係数](int.binom.html)
 - [離散対数](int.dislog.html)
-- [完全順列 (撹乱順列)](int.derangement.html)
-- [オイラーの Phi 関数](int.euler_phi.html)
+- [完全順列](int.derangement.html)
+- [オイラーの関数](int.euler_phi.html)
 
 ## 素数
 - [エラトステネスの篩](prime.sieve.html)
@@ -113,13 +94,13 @@
 
 ## 組み合わせ
 
-- [permutation -- $n!$](nat.perm.html)
-- [permutation -- $n^m$](nat.powperm.html)
-- [combination -- ${}_nC{}_m$](nat.comb.html)
+- [permutation - $n!$](nat.perm.html)
+- [permutation - $n^m$](nat.powperm.html)
+- [combination - ${}_nC{}_m$](nat.comb.html)
 
 # 乱数
 
-- [疑似乱数](rand.gen.html)
+- [xor-shift](rand.xorshift.html)
 
 # フーリエ変換
 - [Cooley-Tukey FFT](fft.html)
@@ -128,20 +109,20 @@
 # 文字列 (Vector)
 
 ## 文字列検索
-- [Shift-And アルゴリズム](string.shift-and.html)
+- [Shift-And](string.shift-and.html)
 
 ## 回文
 - [manacher](string.manacher.html)
 
-## [Run-length 圧縮](string.runlength.html)
+## 圧縮
+- [Run-length](string.runlength.html)
 
 # 時間/時刻
 
-## [制限時間付きループ](time.while.html)
+- [制限時間付きループ](time.while.html)
 
 ## 暦
 - [ツェラーの公式](cal.zeller.html)
-    - [What day is today? | AOJ](http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=0027)
 - [閏年判定](cal.uruu.html)
 
 # STL
@@ -154,13 +135,11 @@
 
 # misc
 - [bit count](bit.count.html)
-- [K-平均法](misc.kmeans.html)
-- [W * H - 1 パズル (aka 15パズル)](15puzzle.html)
-- [文字列のnumeric sort](misc.sort-n.html)
+- [k-means](misc.kmeans.html)
+- [一般化15パズル](15puzzle.html)
+- [numeric sort](misc.sort-n.html)
 - [乱択3-SAT](misc.3sat.html)
 - [スターリングの近似式](misc.stirling.html)
 - [サイコロ](dice.html)
-    - [Biased Dice | AOJ](http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=1181)
-    - [回答](https://gist.github.com/cympfh/6a1fbd8b8f2c9b292ee3)
 - [円周率](misc.pi.html)
 

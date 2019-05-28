@@ -1,11 +1,10 @@
-# 疑似乱数
+# xor-shift 疑似乱数
 
 ## Rust
 
-標準には擬似乱数生成ライブラリが入ってないので.
-以下は [Wikipedia:Xorshift](https://ja.wikipedia.org/wiki/Xorshift) の `xor64` の実装.
+[Wikipedia:Xorshift](https://ja.wikipedia.org/wiki/Xorshift) の `xor64` の実装
 
-@[rust](rand.gen.rs)
+@[rust](rand.xorshift.rs)
 
 ```rust
 fn main() {

@@ -1,5 +1,5 @@
-% mat.det.cramer
+% matrix.det.cramer
 
-## [mat.det.cramer.cc](mat.det.cramer.cc)
+## [matrix.det.cramer.cc](matrix.det.cramer.cc)
 
-@[cpp](mat.det.cramer.cc)
+@[cpp](matrix.det.cramer.cc)

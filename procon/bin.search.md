@@ -1,4 +1,4 @@
-# 私の二分探索の書き方
+# 二分探索
 
 Yes/No を返す述語があるとする.
 
@@ -8,15 +8,20 @@ bool Prop(){}
 
 ## 問題
 
-整数 $n$ (ただし $sub \leq n \leq sup$ は事前に分かっているものとする)
-について、
-`Prop` が Yes と返す最小値を求めよ.
+整数 $n$ について, `Prop` が Yes と返す最小値を求めよ.
 
 ただし、`Prop` には次の性質があることを仮定する.
 
 - ある整数 $m$ があって
-    - $m$ 未満の整数 $n$ については `Prop` は No を返す
-    - $m$ 以上の整数 $n$ については `Prop` は Yes を返す
+    - $\forall n < m, \mathrm{Prop}(n) = \mathrm{No}$
+    - $\forall n \geq m, \mathrm{Prop}(n) = \mathrm{Yes}$
+
+ただし既知の $\mathrm{sub}, \mathrm{sup}$ があって,
+
+- $\mathrm{Prop}(\mathrm{sub}) = \mathrm{No}$
+- $\mathrm{Prop}(\mathrm{sup}) = \mathrm{Yes}$
+
+であることは分かっているとする.
 
 ## 解
 

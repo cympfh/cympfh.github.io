@@ -22,58 +22,58 @@
           <div class="article column is-8">
             <p>Young Tableaux アルゴリズムの実装</p>
 <h2 id="seq.lsi.cc"><a href="seq.lsi.cc" class="uri">seq.lsi.cc</a></h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb1-1" title="1"><span class="co">/*</span></a>
-<a class="sourceLine" id="cb1-2" title="2"><span class="co"> * Young Tableaux アルゴリズム [A.Young 1900]</span></a>
-<a class="sourceLine" id="cb1-3" title="3"><span class="co"> * O(nlog(n))</span></a>
-<a class="sourceLine" id="cb1-4" title="4"><span class="co"> *</span></a>
-<a class="sourceLine" id="cb1-5" title="5"><span class="co"> * 数列の数字が全部違うと仮定してる</span></a>
-<a class="sourceLine" id="cb1-6" title="6"><span class="co"> * 同じのが含まれているときは*たぶん*狭義単調増加列になると思う</span></a>
-<a class="sourceLine" id="cb1-7" title="7"><span class="co"> *</span></a>
-<a class="sourceLine" id="cb1-8" title="8"><span class="co"> */</span></a>
-<a class="sourceLine" id="cb1-9" title="9"></a>
-<a class="sourceLine" id="cb1-10" title="10"><span class="kw">using</span> vi = vector&lt;<span class="dt">int</span>&gt;;</a>
-<a class="sourceLine" id="cb1-11" title="11"></a>
-<a class="sourceLine" id="cb1-12" title="12">vi lsi(vi xs) {</a>
-<a class="sourceLine" id="cb1-13" title="13">  vvi bins;</a>
-<a class="sourceLine" id="cb1-14" title="14">  vi bots;</a>
-<a class="sourceLine" id="cb1-15" title="15">  <span class="cf">for</span> (<span class="dt">int</span> x: xs) {</a>
-<a class="sourceLine" id="cb1-16" title="16">    <span class="kw">auto</span> it = lower_bound(begin(bots), end(bots), x);</a>
-<a class="sourceLine" id="cb1-17" title="17">    <span class="cf">if</span> (it == end(bots)) {</a>
-<a class="sourceLine" id="cb1-18" title="18">      bins.push_back({x});</a>
-<a class="sourceLine" id="cb1-19" title="19">      bots.push_back(x);</a>
-<a class="sourceLine" id="cb1-20" title="20">    } <span class="cf">else</span> {</a>
-<a class="sourceLine" id="cb1-21" title="21">      bins[it - begin(bots)].push_back(x);</a>
-<a class="sourceLine" id="cb1-22" title="22">      *it = x;</a>
-<a class="sourceLine" id="cb1-23" title="23">    }</a>
-<a class="sourceLine" id="cb1-24" title="24">  }</a>
-<a class="sourceLine" id="cb1-25" title="25">  <span class="dt">int</span> n = bots.size();</a>
-<a class="sourceLine" id="cb1-26" title="26">  vi ret(n);</a>
-<a class="sourceLine" id="cb1-27" title="27">  <span class="dt">int</span> x = inf;</a>
-<a class="sourceLine" id="cb1-28" title="28">  <span class="cf">for</span> (--n; n&gt;=<span class="dv">0</span>; --n) {</a>
-<a class="sourceLine" id="cb1-29" title="29">    reverse(begin(bins[n]), end(bins[n]));</a>
-<a class="sourceLine" id="cb1-30" title="30">    x = *(lower_bound(begin(bins[n]), end(bins[n]), x) - <span class="dv">1</span>);</a>
-<a class="sourceLine" id="cb1-31" title="31">    ret[n] = x;</a>
-<a class="sourceLine" id="cb1-32" title="32">  }</a>
-<a class="sourceLine" id="cb1-33" title="33">  <span class="cf">return</span> ret;</a>
-<a class="sourceLine" id="cb1-34" title="34">}</a>
-<a class="sourceLine" id="cb1-35" title="35"></a>
-<a class="sourceLine" id="cb1-36" title="36"><span class="co">/*</span></a>
-<a class="sourceLine" id="cb1-37" title="37"><span class="co"> * 長さだけなら簡単</span></a>
-<a class="sourceLine" id="cb1-38" title="38"><span class="co"> */</span></a>
-<a class="sourceLine" id="cb1-39" title="39"></a>
-<a class="sourceLine" id="cb1-40" title="40"><span class="dt">int</span> lsi_len(vi xs) {</a>
-<a class="sourceLine" id="cb1-41" title="41">  vi bots;</a>
-<a class="sourceLine" id="cb1-42" title="42">  <span class="cf">for</span> (<span class="dt">int</span> x: xs) {</a>
-<a class="sourceLine" id="cb1-43" title="43">    <span class="kw">auto</span> it = lower_bound(begin(bots), end(bots), x);</a>
-<a class="sourceLine" id="cb1-44" title="44">    <span class="cf">if</span> (it == end(bots)) {</a>
-<a class="sourceLine" id="cb1-45" title="45">      bots.push_back(x);</a>
-<a class="sourceLine" id="cb1-46" title="46">    } <span class="cf">else</span> {</a>
-<a class="sourceLine" id="cb1-47" title="47">      *it = x;</a>
-<a class="sourceLine" id="cb1-48" title="48">    }</a>
-<a class="sourceLine" id="cb1-49" title="49">  }</a>
-<a class="sourceLine" id="cb1-50" title="50">  <span class="cf">return</span> bots.size();</a>
-<a class="sourceLine" id="cb1-51" title="51">}</a>
-<a class="sourceLine" id="cb1-52" title="52"></a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="co">/*</span>
+<span class="co"> * Young Tableaux アルゴリズム [A.Young 1900]</span>
+<span class="co"> * O(nlog(n))</span>
+<span class="co"> *</span>
+<span class="co"> * 数列の数字が全部違うと仮定してる</span>
+<span class="co"> * 同じのが含まれているときは*たぶん*狭義単調増加列になると思う</span>
+<span class="co"> *</span>
+<span class="co"> */</span>
+
+<span class="kw">using</span> vi = vector&lt;<span class="dt">int</span>&gt;;
+
+vi lsi(vi xs) {
+  vvi bins;
+  vi bots;
+  <span class="cf">for</span> (<span class="dt">int</span> x: xs) {
+    <span class="kw">auto</span> it = lower_bound(begin(bots), end(bots), x);
+    <span class="cf">if</span> (it == end(bots)) {
+      bins.push_back({x});
+      bots.push_back(x);
+    } <span class="cf">else</span> {
+      bins[it - begin(bots)].push_back(x);
+      *it = x;
+    }
+  }
+  <span class="dt">int</span> n = bots.size();
+  vi ret(n);
+  <span class="dt">int</span> x = inf;
+  <span class="cf">for</span> (--n; n&gt;=<span class="dv">0</span>; --n) {
+    reverse(begin(bins[n]), end(bins[n]));
+    x = *(lower_bound(begin(bins[n]), end(bins[n]), x) - <span class="dv">1</span>);
+    ret[n] = x;
+  }
+  <span class="cf">return</span> ret;
+}
+
+<span class="co">/*</span>
+<span class="co"> * 長さだけなら簡単</span>
+<span class="co"> */</span>
+
+<span class="dt">int</span> lsi_len(vi xs) {
+  vi bots;
+  <span class="cf">for</span> (<span class="dt">int</span> x: xs) {
+    <span class="kw">auto</span> it = lower_bound(begin(bots), end(bots), x);
+    <span class="cf">if</span> (it == end(bots)) {
+      bots.push_back(x);
+    } <span class="cf">else</span> {
+      *it = x;
+    }
+  }
+  <span class="cf">return</span> bots.size();
+}
+</code></pre></div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
@@ -117,13 +117,19 @@
 <details class=menu>
 <summary class=menu>行列</summary>
 <ul>
-<li><a href="matrix.html">行列の表現</a></li>
-<li><a href="matrix.ops.html">基本演算</a></li>
+<li><a href="matrix.ops.html">行列演算</a></li>
 </ul>
 <h2 id="行列式">行列式</h2>
 <ul>
 <li><a href="mat.det.naiiv.html">定義に拠る算法</a></li>
-<li><a href="mat.det.cramer.html">Cramer’s rule</a></li>
+<li><a href="mat.det.cramer.html">Cramer's rule</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>虚数</summary>
+<ul>
+<li><a href="complex.html">虚数の定義と演算</a></li>
 </ul>
 </details>
 

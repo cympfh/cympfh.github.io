@@ -21,74 +21,74 @@
 
           <div class="article column is-8">
             <h2 id="graph.prim.cc"><a href="graph.prim.cc" class="uri">graph.prim.cc</a></h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb1-1" title="1"><span class="dt">int</span> prim(<span class="dt">int</span> n, vvi&amp;adj, vvi&amp;cost) {</a>
-<a class="sourceLine" id="cb1-2" title="2">  vector&lt;<span class="dt">bool</span>&gt; used(n, <span class="kw">false</span>);</a>
-<a class="sourceLine" id="cb1-3" title="3">  queue&lt;<span class="dt">int</span>&gt; q;</a>
-<a class="sourceLine" id="cb1-4" title="4">  <span class="dt">int</span> total = <span class="dv">0</span>;</a>
-<a class="sourceLine" id="cb1-5" title="5"></a>
-<a class="sourceLine" id="cb1-6" title="6">  <span class="dt">int</span> u = rand() % n;</a>
-<a class="sourceLine" id="cb1-7" title="7">  vector&lt;<span class="dt">int</span>&gt; vs = { u };</a>
-<a class="sourceLine" id="cb1-8" title="8">  used[u] = <span class="kw">true</span>;</a>
-<a class="sourceLine" id="cb1-9" title="9">  loop {</a>
-<a class="sourceLine" id="cb1-10" title="10">    <span class="dt">int</span> mc = inf; <span class="co">// minimize</span></a>
-<a class="sourceLine" id="cb1-11" title="11">    <span class="dt">int</span> mu = -<span class="dv">1</span>, mv;</a>
-<a class="sourceLine" id="cb1-12" title="12">    <span class="cf">for</span> (<span class="dt">int</span> v: vs) {</a>
-<a class="sourceLine" id="cb1-13" title="13">      <span class="cf">for</span> (<span class="dt">int</span> u: adj[v]) {</a>
-<a class="sourceLine" id="cb1-14" title="14">        <span class="cf">if</span> (used[u]) <span class="cf">continue</span>;</a>
-<a class="sourceLine" id="cb1-15" title="15">        <span class="cf">if</span> (mc &gt; cost[v][u]) {</a>
-<a class="sourceLine" id="cb1-16" title="16">          mc = cost[v][u];</a>
-<a class="sourceLine" id="cb1-17" title="17">          mv = v; mu = u;</a>
-<a class="sourceLine" id="cb1-18" title="18">        }</a>
-<a class="sourceLine" id="cb1-19" title="19">      }</a>
-<a class="sourceLine" id="cb1-20" title="20">    }</a>
-<a class="sourceLine" id="cb1-21" title="21">    <span class="cf">if</span> (mu &lt; <span class="dv">0</span>) {</a>
-<a class="sourceLine" id="cb1-22" title="22">      <span class="cf">break</span>;</a>
-<a class="sourceLine" id="cb1-23" title="23">    }</a>
-<a class="sourceLine" id="cb1-24" title="24">    used[mu] = <span class="kw">true</span>;</a>
-<a class="sourceLine" id="cb1-25" title="25">    vs.push_back(mu);</a>
-<a class="sourceLine" id="cb1-26" title="26">    total += mc;</a>
-<a class="sourceLine" id="cb1-27" title="27">  }</a>
-<a class="sourceLine" id="cb1-28" title="28">  <span class="cf">return</span> total;</a>
-<a class="sourceLine" id="cb1-29" title="29">}</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="dt">int</span> prim(<span class="dt">int</span> n, vvi&amp;adj, vvi&amp;cost) {
+  vector&lt;<span class="dt">bool</span>&gt; used(n, <span class="kw">false</span>);
+  queue&lt;<span class="dt">int</span>&gt; q;
+  <span class="dt">int</span> total = <span class="dv">0</span>;
+
+  <span class="dt">int</span> u = rand() % n;
+  vector&lt;<span class="dt">int</span>&gt; vs = { u };
+  used[u] = <span class="kw">true</span>;
+  loop {
+    <span class="dt">int</span> mc = inf; <span class="co">// minimize</span>
+    <span class="dt">int</span> mu = <span class="dv">-1</span>, mv;
+    <span class="cf">for</span> (<span class="dt">int</span> v: vs) {
+      <span class="cf">for</span> (<span class="dt">int</span> u: adj[v]) {
+        <span class="cf">if</span> (used[u]) <span class="cf">continue</span>;
+        <span class="cf">if</span> (mc &gt; cost[v][u]) {
+          mc = cost[v][u];
+          mv = v; mu = u;
+        }
+      }
+    }
+    <span class="cf">if</span> (mu &lt; <span class="dv">0</span>) {
+      <span class="cf">break</span>;
+    }
+    used[mu] = <span class="kw">true</span>;
+    vs.push_back(mu);
+    total += mc;
+  }
+  <span class="cf">return</span> total;
+}</code></pre></div>
 <h2 id="example">Example</h2>
-<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">using</span> vi = vector&lt;<span class="dt">int</span>&gt;;</a>
-<a class="sourceLine" id="cb2-2" title="2"><span class="kw">using</span> vvi = vector&lt;vi&gt;;</a>
-<a class="sourceLine" id="cb2-3" title="3"><span class="dt">int</span> main() {</a>
-<a class="sourceLine" id="cb2-4" title="4"></a>
-<a class="sourceLine" id="cb2-5" title="5">  <span class="co">// this graph is an example</span></a>
-<a class="sourceLine" id="cb2-6" title="6">  <span class="co">// on the page: http://ja.wikipedia.org/wiki/プリム法</span></a>
-<a class="sourceLine" id="cb2-7" title="7">stringstream input(</a>
-<a class="sourceLine" id="cb2-8" title="8"><span class="st">&quot;  7&quot;</span></a>
-<a class="sourceLine" id="cb2-9" title="9"><span class="st">&quot;  0 1 7&quot;</span></a>
-<a class="sourceLine" id="cb2-10" title="10"><span class="st">&quot;  0 3 5&quot;</span></a>
-<a class="sourceLine" id="cb2-11" title="11"><span class="st">&quot;  1 2 8&quot;</span></a>
-<a class="sourceLine" id="cb2-12" title="12"><span class="st">&quot;  1 3 9&quot;</span></a>
-<a class="sourceLine" id="cb2-13" title="13"><span class="st">&quot;  1 4 7&quot;</span></a>
-<a class="sourceLine" id="cb2-14" title="14"><span class="st">&quot;  2 4 5&quot;</span></a>
-<a class="sourceLine" id="cb2-15" title="15"><span class="st">&quot;  3 4 15&quot;</span></a>
-<a class="sourceLine" id="cb2-16" title="16"><span class="st">&quot;  3 5 6&quot;</span></a>
-<a class="sourceLine" id="cb2-17" title="17"><span class="st">&quot;  4 5 8&quot;</span></a>
-<a class="sourceLine" id="cb2-18" title="18"><span class="st">&quot;  4 6 9&quot;</span></a>
-<a class="sourceLine" id="cb2-19" title="19"><span class="st">&quot;  5 6 11&quot;</span>);</a>
-<a class="sourceLine" id="cb2-20" title="20">  <span class="dt">int</span> answer = <span class="dv">39</span>;</a>
-<a class="sourceLine" id="cb2-21" title="21">  </a>
-<a class="sourceLine" id="cb2-22" title="22">  {</a>
-<a class="sourceLine" id="cb2-23" title="23">    <span class="dt">int</span> n; input &gt;&gt; n;</a>
-<a class="sourceLine" id="cb2-24" title="24">    vvi adjacency_list(n);</a>
-<a class="sourceLine" id="cb2-25" title="25">    vvi cost_table(n, vi(n, inf));</a>
-<a class="sourceLine" id="cb2-26" title="26">    loop {</a>
-<a class="sourceLine" id="cb2-27" title="27">      <span class="dt">int</span> a, b, c; input &gt;&gt; a &gt;&gt; b &gt;&gt; c;</a>
-<a class="sourceLine" id="cb2-28" title="28">      <span class="cf">if</span> (<span class="kw">not</span> input) <span class="cf">break</span>;</a>
-<a class="sourceLine" id="cb2-29" title="29">      adjacency_list[a].push_back(b);</a>
-<a class="sourceLine" id="cb2-30" title="30">      adjacency_list[b].push_back(a);</a>
-<a class="sourceLine" id="cb2-31" title="31">      cost_table[a][b] = cost_table[b][a] = c;</a>
-<a class="sourceLine" id="cb2-32" title="32">    }</a>
-<a class="sourceLine" id="cb2-33" title="33"></a>
-<a class="sourceLine" id="cb2-34" title="34">    <span class="ot">assert</span>(prim(n, adjacency_list, cost_table) == answer);</a>
-<a class="sourceLine" id="cb2-35" title="35">  }</a>
-<a class="sourceLine" id="cb2-36" title="36"></a>
-<a class="sourceLine" id="cb2-37" title="37">  <span class="cf">return</span> <span class="dv">0</span>;</a>
-<a class="sourceLine" id="cb2-38" title="38">}</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="kw">using</span> vi = vector&lt;<span class="dt">int</span>&gt;;
+<span class="kw">using</span> vvi = vector&lt;vi&gt;;
+<span class="dt">int</span> main() {
+
+  <span class="co">// this graph is an example</span>
+  <span class="co">// on the page: http://ja.wikipedia.org/wiki/プリム法</span>
+stringstream input(
+<span class="st">&quot;  7&quot;</span>
+<span class="st">&quot;  0 1 7&quot;</span>
+<span class="st">&quot;  0 3 5&quot;</span>
+<span class="st">&quot;  1 2 8&quot;</span>
+<span class="st">&quot;  1 3 9&quot;</span>
+<span class="st">&quot;  1 4 7&quot;</span>
+<span class="st">&quot;  2 4 5&quot;</span>
+<span class="st">&quot;  3 4 15&quot;</span>
+<span class="st">&quot;  3 5 6&quot;</span>
+<span class="st">&quot;  4 5 8&quot;</span>
+<span class="st">&quot;  4 6 9&quot;</span>
+<span class="st">&quot;  5 6 11&quot;</span>);
+  <span class="dt">int</span> answer = <span class="dv">39</span>;
+  
+  {
+    <span class="dt">int</span> n; input &gt;&gt; n;
+    vvi adjacency_list(n);
+    vvi cost_table(n, vi(n, inf));
+    loop {
+      <span class="dt">int</span> a, b, c; input &gt;&gt; a &gt;&gt; b &gt;&gt; c;
+      <span class="cf">if</span> (<span class="kw">not</span> input) <span class="cf">break</span>;
+      adjacency_list[a].push_back(b);
+      adjacency_list[b].push_back(a);
+      cost_table[a][b] = cost_table[b][a] = c;
+    }
+
+    assert(prim(n, adjacency_list, cost_table) == answer);
+  }
+
+  <span class="cf">return</span> <span class="dv">0</span>;
+}</code></pre></div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
@@ -132,13 +132,19 @@
 <details class=menu>
 <summary class=menu>行列</summary>
 <ul>
-<li><a href="matrix.html">行列の表現</a></li>
-<li><a href="matrix.ops.html">基本演算</a></li>
+<li><a href="matrix.ops.html">行列演算</a></li>
 </ul>
 <h2 id="行列式">行列式</h2>
 <ul>
 <li><a href="mat.det.naiiv.html">定義に拠る算法</a></li>
-<li><a href="mat.det.cramer.html">Cramer’s rule</a></li>
+<li><a href="mat.det.cramer.html">Cramer's rule</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>虚数</summary>
+<ul>
+<li><a href="complex.html">虚数の定義と演算</a></li>
 </ul>
 </details>
 

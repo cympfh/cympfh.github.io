@@ -1,8 +1,3 @@
-/*
- * 離散フーリエ変換を用いた畳み込みの計算
- * 問題の頁 (解説スライド付き): http://atc001.contest.atcoder.jp/tasks/fft_c
- */
-
 // {{{
 using Real = long double;
 const Real PI = acos(-1);
@@ -60,4 +55,3 @@ int main() {
 
   return 0;
 }
-

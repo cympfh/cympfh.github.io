@@ -22,112 +22,112 @@
           <div class="article column is-8">
             <p>ツェラーの公式</p>
 <h2 id="cal.zeller.rs"><a href="cal.zeller.rs" class="uri">cal.zeller.rs</a></h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">use</span> <span class="pp">std::</span>fmt;</a>
-<a class="sourceLine" id="cb1-2" title="2"></a>
-<a class="sourceLine" id="cb1-3" title="3"><span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">)]</span></a>
-<a class="sourceLine" id="cb1-4" title="4"><span class="kw">enum</span> Day <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-5" title="5">  Sat, Sun, Mon, Tue, Wed, Thu, Fri</a>
-<a class="sourceLine" id="cb1-6" title="6"><span class="op">}</span></a>
-<a class="sourceLine" id="cb1-7" title="7"></a>
-<a class="sourceLine" id="cb1-8" title="8"><span class="kw">impl</span> Day <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-9" title="9">    <span class="kw">fn</span> from(i: <span class="dt">usize</span>) -&gt; Day <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-10" title="10">        <span class="kw">match</span> i <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-11" title="11">            <span class="dv">0</span> =&gt; <span class="pp">Day::</span>Sat,</a>
-<a class="sourceLine" id="cb1-12" title="12">            <span class="dv">1</span> =&gt; <span class="pp">Day::</span>Sun,</a>
-<a class="sourceLine" id="cb1-13" title="13">            <span class="dv">2</span> =&gt; <span class="pp">Day::</span>Mon,</a>
-<a class="sourceLine" id="cb1-14" title="14">            <span class="dv">3</span> =&gt; <span class="pp">Day::</span>Tue,</a>
-<a class="sourceLine" id="cb1-15" title="15">            <span class="dv">4</span> =&gt; <span class="pp">Day::</span>Wed,</a>
-<a class="sourceLine" id="cb1-16" title="16">            <span class="dv">5</span> =&gt; <span class="pp">Day::</span>Thu,</a>
-<a class="sourceLine" id="cb1-17" title="17">            <span class="dv">6</span> =&gt; <span class="pp">Day::</span>Fri,</a>
-<a class="sourceLine" id="cb1-18" title="18">            _ =&gt; <span class="pp">panic!</span>(<span class="st">&quot;no day&quot;</span>)</a>
-<a class="sourceLine" id="cb1-19" title="19">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-20" title="20">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-21" title="21"><span class="op">}</span></a>
-<a class="sourceLine" id="cb1-22" title="22"></a>
-<a class="sourceLine" id="cb1-23" title="23"><span class="kw">impl</span> <span class="pp">fmt::</span><span class="bu">Display</span> <span class="kw">for</span> Day <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-24" title="24">    <span class="kw">fn</span> fmt(&amp;<span class="kw">self</span>, f: &amp;<span class="kw">mut</span> <span class="pp">fmt::</span>Formatter) -&gt; <span class="pp">fmt::</span><span class="dt">Result</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-25" title="25">        <span class="pp">write!</span>(f, <span class="st">&quot;{}&quot;</span>,</a>
-<a class="sourceLine" id="cb1-26" title="26">            <span class="kw">match</span> <span class="kw">self</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-27" title="27">                <span class="pp">Day::</span>Sat =&gt; <span class="st">&quot;Saturday&quot;</span>,</a>
-<a class="sourceLine" id="cb1-28" title="28">                <span class="pp">Day::</span>Sun =&gt; <span class="st">&quot;Sunday&quot;</span>,</a>
-<a class="sourceLine" id="cb1-29" title="29">                <span class="pp">Day::</span>Mon =&gt; <span class="st">&quot;Monday&quot;</span>,</a>
-<a class="sourceLine" id="cb1-30" title="30">                <span class="pp">Day::</span>Tue =&gt; <span class="st">&quot;Tuesday&quot;</span>,</a>
-<a class="sourceLine" id="cb1-31" title="31">                <span class="pp">Day::</span>Wed =&gt; <span class="st">&quot;Wednesday&quot;</span>,</a>
-<a class="sourceLine" id="cb1-32" title="32">                <span class="pp">Day::</span>Thu =&gt; <span class="st">&quot;Thursday&quot;</span>,</a>
-<a class="sourceLine" id="cb1-33" title="33">                <span class="pp">Day::</span>Fri =&gt; <span class="st">&quot;Friday&quot;</span></a>
-<a class="sourceLine" id="cb1-34" title="34">            <span class="op">}</span>)</a>
-<a class="sourceLine" id="cb1-35" title="35">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-36" title="36"><span class="op">}</span></a>
-<a class="sourceLine" id="cb1-37" title="37"></a>
-<a class="sourceLine" id="cb1-38" title="38"><span class="kw">fn</span> zeller(y: <span class="dt">usize</span>, m: <span class="dt">usize</span>, d: <span class="dt">usize</span>) -&gt; Day <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-39" title="39">    <span class="pp">assert!</span>(m &gt;= <span class="dv">1</span> &amp;&amp; d &gt;= <span class="dv">1</span>);</a>
-<a class="sourceLine" id="cb1-40" title="40">    <span class="kw">let</span> (year, month) = <span class="kw">if</span> m &lt;= <span class="dv">2</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-41" title="41">        (y - <span class="dv">1</span>, m + <span class="dv">12</span>)</a>
-<a class="sourceLine" id="cb1-42" title="42">    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-43" title="43">        (y, m)</a>
-<a class="sourceLine" id="cb1-44" title="44">    <span class="op">}</span>;</a>
-<a class="sourceLine" id="cb1-45" title="45">    <span class="kw">let</span> y_up = year % <span class="dv">100</span>;</a>
-<a class="sourceLine" id="cb1-46" title="46">    <span class="kw">let</span> y_down = year / <span class="dv">100</span>;</a>
-<a class="sourceLine" id="cb1-47" title="47">    <span class="kw">let</span> gamma;</a>
-<a class="sourceLine" id="cb1-48" title="48">    <span class="co">// Gregorian if (1582 &lt;= y)</span></a>
-<a class="sourceLine" id="cb1-49" title="49">    <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-50" title="50">        gamma = <span class="dv">5</span> * y_down + y_down / <span class="dv">4</span>;</a>
-<a class="sourceLine" id="cb1-51" title="51">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-52" title="52">    <span class="co">// Julian if 4 &lt;= y &amp;&amp; y &lt;= 1582</span></a>
-<a class="sourceLine" id="cb1-53" title="53">    <span class="co">// {</span></a>
-<a class="sourceLine" id="cb1-54" title="54">    <span class="co">//     gamma = 6 * c + 5;</span></a>
-<a class="sourceLine" id="cb1-55" title="55">    <span class="co">// };</span></a>
-<a class="sourceLine" id="cb1-56" title="56">    <span class="kw">let</span> h = d + (<span class="dv">26</span> * (month + <span class="dv">1</span>) / <span class="dv">10</span>) + y_up + y_up / <span class="dv">4</span> + gamma;</a>
-<a class="sourceLine" id="cb1-57" title="57">    <span class="pp">Day::</span>from(h % <span class="dv">7</span>)</a>
-<a class="sourceLine" id="cb1-58" title="58"><span class="op">}</span></a>
-<a class="sourceLine" id="cb1-59" title="59"></a>
-<a class="sourceLine" id="cb1-60" title="60"><span class="kw">fn</span> main() <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-61" title="61">    <span class="kw">for</span> m <span class="kw">in</span> <span class="dv">11</span>..<span class="dv">13</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-62" title="62">        <span class="kw">for</span> d <span class="kw">in</span> <span class="dv">1</span>..<span class="dv">32</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-63" title="63">            <span class="kw">let</span> day = zeller(<span class="dv">2018</span>, m, d);</a>
-<a class="sourceLine" id="cb1-64" title="64">            <span class="pp">println!</span>(<span class="st">&quot;2018-{}-{}: {} {:?}&quot;</span>, m, d, day, day);</a>
-<a class="sourceLine" id="cb1-65" title="65">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-66" title="66">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-67" title="67"><span class="op">}</span></a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">use</span> std::fmt;
+
+<span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">)]</span>
+<span class="kw">enum</span> Day <span class="op">{</span>
+  Sat, Sun, Mon, Tue, Wed, Thu, Fri
+<span class="op">}</span>
+
+<span class="kw">impl</span> Day <span class="op">{</span>
+    <span class="kw">fn</span> from(i: <span class="dt">usize</span>) -&gt; Day <span class="op">{</span>
+        <span class="kw">match</span> i <span class="op">{</span>
+            <span class="dv">0</span> =&gt; Day::Sat,
+            <span class="dv">1</span> =&gt; Day::Sun,
+            <span class="dv">2</span> =&gt; Day::Mon,
+            <span class="dv">3</span> =&gt; Day::Tue,
+            <span class="dv">4</span> =&gt; Day::Wed,
+            <span class="dv">5</span> =&gt; Day::Thu,
+            <span class="dv">6</span> =&gt; Day::Fri,
+            _ =&gt; <span class="pp">panic!</span>(<span class="st">&quot;no day&quot;</span>)
+        <span class="op">}</span>
+    <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="kw">impl</span> fmt::<span class="bu">Display</span> <span class="kw">for</span> Day <span class="op">{</span>
+    <span class="kw">fn</span> fmt(&amp;<span class="kw">self</span>, f: &amp;<span class="kw">mut</span> fmt::Formatter) -&gt; fmt::<span class="dt">Result</span> <span class="op">{</span>
+        <span class="pp">write!</span>(f, <span class="st">&quot;{}&quot;</span>,
+            <span class="kw">match</span> <span class="kw">self</span> <span class="op">{</span>
+                Day::Sat =&gt; <span class="st">&quot;Saturday&quot;</span>,
+                Day::Sun =&gt; <span class="st">&quot;Sunday&quot;</span>,
+                Day::Mon =&gt; <span class="st">&quot;Monday&quot;</span>,
+                Day::Tue =&gt; <span class="st">&quot;Tuesday&quot;</span>,
+                Day::Wed =&gt; <span class="st">&quot;Wednesday&quot;</span>,
+                Day::Thu =&gt; <span class="st">&quot;Thursday&quot;</span>,
+                Day::Fri =&gt; <span class="st">&quot;Friday&quot;</span>
+            <span class="op">}</span>)
+    <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="kw">fn</span> zeller(y: <span class="dt">usize</span>, m: <span class="dt">usize</span>, d: <span class="dt">usize</span>) -&gt; Day <span class="op">{</span>
+    <span class="pp">assert!</span>(m &gt;= <span class="dv">1</span> &amp;&amp; d &gt;= <span class="dv">1</span>);
+    <span class="kw">let</span> (year, month) = <span class="kw">if</span> m &lt;= <span class="dv">2</span> <span class="op">{</span>
+        (y - <span class="dv">1</span>, m + <span class="dv">12</span>)
+    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
+        (y, m)
+    <span class="op">}</span>;
+    <span class="kw">let</span> y_up = year % <span class="dv">100</span>;
+    <span class="kw">let</span> y_down = year / <span class="dv">100</span>;
+    <span class="kw">let</span> gamma;
+    <span class="co">// Gregorian if (1582 &lt;= y)</span>
+    <span class="op">{</span>
+        gamma = <span class="dv">5</span> * y_down + y_down / <span class="dv">4</span>;
+    <span class="op">}</span>
+    <span class="co">// Julian if 4 &lt;= y &amp;&amp; y &lt;= 1582</span>
+    <span class="co">// {</span>
+    <span class="co">//     gamma = 6 * c + 5;</span>
+    <span class="co">// };</span>
+    <span class="kw">let</span> h = d + (<span class="dv">26</span> * (month + <span class="dv">1</span>) / <span class="dv">10</span>) + y_up + y_up / <span class="dv">4</span> + gamma;
+    Day::from(h % <span class="dv">7</span>)
+<span class="op">}</span>
+
+<span class="kw">fn</span> main() <span class="op">{</span>
+    <span class="kw">for</span> m <span class="kw">in</span> <span class="dv">11.</span>.<span class="dv">13</span> <span class="op">{</span>
+        <span class="kw">for</span> d <span class="kw">in</span> <span class="dv">1.</span>.<span class="dv">32</span> <span class="op">{</span>
+            <span class="kw">let</span> day = zeller(<span class="dv">2018</span>, m, d);
+            <span class="pp">println!</span>(<span class="st">&quot;2018-{}-{}: {} {:?}&quot;</span>, m, d, day, day);
+        <span class="op">}</span>
+    <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
 <h2 id="cal.zeller.cc"><a href="cal.zeller.cc" class="uri">cal.zeller.cc</a></h2>
-<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">enum</span> Day {</a>
-<a class="sourceLine" id="cb2-2" title="2">  Sat = <span class="dv">0</span>,</a>
-<a class="sourceLine" id="cb2-3" title="3">  Sun = <span class="dv">1</span>,</a>
-<a class="sourceLine" id="cb2-4" title="4">  Mon, Tue, Wed, Thu, Fri</a>
-<a class="sourceLine" id="cb2-5" title="5">};</a>
-<a class="sourceLine" id="cb2-6" title="6"></a>
-<a class="sourceLine" id="cb2-7" title="7">Day zeller(<span class="dt">int</span> y, <span class="dt">int</span> m, <span class="dt">int</span> d) {</a>
-<a class="sourceLine" id="cb2-8" title="8">  <span class="cf">if</span> (m == <span class="dv">1</span> || m == <span class="dv">2</span>) {</a>
-<a class="sourceLine" id="cb2-9" title="9">    --y; m += <span class="dv">12</span>;</a>
-<a class="sourceLine" id="cb2-10" title="10">  }</a>
-<a class="sourceLine" id="cb2-11" title="11">  <span class="dt">int</span> Y = y % <span class="dv">100</span>;</a>
-<a class="sourceLine" id="cb2-12" title="12">  <span class="dt">int</span> c = y / <span class="dv">100</span>;</a>
-<a class="sourceLine" id="cb2-13" title="13">  <span class="dt">int</span> gamma = <span class="dv">5</span> * c + c / <span class="dv">4</span>; <span class="co">// Gregorian (1582 &lt;= y)</span></a>
-<a class="sourceLine" id="cb2-14" title="14">  <span class="co">//int gamma = 6 * c + 5; // Julian (4 &lt;= y &lt;= 1582)</span></a>
-<a class="sourceLine" id="cb2-15" title="15">  <span class="dt">int</span> h = d + <span class="dt">int</span>(<span class="dv">26</span> * (m+<span class="dv">1</span>) / <span class="dv">10</span>)</a>
-<a class="sourceLine" id="cb2-16" title="16">    + Y + Y / <span class="dv">4</span> + gamma;</a>
-<a class="sourceLine" id="cb2-17" title="17">  h %= <span class="dv">7</span>;</a>
-<a class="sourceLine" id="cb2-18" title="18">  <span class="cf">return</span> Day(h);</a>
-<a class="sourceLine" id="cb2-19" title="19">}</a>
-<a class="sourceLine" id="cb2-20" title="20"></a>
-<a class="sourceLine" id="cb2-21" title="21">string show_day (Day a) {</a>
-<a class="sourceLine" id="cb2-22" title="22">  <span class="cf">switch</span> (a) {</a>
-<a class="sourceLine" id="cb2-23" title="23">    <span class="cf">case</span> Mon: <span class="cf">return</span> <span class="st">&quot;Monday&quot;</span>;</a>
-<a class="sourceLine" id="cb2-24" title="24">    <span class="cf">case</span> Tue: <span class="cf">return</span> <span class="st">&quot;Tuesday&quot;</span>;</a>
-<a class="sourceLine" id="cb2-25" title="25">    <span class="cf">case</span> Wed: <span class="cf">return</span> <span class="st">&quot;Wednesday&quot;</span>;</a>
-<a class="sourceLine" id="cb2-26" title="26">    <span class="cf">case</span> Thu: <span class="cf">return</span> <span class="st">&quot;Thursday&quot;</span>;</a>
-<a class="sourceLine" id="cb2-27" title="27">    <span class="cf">case</span> Fri: <span class="cf">return</span> <span class="st">&quot;Friday&quot;</span>;</a>
-<a class="sourceLine" id="cb2-28" title="28">    <span class="cf">case</span> Sat: <span class="cf">return</span> <span class="st">&quot;Saturday&quot;</span>;</a>
-<a class="sourceLine" id="cb2-29" title="29">    <span class="cf">case</span> Sun: <span class="cf">return</span> <span class="st">&quot;Sunday&quot;</span>;</a>
-<a class="sourceLine" id="cb2-30" title="30">    <span class="cf">default</span>: <span class="cf">return</span> <span class="st">&quot;Holiday&quot;</span>;</a>
-<a class="sourceLine" id="cb2-31" title="31">  }</a>
-<a class="sourceLine" id="cb2-32" title="32">}</a>
-<a class="sourceLine" id="cb2-33" title="33"></a>
-<a class="sourceLine" id="cb2-34" title="34"><span class="dt">int</span> main() {</a>
-<a class="sourceLine" id="cb2-35" title="35">  cout &lt;&lt; (Fri == zeller(<span class="dv">2014</span>, <span class="dv">11</span>,<span class="dv">28</span>)) &lt;&lt; endl;</a>
-<a class="sourceLine" id="cb2-36" title="36">  cout &lt;&lt; (Tue == zeller(<span class="dv">1990</span>, <span class="dv">11</span>, <span class="dv">6</span>)) &lt;&lt; endl;</a>
-<a class="sourceLine" id="cb2-37" title="37">  <span class="cf">return</span> <span class="dv">0</span>;</a>
-<a class="sourceLine" id="cb2-38" title="38">}</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="kw">enum</span> Day {
+  Sat = <span class="dv">0</span>,
+  Sun = <span class="dv">1</span>,
+  Mon, Tue, Wed, Thu, Fri
+};
+
+Day zeller(<span class="dt">int</span> y, <span class="dt">int</span> m, <span class="dt">int</span> d) {
+  <span class="cf">if</span> (m == <span class="dv">1</span> || m == <span class="dv">2</span>) {
+    --y; m += <span class="dv">12</span>;
+  }
+  <span class="dt">int</span> Y = y % <span class="dv">100</span>;
+  <span class="dt">int</span> c = y / <span class="dv">100</span>;
+  <span class="dt">int</span> gamma = <span class="dv">5</span> * c + c / <span class="dv">4</span>; <span class="co">// Gregorian (1582 &lt;= y)</span>
+  <span class="co">//int gamma = 6 * c + 5; // Julian (4 &lt;= y &lt;= 1582)</span>
+  <span class="dt">int</span> h = d + <span class="dt">int</span>(<span class="dv">26</span> * (m<span class="dv">+1</span>) / <span class="dv">10</span>)
+    + Y + Y / <span class="dv">4</span> + gamma;
+  h %= <span class="dv">7</span>;
+  <span class="cf">return</span> Day(h);
+}
+
+string show_day (Day a) {
+  <span class="cf">switch</span> (a) {
+    <span class="cf">case</span> Mon: <span class="cf">return</span> <span class="st">&quot;Monday&quot;</span>;
+    <span class="cf">case</span> Tue: <span class="cf">return</span> <span class="st">&quot;Tuesday&quot;</span>;
+    <span class="cf">case</span> Wed: <span class="cf">return</span> <span class="st">&quot;Wednesday&quot;</span>;
+    <span class="cf">case</span> Thu: <span class="cf">return</span> <span class="st">&quot;Thursday&quot;</span>;
+    <span class="cf">case</span> Fri: <span class="cf">return</span> <span class="st">&quot;Friday&quot;</span>;
+    <span class="cf">case</span> Sat: <span class="cf">return</span> <span class="st">&quot;Saturday&quot;</span>;
+    <span class="cf">case</span> Sun: <span class="cf">return</span> <span class="st">&quot;Sunday&quot;</span>;
+    <span class="cf">default</span>: <span class="cf">return</span> <span class="st">&quot;Holiday&quot;</span>;
+  }
+}
+
+<span class="dt">int</span> main() {
+  cout &lt;&lt; (Fri == zeller(<span class="dv">2014</span>, <span class="dv">11</span>,<span class="dv">28</span>)) &lt;&lt; endl;
+  cout &lt;&lt; (Tue == zeller(<span class="dv">1990</span>, <span class="dv">11</span>, <span class="dv">6</span>)) &lt;&lt; endl;
+  <span class="cf">return</span> <span class="dv">0</span>;
+}</code></pre></div>
 <h2 id="例題">例題</h2>
 <ul>
 <li><a href="http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=0027">What day is today? | AOJ</a></li>
@@ -175,13 +175,19 @@
 <details class=menu>
 <summary class=menu>行列</summary>
 <ul>
-<li><a href="matrix.html">行列の表現</a></li>
-<li><a href="matrix.ops.html">基本演算</a></li>
+<li><a href="matrix.ops.html">行列演算</a></li>
 </ul>
 <h2 id="行列式">行列式</h2>
 <ul>
 <li><a href="mat.det.naiiv.html">定義に拠る算法</a></li>
-<li><a href="mat.det.cramer.html">Cramer’s rule</a></li>
+<li><a href="mat.det.cramer.html">Cramer's rule</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>虚数</summary>
+<ul>
+<li><a href="complex.html">虚数の定義と演算</a></li>
 </ul>
 </details>
 

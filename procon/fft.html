@@ -21,35 +21,35 @@
 
           <div class="article column is-8">
             <h2 id="fft.cc"><a href="fft.cc" class="uri">fft.cc</a></h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb1-1" title="1"><span class="co">/*</span></a>
-<a class="sourceLine" id="cb1-2" title="2"><span class="co"> * 離散フーリエ変換</span></a>
-<a class="sourceLine" id="cb1-3" title="3"><span class="co"> *</span></a>
-<a class="sourceLine" id="cb1-4" title="4"><span class="co"> * 長さ n の数列を別な長さ n の数列に変換する</span></a>
-<a class="sourceLine" id="cb1-5" title="5"><span class="co"> * O(n*log(n))</span></a>
-<a class="sourceLine" id="cb1-6" title="6"><span class="co"> */</span></a>
-<a class="sourceLine" id="cb1-7" title="7"></a>
-<a class="sourceLine" id="cb1-8" title="8"><span class="kw">using</span> Real = <span class="dt">long</span> <span class="dt">double</span>;</a>
-<a class="sourceLine" id="cb1-9" title="9"><span class="at">const</span> Real PI = acos(-<span class="dv">1</span>);</a>
-<a class="sourceLine" id="cb1-10" title="10"><span class="kw">using</span> C = complex&lt;Real&gt;;</a>
-<a class="sourceLine" id="cb1-11" title="11"></a>
-<a class="sourceLine" id="cb1-12" title="12">vector&lt;C&gt;</a>
-<a class="sourceLine" id="cb1-13" title="13">fft(vector&lt;C&gt; f, <span class="dt">int</span> dir=<span class="dv">1</span>) {</a>
-<a class="sourceLine" id="cb1-14" title="14">  <span class="at">const</span> <span class="dt">int</span> n = f.size();</a>
-<a class="sourceLine" id="cb1-15" title="15">  <span class="cf">if</span> (n &lt; <span class="dv">2</span>) <span class="cf">return</span> f;</a>
-<a class="sourceLine" id="cb1-16" title="16">  vector&lt;C&gt; f0(n/<span class="dv">2</span>), f1(n/<span class="dv">2</span>);</a>
-<a class="sourceLine" id="cb1-17" title="17">  rep (i, n/<span class="dv">2</span>) f0[i] = f[i*<span class="dv">2</span>], f1[i] = f[i*<span class="dv">2</span> + <span class="dv">1</span>];</a>
-<a class="sourceLine" id="cb1-18" title="18">  f0 = fft(f0, dir);</a>
-<a class="sourceLine" id="cb1-19" title="19">  f1 = fft(f1, dir);</a>
-<a class="sourceLine" id="cb1-20" title="20">  Real theta = <span class="dv">2</span> * PI / n;</a>
-<a class="sourceLine" id="cb1-21" title="21">  C z(cos(theta), dir * sin(theta)),</a>
-<a class="sourceLine" id="cb1-22" title="22">    ac = C(<span class="dv">1</span>, <span class="dv">0</span>);</a>
-<a class="sourceLine" id="cb1-23" title="23">  rep (i, n) {</a>
-<a class="sourceLine" id="cb1-24" title="24">    f[i] = f0[i%(n/<span class="dv">2</span>)] + ac * f1[i%(n/<span class="dv">2</span>)];</a>
-<a class="sourceLine" id="cb1-25" title="25">    ac *= z;</a>
-<a class="sourceLine" id="cb1-26" title="26">  }</a>
-<a class="sourceLine" id="cb1-27" title="27">  <span class="cf">return</span> f;</a>
-<a class="sourceLine" id="cb1-28" title="28">}</a>
-<a class="sourceLine" id="cb1-29" title="29"></a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="co">/*</span>
+<span class="co"> * 離散フーリエ変換</span>
+<span class="co"> *</span>
+<span class="co"> * 長さ n の数列を別な長さ n の数列に変換する</span>
+<span class="co"> * O(n*log(n))</span>
+<span class="co"> */</span>
+
+<span class="kw">using</span> Real = <span class="dt">long</span> <span class="dt">double</span>;
+<span class="at">const</span> Real PI = acos(<span class="dv">-1</span>);
+<span class="kw">using</span> C = complex&lt;Real&gt;;
+
+vector&lt;C&gt;
+fft(vector&lt;C&gt; f, <span class="dt">int</span> dir=<span class="dv">1</span>) {
+  <span class="at">const</span> <span class="dt">int</span> n = f.size();
+  <span class="cf">if</span> (n &lt; <span class="dv">2</span>) <span class="cf">return</span> f;
+  vector&lt;C&gt; f0(n/<span class="dv">2</span>), f1(n/<span class="dv">2</span>);
+  rep (i, n/<span class="dv">2</span>) f0[i] = f[i*<span class="dv">2</span>], f1[i] = f[i*<span class="dv">2</span> + <span class="dv">1</span>];
+  f0 = fft(f0, dir);
+  f1 = fft(f1, dir);
+  Real theta = <span class="dv">2</span> * PI / n;
+  C z(cos(theta), dir * sin(theta)),
+    ac = C(<span class="dv">1</span>, <span class="dv">0</span>);
+  rep (i, n) {
+    f[i] = f0[i%(n/<span class="dv">2</span>)] + ac * f1[i%(n/<span class="dv">2</span>)];
+    ac *= z;
+  }
+  <span class="cf">return</span> f;
+}
+</code></pre></div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
@@ -93,13 +93,19 @@
 <details class=menu>
 <summary class=menu>行列</summary>
 <ul>
-<li><a href="matrix.html">行列の表現</a></li>
-<li><a href="matrix.ops.html">基本演算</a></li>
+<li><a href="matrix.ops.html">行列演算</a></li>
 </ul>
 <h2 id="行列式">行列式</h2>
 <ul>
 <li><a href="mat.det.naiiv.html">定義に拠る算法</a></li>
-<li><a href="mat.det.cramer.html">Cramer’s rule</a></li>
+<li><a href="mat.det.cramer.html">Cramer's rule</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>虚数</summary>
+<ul>
+<li><a href="complex.html">虚数の定義と演算</a></li>
 </ul>
 </details>
 

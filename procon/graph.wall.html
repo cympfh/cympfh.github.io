@@ -20,9 +20,10 @@
         <section class="main-content columns is-fullheight">
 
           <div class="article column is-8">
-            <p><span class="math inline">\(n\)</span> 頂点有向グラフの各辺に整数コストが与えられた時、 全点対の最小コストを <span class="math inline">\(O(n^3)\)</span> で求める.</p>
-<h2 id="前提">前提</h2>
-<p><span class="math inline">\(d\)</span> を <span class="math inline">\(n \times n\)</span> のテーブル (二重配列) とする.</p>
+            <h2 id="warshall-floyd">Warshall-Floyd</h2>
+<p><span class="math inline">\(n\)</span> 頂点有向グラフの各辺に整数コストが与えられた時, 全点対の最小コストを <span class="math inline">\(O(n^3)\)</span> で求める.</p>
+<h3 id="前提">前提</h3>
+<p><span class="math inline">\(d\)</span> を <span class="math inline">\(n \times n\)</span> のテーブル (二重配列) とする. 次の値がセットされてるとする:</p>
 <ul>
 <li><span class="math inline">\(d[i][i] = 0\)</span> (自己ループ辺)</li>
 <li>辺 <span class="math inline">\((i,j)\)</span> が存在するとき <span class="math inline">\(d[i][j]\)</span> はそのコスト (整数値)</li>
@@ -34,36 +35,36 @@
 <li>到達不可能ならば <span class="math inline">\(d[i][j] = \infty\)</span></li>
 </ul>
 <h2 id="graph.wall.rs"><a href="graph.wall.rs" class="uri">graph.wall.rs</a></h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">use</span> <span class="pp">std::cmp::</span>min;</a>
-<a class="sourceLine" id="cb1-2" title="2"><span class="kw">fn</span> wall(d: &amp;<span class="kw">mut</span> <span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt;&gt;) <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-3" title="3">    <span class="kw">let</span> n = d.len();</a>
-<a class="sourceLine" id="cb1-4" title="4">    <span class="kw">for</span> k <span class="kw">in</span> <span class="dv">0</span>..n <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-5" title="5">        <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0</span>..n <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-6" title="6">            <span class="kw">for</span> j <span class="kw">in</span> <span class="dv">0</span>..n <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-7" title="7">                d<span class="op">[</span>i<span class="op">][</span>j<span class="op">]</span> = <span class="pp">min::</span>&lt;<span class="dt">i32</span>&gt;(</a>
-<a class="sourceLine" id="cb1-8" title="8">                    d<span class="op">[</span>i<span class="op">][</span>j<span class="op">]</span>,</a>
-<a class="sourceLine" id="cb1-9" title="9">                    d<span class="op">[</span>i<span class="op">][</span>k<span class="op">]</span> + d<span class="op">[</span>k<span class="op">][</span>j<span class="op">]</span></a>
-<a class="sourceLine" id="cb1-10" title="10">                );</a>
-<a class="sourceLine" id="cb1-11" title="11">            <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-12" title="12">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-13" title="13">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-14" title="14"><span class="op">}</span></a>
-<a class="sourceLine" id="cb1-15" title="15"></a>
-<a class="sourceLine" id="cb1-16" title="16"><span class="kw">fn</span> main() <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-17" title="17">    <span class="kw">let</span> <span class="kw">mut</span> d = <span class="pp">vec!</span><span class="op">[</span></a>
-<a class="sourceLine" id="cb1-18" title="18">        <span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span><span class="op">]</span>,</a>
-<a class="sourceLine" id="cb1-19" title="19">        <span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span><span class="op">]</span>,</a>
-<a class="sourceLine" id="cb1-20" title="20">        <span class="pp">vec!</span><span class="op">[</span><span class="dv">4</span>, <span class="dv">2</span>, <span class="dv">0</span><span class="op">]</span></a>
-<a class="sourceLine" id="cb1-21" title="21">    <span class="op">]</span>;</a>
-<a class="sourceLine" id="cb1-22" title="22">    wall(&amp;<span class="kw">mut</span> d);</a>
-<a class="sourceLine" id="cb1-23" title="23">    <span class="pp">println!</span>(<span class="st">&quot;{:?}&quot;</span>, d);</a>
-<a class="sourceLine" id="cb1-24" title="24"><span class="op">}</span></a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">use</span> std::cmp::min;
+<span class="kw">fn</span> wall(d: &amp;<span class="kw">mut</span> <span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt;&gt;) <span class="op">{</span>
+    <span class="kw">let</span> n = d.len();
+    <span class="kw">for</span> k <span class="kw">in</span> <span class="dv">0.</span>.n <span class="op">{</span>
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.n <span class="op">{</span>
+            <span class="kw">for</span> j <span class="kw">in</span> <span class="dv">0.</span>.n <span class="op">{</span>
+                d<span class="op">[</span>i<span class="op">][</span>j<span class="op">]</span> = min::&lt;<span class="dt">i32</span>&gt;(
+                    d<span class="op">[</span>i<span class="op">][</span>j<span class="op">]</span>,
+                    d<span class="op">[</span>i<span class="op">][</span>k<span class="op">]</span> + d<span class="op">[</span>k<span class="op">][</span>j<span class="op">]</span>
+                );
+            <span class="op">}</span>
+        <span class="op">}</span>
+    <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="kw">fn</span> main() <span class="op">{</span>
+    <span class="kw">let</span> <span class="kw">mut</span> d = <span class="pp">vec!</span><span class="op">[</span>
+        <span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span><span class="op">]</span>,
+        <span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span><span class="op">]</span>,
+        <span class="pp">vec!</span><span class="op">[</span><span class="dv">4</span>, <span class="dv">2</span>, <span class="dv">0</span><span class="op">]</span>
+    <span class="op">]</span>;
+    wall(&amp;<span class="kw">mut</span> d);
+    <span class="pp">println!</span>(<span class="st">&quot;{:?}&quot;</span>, d);
+<span class="op">}</span></code></pre></div>
 <h2 id="graph.wall.cc"><a href="graph.wall.cc" class="uri">graph.wall.cc</a></h2>
-<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb2-1" title="1"><span class="dt">void</span> wall(vvi&amp;d) {</a>
-<a class="sourceLine" id="cb2-2" title="2">  <span class="dt">int</span> n = d.size();</a>
-<a class="sourceLine" id="cb2-3" title="3">  rep (k, n) rep (i, n) rep (j, n)</a>
-<a class="sourceLine" id="cb2-4" title="4">    d[i][j] = min(d[i][j], d[i][k] + d[k][j]);</a>
-<a class="sourceLine" id="cb2-5" title="5">}</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="dt">void</span> wall(vvi&amp;d) {
+  <span class="dt">int</span> n = d.size();
+  rep (k, n) rep (i, n) rep (j, n)
+    d[i][j] = min(d[i][j], d[i][k] + d[k][j]);
+}</code></pre></div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
@@ -107,13 +108,19 @@
 <details class=menu>
 <summary class=menu>行列</summary>
 <ul>
-<li><a href="matrix.html">行列の表現</a></li>
-<li><a href="matrix.ops.html">基本演算</a></li>
+<li><a href="matrix.ops.html">行列演算</a></li>
 </ul>
 <h2 id="行列式">行列式</h2>
 <ul>
 <li><a href="mat.det.naiiv.html">定義に拠る算法</a></li>
-<li><a href="mat.det.cramer.html">Cramer’s rule</a></li>
+<li><a href="mat.det.cramer.html">Cramer's rule</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>虚数</summary>
+<ul>
+<li><a href="complex.html">虚数の定義と演算</a></li>
 </ul>
 </details>
 

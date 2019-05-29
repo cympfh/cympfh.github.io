@@ -37,101 +37,101 @@
 <li><code>Dinic::flow(g, s, t)</code></li>
 </ul></li>
 </ul>
-<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">mod</span> dinic <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-2" title="2">    <span class="kw">use</span> <span class="pp">std::collections::</span>VecDeque;</a>
-<a class="sourceLine" id="cb1-3" title="3">    <span class="kw">use</span> <span class="pp">std::cmp::</span>min;</a>
-<a class="sourceLine" id="cb1-4" title="4"></a>
-<a class="sourceLine" id="cb1-5" title="5">    <span class="kw">pub</span> <span class="kw">type</span> Weight = <span class="dt">i32</span>;</a>
-<a class="sourceLine" id="cb1-6" title="6">    <span class="kw">pub</span> <span class="kw">type</span> WeightedGraph = <span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;(<span class="dt">usize</span>, Weight)&gt;&gt;; <span class="co">// [u][] = (v, w)</span></a>
-<a class="sourceLine" id="cb1-7" title="7">    <span class="kw">pub</span> <span class="kw">type</span> Edge = (<span class="dt">usize</span>, <span class="dt">usize</span>, Weight);</a>
-<a class="sourceLine" id="cb1-8" title="8"></a>
-<a class="sourceLine" id="cb1-9" title="9">    <span class="kw">pub</span> <span class="kw">fn</span> new(n: <span class="dt">usize</span>, es: &amp;<span class="dt">Vec</span>&lt;Edge&gt;) -&gt; WeightedGraph <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-10" title="10">        <span class="kw">let</span> <span class="kw">mut</span> g: WeightedGraph = <span class="pp">vec!</span><span class="op">[</span><span class="pp">vec!</span><span class="op">[]</span>; n<span class="op">]</span>;</a>
-<a class="sourceLine" id="cb1-11" title="11">        <span class="kw">for</span> &amp;(u, v, w) <span class="kw">in</span> es.iter() <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-12" title="12">            g<span class="op">[</span>u<span class="op">]</span>.push((v, w));</a>
-<a class="sourceLine" id="cb1-13" title="13">            g<span class="op">[</span>v<span class="op">]</span>.push((u, <span class="dv">0</span>));</a>
-<a class="sourceLine" id="cb1-14" title="14">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-15" title="15">        g</a>
-<a class="sourceLine" id="cb1-16" title="16">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-17" title="17"></a>
-<a class="sourceLine" id="cb1-18" title="18">    <span class="kw">fn</span> levelize(g: &amp;WeightedGraph, s: <span class="dt">usize</span>, t: <span class="dt">usize</span>, cap: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;Weight&gt;&gt;, flw: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;Weight&gt;&gt;) -&gt; <span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt; <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-19" title="19">        <span class="kw">let</span> n = g.len();</a>
-<a class="sourceLine" id="cb1-20" title="20">        <span class="kw">let</span> <span class="kw">mut</span> level = <span class="pp">vec!</span><span class="op">[</span>-<span class="dv">1</span>; n<span class="op">]</span>;</a>
-<a class="sourceLine" id="cb1-21" title="21">        <span class="kw">let</span> <span class="kw">mut</span> q = <span class="pp">VecDeque::</span>new(); q.push_back(s);</a>
-<a class="sourceLine" id="cb1-22" title="22">        <span class="kw">while</span> <span class="kw">let</span> <span class="cn">Some</span>(u) = q.pop_front() <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-23" title="23">            <span class="kw">if</span> u == t <span class="op">{</span> <span class="kw">break</span> <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-24" title="24">            <span class="kw">for</span> &amp;(v, _) <span class="kw">in</span> g<span class="op">[</span>u<span class="op">]</span>.iter() <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-25" title="25">                <span class="kw">if</span> level<span class="op">[</span>v<span class="op">]</span> == -<span class="dv">1</span> &amp;&amp; cap<span class="op">[</span>u<span class="op">][</span>v<span class="op">]</span> - flw<span class="op">[</span>u<span class="op">][</span>v<span class="op">]</span> != <span class="dv">0</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-26" title="26">                    level<span class="op">[</span>v<span class="op">]</span> = level<span class="op">[</span>u<span class="op">]</span> + <span class="dv">1</span>;</a>
-<a class="sourceLine" id="cb1-27" title="27">                    q.push_back(v);</a>
-<a class="sourceLine" id="cb1-28" title="28">                <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-29" title="29">            <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-30" title="30">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-31" title="31">        level</a>
-<a class="sourceLine" id="cb1-32" title="32">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-33" title="33"></a>
-<a class="sourceLine" id="cb1-34" title="34">    <span class="kw">fn</span> augment(limit: Weight,</a>
-<a class="sourceLine" id="cb1-35" title="35">               level: &amp;<span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt;, <span class="kw">mut</span> used: &amp;<span class="kw">mut</span> <span class="dt">Vec</span>&lt;<span class="dt">bool</span>&gt;,</a>
-<a class="sourceLine" id="cb1-36" title="36">               g: &amp;WeightedGraph, u: <span class="dt">usize</span>, t: <span class="dt">usize</span>,</a>
-<a class="sourceLine" id="cb1-37" title="37">               cap: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;Weight&gt;&gt;, <span class="kw">mut</span> flw: &amp;<span class="kw">mut</span> <span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;Weight&gt;&gt;) -&gt; Weight <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-38" title="38">        <span class="kw">if</span> u == t <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-39" title="39">            limit</a>
-<a class="sourceLine" id="cb1-40" title="40">        <span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> used<span class="op">[</span>u<span class="op">]</span> || limit == <span class="dv">0</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-41" title="41">            <span class="dv">0</span></a>
-<a class="sourceLine" id="cb1-42" title="42">        <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-43" title="43">            used<span class="op">[</span>u<span class="op">]</span> = <span class="cn">true</span>;</a>
-<a class="sourceLine" id="cb1-44" title="44">            <span class="kw">for</span> &amp;(v, _) <span class="kw">in</span> g<span class="op">[</span>u<span class="op">]</span>.iter() <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-45" title="45">                <span class="kw">if</span> level<span class="op">[</span>v<span class="op">]</span> &gt; level<span class="op">[</span>u<span class="op">]</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-46" title="46">                    <span class="kw">let</span> limit2 = min(limit, cap<span class="op">[</span>u<span class="op">][</span>v<span class="op">]</span> - flw<span class="op">[</span>u<span class="op">][</span>v<span class="op">]</span>);</a>
-<a class="sourceLine" id="cb1-47" title="47">                    <span class="kw">let</span> f = augment(limit2, &amp;level, &amp;<span class="kw">mut</span> used, &amp;g, v, t, &amp;cap, &amp;<span class="kw">mut</span> flw);</a>
-<a class="sourceLine" id="cb1-48" title="48">                    <span class="kw">if</span> f &gt; <span class="dv">0</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-49" title="49">                        flw<span class="op">[</span>u<span class="op">][</span>v<span class="op">]</span> += f; flw<span class="op">[</span>v<span class="op">][</span>u<span class="op">]</span> -= f;</a>
-<a class="sourceLine" id="cb1-50" title="50">                        used<span class="op">[</span>u<span class="op">]</span> = <span class="cn">false</span>;</a>
-<a class="sourceLine" id="cb1-51" title="51">                        <span class="kw">return</span> f;</a>
-<a class="sourceLine" id="cb1-52" title="52">                    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-53" title="53">                <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-54" title="54">            <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-55" title="55">            <span class="dv">0</span></a>
-<a class="sourceLine" id="cb1-56" title="56">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-57" title="57">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-58" title="58"></a>
-<a class="sourceLine" id="cb1-59" title="59">    <span class="kw">pub</span> <span class="kw">fn</span> flow(g: &amp;WeightedGraph, s: <span class="dt">usize</span>, t: <span class="dt">usize</span>) -&gt; Weight <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-60" title="60"></a>
-<a class="sourceLine" id="cb1-61" title="61">        <span class="kw">let</span> n = g.len();</a>
-<a class="sourceLine" id="cb1-62" title="62"></a>
-<a class="sourceLine" id="cb1-63" title="63">        <span class="kw">let</span> <span class="kw">mut</span> cap = <span class="pp">vec!</span><span class="op">[</span><span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>; n<span class="op">]</span>; n<span class="op">]</span>;</a>
-<a class="sourceLine" id="cb1-64" title="64">        <span class="kw">let</span> <span class="kw">mut</span> flw = <span class="pp">vec!</span><span class="op">[</span><span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>; n<span class="op">]</span>; n<span class="op">]</span>;</a>
-<a class="sourceLine" id="cb1-65" title="65">        <span class="kw">for</span> u <span class="kw">in</span> <span class="dv">0</span>..n <span class="op">{</span> <span class="kw">for</span> &amp;(v, w) <span class="kw">in</span> g<span class="op">[</span>u<span class="op">]</span>.iter() <span class="op">{</span> cap<span class="op">[</span>u<span class="op">][</span>v<span class="op">]</span> = w; <span class="op">}</span> <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-66" title="66"></a>
-<a class="sourceLine" id="cb1-67" title="67">        <span class="kw">let</span> inf = <span class="pp">Weight::</span>max_value() / <span class="dv">8</span>;</a>
-<a class="sourceLine" id="cb1-68" title="68">        <span class="kw">let</span> <span class="kw">mut</span> sum = <span class="dv">0</span>;</a>
-<a class="sourceLine" id="cb1-69" title="69">        <span class="kw">loop</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-70" title="70">            <span class="kw">let</span> level = levelize(&amp;g, s, t, &amp;cap, &amp;flw);</a>
-<a class="sourceLine" id="cb1-71" title="71">            <span class="kw">if</span> level<span class="op">[</span>t<span class="op">]</span> == -<span class="dv">1</span> <span class="op">{</span> <span class="kw">break</span> <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-72" title="72">            <span class="kw">let</span> <span class="kw">mut</span> used = <span class="pp">vec!</span><span class="op">[</span><span class="cn">false</span>; n<span class="op">]</span>;</a>
-<a class="sourceLine" id="cb1-73" title="73">            sum += augment(inf, &amp;level, &amp;<span class="kw">mut</span> used, &amp;g, s, t, &amp;cap, &amp;<span class="kw">mut</span> flw);</a>
-<a class="sourceLine" id="cb1-74" title="74">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-75" title="75">        sum</a>
-<a class="sourceLine" id="cb1-76" title="76">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-77" title="77"><span class="op">}</span></a>
-<a class="sourceLine" id="cb1-78" title="78"></a>
-<a class="sourceLine" id="cb1-79" title="79"><span class="kw">fn</span> main() <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-80" title="80">    <span class="kw">let</span> <span class="kw">mut</span> sc = <span class="pp">Scanner::</span>new();</a>
-<a class="sourceLine" id="cb1-81" title="81">    <span class="kw">let</span> n: <span class="dt">usize</span> = sc.cin();</a>
-<a class="sourceLine" id="cb1-82" title="82">    <span class="kw">let</span> m: <span class="dt">usize</span> = sc.cin();</a>
-<a class="sourceLine" id="cb1-83" title="83"></a>
-<a class="sourceLine" id="cb1-84" title="84">    <span class="kw">let</span> <span class="kw">mut</span> edges = <span class="pp">vec!</span><span class="op">[]</span>;</a>
-<a class="sourceLine" id="cb1-85" title="85">    <span class="kw">for</span> _ <span class="kw">in</span> <span class="dv">0</span>..m <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-86" title="86">        <span class="kw">let</span> u = sc.<span class="pp">cin::</span>&lt;<span class="dt">usize</span>&gt;() - <span class="dv">1</span>;</a>
-<a class="sourceLine" id="cb1-87" title="87">        <span class="kw">let</span> v = sc.<span class="pp">cin::</span>&lt;<span class="dt">usize</span>&gt;() - <span class="dv">1</span>;</a>
-<a class="sourceLine" id="cb1-88" title="88">        <span class="kw">let</span> w: <span class="pp">dinic::</span>Weight = sc.cin();</a>
-<a class="sourceLine" id="cb1-89" title="89">        edges.push((u, v, w));</a>
-<a class="sourceLine" id="cb1-90" title="90">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-91" title="91"></a>
-<a class="sourceLine" id="cb1-92" title="92">    <span class="kw">let</span> g = <span class="pp">dinic::</span>new(n, &amp;edges);</a>
-<a class="sourceLine" id="cb1-93" title="93">    <span class="kw">let</span> max_flow = <span class="pp">dinic::</span>flow(&amp;g, <span class="dv">0</span>, n - <span class="dv">1</span>);</a>
-<a class="sourceLine" id="cb1-94" title="94">    <span class="pp">put!</span>(max_flow);</a>
-<a class="sourceLine" id="cb1-95" title="95"><span class="op">}</span></a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">mod</span> dinic <span class="op">{</span>
+    <span class="kw">use</span> std::collections::VecDeque;
+    <span class="kw">use</span> std::cmp::min;
+
+    <span class="kw">pub</span> <span class="kw">type</span> Weight = <span class="dt">i32</span>;
+    <span class="kw">pub</span> <span class="kw">type</span> WeightedGraph = <span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;(<span class="dt">usize</span>, Weight)&gt;&gt;; <span class="co">// [u][] = (v, w)</span>
+    <span class="kw">pub</span> <span class="kw">type</span> Edge = (<span class="dt">usize</span>, <span class="dt">usize</span>, Weight);
+
+    <span class="kw">pub</span> <span class="kw">fn</span> new(n: <span class="dt">usize</span>, es: &amp;<span class="dt">Vec</span>&lt;Edge&gt;) -&gt; WeightedGraph <span class="op">{</span>
+        <span class="kw">let</span> <span class="kw">mut</span> g: WeightedGraph = <span class="pp">vec!</span><span class="op">[</span><span class="pp">vec!</span><span class="op">[]</span>; n<span class="op">]</span>;
+        <span class="kw">for</span> &amp;(u, v, w) <span class="kw">in</span> es.iter() <span class="op">{</span>
+            g<span class="op">[</span>u<span class="op">]</span>.push((v, w));
+            g<span class="op">[</span>v<span class="op">]</span>.push((u, <span class="dv">0</span>));
+        <span class="op">}</span>
+        g
+    <span class="op">}</span>
+
+    <span class="kw">fn</span> levelize(g: &amp;WeightedGraph, s: <span class="dt">usize</span>, t: <span class="dt">usize</span>, cap: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;Weight&gt;&gt;, flw: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;Weight&gt;&gt;) -&gt; <span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt; <span class="op">{</span>
+        <span class="kw">let</span> n = g.len();
+        <span class="kw">let</span> <span class="kw">mut</span> level = <span class="pp">vec!</span><span class="op">[</span>-<span class="dv">1</span>; n<span class="op">]</span>;
+        <span class="kw">let</span> <span class="kw">mut</span> q = VecDeque::new(); q.push_back(s);
+        <span class="kw">while</span> <span class="kw">let</span> <span class="cn">Some</span>(u) = q.pop_front() <span class="op">{</span>
+            <span class="kw">if</span> u == t <span class="op">{</span> <span class="kw">break</span> <span class="op">}</span>
+            <span class="kw">for</span> &amp;(v, _) <span class="kw">in</span> g<span class="op">[</span>u<span class="op">]</span>.iter() <span class="op">{</span>
+                <span class="kw">if</span> level<span class="op">[</span>v<span class="op">]</span> == -<span class="dv">1</span> &amp;&amp; cap<span class="op">[</span>u<span class="op">][</span>v<span class="op">]</span> - flw<span class="op">[</span>u<span class="op">][</span>v<span class="op">]</span> != <span class="dv">0</span> <span class="op">{</span>
+                    level<span class="op">[</span>v<span class="op">]</span> = level<span class="op">[</span>u<span class="op">]</span> + <span class="dv">1</span>;
+                    q.push_back(v);
+                <span class="op">}</span>
+            <span class="op">}</span>
+        <span class="op">}</span>
+        level
+    <span class="op">}</span>
+
+    <span class="kw">fn</span> augment(limit: Weight,
+               level: &amp;<span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt;, <span class="kw">mut</span> used: &amp;<span class="kw">mut</span> <span class="dt">Vec</span>&lt;<span class="dt">bool</span>&gt;,
+               g: &amp;WeightedGraph, u: <span class="dt">usize</span>, t: <span class="dt">usize</span>,
+               cap: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;Weight&gt;&gt;, <span class="kw">mut</span> flw: &amp;<span class="kw">mut</span> <span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;Weight&gt;&gt;) -&gt; Weight <span class="op">{</span>
+        <span class="kw">if</span> u == t <span class="op">{</span>
+            limit
+        <span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> used<span class="op">[</span>u<span class="op">]</span> || limit == <span class="dv">0</span> <span class="op">{</span>
+            <span class="dv">0</span>
+        <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
+            used<span class="op">[</span>u<span class="op">]</span> = <span class="cn">true</span>;
+            <span class="kw">for</span> &amp;(v, _) <span class="kw">in</span> g<span class="op">[</span>u<span class="op">]</span>.iter() <span class="op">{</span>
+                <span class="kw">if</span> level<span class="op">[</span>v<span class="op">]</span> &gt; level<span class="op">[</span>u<span class="op">]</span> <span class="op">{</span>
+                    <span class="kw">let</span> limit2 = min(limit, cap<span class="op">[</span>u<span class="op">][</span>v<span class="op">]</span> - flw<span class="op">[</span>u<span class="op">][</span>v<span class="op">]</span>);
+                    <span class="kw">let</span> f = augment(limit2, &amp;level, &amp;<span class="kw">mut</span> used, &amp;g, v, t, &amp;cap, &amp;<span class="kw">mut</span> flw);
+                    <span class="kw">if</span> f &gt; <span class="dv">0</span> <span class="op">{</span>
+                        flw<span class="op">[</span>u<span class="op">][</span>v<span class="op">]</span> += f; flw<span class="op">[</span>v<span class="op">][</span>u<span class="op">]</span> -= f;
+                        used<span class="op">[</span>u<span class="op">]</span> = <span class="cn">false</span>;
+                        <span class="kw">return</span> f;
+                    <span class="op">}</span>
+                <span class="op">}</span>
+            <span class="op">}</span>
+            <span class="dv">0</span>
+        <span class="op">}</span>
+    <span class="op">}</span>
+
+    <span class="kw">pub</span> <span class="kw">fn</span> flow(g: &amp;WeightedGraph, s: <span class="dt">usize</span>, t: <span class="dt">usize</span>) -&gt; Weight <span class="op">{</span>
+
+        <span class="kw">let</span> n = g.len();
+
+        <span class="kw">let</span> <span class="kw">mut</span> cap = <span class="pp">vec!</span><span class="op">[</span><span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>; n<span class="op">]</span>; n<span class="op">]</span>;
+        <span class="kw">let</span> <span class="kw">mut</span> flw = <span class="pp">vec!</span><span class="op">[</span><span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>; n<span class="op">]</span>; n<span class="op">]</span>;
+        <span class="kw">for</span> u <span class="kw">in</span> <span class="dv">0.</span>.n <span class="op">{</span> <span class="kw">for</span> &amp;(v, w) <span class="kw">in</span> g<span class="op">[</span>u<span class="op">]</span>.iter() <span class="op">{</span> cap<span class="op">[</span>u<span class="op">][</span>v<span class="op">]</span> = w; <span class="op">}</span> <span class="op">}</span>
+
+        <span class="kw">let</span> inf = Weight::max_value() / <span class="dv">8</span>;
+        <span class="kw">let</span> <span class="kw">mut</span> sum = <span class="dv">0</span>;
+        <span class="kw">loop</span> <span class="op">{</span>
+            <span class="kw">let</span> level = levelize(&amp;g, s, t, &amp;cap, &amp;flw);
+            <span class="kw">if</span> level<span class="op">[</span>t<span class="op">]</span> == -<span class="dv">1</span> <span class="op">{</span> <span class="kw">break</span> <span class="op">}</span>
+            <span class="kw">let</span> <span class="kw">mut</span> used = <span class="pp">vec!</span><span class="op">[</span><span class="cn">false</span>; n<span class="op">]</span>;
+            sum += augment(inf, &amp;level, &amp;<span class="kw">mut</span> used, &amp;g, s, t, &amp;cap, &amp;<span class="kw">mut</span> flw);
+        <span class="op">}</span>
+        sum
+    <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="kw">fn</span> main() <span class="op">{</span>
+    <span class="kw">let</span> <span class="kw">mut</span> sc = Scanner::new();
+    <span class="kw">let</span> n: <span class="dt">usize</span> = sc.cin();
+    <span class="kw">let</span> m: <span class="dt">usize</span> = sc.cin();
+
+    <span class="kw">let</span> <span class="kw">mut</span> edges = <span class="pp">vec!</span><span class="op">[]</span>;
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="dv">0.</span>.m <span class="op">{</span>
+        <span class="kw">let</span> u = sc.cin::&lt;<span class="dt">usize</span>&gt;() - <span class="dv">1</span>;
+        <span class="kw">let</span> v = sc.cin::&lt;<span class="dt">usize</span>&gt;() - <span class="dv">1</span>;
+        <span class="kw">let</span> w: dinic::Weight = sc.cin();
+        edges.push((u, v, w));
+    <span class="op">}</span>
+
+    <span class="kw">let</span> g = dinic::new(n, &amp;edges);
+    <span class="kw">let</span> max_flow = dinic::flow(&amp;g, <span class="dv">0</span>, n - <span class="dv">1</span>);
+    <span class="pp">put!</span>(max_flow);
+<span class="op">}</span></code></pre></div>
 <h2 id="graph.maxflow.cc"><a href="graph.maxflow.cc" class="uri">graph.maxflow.cc</a></h2>
 <p>Ford-Fulkerson 法の実装</p>
 <ul>
@@ -147,130 +147,130 @@
 <li><code>this.flow</code></li>
 </ul></li>
 </ul>
-<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">struct</span> MaxFlow {</a>
-<a class="sourceLine" id="cb2-2" title="2">  <span class="dt">int</span> n;</a>
-<a class="sourceLine" id="cb2-3" title="3">  vvi d, c;</a>
-<a class="sourceLine" id="cb2-4" title="4">  vector&lt;<span class="dt">int</span>&gt; level, iter;</a>
-<a class="sourceLine" id="cb2-5" title="5">  <span class="dt">int</span> flow;</a>
-<a class="sourceLine" id="cb2-6" title="6"></a>
-<a class="sourceLine" id="cb2-7" title="7">  MaxFlow(vvi&amp; _d, vvi&amp; _c, <span class="dt">int</span> s, <span class="dt">int</span> t) {</a>
-<a class="sourceLine" id="cb2-8" title="8">    d = _d; c = _c;</a>
-<a class="sourceLine" id="cb2-9" title="9">    n = _d.size();</a>
-<a class="sourceLine" id="cb2-10" title="10">    level.resize(n);</a>
-<a class="sourceLine" id="cb2-11" title="11">    iter.resize(n);</a>
-<a class="sourceLine" id="cb2-12" title="12">    <span class="dt">int</span> cur_flow = <span class="dv">0</span>;</a>
-<a class="sourceLine" id="cb2-13" title="13">    loop {</a>
-<a class="sourceLine" id="cb2-14" title="14">      bfs(s);</a>
-<a class="sourceLine" id="cb2-15" title="15">      <span class="cf">if</span> (level[t] &lt; <span class="dv">0</span>) { flow = cur_flow; <span class="cf">return</span>; }</a>
-<a class="sourceLine" id="cb2-16" title="16">      rep (i, n) iter[i] = <span class="dv">0</span>;</a>
-<a class="sourceLine" id="cb2-17" title="17">      <span class="cf">for</span> (<span class="dt">int</span> f = <span class="dv">0</span>;;) {</a>
-<a class="sourceLine" id="cb2-18" title="18">        f = dfs(s, t, inf);</a>
-<a class="sourceLine" id="cb2-19" title="19">        <span class="cf">if</span> (f &lt;= <span class="dv">0</span>) <span class="cf">break</span>;</a>
-<a class="sourceLine" id="cb2-20" title="20">        cur_flow += f;</a>
-<a class="sourceLine" id="cb2-21" title="21">      }</a>
-<a class="sourceLine" id="cb2-22" title="22">    }</a>
-<a class="sourceLine" id="cb2-23" title="23">  }</a>
-<a class="sourceLine" id="cb2-24" title="24"></a>
-<a class="sourceLine" id="cb2-25" title="25">  <span class="dt">int</span> dfs(<span class="dt">int</span> v, <span class="dt">int</span> t, <span class="dt">int</span> f) {</a>
-<a class="sourceLine" id="cb2-26" title="26">    <span class="cf">if</span> (v == t) <span class="cf">return</span> f;</a>
-<a class="sourceLine" id="cb2-27" title="27">    <span class="cf">for</span> (<span class="dt">int</span> i = iter[v]; i &lt; d[v].size(); ++i) {</a>
-<a class="sourceLine" id="cb2-28" title="28">      <span class="dt">int</span> u = d[v][i]; <span class="co">// v -&gt; u</span></a>
-<a class="sourceLine" id="cb2-29" title="29">      <span class="cf">if</span> (c[v][u] &gt; <span class="dv">0</span> <span class="kw">and</span> level[v] &lt; level[u]) {</a>
-<a class="sourceLine" id="cb2-30" title="30">        <span class="dt">int</span> d = dfs(u, t, min(f, c[v][u]));</a>
-<a class="sourceLine" id="cb2-31" title="31">        <span class="cf">if</span> (d &gt; <span class="dv">0</span>) {</a>
-<a class="sourceLine" id="cb2-32" title="32">          c[v][u] -= d;</a>
-<a class="sourceLine" id="cb2-33" title="33">          c[u][v] += d;</a>
-<a class="sourceLine" id="cb2-34" title="34">          <span class="cf">return</span> d;</a>
-<a class="sourceLine" id="cb2-35" title="35">        }</a>
-<a class="sourceLine" id="cb2-36" title="36">      }</a>
-<a class="sourceLine" id="cb2-37" title="37">    }</a>
-<a class="sourceLine" id="cb2-38" title="38">    <span class="cf">return</span> <span class="dv">0</span>;</a>
-<a class="sourceLine" id="cb2-39" title="39">  }</a>
-<a class="sourceLine" id="cb2-40" title="40"></a>
-<a class="sourceLine" id="cb2-41" title="41">  <span class="dt">void</span> bfs(<span class="dt">int</span> s) {</a>
-<a class="sourceLine" id="cb2-42" title="42">    rep (i, n) level[i] = i == s ? <span class="dv">0</span> : -<span class="dv">1</span>;</a>
-<a class="sourceLine" id="cb2-43" title="43">    queue&lt;<span class="dt">int</span>&gt; q; q.push(s);</a>
-<a class="sourceLine" id="cb2-44" title="44">    <span class="cf">while</span> (<span class="kw">not</span> q.empty()) {</a>
-<a class="sourceLine" id="cb2-45" title="45">      <span class="dt">int</span> u = q.front(); q.pop();</a>
-<a class="sourceLine" id="cb2-46" title="46">      <span class="cf">for</span> (<span class="kw">auto</span>&amp;v: d[u]) { <span class="co">// u -&gt; v</span></a>
-<a class="sourceLine" id="cb2-47" title="47">        <span class="cf">if</span> (c[u][v] &gt; <span class="dv">0</span> <span class="kw">and</span> level[v] &lt; <span class="dv">0</span>) {</a>
-<a class="sourceLine" id="cb2-48" title="48">          level[v] = level[u] + <span class="dv">1</span>;</a>
-<a class="sourceLine" id="cb2-49" title="49">          q.push(v);</a>
-<a class="sourceLine" id="cb2-50" title="50">        }</a>
-<a class="sourceLine" id="cb2-51" title="51">      }</a>
-<a class="sourceLine" id="cb2-52" title="52">    }</a>
-<a class="sourceLine" id="cb2-53" title="53">  }</a>
-<a class="sourceLine" id="cb2-54" title="54">};</a>
-<a class="sourceLine" id="cb2-55" title="55"></a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="kw">struct</span> MaxFlow {
+  <span class="dt">int</span> n;
+  vvi d, c;
+  vector&lt;<span class="dt">int</span>&gt; level, iter;
+  <span class="dt">int</span> flow;
+
+  MaxFlow(vvi&amp; _d, vvi&amp; _c, <span class="dt">int</span> s, <span class="dt">int</span> t) {
+    d = _d; c = _c;
+    n = _d.size();
+    level.resize(n);
+    iter.resize(n);
+    <span class="dt">int</span> cur_flow = <span class="dv">0</span>;
+    loop {
+      bfs(s);
+      <span class="cf">if</span> (level[t] &lt; <span class="dv">0</span>) { flow = cur_flow; <span class="cf">return</span>; }
+      rep (i, n) iter[i] = <span class="dv">0</span>;
+      <span class="cf">for</span> (<span class="dt">int</span> f = <span class="dv">0</span>;;) {
+        f = dfs(s, t, inf);
+        <span class="cf">if</span> (f &lt;= <span class="dv">0</span>) <span class="cf">break</span>;
+        cur_flow += f;
+      }
+    }
+  }
+
+  <span class="dt">int</span> dfs(<span class="dt">int</span> v, <span class="dt">int</span> t, <span class="dt">int</span> f) {
+    <span class="cf">if</span> (v == t) <span class="cf">return</span> f;
+    <span class="cf">for</span> (<span class="dt">int</span> i = iter[v]; i &lt; d[v].size(); ++i) {
+      <span class="dt">int</span> u = d[v][i]; <span class="co">// v -&gt; u</span>
+      <span class="cf">if</span> (c[v][u] &gt; <span class="dv">0</span> <span class="kw">and</span> level[v] &lt; level[u]) {
+        <span class="dt">int</span> d = dfs(u, t, min(f, c[v][u]));
+        <span class="cf">if</span> (d &gt; <span class="dv">0</span>) {
+          c[v][u] -= d;
+          c[u][v] += d;
+          <span class="cf">return</span> d;
+        }
+      }
+    }
+    <span class="cf">return</span> <span class="dv">0</span>;
+  }
+
+  <span class="dt">void</span> bfs(<span class="dt">int</span> s) {
+    rep (i, n) level[i] = i == s ? <span class="dv">0</span> : <span class="dv">-1</span>;
+    queue&lt;<span class="dt">int</span>&gt; q; q.push(s);
+    <span class="cf">while</span> (<span class="kw">not</span> q.empty()) {
+      <span class="dt">int</span> u = q.front(); q.pop();
+      <span class="cf">for</span> (<span class="kw">auto</span>&amp;v: d[u]) { <span class="co">// u -&gt; v</span>
+        <span class="cf">if</span> (c[u][v] &gt; <span class="dv">0</span> <span class="kw">and</span> level[v] &lt; <span class="dv">0</span>) {
+          level[v] = level[u] + <span class="dv">1</span>;
+          q.push(v);
+        }
+      }
+    }
+  }
+};
+</code></pre></div>
 <h2 id="example">Example</h2>
-<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb3-1" title="1"><span class="dt">int</span> main() {</a>
-<a class="sourceLine" id="cb3-2" title="2">  cin.tie(<span class="dv">0</span>);</a>
-<a class="sourceLine" id="cb3-3" title="3">  ios::sync_with_stdio(<span class="dv">0</span>);</a>
-<a class="sourceLine" id="cb3-4" title="4">  cout.setf(ios::fixed);</a>
-<a class="sourceLine" id="cb3-5" title="5">  cout.precision(<span class="dv">10</span>);</a>
-<a class="sourceLine" id="cb3-6" title="6"></a>
-<a class="sourceLine" id="cb3-7" title="7">  stringstream input(</a>
-<a class="sourceLine" id="cb3-8" title="8"><span class="st">&quot;  7&quot;</span></a>
-<a class="sourceLine" id="cb3-9" title="9"><span class="st">&quot;  0 6&quot;</span></a>
-<a class="sourceLine" id="cb3-10" title="10"><span class="st">&quot;  1 2&quot;</span></a>
-<a class="sourceLine" id="cb3-11" title="11"><span class="st">&quot;  1 4&quot;</span></a>
-<a class="sourceLine" id="cb3-12" title="12"><span class="st">&quot;  3 2&quot;</span></a>
-<a class="sourceLine" id="cb3-13" title="13"><span class="st">&quot;  5 2&quot;</span></a>
-<a class="sourceLine" id="cb3-14" title="14"><span class="st">&quot;  5 4&quot;</span></a>
-<a class="sourceLine" id="cb3-15" title="15"><span class="st">&quot;  0 1&quot;</span></a>
-<a class="sourceLine" id="cb3-16" title="16"><span class="st">&quot;  0 3&quot;</span></a>
-<a class="sourceLine" id="cb3-17" title="17"><span class="st">&quot;  0 5&quot;</span></a>
-<a class="sourceLine" id="cb3-18" title="18"><span class="st">&quot;  2 6&quot;</span></a>
-<a class="sourceLine" id="cb3-19" title="19"><span class="st">&quot;  4 6&quot;</span>);</a>
-<a class="sourceLine" id="cb3-20" title="20">  <span class="dt">int</span> answer = <span class="dv">2</span>;</a>
-<a class="sourceLine" id="cb3-21" title="21"></a>
-<a class="sourceLine" id="cb3-22" title="22">  {</a>
-<a class="sourceLine" id="cb3-23" title="23">    <span class="dt">int</span> n; input &gt;&gt; n;</a>
-<a class="sourceLine" id="cb3-24" title="24">    <span class="dt">int</span> s, t; input &gt;&gt; s &gt;&gt; t;</a>
-<a class="sourceLine" id="cb3-25" title="25">    vvi d(n, vi(n));</a>
-<a class="sourceLine" id="cb3-26" title="26">    vvi c(n, vi(n, <span class="dv">0</span>));</a>
-<a class="sourceLine" id="cb3-27" title="27">    loop {</a>
-<a class="sourceLine" id="cb3-28" title="28">      <span class="dt">int</span> a, b; input &gt;&gt; a &gt;&gt; b;</a>
-<a class="sourceLine" id="cb3-29" title="29">      <span class="cf">if</span> (<span class="kw">not</span> input) <span class="cf">break</span>;</a>
-<a class="sourceLine" id="cb3-30" title="30">      d[a].push_back(b);</a>
-<a class="sourceLine" id="cb3-31" title="31">      c[a][b] = <span class="dv">1</span>;</a>
-<a class="sourceLine" id="cb3-32" title="32">    }</a>
-<a class="sourceLine" id="cb3-33" title="33">    MaxFlow mf(d, c, s, t);</a>
-<a class="sourceLine" id="cb3-34" title="34">    cout &lt;&lt; mf.flow &lt;&lt; endl;</a>
-<a class="sourceLine" id="cb3-35" title="35">    <span class="ot">assert</span>(mf.flow == answer);</a>
-<a class="sourceLine" id="cb3-36" title="36">  }</a>
-<a class="sourceLine" id="cb3-37" title="37"></a>
-<a class="sourceLine" id="cb3-38" title="38">  stringstream input2(</a>
-<a class="sourceLine" id="cb3-39" title="39"><span class="st">&quot;  6&quot;</span></a>
-<a class="sourceLine" id="cb3-40" title="40"><span class="st">&quot;  0 5&quot;</span></a>
-<a class="sourceLine" id="cb3-41" title="41"><span class="st">&quot;  0 1 3&quot;</span></a>
-<a class="sourceLine" id="cb3-42" title="42"><span class="st">&quot;  0 2 3&quot;</span></a>
-<a class="sourceLine" id="cb3-43" title="43"><span class="st">&quot;  1 2 2&quot;</span></a>
-<a class="sourceLine" id="cb3-44" title="44"><span class="st">&quot;  1 3 3&quot;</span></a>
-<a class="sourceLine" id="cb3-45" title="45"><span class="st">&quot;  2 4 2&quot;</span></a>
-<a class="sourceLine" id="cb3-46" title="46"><span class="st">&quot;  3 4 4&quot;</span></a>
-<a class="sourceLine" id="cb3-47" title="47"><span class="st">&quot;  3 5 2&quot;</span></a>
-<a class="sourceLine" id="cb3-48" title="48"><span class="st">&quot;  4 5 3&quot;</span>);</a>
-<a class="sourceLine" id="cb3-49" title="49">  <span class="dt">int</span> answer2 = <span class="dv">5</span>;</a>
-<a class="sourceLine" id="cb3-50" title="50">  {</a>
-<a class="sourceLine" id="cb3-51" title="51">    <span class="dt">int</span> n; input2 &gt;&gt; n;</a>
-<a class="sourceLine" id="cb3-52" title="52">    <span class="dt">int</span> s, t; input2 &gt;&gt; s &gt;&gt; t;</a>
-<a class="sourceLine" id="cb3-53" title="53">    vvi neighbor_list(n, vi(n));</a>
-<a class="sourceLine" id="cb3-54" title="54">    vvi capacity_table(n, vi(n, <span class="dv">0</span>));</a>
-<a class="sourceLine" id="cb3-55" title="55">    loop {</a>
-<a class="sourceLine" id="cb3-56" title="56">      <span class="dt">int</span> a, b, c; input2 &gt;&gt; a &gt;&gt; b &gt;&gt; c;</a>
-<a class="sourceLine" id="cb3-57" title="57">      <span class="cf">if</span> (<span class="kw">not</span> input2) <span class="cf">break</span>;</a>
-<a class="sourceLine" id="cb3-58" title="58">      neighbor_list[a].push_back(b);</a>
-<a class="sourceLine" id="cb3-59" title="59">      capacity_table[a][b] = c;</a>
-<a class="sourceLine" id="cb3-60" title="60">    }</a>
-<a class="sourceLine" id="cb3-61" title="61">    MaxFlow mf(neighbor_list, capacity_table, s, t);</a>
-<a class="sourceLine" id="cb3-62" title="62">    cout &lt;&lt; mf.flow &lt;&lt; endl;</a>
-<a class="sourceLine" id="cb3-63" title="63">    <span class="ot">assert</span>(mf.flow == answer2);</a>
-<a class="sourceLine" id="cb3-64" title="64">  }</a>
-<a class="sourceLine" id="cb3-65" title="65">      </a>
-<a class="sourceLine" id="cb3-66" title="66"></a>
-<a class="sourceLine" id="cb3-67" title="67">  <span class="cf">return</span> <span class="dv">0</span>;</a>
-<a class="sourceLine" id="cb3-68" title="68">}</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="dt">int</span> main() {
+  cin.tie(<span class="dv">0</span>);
+  ios::sync_with_stdio(<span class="dv">0</span>);
+  cout.setf(ios::fixed);
+  cout.precision(<span class="dv">10</span>);
+
+  stringstream input(
+<span class="st">&quot;  7&quot;</span>
+<span class="st">&quot;  0 6&quot;</span>
+<span class="st">&quot;  1 2&quot;</span>
+<span class="st">&quot;  1 4&quot;</span>
+<span class="st">&quot;  3 2&quot;</span>
+<span class="st">&quot;  5 2&quot;</span>
+<span class="st">&quot;  5 4&quot;</span>
+<span class="st">&quot;  0 1&quot;</span>
+<span class="st">&quot;  0 3&quot;</span>
+<span class="st">&quot;  0 5&quot;</span>
+<span class="st">&quot;  2 6&quot;</span>
+<span class="st">&quot;  4 6&quot;</span>);
+  <span class="dt">int</span> answer = <span class="dv">2</span>;
+
+  {
+    <span class="dt">int</span> n; input &gt;&gt; n;
+    <span class="dt">int</span> s, t; input &gt;&gt; s &gt;&gt; t;
+    vvi d(n, vi(n));
+    vvi c(n, vi(n, <span class="dv">0</span>));
+    loop {
+      <span class="dt">int</span> a, b; input &gt;&gt; a &gt;&gt; b;
+      <span class="cf">if</span> (<span class="kw">not</span> input) <span class="cf">break</span>;
+      d[a].push_back(b);
+      c[a][b] = <span class="dv">1</span>;
+    }
+    MaxFlow mf(d, c, s, t);
+    cout &lt;&lt; mf.flow &lt;&lt; endl;
+    assert(mf.flow == answer);
+  }
+
+  stringstream input2(
+<span class="st">&quot;  6&quot;</span>
+<span class="st">&quot;  0 5&quot;</span>
+<span class="st">&quot;  0 1 3&quot;</span>
+<span class="st">&quot;  0 2 3&quot;</span>
+<span class="st">&quot;  1 2 2&quot;</span>
+<span class="st">&quot;  1 3 3&quot;</span>
+<span class="st">&quot;  2 4 2&quot;</span>
+<span class="st">&quot;  3 4 4&quot;</span>
+<span class="st">&quot;  3 5 2&quot;</span>
+<span class="st">&quot;  4 5 3&quot;</span>);
+  <span class="dt">int</span> answer2 = <span class="dv">5</span>;
+  {
+    <span class="dt">int</span> n; input2 &gt;&gt; n;
+    <span class="dt">int</span> s, t; input2 &gt;&gt; s &gt;&gt; t;
+    vvi neighbor_list(n, vi(n));
+    vvi capacity_table(n, vi(n, <span class="dv">0</span>));
+    loop {
+      <span class="dt">int</span> a, b, c; input2 &gt;&gt; a &gt;&gt; b &gt;&gt; c;
+      <span class="cf">if</span> (<span class="kw">not</span> input2) <span class="cf">break</span>;
+      neighbor_list[a].push_back(b);
+      capacity_table[a][b] = c;
+    }
+    MaxFlow mf(neighbor_list, capacity_table, s, t);
+    cout &lt;&lt; mf.flow &lt;&lt; endl;
+    assert(mf.flow == answer2);
+  }
+      
+
+  <span class="cf">return</span> <span class="dv">0</span>;
+}</code></pre></div>
 <h2 id="関連問題">関連問題</h2>
 <ul>
 <li><a href="https://beta.atcoder.jp/contests/arc092/tasks/arc092_a">ABC091/ARC092; C - 2D Plane 2N Points</a></li>
@@ -318,13 +318,19 @@
 <details class=menu>
 <summary class=menu>行列</summary>
 <ul>
-<li><a href="matrix.html">行列の表現</a></li>
-<li><a href="matrix.ops.html">基本演算</a></li>
+<li><a href="matrix.ops.html">行列演算</a></li>
 </ul>
 <h2 id="行列式">行列式</h2>
 <ul>
 <li><a href="mat.det.naiiv.html">定義に拠る算法</a></li>
-<li><a href="mat.det.cramer.html">Cramer’s rule</a></li>
+<li><a href="mat.det.cramer.html">Cramer's rule</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>虚数</summary>
+<ul>
+<li><a href="complex.html">虚数の定義と演算</a></li>
 </ul>
 </details>
 

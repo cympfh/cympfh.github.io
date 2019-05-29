@@ -40,184 +40,184 @@
 <li>リストに戻す <code>rmq.to_vec()</code></li>
 </ul></li>
 </ul>
-<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">use</span> <span class="pp">std::</span><span class="dt">i32</span>;</a>
-<a class="sourceLine" id="cb1-2" title="2"><span class="kw">use</span> <span class="pp">std::ops::</span><span class="op">{</span>Range, Index<span class="op">}</span>;</a>
-<a class="sourceLine" id="cb1-3" title="3"><span class="kw">use</span> <span class="pp">std::cmp::</span><span class="op">{</span> min, max <span class="op">}</span>;</a>
-<a class="sourceLine" id="cb1-4" title="4"></a>
-<a class="sourceLine" id="cb1-5" title="5"><span class="kw">struct</span> RMQ <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-6" title="6">    size: <span class="dt">usize</span>, len: <span class="dt">usize</span>,</a>
-<a class="sourceLine" id="cb1-7" title="7">    heap_max: <span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt;,</a>
-<a class="sourceLine" id="cb1-8" title="8">    heap_min: <span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt;,</a>
-<a class="sourceLine" id="cb1-9" title="9">    lefts: <span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt;, rights: <span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt;</a>
-<a class="sourceLine" id="cb1-10" title="10"><span class="op">}</span></a>
-<a class="sourceLine" id="cb1-11" title="11"></a>
-<a class="sourceLine" id="cb1-12" title="12"><span class="at">#[</span>allow<span class="at">(</span>dead_code<span class="at">)]</span></a>
-<a class="sourceLine" id="cb1-13" title="13"><span class="kw">impl</span> RMQ <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-14" title="14"></a>
-<a class="sourceLine" id="cb1-15" title="15">    <span class="kw">const</span> INF: <span class="dt">i32</span> = <span class="dv">1000000</span>;</a>
-<a class="sourceLine" id="cb1-16" title="16"></a>
-<a class="sourceLine" id="cb1-17" title="17">    <span class="kw">fn</span> new(v: &amp;<span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt;) -&gt; RMQ <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-18" title="18">        <span class="kw">let</span> n = v.len();</a>
-<a class="sourceLine" id="cb1-19" title="19">        <span class="kw">let</span> size = <span class="pp">RMQ::</span>alignment(n);</a>
-<a class="sourceLine" id="cb1-20" title="20">        <span class="kw">let</span> lefts = (<span class="dv">0</span>..size).map(|i| <span class="pp">RMQ::</span>of_left(i, size/<span class="dv">2</span>)).collect();</a>
-<a class="sourceLine" id="cb1-21" title="21">        <span class="kw">let</span> rights = (<span class="dv">0</span>..size).map(|i| <span class="pp">RMQ::</span>of_right(i, size/<span class="dv">2</span>)).collect();</a>
-<a class="sourceLine" id="cb1-22" title="22">        <span class="kw">let</span> <span class="kw">mut</span> heap_max = <span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>; size<span class="op">]</span>;</a>
-<a class="sourceLine" id="cb1-23" title="23">        <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0</span>..n <span class="op">{</span> heap_max<span class="op">[</span>i + size/<span class="dv">2</span><span class="op">]</span> = v<span class="op">[</span>i<span class="op">]</span>; <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-24" title="24">        <span class="kw">for</span> i <span class="kw">in</span> (<span class="dv">0</span>..size/<span class="dv">2</span>).rev() <span class="op">{</span> heap_max<span class="op">[</span>i<span class="op">]</span> = max(heap_max<span class="op">[</span>i*<span class="dv">2</span>+<span class="dv">1</span><span class="op">]</span>, heap_max<span class="op">[</span>i*<span class="dv">2</span>+<span class="dv">2</span><span class="op">]</span>); <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-25" title="25">        <span class="kw">let</span> <span class="kw">mut</span> heap_min = <span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>; size<span class="op">]</span>;</a>
-<a class="sourceLine" id="cb1-26" title="26">        <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0</span>..n <span class="op">{</span> heap_min<span class="op">[</span>i + size/<span class="dv">2</span><span class="op">]</span> = v<span class="op">[</span>i<span class="op">]</span>; <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-27" title="27">        <span class="kw">for</span> i <span class="kw">in</span> (<span class="dv">0</span>..size/<span class="dv">2</span>).rev() <span class="op">{</span> heap_min<span class="op">[</span>i<span class="op">]</span> = min(heap_min<span class="op">[</span>i*<span class="dv">2</span>+<span class="dv">1</span><span class="op">]</span>, heap_min<span class="op">[</span>i*<span class="dv">2</span>+<span class="dv">2</span><span class="op">]</span>); <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-28" title="28">        RMQ <span class="op">{</span>size: size, len: n, heap_max: heap_max, heap_min: heap_min, lefts: lefts, rights: rights<span class="op">}</span></a>
-<a class="sourceLine" id="cb1-29" title="29">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-30" title="30"></a>
-<a class="sourceLine" id="cb1-31" title="31">    <span class="kw">fn</span> len(&amp;<span class="kw">self</span>) -&gt; <span class="dt">usize</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-32" title="32">        <span class="kw">self</span>.len</a>
-<a class="sourceLine" id="cb1-33" title="33">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-34" title="34"></a>
-<a class="sourceLine" id="cb1-35" title="35">    <span class="kw">fn</span> alignment(n: <span class="dt">usize</span>) -&gt; <span class="dt">usize</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-36" title="36">        <span class="kw">let</span> <span class="kw">mut</span> m = <span class="dv">1</span>;</a>
-<a class="sourceLine" id="cb1-37" title="37">        <span class="kw">while</span> n &gt; m <span class="op">{</span> m &lt;&lt;= <span class="dv">1</span>; <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-38" title="38">        m * <span class="dv">2</span> - <span class="dv">1</span></a>
-<a class="sourceLine" id="cb1-39" title="39">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-40" title="40"></a>
-<a class="sourceLine" id="cb1-41" title="41">    <span class="kw">fn</span> of_left(idx: <span class="dt">usize</span>, base: <span class="dt">usize</span>) -&gt; <span class="dt">usize</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-42" title="42">        <span class="kw">let</span> <span class="kw">mut</span> i = idx; <span class="kw">while</span> i &lt; base <span class="op">{</span> i = i * <span class="dv">2</span> + <span class="dv">1</span>; <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-43" title="43">        i - base</a>
-<a class="sourceLine" id="cb1-44" title="44">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-45" title="45"></a>
-<a class="sourceLine" id="cb1-46" title="46">    <span class="kw">fn</span> of_right(idx: <span class="dt">usize</span>, base: <span class="dt">usize</span>) -&gt; <span class="dt">usize</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-47" title="47">        <span class="kw">let</span> <span class="kw">mut</span> i = idx; <span class="kw">while</span> i &lt; base <span class="op">{</span> i = i * <span class="dv">2</span> + <span class="dv">2</span>; <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-48" title="48">        i - base + <span class="dv">1</span></a>
-<a class="sourceLine" id="cb1-49" title="49">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-50" title="50"></a>
-<a class="sourceLine" id="cb1-51" title="51">    <span class="kw">fn</span> max(&amp;<span class="kw">self</span>, range: Range&lt;<span class="dt">usize</span>&gt;) -&gt; <span class="dt">i32</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-52" title="52">        <span class="kw">if</span> range.end == <span class="dv">0</span> || range.start + <span class="dv">1</span> &gt; range.end <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-53" title="53">            <span class="kw">return</span> -<span class="pp">RMQ::</span>INF;</a>
-<a class="sourceLine" id="cb1-54" title="54">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-55" title="55">        <span class="kw">if</span> range.start + <span class="dv">1</span> == range.end <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-56" title="56">            <span class="kw">return</span> <span class="kw">self</span>.heap_max<span class="op">[</span><span class="kw">self</span>.size / <span class="dv">2</span> + range.start<span class="op">]</span></a>
-<a class="sourceLine" id="cb1-57" title="57">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-58" title="58">        <span class="kw">let</span> left = range.start;</a>
-<a class="sourceLine" id="cb1-59" title="59">        <span class="kw">let</span> right = range.end;</a>
-<a class="sourceLine" id="cb1-60" title="60">        <span class="kw">let</span> <span class="kw">mut</span> i = <span class="kw">self</span>.size / <span class="dv">2</span> + left;</a>
-<a class="sourceLine" id="cb1-61" title="61">        <span class="kw">while</span> i &gt; <span class="dv">0</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-62" title="62">            <span class="kw">let</span> p = (i - <span class="dv">1</span>) / <span class="dv">2</span>;</a>
-<a class="sourceLine" id="cb1-63" title="63">            <span class="kw">if</span> <span class="kw">self</span>.lefts<span class="op">[</span>p<span class="op">]</span> == range.start &amp;&amp; <span class="kw">self</span>.rights<span class="op">[</span>p<span class="op">]</span> &lt;= range.end <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-64" title="64">                i = p;</a>
-<a class="sourceLine" id="cb1-65" title="65">            <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-66" title="66">                <span class="kw">break</span></a>
-<a class="sourceLine" id="cb1-67" title="67">            <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-68" title="68">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-69" title="69">        max(<span class="kw">self</span>.heap_max<span class="op">[</span>i<span class="op">]</span>, <span class="kw">self</span>.max(<span class="kw">self</span>.rights<span class="op">[</span>i<span class="op">]</span>..right))</a>
-<a class="sourceLine" id="cb1-70" title="70">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-71" title="71"></a>
-<a class="sourceLine" id="cb1-72" title="72">    <span class="kw">fn</span> min(&amp;<span class="kw">self</span>, range: Range&lt;<span class="dt">usize</span>&gt;) -&gt; <span class="dt">i32</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-73" title="73">        <span class="kw">if</span> range.end == <span class="dv">0</span> || range.start + <span class="dv">1</span> &gt; range.end <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-74" title="74">            <span class="kw">return</span> <span class="pp">RMQ::</span>INF;</a>
-<a class="sourceLine" id="cb1-75" title="75">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-76" title="76">        <span class="kw">if</span> range.start + <span class="dv">1</span> == range.end <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-77" title="77">            <span class="kw">return</span> <span class="kw">self</span>.heap_min<span class="op">[</span><span class="kw">self</span>.size / <span class="dv">2</span> + range.start<span class="op">]</span></a>
-<a class="sourceLine" id="cb1-78" title="78">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-79" title="79">        <span class="kw">let</span> left = range.start;</a>
-<a class="sourceLine" id="cb1-80" title="80">        <span class="kw">let</span> right = range.end;</a>
-<a class="sourceLine" id="cb1-81" title="81">        <span class="kw">let</span> <span class="kw">mut</span> i = <span class="kw">self</span>.size / <span class="dv">2</span> + left;</a>
-<a class="sourceLine" id="cb1-82" title="82">        <span class="kw">while</span> i &gt; <span class="dv">0</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-83" title="83">            <span class="kw">let</span> p = (i - <span class="dv">1</span>) / <span class="dv">2</span>;</a>
-<a class="sourceLine" id="cb1-84" title="84">            <span class="kw">if</span> <span class="kw">self</span>.lefts<span class="op">[</span>p<span class="op">]</span> == range.start &amp;&amp; <span class="kw">self</span>.rights<span class="op">[</span>p<span class="op">]</span> &lt;= range.end <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-85" title="85">                i = p;</a>
-<a class="sourceLine" id="cb1-86" title="86">            <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-87" title="87">                <span class="kw">break</span></a>
-<a class="sourceLine" id="cb1-88" title="88">            <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-89" title="89">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-90" title="90">        min(<span class="kw">self</span>.heap_min<span class="op">[</span>i<span class="op">]</span>, <span class="kw">self</span>.min(<span class="kw">self</span>.rights<span class="op">[</span>i<span class="op">]</span>..right))</a>
-<a class="sourceLine" id="cb1-91" title="91">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-92" title="92"></a>
-<a class="sourceLine" id="cb1-93" title="93">    <span class="co">// [idx] &lt;- x</span></a>
-<a class="sourceLine" id="cb1-94" title="94">    <span class="kw">fn</span> update(&amp;<span class="kw">mut</span> <span class="kw">self</span>, idx: <span class="dt">usize</span>, x: <span class="dt">i32</span>) <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-95" title="95">        <span class="kw">let</span> <span class="kw">mut</span> i = idx + <span class="kw">self</span>.size/<span class="dv">2</span>;</a>
-<a class="sourceLine" id="cb1-96" title="96">        <span class="kw">self</span>.heap_max<span class="op">[</span>i<span class="op">]</span> = x;</a>
-<a class="sourceLine" id="cb1-97" title="97">        <span class="kw">self</span>.heap_min<span class="op">[</span>i<span class="op">]</span> = x;</a>
-<a class="sourceLine" id="cb1-98" title="98">        <span class="kw">loop</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-99" title="99">            i = (i - <span class="dv">1</span>) / <span class="dv">2</span>;</a>
-<a class="sourceLine" id="cb1-100" title="100">            <span class="kw">if</span> i == <span class="dv">0</span> <span class="op">{</span> <span class="kw">break</span> <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-101" title="101">            <span class="kw">self</span>.heap_max<span class="op">[</span>i<span class="op">]</span> = max(<span class="kw">self</span>.heap_max<span class="op">[</span>i*<span class="dv">2</span>+<span class="dv">1</span><span class="op">]</span>, <span class="kw">self</span>.heap_max<span class="op">[</span>i*<span class="dv">2</span>+<span class="dv">2</span><span class="op">]</span>);</a>
-<a class="sourceLine" id="cb1-102" title="102">            <span class="kw">self</span>.heap_min<span class="op">[</span>i<span class="op">]</span> = min(<span class="kw">self</span>.heap_max<span class="op">[</span>i*<span class="dv">2</span>+<span class="dv">1</span><span class="op">]</span>, <span class="kw">self</span>.heap_max<span class="op">[</span>i*<span class="dv">2</span>+<span class="dv">2</span><span class="op">]</span>);</a>
-<a class="sourceLine" id="cb1-103" title="103">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-104" title="104">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-105" title="105"></a>
-<a class="sourceLine" id="cb1-106" title="106">    <span class="co">// [idx] &lt;- [idx] + x</span></a>
-<a class="sourceLine" id="cb1-107" title="107">    <span class="kw">fn</span> add(&amp;<span class="kw">mut</span> <span class="kw">self</span>, idx: <span class="dt">usize</span>, x: <span class="dt">i32</span>) <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-108" title="108">        <span class="kw">self</span>.update(idx, <span class="kw">self</span><span class="op">[</span>idx<span class="op">]</span> + x);</a>
-<a class="sourceLine" id="cb1-109" title="109">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-110" title="110"></a>
-<a class="sourceLine" id="cb1-111" title="111">    <span class="kw">fn</span> to_vec(&amp;<span class="kw">self</span>) -&gt; <span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt; <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-112" title="112">        (<span class="dv">0</span>..<span class="kw">self</span>.len()).map(|i| <span class="kw">self</span><span class="op">[</span>i<span class="op">]</span>).collect()</a>
-<a class="sourceLine" id="cb1-113" title="113">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-114" title="114"><span class="op">}</span></a>
-<a class="sourceLine" id="cb1-115" title="115"></a>
-<a class="sourceLine" id="cb1-116" title="116"><span class="kw">impl</span> Index&lt;<span class="dt">usize</span>&gt; <span class="kw">for</span> RMQ <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-117" title="117">    <span class="kw">type</span> Output = <span class="dt">i32</span>;</a>
-<a class="sourceLine" id="cb1-118" title="118">    <span class="kw">fn</span> index(&amp;<span class="kw">self</span>, i: <span class="dt">usize</span>) -&gt; &amp;<span class="dt">i32</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-119" title="119">        &amp;<span class="kw">self</span>.heap_max<span class="op">[</span>i + <span class="kw">self</span>.size / <span class="dv">2</span><span class="op">]</span></a>
-<a class="sourceLine" id="cb1-120" title="120">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-121" title="121"><span class="op">}</span></a>
-<a class="sourceLine" id="cb1-122" title="122"></a>
-<a class="sourceLine" id="cb1-123" title="123"><span class="kw">fn</span> main() <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-124" title="124"></a>
-<a class="sourceLine" id="cb1-125" title="125">    <span class="kw">let</span> a = <span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span><span class="op">]</span>;</a>
-<a class="sourceLine" id="cb1-126" title="126">    <span class="kw">let</span> <span class="kw">mut</span> rmq = <span class="pp">RMQ::</span>new(&amp;a);</a>
-<a class="sourceLine" id="cb1-127" title="127"></a>
-<a class="sourceLine" id="cb1-128" title="128">    <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0</span>..rmq.len() <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-129" title="129">        <span class="pp">println!</span>(<span class="st">&quot;rmq[{}] = {}&quot;</span>, i, rmq<span class="op">[</span>i<span class="op">]</span>);</a>
-<a class="sourceLine" id="cb1-130" title="130">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-131" title="131"></a>
-<a class="sourceLine" id="cb1-132" title="132">    <span class="pp">trace!</span>(rmq.to_vec());</a>
-<a class="sourceLine" id="cb1-133" title="133">    <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0</span>..rmq.len() <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-134" title="134">        <span class="kw">for</span> j <span class="kw">in</span> i..rmq.len() <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-135" title="135">            <span class="pp">println!</span>(<span class="st">&quot;max{:?} = {}, min(..) = {}&quot;</span>, (i, j), rmq.max(i..j), rmq.min(i..j));</a>
-<a class="sourceLine" id="cb1-136" title="136">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-137" title="137">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-138" title="138"></a>
-<a class="sourceLine" id="cb1-139" title="139">    rmq.update(<span class="dv">1</span>, <span class="dv">4</span>);</a>
-<a class="sourceLine" id="cb1-140" title="140"></a>
-<a class="sourceLine" id="cb1-141" title="141">    <span class="pp">trace!</span>(rmq.to_vec());</a>
-<a class="sourceLine" id="cb1-142" title="142">    <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0</span>..rmq.len() <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-143" title="143">        <span class="kw">for</span> j <span class="kw">in</span> i..rmq.len() <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-144" title="144">            <span class="pp">println!</span>(<span class="st">&quot;max{:?} = {}, min(..) = {}&quot;</span>, (i, j), rmq.max(i..j), rmq.min(i..j));</a>
-<a class="sourceLine" id="cb1-145" title="145">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-146" title="146">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-147" title="147"><span class="op">}</span></a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">use</span> std::<span class="dt">i32</span>;
+<span class="kw">use</span> std::ops::<span class="op">{</span>Range, Index<span class="op">}</span>;
+<span class="kw">use</span> std::cmp::<span class="op">{</span> min, max <span class="op">}</span>;
+
+<span class="kw">struct</span> RMQ <span class="op">{</span>
+    size: <span class="dt">usize</span>, len: <span class="dt">usize</span>,
+    heap_max: <span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt;,
+    heap_min: <span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt;,
+    lefts: <span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt;, rights: <span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt;
+<span class="op">}</span>
+
+<span class="at">#[</span>allow<span class="at">(</span>dead_code<span class="at">)]</span>
+<span class="kw">impl</span> RMQ <span class="op">{</span>
+
+    <span class="kw">const</span> INF: <span class="dt">i32</span> = <span class="dv">1000000</span>;
+
+    <span class="kw">fn</span> new(v: &amp;<span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt;) -&gt; RMQ <span class="op">{</span>
+        <span class="kw">let</span> n = v.len();
+        <span class="kw">let</span> size = RMQ::alignment(n);
+        <span class="kw">let</span> lefts = (<span class="dv">0.</span>.size).map(|i| RMQ::of_left(i, size/<span class="dv">2</span>)).collect();
+        <span class="kw">let</span> rights = (<span class="dv">0.</span>.size).map(|i| RMQ::of_right(i, size/<span class="dv">2</span>)).collect();
+        <span class="kw">let</span> <span class="kw">mut</span> heap_max = <span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>; size<span class="op">]</span>;
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.n <span class="op">{</span> heap_max<span class="op">[</span>i + size/<span class="dv">2</span><span class="op">]</span> = v<span class="op">[</span>i<span class="op">]</span>; <span class="op">}</span>
+        <span class="kw">for</span> i <span class="kw">in</span> (<span class="dv">0.</span>.size/<span class="dv">2</span>).rev() <span class="op">{</span> heap_max<span class="op">[</span>i<span class="op">]</span> = max(heap_max<span class="op">[</span>i*<span class="dv">2</span>+<span class="dv">1</span><span class="op">]</span>, heap_max<span class="op">[</span>i*<span class="dv">2</span>+<span class="dv">2</span><span class="op">]</span>); <span class="op">}</span>
+        <span class="kw">let</span> <span class="kw">mut</span> heap_min = <span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>; size<span class="op">]</span>;
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.n <span class="op">{</span> heap_min<span class="op">[</span>i + size/<span class="dv">2</span><span class="op">]</span> = v<span class="op">[</span>i<span class="op">]</span>; <span class="op">}</span>
+        <span class="kw">for</span> i <span class="kw">in</span> (<span class="dv">0.</span>.size/<span class="dv">2</span>).rev() <span class="op">{</span> heap_min<span class="op">[</span>i<span class="op">]</span> = min(heap_min<span class="op">[</span>i*<span class="dv">2</span>+<span class="dv">1</span><span class="op">]</span>, heap_min<span class="op">[</span>i*<span class="dv">2</span>+<span class="dv">2</span><span class="op">]</span>); <span class="op">}</span>
+        RMQ <span class="op">{</span>size: size, len: n, heap_max: heap_max, heap_min: heap_min, lefts: lefts, rights: rights<span class="op">}</span>
+    <span class="op">}</span>
+
+    <span class="kw">fn</span> len(&amp;<span class="kw">self</span>) -&gt; <span class="dt">usize</span> <span class="op">{</span>
+        <span class="kw">self</span>.len
+    <span class="op">}</span>
+
+    <span class="kw">fn</span> alignment(n: <span class="dt">usize</span>) -&gt; <span class="dt">usize</span> <span class="op">{</span>
+        <span class="kw">let</span> <span class="kw">mut</span> m = <span class="dv">1</span>;
+        <span class="kw">while</span> n &gt; m <span class="op">{</span> m &lt;&lt;= <span class="dv">1</span>; <span class="op">}</span>
+        m * <span class="dv">2</span> - <span class="dv">1</span>
+    <span class="op">}</span>
+
+    <span class="kw">fn</span> of_left(idx: <span class="dt">usize</span>, base: <span class="dt">usize</span>) -&gt; <span class="dt">usize</span> <span class="op">{</span>
+        <span class="kw">let</span> <span class="kw">mut</span> i = idx; <span class="kw">while</span> i &lt; base <span class="op">{</span> i = i * <span class="dv">2</span> + <span class="dv">1</span>; <span class="op">}</span>
+        i - base
+    <span class="op">}</span>
+
+    <span class="kw">fn</span> of_right(idx: <span class="dt">usize</span>, base: <span class="dt">usize</span>) -&gt; <span class="dt">usize</span> <span class="op">{</span>
+        <span class="kw">let</span> <span class="kw">mut</span> i = idx; <span class="kw">while</span> i &lt; base <span class="op">{</span> i = i * <span class="dv">2</span> + <span class="dv">2</span>; <span class="op">}</span>
+        i - base + <span class="dv">1</span>
+    <span class="op">}</span>
+
+    <span class="kw">fn</span> max(&amp;<span class="kw">self</span>, range: Range&lt;<span class="dt">usize</span>&gt;) -&gt; <span class="dt">i32</span> <span class="op">{</span>
+        <span class="kw">if</span> range.end == <span class="dv">0</span> || range.start + <span class="dv">1</span> &gt; range.end <span class="op">{</span>
+            <span class="kw">return</span> -RMQ::INF;
+        <span class="op">}</span>
+        <span class="kw">if</span> range.start + <span class="dv">1</span> == range.end <span class="op">{</span>
+            <span class="kw">return</span> <span class="kw">self</span>.heap_max<span class="op">[</span><span class="kw">self</span>.size / <span class="dv">2</span> + range.start<span class="op">]</span>
+        <span class="op">}</span>
+        <span class="kw">let</span> left = range.start;
+        <span class="kw">let</span> right = range.end;
+        <span class="kw">let</span> <span class="kw">mut</span> i = <span class="kw">self</span>.size / <span class="dv">2</span> + left;
+        <span class="kw">while</span> i &gt; <span class="dv">0</span> <span class="op">{</span>
+            <span class="kw">let</span> p = (i - <span class="dv">1</span>) / <span class="dv">2</span>;
+            <span class="kw">if</span> <span class="kw">self</span>.lefts<span class="op">[</span>p<span class="op">]</span> == range.start &amp;&amp; <span class="kw">self</span>.rights<span class="op">[</span>p<span class="op">]</span> &lt;= range.end <span class="op">{</span>
+                i = p;
+            <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
+                <span class="kw">break</span>
+            <span class="op">}</span>
+        <span class="op">}</span>
+        max(<span class="kw">self</span>.heap_max<span class="op">[</span>i<span class="op">]</span>, <span class="kw">self</span>.max(<span class="kw">self</span>.rights<span class="op">[</span>i<span class="op">]</span>..right))
+    <span class="op">}</span>
+
+    <span class="kw">fn</span> min(&amp;<span class="kw">self</span>, range: Range&lt;<span class="dt">usize</span>&gt;) -&gt; <span class="dt">i32</span> <span class="op">{</span>
+        <span class="kw">if</span> range.end == <span class="dv">0</span> || range.start + <span class="dv">1</span> &gt; range.end <span class="op">{</span>
+            <span class="kw">return</span> RMQ::INF;
+        <span class="op">}</span>
+        <span class="kw">if</span> range.start + <span class="dv">1</span> == range.end <span class="op">{</span>
+            <span class="kw">return</span> <span class="kw">self</span>.heap_min<span class="op">[</span><span class="kw">self</span>.size / <span class="dv">2</span> + range.start<span class="op">]</span>
+        <span class="op">}</span>
+        <span class="kw">let</span> left = range.start;
+        <span class="kw">let</span> right = range.end;
+        <span class="kw">let</span> <span class="kw">mut</span> i = <span class="kw">self</span>.size / <span class="dv">2</span> + left;
+        <span class="kw">while</span> i &gt; <span class="dv">0</span> <span class="op">{</span>
+            <span class="kw">let</span> p = (i - <span class="dv">1</span>) / <span class="dv">2</span>;
+            <span class="kw">if</span> <span class="kw">self</span>.lefts<span class="op">[</span>p<span class="op">]</span> == range.start &amp;&amp; <span class="kw">self</span>.rights<span class="op">[</span>p<span class="op">]</span> &lt;= range.end <span class="op">{</span>
+                i = p;
+            <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
+                <span class="kw">break</span>
+            <span class="op">}</span>
+        <span class="op">}</span>
+        min(<span class="kw">self</span>.heap_min<span class="op">[</span>i<span class="op">]</span>, <span class="kw">self</span>.min(<span class="kw">self</span>.rights<span class="op">[</span>i<span class="op">]</span>..right))
+    <span class="op">}</span>
+
+    <span class="co">// [idx] &lt;- x</span>
+    <span class="kw">fn</span> update(&amp;<span class="kw">mut</span> <span class="kw">self</span>, idx: <span class="dt">usize</span>, x: <span class="dt">i32</span>) <span class="op">{</span>
+        <span class="kw">let</span> <span class="kw">mut</span> i = idx + <span class="kw">self</span>.size/<span class="dv">2</span>;
+        <span class="kw">self</span>.heap_max<span class="op">[</span>i<span class="op">]</span> = x;
+        <span class="kw">self</span>.heap_min<span class="op">[</span>i<span class="op">]</span> = x;
+        <span class="kw">loop</span> <span class="op">{</span>
+            i = (i - <span class="dv">1</span>) / <span class="dv">2</span>;
+            <span class="kw">if</span> i == <span class="dv">0</span> <span class="op">{</span> <span class="kw">break</span> <span class="op">}</span>
+            <span class="kw">self</span>.heap_max<span class="op">[</span>i<span class="op">]</span> = max(<span class="kw">self</span>.heap_max<span class="op">[</span>i*<span class="dv">2</span>+<span class="dv">1</span><span class="op">]</span>, <span class="kw">self</span>.heap_max<span class="op">[</span>i*<span class="dv">2</span>+<span class="dv">2</span><span class="op">]</span>);
+            <span class="kw">self</span>.heap_min<span class="op">[</span>i<span class="op">]</span> = min(<span class="kw">self</span>.heap_max<span class="op">[</span>i*<span class="dv">2</span>+<span class="dv">1</span><span class="op">]</span>, <span class="kw">self</span>.heap_max<span class="op">[</span>i*<span class="dv">2</span>+<span class="dv">2</span><span class="op">]</span>);
+        <span class="op">}</span>
+    <span class="op">}</span>
+
+    <span class="co">// [idx] &lt;- [idx] + x</span>
+    <span class="kw">fn</span> add(&amp;<span class="kw">mut</span> <span class="kw">self</span>, idx: <span class="dt">usize</span>, x: <span class="dt">i32</span>) <span class="op">{</span>
+        <span class="kw">self</span>.update(idx, <span class="kw">self</span><span class="op">[</span>idx<span class="op">]</span> + x);
+    <span class="op">}</span>
+
+    <span class="kw">fn</span> to_vec(&amp;<span class="kw">self</span>) -&gt; <span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt; <span class="op">{</span>
+        (<span class="dv">0.</span>.<span class="kw">self</span>.len()).map(|i| <span class="kw">self</span><span class="op">[</span>i<span class="op">]</span>).collect()
+    <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="kw">impl</span> Index&lt;<span class="dt">usize</span>&gt; <span class="kw">for</span> RMQ <span class="op">{</span>
+    <span class="kw">type</span> Output = <span class="dt">i32</span>;
+    <span class="kw">fn</span> index(&amp;<span class="kw">self</span>, i: <span class="dt">usize</span>) -&gt; &amp;<span class="dt">i32</span> <span class="op">{</span>
+        &amp;<span class="kw">self</span>.heap_max<span class="op">[</span>i + <span class="kw">self</span>.size / <span class="dv">2</span><span class="op">]</span>
+    <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="kw">fn</span> main() <span class="op">{</span>
+
+    <span class="kw">let</span> a = <span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span><span class="op">]</span>;
+    <span class="kw">let</span> <span class="kw">mut</span> rmq = RMQ::new(&amp;a);
+
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.rmq.len() <span class="op">{</span>
+        <span class="pp">println!</span>(<span class="st">&quot;rmq[{}] = {}&quot;</span>, i, rmq<span class="op">[</span>i<span class="op">]</span>);
+    <span class="op">}</span>
+
+    <span class="pp">trace!</span>(rmq.to_vec());
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.rmq.len() <span class="op">{</span>
+        <span class="kw">for</span> j <span class="kw">in</span> i..rmq.len() <span class="op">{</span>
+            <span class="pp">println!</span>(<span class="st">&quot;max{:?} = {}, min(..) = {}&quot;</span>, (i, j), rmq.max(i..j), rmq.min(i..j));
+        <span class="op">}</span>
+    <span class="op">}</span>
+
+    rmq.update(<span class="dv">1</span>, <span class="dv">4</span>);
+
+    <span class="pp">trace!</span>(rmq.to_vec());
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.rmq.len() <span class="op">{</span>
+        <span class="kw">for</span> j <span class="kw">in</span> i..rmq.len() <span class="op">{</span>
+            <span class="pp">println!</span>(<span class="st">&quot;max{:?} = {}, min(..) = {}&quot;</span>, (i, j), rmq.max(i..j), rmq.min(i..j));
+        <span class="op">}</span>
+    <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
 <h2 id="seq.rmq.cc"><a href="seq.rmq.cc" class="uri">seq.rmq.cc</a></h2>
 <p>最大値クエリのみ対応.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">template</span> &lt;<span class="kw">typename</span> T = <span class="dt">int</span>&gt;</a>
-<a class="sourceLine" id="cb2-2" title="2"><span class="kw">struct</span> RMQ {</a>
-<a class="sourceLine" id="cb2-3" title="3">  vector&lt;vector&lt;T&gt;&gt; seg;</a>
-<a class="sourceLine" id="cb2-4" title="4">  vector&lt;<span class="dt">int</span>&gt; sizes;</a>
-<a class="sourceLine" id="cb2-5" title="5">  <span class="dt">int</span> N, K;</a>
-<a class="sourceLine" id="cb2-6" title="6">  RMQ(<span class="at">const</span> vector&lt;T&gt;&amp; v) {</a>
-<a class="sourceLine" id="cb2-7" title="7">    N = v.size();</a>
-<a class="sourceLine" id="cb2-8" title="8">    K = <span class="kw">static_cast</span>&lt;<span class="dt">int</span>&gt;(log2(N));</a>
-<a class="sourceLine" id="cb2-9" title="9">    seg.resize(K + <span class="dv">1</span>);</a>
-<a class="sourceLine" id="cb2-10" title="10">    sizes.resize(K + <span class="dv">1</span>);</a>
-<a class="sourceLine" id="cb2-11" title="11">    seg[<span class="dv">0</span>] = v;</a>
-<a class="sourceLine" id="cb2-12" title="12">    sizes[<span class="dv">0</span>] = <span class="dv">1</span>;</a>
-<a class="sourceLine" id="cb2-13" title="13">    <span class="dt">unsigned</span> <span class="dt">int</span> s = <span class="dv">1</span>;</a>
-<a class="sourceLine" id="cb2-14" title="14">    <span class="cf">for</span> (<span class="dt">int</span> k = <span class="dv">1</span>; k &lt;= K; ++k) {</a>
-<a class="sourceLine" id="cb2-15" title="15">      seg[k].resize(N - s - s + <span class="dv">1</span>);</a>
-<a class="sourceLine" id="cb2-16" title="16">      <span class="cf">for</span> (<span class="dt">int</span> x = <span class="dv">0</span>; x + s + s &lt;= N; ++x) {</a>
-<a class="sourceLine" id="cb2-17" title="17">        seg[k][x] = <span class="bu">std::</span>max&lt;T&gt;(seg[k-<span class="dv">1</span>][x], seg[k-<span class="dv">1</span>][x + s]);</a>
-<a class="sourceLine" id="cb2-18" title="18">      }</a>
-<a class="sourceLine" id="cb2-19" title="19">      s &lt;&lt;= <span class="dv">1</span>;</a>
-<a class="sourceLine" id="cb2-20" title="20">      sizes[k] = s;</a>
-<a class="sourceLine" id="cb2-21" title="21">    }</a>
-<a class="sourceLine" id="cb2-22" title="22">  }</a>
-<a class="sourceLine" id="cb2-23" title="23"></a>
-<a class="sourceLine" id="cb2-24" title="24">  T max(<span class="dt">int</span> i, <span class="dt">int</span> j) { <span class="co">// [ i .. j ]</span></a>
-<a class="sourceLine" id="cb2-25" title="25">    <span class="cf">if</span> (i &gt;= j) <span class="cf">return</span> seg[<span class="dv">0</span>][i];</a>
-<a class="sourceLine" id="cb2-26" title="26">    <span class="at">const</span> <span class="dt">int</span> m = <span class="kw">static_cast</span>&lt;<span class="dt">int</span>&gt;(log2(j - i + <span class="dv">1</span>));</a>
-<a class="sourceLine" id="cb2-27" title="27">    <span class="cf">return</span> <span class="bu">std::</span>max&lt;T&gt;(seg[m][i], seg[m][j - sizes[m] + <span class="dv">1</span>]);</a>
-<a class="sourceLine" id="cb2-28" title="28">  }</a>
-<a class="sourceLine" id="cb2-29" title="29">};</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="kw">template</span> &lt;<span class="kw">typename</span> T = <span class="dt">int</span>&gt;
+<span class="kw">struct</span> RMQ {
+  vector&lt;vector&lt;T&gt;&gt; seg;
+  vector&lt;<span class="dt">int</span>&gt; sizes;
+  <span class="dt">int</span> N, K;
+  RMQ(<span class="at">const</span> vector&lt;T&gt;&amp; v) {
+    N = v.size();
+    K = <span class="kw">static_cast</span>&lt;<span class="dt">int</span>&gt;(log2(N));
+    seg.resize(K + <span class="dv">1</span>);
+    sizes.resize(K + <span class="dv">1</span>);
+    seg[<span class="dv">0</span>] = v;
+    sizes[<span class="dv">0</span>] = <span class="dv">1</span>;
+    <span class="dt">unsigned</span> <span class="dt">int</span> s = <span class="dv">1</span>;
+    <span class="cf">for</span> (<span class="dt">int</span> k = <span class="dv">1</span>; k &lt;= K; ++k) {
+      seg[k].resize(N - s - s + <span class="dv">1</span>);
+      <span class="cf">for</span> (<span class="dt">int</span> x = <span class="dv">0</span>; x + s + s &lt;= N; ++x) {
+        seg[k][x] = <span class="bu">std::</span>max&lt;T&gt;(seg[k<span class="dv">-1</span>][x], seg[k<span class="dv">-1</span>][x + s]);
+      }
+      s &lt;&lt;= <span class="dv">1</span>;
+      sizes[k] = s;
+    }
+  }
+
+  T max(<span class="dt">int</span> i, <span class="dt">int</span> j) { <span class="co">// [ i .. j ]</span>
+    <span class="cf">if</span> (i &gt;= j) <span class="cf">return</span> seg[<span class="dv">0</span>][i];
+    <span class="at">const</span> <span class="dt">int</span> m = <span class="kw">static_cast</span>&lt;<span class="dt">int</span>&gt;(log2(j - i + <span class="dv">1</span>));
+    <span class="cf">return</span> <span class="bu">std::</span>max&lt;T&gt;(seg[m][i], seg[m][j - sizes[m] + <span class="dv">1</span>]);
+  }
+};</code></pre></div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
@@ -261,13 +261,19 @@
 <details class=menu>
 <summary class=menu>行列</summary>
 <ul>
-<li><a href="matrix.html">行列の表現</a></li>
-<li><a href="matrix.ops.html">基本演算</a></li>
+<li><a href="matrix.ops.html">行列演算</a></li>
 </ul>
 <h2 id="行列式">行列式</h2>
 <ul>
 <li><a href="mat.det.naiiv.html">定義に拠る算法</a></li>
-<li><a href="mat.det.cramer.html">Cramer’s rule</a></li>
+<li><a href="mat.det.cramer.html">Cramer's rule</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>虚数</summary>
+<ul>
+<li><a href="complex.html">虚数の定義と演算</a></li>
 </ul>
 </details>
 

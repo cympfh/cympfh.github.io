@@ -26,28 +26,28 @@
 <li>出力; <code>xs</code> に <code>x</code> が出現する回数を返す</li>
 </ul>
 <p><code>(&lt; x)</code> と <code>(&lt;= x)</code> の境界をそれぞれ二分探索する</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">template</span>&lt;<span class="kw">typename</span> Func&gt;</a>
-<a class="sourceLine" id="cb1-2" title="2"><span class="dt">int</span> bsearch(<span class="dt">int</span> left, <span class="dt">int</span> right, Func f) {</a>
-<a class="sourceLine" id="cb1-3" title="3">  <span class="cf">while</span> (left + <span class="dv">1</span> &lt; right) {</a>
-<a class="sourceLine" id="cb1-4" title="4">    <span class="dt">int</span> mid = (left + right) / <span class="dv">2</span>;</a>
-<a class="sourceLine" id="cb1-5" title="5">    <span class="cf">if</span> (f(mid) &lt; <span class="dv">0</span>) {</a>
-<a class="sourceLine" id="cb1-6" title="6">      left = mid;</a>
-<a class="sourceLine" id="cb1-7" title="7">    } <span class="cf">else</span> {</a>
-<a class="sourceLine" id="cb1-8" title="8">      right = mid;</a>
-<a class="sourceLine" id="cb1-9" title="9">    }</a>
-<a class="sourceLine" id="cb1-10" title="10">  }</a>
-<a class="sourceLine" id="cb1-11" title="11">  <span class="cf">return</span> right;</a>
-<a class="sourceLine" id="cb1-12" title="12">}</a>
-<a class="sourceLine" id="cb1-13" title="13"></a>
-<a class="sourceLine" id="cb1-14" title="14"><span class="kw">template</span>&lt;<span class="kw">typename</span> T&gt;</a>
-<a class="sourceLine" id="cb1-15" title="15"><span class="dt">int</span> bcount(<span class="at">const</span> vector&lt;T&gt;&amp; xs, T x) {</a>
-<a class="sourceLine" id="cb1-16" title="16">  <span class="at">const</span> <span class="dt">int</span> n = xs.size();</a>
-<a class="sourceLine" id="cb1-17" title="17">  <span class="kw">auto</span> f1 = [&amp;](<span class="dt">int</span> i) { <span class="cf">return</span> xs[i] - x; };</a>
-<a class="sourceLine" id="cb1-18" title="18">  <span class="kw">auto</span> f2 = [&amp;](<span class="dt">int</span> i) { <span class="cf">return</span> xs[i] - x - <span class="dv">1</span>; };</a>
-<a class="sourceLine" id="cb1-19" title="19">  <span class="dt">int</span> r1 = xs[<span class="dv">0</span>] == x ? <span class="dv">0</span> : bsearch(<span class="dv">0</span>, n, f1);</a>
-<a class="sourceLine" id="cb1-20" title="20">  <span class="dt">int</span> r2 = xs[n-<span class="dv">1</span>] == x ? n : bsearch(<span class="dv">0</span>, n, f2);</a>
-<a class="sourceLine" id="cb1-21" title="21">  <span class="cf">return</span> r2 - r1;</a>
-<a class="sourceLine" id="cb1-22" title="22">}</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="kw">template</span>&lt;<span class="kw">typename</span> Func&gt;
+<span class="dt">int</span> bsearch(<span class="dt">int</span> left, <span class="dt">int</span> right, Func f) {
+  <span class="cf">while</span> (left + <span class="dv">1</span> &lt; right) {
+    <span class="dt">int</span> mid = (left + right) / <span class="dv">2</span>;
+    <span class="cf">if</span> (f(mid) &lt; <span class="dv">0</span>) {
+      left = mid;
+    } <span class="cf">else</span> {
+      right = mid;
+    }
+  }
+  <span class="cf">return</span> right;
+}
+
+<span class="kw">template</span>&lt;<span class="kw">typename</span> T&gt;
+<span class="dt">int</span> bcount(<span class="at">const</span> vector&lt;T&gt;&amp; xs, T x) {
+  <span class="at">const</span> <span class="dt">int</span> n = xs.size();
+  <span class="kw">auto</span> f1 = [&amp;](<span class="dt">int</span> i) { <span class="cf">return</span> xs[i] - x; };
+  <span class="kw">auto</span> f2 = [&amp;](<span class="dt">int</span> i) { <span class="cf">return</span> xs[i] - x - <span class="dv">1</span>; };
+  <span class="dt">int</span> r1 = xs[<span class="dv">0</span>] == x ? <span class="dv">0</span> : bsearch(<span class="dv">0</span>, n, f1);
+  <span class="dt">int</span> r2 = xs[n<span class="dv">-1</span>] == x ? n : bsearch(<span class="dv">0</span>, n, f2);
+  <span class="cf">return</span> r2 - r1;
+}</code></pre></div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
@@ -91,13 +91,19 @@
 <details class=menu>
 <summary class=menu>行列</summary>
 <ul>
-<li><a href="matrix.html">行列の表現</a></li>
-<li><a href="matrix.ops.html">基本演算</a></li>
+<li><a href="matrix.ops.html">行列演算</a></li>
 </ul>
 <h2 id="行列式">行列式</h2>
 <ul>
 <li><a href="mat.det.naiiv.html">定義に拠る算法</a></li>
-<li><a href="mat.det.cramer.html">Cramer’s rule</a></li>
+<li><a href="mat.det.cramer.html">Cramer's rule</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>虚数</summary>
+<ul>
+<li><a href="complex.html">虚数の定義と演算</a></li>
 </ul>
 </details>
 

@@ -1,54 +1,75 @@
+use std::ops::{Add, Mul};
+use std::f64;
 type K = f64;
-type Matrix = Vec<Vec<K>>;
 
-fn eye(n: usize) -> Matrix {
-    let mut e: Matrix = vec![vec![0.0; n]; n];
-    for i in 0..n { e[i][i] = 1.0; }
-    e
-}
+#[derive(Debug, Clone, PartialEq)]
+struct Matrix { data: Vec<Vec<K>> }
 
-fn scalar_multiply(a: &Matrix, k: K) -> Matrix {
-    (*a).iter().map(|row| row.iter().map(|x| x*k).collect()).collect()
-}
-
-fn multiply(a: &Matrix, b: &Matrix) -> Matrix {
-    let n = a.len();
-    let mut c: Matrix = vec![vec![0.0; n]; n];
-    for i in 0..n {
-        for j in 0..n {
-            for k in 0..n {
-                c[i][j] += a[i][k] * b[k][j];
-            }
+#[allow(dead_code)]
+impl Matrix {
+    fn new(data: &Vec<Vec<K>>) -> Matrix {
+        Matrix {data: data.clone()}
+    }
+    fn eye(n: usize) -> Matrix {
+        let mut e = vec![vec![0.0; n]; n];
+        for i in 0..n { e[i][i] = 1.0; }
+        Matrix::new(&e)
+    }
+    fn zero(h: usize, w: usize) -> Matrix {
+        Matrix::new(&vec![vec![0.0; w]; h])
+    }
+    fn scalar_mul(&self, k: K) -> Matrix {
+        let (h, w) = (self.data.len(), self.data[0].len());
+        let data: Vec<Vec<K>> =
+            (0..h).map(|i| (0..w).map(|j| k * self.data[i][j]).collect()).collect();
+        Matrix::new(&data)
+    }
+    fn pow(&self, n: usize) -> Matrix {
+        if n == 0 {
+            Matrix::eye(self.data.len())
+        } else if n == 1 {
+            self.clone()
+        } else if n % 2 == 0 {
+            let m = self * self;
+            m.pow(n / 2)
+        } else {
+            let m = self * self;
+            &m.pow(n / 2) * self
         }
     }
-    c
 }
 
-fn pow(a: &Matrix, n: usize) -> Matrix {
-    if n == 0 {
-        eye(a.len())
-    } else if n == 1 {
-        a.clone()
-    } else if n % 2 == 0 {
-        let b = multiply(a, a);
-        pow(&b, n / 2)
-    } else {
-        let b = multiply(a, a);
-        let c = pow(&b, (n - 1) / 2);
-        multiply(&c, a)
+impl<'t> Add<&'t Matrix> for &'t Matrix {
+    type Output = Matrix;
+    fn add(self, right: &'t Matrix) -> Matrix {
+        let (h, w) = (self.data.len(), self.data[0].len());
+        let data: Vec<Vec<K>> =
+            (0..h).map(|i| (0..w).map(|j| self.data[i][j] + right.data[i][j]).collect()).collect();
+        Matrix::new(&data)
     }
 }
 
-fn add(a: &Matrix, b: &Matrix) -> Matrix {
-    let n = a.len();
-    let m = a[0].len();
-    (0..n).map(|i| (0..m).map(|j| a[i][j] + b[i][j]).collect()).collect()
+impl<'t> Mul<&'t Matrix> for &'t Matrix {
+    type Output = Matrix;
+    fn mul(self, right: &'t Matrix) -> Matrix {
+        let (h, w, v) = (self.data.len(), right.data.len(), right.data[0].len());
+        let data: Vec<Vec<K>> =
+            (0..h).map(|i| (0..v).map(|k| (0..w).map(|j| self.data[i][j] * right.data[j][k]).sum()).collect())
+                  .collect();
+        Matrix::new(&data)
+    }
 }
 
-fn main() {
-    let a: Matrix = eye(2);
-    let b: Matrix = scalar_multiply(&a, 2.0);
-    assert!(add(&a, &a) == b);
-    assert!(pow(&a, 10) == a);
-    assert!(pow(&b, 10) == scalar_multiply(&a, 1024.0));
+impl<'t> Mul<&'t Matrix> for K {
+    type Output = Matrix;
+    fn mul(self, m: &'t Matrix) -> Matrix {
+        m.scalar_mul(self)
+    }
+}
+
+impl<'t> Mul<K> for &'t Matrix {
+    type Output = Matrix;
+    fn mul(self, k: K) -> Matrix {
+        self.scalar_mul(k)
+    }
 }

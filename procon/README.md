@@ -32,12 +32,15 @@
 
 # 行列
 
-- [行列の表現](matrix.html)
-- [基本演算](matrix.ops.html)
+- [行列演算](matrix.ops.html)
 
 ## 行列式
 - [定義に拠る算法](mat.det.naiiv.html)
 - [Cramer's rule](mat.det.cramer.html)
+
+# 虚数
+
+- [虚数の定義と演算](complex.html)
 
 # 幾何
 

@@ -20,70 +20,121 @@
         <section class="main-content columns is-fullheight">
 
           <div class="article column is-8">
-            <h2 id="fft.convolution.cc"><a href="fft.convolution.cc" class="uri">fft.convolution.cc</a></h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb1-1" title="1"><span class="co">/*</span></a>
-<a class="sourceLine" id="cb1-2" title="2"><span class="co"> * 離散フーリエ変換を用いた畳み込みの計算</span></a>
-<a class="sourceLine" id="cb1-3" title="3"><span class="co"> * 問題の頁 (解説スライド付き): http://atc001.contest.atcoder.jp/tasks/fft_c</span></a>
-<a class="sourceLine" id="cb1-4" title="4"><span class="co"> */</span></a>
-<a class="sourceLine" id="cb1-5" title="5"></a>
-<a class="sourceLine" id="cb1-6" title="6"><span class="co">// </span><span class="re">{{{</span></a>
-<a class="sourceLine" id="cb1-7" title="7"><span class="kw">using</span> Real = <span class="dt">long</span> <span class="dt">double</span>;</a>
-<a class="sourceLine" id="cb1-8" title="8"><span class="at">const</span> Real PI = acos(-<span class="dv">1</span>);</a>
-<a class="sourceLine" id="cb1-9" title="9"><span class="kw">using</span> C = complex&lt;Real&gt;;</a>
-<a class="sourceLine" id="cb1-10" title="10"></a>
-<a class="sourceLine" id="cb1-11" title="11">vector&lt;C&gt;</a>
-<a class="sourceLine" id="cb1-12" title="12">fft(vector&lt;C&gt; f, <span class="dt">int</span> dir=<span class="dv">1</span>) {</a>
-<a class="sourceLine" id="cb1-13" title="13">  <span class="at">const</span> <span class="dt">int</span> n = f.size();</a>
-<a class="sourceLine" id="cb1-14" title="14">  <span class="cf">if</span> (n &lt; <span class="dv">2</span>) <span class="cf">return</span> f;</a>
-<a class="sourceLine" id="cb1-15" title="15">  vector&lt;C&gt; f0(n/<span class="dv">2</span>), f1(n/<span class="dv">2</span>);</a>
-<a class="sourceLine" id="cb1-16" title="16">  rep (i, n/<span class="dv">2</span>) f0[i] = f[i*<span class="dv">2</span>], f1[i] = f[i*<span class="dv">2</span> + <span class="dv">1</span>];</a>
-<a class="sourceLine" id="cb1-17" title="17">  f0 = fft(f0, dir);</a>
-<a class="sourceLine" id="cb1-18" title="18">  f1 = fft(f1, dir);</a>
-<a class="sourceLine" id="cb1-19" title="19">  Real theta = <span class="dv">2</span> * PI / n;</a>
-<a class="sourceLine" id="cb1-20" title="20">  C z(cos(theta), dir * sin(theta)),</a>
-<a class="sourceLine" id="cb1-21" title="21">    ac = C(<span class="dv">1</span>, <span class="dv">0</span>);</a>
-<a class="sourceLine" id="cb1-22" title="22">  rep (i, n) {</a>
-<a class="sourceLine" id="cb1-23" title="23">    f[i] = f0[i%(n/<span class="dv">2</span>)] + ac * f1[i%(n/<span class="dv">2</span>)];</a>
-<a class="sourceLine" id="cb1-24" title="24">    ac *= z;</a>
-<a class="sourceLine" id="cb1-25" title="25">  }</a>
-<a class="sourceLine" id="cb1-26" title="26">  <span class="cf">return</span> f;</a>
-<a class="sourceLine" id="cb1-27" title="27">}</a>
-<a class="sourceLine" id="cb1-28" title="28"><span class="co">// </span><span class="re">}}}</span></a>
-<a class="sourceLine" id="cb1-29" title="29"></a>
-<a class="sourceLine" id="cb1-30" title="30">vector&lt;C&gt;</a>
-<a class="sourceLine" id="cb1-31" title="31">convolution(vector&lt;C&gt; f, vector&lt;C&gt; g) {</a>
-<a class="sourceLine" id="cb1-32" title="32">  <span class="dt">int</span> n = <span class="bu">std::</span>max&lt;<span class="dt">unsigned</span>&gt;(f.size(), g.size());</a>
-<a class="sourceLine" id="cb1-33" title="33">  <span class="dt">int</span> m; <span class="cf">for</span> (m = <span class="dv">1</span>; m &lt; n; m &lt;&lt;= <span class="dv">1</span>); m &lt;&lt;= <span class="dv">1</span>;</a>
-<a class="sourceLine" id="cb1-34" title="34">  f.resize(m); g.resize(m);</a>
-<a class="sourceLine" id="cb1-35" title="35">  f = fft(f);</a>
-<a class="sourceLine" id="cb1-36" title="36">  g = fft(g);</a>
-<a class="sourceLine" id="cb1-37" title="37">  rep (i, m) f[i] *= g[i];</a>
-<a class="sourceLine" id="cb1-38" title="38">  <span class="kw">auto</span> fg = fft(f, -<span class="dv">1</span>);</a>
-<a class="sourceLine" id="cb1-39" title="39">  rep (i, m) fg[i] /= <span class="kw">static_cast</span>&lt;Real&gt;(m);</a>
-<a class="sourceLine" id="cb1-40" title="40">  <span class="cf">return</span> fg;</a>
-<a class="sourceLine" id="cb1-41" title="41">}</a>
-<a class="sourceLine" id="cb1-42" title="42"></a>
-<a class="sourceLine" id="cb1-43" title="43"><span class="dt">int</span> main() {</a>
-<a class="sourceLine" id="cb1-44" title="44">  <span class="dt">int</span> n; cin &gt;&gt; n;</a>
-<a class="sourceLine" id="cb1-45" title="45">  vector&lt;C&gt; f(n+<span class="dv">1</span>), g(n+<span class="dv">1</span>);</a>
-<a class="sourceLine" id="cb1-46" title="46"></a>
-<a class="sourceLine" id="cb1-47" title="47">  rep (i, n) {</a>
-<a class="sourceLine" id="cb1-48" title="48">    <span class="dt">int</span> a, b; cin &gt;&gt; a &gt;&gt; b;</a>
-<a class="sourceLine" id="cb1-49" title="49">    f[i+<span class="dv">1</span>] = C(a, <span class="dv">0</span>);</a>
-<a class="sourceLine" id="cb1-50" title="50">    g[i+<span class="dv">1</span>] = C(b, <span class="dv">0</span>);</a>
-<a class="sourceLine" id="cb1-51" title="51">  }</a>
-<a class="sourceLine" id="cb1-52" title="52"></a>
-<a class="sourceLine" id="cb1-53" title="53">  vector&lt;C&gt; fg = convolution(f, g);</a>
-<a class="sourceLine" id="cb1-54" title="54">  <span class="at">const</span> <span class="dt">int</span> m = fg.size();</a>
-<a class="sourceLine" id="cb1-55" title="55"></a>
-<a class="sourceLine" id="cb1-56" title="56">  rep (i, <span class="dv">2</span> * n) {</a>
-<a class="sourceLine" id="cb1-57" title="57">    <span class="dt">int</span> a = round(fg[i+<span class="dv">1</span>].real());</a>
-<a class="sourceLine" id="cb1-58" title="58">    cout &lt;&lt; a &lt;&lt; endl;</a>
-<a class="sourceLine" id="cb1-59" title="59">  }</a>
-<a class="sourceLine" id="cb1-60" title="60"></a>
-<a class="sourceLine" id="cb1-61" title="61">  <span class="cf">return</span> <span class="dv">0</span>;</a>
-<a class="sourceLine" id="cb1-62" title="62">}</a>
-<a class="sourceLine" id="cb1-63" title="63"></a></code></pre></div>
+            <h2 id="数列の畳み込み">数列の畳み込み</h2>
+<p>2つの数列 <span class="math inline">\(A_i, B_i\)</span> について, <span class="math display">\[C_k = \sum_{i=0}^k A_i B_{k-i}\]</span> なる数列 <span class="math inline">\(C_k\)</span> を計算する.</p>
+<h2 id="例題">例題</h2>
+<ul>
+<li>離散フーリエ変換を用いた畳み込みの計算
+<ul>
+<li><a href="http://atc001.contest.atcoder.jp/tasks/fft_c">C: 高速フーリエ変換 - AtCoder</a></li>
+</ul></li>
+</ul>
+<h2 id="fft.convolution.rs"><a href="fft.convolution.rs" class="uri">fft.convolution.rs</a></h2>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">struct</span> FFT;
+
+<span class="kw">impl</span> FFT <span class="op">{</span>
+
+    <span class="kw">fn</span> _fft(f: &amp;<span class="dt">Vec</span>&lt;Complex&gt;, dir: K) -&gt; <span class="dt">Vec</span>&lt;Complex&gt; <span class="op">{</span>
+        <span class="kw">let</span> n = f.len();
+        <span class="kw">if</span> n &lt; <span class="dv">2</span> <span class="op">{</span> <span class="kw">return</span> f.clone() <span class="op">}</span>
+        <span class="kw">let</span> f0: <span class="dt">Vec</span>&lt;Complex&gt; = (<span class="dv">0.</span>.n/<span class="dv">2</span>).map(|i| f<span class="op">[</span>i*<span class="dv">2</span><span class="op">]</span>.clone()).collect();
+        <span class="kw">let</span> f1: <span class="dt">Vec</span>&lt;Complex&gt; = (<span class="dv">0.</span>.n/<span class="dv">2</span>).map(|i| f<span class="op">[</span>i*<span class="dv">2</span>+<span class="dv">1</span><span class="op">]</span>.clone()).collect();
+        <span class="kw">let</span> g0 = FFT::_fft(&amp;f0, dir);
+        <span class="kw">let</span> g1 = FFT::_fft(&amp;f1, dir);
+        <span class="kw">let</span> pi = (-<span class="dv">1.0</span> <span class="kw">as</span> K).acos();
+        <span class="kw">let</span> theta = <span class="dv">2.0</span> * pi / (n <span class="kw">as</span> K);
+        <span class="kw">let</span> z = Complex(theta.cos(), theta.sin() * dir);
+        <span class="kw">let</span> <span class="kw">mut</span> ac = Complex::unit();
+        <span class="kw">let</span> <span class="kw">mut</span> g = <span class="pp">vec!</span><span class="op">[]</span>;
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.n <span class="op">{</span>
+            g.push(&amp;g0<span class="op">[</span>i % (n/<span class="dv">2</span>)<span class="op">]</span> + &amp;(&amp;ac * &amp;g1<span class="op">[</span>i % (n/<span class="dv">2</span>)<span class="op">]</span>));
+            ac = &amp;z * &amp;ac;
+        <span class="op">}</span>
+        g
+    <span class="op">}</span>
+    <span class="kw">fn</span> fft(f: &amp;<span class="dt">Vec</span>&lt;Complex&gt;) -&gt; <span class="dt">Vec</span>&lt;Complex&gt; <span class="op">{</span> FFT::_fft(f, <span class="dv">1.0</span>) <span class="op">}</span>
+    <span class="kw">fn</span> defft(f: &amp;<span class="dt">Vec</span>&lt;Complex&gt;) -&gt; <span class="dt">Vec</span>&lt;Complex&gt; <span class="op">{</span> FFT::_fft(f, -<span class="dv">1.0</span>) <span class="op">}</span>
+
+    <span class="kw">fn</span> _convolution(x: &amp;<span class="dt">Vec</span>&lt;Complex&gt;, y: &amp;<span class="dt">Vec</span>&lt;Complex&gt;) -&gt; <span class="dt">Vec</span>&lt;Complex&gt; <span class="op">{</span>
+        <span class="kw">let</span> m = x.len();
+        <span class="kw">let</span> xh = FFT::fft(&amp;x);
+        <span class="kw">let</span> yh = FFT::fft(&amp;y);
+        <span class="kw">let</span> xyh = (<span class="dv">0.</span>.m).map(|i| &amp;(&amp;xh<span class="op">[</span>i<span class="op">]</span> * &amp;yh<span class="op">[</span>i<span class="op">]</span>) * (<span class="dv">1.0</span> / m <span class="kw">as</span> K)).collect();
+        FFT::defft(&amp;xyh)
+    <span class="op">}</span>
+
+    <span class="kw">fn</span> convolution(f: &amp;<span class="dt">Vec</span>&lt;K&gt;, g: &amp;<span class="dt">Vec</span>&lt;K&gt;) -&gt; <span class="dt">Vec</span>&lt;K&gt; <span class="op">{</span>
+        <span class="kw">let</span> n = max(f.len(), g.len());
+        <span class="kw">let</span> <span class="kw">mut</span> m = <span class="dv">1</span>; <span class="kw">while</span> m &lt; n <span class="op">{</span> m &lt;&lt;= <span class="dv">1</span> <span class="op">}</span>; m &lt;&lt;= <span class="dv">1</span>; <span class="co">// length should be 2**pow</span>
+        <span class="kw">let</span> x: <span class="dt">Vec</span>&lt;Complex&gt; =
+            f.iter().map(|&amp;k| Complex(k, <span class="dv">0.0</span>)).chain(
+                (<span class="dv">0.</span>.m - f.len()).map(|_| Complex(<span class="dv">0.0</span>, <span class="dv">0.0</span>))).collect();
+        <span class="kw">let</span> y: <span class="dt">Vec</span>&lt;Complex&gt; =
+            g.iter().map(|&amp;k| Complex(k, <span class="dv">0.0</span>)).chain(
+                (<span class="dv">0.</span>.m - g.len()).map(|_| Complex(<span class="dv">0.0</span>, <span class="dv">0.0</span>))).collect();
+
+        <span class="kw">let</span> z = FFT::_convolution(&amp;x, &amp;y);
+        z.iter().map(|c| c.<span class="dv">0</span>).collect()
+    <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
+<h2 id="fft.convolution.cc"><a href="fft.convolution.cc" class="uri">fft.convolution.cc</a></h2>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="co">// </span><span class="re">{{{</span>
+<span class="kw">using</span> Real = <span class="dt">long</span> <span class="dt">double</span>;
+<span class="at">const</span> Real PI = acos(<span class="dv">-1</span>);
+<span class="kw">using</span> C = complex&lt;Real&gt;;
+
+vector&lt;C&gt;
+fft(vector&lt;C&gt; f, <span class="dt">int</span> dir=<span class="dv">1</span>) {
+  <span class="at">const</span> <span class="dt">int</span> n = f.size();
+  <span class="cf">if</span> (n &lt; <span class="dv">2</span>) <span class="cf">return</span> f;
+  vector&lt;C&gt; f0(n/<span class="dv">2</span>), f1(n/<span class="dv">2</span>);
+  rep (i, n/<span class="dv">2</span>) f0[i] = f[i*<span class="dv">2</span>], f1[i] = f[i*<span class="dv">2</span> + <span class="dv">1</span>];
+  f0 = fft(f0, dir);
+  f1 = fft(f1, dir);
+  Real theta = <span class="dv">2</span> * PI / n;
+  C z(cos(theta), dir * sin(theta)),
+    ac = C(<span class="dv">1</span>, <span class="dv">0</span>);
+  rep (i, n) {
+    f[i] = f0[i%(n/<span class="dv">2</span>)] + ac * f1[i%(n/<span class="dv">2</span>)];
+    ac *= z;
+  }
+  <span class="cf">return</span> f;
+}
+<span class="co">// </span><span class="re">}}}</span>
+
+vector&lt;C&gt;
+convolution(vector&lt;C&gt; f, vector&lt;C&gt; g) {
+  <span class="dt">int</span> n = <span class="bu">std::</span>max&lt;<span class="dt">unsigned</span>&gt;(f.size(), g.size());
+  <span class="dt">int</span> m; <span class="cf">for</span> (m = <span class="dv">1</span>; m &lt; n; m &lt;&lt;= <span class="dv">1</span>); m &lt;&lt;= <span class="dv">1</span>;
+  f.resize(m); g.resize(m);
+  f = fft(f);
+  g = fft(g);
+  rep (i, m) f[i] *= g[i];
+  <span class="kw">auto</span> fg = fft(f, <span class="dv">-1</span>);
+  rep (i, m) fg[i] /= <span class="kw">static_cast</span>&lt;Real&gt;(m);
+  <span class="cf">return</span> fg;
+}
+
+<span class="dt">int</span> main() {
+  <span class="dt">int</span> n; cin &gt;&gt; n;
+  vector&lt;C&gt; f(n<span class="dv">+1</span>), g(n<span class="dv">+1</span>);
+
+  rep (i, n) {
+    <span class="dt">int</span> a, b; cin &gt;&gt; a &gt;&gt; b;
+    f[i<span class="dv">+1</span>] = C(a, <span class="dv">0</span>);
+    g[i<span class="dv">+1</span>] = C(b, <span class="dv">0</span>);
+  }
+
+  vector&lt;C&gt; fg = convolution(f, g);
+  <span class="at">const</span> <span class="dt">int</span> m = fg.size();
+
+  rep (i, <span class="dv">2</span> * n) {
+    <span class="dt">int</span> a = round(fg[i<span class="dv">+1</span>].real());
+    cout &lt;&lt; a &lt;&lt; endl;
+  }
+
+  <span class="cf">return</span> <span class="dv">0</span>;
+}</code></pre></div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
@@ -127,13 +178,19 @@
 <details class=menu>
 <summary class=menu>行列</summary>
 <ul>
-<li><a href="matrix.html">行列の表現</a></li>
-<li><a href="matrix.ops.html">基本演算</a></li>
+<li><a href="matrix.ops.html">行列演算</a></li>
 </ul>
 <h2 id="行列式">行列式</h2>
 <ul>
 <li><a href="mat.det.naiiv.html">定義に拠る算法</a></li>
-<li><a href="mat.det.cramer.html">Cramer’s rule</a></li>
+<li><a href="mat.det.cramer.html">Cramer's rule</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>虚数</summary>
+<ul>
+<li><a href="complex.html">虚数の定義と演算</a></li>
 </ul>
 </details>
 

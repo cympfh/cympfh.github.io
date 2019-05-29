@@ -35,8 +35,8 @@
 - [行列演算](matrix.ops.html)
 
 ## 行列式
-- [定義に拠る算法](mat.det.naiiv.html)
-- [Cramer's rule](mat.det.cramer.html)
+- [定義に拠る算法](matrix.det.naiiv.html)
+- [Cramer's rule](matrix.det.cramer.html)
 
 # 虚数
 

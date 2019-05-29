@@ -13,8 +13,8 @@ menu.html: README.md
 pages: menu.html
 	ls -1 *.md | grep -v README.md | sed 's/.*/make &/; s/.md$$/.html/g' | sh
 
-%.html: %.md
-	bash resources/template.sh $^ > $@
+%.html: %.md menu.html
+	bash resources/template.sh $< > $@
 
 git: index
 	git add -A .

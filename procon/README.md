@@ -22,6 +22,7 @@
 
 - [最長増加部分列 (LSI)](seq.lsi.html)
 - [std::nth_element](seq.nth.html)
+- [中央値](seq.median.html)
 
 ## 区間木
 

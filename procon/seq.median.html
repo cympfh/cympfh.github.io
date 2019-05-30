@@ -20,33 +20,86 @@
         <section class="main-content columns is-fullheight">
 
           <div class="article column is-8">
-            <p>完全順列（撹乱順列）</p>
-<h2 id="int.derangement.cc"><a href="int.derangement.cc" class="uri">int.derangement.cc</a></h2>
-<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="kw">namespace</span> derangement { <span class="co">// !n</span>
-  <span class="dt">size_t</span> sz = <span class="dv">10000000</span>;
-  vector&lt;<span class="dt">long</span> <span class="dt">long</span>&gt; table;
-  <span class="dt">bool</span> initialized = <span class="kw">false</span>;
-  <span class="dt">long</span> <span class="dt">long</span> at(<span class="dt">size_t</span> n) {
-    <span class="cf">if</span> (<span class="kw">not</span> initialized) {
-      table.resize(sz);
-      table[<span class="dv">1</span>] = <span class="dv">0</span>; table[<span class="dv">2</span>] = <span class="dv">1</span>;
-      <span class="cf">for</span> (<span class="dt">size_t</span> i = <span class="dv">3</span>; i &lt; sz; ++i) {
-        table[i] = (i<span class="dv">-1</span>) * (table[i<span class="dv">-1</span>] + table[i<span class="dv">-2</span>]);
-      }
-      initialized = <span class="kw">true</span>;
-    }
-    <span class="cf">return</span> table[n];
-  }
-};
+            <p>値の追加と中央値の取得を効率的に行うデータ構造</p>
+<p>値をソートしたときの前半と後半をそれぞれ優先度付きキューに持っておく. 実装を簡単にするため値を2個ずつ入れることで前半と後半のサイズが必ず等しくなるようにしている.</p>
+<h2 id="seq.median.rs">seq.median.rs</h2>
+<p><code>std::cmp::Reverse</code> は 1.19.0 から追加された.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">use</span> std::cmp::Reverse;
+<span class="kw">use</span> std::collections::BinaryHeap;
 
-
-<span class="dt">int</span> main() {
-
-  <span class="cf">for</span> (<span class="dt">size_t</span> i = <span class="dv">1</span>; i &lt;= <span class="dv">10</span>; ++i)
-    cout &lt;&lt; derangement::at(i) &lt;&lt; endl;
-
-  <span class="cf">return</span> <span class="dv">0</span>;
-}</code></pre></div>
+<span class="at">#[</span>allow<span class="at">(</span>dead_code<span class="at">)]</span>
+<span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">)]</span>
+<span class="kw">struct</span> MedianHeap&lt;T&gt; <span class="kw">where</span> T: <span class="bu">Ord</span> + <span class="bu">Copy</span> <span class="op">{</span>
+    head: BinaryHeap&lt;T&gt;,
+    tail: BinaryHeap&lt;Reverse&lt;T&gt;&gt;
+<span class="op">}</span>
+<span class="at">#[</span>allow<span class="at">(</span>dead_code<span class="at">)]</span>
+<span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">,</span> <span class="bu">PartialEq</span><span class="at">,</span> <span class="bu">Eq</span><span class="at">)]</span>
+<span class="kw">enum</span> Median&lt;T&gt; <span class="op">{</span>
+    <span class="cn">None</span>,
+    Just(T),
+    Between(T, T),
+<span class="op">}</span>
+<span class="at">#[</span>allow<span class="at">(</span>dead_code<span class="at">)]</span>
+<span class="kw">impl</span>&lt;T: <span class="bu">Ord</span> + <span class="bu">Copy</span>&gt; MedianHeap&lt;T&gt; <span class="op">{</span>
+    <span class="kw">fn</span> new() -&gt; MedianHeap&lt;T&gt; <span class="op">{</span>
+        MedianHeap <span class="op">{</span> head: BinaryHeap::new(), tail: BinaryHeap::new() <span class="op">}</span>
+    <span class="op">}</span>
+    <span class="kw">fn</span> len(&amp;<span class="kw">self</span>) -&gt; <span class="dt">usize</span> <span class="op">{</span>
+        (<span class="kw">self</span>.head.len() + <span class="kw">self</span>.tail.len()) / <span class="dv">2</span>
+    <span class="op">}</span>
+    <span class="kw">fn</span> push(&amp;<span class="kw">mut</span> <span class="kw">self</span>, x: T) <span class="op">{</span>
+        <span class="kw">match</span> (<span class="kw">self</span>.head.peek(), <span class="kw">self</span>.tail.peek()) <span class="op">{</span>
+            (<span class="cn">None</span>, <span class="cn">None</span>) =&gt; <span class="op">{</span>
+                <span class="kw">self</span>.head.push(x);
+                <span class="kw">self</span>.tail.push(Reverse(x));
+            <span class="op">}</span>,
+            (<span class="cn">Some</span>(&amp;a), <span class="cn">Some</span>(&amp;Reverse(b))) =&gt; <span class="op">{</span>
+                <span class="kw">if</span> a &lt;= x &amp;&amp; x &lt;= b <span class="op">{</span>
+                    <span class="kw">self</span>.head.push(x);
+                    <span class="kw">self</span>.tail.push(Reverse(x));
+                <span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> x &lt; a <span class="op">{</span>
+                    <span class="kw">self</span>.head.push(x);
+                    <span class="kw">self</span>.head.push(x);
+                    <span class="kw">let</span> _ = <span class="kw">self</span>.head.pop();
+                    <span class="kw">self</span>.tail.push(Reverse(a));
+                <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
+                    <span class="kw">self</span>.tail.push(Reverse(x));
+                    <span class="kw">self</span>.tail.push(Reverse(x));
+                    <span class="kw">let</span> _ = <span class="kw">self</span>.tail.pop();
+                    <span class="kw">self</span>.head.push(b);
+                <span class="op">}</span>
+            <span class="op">}</span>,
+            _ =&gt; <span class="op">{}</span>
+        <span class="op">}</span>
+    <span class="op">}</span>
+    <span class="kw">fn</span> peek(&amp;<span class="kw">self</span>) -&gt; Median&lt;T&gt; <span class="op">{</span>
+        <span class="kw">let</span> n = <span class="kw">self</span>.len();
+        <span class="kw">if</span> n == <span class="dv">0</span> <span class="op">{</span>
+            Median::<span class="cn">None</span>
+        <span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> n % <span class="dv">2</span> == <span class="dv">1</span> <span class="op">{</span>
+            Median::Just(*<span class="kw">self</span>.head.peek().unwrap())
+        <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
+            <span class="kw">let</span> a = <span class="kw">self</span>.head.peek().unwrap();
+            <span class="kw">let</span> b = <span class="kw">self</span>.tail.peek().unwrap().<span class="dv">0</span>;
+            Median::Between(*a, b)
+        <span class="op">}</span>
+    <span class="op">}</span>
+    <span class="kw">fn</span> pop(&amp;<span class="kw">mut</span> <span class="kw">self</span>) -&gt; Median&lt;T&gt; <span class="op">{</span>
+        <span class="kw">let</span> n = <span class="kw">self</span>.len();
+        <span class="kw">if</span> n == <span class="dv">0</span> <span class="op">{</span>
+            Median::<span class="cn">None</span>
+        <span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> n % <span class="dv">2</span> == <span class="dv">1</span> <span class="op">{</span>
+            <span class="kw">let</span> a = <span class="kw">self</span>.head.pop().unwrap();
+            <span class="kw">let</span> _ = <span class="kw">self</span>.tail.pop();
+            Median::Just(a)
+        <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
+            <span class="kw">let</span> a = <span class="kw">self</span>.head.pop().unwrap();
+            <span class="kw">let</span> b = <span class="kw">self</span>.tail.pop().unwrap().<span class="dv">0</span>;
+            Median::Between(a, b)
+        <span class="op">}</span>
+    <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
@@ -72,7 +125,7 @@
 <h2 id="強連結成分分解"><a href="graph.scc.html">強連結成分分解</a></h2>
 </details>
 
-<details class=menu>
+<details class=menu open>
 <summary class=menu>数列</summary>
 <ul>
 <li><a href="seq.lsi.html">最長増加部分列 (LSI)</a></li>
@@ -155,7 +208,7 @@
 </ul>
 </details>
 
-<details class=menu open>
+<details class=menu>
 <summary class=menu>整数</summary>
 <ul>
 <li><a href="int_max_and_min.html">整数の最大値、最小値 (gcc)</a></li>

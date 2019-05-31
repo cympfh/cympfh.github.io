@@ -89,6 +89,7 @@
 - [エラトステネスの篩](prime.sieve.html)
 - [素朴な判定](prime.predicate.html)
 - [ミラー・ラビン素数判定](prime.MillerRabin.html)
+- [フェルマーの小定理](prime.fermat.little.html)
 
 ## 多倍長
 - [ビッグエンディアンベクタ](bigint.html)

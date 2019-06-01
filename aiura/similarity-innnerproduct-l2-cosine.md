@@ -89,7 +89,7 @@ $(\tilde{q}, \{\tilde{x_i} \mid x_i \in X \})$
 
 $$\argmax_i q x_i = \argmin_i \|\tilde{q} - \tilde{x_i}\|$$
 
-とすることで MIP な NN に帰着できた.
+とすることで MIP を NN に帰着できた.
 
 ### MCS $\to$ NN
 
@@ -117,8 +117,8 @@ $$\argmax_i \cos(q, x_i) = \argmin_i \|\tilde{q} - \tilde{x_i}\|$$
 
 ### NN $\to$ MIP
 
-同じノリで頭に一つ値を付け足す方針でやる.
-ただし論文の方法だとちょうど大小が逆転すると思うので勝手にマイナスを付けて修正した.
+頭に一つ値を付け足す方針でやる.
+ただし論文の方法だとちょうど大小が逆転すると思うので勝手にマイナスを取って修正した.
 
 - $\tilde{q} = \left[-1, 2q\right]$
 - $\tilde{x_i} = \left[ \|x_i\|^2, x_i \right]$
@@ -135,7 +135,7 @@ $$\argmin_i \|q-x_i\|^2 = \argmax_i \tilde{q} \tilde{x_i}.$$
 
 ### MCS $\to$ MIP
 
-これはベクトルを正規化すればよい.
+MCS $\to$ NN と全く同様で, これはベクトルを正規化すればよい.
 そもそも cosine 類似度とは正規化したベクトルの内積のことだから.
 
 $$\argmax_i \cos(q, x_i) = \argmax_i \frac{q}{\|q\|} \frac{x_i}{\|x_i\|}$$

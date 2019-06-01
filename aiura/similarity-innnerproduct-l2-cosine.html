@@ -72,7 +72,7 @@
 \end{align*}\]</span></p>
 <p>したがって, <span class="math inline">\((\tilde{q}, \{\tilde{x_i} \mid x_i \in X \})\)</span> について NN を解くと, 上の値が最も小さいものが返ってくる. その中で <span class="math inline">\(\phi\)</span> と <span class="math inline">\(\|q\|\)</span> は変わらないので, 結局 <span class="math inline">\(-2qx_i\)</span> が最小な <span class="math inline">\(i\)</span> が返ってくる. すなわち内積 <span class="math inline">\(qx_i\)</span> が最大なものが返ってくる.</p>
 <p><span class="math display">\[\argmax_i q x_i = \argmin_i \|\tilde{q} - \tilde{x_i}\|\]</span></p>
-<p>とすることで MIP な NN に帰着できた.</p>
+<p>とすることで MIP を NN に帰着できた.</p>
 <h3 id="mcs-to-nn">MCS <span class="math inline">\(\to\)</span> NN</h3>
 <p>全てのベクトルを正規化するとよい.</p>
 <ul>
@@ -90,7 +90,7 @@
 <p>となるので <span class="math inline">\(\tilde{q}, \tilde{x_i}\)</span> 間のL2距離の大小が, <span class="math inline">\(q,x_i\)</span> の cosine 類似度の大小とちょうど逆転している.</p>
 <p>というわけで, <span class="math display">\[\argmax_i \cos(q, x_i) = \argmin_i \|\tilde{q} - \tilde{x_i}\|\]</span> となって MCS が NN に帰着された.</p>
 <h3 id="nn-to-mip">NN <span class="math inline">\(\to\)</span> MIP</h3>
-<p>同じノリで頭に一つ値を付け足す方針でやる. ただし論文の方法だとちょうど大小が逆転すると思うので勝手にマイナスを付けて修正した.</p>
+<p>頭に一つ値を付け足す方針でやる. ただし論文の方法だとちょうど大小が逆転すると思うので勝手にマイナスを取って修正した.</p>
 <ul>
 <li><span class="math inline">\(\tilde{q} = \left[-1, 2q\right]\)</span></li>
 <li><span class="math inline">\(\tilde{x_i} = \left[ \|x_i\|^2, x_i \right]\)</span></li>
@@ -102,7 +102,7 @@
 \end{align*}\]</span></p>
 <p><span class="math inline">\(\|q\|^2\)</span> は定数なので内積の最大化は L2 距離の最小化になっていて, <span class="math display">\[\argmin_i \|q-x_i\|^2 = \argmax_i \tilde{q} \tilde{x_i}.\]</span></p>
 <h3 id="mcs-to-mip">MCS <span class="math inline">\(\to\)</span> MIP</h3>
-<p>これはベクトルを正規化すればよい. そもそも cosine 類似度とは正規化したベクトルの内積のことだから.</p>
+<p>MCS <span class="math inline">\(\to\)</span> NN と全く同様で, これはベクトルを正規化すればよい. そもそも cosine 類似度とは正規化したベクトルの内積のことだから.</p>
 <p><span class="math display">\[\argmax_i \cos(q, x_i) = \argmax_i \frac{q}{\|q\|} \frac{x_i}{\|x_i\|}\]</span></p>
 <h3 id="mip-to-mcs">MIP <span class="math inline">\(\to\)</span> MCS</h3>
 <p>MIP <span class="math inline">\(\to\)</span> NN と全く同じ変換で良い!!</p>

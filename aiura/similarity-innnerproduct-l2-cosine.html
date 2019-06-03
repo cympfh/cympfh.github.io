@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>近傍探索におけるユークリッド距離, cosine類似度, 内積は互いに変換可能</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="../resources/css/c.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-stumbleupon" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">近傍探索におけるユークリッド距離, cosine類似度, 内積は互いに変換可能</h1>
+</header>
+<p class="date" style="text-align: right">
+2019-06-01 (Sat.)
+</p>
+<div class="is-pulled-right">
+<p><a class='tag is-red' href=index.html#最適化>最適化</a></p>
+</div>
+<p><span class="math inline">\(\DeclareMathOperator*{\argmax}{arg\,max}\DeclareMathOperator*{\argmin}{arg\,min}\)</span></p>
+<h2 id="概要">概要</h2>
+<p>ユークリッド空間の点同士の類似度を図る指標として, ユークリッド距離 (L2距離) 以外に cosine 類似度や内積を用いる（用いたい）ことがある. そして, いくつかの近傍探索手法はユークリッド距離のみを対象にしていたりすることがあるが, 実はこれらの指標は変換可能であるのでユークリッド距離の最小化によって cosine の最大化や内積の最大化を解かせることができる. この記事ではこの3つの指標の内のどの指標も任意の別の指標に変換可能であることを示す （最適化問題の帰着）.</p>
+<h2 id="参考文献">参考文献</h2>
+<p>高速な近傍探索ライブラリとして <a href="https://github.com/facebookresearch/faiss/">faiss</a> があるのだが, この中のいくつかは制約上, L2 距離しか使えない. そこで FAQ の中で変換する方法として次の論文を参照するよう言及されていた.</p>
+<ul>
+<li><a href="http://ulrichpaquet.com/Papers/SpeedUp.pdf">Speeding Up the Xbox Recommender System Using a Euclidean Transformation for Inner-Product Spaces</a></li>
+</ul>
+<p>この記事ではこの論文の Section 3 の定理とその証明を紹介する. のだが, たぶんだけど, ちょいちょい間違えてるので勝手に訂正していく.</p>
+<h2 id="準備">準備</h2>
+<h3 id="notation">notation</h3>
+<p>ユークリッド空間の中の点 <span class="math inline">\(x\)</span> に対してその L2 ノルムを <span class="math inline">\(\|x\|\)</span> と書く. 2つの点 <span class="math inline">\(x,y\)</span> の内積を普通の掛け算のように <span class="math inline">\(xy\)</span> と書く. <span class="math display">\[\|x\| = \sqrt{x x}\]</span></p>
+<h3 id="近傍探索">近傍探索</h3>
+<p>ユークリッド空間の中の点の有限集合 <span class="math inline">\(X = \{x_1,x_2,\ldots,x_N\} \subset \mathbb R^m\)</span> と, ある点 <span class="math inline">\(q \in \mathbb R^m\)</span> が与えられたときに, 何かしらの指標で最も <span class="math inline">\(q\)</span> と近い点を <span class="math inline">\(X\)</span> から探してくるものをここでは単に近傍探索と呼ぶことにする.</p>
+<p>主要な指標として次の3つがある. 指標によって小さいほうが近いのか大きいほうが近いのかが違うので注意.</p>
+<h4 id="ユークリッド距離-l2距離-の最小化-nearest-neighbors-nn">ユークリッド距離 (L2距離) の最小化 (Nearest Neighbors; NN)</h4>
+<p>ユークリッド距離 <span class="math display">\[\argmin_i \|q - x_i\|\]</span> またはL2距離 <span class="math display">\[\argmin_i \|q - x_i\|^2\]</span> もちろんノルムは<span class="math inline">\(0\)</span>以上なので2乗してもしなくても変わらない.</p>
+<h4 id="cosine-類似度の最大化-maximum-cosine-similarity-mcs">cosine 類似度の最大化 (Maximum Cosine Similarity; MCS)</h4>
+<p><span class="math display">\[\argmax_i \cos(q,x_i) = \argmax \frac{q x_i}{\|q\| \|x_i\|}\]</span></p>
+<p>ここでは <span class="math inline">\(\cos\)</span> という関数を上の意味で使う.</p>
+<h4 id="内積の最大化-maximum-inner-product-mip">内積の最大化 (Maximum Inner Product; MIP)</h4>
+<p><span class="math display">\[\argmax_i q x_i\]</span></p>
+<blockquote>
+<p>世の中で普通「近傍探索」というと1つ目のユークリッド距離 (L2距離) の指標を用いて小さくなるベクトルを探すものを指す. また, ここでは <span class="math inline">\(\argmax, \argmin\)</span> としてしまって最大/最小の値を取るベクトルだけを探すことにしているが, トップ <span class="math inline">\(N\)</span> まで取ってくる, としたとしても問題は変わらない（トップ1を見つけたらそれを除外してまたトップ1を探すことをすればいいので）（変わらないというのは解けるか解けないかであって効率の話ではない）.</p>
+</blockquote>
+<h2 id="変換方法">変換方法</h2>
+<h3 id="mip-to-nn">MIP <span class="math inline">\(\to\)</span> NN</h3>
+<p>ベクトル <span class="math inline">\(q, x_i\)</span> に次のような修正を加える. これらは頭に一つ余計な成分を付け足している（したがってベクトルの長さが 1 増えている）.</p>
+<ul>
+<li><span class="math inline">\(\tilde{q} = \left[0, q\right]\)</span></li>
+<li><span class="math inline">\(\tilde{x_i} = \left[ \sqrt{ \phi^2 - \|x_i\|^2 }, x_i \right]\)</span>
+<ul>
+<li>where <span class="math inline">\(\phi = \max_i \|x_i\|\)</span></li>
+</ul></li>
+</ul>
+<p>これらのL2距離を見ると</p>
+<p><span class="math display">\[\begin{align*}
+\|\tilde{q} - \tilde{x_i}\|^2
+&amp; = (0 - \sqrt{ \phi^2 - \|x_i\|^2 })^2 + \|q - x_i\|^2 \\
+&amp; = (\phi^2 - \|x_i\|^2) + (\|q\|^2 + \|x_i\|^2 - 2qx_i) \\
+&amp; = \phi^2 + \|q\|^2 - 2qx_i
+\end{align*}\]</span></p>
+<p>したがって, <span class="math inline">\((\tilde{q}, \{\tilde{x_i} \mid x_i \in X \})\)</span> について NN を解くと, 上の値が最も小さいものが返ってくる. その中で <span class="math inline">\(\phi\)</span> と <span class="math inline">\(\|q\|\)</span> は変わらないので, 結局 <span class="math inline">\(-2qx_i\)</span> が最小な <span class="math inline">\(i\)</span> が返ってくる. すなわち内積 <span class="math inline">\(qx_i\)</span> が最大なものが返ってくる.</p>
+<p><span class="math display">\[\argmax_i q x_i = \argmin_i \|\tilde{q} - \tilde{x_i}\|\]</span></p>
+<p>とすることで MIP を NN に帰着できた.</p>
+<h3 id="mcs-to-nn">MCS <span class="math inline">\(\to\)</span> NN</h3>
+<p>全てのベクトルを正規化するとよい.</p>
+<ul>
+<li><span class="math inline">\(\tilde{q} = \frac{q}{\|q\|}\)</span></li>
+<li><span class="math inline">\(\tilde{x_i} = \frac{x_i}{\|x_i\|}\)</span></li>
+</ul>
+<p>とすれば</p>
+<p><span class="math display">\[\begin{align*}
+\|\tilde{q} - \tilde{x_i}\|^2
+&amp; = \|\tilde{q}\|^2 + \|\tilde{x_i}\|^2 - 2\tilde{q} \tilde{x_i} \\
+&amp; = 2 - 2\tilde{q} \tilde{x_i} \\
+&amp; = 2 - 2\frac{qx_i}{\|q\| \|x_i\|} \\
+&amp; = 2 - 2\cos(q, x_i) \\
+\end{align*}\]</span></p>
+<p>となるので <span class="math inline">\(\tilde{q}, \tilde{x_i}\)</span> 間のL2距離の大小が, <span class="math inline">\(q,x_i\)</span> の cosine 類似度の大小とちょうど逆転している.</p>
+<p>というわけで, <span class="math display">\[\argmax_i \cos(q, x_i) = \argmin_i \|\tilde{q} - \tilde{x_i}\|\]</span> となって MCS が NN に帰着された.</p>
+<h3 id="nn-to-mip">NN <span class="math inline">\(\to\)</span> MIP</h3>
+<p>頭に一つ値を付け足す方針でやる. ただし論文の方法だとちょうど大小が逆転すると思うので勝手にマイナスを取って修正した.</p>
+<ul>
+<li><span class="math inline">\(\tilde{q} = \left[-1, 2q\right]\)</span></li>
+<li><span class="math inline">\(\tilde{x_i} = \left[ \|x_i\|^2, x_i \right]\)</span></li>
+</ul>
+<p>これらの内積は <span class="math display">\[\begin{align*}
+\tilde{q} \tilde{x_i}
+&amp; = -\|x_i\|^2 + 2qx_i \\
+&amp; = -\|q-x_i\|^2 + \|q\|^2
+\end{align*}\]</span></p>
+<p><span class="math inline">\(\|q\|^2\)</span> は定数なので内積の最大化は L2 距離の最小化になっていて, <span class="math display">\[\argmin_i \|q-x_i\|^2 = \argmax_i \tilde{q} \tilde{x_i}.\]</span></p>
+<h3 id="mcs-to-mip">MCS <span class="math inline">\(\to\)</span> MIP</h3>
+<p>MCS <span class="math inline">\(\to\)</span> NN と全く同様で, これはベクトルを正規化すればよい. そもそも cosine 類似度とは正規化したベクトルの内積のことだから.</p>
+<p><span class="math display">\[\argmax_i \cos(q, x_i) = \argmax_i \frac{q}{\|q\|} \frac{x_i}{\|x_i\|}\]</span></p>
+<h3 id="mip-to-mcs">MIP <span class="math inline">\(\to\)</span> MCS</h3>
+<p>MIP <span class="math inline">\(\to\)</span> NN と全く同じ変換で良い!!</p>
+<ul>
+<li><span class="math inline">\(\tilde{q} = \left[0, q\right]\)</span></li>
+<li><span class="math inline">\(\tilde{x_i} = \left[ \sqrt{ \phi^2 - \|x_i\|^2 }, x_i \right]\)</span>
+<ul>
+<li>where <span class="math inline">\(\phi = \max_i \|x_i\|\)</span></li>
+</ul></li>
+</ul>
+<p><span class="math display">\[\begin{align*}
+\cos(\tilde{q}, \tilde{x_i})
+&amp; = \frac{ 0 + q x_i }{\|\tilde{q}\| \|\tilde{x_i}\|} \\
+&amp; = \frac{ q x_i }{\|q\| \phi} \\
+\end{align*}\]</span></p>
+<p>なので <span class="math display">\[\argmax_i qx_i = \argmax_i \cos(\tilde{q}, \tilde{x_i}).\]</span></p>
+<h3 id="nn-to-mcs">NN <span class="math inline">\(\to\)</span> MCS</h3>
+<p>論文の方法は出来てなくない?? しかし NN <span class="math inline">\(\to\)</span> MIP と MIP <span class="math inline">\(\to\)</span> MCS の方法をすでに示したので, 二回変換すればよい.</p>
+<ul>
+<li><span class="math inline">\(\tilde{q} = \left[0, -1, 2q\right]\)</span></li>
+<li><span class="math inline">\(\tilde{x_i} = \left[ \sqrt{ \phi^2 - \|x_i\|^2 - \|x_i\|^4 }, \|x_i\|^2, x_i \right]\)</span>
+<ul>
+<li>where <span class="math inline">\(\phi^2 = \max_i \|x_i\|^4 + \|x_i\|^2\)</span></li>
+</ul></li>
+</ul>
+<p>これらの cosine 類似度は</p>
+<p><span class="math display">\[\begin{align*}
+\cos(\tilde{q}, \tilde{x_i})
+&amp; = \frac{ 0 - \|x_i\|^2 + 2qx_i }{\|\tilde{q}\| \|\tilde{x_i}\|} \\
+&amp; = \frac{ -\|x_i\|^2 + 2q x_i }{\|\tilde{q}\| \phi } \\
+&amp; = \frac{ -\|x_i - q\|^2 + \|q\|^2 }{\|\tilde{q}\| \phi } \\
+\end{align*}\]</span></p>
+<p>分母も分子の <span class="math inline">\(\|q\|^2\)</span> も定数なので, <span class="math display">\[\argmin_i \|x_i - q\|^2 = \argmax_i \cos(\tilde{q}, \tilde{x_i})\]</span></p>
+<p>以上で全ての組み合わせの変換方法を示した.</p>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

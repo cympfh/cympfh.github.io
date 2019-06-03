@@ -2,9 +2,9 @@
 
 ## データフォーマット
 
-- [データの段落分け (ブロック), index](data.index.html)
-- [データの段落分け (ブロック), every](data.blocks.html)
-- [日付時刻のデータ](data.timefmt.html)
+- [データブロック (index)](data.index.html)
+- [データブロック (every)](data.blocks.html)
+- [日付時刻データ](data.timefmt.html)
 
 ## データ入力
 
@@ -24,15 +24,15 @@
 
 - [散布図](2d.scatter.html)
 - [ヒストグラム](2d.histogram.html)
-- [箱ひげ図, box plot, box-and-whisker](2d.box.html)
-- [誤差付きプロット, yerrorbars](2d.yerrorbars.html)
+- [箱ひげ図](2d.box.html)
+- [誤差付きプロット](2d.yerrorbars.html)
 - [陰関数](2d.implicit.html)
 - [等高線](2d.contour.html)
 
 # 三次元
 
-- [混合行列 (confusion matrix, heatmap)](3d.heatmap.html)
+- [混合行列](3d.heatmap.html)
 
 # 高次元
 
-- [t-SNE による可視化](nd.tsne.html)
+- [t-SNE](nd.tsne.html)

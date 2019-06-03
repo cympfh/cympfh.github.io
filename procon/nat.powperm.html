@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>procon_library/</title>
+
+    <link rel="stylesheet" href="./resources/c.css">
+    <link rel="stylesheet" href="./resources/highlight.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+
+  </head>
+  <body>
+    <section class="section">
+      <div class="container">
+        <section class="main-content columns is-fullheight">
+
+          <div class="article column is-8">
+            <h1 id="組み合わせ-nm">組み合わせ <span class="math inline">\(n^m\)</span></h1>
+<p>For each <span class="math inline">\(\{ x_i : 0 \leq i \lt m, 0 \leq x_i \lt n \}\)</span></p>
+<h2 id="rust">Rust</h2>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">// n^m</span>
+<span class="kw">struct</span> PowerPermutation <span class="op">{</span> n: <span class="dt">usize</span>, m: <span class="dt">usize</span>, ar: <span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt; <span class="op">}</span>
+<span class="kw">impl</span> PowerPermutation <span class="op">{</span>
+    <span class="kw">fn</span> new(n: <span class="dt">usize</span>, m: <span class="dt">usize</span>) -&gt; PowerPermutation <span class="op">{</span>
+        <span class="kw">let</span> ar = <span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>; m<span class="op">]</span>;
+        PowerPermutation <span class="op">{</span> n: n, m: m, ar: ar <span class="op">}</span>
+    <span class="op">}</span>
+<span class="op">}</span>
+<span class="kw">impl</span> <span class="bu">Iterator</span> <span class="kw">for</span> PowerPermutation <span class="op">{</span>
+    <span class="kw">type</span> Item = <span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt;;
+    <span class="kw">fn</span> next(&amp;<span class="kw">mut</span> <span class="kw">self</span>) -&gt; <span class="dt">Option</span>&lt;<span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt;&gt; <span class="op">{</span>
+        <span class="kw">if</span> <span class="kw">self</span>.ar<span class="op">[</span><span class="kw">self</span>.m-<span class="dv">1</span><span class="op">]</span> &gt;= <span class="kw">self</span>.n <span class="op">{</span> <span class="kw">return</span> <span class="cn">None</span> <span class="op">}</span>
+        <span class="kw">let</span> r = <span class="kw">self</span>.ar.clone();
+        <span class="kw">self</span>.ar<span class="op">[</span><span class="dv">0</span><span class="op">]</span> += <span class="dv">1</span>;
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.<span class="kw">self</span>.m-<span class="dv">1</span> <span class="op">{</span>
+            <span class="kw">if</span> <span class="kw">self</span>.ar<span class="op">[</span>i<span class="op">]</span> == <span class="kw">self</span>.n <span class="op">{</span>
+                <span class="kw">self</span>.ar<span class="op">[</span>i<span class="op">]</span> = <span class="dv">0</span>;
+                <span class="kw">self</span>.ar<span class="op">[</span>i + <span class="dv">1</span><span class="op">]</span> += <span class="dv">1</span>;
+            <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
+                <span class="kw">break</span>;
+            <span class="op">}</span>
+        <span class="op">}</span>
+        <span class="kw">return</span> <span class="cn">Some</span>(r);
+    <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
+<h2 id="example">Example</h2>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> main() <span class="op">{</span>
+    <span class="kw">let</span> <span class="kw">mut</span> count = <span class="dv">0</span>;
+    <span class="kw">for</span> a <span class="kw">in</span> PowerPermutation::new(<span class="dv">3</span>, <span class="dv">2</span>) <span class="op">{</span>
+        count += <span class="dv">1</span>;
+        <span class="pp">println!</span>(<span class="st">&quot;{:?}&quot;</span>, a);
+    <span class="op">}</span>
+    <span class="pp">println!</span>(<span class="st">&quot;{:?}&quot;</span>, count);
+<span class="op">}</span></code></pre></div>
+<pre><code>[0, 0]
+[1, 0]
+[2, 0]
+[0, 1]
+[1, 1]
+[2, 1]
+[0, 2]
+[1, 2]
+[2, 2]
+9</code></pre>
+          </div>
+
+          <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
+<details class=menu>
+<summary class=menu>グラフ</summary>
+<h2 id="最短路">最短路</h2>
+<ul>
+<li><a href="graph.dij.html">Dijkstra</a></li>
+<li><a href="graph.wall.html">Warshall-Floyd</a></li>
+</ul>
+<h2 id="最小全域木">最小全域木</h2>
+<ul>
+<li><a href="graph.prim.html">Prim</a></li>
+<li><a href="graph.kruskal.html">Kruskal</a></li>
+</ul>
+<h2 id="木">木</h2>
+<ul>
+<li><a href="graph.tree.height.html">高さ</a></li>
+<li><a href="graph.tree.diameter.html">直径</a></li>
+</ul>
+<h2 id="最大流量"><a href="graph.maxflow.html">最大流量</a></h2>
+<h2 id="トポロジカルソート"><a href="graph.topological.html">トポロジカルソート</a></h2>
+<h2 id="強連結成分分解"><a href="graph.scc.html">強連結成分分解</a></h2>
+</details>
+
+<details class=menu>
+<summary class=menu>数列</summary>
+<ul>
+<li><a href="seq.lsi.html">最長増加部分列 (LSI)</a></li>
+<li><a href="seq.nth.html">std::nth_element</a></li>
+<li><a href="seq.median.html">中央値</a></li>
+</ul>
+<h2 id="区間木">区間木</h2>
+<ul>
+<li><a href="seq.cumsum.html">累積和</a></li>
+<li><a href="seq.bit.html">BIT</a></li>
+<li><a href="seq.rmq.html">RMQ</a></li>
+<li><a href="seq.starry.html">Starry Sky Tree</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>行列</summary>
+<ul>
+<li><a href="matrix.ops.html">行列演算</a></li>
+</ul>
+<h2 id="行列式">行列式</h2>
+<ul>
+<li><a href="matrix.det.naiiv.html">定義に拠る算法</a></li>
+<li><a href="matrix.det.cramer.html">Cramer's rule</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>虚数</summary>
+<ul>
+<li><a href="complex.html">虚数の定義と演算</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>幾何</summary>
+<h2 id="線分">線分</h2>
+<ul>
+<li><a href="geo.2d.ccw.html">線分と点の接触関係</a></li>
+<li><a href="geo.2d.intersection.html">線分と線分の交差判定</a></li>
+</ul>
+<h2 id="多角形">多角形</h2>
+<ul>
+<li><a href="geo.2d.triangle.html">三角形の面積</a></li>
+<li><a href="geo.2d.circum.html">三角形の外接円</a></li>
+<li><a href="geo.2d.isin_poly.html">多角形の内外判定</a></li>
+<li><a href="http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=0079">多角形の面積</a></li>
+<li><a href="geo.2d.convex_hull.html">凸包</a></li>
+</ul>
+<h2 id="円">円</h2>
+<ul>
+<li><a href="geo.2d.circle.html">円の定義</a></li>
+<li><a href="geo.2d.circle.intersection.html">円と円の接触関係</a></li>
+</ul>
+<h2 id="最近点対">最近点対</h2>
+<ul>
+<li><a href="geo.closest_pair.html">平面上の分割統治法</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>集合</summary>
+<ul>
+<li><a href="set.union_find.html">Union-Find</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>動的計画法</summary>
+<ul>
+<li><a href="dp.knapsack.01.html">01-ナップザック</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>二分探索</summary>
+<ul>
+<li><a href="bin.search.html">二分探索</a></li>
+<li><a href="bin.count.html">出現回数</a></li>
+</ul>
+</details>
+
+<details class=menu open>
+<summary class=menu>整数</summary>
+<ul>
+<li><a href="int_max_and_min.html">整数の最大値、最小値 (gcc)</a></li>
+<li><a href="int.gcd.html">GCD</a></li>
+<li><a href="int.exgcd.html">拡張GCD</a></li>
+<li><a href="int.modinv.html">モジュラ逆数</a></li>
+<li><a href="misc.pascal_triangle.html">パスカルの三角形</a></li>
+<li><a href="int.binom.html">二項係数</a></li>
+<li><a href="int.dislog.html">離散対数</a></li>
+<li><a href="int.derangement.html">完全順列</a></li>
+<li><a href="int.euler_phi.html">オイラーの関数</a></li>
+</ul>
+<h2 id="素数">素数</h2>
+<ul>
+<li><a href="prime.sieve.html">エラトステネスの篩</a></li>
+<li><a href="prime.predicate.html">素朴な判定</a></li>
+<li><a href="prime.MillerRabin.html">ミラー・ラビン素数判定</a></li>
+</ul>
+<h2 id="多倍長">多倍長</h2>
+<ul>
+<li><a href="bigint.html">ビッグエンディアンベクタ</a></li>
+</ul>
+<h2 id="自然数">自然数</h2>
+<ul>
+<li><a href="nat.n_vs_nn.html">自然数の対 ↔ 自然数 の変換</a></li>
+</ul>
+<h2 id="組み合わせ">組み合わせ</h2>
+<ul>
+<li><a href="nat.perm.html">permutation - <span class="math inline"><em>n</em>!</span></a></li>
+<li><a href="nat.powperm.html">permutation - <span class="math inline"><em>n</em><sup><em>m</em></sup></span></a></li>
+<li><a href="nat.comb.html">combination - <span class="math inline"><sub><em>n</em></sub><em>C</em><sub><em>m</em></sub></span></a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>乱数</summary>
+<ul>
+<li><a href="rand.xorshift.html">xor-shift</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>フーリエ変換</summary>
+<ul>
+<li><a href="fft.convolution.html">畳み込み</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>文字列 (Vector)</summary>
+<h2 id="文字列検索">文字列検索</h2>
+<ul>
+<li><a href="string.shift-and.html">Shift-And</a></li>
+</ul>
+<h2 id="回文">回文</h2>
+<ul>
+<li><a href="string.manacher.html">manacher</a></li>
+</ul>
+<h2 id="圧縮">圧縮</h2>
+<ul>
+<li><a href="string.runlength.html">Run-length</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>時間/時刻</summary>
+<ul>
+<li><a href="time.while.html">制限時間付きループ</a></li>
+</ul>
+<h2 id="暦">暦</h2>
+<ul>
+<li><a href="cal.zeller.html">ツェラーの公式</a></li>
+<li><a href="cal.uruu.html">閏年判定</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>STL</summary>
+<h2 id="コンテナ">コンテナ</h2>
+<ul>
+<li><a href="container.bound.html">std::upper/lower_bound</a></li>
+<li><a href="container.rotate.html">std::rotate</a></li>
+<li><a href="container.unique.html">std::unique</a></li>
+<li><a href="container.priority_queue.html">std::priority_queue</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>misc</summary>
+<ul>
+<li><a href="bit.count.html">bit count</a></li>
+<li><a href="misc.kmeans.html">k-means</a></li>
+<li><a href="15puzzle.html">一般化15パズル</a></li>
+<li><a href="misc.sort-n.html">numeric sort</a></li>
+<li><a href="misc.3sat.html">乱択3-SAT</a></li>
+<li><a href="misc.stirling.html">スターリングの近似式</a></li>
+<li><a href="dice.html">サイコロ</a></li>
+<li><a href="misc.pi.html">円周率</a></li>
+</ul>
+</details>
+          </aside>
+
+        </section>
+    </div>
+  </section>
+  </body>
+</html>

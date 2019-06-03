@@ -1,4 +1,4 @@
-% inline data
+# inline data
 
 スクリプトの中で直接データを書いて与える方法.
 

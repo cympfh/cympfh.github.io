@@ -1,4 +1,4 @@
-% xtics/ytics
+# xtics/ytics
 
 ## 刻みラベルの回転
 

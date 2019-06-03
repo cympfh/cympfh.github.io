@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Thu Apr 18 2019</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='../../index.html'><i class="fa fa-save" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">Thu Apr 18 2019</h1>
+</header>
+<h2 id="日記---生配信の環境を整えた">日記 - 生配信の環境を整えた</h2>
+<p>2019年であるのだが, つい興味を出してしまった. 全体の出費としてはキャプチャーボードの一万円だけで, それ以外は特に無い.</p>
+<p>必要なのはキャプチャーボードと, あとは配信ソフト, それから配信されるためのもの. 配信されるものとは例えば Switch 上でプレイするゲームなど. そもそもそれが, 配信用PCの上で直接動かすならキャプチャーボードは不要. キャプチャーボードは他の機器の HDMI 出力を拾って来るためのものだから.</p>
+<h3 id="キャプチャーボード">キャプチャーボード</h3>
+<p>選ぶ点で重要なのは, 入力用のHDMIの穴が空いていること, パススルー出力があること. 入力用のHDMIの穴があってそこに例えば Switch などと繋ぐ. また USB3.0 くらいの穴が空いてて, それとPCを繋ぐことで, Switch の映像を PC が拾える. さて自分自身がゲームをする必要があり, 人間用にSwtichの映像を出力したいが, PCで拾った映像を見るとすると 500ms 程度どうしても遅延があって, とてもじゃないがゲームなど出来ない. ノベルゲームくらいならいいけど. というわけで, ただHDMIの映像をパススルーするだけの, パススルー出力というのが大抵のキャプチャーボードにはある. その穴と, 適当なディスプレイをHDMIケーブルで繋げば, Switch からの出力をただ流すことが出来る. ここに遅延はほとんど全然無い. 少なくとも感じられない.</p>
+<p>というわけで私は &quot;MiraBox&quot; という名称で売られているものを Amazon で購入した. 恐るべきは, この商品は異なる名称でも売られている. それどころか, 値段が2万円だったり1万円だったりする. 私は1万円で買った. PCに繋いでみると, システム上は MiraBox として認識された. しかしキャプチャーボード自体には &quot;BasicColor&quot; というロゴが印刷されている...</p>
+<p>見れるかわからないが Amazon リンクを貼っておく. これらは全て同一商品である!</p>
+<ol type="1">
+<li>https://www.amazon.co.jp/dp/B07C6KCBYB/</li>
+<li>https://www.amazon.co.jp/dp/B07D5STZXT/</li>
+<li>https://www.amazon.co.jp/dp/B07JDF9N5W/</li>
+</ol>
+<p>一番安いとろこで買えば良いと思う. 知らんけど.</p>
+<h3 id="配信ソフト">配信ソフト</h3>
+<p>郷に入っては郷に従えだし, 長いものにはまかれろで OBS を使ってる. ググれば大抵の解決策は書いてある.</p>
+<h3 id="その他">その他</h3>
+<p>私は自分の声を入れるようなことはしてない. 人に聞かせたい声をしていないので. 代わりにといっちゃなんだが, 声を音声認識させてテキストにし, それを映像の下の方に合成して表示している.</p>
+<p>Speech-to-Text の部分は驚くべきことに WebAPI がある. そしてそれを実際に実装してしまっている唯一のブラウザが GoogleChrome である.</p>
+<ol start="4" type="1">
+<li><a href="https://github.com/cympfh/jimaku">github.com/cympfh/jimaku</a></li>
+</ol>
+<p>これはただそれを使って聞き取ったテキストを表示するというだけの HTML ページとその周辺のコード. セキュリティの都合上, 「マイクの許可」というものをユーザーに, つまりあなたに毎回要求する. https だと, 許可が初回の一回だけで済む. というわけで https 化は実質的に必須である. 上のレポジトリには偽装 https 化するためのコードも一緒に入ってある. ブラウザで開くと, 署名が信用できないが良いかと聞かれるので, 危険を承知で開くを選択する必要がある. まあとにかく出来る.</p>
+<p>で, これを開いたChromeのウィンドウをOBSの横に置いておいて, OBSの画面キャプチャ機能でそれを写している. いい感じにクロップして, また背景の白色をクロマキーで透過させるといい感じになる.</p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/0_xad5LQUUA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+</iframe>
+<p>こんな感じになる</p>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Sun Apr 14 2019</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='../../index.html'><i class="fa fa-save" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">Sun Apr 14 2019</h1>
+</header>
+<h2 id="技術力のない技術書展について">技術力のない技術書展について</h2>
+<p>チャットが生まれたとき, これを素晴らしい発明だとは思わなかったのだろうか. 肯定的な意味でも否定的な意味でも, 人が外に出ることなく, 他人と交流でき, 問題なく生活ができるようなSFめいた未来が来る予感を持たなかっただろうか.</p>
+<p>結論を述べれば人は人が大好きである.</p>
+<p>今日は技術書展なる同人誌イベントがあった. ご存じない方のために説明すると, 技術書展の技術は (ほぼ) いわゆる IT を指している. ところで IT という語はすっかり死語ではないか. 決して印刷技術の技術を指しているのではない. しかしながら未だに, 人は原稿を紙に印刷し, それを会場現地で対面で手渡しをする. 今は2019年である. 平成も終わろうとしている.</p>
+<p>イベントそのものは人に楽しみと有意義を与えるかもしれない. そのようなイベントがあり, 期日があるからこそ, 人は本で自分の知識や考えを披露としてみようというモチベーションが維持されるし, 出来上がった本が一覧になってリストアップされてるからこそ, 参加者はその中で自分の興味をそそるものを探してみようとなる. しかしこれはインターネットで解決できる話ではないのだろうか.</p>
+<p>繰り返すが, もう平成も終わろうとしている.</p>
+<p>会社でのダラダラとしたミーティング, そういったものを若い世代は馬鹿にしてきたはずだ. 自分たちはどうか. 上の世代を馬鹿にしつつも, 結局やってることは同じではないか.</p>
+<p>テキストのみの簡素なチャットから始まり, カメラを用いたビデオチャット, 最近では3Dアバターを被る VR チャットなんてものまで出てきた. 結局, 人は人の顔を見ながら会話がしたいらしい.</p>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

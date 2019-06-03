@@ -1,8 +1,4 @@
-% 日付時刻データ
-
-## index
-
-<div id=toc></div>
+# 日付時刻データ
 
 ## timefmt を使う方法
 

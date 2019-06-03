@@ -1,4 +1,4 @@
-% dice
+# dice
 
 ## [dice.cc](dice.cc)
 

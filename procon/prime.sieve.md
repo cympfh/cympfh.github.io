@@ -1,4 +1,4 @@
-% prime.sieve
+# prime.sieve
 
 ## [Rust](prime.sieve.rs)
 @[rust](prime.sieve.rs)

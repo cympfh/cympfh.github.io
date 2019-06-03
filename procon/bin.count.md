@@ -1,4 +1,4 @@
-% bin.count
+# bin.count
 
 ## [bin.count.cc](bin.count.cc)
 

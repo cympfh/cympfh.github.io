@@ -1,4 +1,4 @@
-% cal.zeller
+# cal.zeller
 
 ツェラーの公式
 

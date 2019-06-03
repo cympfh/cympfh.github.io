@@ -1,4 +1,4 @@
-% Shift-And アルゴリズム
+# Shift-And アルゴリズム
 
 - 文字列 `text`, `pattern` について、`text` 中に `pattern` が部分文字列として初めて出現する位置を返す
     - 大体 $O(n)$

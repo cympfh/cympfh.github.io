@@ -1,4 +1,4 @@
-% fft.convolution
+# fft.convolution
 
 ## 数列の畳み込み
 

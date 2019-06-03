@@ -1,4 +1,4 @@
-% int.modinv
+# int.modinv
 
 ## [int.modinv.cc](int.modinv.cc)
 

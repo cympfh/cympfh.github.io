@@ -1,4 +1,4 @@
-% misc.stirling
+# misc.stirling
 
 ## [misc.stirling.cc](misc.stirling.cc)
 

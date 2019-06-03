@@ -1,4 +1,4 @@
-% 組み合わせ $n!$
+# 組み合わせ $n!$
 
 For each $\{ x_i : 0 \leq i \lt n, 0 \leq x_i \lt n, x_i \ne x_j \}$
 

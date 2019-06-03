@@ -1,4 +1,4 @@
-% 累積和 (Cumulative sum)
+# 累積和 (Cumulative sum)
 
 ## 概要
 

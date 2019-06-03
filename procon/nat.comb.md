@@ -1,4 +1,4 @@
-% 組み合わせ ${}_nC{}_m$
+# 組み合わせ ${}_nC{}_m$
 
 For each $\{ x_i : 0 \leq i \lt m, 0 \leq x_i \lt n, x_i \gt x_j \}$
 

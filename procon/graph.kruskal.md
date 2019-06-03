@@ -1,4 +1,4 @@
-% graph.kruskal
+# graph.kruskal
 
 ## [graph.kruskal.cc](graph.kruskal.cc)
 

@@ -1,4 +1,4 @@
-% seq.rmq
+# seq.rmq
 
 セグメント木による Range Maximum/Minimum Query (RMQ) の実装を与える.
 

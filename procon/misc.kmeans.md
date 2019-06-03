@@ -1,4 +1,4 @@
-% misc.kmeans
+# misc.kmeans
 
 ## [misc.kmeans.cc](misc.kmeans.cc)
 

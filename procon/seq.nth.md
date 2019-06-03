@@ -1,4 +1,4 @@
-% seq.nth
+# seq.nth
 
 ## [seq.nth.cc](seq.nth.cc)
 

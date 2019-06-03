@@ -1,4 +1,4 @@
-% prime.predicate
+# prime.predicate
 
 ## [prime.predicate.cc](prime.predicate.cc)
 

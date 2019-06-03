@@ -1,4 +1,4 @@
-% int.dislog
+# int.dislog
 
 ## [int.dislog.cc](int.dislog.cc)
 

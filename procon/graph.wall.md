@@ -1,4 +1,4 @@
-% graph.wall
+# graph.wall
 
 ## Warshall-Floyd
 

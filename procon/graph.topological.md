@@ -1,4 +1,4 @@
-% graph.topological
+# graph.topological
 
 有向グラフのトポロジカルソートを行う
 

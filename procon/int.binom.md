@@ -1,4 +1,4 @@
-% int.binom
+# int.binom
 
 二項係数
 $\left(\begin{array}{c}n\\k\end{array}\right)$

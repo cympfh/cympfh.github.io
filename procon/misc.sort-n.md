@@ -1,4 +1,4 @@
-% misc.sort-n
+# misc.sort-n
 
 文字列を整数と解釈してソート
 

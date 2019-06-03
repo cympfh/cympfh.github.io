@@ -1,4 +1,4 @@
-% graph.dij - ダイクストラ法
+# graph.dij - ダイクストラ法
 
 ## [graph.dij.rs](graph.dij.rs)
 

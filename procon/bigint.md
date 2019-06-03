@@ -1,4 +1,4 @@
-% bigint
+# bigint
 
 ## [bigint.cc](bigint.cc)
 

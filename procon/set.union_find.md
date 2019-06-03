@@ -1,4 +1,4 @@
-% set.union_find
+# set.union_find
 
 ## 参考
 

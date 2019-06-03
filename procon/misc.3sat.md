@@ -1,4 +1,4 @@
-% misc.3sat
+# misc.3sat
 
 ## 参考文献
 

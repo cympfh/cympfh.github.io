@@ -1,4 +1,4 @@
-% Manacher による最大長回文探索アルゴリズム
+# Manacher による最大長回文探索アルゴリズム
 
 Manacher は人名.
 

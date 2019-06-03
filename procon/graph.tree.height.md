@@ -1,4 +1,4 @@
-% graph.tree.height
+# graph.tree.height
 
 各点から全ての点への最大距離
 

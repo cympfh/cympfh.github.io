@@ -1,4 +1,4 @@
-% geo.2d.ccw
+# geo.2d.ccw
 
 ## [geo.2d.ccw.cc](geo.2d.ccw.cc)
 

@@ -1,4 +1,4 @@
-% Starry Sky Tree
+# Starry Sky Tree
 
 ## 概要
 

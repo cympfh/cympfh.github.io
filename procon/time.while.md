@@ -1,4 +1,4 @@
-% 制限時間付きループ
+# 制限時間付きループ
 
 ## [time.while.rs](time.while.rs)
 

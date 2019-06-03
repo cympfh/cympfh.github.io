@@ -1,4 +1,4 @@
-% seq.lsi
+# seq.lsi
 
 Young Tableaux アルゴリズムの実装
 

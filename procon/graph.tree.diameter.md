@@ -1,4 +1,4 @@
-% graph.tree.diameter - 木の直径
+# graph.tree.diameter - 木の直径
 
 木の最長距離を求める.
 

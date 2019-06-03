@@ -1,4 +1,4 @@
-% int.gcd
+# int.gcd
 
 ## [Rust](int.gcd.rs)
 @[rust](int.gcd.rs)

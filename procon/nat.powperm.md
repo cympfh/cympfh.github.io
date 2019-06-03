@@ -1,4 +1,4 @@
-% 組み合わせ $n^m$
+# 組み合わせ $n^m$
 
 For each $\{ x_i : 0 \leq i \lt m, 0 \leq x_i \lt n \}$
 

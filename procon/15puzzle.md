@@ -1,4 +1,4 @@
-% 15puzzle
+# 15puzzle
 
 ## [15puzzle.cc](15puzzle.cc)
 

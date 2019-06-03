@@ -1,4 +1,4 @@
-% graph.head
+# graph.head
 
 ## [graph.head.cc](graph.head.cc)
 

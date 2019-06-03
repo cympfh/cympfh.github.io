@@ -1,4 +1,4 @@
-% graph.maxflow
+# graph.maxflow
 
 ## [graph.maxflow.rs](graph.maxflow.rs)
 

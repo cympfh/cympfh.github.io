@@ -1,3 +1,3 @@
-% string.runlength
+# string.runlength
 
 @[rust](string.runlength.rs)

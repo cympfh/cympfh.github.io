@@ -1,4 +1,4 @@
-% prime.MillerRabin
+# prime.MillerRabin
 
 ## [prime.MillerRabin.rs](prime.MillerRabin.rs)
 

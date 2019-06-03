@@ -1,4 +1,4 @@
-% graph.prim
+# graph.prim
 
 ## [graph.prim.cc](graph.prim.cc)
 

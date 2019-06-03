@@ -107,7 +107,6 @@
 - [xor-shift](rand.xorshift.html)
 
 # フーリエ変換
-- [Cooley-Tukey FFT](fft.html)
 - [畳み込み](fft.convolution.html)
 
 # 文字列 (Vector)

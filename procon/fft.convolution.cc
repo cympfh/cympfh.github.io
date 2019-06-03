@@ -1,4 +1,3 @@
-// {{{
 using Real = long double;
 const Real PI = acos(-1);
 using C = complex<Real>;
@@ -20,7 +19,6 @@ fft(vector<C> f, int dir=1) {
   }
   return f;
 }
-// }}}
 
 vector<C>
 convolution(vector<C> f, vector<C> g) {

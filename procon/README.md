@@ -45,6 +45,8 @@
 
 # 幾何
 
+- [図形表現](geo.2d.html)
+
 ## 線分
 - [線分と点の接触関係](geo.2d.ccw.html)
 - [線分と線分の交差判定](geo.2d.intersection.html)

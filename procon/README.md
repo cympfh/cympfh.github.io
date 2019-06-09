@@ -87,11 +87,11 @@
 - [離散対数](int.dislog.html)
 - [完全順列](int.derangement.html)
 - [オイラーの関数](int.euler_phi.html)
-- [メビウス関数](moebius.html)
 
 ## 素数
 
 - [エラトステネスの篩](prime.sieve.html)
+- [メビウス関数](moebius.html)
 - [素朴な判定](prime.predicate.html)
 - [ミラー・ラビン素数判定](prime.MillerRabin.html)
 - [フェルマーの小定理](prime.fermat.little.html)

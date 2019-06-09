@@ -48,6 +48,7 @@
 - [図形表現](geo.2d.html)
 
 ## 線分
+- [線分と点との距離](geo.2d.length_from_point.html)
 - [線分と点の接触関係](geo.2d.ccw.html)
 - [線分と線分の交差判定](geo.2d.intersection.html)
 
@@ -86,8 +87,10 @@
 - [離散対数](int.dislog.html)
 - [完全順列](int.derangement.html)
 - [オイラーの関数](int.euler_phi.html)
+- [メビウス関数](moebius.html)
 
 ## 素数
+
 - [エラトステネスの篩](prime.sieve.html)
 - [素朴な判定](prime.predicate.html)
 - [ミラー・ラビン素数判定](prime.MillerRabin.html)

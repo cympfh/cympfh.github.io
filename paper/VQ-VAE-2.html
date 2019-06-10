@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>[1906.00446] Generating Diverse High-Fidelity Images with VQ-VAE-2</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">[1906.00446] Generating Diverse High-Fidelity Images with VQ-VAE-2</h1>
+</header>
+<ul>
+<li>
+original paper: <a href=https://arxiv.org/abs/1906.00446>https://arxiv.org/abs/1906.00446</a>
+</li>
+</ul>
+<div class="is-pulled-right">
+<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#オートエンコーダ>オートエンコーダ</a> <a class='tag is-blue' href=index.html#生成モデル>生成モデル</a> <a class='tag is-blue' href=index.html#VAE>VAE</a></p>
+</div>
+<h2 id="概要">概要</h2>
+<p><a href="VQ-VAE.html">VQ-VAE</a> の version 2.</p>
+<p>VQ-VAE を大きなサイズの画像にも適用できるようになった.</p>
+<h2 id="方法">方法</h2>
+<p>まず VQ-VAE の学習は 2 stages に分けられる. オートエンコーダーの学習と, 潜在空間の事前分布の学習.</p>
+<h3 id="stage-1-vq-vae-training">stage-1: VQ-VAE training</h3>
+<p>エンコーダをさらに2つに分けて, 階層的エンコードを行う. ここでは <span class="math inline">\(E_1, E_2\)</span> とする.</p>
+<ul>
+<li><span class="math inline">\(e_1 = Q(E_1(x))\)</span></li>
+<li><span class="math inline">\(e_2 = Q(E_2(x, e_1))\)</span></li>
+<li><span class="math inline">\(\tilde{x} = D(e_1, e_2)\)</span></li>
+</ul>
+<p>これで VQ-VAE と同じように <span class="math inline">\(L(x, \tilde{x})\)</span> を考えて学習する.</p>
+<h3 id="stage-2-piror-training">stage-2: Piror training</h3>
+<p>潜在空間に関する事前分布を学習する.</p>
+<ul>
+<li>訓練セット
+<ul>
+<li><span class="math inline">\(T_1 = \{ Q(E_1(x)) \mid x \in X \}\)</span> (<span class="math inline">\(X\)</span> は元の学習セット)</li>
+<li><span class="math inline">\(T_2 = \{ Q(E_2(x, Q(E_1(x)))) \mid x \in X \}\)</span></li>
+</ul></li>
+<li>分布
+<ul>
+<li><span class="math inline">\(p_1 = \mathrm{TrainPixelCNN}(T_1)\)</span></li>
+<li><span class="math inline">\(p_2 = \mathrm{TrainConditionalPixelCNN}(T_2, T_1)\)</span></li>
+</ul></li>
+<li>サンプリング
+<ul>
+<li><span class="math inline">\(e_1 \sim p_1\)</span></li>
+<li><span class="math inline">\(e_2 \sim p_2(e_1)\)</span></li>
+<li><span class="math inline">\(x = D(e_1, e_2)\)</span></li>
+</ul></li>
+</ul>
+<p>よくわからん</p>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

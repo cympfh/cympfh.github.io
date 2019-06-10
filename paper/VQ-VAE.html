@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>[1711.00937] Neural Discrete Representation Learning (VQ-VAE)</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">[1711.00937] Neural Discrete Representation Learning (VQ-VAE)</h1>
+</header>
+<ul>
+<li>
+original paper: <a href=https://arxiv.org/abs/1711.00937>https://arxiv.org/abs/1711.00937</a>
+</li>
+</ul>
+<div class="is-pulled-right">
+<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#オートエンコーダ>オートエンコーダ</a> <a class='tag is-blue' href=index.html#生成モデル>生成モデル</a> <a class='tag is-blue' href=index.html#VAE>VAE</a></p>
+</div>
+<p><span class="math inline">\(\def\sg{\mathrm{sg}}\)</span></p>
+<h2 id="概要">概要</h2>
+<p>VAE で困るのが, posterior collapse してしまう現象. この論文で提案される VQ-VAE は VAE に Vector Quantization を導入する.</p>
+<h2 id="方法">方法</h2>
+<h3 id="離散-潜在空間">(離散) 潜在空間</h3>
+<p>潜在空間を <span class="math display">\[e = \left[ e_1, e_2, \ldots, e_K \right] \in \mathbb R^{D \times K}\]</span> で表現する (codebook). この空間のサイズは <span class="math inline">\(K\)</span> であって, 各点 <span class="math inline">\(e_i\)</span> はさらに <span class="math inline">\(D\)</span> 次元実ベクトルで表現される. この空間自体もあとで同時に学習する.</p>
+<h3 id="エンコード">エンコード</h3>
+<p>エンコーダー <span class="math inline">\(E\)</span> は入力 <span class="math inline">\(x\)</span> を <span class="math display">\[E \colon \mathcal X \to \mathbb R^D\]</span> <span class="math display">\[E \colon x \mapsto E(x)\]</span> で一旦写した後, 量子化を行う. それは次で定義される. <span class="math display">\[Q \colon \mathbb R^D \to \mathbb R^D\]</span> <span class="math display">\[Q(z) = e_k ~~\text{ where }~~ k = \mathrm{argmin}_j \| z - e_j \|\]</span> 従って固定された <span class="math inline">\(e\)</span> に対して <span class="math inline">\(Q\)</span> の値域は実質 <span class="math inline">\(K\)</span> みたいなもの.</p>
+<p>VAE のエンコード部分を <span class="math display">\[Q(E(x))\]</span> に置き換えて使う.</p>
+<h3 id="デコード">デコード</h3>
+<p>適当に <span class="math inline">\(z = Q(E(x))\)</span> を <span class="math inline">\(x\)</span> に戻すような <span class="math inline">\(D(z)\)</span> を定義する.</p>
+<h3 id="学習">学習</h3>
+<p>学習の中では <span class="math inline">\(e\)</span> も併せて更新していく. ただのオートエンコーダーとしては <span class="math display">\[L = \| x - D(Q(E(x))) \|^2\]</span> とか <span class="math display">\[L = \log p\left( x \mid D(Q(E(x)) \right)\]</span> を損失関数とするが, これに <span class="math inline">\(e\)</span> の更新要素を加えてく. <span class="math display">\[L&#39; = \| \sg[Q(E(x))] - E(x) \|^2 + \beta \| Q(E(x)) - \sg[E(x)] \|^2\]</span> を足す. ここで <span class="math inline">\(\sg[\cdot]\)</span> は勾配計算を止めるだけの操作 (stop gradient).</p>
+<blockquote>
+<p>つまり <span class="math inline">\(\| \sg[a] - b \|^2\)</span> の最小化は <span class="math inline">\(a\)</span> は止めて <span class="math inline">\(b\)</span> だけを <span class="math inline">\(a\)</span> に近づけるように更新する.</p>
+</blockquote>
+<p>また <span class="math inline">\(\beta\)</span> はハイパーパラメータ. この値は変えても結果は大して変わらなくて <span class="math inline">\(0.1\)</span> から <span class="math inline">\(2.0\)</span> の間ぐらいならなんでもよかったらしい. 最終的に <span class="math inline">\(0.25\)</span> を使ったそう.</p>
+<h3 id="a.1-vq-vae-dictionary-updates-with-exponential-moving-averages">A.1 VQ-VAE dictionary updates with Exponential Moving Averages</h3>
+<p>損失関数の <span class="math inline">\(\| \sg[Q(E(x))] - E(x) \|^2\)</span> 部分について.</p>
+<p><span class="math inline">\(n\)</span> 個の <span class="math inline">\(z_1^i = E(x_1), \ldots, z_n^i = E(x_n)\)</span> が, <span class="math inline">\(e_i = Q(z_j^i)\)</span> であったとする. 上の部分を最小化するには当然 <span class="math display">\[e_i = \frac{1}{n} \sum_j z_j^i\]</span> とすれば良いだけになる. ただミニバッチごとにこれをすれば必ずしも損失関数全体が最小化されるわけではないので, 少しずつそれに近づける (exponential moving) ことをする. <span class="math display">\[e_i \leftarrow \gamma e_i + (1-\gamma) \frac{1}{n} \sum z_j^i\]</span> ここで <span class="math inline">\(\gamma\)</span> は 0 と 1 の間の定数で, 彼らは経験的に <span class="math inline">\(0.99\)</span> を設定したという.</p>
+<h3 id="事前分布">事前分布</h3>
+<p>VAE を十分学習した後, 潜在分布に対する事前分布を見積もる. よくわからん.</p>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

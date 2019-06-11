@@ -1,18 +1,18 @@
 #!/bin/bash
 
 listup() {
-    echo new
+    echo *new
     cat resources/postlist | tac
 }
 
-ID=$(listup | peco)
+ID=$(listup | peco --query "$1")
 
-if [ "$ID" = "" ]; then
+if [ -z "$ID" ]; then
     echo "canceled"
     exit
 fi
 
-if [ "$ID" = new ]; then
+if [ "$ID" = "*new" ]; then
     echo -n "ID > "
     read ID
 fi

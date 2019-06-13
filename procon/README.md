@@ -81,12 +81,16 @@
 - [整数の最大値、最小値 (gcc)](int_max_and_min.html)
 - [GCD](int.gcd.html)
 - [拡張GCD](int.exgcd.html)
-- [モジュラ逆数](int.modinv.html)
 - [パスカルの三角形](misc.pascal_triangle.html)
 - [二項係数](int.binom.html)
 - [離散対数](int.dislog.html)
 - [完全順列](int.derangement.html)
 - [オイラーの関数](int.euler_phi.html)
+
+## モジュラ演算
+
+- [逆数](int.mod.inv.html)
+- [べき乗](int.mod.pow.html)
 
 ## 素数
 

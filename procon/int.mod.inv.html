@@ -20,14 +20,27 @@
         <section class="main-content columns is-fullheight">
 
           <div class="article column is-8">
-            <h1 id="int.modinv">int.modinv</h1>
-<h2 id="int.modinv.cc"><a href="int.modinv.cc" class="uri">int.modinv.cc</a></h2>
-<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="co">/*</span>
-<span class="co"> * a^{-1} (mod m)</span>
-<span class="co"> */</span>
-
-<span class="co">// </span><span class="re">{{{</span><span class="co"> src/int.exgcd.cc</span>
-tuple&lt;<span class="dt">int</span>, <span class="dt">int</span>, <span class="dt">int</span>&gt; ex_gcd(<span class="dt">int</span> x, <span class="dt">int</span> y) {
+            <h1 id="int.mod.inv">int.mod.inv</h1>
+<p>整数 <span class="math inline">\(a\)</span> と <span class="math inline">\(m\)</span> について <span class="math display">\[a^{-1} \bmod m\]</span> の存在のための必要十分条件は <span class="math inline">\(a,m\)</span> が互いに素であること. 存在する時, これは拡張ユークリッドの互除法で次のように解ける.</p>
+<h2 id="int.mod.inv.rs"><a href="int.mod.inv.rs" class="uri">int.mod.inv.rs</a></h2>
+<p>逆数が存在しない場合は <code>None</code> を返す.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> intmod(a: <span class="dt">i64</span>, m: <span class="dt">i64</span>) -&gt; <span class="dt">Option</span>&lt;<span class="dt">i64</span>&gt; <span class="op">{</span>
+    <span class="kw">fn</span> exgcd(r0: <span class="dt">i64</span>, a0: <span class="dt">i64</span>, b0: <span class="dt">i64</span>, r: <span class="dt">i64</span>, a: <span class="dt">i64</span>, b: <span class="dt">i64</span>) -&gt; (<span class="dt">i64</span>, <span class="dt">i64</span>, <span class="dt">i64</span>) <span class="op">{</span>
+        <span class="kw">if</span> r &gt; <span class="dv">0</span> <span class="op">{</span>
+            exgcd(r, a, b, r0 % r, a0 - r0 / r * a, b0 - r0 / r * b)
+        <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
+            (a0, b0, r0)
+        <span class="op">}</span>
+    <span class="op">}</span>
+    <span class="kw">let</span> (a, _, r) = exgcd(a, <span class="dv">1</span>, <span class="dv">0</span>, m, <span class="dv">0</span>, <span class="dv">1</span>);
+    <span class="kw">if</span> r != <span class="dv">1</span> <span class="op">{</span>
+        <span class="cn">None</span>
+    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
+        <span class="cn">Some</span>(((a % m) + m) % m)
+    <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
+<h2 id="int.mod.inv.cc"><a href="int.mod.inv.cc" class="uri">int.mod.inv.cc</a></h2>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp">tuple&lt;<span class="dt">int</span>, <span class="dt">int</span>, <span class="dt">int</span>&gt; ex_gcd(<span class="dt">int</span> x, <span class="dt">int</span> y) {
   <span class="dt">int</span> r0 = x, a0 = <span class="dv">1</span>, b0 = <span class="dv">0</span>;
   <span class="cf">for</span> (<span class="dt">int</span> r = y, a = <span class="dv">0</span>, b = <span class="dv">1</span>; r &gt; <span class="dv">0</span>; ) {
     <span class="dt">int</span> r2 = r0 % r;
@@ -39,31 +52,13 @@ tuple&lt;<span class="dt">int</span>, <span class="dt">int</span>, <span class="
   }
   <span class="cf">return</span> make_tuple(a0, b0, r0);
 }
-<span class="co">// </span><span class="re">}}}</span>
 
-<span class="dt">int</span> mod_inv(<span class="dt">int</span> a, <span class="dt">int</span> m) {
+<span class="dt">int</span> modinv(<span class="dt">int</span> a, <span class="dt">int</span> m) {
   <span class="kw">auto</span> r = ex_gcd(a, m);
   <span class="cf">if</span> (get&lt;<span class="dv">2</span>&gt;(r) != <span class="dv">1</span>) <span class="cf">throw</span>;
   <span class="dt">int</span> b = get&lt;<span class="dv">0</span>&gt;(r);
   <span class="cf">while</span> (b &lt; <span class="dv">0</span>) b += m;
   <span class="cf">return</span> b;
-}
-
-<span class="dt">int</span> main() {
-
-  <span class="cf">for</span> (<span class="dt">int</span> m = <span class="dv">3</span>; m &lt; <span class="dv">100</span>; ++m) {
-    <span class="cf">for</span> (<span class="dt">int</span> a = <span class="dv">2</span>; a &lt; m; ++a) {
-      <span class="cf">if</span> (__gcd(a, m) != <span class="dv">1</span>) <span class="cf">continue</span>;
-      <span class="dt">int</span> b = mod_inv(a, m);
-      <span class="cf">if</span> (((a * b) % m) != <span class="dv">1</span>) {
-        cout &lt;&lt; a &lt;&lt; <span class="st">&#39; &#39;</span> &lt;&lt; b &lt;&lt; <span class="st">&#39; &#39;</span> &lt;&lt; m &lt;&lt; endl;
-      }
-      assert(((a * b) % m) == <span class="dv">1</span>);
-      assert(b &gt; <span class="dv">0</span>);
-    }
-  }
-
-  <span class="cf">return</span> <span class="dv">0</span>;
 }</code></pre></div>
           </div>
 
@@ -127,8 +122,12 @@ tuple&lt;<span class="dt">int</span>, <span class="dt">int</span>, <span class="
 
 <details class=menu>
 <summary class=menu>幾何</summary>
+<ul>
+<li><a href="geo.2d.html">図形表現</a></li>
+</ul>
 <h2 id="線分">線分</h2>
 <ul>
+<li><a href="geo.2d.length_from_point.html">線分と点との距離</a></li>
 <li><a href="geo.2d.ccw.html">線分と点の接触関係</a></li>
 <li><a href="geo.2d.intersection.html">線分と線分の交差判定</a></li>
 </ul>
@@ -179,18 +178,24 @@ tuple&lt;<span class="dt">int</span>, <span class="dt">int</span>, <span class="
 <li><a href="int_max_and_min.html">整数の最大値、最小値 (gcc)</a></li>
 <li><a href="int.gcd.html">GCD</a></li>
 <li><a href="int.exgcd.html">拡張GCD</a></li>
-<li><a href="int.modinv.html">モジュラ逆数</a></li>
 <li><a href="misc.pascal_triangle.html">パスカルの三角形</a></li>
 <li><a href="int.binom.html">二項係数</a></li>
 <li><a href="int.dislog.html">離散対数</a></li>
 <li><a href="int.derangement.html">完全順列</a></li>
 <li><a href="int.euler_phi.html">オイラーの関数</a></li>
 </ul>
+<h2 id="モジュラ演算">モジュラ演算</h2>
+<ul>
+<li><a href="int.mod.inv.html">逆数</a></li>
+<li><a href="int.mod.pow.html">べき乗</a></li>
+</ul>
 <h2 id="素数">素数</h2>
 <ul>
 <li><a href="prime.sieve.html">エラトステネスの篩</a></li>
+<li><a href="moebius.html">メビウス関数</a></li>
 <li><a href="prime.predicate.html">素朴な判定</a></li>
 <li><a href="prime.MillerRabin.html">ミラー・ラビン素数判定</a></li>
+<li><a href="prime.fermat.little.html">フェルマーの小定理</a></li>
 </ul>
 <h2 id="多倍長">多倍長</h2>
 <ul>

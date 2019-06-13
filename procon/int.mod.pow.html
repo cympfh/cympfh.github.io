@@ -20,80 +20,32 @@
         <section class="main-content columns is-fullheight">
 
           <div class="article column is-8">
-            <h1 id="graph.prim">graph.prim</h1>
-<h2 id="graph.prim.cc"><a href="graph.prim.cc" class="uri">graph.prim.cc</a></h2>
-<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="dt">int</span> prim(<span class="dt">int</span> n, vvi&amp;adj, vvi&amp;cost) {
-  vector&lt;<span class="dt">bool</span>&gt; used(n, <span class="kw">false</span>);
-  queue&lt;<span class="dt">int</span>&gt; q;
-  <span class="dt">int</span> total = <span class="dv">0</span>;
-
-  <span class="dt">int</span> u = rand() % n;
-  vector&lt;<span class="dt">int</span>&gt; vs = { u };
-  used[u] = <span class="kw">true</span>;
-  loop {
-    <span class="dt">int</span> mc = inf; <span class="co">// minimize</span>
-    <span class="dt">int</span> mu = <span class="dv">-1</span>, mv;
-    <span class="cf">for</span> (<span class="dt">int</span> v: vs) {
-      <span class="cf">for</span> (<span class="dt">int</span> u: adj[v]) {
-        <span class="cf">if</span> (used[u]) <span class="cf">continue</span>;
-        <span class="cf">if</span> (mc &gt; cost[v][u]) {
-          mc = cost[v][u];
-          mv = v; mu = u;
-        }
-      }
-    }
-    <span class="cf">if</span> (mu &lt; <span class="dv">0</span>) {
-      <span class="cf">break</span>;
-    }
-    used[mu] = <span class="kw">true</span>;
-    vs.push_back(mu);
-    total += mc;
-  }
-  <span class="cf">return</span> total;
-}</code></pre></div>
-<h2 id="example">Example</h2>
-<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="kw">using</span> vi = vector&lt;<span class="dt">int</span>&gt;;
-<span class="kw">using</span> vvi = vector&lt;vi&gt;;
-<span class="dt">int</span> main() {
-
-  <span class="co">// this graph is an example</span>
-  <span class="co">// on the page: http://ja.wikipedia.org/wiki/プリム法</span>
-stringstream input(
-<span class="st">&quot;  7&quot;</span>
-<span class="st">&quot;  0 1 7&quot;</span>
-<span class="st">&quot;  0 3 5&quot;</span>
-<span class="st">&quot;  1 2 8&quot;</span>
-<span class="st">&quot;  1 3 9&quot;</span>
-<span class="st">&quot;  1 4 7&quot;</span>
-<span class="st">&quot;  2 4 5&quot;</span>
-<span class="st">&quot;  3 4 15&quot;</span>
-<span class="st">&quot;  3 5 6&quot;</span>
-<span class="st">&quot;  4 5 8&quot;</span>
-<span class="st">&quot;  4 6 9&quot;</span>
-<span class="st">&quot;  5 6 11&quot;</span>);
-  <span class="dt">int</span> answer = <span class="dv">39</span>;
-  
-  {
-    <span class="dt">int</span> n; input &gt;&gt; n;
-    vvi adjacency_list(n);
-    vvi cost_table(n, vi(n, inf));
-    loop {
-      <span class="dt">int</span> a, b, c; input &gt;&gt; a &gt;&gt; b &gt;&gt; c;
-      <span class="cf">if</span> (<span class="kw">not</span> input) <span class="cf">break</span>;
-      adjacency_list[a].push_back(b);
-      adjacency_list[b].push_back(a);
-      cost_table[a][b] = cost_table[b][a] = c;
-    }
-
-    assert(prim(n, adjacency_list, cost_table) == answer);
-  }
-
-  <span class="cf">return</span> <span class="dv">0</span>;
-}</code></pre></div>
+            <h1 id="int.mod.pow">int.mod.pow</h1>
+<p>整数 <span class="math inline">\(a, n\)</span> と <span class="math inline">\(m\)</span> について <span class="math display">\[a^n \bmod m\]</span> を <span class="math inline">\(O(\log n)\)</span> で求める.</p>
+<blockquote>
+<p><strong>NOTE</strong> 特に <span class="math inline">\(m\)</span> が素数の時, <span class="math inline">\(a^{m-2}\)</span> が <span class="math inline">\(a^{-1}\)</span> になる (フェルマーの小定理).</p>
+</blockquote>
+<h2 id="int.mod.pow.rs"><a href="int.mod.pow.rs" class="uri">int.mod.pow.rs</a></h2>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> powmod
+    &lt;K: <span class="bu">Copy</span> + std::ops::Mul&lt;Output=K&gt; + std::ops::Div&lt;Output=K&gt; + std::ops::Rem&lt;Output=K&gt;&gt;
+    (a: K, n: <span class="dt">u64</span>, m: K) -&gt; K <span class="op">{</span>
+    <span class="kw">if</span> n == <span class="dv">0</span> <span class="op">{</span>
+        a / a
+    <span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> n == <span class="dv">1</span> <span class="op">{</span>
+        a % m
+    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
+        <span class="kw">let</span> y = powmod((a * a) % m, n / <span class="dv">2</span>, m);
+        <span class="kw">if</span> n % <span class="dv">2</span> == <span class="dv">0</span> <span class="op">{</span>
+            y
+        <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
+            (y * a) % m
+        <span class="op">}</span>
+    <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
-<details class=menu open>
+<details class=menu>
 <summary class=menu>グラフ</summary>
 <h2 id="最短路">最短路</h2>
 <ul>
@@ -202,7 +154,7 @@ stringstream input(
 </ul>
 </details>
 
-<details class=menu>
+<details class=menu open>
 <summary class=menu>整数</summary>
 <ul>
 <li><a href="int_max_and_min.html">整数の最大値、最小値 (gcc)</a></li>

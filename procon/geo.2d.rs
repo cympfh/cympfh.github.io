@@ -1,7 +1,6 @@
 #[derive(Debug, Clone, Copy)]
 struct Point(f64, f64);
 
-#[allow(dead_code)]
 impl Point {
     fn norm(self) -> f64 {
         (self * self).sqrt()
@@ -82,7 +81,6 @@ impl Div<f64> for Point {
 #[derive(Debug, Clone, Copy)]
 struct Line(Point, Point);
 
-#[allow(dead_code)]
 impl Line {
     fn len(self) -> f64 {
         (self.0 - self.1).norm()

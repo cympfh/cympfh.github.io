@@ -6,7 +6,6 @@ type K = f64;
 #[derive(Debug, Clone, PartialEq)]
 struct Complex(K, K);
 
-#[allow(dead_code)]
 impl Complex {
     fn zero() -> Complex { Complex(0.0, 0.0) }
     fn unit() -> Complex { Complex(1.0, 0.0) }

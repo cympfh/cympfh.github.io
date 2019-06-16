@@ -27,7 +27,6 @@ macro_rules! mat {
     ( $( $( $x:expr )* );* ) => ( Matrix::new( vec![ $( vec![ $( $x ),* ] ),* ] ) )
 }
 
-#[allow(dead_code)]
 impl<K: MatrixElement> Matrix<K>
 {
     fn new(data: Vec<Vec<K>>) -> Matrix<K> {

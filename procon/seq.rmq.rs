@@ -9,7 +9,6 @@ struct RMQ {
     lefts: Vec<usize>, rights: Vec<usize>
 }
 
-#[allow(dead_code)]
 impl RMQ {
 
     const INF: i32 = 1000000;

@@ -1,20 +1,17 @@
 use std::cmp::Reverse;
 use std::collections::BinaryHeap;
 
-#[allow(dead_code)]
 #[derive(Debug)]
 struct MedianHeap<T> where T: Ord + Copy {
     head: BinaryHeap<T>,
     tail: BinaryHeap<Reverse<T>>
 }
-#[allow(dead_code)]
 #[derive(Debug, PartialEq, Eq)]
 enum Median<T> {
     None,
     Just(T),
     Between(T, T),
 }
-#[allow(dead_code)]
 impl<T: Ord + Copy> MedianHeap<T> {
     fn new() -> MedianHeap<T> {
         MedianHeap { head: BinaryHeap::new(), tail: BinaryHeap::new() }

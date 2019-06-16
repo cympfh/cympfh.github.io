@@ -89,6 +89,7 @@
 
 ## モジュラ演算
 
+- [ModInt](int.mod.ops.html)
 - [逆数](int.mod.inv.html)
 - [べき乗](int.mod.pow.html)
 

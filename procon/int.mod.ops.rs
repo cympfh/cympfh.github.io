@@ -3,7 +3,7 @@ struct ModInt { res: i64, md: i64 }
 
 impl ModInt {
     fn new(res: i64, md: i64) -> Self {
-        ModInt { res, md }
+        ModInt { res: res, md: md }
     }
     fn inv(self) -> Self {
         fn exgcd(r0: i64, a0: i64, b0: i64, r: i64, a: i64, b: i64)
@@ -40,6 +40,7 @@ impl std::fmt::Display for ModInt {
 impl std::ops::Neg for ModInt {
     type Output = Self;
     fn neg(self) -> Self {
+        if self.res == 0 { return self }
         ModInt { res: self.md - self.res, md: self.md }
     }
 }
@@ -51,7 +52,7 @@ impl std::ops::Add<i64> for ModInt {
         } else {
             self.res + other
         };
-        ModInt { res, md: self.md }
+        ModInt { res: res, md: self.md }
     }
 }
 impl std::ops::Add for ModInt {
@@ -84,11 +85,11 @@ impl std::ops::Sub<i64> for ModInt {
     type Output = Self;
     fn sub(self, other: i64) -> Self {
         let res = if self.res < other {
-            self.res + self.md - self.res
+            self.res + self.md - other
         } else {
             self.res - other
         };
-        ModInt { res, md: self.md }
+        ModInt { res: res, md: self.md }
     }
 }
 impl std::ops::Sub for ModInt {

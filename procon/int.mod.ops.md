@@ -7,3 +7,8 @@
 あらかた演算は用意してある.
 
 @[rust](int.mod.ops.rs)
+
+## 例題
+
+- [ABC130: E - Common Subsequence](https://atcoder.jp/contests/abc130/tasks/abc130_e)
+  - [回答例: submissions/6014247](https://atcoder.jp/contests/abc130/submissions/6014247)

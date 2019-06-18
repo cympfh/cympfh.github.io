@@ -7,7 +7,8 @@ title() {
 }
 
 summary() {
-    grep '^## ' "$1" | sed 's,^## ,,; s,$,/,'
+    grep '^## ' "$1" | sed 's/^## //' |
+      sed 's,^, <i class="fa fa-caret-right"></i> ,'
 }
 
 write-item() {

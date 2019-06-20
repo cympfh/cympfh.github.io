@@ -1,48 +1,47 @@
 # 二分探索
 
-Yes/No を返す述語があるとする.
+整数について Yes/No を返す述語 $P$ があるとする.
+$$P \colon \mathbb Z \to \mathrm{Bool}$$
 
-```cpp
-bool Prop(){}
-```
+そして今, この $P$ はある整数 $m$ があって,
 
-## 問題
+- $n < m \implies P(n) = \mathrm{No}$
+- $n \geq m \implies P(n) = \mathrm{Yes}$
 
-整数 $n$ について, `Prop` が Yes と返す最小値を求めよ.
+を満たすことが分かっているとする.
+このとき, この整数 $m$ を求めたい.
 
-ただし、`Prop` には次の性質があることを仮定する.
-
-- ある整数 $m$ があって
-    - $\forall n < m, \mathrm{Prop}(n) = \mathrm{No}$
-    - $\forall n \geq m, \mathrm{Prop}(n) = \mathrm{Yes}$
-
-ただし既知の $\mathrm{sub}, \mathrm{sup}$ があって,
-
-- $\mathrm{Prop}(\mathrm{sub}) = \mathrm{No}$
-- $\mathrm{Prop}(\mathrm{sup}) = \mathrm{Yes}$
-
-であることは分かっているとする.
+ただし, 次のような2つの値 $l, r$ も予め分かっているとする.
+すなわち $l$ は十分小さく $P(l) = \mathrm{No}$ を満たし,
+$r$ は十分大きく $P(r) = \mathrm{Yes}$ を満たす.
 
 ## 解
 
-```cpp
-int left = sub;
-int right = sup;
-
-while (left + 2 < right) { // 2 is a magic
-  assert( not Prop(left) );
-  assert( Prop(right) );
-  int mid = (left + right) / 2;
-  if (Prop(mid)) {
-    right = mid; // because of the assertion
-  } else {
-    left = mid;
-  }
+```rust
+// sample P
+fn P(n: i64) -> bool {
+    n * n * n > 100
 }
 
-int ans = left;
-for (; ans <= sup and ans < right + 2; ++ans) {
-  if (Prop(ans)) break;
+fn main() {
+
+    let mut left = -10000;  // small enough
+    let mut right = 100000;  // large enough
+
+    while left + 2 <= right {
+        let mid = (left + right) / 2;
+        println!("{:?} {} => {} {}", left, right, mid, P(mid));
+        if P(mid) {
+            right = mid;
+        } else {
+            left = mid;
+        }
+        // condition:
+        //   P(left) == false
+        //   P(right) == true
+    }
+    // right is the answer
+    println!("The smallest number that satisfies P is {}", right);
 }
 ```
 

@@ -21,34 +21,26 @@
 
           <div class="article column is-8">
             <h1 id="bin.count">bin.count</h1>
-<h2 id="bin.count.cc"><a href="bin.count.cc" class="uri">bin.count.cc</a></h2>
-<ul>
-<li>入力; 昇順整列済み <code>xs</code>, 要素 <code>x</code></li>
-<li>出力; <code>xs</code> に <code>x</code> が出現する回数を返す</li>
-</ul>
-<p><code>(&lt; x)</code> と <code>(&lt;= x)</code> の境界をそれぞれ二分探索する</p>
-<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="kw">template</span>&lt;<span class="kw">typename</span> Func&gt;
-<span class="dt">int</span> bsearch(<span class="dt">int</span> left, <span class="dt">int</span> right, Func f) {
-  <span class="cf">while</span> (left + <span class="dv">1</span> &lt; right) {
-    <span class="dt">int</span> mid = (left + right) / <span class="dv">2</span>;
-    <span class="cf">if</span> (f(mid) &lt; <span class="dv">0</span>) {
-      left = mid;
-    } <span class="cf">else</span> {
-      right = mid;
-    }
-  }
-  <span class="cf">return</span> right;
-}
+<p>昇順に整列した整数列 <code>xs</code> と整数 <code>x</code> が与えられたとき, <code>x</code> が何度出現するかを二分探索で調べる.</p>
+<p><a href="bin.search.html">二分探索</a> を <span class="math inline">\(P(n) = (n \geq x)\)</span> としてやれば, <span class="math inline">\(P(n+1)-P(n)\)</span> が答え. ただし境界だけ注意.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> bsearch(xs: &amp;<span class="dt">Vec</span>&lt;<span class="dt">i64</span>&gt;, x: <span class="dt">i64</span>) -&gt; <span class="dt">usize</span> <span class="op">{</span>
+    <span class="kw">if</span> xs<span class="op">[</span><span class="dv">0</span><span class="op">]</span> &gt;= x <span class="op">{</span> <span class="kw">return</span> <span class="dv">0</span> <span class="op">}</span>
+    <span class="kw">let</span> <span class="kw">mut</span> left = <span class="dv">0</span>;  <span class="co">// xs[left] &lt; x</span>
+    <span class="kw">let</span> <span class="kw">mut</span> right = xs.len();  <span class="co">// xs[right] &gt;= x</span>
+    <span class="kw">while</span> left + <span class="dv">2</span> &lt;= right <span class="op">{</span>
+        <span class="kw">let</span> mid = (left + right) / <span class="dv">2</span>;
+        <span class="kw">if</span> xs<span class="op">[</span>mid<span class="op">]</span> &lt; x <span class="op">{</span>
+            left = mid;
+        <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
+            right = mid;
+        <span class="op">}</span>
+    <span class="op">}</span>
+    right
+<span class="op">}</span>
 
-<span class="kw">template</span>&lt;<span class="kw">typename</span> T&gt;
-<span class="dt">int</span> bcount(<span class="at">const</span> vector&lt;T&gt;&amp; xs, T x) {
-  <span class="at">const</span> <span class="dt">int</span> n = xs.size();
-  <span class="kw">auto</span> f1 = [&amp;](<span class="dt">int</span> i) { <span class="cf">return</span> xs[i] - x; };
-  <span class="kw">auto</span> f2 = [&amp;](<span class="dt">int</span> i) { <span class="cf">return</span> xs[i] - x - <span class="dv">1</span>; };
-  <span class="dt">int</span> r1 = xs[<span class="dv">0</span>] == x ? <span class="dv">0</span> : bsearch(<span class="dv">0</span>, n, f1);
-  <span class="dt">int</span> r2 = xs[n<span class="dv">-1</span>] == x ? n : bsearch(<span class="dv">0</span>, n, f2);
-  <span class="cf">return</span> r2 - r1;
-}</code></pre></div>
+<span class="kw">fn</span> bcount(xs: &amp;<span class="dt">Vec</span>&lt;<span class="dt">i64</span>&gt;, x: <span class="dt">i64</span>) -&gt; <span class="dt">usize</span> <span class="op">{</span>
+    bsearch(&amp;xs, x + <span class="dv">1</span>) - bsearch(&amp;xs, x)
+<span class="op">}</span></code></pre></div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
@@ -98,7 +90,7 @@
 <h2 id="行列式">行列式</h2>
 <ul>
 <li><a href="matrix.det.naiiv.html">定義に拠る算法</a></li>
-<li><a href="matrix.det.cramer.html">Cramer's rule</a></li>
+<li><a href="matrix.det.cramer.html">Cramer’s rule</a></li>
 </ul>
 </details>
 
@@ -175,6 +167,7 @@
 </ul>
 <h2 id="モジュラ演算">モジュラ演算</h2>
 <ul>
+<li><a href="int.mod.ops.html">ModInt</a></li>
 <li><a href="int.mod.inv.html">逆数</a></li>
 <li><a href="int.mod.pow.html">べき乗</a></li>
 </ul>

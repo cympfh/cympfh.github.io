@@ -69,10 +69,9 @@ impl std::ops::Add<ModInt> for i64 {
 }
 impl std::ops::AddAssign<i64> for ModInt {
     fn add_assign(&mut self, other: i64) {
-        if self.res + other >= self.md {
-            self.res += other - self.md;
-        } else {
-            self.res += other;
+        self.res += other;
+        if self.res >= self.md {
+            self.res -= self.md;
         }
     }
 }

@@ -20,43 +20,60 @@
         <section class="main-content columns is-fullheight">
 
           <div class="article column is-8">
-            <h1 id="bit.count">bit.count</h1>
-<h2 id="rust">Rust</h2>
-<p><code>.count_ones()</code> を使う.</p>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> main() <span class="op">{</span>
-
-    <span class="op">{</span>
-        <span class="kw">let</span> a = <span class="dv">3u</span>size;
-        <span class="pp">println!</span>(<span class="st">&quot;{}&quot;</span>, a.count_ones());
+            <h1 id="graph.tree.lca---最小共通祖先">graph.tree.lca - 最小共通祖先</h1>
+<p>根付き木についてダブリングによってLCAを求める.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">struct</span> LCA <span class="op">{</span>
+    depth: <span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt;,
+    parent: <span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;<span class="dt">Option</span>&lt;<span class="dt">usize</span>&gt;&gt;&gt;
+<span class="op">}</span>
+<span class="kw">impl</span> LCA <span class="op">{</span>
+    <span class="kw">fn</span> new(tree: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt;&gt;, root: <span class="dt">usize</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span>
+        <span class="kw">let</span> n = tree.len();
+        <span class="kw">let</span> log2n = (<span class="dv">0.</span>.n).map(|i| n &gt;&gt; i).take_while(|&amp;x| x &gt; <span class="dv">0</span>).count();
+        <span class="kw">let</span> <span class="kw">mut</span> parent = <span class="pp">vec!</span><span class="op">[</span><span class="pp">vec!</span><span class="op">[</span><span class="cn">None</span>; log2n<span class="op">]</span>; n<span class="op">]</span>;
+        <span class="kw">let</span> depth: <span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt; = <span class="op">{</span>
+            <span class="kw">let</span> <span class="kw">mut</span> depth = <span class="pp">vec!</span><span class="op">[</span><span class="cn">None</span>; n<span class="op">]</span>;
+            <span class="kw">let</span> <span class="kw">mut</span> stack = <span class="pp">vec!</span><span class="op">[</span>(<span class="dv">0</span>, root)<span class="op">]</span>;
+            <span class="kw">while</span> <span class="kw">let</span> <span class="cn">Some</span>((d, u)) = stack.pop() <span class="op">{</span>
+                <span class="kw">if</span> depth<span class="op">[</span>u<span class="op">]</span>.is_some() <span class="op">{</span> <span class="kw">continue</span> <span class="op">}</span>
+                depth<span class="op">[</span>u<span class="op">]</span> = <span class="cn">Some</span>(d);
+                <span class="kw">for</span> &amp;v <span class="kw">in</span> tree<span class="op">[</span>u<span class="op">]</span>.iter() <span class="op">{</span>
+                    parent<span class="op">[</span>v<span class="op">][</span><span class="dv">0</span><span class="op">]</span> = <span class="cn">Some</span>(u);
+                    <span class="kw">if</span> depth<span class="op">[</span>v<span class="op">]</span>.is_some() <span class="op">{</span> <span class="kw">continue</span> <span class="op">}</span>
+                    stack.push((d + <span class="dv">1</span>, v));
+                <span class="op">}</span>
+            <span class="op">}</span>
+            depth.iter().map(|d| d.unwrap()).collect()
+        <span class="op">}</span>;
+        <span class="kw">for</span> k <span class="kw">in</span> <span class="dv">1.</span>.log2n <span class="op">{</span>
+            <span class="kw">for</span> u <span class="kw">in</span> <span class="dv">0.</span>.n <span class="op">{</span>
+                <span class="kw">if</span> <span class="kw">let</span> <span class="cn">Some</span>(v) = parent<span class="op">[</span>u<span class="op">][</span>k - <span class="dv">1</span><span class="op">]</span> <span class="op">{</span>
+                    parent<span class="op">[</span>u<span class="op">][</span>k<span class="op">]</span> = parent<span class="op">[</span>v<span class="op">][</span>k - <span class="dv">1</span><span class="op">]</span>;
+                <span class="op">}</span>
+            <span class="op">}</span>
+        <span class="op">}</span>
+        LCA <span class="op">{</span> depth: depth, parent: parent <span class="op">}</span>
     <span class="op">}</span>
-    <span class="op">{</span>
-        <span class="kw">let</span> a = <span class="dv">3u32</span>;
-        <span class="pp">println!</span>(<span class="st">&quot;{}&quot;</span>, a.count_ones());
+    <span class="kw">fn</span> get(&amp;<span class="kw">self</span>, u: <span class="dt">usize</span>, v: <span class="dt">usize</span>) -&gt; <span class="dt">usize</span> <span class="op">{</span>
+        <span class="kw">if</span> <span class="kw">self</span>.depth<span class="op">[</span>u<span class="op">]</span> &gt; <span class="kw">self</span>.depth<span class="op">[</span>v<span class="op">]</span> <span class="op">{</span> <span class="kw">return</span> <span class="kw">self</span>.get(v, u) <span class="op">}</span>
+        <span class="kw">let</span> <span class="kw">mut</span> u = u;
+        <span class="kw">let</span> <span class="kw">mut</span> v = v;
+        <span class="kw">while</span> <span class="kw">self</span>.depth<span class="op">[</span>u<span class="op">]</span> &lt; <span class="kw">self</span>.depth<span class="op">[</span>v<span class="op">]</span> <span class="op">{</span> v = <span class="kw">self</span>.parent<span class="op">[</span>v<span class="op">][</span><span class="dv">0</span><span class="op">]</span>.unwrap(); <span class="op">}</span>
+        <span class="kw">if</span> u == v <span class="op">{</span> <span class="kw">return</span> u <span class="op">}</span>
+        <span class="kw">let</span> log2n = <span class="kw">self</span>.parent<span class="op">[</span><span class="dv">0</span><span class="op">]</span>.len();
+        <span class="kw">for</span> k <span class="kw">in</span> (<span class="dv">0.</span>.log2n).rev() <span class="op">{</span>
+            <span class="kw">match</span> (<span class="kw">self</span>.parent<span class="op">[</span>u<span class="op">][</span>k<span class="op">]</span>, <span class="kw">self</span>.parent<span class="op">[</span>v<span class="op">][</span>k<span class="op">]</span>) <span class="op">{</span>
+                (<span class="cn">Some</span>(s), <span class="cn">Some</span>(t)) =&gt; <span class="op">{</span> <span class="kw">if</span> s != t <span class="op">{</span> u = s; v = t; <span class="op">}</span> <span class="op">}</span>
+                _ =&gt; <span class="op">{}</span>
+            <span class="op">}</span>
+        <span class="op">}</span>
+        <span class="kw">self</span>.parent<span class="op">[</span>u<span class="op">][</span><span class="dv">0</span><span class="op">]</span>.unwrap()
     <span class="op">}</span>
-    <span class="op">{</span>
-        <span class="kw">let</span> a = <span class="dv">3i32</span>;
-        <span class="pp">println!</span>(<span class="st">&quot;{}&quot;</span>, a.count_ones());
-    <span class="op">}</span>
-
 <span class="op">}</span></code></pre></div>
-<h2 id="bit.count.cc"><a href="bit.count.cc" class="uri">bit.count.cc</a></h2>
-<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="dt">int</span>
-<span class="fu">__builtin_popcount</span>
-(<span class="dt">int</span>);
-
-<span class="dt">int</span> bit_count(<span class="dt">long</span> <span class="dt">long</span> x) {
-  x = (x &amp; <span class="bn">0x5555555555555555ll</span>) + (x &gt;&gt; <span class="dv">1</span> &amp; <span class="bn">0x5555555555555555ll</span>);
-  x = (x &amp; <span class="bn">0x3333333333333333ll</span>) + (x &gt;&gt; <span class="dv">2</span> &amp; <span class="bn">0x3333333333333333ll</span>);
-  x = (x &amp; <span class="bn">0x0f0f0f0f0f0f0f0fll</span>) + (x &gt;&gt; <span class="dv">4</span> &amp; <span class="bn">0x0f0f0f0f0f0f0f0fll</span>);
-  x = (x &amp; <span class="bn">0x00ff00ff00ff00ffll</span>) + (x &gt;&gt; <span class="dv">8</span> &amp; <span class="bn">0x00ff00ff00ff00ffll</span>);
-  x = (x &amp; <span class="bn">0x0000ffff0000ffffll</span>) + (x &gt;&gt;<span class="dv">16</span> &amp; <span class="bn">0x0000ffff0000ffffll</span>);
-  x = (x &amp; <span class="bn">0x00000000ffffffffll</span>) + (x &gt;&gt;<span class="dv">32</span> &amp; <span class="bn">0x00000000ffffffffll</span>);
-  <span class="cf">return</span> x;
-}</code></pre></div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
-<details class=menu>
+<details class=menu open>
 <summary class=menu>グラフ</summary>
 <h2 id="最短路">最短路</h2>
 <ul>
@@ -261,7 +278,7 @@
 </ul>
 </details>
 
-<details class=menu open>
+<details class=menu>
 <summary class=menu>misc</summary>
 <ul>
 <li><a href="bit.count.html">bit count</a></li>

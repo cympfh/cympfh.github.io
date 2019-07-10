@@ -11,6 +11,7 @@
 ## 木
 - [高さ](graph.tree.height.html)
 - [直径](graph.tree.diameter.html)
+- [最小共通祖先](graph.tree.lca.html)
 
 ## [最大流量](graph.maxflow.html)
 

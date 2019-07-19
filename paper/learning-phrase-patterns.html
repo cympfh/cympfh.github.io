@@ -45,14 +45,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
   </style>
   <link rel="stylesheet" href="../resources/css/c.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/</a>
+    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
 </header>
 <header>
 <h1 class="title">Learning Phrase Patterns for Text Classification</h1>
@@ -66,55 +66,69 @@ original paper: <a href=http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumb
 <p><a class='tag is-blue' href=index.html#自然言語処理>自然言語処理</a> <a class='tag is-blue' href=index.html#テキストマイニング>テキストマイニング</a> <a class='tag is-blue' href=index.html#テキスト分類>テキスト分類</a></p>
 </div>
 <h2 id="intro">Intro</h2>
-<p>テキスト分類. N-gram なんかで十分な精度はある. けれどもドメインに特化してしまうこと、 application に依存してしまうことから一般性がない. n-gram に補充する素性の一つとして、phrase pattern を使いたい.</p>
+<p>テキスト分類. N-gram なんかで十分な精度はある. けれどもドメインに特化してしまうこと, application に依存してしまうことから一般性がない. n-gram に補充する素性の一つとして, phrase pattern を使いたい.</p>
 <h2 id="先行研究">先行研究</h2>
-<h3 id="jaillet-2006">Jaillet+, 2006</h3>
-<p>topic categorization</p>
-<h3 id="wiebe-2005">Wiebe+, 2005</h3>
-<p>文章の一人称を教師ナシで これは目的語を含んだフレーズパターンで分類した. 先行研究よりも高い精度.</p>
-<h3 id="sun-2007">Sun+, 2007</h3>
-<p>第二外国語学習者の書いた誤文法を検出.</p>
-<h3 id="thur-2010-and-davidov-2010">Thur+, 2010 and Davidov+, 2010</h3>
-<p>TwitterやAmazonレビューから「皮肉」な文を検出</p>
-<h3 id="zhang-2010">Zhang+, 2010</h3>
-<p>memo/N10-1108.md</p>
-<p>で紹介したとおり、 N-gram よりも高精度であった！（まだ読んでない）</p>
-<h1 id="手法">手法</h1>
-<h2 id="phrase-pattern">phrase pattern</h2>
-<p>普通パターンと言う場合の素のやつと、拡張バージョンのパターンの定義と、 パターンが文にマッチする、の定義を述べる.</p>
-<h3 id="素-phrase-pattern">素 phrase pattern</h3>
-<p>文を word の列 <span class="math inline">\(u = [u_1, u_2 .. u_n]\)</span> とみなすのと全く同様に、 phrase pattern もまた、word の列 <span class="math inline">\(w = [w_1, w_2 .. w_m]\)</span> とする. これが、先の文にマッチするとは、sub sequence になっていること.</p>
-<p>すなわち、 <span class="math display">\[u \preceq w \iff \exists \{ j_1 &lt; j_2 &lt; .. &lt; j_m \} .~ \forall i .~ w_i = u_{j_i}\]</span></p>
-<h3 id="extend">extend</h3>
-<p>語の列でなく、word class も利用したい. word class としては、POS とか polarity とかを使い、制限しない. word <span class="math inline">\(w\)</span> の <span class="math inline">\(n\)</span> 種類のclass が (文脈に依存して) <span class="math inline">\(\{c_1 .. c_n\}\)</span> であるとき</p>
-<p>語 <span class="math inline">\(w\)</span> を考える代わりに <span class="math inline">\(\{w, c_1 .. c_n \}\)</span> という集合を一つの語だと見なすことで拡張する.</p>
-<p>文と、phrase pattern ともに、この拡張を適用できる.</p>
-<p>すなわち、 文とは以前と変わらずに word の列 <span class="math inline">\(u = [u_1, u_2 .. u_n]\)</span> であるが、 phrase pattern を <span class="math inline">\(v = [v_1, v_2 .. v_m]; v_i = \{ w_i, c_{i1} .. c_{in} \}\)</span> とする.</p>
-<p>マッチングを <span class="math display">\[u \preceq v \iff \exists \{ j_1 &lt; j_2 &lt; .. &lt; j_m \} .~ \forall i .~ u_{j_i} \in v_i\]</span> とする.</p>
-<h2 id="learning">learning</h2>
-<p>拡張バージョンの phrase pattern を学習するアルゴリズムを一つ挙げる. 他には CloSpan っていうのもある.</p>
-<h3 id="prefixspan-pei-han-2001">PrefixSpan (Pei, Han+, 2001)</h3>
-<p>コーパス <code>D</code> (文の集合) から、閾値 <code>f</code> 以上の頻度のあるような 素 phrase pattern を得る.</p>
-<p>python-like コードで以下に示すが、これは、 prefix <code>rho</code> について、 先頭から再帰的に付け足すような再帰でパターンを得る. <code>rho = []</code> からスタートする.</p>
+<ul>
+<li>Jaillet+, 2006
+<ul>
+<li>topic categorization</li>
+</ul></li>
+<li>Wiebe+, 2005
+<ul>
+<li>一人称を教師無しで当てる</li>
+<li>目的語を含むようなフレーズパターンを作って分類</li>
+</ul></li>
+<li>Sun+, 2007
+<ul>
+<li>第二外国語学習者の書いた誤文法を検出</li>
+</ul></li>
+<li>Thur+, 2010 and Davidov+, 2010
+<ul>
+<li>TwitterやAmazonレビューから「皮肉」な文を検出</li>
+</ul></li>
+<li>Zhang+, 2010
+<ul>
+<li>N10-1108 で紹介したとおり, N-gram よりも高精度であった！（まだ読んでない）</li>
+</ul></li>
+</ul>
+<h2 id="phrase-pattern">Phrase Pattern</h2>
+<p>単純パターンと, その拡張版の拡張パターンの定義を述べる</p>
+<h3 id="単純パターン">単純パターン</h3>
+<p>文を word の列 <span class="math inline">\(u = [u_1, u_2 .. u_n]\)</span> とみなすのと全く同様に, パターンも word の列 <span class="math inline">\(w = [w_1, w_2 .. w_m]\)</span> として定義する.</p>
+<p>また, パターン <span class="math inline">\(w\)</span> が文 <span class="math inline">\(u\)</span> にマッチすることを次で定める. <span class="math display">\[w \preceq u \iff \exists ( 1 \leq j_1 &lt; j_2 &lt; \cdots &lt; j_m \leq n ) ,~ \forall i ,~ w_i = u_{j_i}\]</span> すなわち部分列であること.</p>
+<h3 id="拡張パターン">拡張パターン</h3>
+<p>word に加えて word class の概念も使えるように拡張する. class の使い方はこれに限定しないが, 例えば単語に対して品詞だとか極性などがあるだろう. 同時に複数の class を割り当てることを考える.</p>
+<p>word <span class="math inline">\(w\)</span> に対して <span class="math inline">\(n\)</span> 種類の class <span class="math inline">\(\{c_1, \ldots, c_n\}\)</span> があるときに <span class="math inline">\(w\)</span> を考える代わりに, <span class="math display">\[\{w, c_1, \ldots, c_n \}\]</span> という集合を一つの word だと思って扱うことにする. これを文とパターンに適用する.</p>
+<p>マッチは, 部分列であって各要素が部分集合であることとする. (さっきのマッチの定義の <span class="math inline">\(=\)</span> が <span class="math inline">\(\subset\)</span> に代わった.)</p>
+<p><span class="math display">\[w \preceq u \iff \exists ( 1 \leq j_1 &lt; j_2 &lt; \cdots &lt; j_m \leq n ) ,~ \forall i ,~ w_i \subset u_{j_i}\]</span></p>
+<h2 id="パターンの学習">パターンの学習</h2>
+<p>拡張パターンの学習方法として PrefixSpan を挙げる. ここには挙げないけど CloSpan っていうのもある.</p>
+<h3 id="prefixspan-pei-han-2001">PrefixSpan [Pei, Han+, 2001]</h3>
+<p>コーパス (文集合) <span class="math inline">\(D\)</span> から頻度 <span class="math inline">\(f\)</span> 以上の単純パターンを効率的に列挙する手法. <span class="math inline">\(\rho\)</span> (<code>rho</code>) を接頭辞に持つものに再帰的に後ろに付け足して列挙してく.</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> PrefixSpan(D, rho, f):
-  P <span class="op">=</span> [] <span class="co"># pattern set as return value</span>
-  A <span class="op">=</span> [] <span class="co"># new patterns</span>
+  A <span class="op">=</span> [a <span class="cf">for</span> <span class="bu">all</span> tokens <span class="kw">in</span> D, <span class="kw">and</span> count(a) <span class="op">&gt;=</span> f]
 
-  for_each a <span class="kw">in</span> D: <span class="co"># a is a token</span>
-    rho<span class="st">&#39; = append(rho, a)</span>
-<span class="st">    A.append(rho&#39;</span>) <span class="cf">if</span> match_freq(D, p) <span class="op">&gt;=</span> f
-  for_each a <span class="kw">in</span> D: <span class="co"># a is a token</span>
-    rho<span class="st">&#39; = assemble(rho, a)</span>
-<span class="st">    A.append(rho&#39;</span>) <span class="cf">if</span> match_freq(D, p) <span class="op">&gt;=</span> f
+  P <span class="op">=</span> []  <span class="co"># pattern set as return value</span>
+  Q <span class="op">=</span> []  <span class="co"># new patterns</span>
+
+  <span class="cf">for</span> a <span class="kw">in</span> A:
+    q <span class="op">=</span> append(rho, a)
+    <span class="cf">if</span> match_freq(D, p) <span class="op">&gt;=</span> f:
+        A.append(q)
+
+  <span class="cf">for</span> a <span class="kw">in</span> A:
+    q <span class="op">=</span> assemble(rho, a)
+    <span class="cf">if</span> match_freq(D, q) <span class="op">&gt;=</span> f:
+        A.append(q)
 
   P <span class="op">=</span> P.extend(A)
 
-  for_each rho<span class="st">&#39; in A:</span>
-<span class="st">    D&#39;</span> <span class="op">=</span> project(D, rho<span class="st">&#39;)</span>
-<span class="st">    B = PrefixSpan(D&#39;</span>, rho<span class="st">&#39;, f)</span>
-<span class="st">    P = P.extend(B)</span>
+  <span class="cf">for</span> a <span class="kw">in</span> A:
+    D2 <span class="op">=</span> project(D, a)
+    B <span class="op">=</span> PrefixSpan(D2, a, f)
+    P <span class="op">=</span> P.extend(B)
 
-<span class="st">  return P</span></code></pre></div>
+  <span class="cf">return</span> P</code></pre></div>
 <p><code>match_freq</code> はマッチする回数.</p>
 <p><code>append</code> および <code>assemble</code> はパターンとトークンから新しいパターンを作る.</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> append(rho, a):
@@ -124,92 +138,74 @@ original paper: <a href=http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumb
   init <span class="op">=</span> rho[<span class="dv">0</span>:<span class="op">-</span><span class="dv">1</span>]
   last <span class="op">=</span> rho[<span class="op">-</span><span class="dv">1</span>]
   <span class="cf">return</span> init.append(last.union({a}))</code></pre></div>
-<p>言い直すと、</p>
-<p>パターン <code>[{w1,c1..c1} .. {wn,cn..cn}]</code> に <code>s</code> をつけたす方法として、</p>
+<p>すなわち, パターン <span class="math inline">\(\[ a_1, a_2, \ldots, a_n \]\)</span> に <span class="math inline">\(s\)</span> を付け足す方法として,</p>
+<ol type="1">
+<li>append
 <ul>
-<li><code>[{w1,c1..c1} .. {wn,cn..cn}, {s}]</code> # append</li>
-<li><code>[{w1,c1..c1} .. {wn,cn..cn, s}]</code> # assemble</li>
-</ul>
-<p>がある、って言ってる.</p>
-<p>あと、コーパスDについてのパターンrhoによるproject とは、 マッチする文だけフィルタリングしたもの.</p>
+<li><span class="math inline">\(\[ a_1, a_2, \ldots, a_n, \{s\} \]\)</span></li>
+</ul></li>
+<li>assemble
+<ul>
+<li><span class="math inline">\(\[ a_1, a_2, \ldots, a_n \cup \{s\} \]\)</span></li>
+</ul></li>
+</ol>
+<p>があると言っている.</p>
+<p>また, コーパス <span class="math inline">\(D\)</span> についてのパターン <span class="math inline">\(\rho\)</span> による project とは, <span class="math inline">\(\rho\)</span> にマッチする文だけフィルタリングしたもの.</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> Project(D, rho):
-  D<span class="st">&#39; = []</span>
-<span class="st">  for_each s in D:</span>
-<span class="st">    D&#39;</span> <span class="op">=</span> D<span class="st">&#39;.append(s) if match(rho, s)</span>
-
-<span class="st">  return D&#39;</span></code></pre></div>
-<p>論文に載ってるのはもうちょっと複雑で、 効率よく動くようになってる. 上の場合、 パターン <code>[w1]</code> を採択したら、 <code>project</code> で それにマッチする文だけを集めて、 次は <code>[w1, w2]</code> を見る.</p>
-<p>しかし、 先頭から作って行くのだから、 <code>project</code> の定義を、マッチした文、じゃなくて、マッチした文のマッチより後ろ部分だけ、にすることで、 <code>[w2]</code>を見ればよくなる.</p>
-<h2 id="尺度">尺度</h2>
-<p>先のアルゴリズムでは、頻度という尺度で、 パターンを採択するか決めていたが、 相互情報量のほうがいいだろう.</p>
-<p>コーパスD に、クラス <code>Y = 1, 2 .. K</code> があって、 変数<code>X</code>はあるパターンがマッチするかどうか(<code>X=0,1</code>) とすると、</p>
-<p>定義通りには、</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="dt">I</span> <span class="dt">X</span> <span class="dt">Y</span> <span class="fu">=</span> sum [ sum [ (p x y) <span class="fu">*</span> log ((p x y) <span class="fu">/</span> (p x) <span class="fu">/</span> (p y))  <span class="fu">|</span> y <span class="ot">&lt;-</span> [<span class="dv">1</span><span class="fu">..</span><span class="dt">K</span>] ] <span class="fu">|</span> x <span class="ot">&lt;-</span> [<span class="dv">0</span>,<span class="dv">1</span>] ]</code></pre></div>
-<p>次のように書き換えると、計算しよい. (計算効率をおとさない)</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">p_given x y <span class="co">-- probability of x given y</span>
-<span class="dt">I</span> <span class="dt">X</span> <span class="dt">Y</span> <span class="fu">=</span> sum [ sum [ (p_given x y) <span class="fu">*</span> (p y) <span class="fu">*</span> log ((p_given x y) <span class="fu">/</span> p_x) <span class="fu">|</span> y <span class="ot">&lt;-</span> [<span class="dv">1</span><span class="fu">..</span><span class="dt">K</span>] ] <span class="fu">|</span> x <span class="ot">&lt;-</span> [<span class="dv">0</span>,<span class="dv">1</span>] ]
-  <span class="kw">where</span>
-    p_x <span class="fu">=</span> sum [ p_given x y&#39; <span class="fu">*</span> p y&#39; <span class="fu">|</span> y&#39; <span class="ot">&lt;-</span> [<span class="dv">1</span> <span class="fu">..</span> <span class="dt">K</span>] ]</code></pre></div>
-<p>で、えっと、あるパターン <code>p</code> について の、<code>X</code>に対して そのパターンを拡張した時のそれを <code>XE</code>と書くと、 <span class="math display">\[p(XE=1|y) \leq p(X=1|y)\]</span> が当然なりたつ. したがって、相互情報量の上限 <span class="math display">\[\sup_E I(XE;Y)\]</span> が存在する (まじで？？？).</p>
-<p>改訂版のアルゴリズム <code>ExtendedPrefixSpan</code></p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="kw">def</span> ExtendedPrefixSpan(D, rho, Theta):
-  P <span class="op">=</span> []
-
-  for_each t <span class="kw">in</span> D:
-    rho<span class="st">&#39; = rho.append(t)</span>
-<span class="st">    rho&#39;</span> の相互情報量 が閾値以上なら、
-      P <span class="op">=</span> P.append(rho<span class="st">&#39;)</span>
-
-<span class="st">    else 上限が閾値を超えるなら</span>
-<span class="st">      D&#39;</span> <span class="op">=</span> project(D, rho<span class="st">&#39;)</span>
-<span class="st">      P&#39;</span> <span class="op">=</span> ExtendedPrefixSpan(D<span class="st">&#39;, rho&#39;</span>, Theta)
-      P <span class="op">=</span> P.extend(P<span class="st">&#39;)</span>
-
-<span class="st">  return P</span></code></pre></div>
-<h1 id="word-classes">Word Classes</h1>
-<h2 id="lemma">Lemma</h2>
-<p>canonical form of a word のこと.</p>
+    <span class="cf">return</span> <span class="bu">set</span>(match(rho, s) <span class="cf">for</span> s <span class="kw">in</span> D)</code></pre></div>
+<p>ただし実際には文全体を持たないで, 最小マッチをさせてその後ろ部分 (postfix) だけを持つようにする. そうすると, 次にパターンに付け足す候補はそれの頭１文字だけになる.</p>
+<h3 id="尺度">尺度</h3>
+<p>先のアルゴリズムでは, 頻度という尺度でパターンを採択するか決めていたが, 相互情報量のほうがいいだろう.</p>
+<p>コーパス <span class="math inline">\(D\)</span> の各文にクラス <span class="math inline">\(Y = \{ 1, 2, \ldots, K\}\)</span> が与えられ, また, あるパターン <span class="math inline">\(p\)</span> がマッチするかどうかが <span class="math inline">\(X_p = \{0,1\}\)</span> も与えられているとする. このとき, <span class="math inline">\(X_p, Y\)</span> の間の相互情報量が次で与えられる.</p>
+<p><span class="math display">\[I(X_p;Y) = \sum_{x} \sum{y} p(x,y) \log \frac{p(x,y)}{p(x)p(y)}\]</span></p>
+<p>これは次のように書き換えると計算効率上都合が良くなる.</p>
+<p><span class="math display">\[I(X_p;Y) = \sum_{x} \sum{y} p(x \mid y) p(y) \log \frac{p(x \mid y)}{\sum_{y&#39;} p(x\mid y&#39;)p(y&#39;)}\]</span></p>
+<p>今, パターン <span class="math inline">\(p\)</span> を拡張 (append, assemble) して <span class="math inline">\(p&#39;\)</span> を得た時, 頻度は必ず非増加だから, <span class="math display">\[p(X_p&#39; = 1 \mid y) \leq p(X_p = 1 \mid y)\]</span> である. 従って相互情報量も上から抑えることが出来る. <span class="math display">\[I(X_p&#39;;Y) \leq I(X_p; Y)\]</span></p>
+<p>この値に関して枝刈りをしながらパターンを探索するような方法も考えられる.</p>
+<h2 id="word-classes">Word Classes</h2>
+<p>どんな word class が実用的にありえるか考えてみる.</p>
+<h3 id="lemma-語の標準形">Lemma (語の標準形)</h3>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">{go, goes, going, went gone} <span class="ot">-&gt;</span> go</code></pre></div>
 <p>NLTK WordNet lemmatizer を使う</p>
-<h2 id="word-shape">Word shape</h2>
-<p>大文字の使われ方. 全部大文字になってるか、最初だけか、ドットで連結した大文字（つまり省略形）か.</p>
-<h2 id="pos">POS</h2>
-<p>いわずもがな. Stanford log-lenear POS tagger ってのがあって、 英語と中国語に対して使える？らしいよ.</p>
-<h2 id="named-entity-ne">Named entity (NE)</h2>
+<h3 id="word-shape">Word shape</h3>
+<p>大文字の使われ方. 全部大文字になってるか, 最初だけか, ドットで連結した大文字（つまり省略形）か.</p>
+<h3 id="pos">POS</h3>
+<p>いわずもがな. Stanford log-lenear POS tagger ってのがあって, 英語と中国語に対して使える？らしいよ.</p>
+<h3 id="named-entity-ne">Named entity (NE)</h3>
 <p>テキスト分類についてはこれはすごい大事な素性.</p>
 <pre><code>(sentence, word) -&gt; class ({Location, Person, Organization, Time, Date})</code></pre>
 <p>Stanford conditional random field-based NE recognizer (NER) なるものが良いって.</p>
-<h2 id="liwc-dictionary-89.95">LIWC dictionary ($89.95)</h2>
-<p>Linguistic Inquiry and Word Count (LIWC) は、単語を64の(感情の?)クラスに分類する. Facebookが使った奴. 文脈に依存せず、一つの単語について分析する.</p>
+<h3 id="liwc-dictionary-89.95">LIWC dictionary ($89.95)</h3>
+<p>Linguistic Inquiry and Word Count (LIWC) は, 単語を64の(感情の?)クラスに分類する. Facebookが使った奴. 文脈に依存せず, 一つの単語について分析する.</p>
 <p><a href="http://www.liwc.net/tryonline.php">LIWC: Linguistic Inquiry and Word Count</a></p>
-<h2 id="mpqa-subjectivity-lexicon">MPQA subjectivity lexicon</h2>
+<h3 id="mpqa-subjectivity-lexicon">MPQA subjectivity lexicon</h3>
 <p>under GNU GPL</p>
 <p>自己申告で個人情報送ると即座にダウンロードできる. <a href="http://mpqa.cs.pitt.edu/lexicons/subj_lexicon/">Subjectivity Lexicon | MPQA</a></p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">(word, <span class="dt">POS</span>) <span class="ot">-&gt;</span> <span class="kw">class</span></code></pre></div>
 <p>8222 (word, POS) 登録されてる.</p>
 <pre><code>type=weaksubj len=1 word1=dominate pos1=verb stemmed1=y priorpolarity=negative</code></pre>
-<h2 id="manual">manual</h2>
+<h3 id="manual">manual</h3>
 <blockquote>
 <p>we use various word listsc onstructed by linguists who have looked at data related to some of our tasks.</p>
 </blockquote>
-<p>つまり手作業で、 あるクラスに属する単語のリストを作る． これは、タスクごとに、そのトピックに詳しい人間がやる．</p>
-<p>例えば、後の実験で使った例では、</p>
+<p>つまり手作業で, あるクラスに属する単語のリストを作る. これは, タスクごとに, そのトピックに詳しい人間がやる.</p>
+<p>例えば, 後の実験で使った例では,</p>
 <div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="dt">AGREEMENT</span> <span class="fu">=</span> [right, agree, true]
 <span class="dt">DISAGREEMENT</span> <span class="fu">=</span> [doubt, inappropriate]
 <span class="dt">ALIGNMENT</span> <span class="fu">=</span> <span class="dt">AGREEMENT</span> <span class="fu">++</span> <span class="dt">DISAGREEMENT</span>
 <span class="dt">MODAL</span> <span class="fu">=</span> [could, should]
 <span class="dt">NEGATIVE_DISCOURSE_ORDER</span> <span class="fu">=</span> [however, but, nevertheless]</code></pre></div>
-<h2 id="automatic">automatic</h2>
-<p>1次マルコフモデルを使って、 wordをクラスタリングする． クラスた数は 10, 100, 1000 ってする．</p>
+<h3 id="automatic">automatic</h3>
+<p>1次マルコフモデルを使って, wordをクラスタリングする. クラスた数は 10, 100, 1000 ってする.</p>
 <p>Brown+, 1992 &quot;Class-based n-gram models of natural language&quot;</p>
-<h1 id="実験">実験</h1>
-<p>n-gramと他の素性を使えば十分に分類可能なタスクは してもしょうがないので、 それなりに難しいタスクを３つやる．</p>
+<h3 id="実験">実験</h3>
+<p>n-gramと他の素性を使えば十分に分類可能なタスクは してもしょうがないので, それなりに難しいタスクを３つやる.</p>
 <ul>
 <li>speaker role</li>
 <li>alignment move</li>
 <li>authority claim</li>
 </ul>
-<p>初めに訓練データでパターンを学習して、 n-gramの場合と、パターンの場合を比較する． 公平のために、n-gramは3-gramまで、 パターンも長さ3までにする．</p>
+<p>初めに訓練データでパターンを学習して, n-gramの場合と, パターンの場合を比較する. 公平のために, n-gramは3-gramまで, パターンも長さ3までにする.</p>
 <ul>
 <li>Maximum entropy classification
 <ul>
@@ -217,85 +213,140 @@ original paper: <a href=http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumb
 </ul></li>
 <li>5-fold cross validation</li>
 </ul>
-<h2 id="speaker-role">Speaker role</h2>
-<p>ニュースショーにおける、(人, その人が発した言葉) から、 その人のショーにおける役割をあてる． 役割とは、Host, Guest, Voice bite</p>
+<h4 id="speaker-role">Speaker role</h4>
+<p>ニュースショーにおける, (人, その人が発した言葉) から, その人のショーにおける役割をあてる. 役割とは, Host, Guest, Voice bite</p>
 <p>Liu+ 80%</p>
-<p>48 English talks and 90 Mandarin talks の録音に対して、 REF (Reference human transcripts) と ASR (automatic speech recognition) output (using SRI Decipher ASR system) を対象にする．</p>
-<p>ASR は、結構間違えることに註意． 英語については22.8% 北京語については38.6% くらい、単語/文字を誤る．</p>
+<p>48 English talks and 90 Mandarin talks の録音に対して, REF (Reference human transcripts) と ASR (automatic speech recognition) output (using SRI Decipher ASR system) を対象にする.</p>
+<p>ASR は, 結構間違えることに註意. 英語については22.8% 北京語については38.6% くらい, 単語/文字を誤る.</p>
 <p>kappa = 0.67 / 0.78</p>
-<h2 id="alignment-move">Alignment move</h2>
-<p>ネット上の議論において、 参加者の同意(positive)、異論(negative) を見る． 文に対して、 pos/neg をつける． あるアノテータがposをつけて、あるアノテータがnegを つけたら pos+neg というラベルにする．</p>
+<h4 id="alignment-move">Alignment move</h4>
+<p>ネット上の議論において, 参加者の同意(positive), 異論(negative) を見る. 文に対して, pos/neg をつける. あるアノテータがposをつけて, あるアノテータがnegを つけたら pos+neg というラベルにする.</p>
 <p>実験で使うのは Wikipedia talk page</p>
 <p>211 English pages and 225 Chinese pages</p>
 <p>kappa = 0.50 / 0.53</p>
-<p>で、たまに pos/neg 両方を含むような面倒な文がある． そこで、 pos/none, neg/none の２つの分類器を作って</p>
-<h2 id="authority-claim">Authority claim</h2>
+<p>で, たまに pos/neg 両方を含むような面倒な文がある. そこで, pos/none, neg/none の２つの分類器を作って</p>
+<h4 id="authority-claim">Authority claim</h4>
 <blockquote>
 <p>showing her knowledge or experience with respect to a topic, or using some external evidence to support herself</p>
 </blockquote>
-<p>Marin+, 2010: Unigramで実際けっこういい． (外のページヘの引用とかがある)</p>
+<p>Marin+, 2010: Unigramで実際けっこういい. (外のページヘの引用とかがある)</p>
 <p>339 English pages and 225 Chinese pages</p>
-<p>発言ごとに、authority claimであるかどうか．</p>
+<p>発言ごとに, authority claimであるかどうか.</p>
 <p>kappa = 0.59 / 0.73</p>
-<p>全体の20%がauthority claim であった．</p>
-<h2 id="result">Result</h2>
-<p>表は適宜参照のこと． ここには書くことはしない．</p>
-<p>Table I は、PrefixSpan と、ExtendedPrefixSpan との差を見る． -0.2%から+4.1%とか．</p>
-<p>Table IIからVIIは、baseline (with only n-gram) と、pattern (with each class) との比較．</p>
-<p>Speech role は、REFでもASRでも十分な結果が得られている． つまり、頑強である．</p>
-<p>manualは利用ならば、それが最強</p>
-<p>Wikipedia English pages alignmentについてのパターンとして、</p>
+<p>全体の20%がauthority claim であった.</p>
+<h3 id="result">Result</h3>
+<p>表は適宜参照のこと. ここには書くことはしない.</p>
+<p>Table I は, PrefixSpan と, ExtendedPrefixSpan との差を見る. <span class="math inline">\(-0.2%\)</span> から <span class="math inline">\(+4.1%\)</span> とか.</p>
+<p>Table II から VII は, baseline (with only n-gram) と, pattern (with each class) との比較.</p>
+<p>Speech role は, REFでもASRでも十分な結果が得られている. つまり, 頑強である.</p>
+<p>manualは利用ならば, それが最強</p>
+<p>Wikipedia English pages alignmentについてのパターンとして,</p>
 <pre><code>i ALIGNMENT MODAL
 a POSITIVE #idea</code></pre>
-<p>とか．</p>
-<p>あ、そうそう．英語のパターンの場合は、 ２つのトークンが連続で出現してなくてもマッチするわけだけど、 上のように<code>#</code>というのは、連続であることを意味するらしい． 初めからそうすればいいのにね．</p>
+<p>とか.</p>
+<p>あ, そうそう. 英語のパターンの場合は, ２つのトークンが連続で出現してなくてもマッチするわけだけど, 上のように<code>#</code>というのは, 連続であることを意味するらしい. 初めからそうすればいいのにね.</p>
 <!--
 
-  HTML として pandoc -B で include する.
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
 
-  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
-  markdown で書いてるだろうから例として次のような段落を書けばよい.
+    <div id=toc></div>
 
-```
-## INDEX
-<div id=toc></div>
-```
 
-  used in
-  - /memo/gnuplot
-  - /memo/linux
-  - /memo/imagemagick
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
 
 -->
 <script>
 (function() {
-  var sections = document.getElementsByTagName('h2');
-  var i;
-  var OL = document.createElement('ol');
-  for (i=0; i < sections.length; ++i) {
-    var LI = document.createElement('li');
-    var A = document.createElement('a');
-    A.innerHTML = sections[i].innerHTML;
-    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
-    A.href = '#' + i;
-    LI.appendChild(A);
-    OL.appendChild(LI);
 
-    var PREF = document.createElement('a');
-    PREF.name = i;
-    sections[i].appendChild(PREF);
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
   }
 
-  var done = false;
-  function work() {
-    if (done) return;
-    if ( document.getElementById('toc') === null) return; // no toc element
-    document.getElementById('toc').appendChild(OL);
-    done = true;
-  };
+  function level1() {
 
-  window.onload = work;
-  setTimeout(work,800);
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
 </body>

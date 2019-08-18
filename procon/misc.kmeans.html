@@ -22,179 +22,179 @@
           <div class="article column is-8">
             <h1 id="misc.kmeans">misc.kmeans</h1>
 <h2 id="misc.kmeans.cc"><a href="misc.kmeans.cc" class="uri">misc.kmeans.cc</a></h2>
-<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span>
-<span class="pp">#include </span><span class="im">&lt;stack&gt;</span>
-<span class="pp">#include </span><span class="im">&lt;cmath&gt;</span>
-<span class="pp">#include </span><span class="im">&lt;vector&gt;</span>
-<span class="pp">#include </span><span class="im">&lt;ctime&gt;</span>
-<span class="kw">using</span> <span class="kw">namespace</span> std;
-
-<span class="pp">#define iota(i,n,b,s) for(int i=int(b);i!=int((b)+(s)*(n));i+=(s))</span>
-<span class="pp">#define range(i,n,m) iota(i,(((n)&gt;(m))?((n)-(m)+1):((m)-(n)+1)),(n),((n)&gt;(m)?-1:1))</span>
-<span class="pp">#define rep(i,n) iota(i,(n),0,1)</span>
-
-<span class="pp">#define INF (1e9)</span>
-<span class="pp">#define EPS (1e-9)</span>
-<span class="pp">#define cons(a,b) (make_pair(a,b))</span>
-<span class="pp">#define car(a) (a.first)</span>
-<span class="pp">#define cdr(a) (a.second)</span>
-<span class="pp">#define cadr(a) (car(cdr(a)))</span>
-<span class="pp">#define cddr(a) (cdr(cdr(a)))</span>
-<span class="pp">#define all(a) a.begin(), a.end()</span>
-<span class="pp">#define trace(var) cerr&lt;&lt;&quot;&gt;&gt;&gt; &quot;&lt;&lt;#var&lt;&lt;&quot; = &quot;&lt;&lt;var&lt;&lt;endl;</span>
-
-<span class="kw">template</span>&lt;<span class="kw">class</span> S, <span class="kw">class</span> T&gt;
-ostream&amp; <span class="kw">operator</span>&lt;&lt;(ostream&amp; os, pair&lt;S,T&gt; p) {
-  os &lt;&lt; <span class="st">&#39;(&#39;</span> &lt;&lt; car(p) &lt;&lt; <span class="st">&quot;, &quot;</span> &lt;&lt; cdr(p) &lt;&lt; <span class="st">&#39;)&#39;</span>;
-  <span class="cf">return</span> os;
-}
-
-<span class="kw">template</span>&lt;<span class="kw">class</span> T&gt;
-ostream&amp; <span class="kw">operator</span>&lt;&lt;(ostream&amp; os, vector&lt;T&gt; v) {
-  os &lt;&lt; v[<span class="dv">0</span>];
-  <span class="cf">for</span> (<span class="dt">int</span> i=<span class="dv">1</span>, len=v.size(); i&lt;len; ++i) os &lt;&lt; <span class="st">&#39; &#39;</span> &lt;&lt; v[i];
-  <span class="cf">return</span> os;
-}
-
-<span class="kw">typedef</span> <span class="dt">double</span> Real;
-<span class="kw">typedef</span> pair&lt;Real, Real&gt; P;
-
-<span class="co">/*</span>
-<span class="co"> * k-means</span>
-<span class="co"> *</span>
-<span class="co"> * return vector&lt;int&gt;ids;</span>
-<span class="co"> * ids[i] is the cluster ID of ps[i]</span>
-<span class="co"> */</span>
-
-<span class="co">/* vector operator */</span>
-P <span class="kw">operator</span>+(P&amp;a, P&amp;b) {
-    <span class="cf">return</span> cons(car(a) + car(b), cdr(a) + cdr(b));
-}
-P <span class="kw">operator</span>-(P&amp;a) {
-    <span class="cf">return</span> cons(-car(a), -cdr(a));
-}
-
-P <span class="kw">operator</span>-(P&amp;a, P&amp;b) {
-    <span class="cf">return</span> cons(car(a) - car(b), cdr(a) - cdr(b));
-}
-
-Real Euclidean(P&amp;a, P&amp;b) {
-  P p = a - b;
-  <span class="cf">return</span> sqrt(pow(car(p), <span class="dv">2</span>) + pow(cdr(p), <span class="dv">2</span>));
-}
-
-vector&lt;<span class="dt">int</span>&gt;
-kmeans(<span class="dt">int</span> cluster_N, vector&lt;P&gt;&amp;ps, <span class="dt">int</span> iterator_N = <span class="dv">20</span>) {
-  <span class="dt">int</span> len = ps.size();
-  vector&lt;<span class="dt">int</span>&gt; ids(len);
-
-  vector&lt;P&gt; ms(cluster_N);
-  rep (i, cluster_N) ms[i] = ps[i * len / cluster_N];
-
-  rep (i, iterator_N) {
-    cerr &lt;&lt; <span class="st">&quot;iterate: &quot;</span> &lt;&lt; i &lt;&lt; endl;
-    vector&lt;P&gt; sum(cluster_N, P(<span class="dv">0</span>, <span class="dv">0</span>)); <span class="co">// sum[j] は id j のクラスタの和</span>
-    vector&lt;<span class="dt">int</span>&gt; cod(cluster_N, <span class="dv">0</span>); <span class="co">// id j のクラスタの濃度</span>
-
-    <span class="co">// ps[j] と ms[n] の比較</span>
-    rep (j, len) {
-      <span class="dt">int</span> id = <span class="dv">-1</span>;
-      Real min_d = INF;
-      rep (n, cluster_N) {
-        Real d = Euclidean(ps[j], ms[n]);
-        <span class="cf">if</span> (min_d &gt; d) {
-          min_d = d;
-          id = n;
-        }
-      }
-      ids[j] = id;
-      sum[id] = sum[id] + ps[j];
-      cod[id]++;
-    }
-
-    <span class="co">// update</span>
-    rep (n, cluster_N) {
-      <span class="cf">if</span> (cod[n] == <span class="dv">0</span>) {
-        <span class="co">// fuck</span>
-        ms[n] = ps[rand() % len];
-      } <span class="cf">else</span> {
-        <span class="co">// means</span>
-        P total = sum[n];
-        ms[n] = P(car(total) / cod[n], cdr(total) / cod[n]);
-      }
-    }
-  }
-
-  <span class="cf">return</span> ids;
-}
-
-<span class="at">const</span> <span class="dt">int</span> M = <span class="dv">10</span>;
-Real gaussian_gen() {
-  <span class="at">const</span> <span class="dt">int</span> mu = <span class="dv">10</span>;
-  Real x = <span class="dv">0</span>;
-  rep (j, M) x += Real((rand() % (mu * <span class="dv">2</span>)) - mu);
-  x /= M;
-  <span class="cf">return</span> x;
-}
-
-<span class="dt">int</span> main() {
-  srand(time(NULL));
-
-  <span class="co">/*</span>
-<span class="co">   * Point ps[j] has class ts[j]</span>
-<span class="co">   */</span>
-  vector&lt;P&gt; ps; <span class="co">// seq of point</span>
-  vector&lt;<span class="dt">int</span>&gt; ts; <span class="co">// seq of class</span>
-
-  <span class="at">const</span> <span class="dt">int</span> N = <span class="dv">100</span>;
-  rep (i, N) {
-    <span class="dt">int</span> klass = rand() % <span class="dv">3</span>;
-    Real x = gaussian_gen();
-    Real y = gaussian_gen();
-
-    <span class="co">// give klass by its mean</span>
-    <span class="cf">switch</span> (klass) {
-      <span class="cf">case</span> <span class="dv">0</span>:
-        <span class="cf">break</span>;
-      <span class="cf">case</span> <span class="dv">1</span>:
-        x += <span class="dv">10</span>;
-        y += <span class="dv">10</span>;
-        <span class="cf">break</span>;
-      <span class="cf">case</span> <span class="dv">2</span>:
-        x += <span class="dv">5</span>;
-        y += <span class="dv">5</span>;
-        <span class="cf">break</span>;
-    }
-    ps.push_back(P(x, y));
-    ts.push_back(klass);
-  }
-
-  <span class="kw">auto</span> result = kmeans(<span class="dv">3</span>, ps);
-
-  <span class="co">/*</span>
-<span class="co">   * IDは違うので、単純に比較はできない。</span>
-<span class="co">   */</span>
-  <span class="dt">float</span> acc = <span class="dv">0</span>;
-  <span class="cf">for</span> (<span class="dt">int</span> id0 = <span class="dv">0</span>; id0 &lt; <span class="dv">3</span>; ++id0) {
-    <span class="cf">for</span> (<span class="dt">int</span> id1 = <span class="dv">0</span>; id1 &lt; <span class="dv">3</span>; ++id1) {
-      <span class="cf">if</span> (id0 == id1) <span class="cf">continue</span>;
-      <span class="cf">for</span> (<span class="dt">int</span> id2 = <span class="dv">0</span>; id2 &lt; <span class="dv">3</span>; ++id2) {
-        <span class="cf">if</span> (id0 == id2) <span class="cf">continue</span>;
-        <span class="cf">if</span> (id1 == id2) <span class="cf">continue</span>;
-        <span class="dt">int</span> n = <span class="dv">0</span>;
-        rep (i, N) {
-          <span class="cf">if</span> (ts[i] == <span class="dv">0</span> &amp;&amp; result[i] == id0) ++n;
-          <span class="cf">else</span> <span class="cf">if</span> (ts[i] == <span class="dv">1</span> &amp;&amp; result[i] == id1) ++n;
-          <span class="cf">else</span> <span class="cf">if</span> (ts[i] == <span class="dv">2</span> &amp;&amp; result[i] == id2) ++n;
-        }
-        acc = max&lt;<span class="dt">float</span>&gt;(acc, <span class="dt">float</span>(n) / <span class="dt">float</span>(N));
-      }
-    }
-  }
-  cerr &lt;&lt; <span class="st">&quot;Accuracy: &quot;</span> &lt;&lt; (acc * <span class="dv">100</span>) &lt;&lt; <span class="st">&quot;%&quot;</span> &lt;&lt; endl;
-
-  <span class="cf">return</span> <span class="dv">0</span>;
-}</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb1-1" title="1"><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="pp">#include </span><span class="im">&lt;stack&gt;</span></a>
+<a class="sourceLine" id="cb1-3" title="3"><span class="pp">#include </span><span class="im">&lt;cmath&gt;</span></a>
+<a class="sourceLine" id="cb1-4" title="4"><span class="pp">#include </span><span class="im">&lt;vector&gt;</span></a>
+<a class="sourceLine" id="cb1-5" title="5"><span class="pp">#include </span><span class="im">&lt;ctime&gt;</span></a>
+<a class="sourceLine" id="cb1-6" title="6"><span class="kw">using</span> <span class="kw">namespace</span> std;</a>
+<a class="sourceLine" id="cb1-7" title="7"></a>
+<a class="sourceLine" id="cb1-8" title="8"><span class="pp">#define iota</span>(i,n,b,s)<span class="pp"> </span><span class="cf">for</span>(<span class="dt">int</span><span class="pp"> </span>i=<span class="dt">int</span>(b);i!=<span class="dt">int</span>((b)+(s)*(n));i+=(s))</a>
+<a class="sourceLine" id="cb1-9" title="9"><span class="pp">#define range</span>(i,n,m)<span class="pp"> </span>iota(i,(((n)&gt;(m))?((n)-(m)+<span class="dv">1</span>):((m)-(n)+<span class="dv">1</span>)),(n),((n)&gt;(m)?-<span class="dv">1</span>:<span class="dv">1</span>))</a>
+<a class="sourceLine" id="cb1-10" title="10"><span class="pp">#define rep</span>(i,n)<span class="pp"> </span>iota(i,(n),<span class="dv">0</span>,<span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb1-11" title="11"></a>
+<a class="sourceLine" id="cb1-12" title="12"><span class="pp">#define INF </span>(<span class="fl">1e9</span>)</a>
+<a class="sourceLine" id="cb1-13" title="13"><span class="pp">#define EPS </span>(<span class="fl">1e-9</span>)</a>
+<a class="sourceLine" id="cb1-14" title="14"><span class="pp">#define cons</span>(a,b)<span class="pp"> </span>(make_pair(a,b))</a>
+<a class="sourceLine" id="cb1-15" title="15"><span class="pp">#define car</span>(a)<span class="pp"> </span>(a.first)</a>
+<a class="sourceLine" id="cb1-16" title="16"><span class="pp">#define cdr</span>(a)<span class="pp"> </span>(a.second)</a>
+<a class="sourceLine" id="cb1-17" title="17"><span class="pp">#define cadr</span>(a)<span class="pp"> </span>(car(cdr(a)))</a>
+<a class="sourceLine" id="cb1-18" title="18"><span class="pp">#define cddr</span>(a)<span class="pp"> </span>(cdr(cdr(a)))</a>
+<a class="sourceLine" id="cb1-19" title="19"><span class="pp">#define all</span>(a)<span class="pp"> </span>a.begin(),<span class="pp"> </span>a.end()</a>
+<a class="sourceLine" id="cb1-20" title="20"><span class="pp">#define trace</span>(var)<span class="pp"> </span>cerr&lt;&lt;<span class="st">&quot;&gt;&gt;&gt; &quot;</span>&lt;&lt;<span class="pp">#</span>var&lt;&lt;<span class="st">&quot; = &quot;</span>&lt;&lt;var&lt;&lt;endl;</a>
+<a class="sourceLine" id="cb1-21" title="21"></a>
+<a class="sourceLine" id="cb1-22" title="22"><span class="kw">template</span>&lt;<span class="kw">class</span> S, <span class="kw">class</span> T&gt;</a>
+<a class="sourceLine" id="cb1-23" title="23">ostream&amp; <span class="kw">operator</span>&lt;&lt;(ostream&amp; os, pair&lt;S,T&gt; p) {</a>
+<a class="sourceLine" id="cb1-24" title="24">  os &lt;&lt; <span class="ch">&#39;(&#39;</span> &lt;&lt; car(p) &lt;&lt; <span class="st">&quot;, &quot;</span> &lt;&lt; cdr(p) &lt;&lt; <span class="ch">&#39;)&#39;</span>;</a>
+<a class="sourceLine" id="cb1-25" title="25">  <span class="cf">return</span> os;</a>
+<a class="sourceLine" id="cb1-26" title="26">}</a>
+<a class="sourceLine" id="cb1-27" title="27"></a>
+<a class="sourceLine" id="cb1-28" title="28"><span class="kw">template</span>&lt;<span class="kw">class</span> T&gt;</a>
+<a class="sourceLine" id="cb1-29" title="29">ostream&amp; <span class="kw">operator</span>&lt;&lt;(ostream&amp; os, vector&lt;T&gt; v) {</a>
+<a class="sourceLine" id="cb1-30" title="30">  os &lt;&lt; v[<span class="dv">0</span>];</a>
+<a class="sourceLine" id="cb1-31" title="31">  <span class="cf">for</span> (<span class="dt">int</span> i=<span class="dv">1</span>, len=v.size(); i&lt;len; ++i) os &lt;&lt; <span class="ch">&#39; &#39;</span> &lt;&lt; v[i];</a>
+<a class="sourceLine" id="cb1-32" title="32">  <span class="cf">return</span> os;</a>
+<a class="sourceLine" id="cb1-33" title="33">}</a>
+<a class="sourceLine" id="cb1-34" title="34"></a>
+<a class="sourceLine" id="cb1-35" title="35"><span class="kw">typedef</span> <span class="dt">double</span> Real;</a>
+<a class="sourceLine" id="cb1-36" title="36"><span class="kw">typedef</span> pair&lt;Real, Real&gt; P;</a>
+<a class="sourceLine" id="cb1-37" title="37"></a>
+<a class="sourceLine" id="cb1-38" title="38"><span class="co">/*</span></a>
+<a class="sourceLine" id="cb1-39" title="39"><span class="co"> * k-means</span></a>
+<a class="sourceLine" id="cb1-40" title="40"><span class="co"> *</span></a>
+<a class="sourceLine" id="cb1-41" title="41"><span class="co"> * return vector&lt;int&gt;ids;</span></a>
+<a class="sourceLine" id="cb1-42" title="42"><span class="co"> * ids[i] is the cluster ID of ps[i]</span></a>
+<a class="sourceLine" id="cb1-43" title="43"><span class="co"> */</span></a>
+<a class="sourceLine" id="cb1-44" title="44"></a>
+<a class="sourceLine" id="cb1-45" title="45"><span class="co">/* vector operator */</span></a>
+<a class="sourceLine" id="cb1-46" title="46">P <span class="kw">operator</span>+(P&amp;a, P&amp;b) {</a>
+<a class="sourceLine" id="cb1-47" title="47">    <span class="cf">return</span> cons(car(a) + car(b), cdr(a) + cdr(b));</a>
+<a class="sourceLine" id="cb1-48" title="48">}</a>
+<a class="sourceLine" id="cb1-49" title="49">P <span class="kw">operator</span>-(P&amp;a) {</a>
+<a class="sourceLine" id="cb1-50" title="50">    <span class="cf">return</span> cons(-car(a), -cdr(a));</a>
+<a class="sourceLine" id="cb1-51" title="51">}</a>
+<a class="sourceLine" id="cb1-52" title="52"></a>
+<a class="sourceLine" id="cb1-53" title="53">P <span class="kw">operator</span>-(P&amp;a, P&amp;b) {</a>
+<a class="sourceLine" id="cb1-54" title="54">    <span class="cf">return</span> cons(car(a) - car(b), cdr(a) - cdr(b));</a>
+<a class="sourceLine" id="cb1-55" title="55">}</a>
+<a class="sourceLine" id="cb1-56" title="56"></a>
+<a class="sourceLine" id="cb1-57" title="57">Real Euclidean(P&amp;a, P&amp;b) {</a>
+<a class="sourceLine" id="cb1-58" title="58">  P p = a - b;</a>
+<a class="sourceLine" id="cb1-59" title="59">  <span class="cf">return</span> sqrt(pow(car(p), <span class="dv">2</span>) + pow(cdr(p), <span class="dv">2</span>));</a>
+<a class="sourceLine" id="cb1-60" title="60">}</a>
+<a class="sourceLine" id="cb1-61" title="61"></a>
+<a class="sourceLine" id="cb1-62" title="62">vector&lt;<span class="dt">int</span>&gt;</a>
+<a class="sourceLine" id="cb1-63" title="63">kmeans(<span class="dt">int</span> cluster_N, vector&lt;P&gt;&amp;ps, <span class="dt">int</span> iterator_N = <span class="dv">20</span>) {</a>
+<a class="sourceLine" id="cb1-64" title="64">  <span class="dt">int</span> len = ps.size();</a>
+<a class="sourceLine" id="cb1-65" title="65">  vector&lt;<span class="dt">int</span>&gt; ids(len);</a>
+<a class="sourceLine" id="cb1-66" title="66"></a>
+<a class="sourceLine" id="cb1-67" title="67">  vector&lt;P&gt; ms(cluster_N);</a>
+<a class="sourceLine" id="cb1-68" title="68">  rep (i, cluster_N) ms[i] = ps[i * len / cluster_N];</a>
+<a class="sourceLine" id="cb1-69" title="69"></a>
+<a class="sourceLine" id="cb1-70" title="70">  rep (i, iterator_N) {</a>
+<a class="sourceLine" id="cb1-71" title="71">    cerr &lt;&lt; <span class="st">&quot;iterate: &quot;</span> &lt;&lt; i &lt;&lt; endl;</a>
+<a class="sourceLine" id="cb1-72" title="72">    vector&lt;P&gt; sum(cluster_N, P(<span class="dv">0</span>, <span class="dv">0</span>)); <span class="co">// sum[j] は id j のクラスタの和</span></a>
+<a class="sourceLine" id="cb1-73" title="73">    vector&lt;<span class="dt">int</span>&gt; cod(cluster_N, <span class="dv">0</span>); <span class="co">// id j のクラスタの濃度</span></a>
+<a class="sourceLine" id="cb1-74" title="74"></a>
+<a class="sourceLine" id="cb1-75" title="75">    <span class="co">// ps[j] と ms[n] の比較</span></a>
+<a class="sourceLine" id="cb1-76" title="76">    rep (j, len) {</a>
+<a class="sourceLine" id="cb1-77" title="77">      <span class="dt">int</span> id = -<span class="dv">1</span>;</a>
+<a class="sourceLine" id="cb1-78" title="78">      Real min_d = INF;</a>
+<a class="sourceLine" id="cb1-79" title="79">      rep (n, cluster_N) {</a>
+<a class="sourceLine" id="cb1-80" title="80">        Real d = Euclidean(ps[j], ms[n]);</a>
+<a class="sourceLine" id="cb1-81" title="81">        <span class="cf">if</span> (min_d &gt; d) {</a>
+<a class="sourceLine" id="cb1-82" title="82">          min_d = d;</a>
+<a class="sourceLine" id="cb1-83" title="83">          id = n;</a>
+<a class="sourceLine" id="cb1-84" title="84">        }</a>
+<a class="sourceLine" id="cb1-85" title="85">      }</a>
+<a class="sourceLine" id="cb1-86" title="86">      ids[j] = id;</a>
+<a class="sourceLine" id="cb1-87" title="87">      sum[id] = sum[id] + ps[j];</a>
+<a class="sourceLine" id="cb1-88" title="88">      cod[id]++;</a>
+<a class="sourceLine" id="cb1-89" title="89">    }</a>
+<a class="sourceLine" id="cb1-90" title="90"></a>
+<a class="sourceLine" id="cb1-91" title="91">    <span class="co">// update</span></a>
+<a class="sourceLine" id="cb1-92" title="92">    rep (n, cluster_N) {</a>
+<a class="sourceLine" id="cb1-93" title="93">      <span class="cf">if</span> (cod[n] == <span class="dv">0</span>) {</a>
+<a class="sourceLine" id="cb1-94" title="94">        <span class="co">// fuck</span></a>
+<a class="sourceLine" id="cb1-95" title="95">        ms[n] = ps[rand() % len];</a>
+<a class="sourceLine" id="cb1-96" title="96">      } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb1-97" title="97">        <span class="co">// means</span></a>
+<a class="sourceLine" id="cb1-98" title="98">        P total = sum[n];</a>
+<a class="sourceLine" id="cb1-99" title="99">        ms[n] = P(car(total) / cod[n], cdr(total) / cod[n]);</a>
+<a class="sourceLine" id="cb1-100" title="100">      }</a>
+<a class="sourceLine" id="cb1-101" title="101">    }</a>
+<a class="sourceLine" id="cb1-102" title="102">  }</a>
+<a class="sourceLine" id="cb1-103" title="103"></a>
+<a class="sourceLine" id="cb1-104" title="104">  <span class="cf">return</span> ids;</a>
+<a class="sourceLine" id="cb1-105" title="105">}</a>
+<a class="sourceLine" id="cb1-106" title="106"></a>
+<a class="sourceLine" id="cb1-107" title="107"><span class="at">const</span> <span class="dt">int</span> M = <span class="dv">10</span>;</a>
+<a class="sourceLine" id="cb1-108" title="108">Real gaussian_gen() {</a>
+<a class="sourceLine" id="cb1-109" title="109">  <span class="at">const</span> <span class="dt">int</span> mu = <span class="dv">10</span>;</a>
+<a class="sourceLine" id="cb1-110" title="110">  Real x = <span class="dv">0</span>;</a>
+<a class="sourceLine" id="cb1-111" title="111">  rep (j, M) x += Real((rand() % (mu * <span class="dv">2</span>)) - mu);</a>
+<a class="sourceLine" id="cb1-112" title="112">  x /= M;</a>
+<a class="sourceLine" id="cb1-113" title="113">  <span class="cf">return</span> x;</a>
+<a class="sourceLine" id="cb1-114" title="114">}</a>
+<a class="sourceLine" id="cb1-115" title="115"></a>
+<a class="sourceLine" id="cb1-116" title="116"><span class="dt">int</span> main() {</a>
+<a class="sourceLine" id="cb1-117" title="117">  srand(time(NULL));</a>
+<a class="sourceLine" id="cb1-118" title="118"></a>
+<a class="sourceLine" id="cb1-119" title="119">  <span class="co">/*</span></a>
+<a class="sourceLine" id="cb1-120" title="120"><span class="co">   * Point ps[j] has class ts[j]</span></a>
+<a class="sourceLine" id="cb1-121" title="121"><span class="co">   */</span></a>
+<a class="sourceLine" id="cb1-122" title="122">  vector&lt;P&gt; ps; <span class="co">// seq of point</span></a>
+<a class="sourceLine" id="cb1-123" title="123">  vector&lt;<span class="dt">int</span>&gt; ts; <span class="co">// seq of class</span></a>
+<a class="sourceLine" id="cb1-124" title="124"></a>
+<a class="sourceLine" id="cb1-125" title="125">  <span class="at">const</span> <span class="dt">int</span> N = <span class="dv">100</span>;</a>
+<a class="sourceLine" id="cb1-126" title="126">  rep (i, N) {</a>
+<a class="sourceLine" id="cb1-127" title="127">    <span class="dt">int</span> klass = rand() % <span class="dv">3</span>;</a>
+<a class="sourceLine" id="cb1-128" title="128">    Real x = gaussian_gen();</a>
+<a class="sourceLine" id="cb1-129" title="129">    Real y = gaussian_gen();</a>
+<a class="sourceLine" id="cb1-130" title="130"></a>
+<a class="sourceLine" id="cb1-131" title="131">    <span class="co">// give klass by its mean</span></a>
+<a class="sourceLine" id="cb1-132" title="132">    <span class="cf">switch</span> (klass) {</a>
+<a class="sourceLine" id="cb1-133" title="133">      <span class="cf">case</span> <span class="dv">0</span>:</a>
+<a class="sourceLine" id="cb1-134" title="134">        <span class="cf">break</span>;</a>
+<a class="sourceLine" id="cb1-135" title="135">      <span class="cf">case</span> <span class="dv">1</span>:</a>
+<a class="sourceLine" id="cb1-136" title="136">        x += <span class="dv">10</span>;</a>
+<a class="sourceLine" id="cb1-137" title="137">        y += <span class="dv">10</span>;</a>
+<a class="sourceLine" id="cb1-138" title="138">        <span class="cf">break</span>;</a>
+<a class="sourceLine" id="cb1-139" title="139">      <span class="cf">case</span> <span class="dv">2</span>:</a>
+<a class="sourceLine" id="cb1-140" title="140">        x += <span class="dv">5</span>;</a>
+<a class="sourceLine" id="cb1-141" title="141">        y += <span class="dv">5</span>;</a>
+<a class="sourceLine" id="cb1-142" title="142">        <span class="cf">break</span>;</a>
+<a class="sourceLine" id="cb1-143" title="143">    }</a>
+<a class="sourceLine" id="cb1-144" title="144">    ps.push_back(P(x, y));</a>
+<a class="sourceLine" id="cb1-145" title="145">    ts.push_back(klass);</a>
+<a class="sourceLine" id="cb1-146" title="146">  }</a>
+<a class="sourceLine" id="cb1-147" title="147"></a>
+<a class="sourceLine" id="cb1-148" title="148">  <span class="kw">auto</span> result = kmeans(<span class="dv">3</span>, ps);</a>
+<a class="sourceLine" id="cb1-149" title="149"></a>
+<a class="sourceLine" id="cb1-150" title="150">  <span class="co">/*</span></a>
+<a class="sourceLine" id="cb1-151" title="151"><span class="co">   * IDは違うので、単純に比較はできない。</span></a>
+<a class="sourceLine" id="cb1-152" title="152"><span class="co">   */</span></a>
+<a class="sourceLine" id="cb1-153" title="153">  <span class="dt">float</span> acc = <span class="dv">0</span>;</a>
+<a class="sourceLine" id="cb1-154" title="154">  <span class="cf">for</span> (<span class="dt">int</span> id0 = <span class="dv">0</span>; id0 &lt; <span class="dv">3</span>; ++id0) {</a>
+<a class="sourceLine" id="cb1-155" title="155">    <span class="cf">for</span> (<span class="dt">int</span> id1 = <span class="dv">0</span>; id1 &lt; <span class="dv">3</span>; ++id1) {</a>
+<a class="sourceLine" id="cb1-156" title="156">      <span class="cf">if</span> (id0 == id1) <span class="cf">continue</span>;</a>
+<a class="sourceLine" id="cb1-157" title="157">      <span class="cf">for</span> (<span class="dt">int</span> id2 = <span class="dv">0</span>; id2 &lt; <span class="dv">3</span>; ++id2) {</a>
+<a class="sourceLine" id="cb1-158" title="158">        <span class="cf">if</span> (id0 == id2) <span class="cf">continue</span>;</a>
+<a class="sourceLine" id="cb1-159" title="159">        <span class="cf">if</span> (id1 == id2) <span class="cf">continue</span>;</a>
+<a class="sourceLine" id="cb1-160" title="160">        <span class="dt">int</span> n = <span class="dv">0</span>;</a>
+<a class="sourceLine" id="cb1-161" title="161">        rep (i, N) {</a>
+<a class="sourceLine" id="cb1-162" title="162">          <span class="cf">if</span> (ts[i] == <span class="dv">0</span> &amp;&amp; result[i] == id0) ++n;</a>
+<a class="sourceLine" id="cb1-163" title="163">          <span class="cf">else</span> <span class="cf">if</span> (ts[i] == <span class="dv">1</span> &amp;&amp; result[i] == id1) ++n;</a>
+<a class="sourceLine" id="cb1-164" title="164">          <span class="cf">else</span> <span class="cf">if</span> (ts[i] == <span class="dv">2</span> &amp;&amp; result[i] == id2) ++n;</a>
+<a class="sourceLine" id="cb1-165" title="165">        }</a>
+<a class="sourceLine" id="cb1-166" title="166">        acc = max&lt;<span class="dt">float</span>&gt;(acc, <span class="dt">float</span>(n) / <span class="dt">float</span>(N));</a>
+<a class="sourceLine" id="cb1-167" title="167">      }</a>
+<a class="sourceLine" id="cb1-168" title="168">    }</a>
+<a class="sourceLine" id="cb1-169" title="169">  }</a>
+<a class="sourceLine" id="cb1-170" title="170">  cerr &lt;&lt; <span class="st">&quot;Accuracy: &quot;</span> &lt;&lt; (acc * <span class="dv">100</span>) &lt;&lt; <span class="st">&quot;%&quot;</span> &lt;&lt; endl;</a>
+<a class="sourceLine" id="cb1-171" title="171"></a>
+<a class="sourceLine" id="cb1-172" title="172">  <span class="cf">return</span> <span class="dv">0</span>;</a>
+<a class="sourceLine" id="cb1-173" title="173">}</a></code></pre></div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
@@ -204,6 +204,7 @@ Real gaussian_gen() {
 <ul>
 <li><a href="graph.dij.html">Dijkstra</a></li>
 <li><a href="graph.wall.html">Warshall-Floyd</a></li>
+<li><a href="graph.bellmanford.html">Bellman-Ford</a></li>
 </ul>
 <h2 id="最小全域木">最小全域木</h2>
 <ul>
@@ -245,7 +246,7 @@ Real gaussian_gen() {
 <h2 id="行列式">行列式</h2>
 <ul>
 <li><a href="matrix.det.naiiv.html">定義に拠る算法</a></li>
-<li><a href="matrix.det.cramer.html">Cramer's rule</a></li>
+<li><a href="matrix.det.cramer.html">Cramer’s rule</a></li>
 </ul>
 </details>
 
@@ -341,6 +342,7 @@ Real gaussian_gen() {
 <h2 id="自然数">自然数</h2>
 <ul>
 <li><a href="nat.n_vs_nn.html">自然数の対 ↔ 自然数 の変換</a></li>
+<li><a href="nat.mex.html">最小自由数 (最小除外数)</a></li>
 </ul>
 <h2 id="組み合わせ">組み合わせ</h2>
 <ul>

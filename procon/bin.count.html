@@ -23,24 +23,24 @@
             <h1 id="bin.count">bin.count</h1>
 <p>昇順に整列した整数列 <code>xs</code> と整数 <code>x</code> が与えられたとき, <code>x</code> が何度出現するかを二分探索で調べる.</p>
 <p><a href="bin.search.html">二分探索</a> を <span class="math inline">\(P(n) = (n \geq x)\)</span> としてやれば, <span class="math inline">\(P(n+1)-P(n)\)</span> が答え. ただし境界だけ注意.</p>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> bsearch(xs: &amp;<span class="dt">Vec</span>&lt;<span class="dt">i64</span>&gt;, x: <span class="dt">i64</span>) -&gt; <span class="dt">usize</span> <span class="op">{</span>
-    <span class="kw">if</span> xs<span class="op">[</span><span class="dv">0</span><span class="op">]</span> &gt;= x <span class="op">{</span> <span class="kw">return</span> <span class="dv">0</span> <span class="op">}</span>
-    <span class="kw">let</span> <span class="kw">mut</span> left = <span class="dv">0</span>;  <span class="co">// xs[left] &lt; x</span>
-    <span class="kw">let</span> <span class="kw">mut</span> right = xs.len();  <span class="co">// xs[right] &gt;= x</span>
-    <span class="kw">while</span> left + <span class="dv">2</span> &lt;= right <span class="op">{</span>
-        <span class="kw">let</span> mid = (left + right) / <span class="dv">2</span>;
-        <span class="kw">if</span> xs<span class="op">[</span>mid<span class="op">]</span> &lt; x <span class="op">{</span>
-            left = mid;
-        <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
-            right = mid;
-        <span class="op">}</span>
-    <span class="op">}</span>
-    right
-<span class="op">}</span>
-
-<span class="kw">fn</span> bcount(xs: &amp;<span class="dt">Vec</span>&lt;<span class="dt">i64</span>&gt;, x: <span class="dt">i64</span>) -&gt; <span class="dt">usize</span> <span class="op">{</span>
-    bsearch(&amp;xs, x + <span class="dv">1</span>) - bsearch(&amp;xs, x)
-<span class="op">}</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">fn</span> bsearch(xs: &amp;<span class="dt">Vec</span>&lt;<span class="dt">i64</span>&gt;, x: <span class="dt">i64</span>) -&gt; <span class="dt">usize</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-2" title="2">    <span class="kw">if</span> xs<span class="op">[</span><span class="dv">0</span><span class="op">]</span> &gt;= x <span class="op">{</span> <span class="kw">return</span> <span class="dv">0</span> <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-3" title="3">    <span class="kw">let</span> <span class="kw">mut</span> left = <span class="dv">0</span>;  <span class="co">// xs[left] &lt; x</span></a>
+<a class="sourceLine" id="cb1-4" title="4">    <span class="kw">let</span> <span class="kw">mut</span> right = xs.len();  <span class="co">// xs[right] &gt;= x</span></a>
+<a class="sourceLine" id="cb1-5" title="5">    <span class="kw">while</span> left + <span class="dv">2</span> &lt;= right <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-6" title="6">        <span class="kw">let</span> mid = (left + right) / <span class="dv">2</span>;</a>
+<a class="sourceLine" id="cb1-7" title="7">        <span class="kw">if</span> xs<span class="op">[</span>mid<span class="op">]</span> &lt; x <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-8" title="8">            left = mid;</a>
+<a class="sourceLine" id="cb1-9" title="9">        <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-10" title="10">            right = mid;</a>
+<a class="sourceLine" id="cb1-11" title="11">        <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-12" title="12">    <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-13" title="13">    right</a>
+<a class="sourceLine" id="cb1-14" title="14"><span class="op">}</span></a>
+<a class="sourceLine" id="cb1-15" title="15"></a>
+<a class="sourceLine" id="cb1-16" title="16"><span class="kw">fn</span> bcount(xs: &amp;<span class="dt">Vec</span>&lt;<span class="dt">i64</span>&gt;, x: <span class="dt">i64</span>) -&gt; <span class="dt">usize</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-17" title="17">    bsearch(&amp;xs, x + <span class="dv">1</span>) - bsearch(&amp;xs, x)</a>
+<a class="sourceLine" id="cb1-18" title="18"><span class="op">}</span></a></code></pre></div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
@@ -50,6 +50,7 @@
 <ul>
 <li><a href="graph.dij.html">Dijkstra</a></li>
 <li><a href="graph.wall.html">Warshall-Floyd</a></li>
+<li><a href="graph.bellmanford.html">Bellman-Ford</a></li>
 </ul>
 <h2 id="最小全域木">最小全域木</h2>
 <ul>
@@ -91,7 +92,7 @@
 <h2 id="行列式">行列式</h2>
 <ul>
 <li><a href="matrix.det.naiiv.html">定義に拠る算法</a></li>
-<li><a href="matrix.det.cramer.html">Cramer's rule</a></li>
+<li><a href="matrix.det.cramer.html">Cramer’s rule</a></li>
 </ul>
 </details>
 
@@ -187,6 +188,7 @@
 <h2 id="自然数">自然数</h2>
 <ul>
 <li><a href="nat.n_vs_nn.html">自然数の対 ↔ 自然数 の変換</a></li>
+<li><a href="nat.mex.html">最小自由数 (最小除外数)</a></li>
 </ul>
 <h2 id="組み合わせ">組み合わせ</h2>
 <ul>

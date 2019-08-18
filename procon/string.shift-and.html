@@ -36,86 +36,86 @@
 <li>マシン依存</li>
 </ul></li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> shift_and(text: &amp;<span class="dt">String</span>, pattern: &amp;<span class="dt">String</span>) -&gt; <span class="dt">Option</span>&lt;<span class="dt">usize</span>&gt; <span class="op">{</span>
-    <span class="kw">let</span> text_chars = text.chars().map(|c| c <span class="kw">as</span> <span class="dt">usize</span>).collect::&lt;<span class="dt">Vec</span>&lt;_&gt;&gt;();
-    <span class="kw">let</span> pattern_chars = pattern.chars().map(|c| c <span class="kw">as</span> <span class="dt">usize</span>).collect::&lt;<span class="dt">Vec</span>&lt;_&gt;&gt;();
-    <span class="kw">let</span> n = text.len();
-    <span class="kw">let</span> m = pattern.len();
-    <span class="kw">let</span> g = <span class="dv">1</span> &lt;&lt; (m - <span class="dv">1</span>);
-
-    <span class="kw">let</span> <span class="kw">mut</span> d = <span class="op">[</span><span class="dv">0</span>; <span class="dv">300</span><span class="op">]</span>;
-    <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.m <span class="op">{</span> d<span class="op">[</span>pattern_chars<span class="op">[</span>i<span class="op">]]</span> ^= <span class="dv">1</span> &lt;&lt; i <span class="op">}</span>
-
-    <span class="kw">let</span> <span class="kw">mut</span> x: <span class="dt">usize</span> = <span class="dv">0</span>;
-    <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.n <span class="op">{</span>
-        x = (<span class="dv">1</span> | (x &lt;&lt; <span class="dv">1</span>)) &amp; d<span class="op">[</span>text_chars<span class="op">[</span>i<span class="op">]]</span>;
-        <span class="kw">if</span> x &amp; g &gt; <span class="dv">0</span> <span class="op">{</span> <span class="kw">return</span> <span class="cn">Some</span>(i+<span class="dv">1</span>-m) <span class="op">}</span>
-    <span class="op">}</span>
-    <span class="kw">return</span> <span class="cn">None</span>
-<span class="op">}</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">fn</span> shift_and(text: &amp;<span class="dt">String</span>, pattern: &amp;<span class="dt">String</span>) -&gt; <span class="dt">Option</span>&lt;<span class="dt">usize</span>&gt; <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-2" title="2">    <span class="kw">let</span> text_chars = text.chars().map(|c| c <span class="kw">as</span> <span class="dt">usize</span>).<span class="pp">collect::</span>&lt;<span class="dt">Vec</span>&lt;_&gt;&gt;();</a>
+<a class="sourceLine" id="cb1-3" title="3">    <span class="kw">let</span> pattern_chars = pattern.chars().map(|c| c <span class="kw">as</span> <span class="dt">usize</span>).<span class="pp">collect::</span>&lt;<span class="dt">Vec</span>&lt;_&gt;&gt;();</a>
+<a class="sourceLine" id="cb1-4" title="4">    <span class="kw">let</span> n = text.len();</a>
+<a class="sourceLine" id="cb1-5" title="5">    <span class="kw">let</span> m = pattern.len();</a>
+<a class="sourceLine" id="cb1-6" title="6">    <span class="kw">let</span> g = <span class="dv">1</span> &lt;&lt; (m - <span class="dv">1</span>);</a>
+<a class="sourceLine" id="cb1-7" title="7"></a>
+<a class="sourceLine" id="cb1-8" title="8">    <span class="kw">let</span> <span class="kw">mut</span> d = <span class="op">[</span><span class="dv">0</span>; <span class="dv">300</span><span class="op">]</span>;</a>
+<a class="sourceLine" id="cb1-9" title="9">    <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0</span>..m <span class="op">{</span> d<span class="op">[</span>pattern_chars<span class="op">[</span>i<span class="op">]]</span> ^= <span class="dv">1</span> &lt;&lt; i <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-10" title="10"></a>
+<a class="sourceLine" id="cb1-11" title="11">    <span class="kw">let</span> <span class="kw">mut</span> x: <span class="dt">usize</span> = <span class="dv">0</span>;</a>
+<a class="sourceLine" id="cb1-12" title="12">    <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0</span>..n <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-13" title="13">        x = (<span class="dv">1</span> | (x &lt;&lt; <span class="dv">1</span>)) &amp; d<span class="op">[</span>text_chars<span class="op">[</span>i<span class="op">]]</span>;</a>
+<a class="sourceLine" id="cb1-14" title="14">        <span class="kw">if</span> x &amp; g &gt; <span class="dv">0</span> <span class="op">{</span> <span class="kw">return</span> <span class="cn">Some</span>(i+<span class="dv">1</span>-m) <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-15" title="15">    <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-16" title="16">    <span class="kw">return</span> <span class="cn">None</span></a>
+<a class="sourceLine" id="cb1-17" title="17"><span class="op">}</span></a></code></pre></div>
 <h2 id="example">Example</h2>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> test(s: &amp;<span class="dt">str</span>, t: &amp;<span class="dt">str</span>) <span class="op">{</span>
-    <span class="kw">let</span> a = <span class="dt">String</span>::from(s);
-    <span class="kw">let</span> b = <span class="dt">String</span>::from(t);
-    <span class="pp">println!</span>(<span class="st">&quot;{:?} {:?} {:?}&quot;</span>, s, t, shift_and(&amp;a, &amp;b));
-<span class="op">}</span>
-
-<span class="kw">fn</span> main() <span class="op">{</span>
-    test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;BCX&quot;</span>);    <span class="co">// &quot;ABC&quot; &quot;BCX&quot; None</span>
-    test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;BX&quot;</span>);     <span class="co">// &quot;ABC&quot; &quot;BX&quot; None</span>
-    test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;X&quot;</span>);      <span class="co">// &quot;ABC&quot; &quot;X&quot; None</span>
-    test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;BC&quot;</span>);     <span class="co">// &quot;ABC&quot; &quot;BC&quot; Some(1)</span>
-    test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;B&quot;</span>);      <span class="co">// &quot;ABC&quot; &quot;B&quot; Some(1)</span>
-    test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;C&quot;</span>);      <span class="co">// &quot;ABC&quot; &quot;C&quot; Some(2)</span>
-    test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;AC&quot;</span>);     <span class="co">// &quot;ABC&quot; &quot;AC&quot; None</span>
-    test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;AB&quot;</span>);     <span class="co">// &quot;ABC&quot; &quot;AB&quot; Some(0)</span>
-    test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;A&quot;</span>);      <span class="co">// &quot;ABC&quot; &quot;A&quot; Some(0)</span>
-    test(<span class="st">&quot;BACABAB&quot;</span>, <span class="st">&quot;AB&quot;</span>); <span class="co">// &quot;BACABAB&quot; &quot;AB&quot; Some(3)</span>
-<span class="op">}</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">fn</span> test(s: &amp;<span class="dt">str</span>, t: &amp;<span class="dt">str</span>) <span class="op">{</span></a>
+<a class="sourceLine" id="cb2-2" title="2">    <span class="kw">let</span> a = <span class="dt">String</span>::from(s);</a>
+<a class="sourceLine" id="cb2-3" title="3">    <span class="kw">let</span> b = <span class="dt">String</span>::from(t);</a>
+<a class="sourceLine" id="cb2-4" title="4">    <span class="pp">println!</span>(<span class="st">&quot;{:?} {:?} {:?}&quot;</span>, s, t, shift_and(&amp;a, &amp;b));</a>
+<a class="sourceLine" id="cb2-5" title="5"><span class="op">}</span></a>
+<a class="sourceLine" id="cb2-6" title="6"></a>
+<a class="sourceLine" id="cb2-7" title="7"><span class="kw">fn</span> main() <span class="op">{</span></a>
+<a class="sourceLine" id="cb2-8" title="8">    test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;BCX&quot;</span>);    <span class="co">// &quot;ABC&quot; &quot;BCX&quot; None</span></a>
+<a class="sourceLine" id="cb2-9" title="9">    test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;BX&quot;</span>);     <span class="co">// &quot;ABC&quot; &quot;BX&quot; None</span></a>
+<a class="sourceLine" id="cb2-10" title="10">    test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;X&quot;</span>);      <span class="co">// &quot;ABC&quot; &quot;X&quot; None</span></a>
+<a class="sourceLine" id="cb2-11" title="11">    test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;BC&quot;</span>);     <span class="co">// &quot;ABC&quot; &quot;BC&quot; Some(1)</span></a>
+<a class="sourceLine" id="cb2-12" title="12">    test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;B&quot;</span>);      <span class="co">// &quot;ABC&quot; &quot;B&quot; Some(1)</span></a>
+<a class="sourceLine" id="cb2-13" title="13">    test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;C&quot;</span>);      <span class="co">// &quot;ABC&quot; &quot;C&quot; Some(2)</span></a>
+<a class="sourceLine" id="cb2-14" title="14">    test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;AC&quot;</span>);     <span class="co">// &quot;ABC&quot; &quot;AC&quot; None</span></a>
+<a class="sourceLine" id="cb2-15" title="15">    test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;AB&quot;</span>);     <span class="co">// &quot;ABC&quot; &quot;AB&quot; Some(0)</span></a>
+<a class="sourceLine" id="cb2-16" title="16">    test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;A&quot;</span>);      <span class="co">// &quot;ABC&quot; &quot;A&quot; Some(0)</span></a>
+<a class="sourceLine" id="cb2-17" title="17">    test(<span class="st">&quot;BACABAB&quot;</span>, <span class="st">&quot;AB&quot;</span>); <span class="co">// &quot;BACABAB&quot; &quot;AB&quot; Some(3)</span></a>
+<a class="sourceLine" id="cb2-18" title="18"><span class="op">}</span></a></code></pre></div>
 <h2 id="string.shift-and.cc"><a href="string.shift-and.cc" class="uri">string.shift-and.cc</a></h2>
 <ul>
 <li><code>pattern</code> 長が32以下であることを仮定</li>
 <li>64以下なら unsigned long に切り替えればまだ使える</li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="dt">int</span> shift_and(string text, string pattern) {
-  <span class="kw">using</span> T = <span class="dt">unsigned</span> <span class="dt">int</span>;
-  <span class="co">// using T = unsigned long</span>
-
-  <span class="at">const</span> <span class="dt">int</span> n = text.size();
-  <span class="at">const</span> <span class="dt">int</span> m = pattern.size();
-  assert(<span class="kw">sizeof</span>(T) * <span class="dv">8</span> &gt;= m);
-
-  <span class="at">const</span> T M = <span class="dv">1</span> &lt;&lt; (m - <span class="dv">1</span>);
-  T d[<span class="dv">300</span>] = {<span class="dv">0</span>};
-  <span class="co">// map&lt;char, T&gt; d;</span>
-
-  rep (i, m) d[pattern[i]] ^= <span class="dv">1</span> &lt;&lt; i;
-  T x = <span class="dv">0</span>;
-  rep (i, n) {
-    x = (<span class="dv">1</span> | (x &lt;&lt; <span class="dv">1</span>)) &amp; d[text[i]];
-    <span class="cf">if</span> (x &amp; M) <span class="cf">return</span> i - m + <span class="dv">1</span>;
-  }
-  <span class="cf">return</span> <span class="dv">-1</span>;
-}</code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb3-1" title="1"><span class="dt">int</span> shift_and(string text, string pattern) {</a>
+<a class="sourceLine" id="cb3-2" title="2">  <span class="kw">using</span> T = <span class="dt">unsigned</span> <span class="dt">int</span>;</a>
+<a class="sourceLine" id="cb3-3" title="3">  <span class="co">// using T = unsigned long</span></a>
+<a class="sourceLine" id="cb3-4" title="4"></a>
+<a class="sourceLine" id="cb3-5" title="5">  <span class="at">const</span> <span class="dt">int</span> n = text.size();</a>
+<a class="sourceLine" id="cb3-6" title="6">  <span class="at">const</span> <span class="dt">int</span> m = pattern.size();</a>
+<a class="sourceLine" id="cb3-7" title="7">  <span class="ot">assert</span>(<span class="kw">sizeof</span>(T) * <span class="dv">8</span> &gt;= m);</a>
+<a class="sourceLine" id="cb3-8" title="8"></a>
+<a class="sourceLine" id="cb3-9" title="9">  <span class="at">const</span> T M = <span class="dv">1</span> &lt;&lt; (m - <span class="dv">1</span>);</a>
+<a class="sourceLine" id="cb3-10" title="10">  T d[<span class="dv">300</span>] = {<span class="dv">0</span>};</a>
+<a class="sourceLine" id="cb3-11" title="11">  <span class="co">// map&lt;char, T&gt; d;</span></a>
+<a class="sourceLine" id="cb3-12" title="12"></a>
+<a class="sourceLine" id="cb3-13" title="13">  rep (i, m) d[pattern[i]] ^= <span class="dv">1</span> &lt;&lt; i;</a>
+<a class="sourceLine" id="cb3-14" title="14">  T x = <span class="dv">0</span>;</a>
+<a class="sourceLine" id="cb3-15" title="15">  rep (i, n) {</a>
+<a class="sourceLine" id="cb3-16" title="16">    x = (<span class="dv">1</span> | (x &lt;&lt; <span class="dv">1</span>)) &amp; d[text[i]];</a>
+<a class="sourceLine" id="cb3-17" title="17">    <span class="cf">if</span> (x &amp; M) <span class="cf">return</span> i - m + <span class="dv">1</span>;</a>
+<a class="sourceLine" id="cb3-18" title="18">  }</a>
+<a class="sourceLine" id="cb3-19" title="19">  <span class="cf">return</span> -<span class="dv">1</span>;</a>
+<a class="sourceLine" id="cb3-20" title="20">}</a></code></pre></div>
 <h2 id="example-1">Example</h2>
-<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="dt">void</span> test(string s, string t) {
-  <span class="kw">auto</span> r = shift_and(s, t);
-  cout &lt;&lt; s &lt;&lt; <span class="st">&#39; &#39;</span> &lt;&lt; t &lt;&lt; <span class="st">&#39; &#39;</span> &lt;&lt; r &lt;&lt; endl;
-}
-
-<span class="dt">int</span> main()
-{
-  test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;BCX&quot;</span>);    <span class="co">// ABC BCX -1</span>
-  test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;BX&quot;</span>);     <span class="co">// ABC BX -1</span>
-  test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;X&quot;</span>);      <span class="co">// ABC X -1</span>
-  test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;BC&quot;</span>);     <span class="co">// ABC BC 1</span>
-  test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;B&quot;</span>);      <span class="co">// ABC B 1</span>
-  test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;C&quot;</span>);      <span class="co">// ABC C 2</span>
-  test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;AC&quot;</span>);     <span class="co">// ABC AC -1</span>
-  test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;AB&quot;</span>);     <span class="co">// ABC AB 0</span>
-  test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;A&quot;</span>);      <span class="co">// ABC A 0</span>
-  test(<span class="st">&quot;BACABAB&quot;</span>, <span class="st">&quot;AB&quot;</span>); <span class="co">// BACABAB AB 3</span>
-}</code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb4-1" title="1"><span class="dt">void</span> test(string s, string t) {</a>
+<a class="sourceLine" id="cb4-2" title="2">  <span class="kw">auto</span> r = shift_and(s, t);</a>
+<a class="sourceLine" id="cb4-3" title="3">  cout &lt;&lt; s &lt;&lt; <span class="ch">&#39; &#39;</span> &lt;&lt; t &lt;&lt; <span class="ch">&#39; &#39;</span> &lt;&lt; r &lt;&lt; endl;</a>
+<a class="sourceLine" id="cb4-4" title="4">}</a>
+<a class="sourceLine" id="cb4-5" title="5"></a>
+<a class="sourceLine" id="cb4-6" title="6"><span class="dt">int</span> main()</a>
+<a class="sourceLine" id="cb4-7" title="7">{</a>
+<a class="sourceLine" id="cb4-8" title="8">  test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;BCX&quot;</span>);    <span class="co">// ABC BCX -1</span></a>
+<a class="sourceLine" id="cb4-9" title="9">  test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;BX&quot;</span>);     <span class="co">// ABC BX -1</span></a>
+<a class="sourceLine" id="cb4-10" title="10">  test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;X&quot;</span>);      <span class="co">// ABC X -1</span></a>
+<a class="sourceLine" id="cb4-11" title="11">  test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;BC&quot;</span>);     <span class="co">// ABC BC 1</span></a>
+<a class="sourceLine" id="cb4-12" title="12">  test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;B&quot;</span>);      <span class="co">// ABC B 1</span></a>
+<a class="sourceLine" id="cb4-13" title="13">  test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;C&quot;</span>);      <span class="co">// ABC C 2</span></a>
+<a class="sourceLine" id="cb4-14" title="14">  test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;AC&quot;</span>);     <span class="co">// ABC AC -1</span></a>
+<a class="sourceLine" id="cb4-15" title="15">  test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;AB&quot;</span>);     <span class="co">// ABC AB 0</span></a>
+<a class="sourceLine" id="cb4-16" title="16">  test(<span class="st">&quot;ABC&quot;</span>, <span class="st">&quot;A&quot;</span>);      <span class="co">// ABC A 0</span></a>
+<a class="sourceLine" id="cb4-17" title="17">  test(<span class="st">&quot;BACABAB&quot;</span>, <span class="st">&quot;AB&quot;</span>); <span class="co">// BACABAB AB 3</span></a>
+<a class="sourceLine" id="cb4-18" title="18">}</a></code></pre></div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
@@ -125,6 +125,7 @@
 <ul>
 <li><a href="graph.dij.html">Dijkstra</a></li>
 <li><a href="graph.wall.html">Warshall-Floyd</a></li>
+<li><a href="graph.bellmanford.html">Bellman-Ford</a></li>
 </ul>
 <h2 id="最小全域木">最小全域木</h2>
 <ul>
@@ -166,7 +167,7 @@
 <h2 id="行列式">行列式</h2>
 <ul>
 <li><a href="matrix.det.naiiv.html">定義に拠る算法</a></li>
-<li><a href="matrix.det.cramer.html">Cramer's rule</a></li>
+<li><a href="matrix.det.cramer.html">Cramer’s rule</a></li>
 </ul>
 </details>
 
@@ -262,6 +263,7 @@
 <h2 id="自然数">自然数</h2>
 <ul>
 <li><a href="nat.n_vs_nn.html">自然数の対 ↔ 自然数 の変換</a></li>
+<li><a href="nat.mex.html">最小自由数 (最小除外数)</a></li>
 </ul>
 <h2 id="組み合わせ">組み合わせ</h2>
 <ul>

@@ -3,6 +3,7 @@
 ## 最短路
 - [Dijkstra](graph.dij.html)
 - [Warshall-Floyd](graph.wall.html)
+- [Bellman-Ford](graph.bellmanford.html)
 
 ## 最小全域木
 - [Prim](graph.prim.html)
@@ -107,6 +108,7 @@
 
 ## 自然数
 - [自然数の対 ↔ 自然数 の変換](nat.n_vs_nn.html)
+- [最小自由数 (最小除外数)](nat.mex.html)
 
 ## 組み合わせ
 

@@ -32,6 +32,7 @@
 - [BIT](seq.bit.html)
 - [RMQ](seq.rmq.html)
 - [Starry Sky Tree](seq.starry.html)
+- [SeqSearch](seq.search.html)
 
 # 行列
 

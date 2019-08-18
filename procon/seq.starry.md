@@ -7,7 +7,7 @@
     1.  `add(l, r, x)`: $v_i \leftarrow v_i + x$ for each $l \leq i \leq r$
     1.  `max(l, r)`: $\max \{ x_i : l \leq i \leq r \}$ を返す
 
-## [seq.starry.cc](seq.starry.cc)
+## [[seq.starry.cc]]
 
 @[cpp](seq.starry.cc)
 

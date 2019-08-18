@@ -16,7 +16,7 @@
     - 時間計算量: 共に $O(log(n))$
     - 空間計算量: 数列の長さ $n$ 程度の配列.
 
-## [seq.bit.rs](seq.bit.rs)
+## [[seq.bit.rs]]
 
 @[rust](seq.bit.rs)
 

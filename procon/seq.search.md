@@ -15,7 +15,7 @@
         - $\min \{ k \mid i \leq k < j, v_k = a \}$
             - where $0 \leq i \leq j < n$
 
-## [seq.search.rs](seq.search.rs)
+## [[seq.search.rs]]
 
 @[rust](seq.search.rs)
 

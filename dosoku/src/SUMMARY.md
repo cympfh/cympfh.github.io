@@ -1,6 +1,6 @@
 # SUMMARY
 
-- [これはなにか](./intro.md)
+- [What is this?](./intro.md)
 - [量子計算](./SUMMARY.md)
     - [計算モデル](./quantum/model.md)
     - [量子並列性とドイチュのアルゴリズム](./quantum/deutsch.md)

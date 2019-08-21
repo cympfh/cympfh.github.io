@@ -17,7 +17,7 @@
     - [行列ゲーム](./SUMMARY.md)
 - [形式言語](./SUMMARY.md)
     - [極限同定](./formallang/limit_identification.md)
-    - [極小言語, k-mmg](./formallang/kmmg.md)
+    - [汎化システムと極小言語](./formallang/kmmg.md)
 - [圏論](./SUMMARY.md)
     - [基礎](./cat/basic.md)
     - [F代数](./cat/f-alg.md)

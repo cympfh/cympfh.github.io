@@ -24,8 +24,10 @@ end
 def process_single_back_slack_mark(content)
   # \# -> \\#
   # \! -> \\!
+  # \; -> \\;
   content = content.gsub('\\#', '\\\\\\\\#')
   content = content.gsub('\\!', '\\\\\\\\!')
+  content = content.gsub('\\;', '\\\\\\\\;')
   content
 end
 

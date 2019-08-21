@@ -1168,7 +1168,7 @@ X
 </li>
 </ul>
 <h1><a class="header" href="#形式言語の極限同定" id="形式言語の極限同定">形式言語の極限同定</a></h1>
-<p>\( \def\PAT{\mathrm{PAT}}\content{\mathrm{content}} \)</p>
+<p>\( \def\PAT{\mathrm{PAT}}\def\content{\mathrm{content}} \)</p>
 <h2><a class="header" href="#参考文献" id="参考文献">参考文献</a></h2>
 <ul>
 <li><a href="https://en.wikipedia.org/wiki/Language_identification_in_the_limit">wikipedia/Language_identification_in_the_limit</a></li>
@@ -1188,9 +1188,14 @@ X
 </li>
 <li>テキストとはアルファベットの上の文字列
 <ul>
-<li>\( \Sigma^* = \{ \epsilon, 0, 1, \cdot, 00, 01, 10, 11, \cdots, 010, \cdots \} \)
+<li>\( \Sigma^* = \{ \epsilon, 0, 1, \cdots, 00, 01, 10, 11, \cdots, 010, \cdots \} \)
 <ul>
 <li>空文字列を \( \epsilon \) と書く</li>
+</ul>
+</li>
+<li>1文字以上に限ったテキストを次の記号で表す
+<ul>
+<li>\( \Sigma^+ = \{ 0, 1, \cdots, 00, 01, 10, 11, \cdots, 010, \cdots \} \)</li>
 </ul>
 </li>
 </ul>
@@ -1272,7 +1277,7 @@ X
 これは結構強い性質である.</p>
 <p>気持ちとして, 正提示とは次のような状況に相当する.
 すなわち「子供が大人から常に正しいテキストを一つずつ聞く」</p>
-<h4><a class="header" href="#notation-content" id="notation-content">notation: content</a></h4>
+<h4><a class="header" href="#def-content" id="def-content">Def. content</a></h4>
 <p>無限列を集合に変換する操作を \( \content \) と呼ぶことにする.
 例えば \( \content \{ 0,1,2,\ldots \} = \mathbb N \) みたいに使う.</p>
 <p>こうすると正提示で要求してる性質は,
@@ -1405,13 +1410,13 @@ x_1 x_1 &amp; \succeq \underline{x_2} ~ \underline{x_2} &amp; [x_1/x_2] \\
 <h2><a class="header" href="#パターン言語" id="パターン言語">パターン言語</a></h2>
 <p>パターンに対応して言語を構成することが出来る.
 すなわち,
-\[ L(p) = \{ w \in \Sigma^* | w \preceq p \}. \]</p>
+\[ L(p) = \{ w \in \Sigma^* \mid w \preceq p \}. \]</p>
 <p>(正規表現に対して正規言語があるようなもの.)</p>
 <p>例えば,
-\[ L(x_1 x_1) = \{ w w | w \in \Sigma^+ \} \]</p>
+\[ L(x_1 x_1) = \{ w w \mid w \in \Sigma^+ \} \]</p>
 <h2><a class="header" href="#定理-パターン言語は正提示から学習可能" id="定理-パターン言語は正提示から学習可能">定理: パターン言語は正提示から学習可能</a></h2>
 <p>パターン言語のクラス
-\[ C = \{ L(p) | p \in \PAT \} \]
+\[ C = \{ L(p) \mid p \in \PAT \} \]
 は正提示で学習可能.</p>
 <h3><a class="header" href="#学習過程-推論機械--g-" id="学習過程-推論機械--g-">学習過程 (推論機械 \( G \))</a></h3>
 <p>学習ターゲットが \( L = L(p) \in C \) であって,
@@ -1420,23 +1425,23 @@ x_1 x_1 &amp; \succeq \underline{x_2} ~ \underline{x_2} &amp; [x_1/x_2] \\
 \[ p_t = G(s_1 \cdots s_t) \]</p>
 <p>さて推論機械の構成方法であるが, それは大雑把に述べると</p>
 <ul>
-<li>\( \forall t, \content(s_1, \cdots, s_t) \subseteq L(p_t) \) (無矛盾)</li>
-<li>\( L(p_1) \subseteq L(p_2) \subseteq \cdots \) (保守的)</li>
-<li>上2つを満たす為には次のようにすれば十分 (極小言語戦略)
+<li>\( \forall t, \content(s_1, \cdots, s_t) \subseteq L(p_t) \) （無矛盾）</li>
+<li>\( L(p_1) \subseteq L(p_2) \subseteq \cdots \) （保守的）</li>
+<li>上2つを満たす為には次のようにすれば十分 （極小言語戦略）
 <ul>
-<li>\( p_t = \mathop{\rm arg;min}\limits_p L(p) ~s.t.~ content \subseteq L(p) \)</li>
+<li>\( p_t = \mathop{\rm argmin}\limits_p L(p) ~s.t.~ \content \subseteq L(p) \)</li>
 </ul>
 </li>
 </ul>
 <p>ってやると,
 \[ L = L(\lim_t p_t) \]
 になる.</p>
-<h2><a class="header" href="#皆が興味がなさそうだったら飛ばすページ" id="皆が興味がなさそうだったら飛ばすページ">皆が興味がなさそうだったら飛ばすページ</a></h2>
-<h3><a class="header" href="#prop-有限の厚みを持つ言語クラスは極小言語によって極限同定可能である" id="prop-有限の厚みを持つ言語クラスは極小言語によって極限同定可能である">Prop. 有限の厚みを持つ言語クラスは極小言語によって極限同定可能である</a></h3>
+<h2><a class="header" href="#def-有限の厚み" id="def-有限の厚み">Def. 有限の厚み</a></h2>
 <p>言語クラスが有限の厚みを持つとは \( \iff \)
 任意のテキストの有限集合 \( S \) について
-\( \{ L | S \subseteq L \} \)
+\( \{ L \mid S \subseteq L \} \)
 が有限であること</p>
+<h3><a class="header" href="#prop-有限の厚みを持つ言語クラスは極小言語によって極限同定可能である" id="prop-有限の厚みを持つ言語クラスは極小言語によって極限同定可能である">Prop. 有限の厚みを持つ言語クラスは極小言語によって極限同定可能である</a></h3>
 <ol>
 <li>無矛盾かつ保守的な推論による推論の列: \( g_1, g_2, ... \)
 は収束する
@@ -1451,40 +1456,36 @@ x_1 x_1 &amp; \succeq \underline{x_2} ~ \underline{x_2} &amp; [x_1/x_2] \\
 </ol>
 </li>
 </ol>
-<h2><a class="header" href="#パターン言語は正提示から学習可能であることの証明" id="パターン言語は正提示から学習可能であることの証明">パターン言語は正提示から学習可能であることの証明</a></h2>
+<h3><a class="header" href="#thm-パターン言語は正提示から学習可能" id="thm-パターン言語は正提示から学習可能">Thm. パターン言語は正提示から学習可能</a></h3>
 <ol>
 <li>先に挙げた極小言語戦略による推論機械を構成する</li>
 <li>パターン言語クラスは有限の厚みを持つことを示す
 <ul>
-<li>\( \forall w, \{ p | w \preceq p \} \) が有限であることを言えばよい</li>
+<li>\( \forall w, \{ p \mid w \preceq p \} \) が有限であることを言えばよい</li>
 <li>hint: \( q \preceq p \Rightarrow |q| \geq |p| \)</li>
 </ul>
 </li>
 <li>先の Prop. から極限同定可能</li>
 </ol>
-<h1><a class="header" href="#others" id="others">Others</a></h1>
-<h2><a class="header" href="#shinohara-polynomial-time-inference-of-extended-regular-pattern-languages-1991" id="shinohara-polynomial-time-inference-of-extended-regular-pattern-languages-1991">Shinohara: &quot;Polynomial Time Inference of Extended Regular Pattern Languages&quot;, 1991</a></h2>
-<p>パターン言語を消去可能パターン言語に拡張</p>
+<h1><a class="header" href="#その他の話題" id="その他の話題">その他の話題</a></h1>
+<h2><a class="header" href="#shinohara" id="shinohara">Shinohara</a></h2>
 <ul>
-<li>空の代入を許す:
-\[ a x_1 a x_1 \succeq a a \]</li>
+<li>Shinohara: &quot;Polynomial Time Inference of Extended Regular Pattern Languages&quot;, 1991</li>
 </ul>
-<p>消去可能パターン言語であって正則なものは, 正提示から学習可能であることを示した</p>
-<ul>
-<li>N.B. パターン言語が正則 \( \iff \) 一つのパターンに出現する同じ変数 \( x_i \) は高々一つ (出現する変数が全て異なる)</li>
-</ul>
-<h2><a class="header" href="#使い道" id="使い道">使い道</a></h2>
-<p>\includegraphics[width=1.0\textwidth,bb=0 0 1186 794]{img/shinohara.jpg}</p>
+<p>パターン言語を消去可能パターン言語に拡張した.
+消去可能であるとは空文字列の代入を許すこと.</p>
+<p>例えば:
+\[ a x_1 a x_1 \succeq a a \]</p>
+<p>Shinohara は消去可能パターン言語であって正則なものは, 正提示から学習可能であることを示した.</p>
+<blockquote>
+<p>N.B. パターン言語が正則 \( \iff \) 一つのパターンに出現する同じ変数 \( x_i \) は高々一つ (出現する変数が全て異なる)</p>
+</blockquote>
 <h2><a class="header" href="#arimura-shinohara-finding-minimal-generalizations-of-unions-of-pattern-languages-and--1994" id="arimura-shinohara-finding-minimal-generalizations-of-unions-of-pattern-languages-and--1994">Arimura, Shinohara: &quot;Finding Minimal Generalizations of Unions of Pattern Languages and ...&quot;, 1994</a></h2>
-<p>パターンの和言語も正提示から学習可能であることを示した</p>
-<ul>
-<li>大体一つのパターンの言語なんて単純すぎる</li>
-<li>\( L(p_1, \cdots, p_k) = L(p_1) \cup \cdots \cup L(p_k) \)
-<ul>
-<li>ただしパターンの数に上限 \( k \) を設定する</li>
-</ul>
-</li>
-</ul>
+<p>パターンの和言語も正提示から学習可能であることを示した.
+和言語とは, \( k \) 個のパターン \( p_1, p_2, \ldots, p_k \) について
+\[ L(p_1, \cdots, p_k) = L(p_1) \cup \cdots \cup L(p_k) \]
+と定められるもの.
+ただしこの個数 \( k \) について上限を設けたりする.</p>
 <h2><a class="header" href="#takeuchi-sato-誤情報を含む正則パターン言語の多項式時間推論-1998" id="takeuchi-sato-誤情報を含む正則パターン言語の多項式時間推論-1998">Takeuchi, Sato: &quot;誤情報を含む正則パターン言語の多項式時間推論&quot;, 1998</a></h2>
 <p>タイトルの通り</p>
 <ul>
@@ -1516,8 +1517,7 @@ x_1 x_1 &amp; \succeq \underline{x_2} ~ \underline{x_2} &amp; [x_1/x_2] \\
 </li>
 </ul>
 <p>性質を調べたものであって, この場合の推論方法を示したわけでも学習可能性を言ったものでもない</p>
-<h1><a class="header" href="#おわりに" id="おわりに">おわりに</a></h1>
-<h2><a class="header" href="#おわりに-1" id="おわりに-1">おわりに</a></h2>
+<h2><a class="header" href="#おわりに" id="おわりに">おわりに</a></h2>
 <ul>
 <li>誰も自然言語のことを忘れてパターン言語だけをやっている</li>
 <li>完全提示からの学習なんて誰もやってない (ことはないけど)</li>

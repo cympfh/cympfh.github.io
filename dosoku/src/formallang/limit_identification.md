@@ -1,6 +1,6 @@
 # 形式言語の極限同定
 
-$\def\PAT{\mathrm{PAT}}\content{\mathrm{content}}$
+$\def\PAT{\mathrm{PAT}}\def\content{\mathrm{content}}$
 
 ## 参考文献
 
@@ -17,8 +17,10 @@ $\def\PAT{\mathrm{PAT}}\content{\mathrm{content}}$
     - 文脈によってはシンボルは2つ以上に限ることがある
     - $\Sigma = \{ 0, 1, \cdots \}$
 - テキストとはアルファベットの上の文字列
-    - $\Sigma^* = \{ \epsilon, 0, 1, \cdot, 00, 01, 10, 11, \cdots, 010, \cdots \}$
+    - $\Sigma^* = \{ \epsilon, 0, 1, \cdots, 00, 01, 10, 11, \cdots, 010, \cdots \}$
         - 空文字列を $\epsilon$ と書く
+    - 1文字以上に限ったテキストを次の記号で表す
+        - $\Sigma^+ = \{ 0, 1, \cdots, 00, 01, 10, 11, \cdots, 010, \cdots \}$
 - 言語とはテキストの集合
     - $L \subseteq \Sigma^*$
 
@@ -84,7 +86,7 @@ $$\forall v \in L, \exists i \in \mathbb{N}, w_i = v$$
 気持ちとして, 正提示とは次のような状況に相当する.
 すなわち「子供が大人から常に正しいテキストを一つずつ聞く」
 
-#### notation: content
+#### Def. content
 
 無限列を集合に変換する操作を $\content$ と呼ぶことにする.
 例えば $\content \{ 0,1,2,\ldots \} = \mathbb N$ みたいに使う.
@@ -227,17 +229,17 @@ $$a x_1 a x_1 \not\succeq a a$$
 
 パターンに対応して言語を構成することが出来る.
 すなわち,
-$$L(p) = \{ w \in \Sigma^* | w \preceq p \}.$$
+$$L(p) = \{ w \in \Sigma^* \mid w \preceq p \}.$$
 
 (正規表現に対して正規言語があるようなもの.)
 
 例えば,
-$$L(x_1 x_1) = \{ w w | w \in \Sigma^+ \}$$
+$$L(x_1 x_1) = \{ w w \mid w \in \Sigma^+ \}$$
 
 ## 定理: パターン言語は正提示から学習可能
 
 パターン言語のクラス
-$$C = \{ L(p) | p \in \PAT \}$$
+$$C = \{ L(p) \mid p \in \PAT \}$$
 は正提示で学習可能.
 
 ### 学習過程 (推論機械 $G$)
@@ -250,23 +252,23 @@ $$p_t = G(s_1 \cdots s_t)$$
 
 さて推論機械の構成方法であるが, それは大雑把に述べると
 
-- $\forall t, \content(s_1, \cdots, s_t) \subseteq L(p_t)$ (無矛盾)
-- $L(p_1) \subseteq L(p_2) \subseteq \cdots$ (保守的)
-- 上2つを満たす為には次のようにすれば十分 (極小言語戦略)
-    - $p_t = \mathop{\rm arg\;min}\limits_p L(p) ~s.t.~ content \subseteq L(p)$
+- $\forall t, \content(s_1, \cdots, s_t) \subseteq L(p_t)$ （無矛盾）
+- $L(p_1) \subseteq L(p_2) \subseteq \cdots$ （保守的）
+- 上2つを満たす為には次のようにすれば十分 （極小言語戦略）
+    - $p_t = \mathop{\rm argmin}\limits_p L(p) ~s.t.~ \content \subseteq L(p)$
 
 ってやると,
 $$L = L(\lim_t p_t)$$
 になる.
 
-## 皆が興味がなさそうだったら飛ばすページ
-
-### Prop. 有限の厚みを持つ言語クラスは極小言語によって極限同定可能である
+## Def. 有限の厚み
 
 言語クラスが有限の厚みを持つとは $\iff$
 任意のテキストの有限集合 $S$ について
-$\{ L | S \subseteq L \}$
+$\{ L \mid S \subseteq L \}$
 が有限であること
+
+### Prop. 有限の厚みを持つ言語クラスは極小言語によって極限同定可能である
 
 1. 無矛盾かつ保守的な推論による推論の列: $g_1, g_2, ...$
 は収束する
@@ -275,38 +277,37 @@ $\{ L | S \subseteq L \}$
     1. 保守性より $L(g_1) \subseteq L(g_2) \subseteq \cdots$ ($g_i$ に半順序がつく)
     1. 推論列はどこかで停まるか, 極大を定める
 
-## パターン言語は正提示から学習可能であることの証明
+### Thm. パターン言語は正提示から学習可能
 
 1. 先に挙げた極小言語戦略による推論機械を構成する
 1. パターン言語クラスは有限の厚みを持つことを示す
-    - $\forall w, \{ p | w \preceq p \}$ が有限であることを言えばよい
+    - $\forall w, \{ p \mid w \preceq p \}$ が有限であることを言えばよい
     - hint: $q \preceq p \Rightarrow |q| \geq |p|$
 1. 先の Prop. から極限同定可能
 
-# Others
+# その他の話題
 
-## Shinohara: "Polynomial Time Inference of Extended Regular Pattern Languages", 1991
+## Shinohara
 
-パターン言語を消去可能パターン言語に拡張
+- Shinohara: "Polynomial Time Inference of Extended Regular Pattern Languages", 1991
 
-- 空の代入を許す:
+パターン言語を消去可能パターン言語に拡張した.
+消去可能であるとは空文字列の代入を許すこと.
+
+例えば:
 $$a x_1 a x_1 \succeq a a$$
 
-消去可能パターン言語であって正則なものは, 正提示から学習可能であることを示した
+Shinohara は消去可能パターン言語であって正則なものは, 正提示から学習可能であることを示した.
 
-- N.B. パターン言語が正則 $\iff$ 一つのパターンに出現する同じ変数 $x_i$ は高々一つ (出現する変数が全て異なる)
-
-## 使い道
-
-\includegraphics[width=1.0\textwidth,bb=0 0 1186 794]{img/shinohara.jpg}
+> N.B. パターン言語が正則 $\iff$ 一つのパターンに出現する同じ変数 $x_i$ は高々一つ (出現する変数が全て異なる)
 
 ## Arimura, Shinohara: "Finding Minimal Generalizations of Unions of Pattern Languages and ...", 1994
 
-パターンの和言語も正提示から学習可能であることを示した
-
-- 大体一つのパターンの言語なんて単純すぎる
-- $L(p_1, \cdots, p_k) = L(p_1) \cup \cdots \cup L(p_k)$
-    - ただしパターンの数に上限 $k$ を設定する
+パターンの和言語も正提示から学習可能であることを示した.
+和言語とは, $k$ 個のパターン $p_1, p_2, \ldots, p_k$ について
+$$L(p_1, \cdots, p_k) = L(p_1) \cup \cdots \cup L(p_k)$$
+と定められるもの.
+ただしこの個数 $k$ について上限を設けたりする.
 
 ## Takeuchi, Sato: "誤情報を含む正則パターン言語の多項式時間推論", 1998
 
@@ -329,8 +330,6 @@ $$a x_1 a x_1 \succeq a a$$
         - 大きさに関する極小を取ることができる
 
 性質を調べたものであって, この場合の推論方法を示したわけでも学習可能性を言ったものでもない
-
-# おわりに
 
 ## おわりに
 

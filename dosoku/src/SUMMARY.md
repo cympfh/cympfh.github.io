@@ -19,6 +19,8 @@
     - [極限同定](./formallang/limit_identification.md)
     - [汎化システム](./formallang/generalization_system.md)
     - [極小言語戦略](./formallang/minl.md)
+    - [正規パターン言語は推論可能](./formallang/minl-rp.md)
+    - [正規パターン和言語は推論可能](./formallang/minl-kmmg.md)
 - [圏論](./SUMMARY.md)
     - [基礎](./cat/basic.md)
     - [F代数](./cat/f-alg.md)

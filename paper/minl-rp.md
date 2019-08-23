@@ -1,6 +1,6 @@
 % 消去可能正規パターン言語は推論可能: "Polynomial Time Inference of Extended Regular Pattern Languages"
 % https://link.springer.com/chapter/10.1007/3-540-11980-9_19
-% 形式言語
+% 形式言語 パターン
 
 ## 概要
 

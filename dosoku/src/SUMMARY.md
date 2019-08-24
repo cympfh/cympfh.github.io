@@ -7,7 +7,7 @@
     - [ユニタリー変換](./quantum/unitary.md)
     - [EXACT, THRESHOLD アルゴリズム](./quantum/algorithm_exact_threshold.md)
 - [ラムダ計算](./SUMMARY.md)
-    - [計算モデル](./lambda/basic.md)
+    - [基礎](./lambda/basic.md)
     - [SKIコンビネータ](./lambda/ski.md)
     - [不動点コンビネータ](./lambda/fixed.md)
 - [ゲーム理論](./SUMMARY.md)

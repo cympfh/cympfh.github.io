@@ -1,9 +1,6 @@
 # 基礎
 
-$\def\Obj{\mathrm{Obj}}
-\def\Arr{\mathrm{Arr}}
-\def\dom{\mathrm{dom}}
-\def\cod{\mathrm{cod}}$
+{{#include macro.tex}}
 
 ## 定義
 

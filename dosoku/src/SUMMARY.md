@@ -21,7 +21,7 @@
     - [極小言語戦略](./formallang/minl.md)
 - [圏論](./SUMMARY.md)
     - [基礎](./cat/basic.md)
-    - [F代数](./cat/f-alg.md)
+    - [F-代数](./cat/f-alg.md)
     - [随伴, モナド](./cat/adj_monado.md)
     - [冪対象, eval](./cat/eval.md)
 - [群論](./SUMMARY.md)

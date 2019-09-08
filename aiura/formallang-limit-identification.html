@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>形式言語の極限同定</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="../resources/css/c.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-stumbleupon" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">形式言語の極限同定</h1>
+</header>
+<p class="date" style="text-align: right">
+2015-11-13
+</p>
+<div class="is-pulled-right">
+<p><a class='tag is-red' href=index.html#形式言語>形式言語</a> <a class='tag is-red' href=index.html#言語獲得>言語獲得</a></p>
+</div>
+<p><span class="math inline">\(\def\PAT{\mathrm{PAT}}\def\content{\mathrm{content}}\)</span></p>
+<div id="toc">
+
+</div>
+<h2 id="参考文献">参考文献</h2>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Language_identification_in_the_limit">wikipedia/Language_identification_in_the_limit</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Grammar_induction">wikipedia/Grammar_induction</a></li>
+<li><a href="http://web.mit.edu/6.863/www/spring2010/readings/gold67limit.pdf">paper/gold67limit.pdf</a></li>
+<li><a href="http://www.sciencedirect.com/science/article/pii/0022000080900410">paper/Angluin80</a></li>
+<li><a href="http://repository.kulib.kyoto-u.ac.jp/dspace/bitstream/2433/103408/1/0482-7.pdf">paper/Shinohara83.pdf</a></li>
+<li><a href="http://www-ikn.ist.hokudai.ac.jp/~arim/papers/arimura_stacs94.pdf">paper/Arimura94.pdf</a></li>
+</ul>
+<h2 id="諸定義">諸定義</h2>
+<ul>
+<li>アルファベットとはシンボルの有限集合
+<ul>
+<li>文脈によってはシンボルは2つ以上に限ることがある</li>
+<li><span class="math inline">\(\Sigma = \{ 0, 1, \cdots \}\)</span></li>
+</ul></li>
+<li>テキストとはアルファベットの上の文字列
+<ul>
+<li><span class="math inline">\(\Sigma^* = \{ \epsilon, 0, 1, \cdots, 00, 01, 10, 11, \cdots, 010, \cdots \}\)</span>
+<ul>
+<li>空文字列を <span class="math inline">\(\epsilon\)</span> と書く</li>
+</ul></li>
+<li>1文字以上に限ったテキストを次の記号で表す
+<ul>
+<li><span class="math inline">\(\Sigma^+ = \{ 0, 1, \cdots, 00, 01, 10, 11, \cdots, 010, \cdots \}\)</span></li>
+</ul></li>
+</ul></li>
+<li>言語とはテキストの集合
+<ul>
+<li><span class="math inline">\(L \subseteq \Sigma^*\)</span></li>
+</ul></li>
+</ul>
+<h2 id="e.-mark-gold-による言語の極限同定">E. Mark Gold による言語の極限同定</h2>
+<ul>
+<li>“Language Identification in the Limit”, 1967</li>
+</ul>
+<h3 id="動機">動機</h3>
+<ul>
+<li>AIに言葉を話させたい (作文をさせたい)</li>
+<li>言葉を話すためにはその言語を学習しなければならない
+<ol type="1">
+<li>AI (計算機) は言語を学習できるか</li>
+<li>どの時点で学習したと言えるか</li>
+</ol></li>
+</ul>
+<h3 id="言葉を話せるai">言葉を話せるAI</h3>
+<ul>
+<li>人間の場合は, 英語のルールを正しく書き下せなくても, “英語を話せる” と言う</li>
+<li>AI の場合でも, 同様の “英語を話せる” とかいえるようなモデルが作れるはず（模倣）
+<ul>
+<li>すなわち言語のルールを書き下すことなく学習ができるはず</li>
+<li>英語に限らず自然言語一般のルールを学習させたい
+<ul>
+<li>人間は任意の自然言語を学習可能</li>
+</ul></li>
+<li>自然言語よりも単純な言語はより容易に学習できる
+<ul>
+<li>自然言語を lower bound とする</li>
+<li>より複雑な言語は別にどうでもいい</li>
+</ul></li>
+<li>少なくとも自然言語を含むような単純な言語の枠組みを設定する</li>
+</ul></li>
+</ul>
+<h3 id="言語の枠組み-言語クラス">言語の枠組み: 言語クラス</h3>
+<p>何の枠組みもなしに言語を学習するってのは難しすぎる</p>
+<p>個々の言語を考える代わりに言語の族, 言語クラスを考える. <span class="math display">\[C = \{ L_1, L_2, \ldots \}\]</span> (実際には添字付きなものに限らない)</p>
+<ul>
+<li>言語クラス <span class="math inline">\(C\)</span>
+<ul>
+<li>例えば「ありえる自然言語全体」を設定する</li>
+<li>例えば「文脈自由文法全体」を設定する
+<ul>
+<li>その中には実在する自然言語 (英語など) が含まれる</li>
+</ul></li>
+</ul></li>
+<li>言語の学習とは言語クラス <span class="math inline">\(C\)</span> からそれっぽい言語を選ぶことだとする</li>
+</ul>
+<h3 id="情報提示-information-presentation">情報提示 (information presentation)</h3>
+<p>何はともあれ, 情報を提示されないと学習できない</p>
+<p>Gold は Text , Informant の2つがあると考えた</p>
+<p>現代語訳すると</p>
+<ul>
+<li>Text <span class="math inline">\(\Rightarrow\)</span> 正提示</li>
+<li>Informant <span class="math inline">\(\Rightarrow\)</span> 完全提示</li>
+</ul>
+<p>紛らわしいので現代語を使います</p>
+<h3 id="正提示">正提示</h3>
+<p>言語 <span class="math inline">\(L\)</span> の正提示とは, その言語に出現するテキストの (無限) 列のこと <span class="math display">\[w_1, w_2, \ldots\]</span> この列には重複などがあってもいいが, 言語に含まれる任意のテキストはこの列のどこかではいつか必ず出現することを要請する. すなわち, <span class="math display">\[\forall v \in L, \exists i \in \mathbb{N}, w_i = v\]</span> これは結構強い性質である.</p>
+<p>気持ちとして, 正提示とは次のような状況に相当する. すなわち「子供が大人から常に正しいテキストを一つずつ聞く」</p>
+<h4 id="def.-content">Def. content</h4>
+<p>無限列を集合に変換する操作を <span class="math inline">\(\content\)</span> と呼ぶことにする. 例えば <span class="math inline">\(\content \{ 0,1,2,\ldots \} = \mathbb N\)</span> みたいに使う.</p>
+<p>こうすると正提示で要求してる性質は, 正提示 <span class="math inline">\(I = ( w_1, w_2, \ldots )\)</span> に対して <span class="math display">\[\content(I) = L\]</span> だと書ける.</p>
+<h3 id="完全提示">完全提示</h3>
+<p>言語 <span class="math inline">\(L\)</span> の完全提示とは, 何でもいいから任意のテキストの列であって, そのテキストが言語に含まれるかのラベル (<span class="math inline">\(\mathrm{Bool} = \{0,1\}\)</span>) が付いているもの <span class="math display">\[(w_1, I_1), (w_2, I_2), \ldots\]</span></p>
+<ul>
+<li><span class="math inline">\((w_i, I_i)\)</span> は次を満たす
+<ul>
+<li><span class="math inline">\(I_i = 1 \iff w_i \in L\)</span></li>
+<li><span class="math inline">\(I_i = 0 \iff w_i \not\in L\)</span></li>
+</ul></li>
+<li>ただし任意のテキストがいつかは出現する
+<ul>
+<li><span class="math inline">\(\forall v \in \Sigma^*, \exists i \in \mathbb N, w_i = v\)</span></li>
+</ul></li>
+</ul>
+<p>そして完全提示の気持ちはこういうもの:</p>
+<ul>
+<li>子供が大人から常に正しいテキストを聞く (<span class="math inline">\(I_i = 1\)</span>)</li>
+<li>子供はたまに作文をする (話す)
+<ul>
+<li>文法エラーをすると相手のリアクションから誤りだと知る (<span class="math inline">\(I_i = 0\)</span>)</li>
+</ul></li>
+</ul>
+<h3 id="言語学習モデル-guessing-machine">言語学習モデル (guessing machine)</h3>
+<ol type="1">
+<li>正提示または完全提示により, 学習者は <span class="math inline">\(i_1, i_2, \ldots\)</span> を逐次的に受け取る
+<ul>
+<li>時刻 <span class="math inline">\(t\)</span> に情報 <span class="math inline">\(i_t\)</span> を受け取る</li>
+</ul></li>
+<li>学習者はその時点までに受け取った情報から, 何らかの手続き <span class="math inline">\(G\)</span> によって言語を推論する</li>
+</ol>
+<p>時刻 <span class="math inline">\(t\)</span> における推論: <span class="math display">\[g_t = G(i_1, i_2, \ldots, i_t)\]</span></p>
+<p><span class="math inline">\(g_t\)</span> は特定の1つの言語を説明するもの, 或いは, 言語そのもの</p>
+<h3 id="極限における同定">極限における同定</h3>
+<p>原理的に有限個の情報からは学習できない, という言語クラスはいくらでもあるので極限を考える</p>
+<p><span class="math display">\[g_t = G(i_1, i_2, \cdots, i_t)\]</span></p>
+<p>が極限 <span class="math inline">\(t \rightarrow \infty\)</span> で同定してかつ正しい言語を指し示すことを <strong>極限同定</strong> という. 注意として, 学習者は「いつ自分は正しく言語を学習できたか」を知る必要はない.</p>
+<h3 id="言語クラスの学習可能性">言語クラスの学習可能性</h3>
+<p>Gold が提示した枠組みにおける <strong>学習可能性</strong> とは次のこと.</p>
+<p>「ある言語クラス <span class="math inline">\(C\)</span> が学習可能である」とは, 任意の言語 <span class="math inline">\(L \in C\)</span> とその任意の情報提示 <span class="math inline">\(I\)</span> について, ある guessing machine <span class="math inline">\(G\)</span> を構成することができて <span class="math inline">\(I\)</span> によって <span class="math inline">\(L\)</span> を極限同定できること.</p>
+<h3 id="例-完全提示から正規言語は学習可能">例: 完全提示から正規言語は学習可能</h3>
+<p>正規言語全体のクラスを考えるこれは完全提示によって学習可能であることが知られている. 正規言語とはオートマトン (或いは正規表現) に対応するからそれを復元出来れば良い. guessing machine <span class="math inline">\(G\)</span> の出力はオートマトン <span class="math inline">\(g_t\)</span></p>
+<p>ただしこれは完全提示を要求していて, したがって無限のテキストについてそれが言語に含まれるか (つまりオートマトンに受理されるか, 或いは正規表現にマッチするか) を神託する必要がある.</p>
+<h3 id="libalf-automata-learning-framework">libalf: Automata Learning Framework</h3>
+<p>完全提示からオートマトンを復元してくれるツール <a href="http://libalf.informatik.rwth-aachen.de/index.php?page=about">libalf</a> というものがある. これがまさに今欲しかった guessing machine である.</p>
+<p><img src="https://i.imgur.com/Z2wOh8V.png" /></p>
+<h3 id="正提示から正規言語を極限同定することは不可能">正提示から正規言語を極限同定することは不可能</h3>
+<p>正提示だけからは正規言語のクラスは極限同定が不可能であることも知られている.</p>
+<ul>
+<li>正規言語全体は大きすぎる (超有限)</li>
+<li>正提示が完全提示に比べて弱すぎる (それはそう)</li>
+</ul>
+<h3 id="子供の言語学習-acquisition-of-grammar-by-children">子供の言語学習 (acquisition of grammar by children)</h3>
+<p>ちょいちょい「子供が学習するときは〜」という話が出るが, 実際はどうなのか</p>
+<p>psycholinguist 曰く [McNeill, 1966]: 「子供が文法誤りをしたとき, それを指摘することは滅多にない」</p>
+<p>つまり完全提示は仮定が強すぎて現実的には正提示しか無い. そしてその中でも人間は自然言語を学習することが出来る.</p>
+<h3 id="自然言語は正提示から学習可能説">自然言語は正提示から学習可能説</h3>
+<ul>
+<li>多くの自明な言語クラスなら正提示から学習可能であることを Gold は示した</li>
+<li>英語は文脈自由文法だと言われているが, 実際には, 全ての文脈自由文法が自然言語になるわけではない
+<ul>
+<li>もっと制限がある (もっと小さなクラスである)</li>
+<li>例えば, 学習可能性の結論として: あり得る自然言語のクラスは, 無限言語を少なくともひとつは含み, 全ての有限言語を含むことはない (超有限ではない)</li>
+</ul></li>
+</ul>
+<h3 id="子供は-我々がわからない方法で負例を学習する説">子供は, 我々がわからない方法で負例を学習する説</h3>
+<ul>
+<li>例えば, 発言をして, 思ったような反応が得られなかったとき
+<ul>
+<li>だとすると完全提示からの学習をしてもいい</li>
+</ul></li>
+<li>原始再帰的言語は完全提示から学習可能であることをGoldは示している
+<ul>
+<li>文脈依存文法も原始再帰的言語の一つ</li>
+<li>英語は完全提示から学習可能</li>
+</ul></li>
+</ul>
+<h2 id="dana-angluin-のパターン言語">Dana Angluin のパターン言語</h2>
+<ul>
+<li>“On the Complexity of Minimum Inference of Regular Sets”, 1978</li>
+<li>“Finding Patterns Common to a Set of Strings”, 1979</li>
+</ul>
+<p>この人は正提示から学習可能な非自明な言語クラスを発見した. それが <strong>パターン言語</strong>.</p>
+<h3 id="パターン-pat">パターン: <span class="math inline">\(\PAT\)</span></h3>
+<p>有限アルファベット <span class="math inline">\(\Sigma = \{ 0, 1, \cdots \}\)</span> と 無限変数 <span class="math inline">\(X = \{ x_1, x_2, \cdots \}\)</span> の列としてパターンは定義される.</p>
+<p><span class="math display">\[\PAT = (\Sigma \cup X)^+\]</span></p>
+<p>パターンに対しては次の操作と関係が定義される.</p>
+<h3 id="代入-preceq-less-general-than">代入, <span class="math inline">\(\preceq\)</span> (less-general-than)</h3>
+<p>代入 <span class="math inline">\([x_i/p]\)</span> とは, パターン中に出現する <strong>全ての</strong> 変数 <span class="math inline">\(x_i\)</span> を <strong>空でない</strong> パターン <span class="math inline">\(p\)</span> に置き換える操作.</p>
+<p><span class="math display">\[\begin{align*}
+x_1 x_1 &amp; \succeq \underline{x_2} ~ \underline{x_2} &amp; [x_1/x_2] \\
+&amp; \succeq \underline{a x_1} ~ \underline{a x_1} &amp; [x_2/a x_1] \\
+&amp; \succeq a \underline{b c} a \underline{b c} &amp; [x_1/b c] \\
+\end{align*}\]</span></p>
+<p>ただし空は代入できないことに注意. <span class="math display">\[a x_1 a x_1 \not\succeq a a\]</span></p>
+<h3 id="パターン言語">パターン言語</h3>
+<p>パターンに対応して言語を構成することが出来る. すなわち, <span class="math display">\[L(p) = \{ w \in \Sigma^* \mid w \preceq p \}.\]</span></p>
+<p>(正規表現に対して正規言語があるようなもの.)</p>
+<p>例えば, <span class="math display">\[L(x_1 x_1) = \{ w w \mid w \in \Sigma^+ \}\]</span></p>
+<h3 id="定理-パターン言語は正提示から学習可能">定理: パターン言語は正提示から学習可能</h3>
+<p>パターン言語のクラス <span class="math display">\[C = \{ L(p) \mid p \in \PAT \}\]</span> は正提示で学習可能.</p>
+<h3 id="学習過程-推論機械-g">学習過程 (推論機械 <span class="math inline">\(G\)</span>)</h3>
+<p>学習ターゲットが <span class="math inline">\(L = L(p) \in C\)</span> であって, その正提示として <span class="math inline">\(s_1, s_2, \cdots (s_i \in L)\)</span> を受け取るとする.</p>
+<p>推論機械は言語そのものの代わりにパターンを出力すればよい: <span class="math display">\[p_t = G(s_1 \cdots s_t)\]</span></p>
+<p>さて推論機械の構成方法であるが, それは大雑把に述べると</p>
+<ul>
+<li><span class="math inline">\(\forall t, \content(s_1, \cdots, s_t) \subseteq L(p_t)\)</span> （無矛盾）</li>
+<li><span class="math inline">\(L(p_1) \subseteq L(p_2) \subseteq \cdots\)</span> （保守的）</li>
+<li>上2つを満たす為には次のようにすれば十分 （極小言語戦略）
+<ul>
+<li><span class="math inline">\(p_t = \mathop{\rm argmin}\limits_p L(p) ~s.t.~ \content \subseteq L(p)\)</span></li>
+</ul></li>
+</ul>
+<p>ってやると, <span class="math display">\[L = L(\lim_t p_t)\]</span> になる.</p>
+<h3 id="def.-有限の厚み">Def. 有限の厚み</h3>
+<p>言語クラスが有限の厚みを持つとは <span class="math inline">\(\iff\)</span> 任意のテキストの有限集合 <span class="math inline">\(S\)</span> について <span class="math inline">\(\{ L \mid S \subseteq L \}\)</span> が有限であること</p>
+<h3 id="prop.-有限の厚みを持つ言語クラスは極小言語によって極限同定可能である">Prop. 有限の厚みを持つ言語クラスは極小言語によって極限同定可能である</h3>
+<ol type="1">
+<li>無矛盾かつ保守的な推論による推論の列: <span class="math inline">\(g_1, g_2, ...\)</span> は収束する
+<ol type="1">
+<li>有限の厚みより, 正提示の1つ目を含む言語は有限個しかない
+<ol type="1">
+<li>推論も有限個しかない</li>
+</ol></li>
+<li>保守性より <span class="math inline">\(L(g_1) \subseteq L(g_2) \subseteq \cdots\)</span> (<span class="math inline">\(g_i\)</span> に半順序がつく)</li>
+<li>推論列はどこかで停まるか, 極大を定める</li>
+</ol></li>
+</ol>
+<h3 id="thm.-パターン言語は正提示から学習可能">Thm. パターン言語は正提示から学習可能</h3>
+<ol type="1">
+<li>先に挙げた極小言語戦略による推論機械を構成する</li>
+<li>パターン言語クラスは有限の厚みを持つことを示す
+<ul>
+<li><span class="math inline">\(\forall w, \{ p \mid w \preceq p \}\)</span> が有限であることを言えばよい</li>
+<li>hint: <span class="math inline">\(q \preceq p \Rightarrow |q| \geq |p|\)</span></li>
+</ul></li>
+<li>先の Prop. から極限同定可能</li>
+</ol>
+<h2 id="その他の話題">その他の話題</h2>
+<h3 id="shinohara">Shinohara</h3>
+<ul>
+<li>Shinohara: “Polynomial Time Inference of Extended Regular Pattern Languages”, 1991</li>
+</ul>
+<p>パターン言語を消去可能パターン言語に拡張した. 消去可能であるとは空文字列の代入を許すこと.</p>
+<p>例えば: <span class="math display">\[a x_1 a x_1 \succeq a a\]</span></p>
+<p>Shinohara は消去可能パターン言語であって正則なものは, 正提示から学習可能であることを示した.</p>
+<blockquote>
+<p>N.B. パターン言語が正則 <span class="math inline">\(\iff\)</span> 一つのパターンに出現する同じ変数 <span class="math inline">\(x_i\)</span> は高々一つ (出現する変数が全て異なる)</p>
+</blockquote>
+<h3 id="arimura-shinohara-finding-minimal-generalizations-of-unions-of-pattern-languages-and-1994">Arimura, Shinohara: “Finding Minimal Generalizations of Unions of Pattern Languages and …”, 1994</h3>
+<p>パターンの和言語も正提示から学習可能であることを示した. 和言語とは, <span class="math inline">\(k\)</span> 個のパターン <span class="math inline">\(p_1, p_2, \ldots, p_k\)</span> について <span class="math display">\[L(p_1, \cdots, p_k) = L(p_1) \cup \cdots \cup L(p_k)\]</span> と定められるもの. ただしこの個数 <span class="math inline">\(k\)</span> について上限を設けたりする.</p>
+<h3 id="takeuchi-sato-誤情報を含む正則パターン言語の多項式時間推論-1998">Takeuchi, Sato: “誤情報を含む正則パターン言語の多項式時間推論”, 1998</h3>
+<p>タイトルの通り</p>
+<ul>
+<li>学習したい言語からちょっとくらいズレた提示があっても良いようにする</li>
+<li>言語の「近傍系」を学習していく
+<ul>
+<li>パターンの上の一種のハミング距離を取る</li>
+</ul></li>
+</ul>
+<p>(一定の) 誤情報を含む正提示から学習可能</p>
+<h3 id="ng-shinohara-inferring-unions-of-the-pattern-languages-by-the-most-fitting-covers-2005">Ng, Shinohara: “Inferring Unions of the Pattern Languages by the Most Fitting Covers”, 2005</h3>
+<ul>
+<li>今見てきた極小言語戦略は提示 <span class="math inline">\(s_1, \cdots, s_t\)</span> を含む中で極小な言語を推論として出力する
+<ul>
+<li>極小とは言語の包含関係に関する</li>
+<li>言語は無限集合なので大きさを比較するのは難しい</li>
+</ul></li>
+<li>要するに小さければ良い
+<ul>
+<li>実際の言語ではテキストの長さには上限が (たぶん) ある
+<ul>
+<li><span class="math inline">\(\Rightarrow\)</span> 任意の自然言語は有限集合である</li>
+<li>大きさに関する極小を取ることができる</li>
+</ul></li>
+</ul></li>
+</ul>
+<p>性質を調べたものであって, この場合の推論方法を示したわけでも学習可能性を言ったものでもない</p>
+<h2 id="おわりに">おわりに</h2>
+<ul>
+<li>誰も自然言語のことを忘れてパターン言語だけをやっている</li>
+<li>完全提示からの学習なんて誰もやってない (ことはないけど)</li>
+<li>というか確率を導入すべきだ</li>
+<li>もはや誰も手をつけない分野
+<ul>
+<li>ちょっと古ければ論文は大量にある</li>
+<li>2000年以降もたま〜にぽつぽつ出てる</li>
+</ul></li>
+</ul>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

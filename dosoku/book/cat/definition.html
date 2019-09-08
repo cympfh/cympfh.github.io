@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>線形代数 - dosoku/</title>
+        <title>圏論 - dosoku/</title>
         
 
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
@@ -81,7 +81,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li><a href="../intro.html"><strong aria-hidden="true">1.</strong> What is this?</a></li><li><a href="../cat/definition.html"><strong aria-hidden="true">2.</strong> 圏論</a></li><li><ol class="section"><li><a href="../cat/f-alg.html"><strong aria-hidden="true">2.1.</strong> F-代数</a></li></ol></li><li><a href="../linearalg/index.html" class="active"><strong aria-hidden="true">3.</strong> 線形代数</a></li><li><ol class="section"><li><a href="../linearalg/tensor.html"><strong aria-hidden="true">3.1.</strong> テンソル</a></li></ol></li></ol>
+                <ol class="chapter"><li><a href="../intro.html"><strong aria-hidden="true">1.</strong> What is this?</a></li><li><a href="../cat/definition.html" class="active"><strong aria-hidden="true">2.</strong> 圏論</a></li><li><ol class="section"><li><a href="../cat/f-alg.html"><strong aria-hidden="true">2.1.</strong> F-代数</a></li></ol></li><li><a href="../linearalg/index.html"><strong aria-hidden="true">3.</strong> 線形代数</a></li><li><ol class="section"><li><a href="../linearalg/tensor.html"><strong aria-hidden="true">3.1.</strong> テンソル</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -148,20 +148,134 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#線形代数" id="線形代数">線形代数</a></h1>
+                        <h1><a class="header" href="#圏の定義" id="圏の定義">圏の定義</a></h1>
+<p>\[ \require{AMScd} \]
+\[ \def\Obj{\mathrm{Obj}}
+\def\Arr{\mathrm{Arr}}
+\def\dom{\mathrm{dom}}
+\def\cod{\mathrm{cod}}
+\def\C{\mathcal C}
+\]</p>
+<p>次の要素が備わったものを圏という.</p>
+<ul>
+<li>対象の集まり \( Obj \)</li>
+<li>射の集まり \( Arr \)
+<ul>
+<li>各射 \( f \in Arr \) にはドメインとコドメインがあり次のように書く
+<ul>
+<li>\( \dom f \in Obj \)</li>
+<li>\( \cod f \in Obj \)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>射の合成演算 \( \circ \)
+<ul>
+<li>2つの射 \( f, g \) について \( \cod f = \dom g \) のとき \( g \circ f \) という射が \( \Arr \) の中に存在する
+<ul>
+<li>すなわち \( \circ \) とは2つの射から一つの射を作る演算でこれを「合成」という</li>
+<li>数の積を表す \( \times \) や \( \cdot \) が略されるのと同様に, \( \circ \) のことも略して \( gf \) と書く</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>「集まり」と言ったのは本来, 圏の概念は集合とは独立して定義されるもので,
+従って集合という概念を使いたくないから.
+とはいえ, 普通の集合のように「集まりに属する」ということを \( \in \) で表している.</p>
+</blockquote>
+<p>ただし射について次を要請する.</p>
+<ul>
+<li>恒等射の存在
+<ul>
+<li>各対象 \( A \in \Obj \) に対応して次のような射 \( 1_A \) がある
+<ul>
+<li>\( \dom 1_A = A \)</li>
+<li>\( \cod 1_A = A \)</li>
+<li>\( f 1_A = f \)  (合成の単位元)</li>
+<li>\( 1_A g = g \)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>合成の結合則
+<ul>
+<li>3つの射 \( f,g,h \) の \( \cod, \dom \) がいい感じのとき, この3つを合成できるが, このとき \( (fg)h = f(gh) \) であること</li>
+</ul>
+</li>
+</ul>
+<h1><a class="header" href="#圏の例" id="圏の例">圏の例</a></h1>
+<h2><a class="header" href="#モノイドの圏" id="モノイドの圏">モノイドの圏</a></h2>
+<p>用語に惑わされずにただ合成演算だけに注目すれば, 圏とは群あるいはモノイドのことに見える.
+モノイドとは次のようなものであった.</p>
+<p>モノイドとは集合 \( X \) に乗算演算 \( \circ \colon X \times X \to X \) を与えたもの.
+この演算は次を満たすことを要請する.</p>
+<ol>
+<li>単位元の存在
+<ul>
+<li>ある \( e \in X \) があって</li>
+<li>\( e \circ x = x \circ e = x \) (\( \forall x \in X \))</li>
+</ul>
+</li>
+<li>結合則
+<ul>
+<li>\( (f \circ g) \circ h = f \circ (g \circ h) \)</li>
+</ul>
+</li>
+</ol>
+<p>つまり数 \( x \in X \) が射であって, 単位元 \( e \) が恒等射.
+乗算の結合則が合成の結合則である.</p>
+<p>さて対象はというと,
+恒等射に対応する単位元がモノイドは唯一しか持たないことから,
+ただ一つの対象を持つと考えるしかないだろう.
+従ってモノイドという概念を拡張したものが圏である, という見方がありえる.</p>
+<p>とにかくモノイド \( X \) があると, それを圏として見ることができる.
+これをモノイド圏 \( X \) という.
+改めてその定義を述べると,</p>
+<ul>
+<li>対象は唯一 \( \Obj = \{ * \} \)</li>
+<li>射は数 \( \Arr = X \)（右辺 \( X \) はモノイドの台集合）</li>
+<li>恒等射は単位元 \( 1_* = e \) （\( e \) はモノイドの単位元）</li>
+<li>合成は乗算 \( x y = x \circ y \) （右辺はモノイドとしての乗算）</li>
+</ul>
+<h2><a class="header" href="#set" id="set">Set</a></h2>
+<p>この考えはしばしば初学者を混乱させるが,
+射は写像（関数）の一般化であるという見方も出来る.
+そのような圏のことは Set という.
+すなわち,</p>
+<ul>
+<li>対象とは任意の集合</li>
+<li>射とは集合から集合への写像
+<ul>
+<li>\( \dom \) とは写像の定義域</li>
+<li>\( \cod \) とは値域</li>
+</ul>
+</li>
+<li>射の合成とは関数合成</li>
+<li>恒等射とは恒等写像</li>
+</ul>
+<p>関数合成の結合性は自然に成立する.
+関数 \( f \) が集合 \( A \) から集合 \( B \) への関数であることをしばしば
+\[ f \colon A \to B \]
+と書くだろう.
+これに倣って, ドメインを対象 \( A \) とし, コドメインを対象 \( B \) とするような射のことを
+「\( A \) から \( B \) への射」と言って
+\[ f \colon A \to B \]
+と書く.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-                            <a rel="prev" href="../cat/f-alg.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../intro.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
 
                         
-                            <a rel="next" href="../linearalg/tensor.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="../cat/f-alg.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -173,13 +287,13 @@
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-                    <a href="../cat/f-alg.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a href="../intro.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
                 
-                    <a href="../linearalg/tensor.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a href="../cat/f-alg.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 

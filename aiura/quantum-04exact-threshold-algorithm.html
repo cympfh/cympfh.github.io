@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>EXACT, THRESHOLD アルゴリズム</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="../resources/css/c.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-stumbleupon" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">EXACT, THRESHOLD アルゴリズム</h1>
+</header>
+<p class="date" style="text-align: right">
+2019-09-08 (Sun.)
+</p>
+<div class="is-pulled-right">
+<p><a class='tag is-red' href=index.html#量子計算>量子計算</a></p>
+</div>
+<p><span class="math display">\[\newcommand{\ket}[1]{\left|#1\right\rangle}
+\newcommand{\true}{\mathrm{true}}
+\newcommand{\false}{\mathrm{false}}
+\newcommand{\exact}{\mathrm{EXACT}}
+\newcommand{\threshold}{\mathrm{THRESHOLD}}
+\newcommand{\concat}{+\!\!\!+}\]</span></p>
+<h2 id="紹介する論文">紹介する論文</h2>
+<ul>
+<li>“Exact quantum query complexity of EXACT and THRESHOLD”</li>
+<li>Andris Ambainis, Jānis Iraids, Juris Smotrovs</li>
+<li><a href="https://arxiv.org/abs/1302.1235">arxiv.org/abs/1302.1235</a></li>
+</ul>
+<p>与えられた <span class="math inline">\(n\)</span> bit (qbit ではない) について立ってる (<span class="math inline">\(1\)</span> である) ビットの数を数えるアルゴリズム. 正確に述べると, 立ってるビットの数がちょうど <span class="math inline">\(k\)</span> であるか判定する <span class="math inline">\(\exact^n_k\)</span> と, <span class="math inline">\(k\)</span> 以上であるか判定する <span class="math inline">\(\threshold^n_k\)</span> の2つのアルゴリズムを与える.</p>
+<blockquote>
+<p>もちろん量子計算を用いない古典コンピュータなら全てのビットをチェックする必要がある.</p>
+</blockquote>
+<h2 id="notation">notation</h2>
+<p><span class="math inline">\(n\)</span> qbit の基底の内, <span class="math inline">\(i\)</span> 番目 (<span class="math inline">\(0\)</span>-indexed) の qbit だけが立ってるもの <span class="math inline">\(\ket{0\cdots 0 1 0 \cdots 0}\)</span> を <span class="math display">\[\ket{i}\]</span> と書くことにする (<span class="math inline">\(i=0,1,\ldots,n-1\)</span>).</p>
+<p>2つの <span class="math inline">\(n\)</span> qbit <span class="math inline">\(\ket{i}\)</span> と <span class="math inline">\(\ket{j}\)</span> とを並べたものを <span class="math display">\[\ket{i, j} := \ket{i} \otimes \ket{j}\]</span> と書く.</p>
+<p>更にそれが <span class="math inline">\(2n\)</span> qbit であることが紛らわしく無ければ, <span class="math display">\[\ket{i} := \ket{i, i}\]</span> と書く.</p>
+<blockquote>
+<p><strong>補足</strong>: 実際には, 中身の表現はどうでもよくて, 要するに区別できる状態であればよい. つまり <span class="math inline">\(\ket{\cdot}\)</span> の中に書く数字は単なるラベルだとしか思ってない.</p>
+</blockquote>
+<p>1 qbit <span class="math inline">\(\ket{x}\)</span> (<span class="math inline">\(x=0,1\)</span>) に対して <span class="math inline">\((-1)^x\)</span> を <span class="math inline">\(\hat{x}\)</span> と書く (<span class="math inline">\(\hat{x}=1,-1\)</span>).</p>
+<h2 id="query-量子クエリ">Query (量子クエリ)</h2>
+<p>これから EXACT と THRESHOLD という2つのアルゴリズムを説明するが, 共に <span class="math inline">\(Q\)</span> という操作が登場する. これは入力 <span class="math inline">\(x_1, x_2,\ldots , x_n\)</span> に依存する写像であって,</p>
+<ul>
+<li><span class="math inline">\(Q \ket{i} = \hat{x}_i \ket{i}\)</span></li>
+</ul>
+<p>で定めるものである. このように入力に依存する操作をクエリと呼ぶ.</p>
+<p>1回のクエリの処理 (<span class="math inline">\(Q\)</span> の適用) のたびに, 入力 <span class="math inline">\(x_i\)</span> を一回読む必要がある. アルゴリズムの複雑性として, クエリを処理する回数を指標とする. これを量子クエリ計算量という.</p>
+<h2 id="exact">EXACT</h2>
+<p><span class="math inline">\(n\)</span> qbit <span class="math display">\[x=(x_0 x_1 \cdots x_{n-1})\]</span> の内, ちょうど <span class="math inline">\(k\)</span> 個が立ってるか判定するアルゴリズムを <span class="math inline">\(\exact^n_k\)</span> とする.</p>
+<p><span class="math display">\[\exact^n_k : \{0,1\}^n \to \{\true, \false\}\]</span></p>
+<p>今から述べる彼らのアルゴリズムでは <span class="math inline">\(2n\)</span> qbit を用意する. 取り得る状態は <span class="math inline">\(\ket{i}\)</span> と <span class="math inline">\(\ket{i,j}\)</span> <span class="math inline">\((0 \leq i,j \lt n; i \lt j)\)</span> の <span class="math inline">\(n(n+1)/2\)</span> 個だけとし, 初め <span class="math inline">\(\ket{0}\)</span> であるとする. 従って, 長さ <span class="math inline">\(n(n+1)/2\)</span> の複素ベクトルで状態は表現される.</p>
+<p>さていきなり一般の <span class="math inline">\(\exact^n_k\)</span> を考えるのは難しいので, まずは <span class="math inline">\(\exact^{2k}_k\)</span> の場合を考える.</p>
+<h3 id="exact2k_k"><span class="math inline">\(\exact^{2k}_k\)</span></h3>
+<p>全体が偶数ビットで, 内のちょうど半分のビットが立ってるかを判定する. このことは, ビットそれぞれを <span class="math inline">\(x \mapsto \hat{x}\)</span> としたときのその和 <span class="math inline">\(\sum_i \hat{x}_i\)</span> がゼロになることと等しいことを利用する. <span class="math display">\[\exact^{2k}_k(x) = \true \iff \sum_i \hat{x}_i = 0\]</span></p>
+<p>次の3つの操作を用いる:</p>
+<ol type="1">
+<li><span class="math inline">\(U_1 \ket{0} = \frac{1}{\sqrt{2k}} \sum_{i=0}^{2k-1} \ket{i}\)</span></li>
+<li>クエリ <span class="math inline">\(Q\)</span></li>
+<li><span class="math inline">\(U_2 \ket{i} = \frac{1}{\sqrt{2k}} \left( \sum_{i \lt j} \ket{i,j} - \sum_{i \gt j} \ket{j,i} + \ket{0} \right)\)</span></li>
+</ol>
+<p>ここで未定義な値 (e.g. <span class="math inline">\(U_1\ket{1}\)</span>) はどう定義してもいいので <span class="math inline">\(U_1, U_2\)</span> をユニタリー行列になるようにする.</p>
+<p><span class="math inline">\(\ket{0}\)</span> にこれらを順に通す:</p>
+<ol type="1">
+<li>初期状態
+<ul>
+<li><span class="math inline">\(\ket{0}\)</span></li>
+</ul></li>
+<li><span class="math inline">\(U_1\)</span>
+<ul>
+<li><span class="math inline">\(\frac{1}{\sqrt{2k}} \sum_{i=0}^{2k-1} \ket{i}\)</span></li>
+</ul></li>
+<li><span class="math inline">\(Q\)</span>
+<ul>
+<li><span class="math inline">\(\frac{1}{\sqrt{2k}} \sum_{i=0}^{2k-1} \hat{x}_i \ket{i}\)</span></li>
+</ul></li>
+<li><span class="math inline">\(U_2\)</span>
+<ul>
+<li><span class="math inline">\(\frac{1}{2k} \left( (\hat{x}_i - \hat{x}_j) \ket{i,j} + \sum_{i=0}^{2k-1} \hat{x}_i \ket{0} \right)\)</span></li>
+</ul></li>
+</ol>
+<p>で, 最後の量子を観測したときに得られうる状態は</p>
+<ol type="1">
+<li><span class="math inline">\(\ket{i,j}\)</span> (ただし <span class="math inline">\(i \lt j\)</span> )</li>
+<li><span class="math inline">\(\ket{0}\)</span></li>
+</ol>
+<p>の2種類がある.</p>
+<p>もし <span class="math inline">\(\ket{0}\)</span> を観測したならば, <span class="math inline">\(\sum_i \hat{x}_i\)</span> がゼロでないことがわかる. なぜなら, <span class="math inline">\(\ket{0}\)</span> を観測する確率は <span class="math inline">\((\frac{1}{2k}\sum\hat{x}_i)^2)\)</span> であるから. 従って, <span class="math display">\[\exact^{2k}_k(x) = \false\]</span> であることがわかる.</p>
+<p>次に <span class="math inline">\(\ket{i,j}\)</span> を観測したときを考えると, この係数について <span class="math inline">\(\hat{x}_i - \hat{x}_j \ne 0\)</span> であることがわかる. 即ち, ビット <span class="math inline">\(x_i\)</span> とビット <span class="math inline">\(x_j\)</span> とが異なることを示してる. 今, <span class="math inline">\(\exact^{2k}_k\)</span> はビットが立っているものの数と立っていないものの数が <strong>等しい</strong> かどうかにだけ興味があるので, 次が言える.</p>
+<p><span class="math display">\[\exact^{2k}_{k}(\{ x_0, x_1, \ldots , x_{n-1} \}) =
+\exact^{2k-2}_{k-1}(\{ x_0, x_1, \ldots , x_{n-1}\} \setminus \{x_i, x_j\}).\]</span> (ビットの列を集合に書き換えているので註意.)</p>
+<p>このことはビットに関する帰納法を示唆している. その基底状態として, <span class="math display">\[\exact^0_0~\{\} = \true\]</span> がある.</p>
+<p>帰納部分は, (<span class="math inline">\(\false\)</span> であれば) 運が良ければさっさと終わるが, 最悪 (<span class="math inline">\(\true\)</span> なら必ずそうで) <span class="math inline">\(\frac{2k}{2}\)</span> 回繰り返す必要がある.</p>
+<h3 id="exactn_k"><span class="math inline">\(\exact^n_k\)</span></h3>
+<p>入力 <span class="math inline">\(x = (x_0 \cdots x_{n-1})\)</span> に余計にビットを付け足せば <span class="math inline">\(\exact^{2k}_k\)</span> に出来る. 具体的に, <span class="math inline">\(\exact^n_k(x)\)</span> は次に等しい:</p>
+<ul>
+<li>case <span class="math inline">\(n = 2k\)</span>
+<ul>
+<li><span class="math inline">\(\exact^{2k}_k(x)\)</span></li>
+</ul></li>
+<li>case <span class="math inline">\(n \gt 2k\)</span>
+<ul>
+<li><span class="math inline">\(\exact^{2n-2k}_{n-k}(x \concat (1 \ldots 1))\)</span></li>
+<li><span class="math inline">\(n-2k\)</span> 個の 1 bit 列を連結</li>
+</ul></li>
+<li>case <span class="math inline">\(n \lt 2k\)</span>
+<ul>
+<li><span class="math inline">\(\exact^{2k}_{k}(x \concat (0 \ldots 0))\)</span></li>
+<li><span class="math inline">\(2k-n\)</span> 個の 0 bit 列を連結</li>
+</ul></li>
+</ul>
+<h3 id="クエリ計算量">クエリ計算量</h3>
+<p><span class="math inline">\(\exact^{2k}_k\)</span> のクエリ計算量は, 再帰の回数なので, 最悪 <span class="math inline">\(k\)</span>. したがって, <span class="math inline">\(\exact^{n}_k\)</span> のクエリ計算量は, 最悪</p>
+<p><span class="math display">\[\max\{k, n-k\}\]</span></p>
+<p>となる.</p>
+<h2 id="threshold">THRESHOLD</h2>
+<p><span class="math inline">\(n\)</span> bit <span class="math display">\[x = (x_0 x_1 \cdots x_{n-1})\]</span> の内, <span class="math inline">\(k\)</span> 個 <strong>以上</strong> が立ってるか判定するアルゴリズムを <span class="math display">\[\threshold^n_k \colon \{0,1\}^n \to \{\true, \false\}\]</span> とする.</p>
+<h3 id="threshold2k1_k1"><span class="math inline">\(\threshold^{2k+1}_{k+1}\)</span></h3>
+<p>まず初めに <span class="math inline">\(\threshold^{2k+1}_{k+1}\)</span> を考える. これは即ち過半数ビットが立ってるかを判定する手続きである.</p>
+<p>入力は <span class="math inline">\(x_0, x_1, \ldots , x_{2k}\)</span> の <span class="math inline">\(2k+1\)</span> ビット. これに関して</p>
+<ul>
+<li><span class="math inline">\(S_0 = \{ i \mid 0 \leq i \lt 2k+1, x_i = 0 \}\)</span></li>
+<li><span class="math inline">\(S_1 = \{ i \mid 0 \leq i \lt 2k+1, x_i = 1 \}\)</span></li>
+</ul>
+<p>とする. それぞれのサイズ (要素数) を <span class="math inline">\(\#S_0, \#S_1\)</span> と書くことにして, 全体は奇数ビットなので, 必ず <span class="math inline">\(\#S_0 \ne \#S_1\)</span>. 今 <span class="math inline">\(\#S_0 \gt \#S_1\)</span> とする. 逆の場合も同様であるので省略する.</p>
+<p>次のことが言える:</p>
+<ul>
+<li>when <span class="math inline">\(i \in S_0\)</span>,
+<ul>
+<li>when <span class="math inline">\(\#S_0 = \#S_1 + 1\)</span>
+<ul>
+<li><span class="math inline">\(\sum_{j \ne i} \hat{x}_j = 0\)</span></li>
+</ul></li>
+<li>when <span class="math inline">\(\#S_0 \gt \#S_1 + 1\)</span>
+<ul>
+<li><span class="math inline">\(\threshold^{2k+1}_{k+1}(x) = \threshold^{2k-1}_{k-1}(x \setminus \{x_i, x_j\})\)</span> (<span class="math inline">\(\forall j \ne i\)</span>)</li>
+</ul></li>
+</ul></li>
+<li>when <span class="math inline">\(i \in S_1\)</span>
+<ul>
+<li><span class="math inline">\(\threshold^{2k+1}_{k+1}(x) = \threshold^{2k-1}_{k-1}(x \setminus \{x_i, x_j\})\)</span> (<span class="math inline">\(\forall j \ne i\)</span>)</li>
+</ul></li>
+</ul>
+<p>THRESHOLD では次の3つの操作を用いる:</p>
+<ol type="1">
+<li><span class="math inline">\(U_1\)</span>
+<ul>
+<li><span class="math inline">\(\exact\)</span> のときと同様</li>
+</ul></li>
+<li><span class="math inline">\(Q\)</span>
+<ul>
+<li><span class="math inline">\(\exact\)</span> のときと同様</li>
+</ul></li>
+<li><span class="math inline">\(U_3\)</span>
+<ul>
+<li><span class="math inline">\(U_3 \ket{i} = \frac{\sqrt{2k+1}}{2k} \left( \sum_{i \lt j} \ket{i,j} - \sum_{i&gt;j} \ket{j,i} + \frac{1}{2k} \ket{j} \right)\)</span></li>
+<li>ユニタリ変換になるように</li>
+</ul></li>
+</ol>
+<p>EXACT と同様に <span class="math inline">\(\ket{0}\)</span> から初めてこれらに順に通す.</p>
+<ul>
+<li>初期状態
+<ul>
+<li><span class="math inline">\(\ket{0}\)</span></li>
+</ul></li>
+<li><span class="math inline">\(U_1\)</span>
+<ul>
+<li><span class="math inline">\(\frac{1}{\sqrt{2k}} \sum_{i=0}^{2k-1} \ket{i}\)</span></li>
+</ul></li>
+<li><span class="math inline">\(Q\)</span>
+<ul>
+<li><span class="math inline">\(\frac{1}{\sqrt{2k}} \sum_{i=0}^{2k-1} \hat{x}_i \ket{i}\)</span></li>
+</ul></li>
+<li><span class="math inline">\(U_3\)</span>
+<ul>
+<li><span class="math inline">\(\frac{\sqrt{2k-1}}{2k \sqrt{2k+1}} \sum_{i \lt j} (\hat{x}_i - \hat{x}_j) \ket{i,j} + \frac{1}{2k\sqrt{2k+1}} \sum_{i=0}^{2k} \sum_{i \ne j} \hat{x}_i \ket{j}\)</span></li>
+</ul></li>
+</ul>
+<p>これを測定すると</p>
+<ol type="1">
+<li><span class="math inline">\(\ket{i,j}\)</span> または</li>
+<li><span class="math inline">\(\ket{j}\)</span></li>
+</ol>
+<p>のいずれかを得る.</p>
+<h4 id="ketij-を得た時">1. <span class="math inline">\(\ket{i,j}\)</span> を得た時,</h4>
+<p><span class="math inline">\(\hat{x}_i - \hat{x}_j \ne 0\)</span> であるから, <span class="math inline">\(x_i \ne x_j\)</span>. 従って <span class="math display">\[\threshold^{2k+1}_{k+1}(x) = \threshold^{2k+1}_{k+1}(x \setminus \{x_i, x_j\}).\]</span></p>
+<h4 id="ketj-を得た時">2. <span class="math inline">\(\ket{j}\)</span> を得た時,</h4>
+<p><span class="math inline">\(\sum_{i \ne j} \hat{x}_i \ne 0\)</span>. 先ほどの性質を思い出せば, <span class="math display">\[\threshold^{2k+1}_{k+1}(x) = \threshold^{2k+1}_{k+1}(x \setminus \{x_i, x_j\}).\]</span></p>
+<p>以上から, ちょうど <span class="math inline">\(k\)</span> 回, 再帰的に <span class="math inline">\(U_1, Q, U_2\)</span> を適用することで</p>
+<p><span class="math display">\[\threshold^1_0(x_0) = x_0\]</span></p>
+<p>というわけで <span class="math inline">\(\threshold^{2k+1}_{k+1}\)</span> はクエリ計算量 <span class="math inline">\(k+1\)</span> で解ける.</p>
+<h3 id="thresholdn_k"><span class="math inline">\(\threshold^n_k\)</span></h3>
+<p>一般の場合はやはり EXACT と同様に余分にビットを付け足してやれば結局 <span class="math inline">\(\threshold^{2k+1}_{k+1}\)</span> に帰着でき, クエリ計算量は, <span class="math display">\[\max \{k+1, n-k+1\}.\]</span></p>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>極小言語戦略</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../resources/css/c.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-stumbleupon" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">極小言語戦略</h1>
+</header>
+<p class="date" style="text-align: right">
+2015-01-14
+</p>
+<div class="is-pulled-right">
+<p><a class='tag is-red' href=index.html#形式言語>形式言語</a> <a class='tag is-red' href=index.html#言語獲得>言語獲得</a></p>
+</div>
+<h2 id="概要">概要</h2>
+<p><a href="formallang-generalize-system.html">汎化システム</a> が成す言語クラスのいくつかは, 極小言語戦略と呼ばれる戦略で作る推論機械によって <a href="formallang-limit-identification.html">正提示で極限同定可能</a>（単に推論可能という）である. ここではその戦略を紹介する.</p>
+<h2 id="正提示からの推論">正提示からの推論</h2>
+<p>今考えている問題は次のようなものである.</p>
+<ul>
+<li>言語のクラス <span class="math inline">\(\mathcal L\)</span>
+<ul>
+<li>これは既知</li>
+</ul></li>
+<li>言語 <span class="math inline">\(L^* \in \mathcal L\)</span>
+<ul>
+<li>これは未知</li>
+</ul></li>
+<li>正提示 <span class="math inline">\(S \subset L\)</span>
+<ul>
+<li>これは初め空集合が与えられ, 逐次的に <span class="math inline">\(s \in L^*\)</span> が与えられ <span class="math inline">\(S\)</span> に追加していく</li>
+</ul></li>
+</ul>
+<p><span class="math inline">\(S\)</span> から <span class="math inline">\(L^*\)</span> を予測するという問題.</p>
+<p>そして今, 言語クラスは汎化システム <span class="math inline">\((D, \preceq)\)</span> で与えられているものとする. すなわち, ある集合 <span class="math inline">\(D\)</span> と写像 <span class="math inline">\(L\)</span> があって <span class="math display">\[L : D \xrightarrow{\sim} \mathcal L\]</span> という同型対応がついている. 推論機械は言語を直接出力する代わりに description <span class="math inline">\(d \in D\)</span> を出力する.</p>
+<h2 id="無矛盾な推論">無矛盾な推論</h2>
+<p>推論すべき真の description <span class="math inline">\(p\)</span> は <span class="math inline">\(L^* = L(p)\)</span> であるから <span class="math display">\[S \subseteq L(p)\]</span> を満たす. この最後の包含が成り立っていることを「無矛盾である」とか「 <span class="math inline">\(p\)</span> は <span class="math inline">\(S\)</span> を被覆する」などと言う.</p>
+<p>極限同定においては極限値が正しければよいので途中の推論ではどんなに誤っていてもよく, 従って上の意味で矛盾していてもよい. しかし一つの戦略として, 常に無矛盾な推論をすることが妥当そうに見える.</p>
+<h2 id="極小言語戦略">極小言語戦略</h2>
+<p>極小言語戦略とは, 正提示に対して無矛盾な言語の内, 極小なものを推論結果として出力する手法を言う. ここで極小であるとは, 言語の集合としての包含関係によって定まる順序に関する. （最小とは限らないので極小であることに注意.） そしてその極小な言語を <strong>極小言語 (minimal language; minl)</strong> と言う.</p>
+<p>いくつかの汎化システムが成す言語クラスは実は極小戦略によって推論可能である.</p>
+<blockquote>
+<p>この戦略はすなわち, 無矛盾なものであればいくらでもありえるし特に <span class="math inline">\(\top \in D\)</span> といった自明なものもある中で, 集合の小ささと推論の良さと思おうという気持ちである.</p>
+</blockquote>
+<p><span class="math inline">\(S\)</span> から極小言語（その description）を出力する仮定を <code>MINL</code> とすれば極小言語戦略とは次のような擬似コードで表される:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb1-1" title="1">S <span class="op">=</span> <span class="bu">set</span>()</a>
+<a class="sourceLine" id="cb1-2" title="2">g <span class="op">=</span> <span class="va">None</span>  <span class="co"># この時点の推論結果</span></a>
+<a class="sourceLine" id="cb1-3" title="3"><span class="cf">while</span> s <span class="op">=</span> <span class="bu">input</span>():</a>
+<a class="sourceLine" id="cb1-4" title="4">    S.add(s)</a>
+<a class="sourceLine" id="cb1-5" title="5">    <span class="cf">if</span> s <span class="kw">in</span> L(g):</a>
+<a class="sourceLine" id="cb1-6" title="6">        guess(g)  <span class="co"># 更新の必要なし</span></a>
+<a class="sourceLine" id="cb1-7" title="7">    <span class="cf">else</span>:</a>
+<a class="sourceLine" id="cb1-8" title="8">        g <span class="op">=</span> MINL(S)  <span class="co"># 更新</span></a>
+<a class="sourceLine" id="cb1-9" title="9">        guess(g)</a></code></pre></div>
+<h2 id="有限の厚み">有限の厚み</h2>
+<p>言語クラス <span class="math inline">\(\mathcal L\)</span> が任意の空でない正提示（文字列の集合）<span class="math inline">\(S\)</span> に対して以下を満たすとき <span class="math inline">\(\mathcal L\)</span> は有限の厚みを持つという.</p>
+<ul>
+<li><span class="math inline">\(\{ L \in \mathcal L \mid S \subseteq L \}\)</span> が有限集合</li>
+</ul>
+<p>すなわち被覆する言語の候補が常に有限通りであることを言う.</p>
+<h3 id="定理-有限の厚みを持つ言語クラスは極小言語戦略によって推論可能">定理: 有限の厚みを持つ言語クラスは極小言語戦略によって推論可能</h3>
+<p>証明はまだ分かってないので理解したら書きます.</p>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

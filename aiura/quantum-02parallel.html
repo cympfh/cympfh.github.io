@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>量子並列性とドイチュのアルゴリズム</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="../resources/css/c.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-stumbleupon" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">量子並列性とドイチュのアルゴリズム</h1>
+</header>
+<p class="date" style="text-align: right">
+2019-09-08 (Sun.)
+</p>
+<div class="is-pulled-right">
+<p><a class='tag is-red' href=index.html#量子計算>量子計算</a></p>
+</div>
+<p><span class="math display">\[\newcommand{\ket}[1]{\left|#1\right\rangle}
+\newcommand{\true}{\mathrm{true}}
+\newcommand{\false}{\mathrm{false}}
+\newcommand{\exact}{\mathrm{EXACT}}
+\newcommand{\threshold}{\mathrm{THRESHOLD}}
+\newcommand{\concat}{+\!\!\!+}\]</span></p>
+<h2 id="量子並列性">量子並列性</h2>
+<p><span class="math inline">\(n\)</span> qbit の基底の状態 <span class="math inline">\(\ket{ij\ldots k}\)</span> を普通の古典 <span class="math inline">\(n\)</span> bit <span class="math inline">\(i,j,\ldots,k\)</span> と同一視する. <span class="math inline">\(n\)</span> bit を入力にして 1 bit を出力する古典回路 <span class="math inline">\(f\)</span> について, 同程度の効率で計算できる次のような量子ゲート <span class="math inline">\(U_f\)</span> が存在する: <span class="math display">\[U_f (x \otimes \ket{i}) = x \otimes \ket{i \oplus f(x)}\]</span> ここで <span class="math inline">\(x\)</span> は <span class="math inline">\(n\)</span> qbit. <span class="math inline">\(i\)</span> は <span class="math inline">\(0\)</span> または <span class="math inline">\(1\)</span> (もちろん) で, <span class="math inline">\(\oplus\)</span> は排他的論理和.</p>
+<p>さて, アダマールゲートを用いれば2つの状態を全く同等に含んだ量子を作れるのだった. それを <span class="math inline">\(U_f\)</span> に通すことで, <strong>実質的に</strong> <span class="math inline">\(f(0)\)</span> と <span class="math inline">\(f(1)\)</span> を並列に計算するようなことができる. 具体的には次を実行する.</p>
+<ol type="1">
+<li><span class="math inline">\(H \ket{0}\)</span> に <span class="math inline">\(\ket{0}\)</span> を並べる
+<ul>
+<li><span class="math inline">\((H \ket{0}) \otimes \ket{0} = \frac{1}{\sqrt{2}} \ket{00} + \frac{1}{\sqrt{2}} \ket{10}\)</span></li>
+</ul></li>
+<li>これを <span class="math inline">\(U_f\)</span> に通す
+<ul>
+<li><span class="math inline">\(\frac{1}{\sqrt{2}} \ket{0, f(0)} + \frac{1}{\sqrt{2}} \ket{1, f(1)}\)</span></li>
+</ul></li>
+</ol>
+<p>一度の <span class="math inline">\(U_f\)</span> の計算で <span class="math inline">\(f(0)\)</span> と <span class="math inline">\(f(1)\)</span> が行われているのが分かる. この性質を <strong>量子並列性</strong> という. ただし, これをこのまま観測するだけでは結局そのどちらか <span class="math inline">\(\ket{x, f(x)}\)</span> しか得られない. 並列性のメリットを享受するには工夫が必要である. その古典的な一例であるドイチュのアルゴリズムを次に見る.</p>
+<h2 id="ドイチュのアルゴリズム-deutschs-algorithm">ドイチュのアルゴリズム (Deutsch’s algorithm)</h2>
+<p>1 bit から 1 bit を出力する古典回路 <span class="math inline">\(f\)</span> について, <span class="math inline">\(f(0) \oplus f(1)\)</span> を一度の <span class="math inline">\(U_f\)</span> (<span class="math inline">\(f\)</span> 相当の計算) で計算することができる.</p>
+<p>アルゴリズムは次の通り:</p>
+<ol type="1">
+<li><span class="math inline">\(\ket{+} = H \ket{0}\)</span> と <span class="math inline">\(\ket{-} = H \ket{1}\)</span> を得る
+<ul>
+<li>これを並べたものを <span class="math inline">\(\ket{+-} = \ket{+} \otimes \ket{-}\)</span> とする</li>
+</ul></li>
+<li><span class="math inline">\(\ket{\phi_1, \phi_2} = U_f \ket{+-}\)</span></li>
+<li><span class="math inline">\(H \ket{\phi_1, \phi_2} = H \ket{\phi_1} \otimes H\ket{\phi_2}\)</span> を計算して 1 qbit 目を観測する</li>
+</ol>
+<p>具体的に計算を追う.</p>
+<ol type="1">
+<li><span class="math inline">\(\ket{+-} = \ket{+} \otimes \ket{-} = \frac{1}{2} (\ket{00} - \ket{01} + \ket{10} - \ket{11})\)</span></li>
+<li><span class="math inline">\(U_f \ket{+-} = \frac{1}{2} (\ket{0,f(0)} - \ket{0,1-f(0)} + \ket{1,f(1)} - \ket{1,1-f(1)})\)</span></li>
+<li><span class="math inline">\(H(U_f \ket{+-}) = \frac{1}{2} \left[ (\ket{+} \otimes H\ket{f(0)}) - (\ket{+} \otimes H\ket{1 - f(0)}) + (\ket{-} \otimes H\ket{f(1)}) + (\ket{-} \otimes H\ket{1 - f(1)}) \right]\)</span></li>
+</ol>
+<p>最期の式を更に詳細に計算する.</p>
+<p>初めの2項 <span class="math inline">\((\ket{+} \otimes H\ket{f(0)}) - (\ket{+} \otimes H\ket{1 - f(0)})\)</span> を調べる. <span class="math inline">\(f(0), 1-f(0)\)</span> はちょうど一方が 0 なら他方は 1 である.</p>
+<p><span class="math inline">\(f(0) = 0\)</span> のとき,</p>
+<p><span class="math display">\[\begin{align*}
+(\ket{+} \otimes H\ket{f(0)}) - (\ket{+} \otimes H\ket{1 - f(0)})
+&amp; = \ket{+} \otimes (\ket{+} - \ket{-}) \\\\
+&amp; = \ket{+} \otimes (\sqrt{2} \ket{1}) \\\\
+&amp; = \sqrt{2} (\ket{+} \otimes \ket{1})
+\end{align*}\]</span></p>
+<p>同様に <span class="math inline">\(f(0)=1\)</span> のとき,</p>
+<p><span class="math display">\[\begin{align*}
+(\ket{+} \otimes H\ket{f(0)}) - (\ket{+} \otimes H\ket{1 - f(0)})
+&amp; = - \sqrt{2} (\ket{+} \otimes \ket{1})
+\end{align*}\]</span></p>
+<p>である. この2つの場合をまとめて <span class="math display">\[(\ket{+} \otimes H\ket{f(0)}) - (\ket{+} \otimes H\ket{1 - f(0)}) = (-1)^{f(0)} \sqrt{2} \ket{+1}\]</span> と書ける. ここで <span class="math inline">\(\ket{+} \otimes \ket{1}\)</span> を <span class="math inline">\(\ket{+1}\)</span> と書いた.</p>
+<p>また残りの2項についても同様に <span class="math display">\[(\ket{-} \otimes H\ket{f(1)}) - (\ket{-} \otimes H\ket{1 - f(1)})
+= (-1)^{f(1)} \sqrt{2} \ket{-1}\]</span> となる.</p>
+<p>というわけで <span class="math display">\[\begin{align*}
+H(U_f\ket{+-})
+&amp; = \frac{1}{2} \left[
+    (-1)^{f(0)} \sqrt{2} \ket{+1} + (-1)^{f(1)} \sqrt{2} \ket{-1}
+\right] \\\\
+&amp; = \frac{1}{\sqrt{2}} \left[
+    (-1)^{f(0)} \ket{+1} + (-1)^{f(1)} \ket{-1}
+\right]
+\end{align*}\]</span></p>
+<p>を得る.</p>
+<p>2 qbit 目は常に <span class="math inline">\(1\)</span> であることがわかる. さて 1 qbit 目にだけ注目すると <span class="math display">\[\frac{1}{\sqrt{2}}\left[ (-1)^{f(0)} \ket{+} + (-1)^{f(1)} \ket{-} \right]\]</span> である. <span class="math inline">\(f(0), f(1)\)</span> によって4通りに場合分けをすると,</p>
+<ol type="1">
+<li>case <span class="math inline">\(f(0)=0, f(1)=0\)</span>
+<ul>
+<li><span class="math inline">\(\frac{1}{\sqrt{2}} (\ket{+} + \ket{-})) = \ket{0}\)</span></li>
+</ul></li>
+<li>case <span class="math inline">\(f(0)=0, f(1)=1\)</span>
+<ul>
+<li><span class="math inline">\(\frac{1}{\sqrt{2}} (\ket{+} - \ket{-})) = \ket{1}\)</span></li>
+</ul></li>
+<li>case <span class="math inline">\(f(0)=1, f(1)=0\)</span>
+<ul>
+<li><span class="math inline">\(\frac{1}{\sqrt{2}} (- \ket{+} + \ket{-})) = - \ket{1}\)</span></li>
+</ul></li>
+<li>case <span class="math inline">\(f(0)=1, f(1)=1\)</span>
+<ul>
+<li><span class="math inline">\(\frac{1}{\sqrt{2}} (- \ket{+} - \ket{-})) = - \ket{0}\)</span></li>
+</ul></li>
+</ol>
+<p>観測する場合にはその係数の大きさの自乗の確率で状態を得る. 係数はそれぞれ <span class="math inline">\(+1\)</span> または <span class="math inline">\(-1\)</span> になっているから結局必ず <span class="math inline">\(\ket{0}\)</span> または <span class="math inline">\(\ket{1}\)</span> を得ることになり, それは <span class="math inline">\(f(0) \oplus f(1)\)</span> と一致している. 例えば <span class="math inline">\(f(0)=1, f(1)=0\)</span> の場合は <span class="math inline">\(-\ket{1}\)</span> を得, 観測した結果 <span class="math inline">\((-1)^2\)</span> の確率で <span class="math inline">\(\ket{1}\)</span> を得る.</p>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

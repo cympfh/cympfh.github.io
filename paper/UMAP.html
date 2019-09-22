@@ -1,54 +1,82 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>[1802.03426] UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction</title>
-  <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
   </style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../resources/css/c.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
 </head>
 <body>
 <header class="page-header">
@@ -110,11 +138,11 @@ original paper: <a href=https://arxiv.org/abs/1802.03426>https://arxiv.org/abs/1
 <h4 id="fuzzy-set">fuzzy set</h4>
 <p><span class="math inline">\(\P\)</span> が fuzzy set であるとは <span class="math inline">\(I\)</span> の上の前層であって, <span class="math inline">\(\P(a \leq b)\)</span> が包含写像であること.</p>
 <p>つまり <span class="math inline">\(I\)</span> の上では射 <span class="math inline">\(a \leq b\)</span> があり, <span class="math inline">\(\P\)</span> は関手なのでこの射を <span class="math inline">\(\Sets\)</span> の上に反対向きに写す. そのときその射が単なる包含写像であるので <span class="math display">\[\P(a) \supset \P(b)\]</span> となること.</p>
-<p>例えば実数の単調増加列 <span class="math display">\[0 &lt; a_1 \leq a_2 \leq \cdots \leq 1\]</span> に対して <span class="math display">\[\P(a_1) \supset \P(a_2) \supset \cdots \supset \P(1)\]</span> という集合の列を与えるものが &quot;fuzzy set&quot;.</p>
+<p>例えば実数の単調増加列 <span class="math display">\[0 &lt; a_1 \leq a_2 \leq \cdots \leq 1\]</span> に対して <span class="math display">\[\P(a_1) \supset \P(a_2) \supset \cdots \supset \P(1)\]</span> という集合の列を与えるものが “fuzzy set”.</p>
 <blockquote>
 <p>フィルタのような何かを思わせる.</p>
 </blockquote>
-<p>これが &quot;fuzzy set&quot; であることの気持ちを知っておく必要がある. 通常の集合 <span class="math inline">\(X\)</span> とは要は要素 <span class="math inline">\(x\)</span> に属してるかどうかだけを情報として持つ. 次のような membership 関数がある.</p>
+<p>これが “fuzzy set” であることの気持ちを知っておく必要がある. 通常の集合 <span class="math inline">\(X\)</span> とは要は要素 <span class="math inline">\(x\)</span> に属してるかどうかだけを情報として持つ. 次のような membership 関数がある.</p>
 <p><span class="math display">\[\mu_X(x) = \begin{cases}
 1 &amp; \text{ if } x \in X \\
 0 &amp; \text{ o/w }
@@ -176,7 +204,7 @@ d_\M(X_i, X_k) - \rho &amp; \text{ if } j=i \\
 <h2 id="次元削減の方法">次元削減の方法</h2>
 <p>データセット <span class="math inline">\(X\)</span> のその表現を同じ記号 <span class="math inline">\(X\)</span> で書く.</p>
 <p>これに対応する低次元のデータ <span class="math display">\[Y = \{Y_1, \ldots, Y_N \} \subset \R^d\]</span> を推定したい <span class="math inline">\((d \ll n)\)</span>. ただし <span class="math inline">\(Y\)</span> は <span class="math inline">\(\R^d\)</span> そのものを多様体とする空間の中に一様分布するものだとする. 従って距離もユークリッド距離そのもので与えられる.</p>
-<p>2つの表現 <span class="math inline">\(X, Y\)</span> があるときに, この2つの距離を, 理想的なときに最短になるように定義する. そのためにさっきやったように &quot;the strength of membership&quot; に変換して, その cross entropy を距離と定める.</p>
+<p>2つの表現 <span class="math inline">\(X, Y\)</span> があるときに, この2つの距離を, 理想的なときに最短になるように定義する. そのためにさっきやったように “the strength of membership” に変換して, その cross entropy を距離と定める.</p>
 <p>つまり fuzzy set <span class="math inline">\(\P\)</span> の membership 関数とは <span class="math display">\[\mu(x) = \sup \{ a \in (0,1] ~|~ x \in \P(a) \}\]</span> で与えられる.</p>
 <p>2つの表現からそれぞれの membership <span class="math inline">\(\mu, \nu\)</span> があるとき, その2つの距離を次のように定義する. ただし <span class="math inline">\(\mu, \nu\)</span> の定義域は同じ <span class="math inline">\(A=\lim \P\)</span> だとする. <span class="math display">\[C(\mu, \nu) = \sum_{a \in A}
 \mu(a) \log \frac{\mu(a)}{\nu(a)} +
@@ -199,31 +227,29 @@ d_\M(X_i, X_k) - \rho &amp; \text{ if } j=i \\
 </ul></li>
 </ul>
 <p><span class="math inline">\(\bar{X}\)</span> を <span class="math inline">\(X\)</span> の fuzzy topological representation とする.</p>
-<p><span class="math inline">\(Y\)</span> については, まず大雑把に <span class="math inline">\(X\)</span> を低次元ユークリッド空間に写す. これには &quot;Laplace-Beltrami operator&quot; を使ったそう. それから, 各エッジについて距離乃至 strength of membership についてのクロスエントロピーを最小化するように <span class="math inline">\(Y\)</span> を動かす. strength が正のものと, ゼロのもの (つまり距離が無限) を negative sampling して上手く選んでSGDに突っ込む.</p>
+<p><span class="math inline">\(Y\)</span> については, まず大雑把に <span class="math inline">\(X\)</span> を低次元ユークリッド空間に写す. これには “Laplace-Beltrami operator” を使ったそう. それから, 各エッジについて距離乃至 strength of membership についてのクロスエントロピーを最小化するように <span class="math inline">\(Y\)</span> を動かす. strength が正のものと, ゼロのもの (つまり距離が無限) を negative sampling して上手く選んでSGDに突っ込む.</p>
 <h2 id="使ってみる">使ってみる</h2>
 <p>ほぼほぼ https://www.kaggle.com/mrisdal/dimensionality-reduction-with-umap-on-mnist のコピペだけど。</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">pip</span> install mnist
-<span class="ex">pip</span> install umap-learn  <span class="co"># not `umap` (!!)</span></code></pre></div>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> mnist
-<span class="im">import</span> umap
-
-M <span class="op">=</span> <span class="dv">10000</span>  <span class="co"># 数秒でやるにはこのくらいの数が限度</span>
-X <span class="op">=</span> mnist.train_images()[:M]
-X <span class="op">=</span> X.reshape((X.shape[<span class="dv">0</span>], X.shape[<span class="dv">1</span>] <span class="op">*</span> X.shape[<span class="dv">2</span>]))
-y <span class="op">=</span> mnist.train_labels()[:M]
-
-embedding <span class="op">=</span> umap.UMAP(n_neighbors<span class="op">=</span><span class="dv">5</span>,
-                      min_dist<span class="op">=</span><span class="fl">0.3</span>,
-                      metric<span class="op">=</span><span class="st">&#39;correlation&#39;</span>).fit_transform(X)
-
-<span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt
-
-plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>,<span class="dv">12</span>))
-plt.scatter(embedding[:, <span class="dv">0</span>], embedding[:, <span class="dv">1</span>], c<span class="op">=</span>y)
-plt.axis(<span class="st">&#39;off&#39;</span>)<span class="op">;</span></code></pre></div>
-<figure>
-<img src="https://i.imgur.com/wDbuyYN.png" />
-</figure>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb1-1" title="1"><span class="ex">pip</span> install mnist</a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="ex">pip</span> install umap-learn  <span class="co"># not `umap` (!!)</span></a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb2-1" title="1"><span class="im">import</span> mnist</a>
+<a class="sourceLine" id="cb2-2" title="2"><span class="im">import</span> umap</a>
+<a class="sourceLine" id="cb2-3" title="3"></a>
+<a class="sourceLine" id="cb2-4" title="4">M <span class="op">=</span> <span class="dv">10000</span>  <span class="co"># 数秒でやるにはこのくらいの数が限度</span></a>
+<a class="sourceLine" id="cb2-5" title="5">X <span class="op">=</span> mnist.train_images()[:M]</a>
+<a class="sourceLine" id="cb2-6" title="6">X <span class="op">=</span> X.reshape((X.shape[<span class="dv">0</span>], X.shape[<span class="dv">1</span>] <span class="op">*</span> X.shape[<span class="dv">2</span>]))</a>
+<a class="sourceLine" id="cb2-7" title="7">y <span class="op">=</span> mnist.train_labels()[:M]</a>
+<a class="sourceLine" id="cb2-8" title="8"></a>
+<a class="sourceLine" id="cb2-9" title="9">embedding <span class="op">=</span> umap.UMAP(n_neighbors<span class="op">=</span><span class="dv">5</span>,</a>
+<a class="sourceLine" id="cb2-10" title="10">                      min_dist<span class="op">=</span><span class="fl">0.3</span>,</a>
+<a class="sourceLine" id="cb2-11" title="11">                      metric<span class="op">=</span><span class="st">&#39;correlation&#39;</span>).fit_transform(X)</a>
+<a class="sourceLine" id="cb2-12" title="12"></a>
+<a class="sourceLine" id="cb2-13" title="13"><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</a>
+<a class="sourceLine" id="cb2-14" title="14"></a>
+<a class="sourceLine" id="cb2-15" title="15">plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>,<span class="dv">12</span>))</a>
+<a class="sourceLine" id="cb2-16" title="16">plt.scatter(embedding[:, <span class="dv">0</span>], embedding[:, <span class="dv">1</span>], c<span class="op">=</span>y)</a>
+<a class="sourceLine" id="cb2-17" title="17">plt.axis(<span class="st">&#39;off&#39;</span>)<span class="op">;</span></a></code></pre></div>
+<p><img src="https://i.imgur.com/wDbuyYN.png" /></p>
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.

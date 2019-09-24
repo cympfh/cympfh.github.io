@@ -15,6 +15,7 @@
 
 - [linestyle](style.linestyle.html)
 - [xtics/ytics](style.xtics_ytics.html)
+- [awesome](style.awesome.html)
 
 ## fitting
 

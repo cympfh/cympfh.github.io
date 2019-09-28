@@ -128,6 +128,7 @@
 
 ## 文字列検索
 - [Shift-And](string.shift-and.html)
+- [Z-alogirhtm](string.z.html)
 
 ## 回文
 - [manacher](string.manacher.html)

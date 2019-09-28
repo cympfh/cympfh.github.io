@@ -55,7 +55,7 @@ cat <<EOM
       <div class="container">
         <section class="main-content columns is-fullheight">
 
-          <div class="article column is-8">
+          <div class="article column is-8 is-10-mobile">
             $(content)
           </div>
 

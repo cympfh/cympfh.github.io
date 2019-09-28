@@ -3,7 +3,7 @@
 ## 概要
 
 与えられた文字列 $S$ について,
-$$Z_i = \mathrm{len}(\mathrm{longest\_common\_suffix}(S, S[i:]))$$
+$$Z_i = \mathrm{len}(\mathrm{longest\_common\_prefix}(S, S[i:]))$$
 なる配列 $Z$ を線形時間で求めるアルゴリズム.
 ここで $S[i:]$ とは $i$ 文字目以降を切り出した部分文字列で,
 $Z_i$ とは $S$ と $S[i:]$ との最長共通接頭辞の長さのこと.

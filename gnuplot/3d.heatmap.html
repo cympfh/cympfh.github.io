@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>procon_library/</title>
+    <title>gnuplot/</title>
 
     <link rel="stylesheet" href="./resources/c.css">
     <link rel="stylesheet" href="./resources/highlight.css">
@@ -28,9 +28,7 @@
 <h2 id="概要">概要</h2>
 <p>混合行列 (Confusion Matrix) などと呼ばれるあの表を色付きで図示する. 色の濃さで数の大きさを表現する.</p>
 <p>上の参考リンクでは色が連続して変化するように中間値補完が為されてるが、 私の知ってるgnuplotのバージョンではこれは再現できない. これをするには <code>pm3d</code> を使ったほうがいいと思う.</p>
-<figure>
-<img src="3d.heatmap.png" />
-</figure>
+<p><img src="3d.heatmap.png" /></p>
 <h2 id="方法">方法</h2>
 <h3 id="data-format">data format</h3>
 <p>行列 (<code>matrix</code>) 形式でデータを与えることにする. すなわち、データ <span class="math inline">\(z\)</span> を <span class="math inline">\(n\)</span> 行 <span class="math inline">\(m\)</span> 列に並べたものをデータとする.</p>
@@ -45,7 +43,7 @@ Row2  z21  z22  z23
 Row3  z31  z32  z33
 Row4  z41  z42  z43</code></pre>
 <h3 id="with-image"><code>with image</code></h3>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">plot</span> ... using <span class="op">&lt;</span>x<span class="op">&gt;</span>:<span class="op">&lt;</span>y<span class="op">&gt;</span>:<span class="op">&lt;</span>z<span class="op">&gt;</span> with image</code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="ex">plot</span> ... using <span class="op">&lt;</span>x<span class="op">&gt;</span>:<span class="op">&lt;</span>y<span class="op">&gt;</span>:<span class="op">&lt;</span>z<span class="op">&gt;</span> with image</a></code></pre></div>
 <table>
 <thead>
 <tr class="header">
@@ -58,19 +56,19 @@ Row4  z41  z42  z43</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;"><code>x</code></td>
-<td style="text-align: center;">--</td>
+<td style="text-align: center;">–</td>
 <td style="text-align: left;">(int)</td>
 <td style="text-align: left;">データの <span class="math inline">\(x\)</span> 座標</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><code>y</code></td>
-<td style="text-align: center;">--</td>
+<td style="text-align: center;">–</td>
 <td style="text-align: left;">(int)</td>
 <td style="text-align: left;">データの <span class="math inline">\(y\)</span> 座標</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><code>z</code></td>
-<td style="text-align: center;">--</td>
+<td style="text-align: center;">–</td>
 <td style="text-align: left;">(double)</td>
 <td style="text-align: left;">データ. 対応する色が塗られる</td>
 </tr>
@@ -78,7 +76,7 @@ Row4  z41  z42  z43</code></pre>
 </table>
 <p>ただし、matrix で読む場合は <code>x</code>, <code>y</code> は自動的に column 1, 2 として適切な値が入ってると見なしてよい.</p>
 <h3 id="columnheaders-rowheaders"><code>columnheaders</code>, <code>rowheaders</code></h3>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">plot</span> ... matrix column rowheaders</code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="ex">plot</span> ... matrix column rowheaders</a></code></pre></div>
 <p>データの一行目、一列目の文字列を見出しだと思って、 二行目、二列目以降のデータだけを使う.</p>
 <h3 id="example">example</h3>
 <pre class="data"><code>xxxx Col1 Col2 Col3
@@ -87,76 +85,70 @@ Row2    2    4    6
 Row3    4    8   12
 Row4    8   16   24
 </code></pre>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">set</span> <span class="ex">terminal</span> pngcairo
-<span class="kw">set</span> <span class="ex">output</span> <span class="st">&#39;heatmap.png&#39;</span>
-
-<span class="bu">unset</span> <span class="va">key</span>
-<span class="kw">set</span> <span class="ex">title</span> <span class="st">&#39;Heatmap with image&#39;</span>
-
-<span class="kw">set</span> <span class="ex">cbrange</span> [0:30]  # the range of colorbox
-<span class="kw">set</span> <span class="ex">palette</span> cubehelix start -2 cycles 0 saturation 3 gamma 3 negative  # color scheme
-
-<span class="ex">plot</span> <span class="st">&#39;heatmap.dat&#39;</span> matrix rowheaders columnheaders u 1:2:3 with image ,\
-                <span class="st">&#39;&#39;</span> matrix rowheaders columnheaders u 1:2:(sprintf(<span class="st">&quot;%g&quot;</span>, <span class="va">$3</span>)) <span class="ex">with</span> labels</code></pre></div>
-<figure>
-<img src="3d.heatmap.png" />
-</figure>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw">set</span> <span class="ex">terminal</span> pngcairo</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="kw">set</span> <span class="ex">output</span> <span class="st">&#39;heatmap.png&#39;</span></a>
+<a class="sourceLine" id="cb6-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb6-4" data-line-number="4"><span class="bu">unset</span> <span class="va">key</span></a>
+<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="kw">set</span> <span class="ex">title</span> <span class="st">&#39;Heatmap with image&#39;</span></a>
+<a class="sourceLine" id="cb6-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="kw">set</span> <span class="ex">cbrange</span> [0:30]  # the range of colorbox</a>
+<a class="sourceLine" id="cb6-8" data-line-number="8"><span class="kw">set</span> <span class="ex">palette</span> cubehelix start -2 cycles 0 saturation 3 gamma 3 negative  # color scheme</a>
+<a class="sourceLine" id="cb6-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb6-10" data-line-number="10"><span class="ex">plot</span> <span class="st">&#39;heatmap.dat&#39;</span> matrix rowheaders columnheaders u 1:2:3 with image ,\</a>
+<a class="sourceLine" id="cb6-11" data-line-number="11">                <span class="st">&#39;&#39;</span> matrix rowheaders columnheaders u 1:2:(sprintf(<span class="st">&quot;%g&quot;</span>, <span class="va">$3</span>)) <span class="ex">with</span> labels</a></code></pre></div>
+<p><img src="3d.heatmap.png" /></p>
 <h2 id="格子線-gridline">格子線 (gridline)</h2>
 <p><code>set grid</code> によってセル同士の境界に線を引く. デフォルトだとセルの色塗りは gridline の後に行われて上書きされるので <code>set grid front</code> とする. <code>lt</code> や <code>lc</code>, <code>lw</code> で線のスタイルは調整する.</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">set</span> <span class="ex">term</span> pngcairo
-<span class="kw">set</span> <span class="ex">output</span> <span class="st">&#39;3d.heatmap.grid.ng.png&#39;</span>
-
-<span class="va">$data</span> <span class="op">&lt;&lt; EOD</span>
-X a b c d e
-A 0.0 -0.06 -0.25 -0.56 -1.0
-B 0.11 0.04 -0.13 -0.45 -0.88
-C 0.44 0.38 0.19 -0.11 -0.55
-D 1.0 0.93 0.75 0.43 0.0
-E 1.77 1.71 1.52 1.21 0.77
-EOD
-
-set grid front lw 1.5 lt -1 lc rgb &#39;white&#39;
-plot <span class="va">$data</span> matrix rowheaders columnheaders w image not</code></pre></div>
-<figure>
-<img src="3d.heatmap.grid.ng.png" />
-</figure>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">set</span> <span class="ex">term</span> pngcairo</a>
+<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="kw">set</span> <span class="ex">output</span> <span class="st">&#39;3d.heatmap.grid.ng.png&#39;</span></a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="va">$data</span> <span class="op">&lt;&lt; EOD</span></a>
+<a class="sourceLine" id="cb7-5" data-line-number="5">X a b c d e</a>
+<a class="sourceLine" id="cb7-6" data-line-number="6">A 0.0 -0.06 -0.25 -0.56 -1.0</a>
+<a class="sourceLine" id="cb7-7" data-line-number="7">B 0.11 0.04 -0.13 -0.45 -0.88</a>
+<a class="sourceLine" id="cb7-8" data-line-number="8">C 0.44 0.38 0.19 -0.11 -0.55</a>
+<a class="sourceLine" id="cb7-9" data-line-number="9">D 1.0 0.93 0.75 0.43 0.0</a>
+<a class="sourceLine" id="cb7-10" data-line-number="10">E 1.77 1.71 1.52 1.21 0.77</a>
+<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="op">EOD</span></a>
+<a class="sourceLine" id="cb7-12" data-line-number="12"></a>
+<a class="sourceLine" id="cb7-13" data-line-number="13"><span class="kw">set</span> <span class="ex">grid</span> front lw 1.5 lt -1 lc rgb <span class="st">&#39;white&#39;</span></a>
+<a class="sourceLine" id="cb7-14" data-line-number="14"><span class="ex">plot</span> <span class="va">$data</span> matrix rowheaders columnheaders w image not</a></code></pre></div>
+<p><img src="3d.heatmap.grid.ng.png" /></p>
 <p><code>xy</code> に gridline を引いてもちょうど 0.5 ずれた、セルの真ん中に引くようになってしまう. なぜならセルはちょうど格子点から <code>(-0.5, -0.5)-(0.5, 0.5)</code> の領域を占めているから.</p>
 <p>ちょうど 0.5 ずらした格子線を手に入れるために小目盛り (minor tics) を利用する. ただし <code>xy</code> の大目盛りがラベルのために使われている (数値で指定されていない) ときは小目盛りは使えないことになっているので、 <code>x2y2</code> を使う.</p>
 <p>まず <code>x2, y2</code> を宣言し <code>set link</code> で <code>xy</code> と同期させる. これに小目盛り <code>mx2, my2</code> を <code>interval=2</code> で宣言することで、ちょうど半分に分割する目盛りを作れる. <code>grid</code> の引数に <code>mx2tics, my2tics</code> を追加すればよい.</p>
 <p>変更点だけ書き出すと次の通り.</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">set</span> <span class="ex">x2tics</span>
-<span class="kw">set</span> <span class="ex">y2tics</span>
-<span class="kw">set</span> <span class="fu">link</span> x2
-<span class="kw">set</span> <span class="fu">link</span> y2
-<span class="kw">set</span> <span class="ex">mx2tics</span> 2
-<span class="kw">set</span> <span class="ex">my2tics</span> 2
-<span class="kw">set</span> <span class="ex">grid</span> front mx2tics my2tics lw 1.5 lt -1 lc rgb <span class="st">&#39;white&#39;</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw">set</span> <span class="ex">x2tics</span></a>
+<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="kw">set</span> <span class="ex">y2tics</span></a>
+<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="kw">set</span> <span class="fu">link</span> x2</a>
+<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="kw">set</span> <span class="fu">link</span> y2</a>
+<a class="sourceLine" id="cb8-5" data-line-number="5"><span class="kw">set</span> <span class="ex">mx2tics</span> 2</a>
+<a class="sourceLine" id="cb8-6" data-line-number="6"><span class="kw">set</span> <span class="ex">my2tics</span> 2</a>
+<a class="sourceLine" id="cb8-7" data-line-number="7"><span class="kw">set</span> <span class="ex">grid</span> front mx2tics my2tics lw 1.5 lt -1 lc rgb <span class="st">&#39;white&#39;</span></a></code></pre></div>
 <p>最後に余計なラベルや刻み線を消す処理を追加して結局</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">set</span> <span class="ex">term</span> pngcairo
-<span class="kw">set</span> <span class="ex">output</span> <span class="st">&#39;3d.heatmap.grid.png&#39;</span>
-
-<span class="va">$data</span> <span class="op">&lt;&lt; EOD</span>
-X a b c d e
-A 0.0 -0.06 -0.25 -0.56 -1.0
-B 0.11 0.04 -0.13 -0.45 -0.88
-C 0.44 0.38 0.19 -0.11 -0.55
-D 1.0 0.93 0.75 0.43 0.0
-E 1.77 1.71 1.52 1.21 0.77
-EOD
-
-set xtics scale 0  # 刻み線の長さ
-set ytics scale 0
-set x2tics format &#39;&#39; scale 0.01  # こちらもゼロにしたいがすると格子線まで消えてしまうので
-set y2tics format &#39;&#39; scale 0.01
-set link x2
-set link y2
-set mx2tics 2
-set my2tics 2
-set grid front mx2tics my2tics lw 1.5 lt -1 lc rgb &#39;white&#39;
-plot <span class="va">$data</span> matrix rowheaders columnheaders w image not</code></pre></div>
-<figure>
-<img src="3d.heatmap.grid.png" />
-</figure>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw">set</span> <span class="ex">term</span> pngcairo</a>
+<a class="sourceLine" id="cb9-2" data-line-number="2"><span class="kw">set</span> <span class="ex">output</span> <span class="st">&#39;3d.heatmap.grid.png&#39;</span></a>
+<a class="sourceLine" id="cb9-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb9-4" data-line-number="4"><span class="va">$data</span> <span class="op">&lt;&lt; EOD</span></a>
+<a class="sourceLine" id="cb9-5" data-line-number="5">X a b c d e</a>
+<a class="sourceLine" id="cb9-6" data-line-number="6">A 0.0 -0.06 -0.25 -0.56 -1.0</a>
+<a class="sourceLine" id="cb9-7" data-line-number="7">B 0.11 0.04 -0.13 -0.45 -0.88</a>
+<a class="sourceLine" id="cb9-8" data-line-number="8">C 0.44 0.38 0.19 -0.11 -0.55</a>
+<a class="sourceLine" id="cb9-9" data-line-number="9">D 1.0 0.93 0.75 0.43 0.0</a>
+<a class="sourceLine" id="cb9-10" data-line-number="10">E 1.77 1.71 1.52 1.21 0.77</a>
+<a class="sourceLine" id="cb9-11" data-line-number="11"><span class="op">EOD</span></a>
+<a class="sourceLine" id="cb9-12" data-line-number="12"></a>
+<a class="sourceLine" id="cb9-13" data-line-number="13"><span class="kw">set</span> <span class="ex">xtics</span> scale 0  # 刻み線の長さ</a>
+<a class="sourceLine" id="cb9-14" data-line-number="14"><span class="kw">set</span> <span class="ex">ytics</span> scale 0</a>
+<a class="sourceLine" id="cb9-15" data-line-number="15"><span class="kw">set</span> <span class="ex">x2tics</span> format <span class="st">&#39;&#39;</span> scale 0.01  # こちらもゼロにしたいがすると格子線まで消えてしまうので</a>
+<a class="sourceLine" id="cb9-16" data-line-number="16"><span class="kw">set</span> <span class="ex">y2tics</span> format <span class="st">&#39;&#39;</span> scale 0.01</a>
+<a class="sourceLine" id="cb9-17" data-line-number="17"><span class="kw">set</span> <span class="fu">link</span> x2</a>
+<a class="sourceLine" id="cb9-18" data-line-number="18"><span class="kw">set</span> <span class="fu">link</span> y2</a>
+<a class="sourceLine" id="cb9-19" data-line-number="19"><span class="kw">set</span> <span class="ex">mx2tics</span> 2</a>
+<a class="sourceLine" id="cb9-20" data-line-number="20"><span class="kw">set</span> <span class="ex">my2tics</span> 2</a>
+<a class="sourceLine" id="cb9-21" data-line-number="21"><span class="kw">set</span> <span class="ex">grid</span> front mx2tics my2tics lw 1.5 lt -1 lc rgb <span class="st">&#39;white&#39;</span></a>
+<a class="sourceLine" id="cb9-22" data-line-number="22"><span class="ex">plot</span> <span class="va">$data</span> matrix rowheaders columnheaders w image not</a></code></pre></div>
+<p><img src="3d.heatmap.grid.png" /></p>
 <p>となった.</p>
           </div>
 

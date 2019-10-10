@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>procon_library/</title>
+    <title>gnuplot/</title>
 
     <link rel="stylesheet" href="./resources/c.css">
     <link rel="stylesheet" href="./resources/highlight.css">
@@ -27,17 +27,15 @@
 </ul>
 <h2 id="概要">概要</h2>
 <p>y軸方向にエラーバーについたプロットをしたい.</p>
-<figure>
-<img src="2d.yerrorbars.png" />
-</figure>
+<p><img src="2d.yerrorbars.png" /></p>
 <h2 id="data-format">data format</h2>
-<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="ex">x</span> y y_low y_high
-<span class="ex">x</span> y y_low y_high
-<span class="bu">:</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="ex">x</span> y y_low y_high</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="ex">x</span> y y_low y_high</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="bu">:</span></a></code></pre></div>
 <h2 id="with-yerrorbars"><code>with yerrorbars</code></h2>
 <p>次のいずれか.</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">plot</span> ... using <span class="dt">{&lt;x&gt;:}</span><span class="op">&lt;</span>y<span class="op">&gt;</span>:<span class="op">&lt;</span>ydelta<span class="op">&gt;</span> with yerrorbars
-<span class="ex">plot</span> ... using <span class="op">&lt;</span>x<span class="op">&gt;</span>:<span class="op">&lt;</span>y<span class="op">&gt;</span>:<span class="op">&lt;</span>ylow<span class="op">&gt;</span>:<span class="op">&lt;</span>yhigh<span class="op">&gt;</span> with yerrorbars</code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="ex">plot</span> ... using <span class="dt">{&lt;x&gt;:}</span><span class="op">&lt;</span>y<span class="op">&gt;</span>:<span class="op">&lt;</span>ydelta<span class="op">&gt;</span> with yerrorbars</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="ex">plot</span> ... using <span class="op">&lt;</span>x<span class="op">&gt;</span>:<span class="op">&lt;</span>y<span class="op">&gt;</span>:<span class="op">&lt;</span>ylow<span class="op">&gt;</span>:<span class="op">&lt;</span>yhigh<span class="op">&gt;</span> with yerrorbars</a></code></pre></div>
 <table>
 <thead>
 <tr class="header">
@@ -50,31 +48,31 @@
 <tbody>
 <tr class="odd">
 <td style="text-align: left;"><code>x</code></td>
-<td style="text-align: center;">--</td>
+<td style="text-align: center;">–</td>
 <td style="text-align: left;">(double)x</td>
 <td style="text-align: left;">x 座標</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><code>y</code></td>
-<td style="text-align: center;">--</td>
+<td style="text-align: center;">–</td>
 <td style="text-align: left;">(double)y</td>
 <td style="text-align: left;">エラーバーの中点 y 座標</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><code>ydelta</code></td>
-<td style="text-align: center;">--</td>
+<td style="text-align: center;">–</td>
 <td style="text-align: left;">(double)</td>
 <td style="text-align: left;">これのプラスマイナスを <code>ylow</code> <code>yhigh</code> とする</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><code>ylow</code></td>
-<td style="text-align: center;">--</td>
+<td style="text-align: center;">–</td>
 <td style="text-align: left;">(double)</td>
 <td style="text-align: left;">エラーバーの下点 y 座標</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><code>yhigh</code></td>
-<td style="text-align: center;">--</td>
+<td style="text-align: center;">–</td>
 <td style="text-align: left;">(double)</td>
 <td style="text-align: left;">エラーバーの上点 y 座標</td>
 </tr>
@@ -83,35 +81,35 @@
 <h2 id="script">script</h2>
 <p>フォーマット通りのデータがいつも手に入るとは限らない.</p>
 <p>例えば</p>
-<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="ex">x</span> y
-<span class="ex">x</span> y
-<span class="ex">x</span> y
-<span class="bu">:</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="ex">x</span> y</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="ex">x</span> y</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="ex">x</span> y</a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="bu">:</span></a></code></pre></div>
 <p>というデータがあって、等しい <code>x</code> について <code>y</code> をグルーピングした上でその <code>ylow</code> <code>yhight</code> を手に入れる必要があるかもしれない. 次の Ruby スクリプトは等しい <code>x</code> を持つデータの中で、 <code>y</code> の平均、最小、最大を求めて上のデータフォーマットに合わせる.</p>
-<div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby">groups = {}
-readlines.each <span class="kw">do</span> |line|
-  x, y = line.chomp.split
-  <span class="kw">next</span> <span class="kw">unless</span> x &amp;&amp; y
-  x = x.to_f
-  y = y.to_f
-  <span class="kw">if</span> groups[x]
-    groups[x] &lt;&lt; y
-  <span class="kw">else</span>
-    groups[x] = [y]
-  <span class="kw">end</span>
-<span class="kw">end</span>
-
-groups.each <span class="kw">do</span> |x, ys|
-  av = ys.inject(:+) / ys.size.to_f
-  puts <span class="st">&quot;</span><span class="ot">#{</span>x<span class="ot">}</span><span class="st"> </span><span class="ot">#{</span>av<span class="ot">}</span><span class="st"> </span><span class="ot">#{</span>ys.min<span class="ot">}</span><span class="st"> </span><span class="ot">#{</span>ys.max<span class="ot">}</span><span class="st">&quot;</span>
-<span class="kw">end</span></code></pre></div>
-<div class="sourceCode"><pre class="sourceCode sh"><code class="sourceCode bash"><span class="kw">set</span> <span class="ex">terminal</span> pngcairo size 700,400
-<span class="kw">set</span> <span class="ex">output</span> <span class="st">&#39;yerrorbars.png&#39;</span>
-
-<span class="kw">set</span> <span class="ex">key</span> bottom right
-<span class="kw">set</span> <span class="ex">xrange</span> [0:4]
-<span class="ex">plot</span> <span class="st">&#39;&lt; cat yerrorbars.dat | ruby error.rb&#39;</span> ls 1 with yerrorbars ,\
-                                 <span class="st">&#39;&#39;</span> ls 1 with lines ,\</code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode ruby"><code class="sourceCode ruby"><a class="sourceLine" id="cb4-1" data-line-number="1">groups = {}</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">readlines.each <span class="kw">do</span> |line|</a>
+<a class="sourceLine" id="cb4-3" data-line-number="3">  x, y = line.chomp.split</a>
+<a class="sourceLine" id="cb4-4" data-line-number="4">  <span class="kw">next</span> <span class="kw">unless</span> x &amp;&amp; y</a>
+<a class="sourceLine" id="cb4-5" data-line-number="5">  x = x.to_f</a>
+<a class="sourceLine" id="cb4-6" data-line-number="6">  y = y.to_f</a>
+<a class="sourceLine" id="cb4-7" data-line-number="7">  <span class="kw">if</span> groups[x]</a>
+<a class="sourceLine" id="cb4-8" data-line-number="8">    groups[x] &lt;&lt; y</a>
+<a class="sourceLine" id="cb4-9" data-line-number="9">  <span class="kw">else</span></a>
+<a class="sourceLine" id="cb4-10" data-line-number="10">    groups[x] = [y]</a>
+<a class="sourceLine" id="cb4-11" data-line-number="11">  <span class="kw">end</span></a>
+<a class="sourceLine" id="cb4-12" data-line-number="12"><span class="kw">end</span></a>
+<a class="sourceLine" id="cb4-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb4-14" data-line-number="14">groups.each <span class="kw">do</span> |x, ys|</a>
+<a class="sourceLine" id="cb4-15" data-line-number="15">  av = ys.inject(:+) / ys.size.to_f</a>
+<a class="sourceLine" id="cb4-16" data-line-number="16">  puts <span class="st">&quot;</span><span class="ot">#{</span>x<span class="ot">}</span><span class="st"> </span><span class="ot">#{</span>av<span class="ot">}</span><span class="st"> </span><span class="ot">#{</span>ys.min<span class="ot">}</span><span class="st"> </span><span class="ot">#{</span>ys.max<span class="ot">}</span><span class="st">&quot;</span></a>
+<a class="sourceLine" id="cb4-17" data-line-number="17"><span class="kw">end</span></a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode sh"><code class="sourceCode bash"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">set</span> <span class="ex">terminal</span> pngcairo size 700,400</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="kw">set</span> <span class="ex">output</span> <span class="st">&#39;yerrorbars.png&#39;</span></a>
+<a class="sourceLine" id="cb5-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb5-4" data-line-number="4"><span class="kw">set</span> <span class="ex">key</span> bottom right</a>
+<a class="sourceLine" id="cb5-5" data-line-number="5"><span class="kw">set</span> <span class="ex">xrange</span> [0:4]</a>
+<a class="sourceLine" id="cb5-6" data-line-number="6"><span class="ex">plot</span> <span class="st">&#39;&lt; cat yerrorbars.dat | ruby error.rb&#39;</span> ls 1 with yerrorbars ,\</a>
+<a class="sourceLine" id="cb5-7" data-line-number="7">                                 <span class="st">&#39;&#39;</span> ls 1 with lines ,\</a></code></pre></div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">

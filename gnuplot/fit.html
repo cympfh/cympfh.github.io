@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>procon_library/</title>
+    <title>gnuplot/</title>
 
     <link rel="stylesheet" href="./resources/c.css">
     <link rel="stylesheet" href="./resources/highlight.css">
@@ -23,40 +23,38 @@
             <h1 id="fit">fit</h1>
 <p>fit コマンドを使うとデータ点列を説明 (近似) するような曲線を探索できる.</p>
 <h2 id="synopsis">SYNOPSIS</h2>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">f</span>(x) = <span class="ex">g</span>(x, a, b, c)
-<span class="ex">fit</span> [:][:] f(x) <span class="st">&#39;data&#39;</span> <span class="ex">via</span> a, b, c</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="ex">f</span>(x) = <span class="ex">g</span>(x, a, b, c)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="ex">fit</span> [:][:] f(x) <span class="st">&#39;data&#39;</span> <span class="ex">via</span> a, b, c</a></code></pre></div>
 <h2 id="例">例</h2>
 <p>正弦曲線を描く Ruby スクリプトをデータの例に使う.</p>
-<div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="co"># data.rb</span>
-<span class="kw">def</span> noisy_sin(x)
-  <span class="kw">return</span> <span class="dt">Math</span>.sin(x) + (rand - <span class="fl">0.5</span>) * <span class="fl">0.2</span>
-<span class="kw">end</span>
-
-<span class="dv">100</span>.times <span class="kw">do</span> |i|
-  x = (i - <span class="dv">50</span>) / <span class="fl">20.0</span>
-  puts <span class="st">&quot;</span><span class="ot">#{</span>x<span class="ot">}</span><span class="st"> </span><span class="ot">#{</span>noisy_sin x<span class="ot">}</span><span class="st">&quot;</span>
-<span class="kw">end</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode ruby"><code class="sourceCode ruby"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># data.rb</span></a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw">def</span> noisy_sin(x)</a>
+<a class="sourceLine" id="cb2-3" data-line-number="3">  <span class="kw">return</span> <span class="dt">Math</span>.sin(x) + (rand - <span class="fl">0.5</span>) * <span class="fl">0.2</span></a>
+<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="kw">end</span></a>
+<a class="sourceLine" id="cb2-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="dv">100</span>.times <span class="kw">do</span> |i|</a>
+<a class="sourceLine" id="cb2-7" data-line-number="7">  x = (i - <span class="dv">50</span>) / <span class="fl">20.0</span></a>
+<a class="sourceLine" id="cb2-8" data-line-number="8">  puts <span class="st">&quot;</span><span class="ot">#{</span>x<span class="ot">}</span><span class="st"> </span><span class="ot">#{</span>noisy_sin x<span class="ot">}</span><span class="st">&quot;</span></a>
+<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="kw">end</span></a></code></pre></div>
 <p>ランダムなので実行のたびに結果が変わるけど, そこは目をつむってもらって gnuplot からは <code>&lt;ruby data.rb</code> を参照する.</p>
 <p>fit コマンドを使うには, このデータを近似する関数を定義する. ただし関数の定義には自由な変数を使って良い. 例えば下の例では <span class="math inline">\(f(x) = ax^3+bx+c\)</span> という関数を定義し, 係数に <span class="math inline">\(a,b,c\)</span> という自由変数を含んでいる.</p>
 <p>係数には適用な値を代入して初期化しておく. 初期化されてない場合は <code>1</code> が自動的に使われるが, ある程度当たりをつけて良い初期値を入れることは結果の精度の為に大事になってくることがある.</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">f</span>(x) = <span class="ex">a</span> * x * x * x + b * x + c
-<span class="ex">a</span> = 1
-<span class="ex">b</span> = -2
-<span class="ex">c</span> = 0</code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="ex">f</span>(x) = <span class="ex">a</span> * x * x * x + b * x + c</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="ex">a</span> = 1</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="ex">b</span> = -2</a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="ex">c</span> = 0</a></code></pre></div>
 <p>この <code>f(x)</code> を使って fit コマンドを次のように叩く. <code>via</code> キーワードの次に探索して欲しい変数を列挙する.</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">fit</span> f(x) <span class="st">&#39;&lt; ruby test.rb&#39;</span> <span class="ex">via</span> a, b, c
-<span class="ex">plot</span> <span class="st">&#39;&lt; ruby test.rb&#39;</span>, f(x)</code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="ex">fit</span> f(x) <span class="st">&#39;&lt; ruby test.rb&#39;</span> <span class="ex">via</span> a, b, c</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="ex">plot</span> <span class="st">&#39;&lt; ruby test.rb&#39;</span>, f(x)</a></code></pre></div>
 <p>fit コマンドが終了した時点で, <code>a, b, c</code> には fitting し終えた値が代入されているので, そのまま <code>plot f(x)</code> をすれば, 結果の曲線を描かせることができる. 今回は次のような結果が得られた.</p>
-<figure>
-<img src="https://i.imgur.com/GsL5nx8.png" />
-</figure>
+<p><img src="https://i.imgur.com/GsL5nx8.png" /></p>
 <p><code>f(x)</code> は多項式である必要はない. 例えばデータが正弦波っぽく見えたのなら直接正弦波に近似させればよい.</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">f</span>(x) = <span class="ex">a</span> * sin(b * x + c)
-<span class="ex">a</span> = 0
-<span class="ex">b</span> = 0
-<span class="ex">c</span> = 0
-<span class="ex">fit</span> f(x) <span class="st">&#39;&lt; ruby test.rb&#39;</span> <span class="ex">via</span> a, b, c
-<span class="ex">plot</span> <span class="st">&#39;&lt; ruby test.rb&#39;</span>, f(x)</code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="ex">f</span>(x) = <span class="ex">a</span> * sin(b * x + c)</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="ex">a</span> = 0</a>
+<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="ex">b</span> = 0</a>
+<a class="sourceLine" id="cb5-4" data-line-number="4"><span class="ex">c</span> = 0</a>
+<a class="sourceLine" id="cb5-5" data-line-number="5"><span class="ex">fit</span> f(x) <span class="st">&#39;&lt; ruby test.rb&#39;</span> <span class="ex">via</span> a, b, c</a>
+<a class="sourceLine" id="cb5-6" data-line-number="6"><span class="ex">plot</span> <span class="st">&#39;&lt; ruby test.rb&#39;</span>, f(x)</a></code></pre></div>
 <p>おそらく <code>a=1, b=1, c=0</code> に近い値がセットされるはず.</p>
           </div>
 

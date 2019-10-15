@@ -5,6 +5,10 @@
 - [Warshall-Floyd](graph.wall.html)
 - [Bellman-Ford](graph.bellmanford.html)
 
+## 無向グラフ
+- [二部グラフ判定](graph.undirected.bipartite.html)
+- [直径](graph.undirected.diameter.html)
+
 ## 最小全域木
 - [Prim](graph.prim.html)
 - [Kruskal](graph.kruskal.html)

@@ -23,28 +23,28 @@
             <h1 id="int.euler_phi">int.euler_phi</h1>
 <p>オイラーの <span class="math inline">\(\Phi\)</span> 関数. <span class="math inline">\(\Phi(n)\)</span> は <span class="math inline">\(1\)</span> 以上 <span class="math inline">\(n\)</span> 以下の <span class="math inline">\(n\)</span> と互いに素な自然数の個数.</p>
 <h2 id="int.euler_phi.rs"><a href="int.euler_phi.rs" class="uri">int.euler_phi.rs</a></h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">fn</span> euler_phi(n: <span class="dt">i32</span>) -&gt; <span class="dt">usize</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-2" title="2">    <span class="kw">let</span> <span class="kw">mut</span> divs = <span class="pp">vec!</span><span class="op">[]</span>;</a>
-<a class="sourceLine" id="cb1-3" title="3">    <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-4" title="4">        <span class="kw">let</span> <span class="kw">mut</span> m = n;</a>
-<a class="sourceLine" id="cb1-5" title="5">        <span class="kw">for</span> k <span class="kw">in</span> <span class="dv">2</span>..n <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-6" title="6">            <span class="kw">if</span> m % k == <span class="dv">0</span> <span class="op">{</span> divs.push(k); <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-7" title="7">            <span class="kw">while</span> m % k == <span class="dv">0</span> <span class="op">{</span> m /= k; <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-8" title="8">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-9" title="9">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-10" title="10"></a>
-<a class="sourceLine" id="cb1-11" title="11">    <span class="kw">let</span> <span class="kw">mut</span> cx: <span class="dt">i32</span> = <span class="dv">0</span>;</a>
-<a class="sourceLine" id="cb1-12" title="12">    <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-13" title="13">        <span class="kw">let</span> m = divs.len();</a>
-<a class="sourceLine" id="cb1-14" title="14">        <span class="kw">for</span> b <span class="kw">in</span> <span class="dv">1</span>..(<span class="dv">1</span>&lt;&lt;m) <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-15" title="15">            <span class="kw">let</span> d = (<span class="dv">0</span>..m).filter(|i| b &amp; <span class="dv">1</span>&lt;&lt;i &gt; <span class="dv">0</span>).fold(<span class="dv">1</span>, |ac, i| ac * divs<span class="op">[</span>i<span class="op">]</span>);</a>
-<a class="sourceLine" id="cb1-16" title="16">            <span class="kw">let</span> popcnt = (<span class="dv">0</span>..m).filter(|i| b &amp; <span class="dv">1</span>&lt;&lt;i &gt; <span class="dv">0</span>).<span class="pp">collect::</span>&lt;<span class="dt">Vec</span>&lt;_&gt;&gt;().len();</a>
-<a class="sourceLine" id="cb1-17" title="17">            cx += n / d * <span class="kw">if</span> popcnt % <span class="dv">2</span> == <span class="dv">1</span> <span class="op">{</span> <span class="dv">1</span> <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span> -<span class="dv">1</span> <span class="op">}</span>;</a>
-<a class="sourceLine" id="cb1-18" title="18">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-19" title="19">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-20" title="20"></a>
-<a class="sourceLine" id="cb1-21" title="21">    (n - cx) <span class="kw">as</span> <span class="dt">usize</span></a>
-<a class="sourceLine" id="cb1-22" title="22"><span class="op">}</span></a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> euler_phi(n: <span class="dt">i32</span>) -&gt; <span class="dt">usize</span> {
+    <span class="kw">let</span> <span class="kw">mut</span> divs = <span class="pp">vec!</span>[];
+    {
+        <span class="kw">let</span> <span class="kw">mut</span> m = n;
+        <span class="kw">for</span> k <span class="kw">in</span> <span class="dv">2.</span>.n {
+            <span class="kw">if</span> m % k == <span class="dv">0</span> { divs.push(k); }
+            <span class="kw">while</span> m % k == <span class="dv">0</span> { m /= k; }
+        }
+    }
+
+    <span class="kw">let</span> <span class="kw">mut</span> cx: <span class="dt">i32</span> = <span class="dv">0</span>;
+    {
+        <span class="kw">let</span> m = divs.len();
+        <span class="kw">for</span> b <span class="kw">in</span> <span class="dv">1.</span>.(<span class="dv">1</span>&lt;&lt;m) {
+            <span class="kw">let</span> d = (<span class="dv">0.</span>.m).filter(|i| b &amp; <span class="dv">1</span>&lt;&lt;i &gt; <span class="dv">0</span>).fold(<span class="dv">1</span>, |ac, i| ac * divs[i]);
+            <span class="kw">let</span> popcnt = (<span class="dv">0.</span>.m).filter(|i| b &amp; <span class="dv">1</span>&lt;&lt;i &gt; <span class="dv">0</span>).collect::&lt;<span class="dt">Vec</span>&lt;_&gt;&gt;().len();
+            cx += n / d * <span class="kw">if</span> popcnt % <span class="dv">2</span> == <span class="dv">1</span> { <span class="dv">1</span> } <span class="kw">else</span> { -<span class="dv">1</span> };
+        }
+    }
+
+    (n - cx) <span class="kw">as</span> <span class="dt">usize</span>
+}</code></pre></div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
@@ -55,6 +55,11 @@
 <li><a href="graph.dij.html">Dijkstra</a></li>
 <li><a href="graph.wall.html">Warshall-Floyd</a></li>
 <li><a href="graph.bellmanford.html">Bellman-Ford</a></li>
+</ul>
+<h2 id="無向グラフ">無向グラフ</h2>
+<ul>
+<li><a href="graph.undirected.bipartite.html">二部グラフ判定</a></li>
+<li><a href="graph.undirected.diameter.html">直径</a></li>
 </ul>
 <h2 id="最小全域木">最小全域木</h2>
 <ul>
@@ -97,7 +102,7 @@
 <h2 id="行列式">行列式</h2>
 <ul>
 <li><a href="matrix.det.naiiv.html">定義に拠る算法</a></li>
-<li><a href="matrix.det.cramer.html">Cramer’s rule</a></li>
+<li><a href="matrix.det.cramer.html">Cramer's rule</a></li>
 </ul>
 </details>
 

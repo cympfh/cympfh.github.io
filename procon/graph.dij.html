@@ -43,47 +43,47 @@
 </ul></li>
 </ul></li>
 </ul>
-<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">use</span> <span class="pp">std::collections::</span>BinaryHeap;</a>
-<a class="sourceLine" id="cb1-2" title="2"></a>
-<a class="sourceLine" id="cb1-3" title="3"><span class="kw">type</span> Cost = <span class="dt">i64</span>;</a>
-<a class="sourceLine" id="cb1-4" title="4"><span class="kw">const</span> MaxCost: Cost = <span class="dv">1_000_000_000_000_000</span>;</a>
-<a class="sourceLine" id="cb1-5" title="5"></a>
-<a class="sourceLine" id="cb1-6" title="6"><span class="kw">fn</span> dij(s: <span class="dt">usize</span>, neigh: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;(<span class="dt">usize</span>, Cost)&gt;&gt;) -&gt; <span class="dt">Vec</span>&lt;Cost&gt; <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-7" title="7">    <span class="kw">let</span> n = neigh.len();</a>
-<a class="sourceLine" id="cb1-8" title="8">    <span class="kw">let</span> <span class="kw">mut</span> d: <span class="dt">Vec</span>&lt;Cost&gt; = <span class="pp">vec!</span><span class="op">[</span>MaxCost; n<span class="op">]</span>;</a>
-<a class="sourceLine" id="cb1-9" title="9">    <span class="kw">let</span> <span class="kw">mut</span> q = <span class="pp">BinaryHeap::</span>new();</a>
-<a class="sourceLine" id="cb1-10" title="10">    q.push((<span class="dv">0</span>, s));</a>
-<a class="sourceLine" id="cb1-11" title="11">    d<span class="op">[</span>s<span class="op">]</span> = <span class="dv">0</span>;</a>
-<a class="sourceLine" id="cb1-12" title="12">    <span class="kw">while</span> <span class="kw">let</span> <span class="cn">Some</span>((_, u)) = q.pop() <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-13" title="13">        <span class="kw">for</span> &amp;(v, cost) <span class="kw">in</span> neigh<span class="op">[</span>u<span class="op">]</span>.iter() <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-14" title="14">            <span class="kw">if</span> d<span class="op">[</span>v<span class="op">]</span> &gt; d<span class="op">[</span>u<span class="op">]</span> + cost <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-15" title="15">                d<span class="op">[</span>v<span class="op">]</span> = d<span class="op">[</span>u<span class="op">]</span> + cost;</a>
-<a class="sourceLine" id="cb1-16" title="16">                q.push((-d<span class="op">[</span>v<span class="op">]</span>, v));</a>
-<a class="sourceLine" id="cb1-17" title="17">            <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-18" title="18">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-19" title="19">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-20" title="20">    d</a>
-<a class="sourceLine" id="cb1-21" title="21"><span class="op">}</span></a>
-<a class="sourceLine" id="cb1-22" title="22"></a>
-<a class="sourceLine" id="cb1-23" title="23"><span class="kw">fn</span> main() <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-24" title="24"></a>
-<a class="sourceLine" id="cb1-25" title="25">    <span class="kw">let</span> <span class="kw">mut</span> sc = <span class="pp">Scanner::</span>new();</a>
-<a class="sourceLine" id="cb1-26" title="26"></a>
-<a class="sourceLine" id="cb1-27" title="27">    <span class="kw">let</span> n: <span class="dt">usize</span> = sc.cin(); <span class="co">// nodes</span></a>
-<a class="sourceLine" id="cb1-28" title="28">    <span class="kw">let</span> m: <span class="dt">usize</span> = sc.cin(); <span class="co">// edges</span></a>
-<a class="sourceLine" id="cb1-29" title="29">    <span class="kw">let</span> <span class="kw">mut</span> neigh = <span class="pp">vec!</span><span class="op">[</span><span class="pp">vec!</span><span class="op">[]</span>; n<span class="op">]</span>;</a>
-<a class="sourceLine" id="cb1-30" title="30">    <span class="kw">for</span> _ <span class="kw">in</span> <span class="dv">0</span>..m <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-31" title="31">        <span class="kw">let</span> u = sc.<span class="pp">cin::</span>&lt;<span class="dt">usize</span>&gt;() - <span class="dv">1</span>;</a>
-<a class="sourceLine" id="cb1-32" title="32">        <span class="kw">let</span> v = sc.<span class="pp">cin::</span>&lt;<span class="dt">usize</span>&gt;() - <span class="dv">1</span>;</a>
-<a class="sourceLine" id="cb1-33" title="33">        <span class="kw">let</span> c: Cost = sc.cin();</a>
-<a class="sourceLine" id="cb1-34" title="34">        neigh<span class="op">[</span>u<span class="op">]</span>.push((v, c));</a>
-<a class="sourceLine" id="cb1-35" title="35">        neigh<span class="op">[</span>v<span class="op">]</span>.push((u, c));</a>
-<a class="sourceLine" id="cb1-36" title="36">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-37" title="37"></a>
-<a class="sourceLine" id="cb1-38" title="38">    <span class="kw">let</span> d = dij(<span class="dv">0</span>, &amp;neigh);</a>
-<a class="sourceLine" id="cb1-39" title="39">    <span class="pp">trace!</span>(d);</a>
-<a class="sourceLine" id="cb1-40" title="40"></a>
-<a class="sourceLine" id="cb1-41" title="41"><span class="op">}</span></a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">use</span> std::collections::BinaryHeap;
+
+<span class="kw">type</span> Cost = <span class="dt">i64</span>;
+<span class="kw">const</span> MaxCost: Cost = <span class="dv">1_000_000_000_000_000</span>;
+
+<span class="kw">fn</span> dij(s: <span class="dt">usize</span>, neigh: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;(<span class="dt">usize</span>, Cost)&gt;&gt;) -&gt; <span class="dt">Vec</span>&lt;Cost&gt; {
+    <span class="kw">let</span> n = neigh.len();
+    <span class="kw">let</span> <span class="kw">mut</span> d: <span class="dt">Vec</span>&lt;Cost&gt; = <span class="pp">vec!</span>[MaxCost; n];
+    <span class="kw">let</span> <span class="kw">mut</span> q = BinaryHeap::new();
+    q.push((<span class="dv">0</span>, s));
+    d[s] = <span class="dv">0</span>;
+    <span class="kw">while</span> <span class="kw">let</span> <span class="cn">Some</span>((_, u)) = q.pop() {
+        <span class="kw">for</span> &amp;(v, cost) <span class="kw">in</span> neigh[u].iter() {
+            <span class="kw">if</span> d[v] &gt; d[u] + cost {
+                d[v] = d[u] + cost;
+                q.push((-d[v], v));
+            }
+        }
+    }
+    d
+}
+
+<span class="kw">fn</span> main() {
+
+    <span class="kw">let</span> <span class="kw">mut</span> sc = Scanner::new();
+
+    <span class="kw">let</span> n: <span class="dt">usize</span> = sc.cin(); <span class="co">// nodes</span>
+    <span class="kw">let</span> m: <span class="dt">usize</span> = sc.cin(); <span class="co">// edges</span>
+    <span class="kw">let</span> <span class="kw">mut</span> neigh = <span class="pp">vec!</span>[<span class="pp">vec!</span>[]; n];
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="dv">0.</span>.m {
+        <span class="kw">let</span> u = sc.cin::&lt;<span class="dt">usize</span>&gt;() - <span class="dv">1</span>;
+        <span class="kw">let</span> v = sc.cin::&lt;<span class="dt">usize</span>&gt;() - <span class="dv">1</span>;
+        <span class="kw">let</span> c: Cost = sc.cin();
+        neigh[u].push((v, c));
+        neigh[v].push((u, c));
+    }
+
+    <span class="kw">let</span> d = dij(<span class="dv">0</span>, &amp;neigh);
+    <span class="pp">trace!</span>(d);
+
+}</code></pre></div>
 <h2 id="graph.dij.cc"><a href="graph.dij.cc" class="uri">graph.dij.cc</a></h2>
 <ul>
 <li>入力;
@@ -97,43 +97,43 @@
 <li>各点までの最短コストの列 <code>vector&lt;Cost&gt; d</code></li>
 </ul></li>
 </ul>
-<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb2-1" title="1"><span class="pp">#define inf </span>(<span class="fl">1e18</span>)</a>
-<a class="sourceLine" id="cb2-2" title="2"><span class="kw">using</span> Cost = <span class="dt">long</span> <span class="dt">long</span>;</a>
-<a class="sourceLine" id="cb2-3" title="3"></a>
-<a class="sourceLine" id="cb2-4" title="4">vector&lt;Cost&gt;</a>
-<a class="sourceLine" id="cb2-5" title="5">dij(<span class="dt">int</span> s, vector&lt;vector&lt;pair&lt;<span class="dt">int</span>, Cost&gt;&gt;&gt; &amp;neigh) {</a>
-<a class="sourceLine" id="cb2-6" title="6">  <span class="at">const</span> <span class="dt">int</span> n = neigh.size();</a>
-<a class="sourceLine" id="cb2-7" title="7">  vector&lt;Cost&gt; d(n, inf); d[s] = <span class="dv">0</span>;</a>
-<a class="sourceLine" id="cb2-8" title="8">  priority_queue&lt;pair&lt;Cost, <span class="dt">int</span>&gt;&gt; q; q.push({<span class="dv">0</span>, s});</a>
-<a class="sourceLine" id="cb2-9" title="9">  <span class="cf">while</span> (<span class="kw">not</span> q.empty()) {</a>
-<a class="sourceLine" id="cb2-10" title="10">    <span class="dt">int</span> u = q.top().second; q.pop();</a>
-<a class="sourceLine" id="cb2-11" title="11">    <span class="cf">for</span> (<span class="kw">auto</span> pair: neigh[u]) {</a>
-<a class="sourceLine" id="cb2-12" title="12">      <span class="dt">int</span> v = pair.first;</a>
-<a class="sourceLine" id="cb2-13" title="13">      Cost c = pair.second;</a>
-<a class="sourceLine" id="cb2-14" title="14">      <span class="cf">if</span> (d[v] &gt; d[u] + c) {</a>
-<a class="sourceLine" id="cb2-15" title="15">        d[v] = d[u] + c;</a>
-<a class="sourceLine" id="cb2-16" title="16">        q.push({ -d[v], v });</a>
-<a class="sourceLine" id="cb2-17" title="17">      }</a>
-<a class="sourceLine" id="cb2-18" title="18">    }</a>
-<a class="sourceLine" id="cb2-19" title="19">  }</a>
-<a class="sourceLine" id="cb2-20" title="20">  <span class="cf">return</span> d;</a>
-<a class="sourceLine" id="cb2-21" title="21">}</a>
-<a class="sourceLine" id="cb2-22" title="22"></a>
-<a class="sourceLine" id="cb2-23" title="23"><span class="dt">int</span> main() {</a>
-<a class="sourceLine" id="cb2-24" title="24">  <span class="dt">int</span> n, m; cin &gt;&gt; n &gt;&gt; m;</a>
-<a class="sourceLine" id="cb2-25" title="25">  vector&lt;vector&lt;pair&lt;<span class="dt">int</span>, Cost&gt;&gt;&gt; neigh(n);</a>
-<a class="sourceLine" id="cb2-26" title="26">  rep (i, m) {</a>
-<a class="sourceLine" id="cb2-27" title="27">    <span class="dt">int</span> u, v; cin &gt;&gt; u &gt;&gt; v; --u; --v;</a>
-<a class="sourceLine" id="cb2-28" title="28">    Cost c; cin &gt;&gt; c;</a>
-<a class="sourceLine" id="cb2-29" title="29">    neigh[u].emplace_back(v, c);</a>
-<a class="sourceLine" id="cb2-30" title="30">    neigh[v].emplace_back(u, c);</a>
-<a class="sourceLine" id="cb2-31" title="31">  }</a>
-<a class="sourceLine" id="cb2-32" title="32"></a>
-<a class="sourceLine" id="cb2-33" title="33">  <span class="kw">auto</span> result = dij(<span class="dv">0</span>, neigh);</a>
-<a class="sourceLine" id="cb2-34" title="34">  cout &lt;&lt; result &lt;&lt; endl;</a>
-<a class="sourceLine" id="cb2-35" title="35"></a>
-<a class="sourceLine" id="cb2-36" title="36">  <span class="cf">return</span> <span class="dv">0</span>;</a>
-<a class="sourceLine" id="cb2-37" title="37">}</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="pp">#define inf (1e18)</span>
+<span class="kw">using</span> Cost = <span class="dt">long</span> <span class="dt">long</span>;
+
+vector&lt;Cost&gt;
+dij(<span class="dt">int</span> s, vector&lt;vector&lt;pair&lt;<span class="dt">int</span>, Cost&gt;&gt;&gt; &amp;neigh) {
+  <span class="at">const</span> <span class="dt">int</span> n = neigh.size();
+  vector&lt;Cost&gt; d(n, inf); d[s] = <span class="dv">0</span>;
+  priority_queue&lt;pair&lt;Cost, <span class="dt">int</span>&gt;&gt; q; q.push({<span class="dv">0</span>, s});
+  <span class="cf">while</span> (<span class="kw">not</span> q.empty()) {
+    <span class="dt">int</span> u = q.top().second; q.pop();
+    <span class="cf">for</span> (<span class="kw">auto</span> pair: neigh[u]) {
+      <span class="dt">int</span> v = pair.first;
+      Cost c = pair.second;
+      <span class="cf">if</span> (d[v] &gt; d[u] + c) {
+        d[v] = d[u] + c;
+        q.push({ -d[v], v });
+      }
+    }
+  }
+  <span class="cf">return</span> d;
+}
+
+<span class="dt">int</span> main() {
+  <span class="dt">int</span> n, m; cin &gt;&gt; n &gt;&gt; m;
+  vector&lt;vector&lt;pair&lt;<span class="dt">int</span>, Cost&gt;&gt;&gt; neigh(n);
+  rep (i, m) {
+    <span class="dt">int</span> u, v; cin &gt;&gt; u &gt;&gt; v; --u; --v;
+    Cost c; cin &gt;&gt; c;
+    neigh[u].emplace_back(v, c);
+    neigh[v].emplace_back(u, c);
+  }
+
+  <span class="kw">auto</span> result = dij(<span class="dv">0</span>, neigh);
+  cout &lt;&lt; result &lt;&lt; endl;
+
+  <span class="cf">return</span> <span class="dv">0</span>;
+}</code></pre></div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
@@ -144,6 +144,11 @@
 <li><a href="graph.dij.html">Dijkstra</a></li>
 <li><a href="graph.wall.html">Warshall-Floyd</a></li>
 <li><a href="graph.bellmanford.html">Bellman-Ford</a></li>
+</ul>
+<h2 id="無向グラフ">無向グラフ</h2>
+<ul>
+<li><a href="graph.undirected.bipartite.html">二部グラフ判定</a></li>
+<li><a href="graph.undirected.diameter.html">直径</a></li>
 </ul>
 <h2 id="最小全域木">最小全域木</h2>
 <ul>
@@ -186,7 +191,7 @@
 <h2 id="行列式">行列式</h2>
 <ul>
 <li><a href="matrix.det.naiiv.html">定義に拠る算法</a></li>
-<li><a href="matrix.det.cramer.html">Cramer’s rule</a></li>
+<li><a href="matrix.det.cramer.html">Cramer's rule</a></li>
 </ul>
 </details>
 

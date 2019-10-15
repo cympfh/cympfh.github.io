@@ -23,59 +23,59 @@
             <h1 id="graph.tree.height">graph.tree.height</h1>
 <p>各点から全ての点への最大距離</p>
 <h2 id="graph.tree.height.cc"><a href="graph.tree.height.cc" class="uri">graph.tree.height.cc</a></h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb1-1" title="1"><span class="co">/*</span></a>
-<a class="sourceLine" id="cb1-2" title="2"><span class="co"> * 木 (無向非巡回グラフ) について</span></a>
-<a class="sourceLine" id="cb1-3" title="3"><span class="co"> * 全ての点 (を根としたときの) からの最大距離 (高さ)</span></a>
-<a class="sourceLine" id="cb1-4" title="4"><span class="co"> *</span></a>
-<a class="sourceLine" id="cb1-5" title="5"><span class="co"> * O(|E|)</span></a>
-<a class="sourceLine" id="cb1-6" title="6"><span class="co"> */</span></a>
-<a class="sourceLine" id="cb1-7" title="7"></a>
-<a class="sourceLine" id="cb1-8" title="8"><span class="kw">using</span> vi = vector&lt;<span class="dt">int</span>&gt;;</a>
-<a class="sourceLine" id="cb1-9" title="9"><span class="kw">using</span> vvi = vector&lt;vi&gt;;</a>
-<a class="sourceLine" id="cb1-10" title="10"></a>
-<a class="sourceLine" id="cb1-11" title="11"><span class="co">// DFS with memo `t`</span></a>
-<a class="sourceLine" id="cb1-12" title="12"><span class="co">// t[i][j] は 点 i を根として 辺 (i, j) をパスのスタートにしたときの最大距離</span></a>
-<a class="sourceLine" id="cb1-13" title="13"></a>
-<a class="sourceLine" id="cb1-14" title="14"><span class="dt">int</span> visit(<span class="at">const</span> vvi&amp; w, <span class="at">const</span> vvi&amp; neigh, vvi&amp; t, <span class="dt">int</span> u, <span class="dt">int</span> v) {</a>
-<a class="sourceLine" id="cb1-15" title="15">  <span class="cf">if</span> (t[u][v] &gt;= <span class="dv">0</span>) <span class="cf">return</span> t[u][v];</a>
-<a class="sourceLine" id="cb1-16" title="16">  t[u][v] = w[u][v];</a>
-<a class="sourceLine" id="cb1-17" title="17">  <span class="cf">for</span> (<span class="dt">int</span> s: neigh[v]) {</a>
-<a class="sourceLine" id="cb1-18" title="18">    <span class="cf">if</span> (s == u) <span class="cf">continue</span>;</a>
-<a class="sourceLine" id="cb1-19" title="19">    t[u][v] = max(t[u][v], visit(w, neigh, t, v, s) + w[u][v]);</a>
-<a class="sourceLine" id="cb1-20" title="20">  }</a>
-<a class="sourceLine" id="cb1-21" title="21">  <span class="cf">return</span> t[u][v];</a>
-<a class="sourceLine" id="cb1-22" title="22">}</a>
-<a class="sourceLine" id="cb1-23" title="23"></a>
-<a class="sourceLine" id="cb1-24" title="24">vi heights(<span class="dt">int</span> n, <span class="at">const</span> vvi&amp; neigh, <span class="at">const</span> vvi&amp; w) {</a>
-<a class="sourceLine" id="cb1-25" title="25">  vvi t(n, vi(n, -<span class="dv">1</span>));</a>
-<a class="sourceLine" id="cb1-26" title="26">  rep (u, n) {</a>
-<a class="sourceLine" id="cb1-27" title="27">    <span class="cf">for</span> (<span class="dt">int</span> v: neigh[u]) {</a>
-<a class="sourceLine" id="cb1-28" title="28">      <span class="cf">if</span> (t[u][v] &gt;= <span class="dv">0</span>) <span class="cf">continue</span>;</a>
-<a class="sourceLine" id="cb1-29" title="29">      t[u][v] = visit(w, neigh, t, u, v);</a>
-<a class="sourceLine" id="cb1-30" title="30">    }</a>
-<a class="sourceLine" id="cb1-31" title="31">  }</a>
-<a class="sourceLine" id="cb1-32" title="32">  vi ht(n);</a>
-<a class="sourceLine" id="cb1-33" title="33">  rep (i, n) <span class="cf">for</span> (<span class="dt">int</span> j: neigh[i]) ht[i] = max(ht[i], t[i][j]);</a>
-<a class="sourceLine" id="cb1-34" title="34">  <span class="cf">return</span> ht;</a>
-<a class="sourceLine" id="cb1-35" title="35">}</a>
-<a class="sourceLine" id="cb1-36" title="36"></a>
-<a class="sourceLine" id="cb1-37" title="37"><span class="dt">int</span> main() {</a>
-<a class="sourceLine" id="cb1-38" title="38"></a>
-<a class="sourceLine" id="cb1-39" title="39">  <span class="dt">int</span> n, m; cin &gt;&gt; n &gt;&gt; m;</a>
-<a class="sourceLine" id="cb1-40" title="40">  vvi w(n, vi(n, <span class="dv">0</span>));</a>
-<a class="sourceLine" id="cb1-41" title="41">  vvi neigh(n);</a>
-<a class="sourceLine" id="cb1-42" title="42">  rep (_, m) {</a>
-<a class="sourceLine" id="cb1-43" title="43">    <span class="dt">int</span> a, b, c; cin &gt;&gt; a &gt;&gt; b &gt;&gt; c;</a>
-<a class="sourceLine" id="cb1-44" title="44">    --a; --b;</a>
-<a class="sourceLine" id="cb1-45" title="45">    w[a][b] = w[b][a] = c;</a>
-<a class="sourceLine" id="cb1-46" title="46">    neigh[a].push_back(b);</a>
-<a class="sourceLine" id="cb1-47" title="47">    neigh[b].push_back(a);</a>
-<a class="sourceLine" id="cb1-48" title="48">  }</a>
-<a class="sourceLine" id="cb1-49" title="49"></a>
-<a class="sourceLine" id="cb1-50" title="50">  cout &lt;&lt; heights(n, neigh, w) &lt;&lt; endl;</a>
-<a class="sourceLine" id="cb1-51" title="51"></a>
-<a class="sourceLine" id="cb1-52" title="52">  <span class="cf">return</span> <span class="dv">0</span>;</a>
-<a class="sourceLine" id="cb1-53" title="53">}</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="co">/*</span>
+<span class="co"> * 木 (無向非巡回グラフ) について</span>
+<span class="co"> * 全ての点 (を根としたときの) からの最大距離 (高さ)</span>
+<span class="co"> *</span>
+<span class="co"> * O(|E|)</span>
+<span class="co"> */</span>
+
+<span class="kw">using</span> vi = vector&lt;<span class="dt">int</span>&gt;;
+<span class="kw">using</span> vvi = vector&lt;vi&gt;;
+
+<span class="co">// DFS with memo `t`</span>
+<span class="co">// t[i][j] は 点 i を根として 辺 (i, j) をパスのスタートにしたときの最大距離</span>
+
+<span class="dt">int</span> visit(<span class="at">const</span> vvi&amp; w, <span class="at">const</span> vvi&amp; neigh, vvi&amp; t, <span class="dt">int</span> u, <span class="dt">int</span> v) {
+  <span class="cf">if</span> (t[u][v] &gt;= <span class="dv">0</span>) <span class="cf">return</span> t[u][v];
+  t[u][v] = w[u][v];
+  <span class="cf">for</span> (<span class="dt">int</span> s: neigh[v]) {
+    <span class="cf">if</span> (s == u) <span class="cf">continue</span>;
+    t[u][v] = max(t[u][v], visit(w, neigh, t, v, s) + w[u][v]);
+  }
+  <span class="cf">return</span> t[u][v];
+}
+
+vi heights(<span class="dt">int</span> n, <span class="at">const</span> vvi&amp; neigh, <span class="at">const</span> vvi&amp; w) {
+  vvi t(n, vi(n, <span class="dv">-1</span>));
+  rep (u, n) {
+    <span class="cf">for</span> (<span class="dt">int</span> v: neigh[u]) {
+      <span class="cf">if</span> (t[u][v] &gt;= <span class="dv">0</span>) <span class="cf">continue</span>;
+      t[u][v] = visit(w, neigh, t, u, v);
+    }
+  }
+  vi ht(n);
+  rep (i, n) <span class="cf">for</span> (<span class="dt">int</span> j: neigh[i]) ht[i] = max(ht[i], t[i][j]);
+  <span class="cf">return</span> ht;
+}
+
+<span class="dt">int</span> main() {
+
+  <span class="dt">int</span> n, m; cin &gt;&gt; n &gt;&gt; m;
+  vvi w(n, vi(n, <span class="dv">0</span>));
+  vvi neigh(n);
+  rep (_, m) {
+    <span class="dt">int</span> a, b, c; cin &gt;&gt; a &gt;&gt; b &gt;&gt; c;
+    --a; --b;
+    w[a][b] = w[b][a] = c;
+    neigh[a].push_back(b);
+    neigh[b].push_back(a);
+  }
+
+  cout &lt;&lt; heights(n, neigh, w) &lt;&lt; endl;
+
+  <span class="cf">return</span> <span class="dv">0</span>;
+}</code></pre></div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
@@ -86,6 +86,11 @@
 <li><a href="graph.dij.html">Dijkstra</a></li>
 <li><a href="graph.wall.html">Warshall-Floyd</a></li>
 <li><a href="graph.bellmanford.html">Bellman-Ford</a></li>
+</ul>
+<h2 id="無向グラフ">無向グラフ</h2>
+<ul>
+<li><a href="graph.undirected.bipartite.html">二部グラフ判定</a></li>
+<li><a href="graph.undirected.diameter.html">直径</a></li>
 </ul>
 <h2 id="最小全域木">最小全域木</h2>
 <ul>
@@ -128,7 +133,7 @@
 <h2 id="行列式">行列式</h2>
 <ul>
 <li><a href="matrix.det.naiiv.html">定義に拠る算法</a></li>
-<li><a href="matrix.det.cramer.html">Cramer’s rule</a></li>
+<li><a href="matrix.det.cramer.html">Cramer's rule</a></li>
 </ul>
 </details>
 

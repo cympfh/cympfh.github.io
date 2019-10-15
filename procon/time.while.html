@@ -22,36 +22,36 @@
           <div class="article column is-8 is-10-mobile">
             <h1 id="制限時間付きループ">制限時間付きループ</h1>
 <h2 id="time.while.rs"><a href="time.while.rs" class="uri">time.while.rs</a></h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">use</span> <span class="pp">std::time::</span>SystemTime;</a>
-<a class="sourceLine" id="cb1-2" title="2"></a>
-<a class="sourceLine" id="cb1-3" title="3"><span class="pp">macro_rules!</span> loop_timeout <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-4" title="4">    ( $sec:expr; $body:expr ) =&gt; <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-5" title="5">        <span class="kw">let</span> now = <span class="pp">SystemTime::</span>now();</a>
-<a class="sourceLine" id="cb1-6" title="6">        <span class="kw">loop</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-7" title="7">            <span class="kw">match</span> now.elapsed() <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-8" title="8">                <span class="cn">Ok</span>(elapsed) =&gt; <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-9" title="9">                    <span class="kw">if</span> elapsed.as_secs() &gt; $sec <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-10" title="10">                        <span class="kw">break</span></a>
-<a class="sourceLine" id="cb1-11" title="11">                    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-12" title="12">                    $body</a>
-<a class="sourceLine" id="cb1-13" title="13">                <span class="op">}</span>,</a>
-<a class="sourceLine" id="cb1-14" title="14">                <span class="cn">Err</span>(e) =&gt; <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-15" title="15">                    <span class="pp">eprintln!</span>(<span class="st">&quot;Err, {:?}&quot;</span>, e);</a>
-<a class="sourceLine" id="cb1-16" title="16">                <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-17" title="17">            <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-18" title="18">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-19" title="19">    <span class="op">}</span>;</a>
-<a class="sourceLine" id="cb1-20" title="20"><span class="op">}</span></a>
-<a class="sourceLine" id="cb1-21" title="21"></a>
-<a class="sourceLine" id="cb1-22" title="22"><span class="kw">fn</span> main() <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-23" title="23">    <span class="co">// yes while 3sec</span></a>
-<a class="sourceLine" id="cb1-24" title="24">    <span class="kw">use</span> <span class="pp">std::time::</span>Duration;</a>
-<a class="sourceLine" id="cb1-25" title="25">    <span class="kw">use</span> <span class="pp">std::thread::</span>sleep;</a>
-<a class="sourceLine" id="cb1-26" title="26">    <span class="pp">loop_timeout!</span>(<span class="dv">3</span>; <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-27" title="27">        <span class="pp">println!</span>(<span class="st">&quot;yes&quot;</span>);</a>
-<a class="sourceLine" id="cb1-28" title="28">        sleep(<span class="pp">Duration::</span>new(<span class="dv">0</span>, <span class="dv">100000000</span>));</a>
-<a class="sourceLine" id="cb1-29" title="29">    <span class="op">}</span>);</a>
-<a class="sourceLine" id="cb1-30" title="30"><span class="op">}</span></a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">use</span> std::time::SystemTime;
+
+<span class="pp">macro_rules!</span> loop_timeout {
+    ( $sec:expr; $body:expr ) =&gt; {
+        <span class="kw">let</span> now = SystemTime::now();
+        <span class="kw">loop</span> {
+            <span class="kw">match</span> now.elapsed() {
+                <span class="cn">Ok</span>(elapsed) =&gt; {
+                    <span class="kw">if</span> elapsed.as_secs() &gt; $sec {
+                        <span class="kw">break</span>
+                    }
+                    $body
+                },
+                <span class="cn">Err</span>(e) =&gt; {
+                    <span class="pp">eprintln!</span>(<span class="st">&quot;Err, {:?}&quot;</span>, e);
+                }
+            }
+        }
+    };
+}
+
+<span class="kw">fn</span> main() {
+    <span class="co">// yes while 3sec</span>
+    <span class="kw">use</span> std::time::Duration;
+    <span class="kw">use</span> std::thread::sleep;
+    <span class="pp">loop_timeout!</span>(<span class="dv">3</span>; {
+        <span class="pp">println!</span>(<span class="st">&quot;yes&quot;</span>);
+        sleep(Duration::new(<span class="dv">0</span>, <span class="dv">100000000</span>));
+    });
+}</code></pre></div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
@@ -62,6 +62,11 @@
 <li><a href="graph.dij.html">Dijkstra</a></li>
 <li><a href="graph.wall.html">Warshall-Floyd</a></li>
 <li><a href="graph.bellmanford.html">Bellman-Ford</a></li>
+</ul>
+<h2 id="無向グラフ">無向グラフ</h2>
+<ul>
+<li><a href="graph.undirected.bipartite.html">二部グラフ判定</a></li>
+<li><a href="graph.undirected.diameter.html">直径</a></li>
 </ul>
 <h2 id="最小全域木">最小全域木</h2>
 <ul>
@@ -104,7 +109,7 @@
 <h2 id="行列式">行列式</h2>
 <ul>
 <li><a href="matrix.det.naiiv.html">定義に拠る算法</a></li>
-<li><a href="matrix.det.cramer.html">Cramer’s rule</a></li>
+<li><a href="matrix.det.cramer.html">Cramer's rule</a></li>
 </ul>
 </details>
 

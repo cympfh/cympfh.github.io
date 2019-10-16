@@ -7,7 +7,7 @@ listup() {
 }
 
 datetitle() {
-    LANG=en date -d "$1" "+%a %b %d %Y"
+    LC_ALL=C date -d "$1" "+%a %b %d %Y"
 }
 
 TOKEN=$(listup | peco $@)
@@ -18,7 +18,7 @@ if [ -z "$TOKEN" ]; then
 fi
 
 if [ "$TOKEN" = today ]; then
-    TOKEN=$(date +"%Y/%m/%d")
+    TOKEN=$(LC_ALL=C date +"%Y/%m/%d")
 fi
 
 if [ "$TOKEN" = new ]; then

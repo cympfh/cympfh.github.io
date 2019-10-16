@@ -21,7 +21,7 @@ if [ ! -f "${ID}.md" ]; then
     echo "$ID" >> resources/postlist
     cat <<EOM > "$ID.md"
 % title
-% $(LANG=en date "+%Y-%m-%d (%a.)")
+% $(LC_ALL=C date "+%Y-%m-%d (%a.)")
 % tags
 
 EOM

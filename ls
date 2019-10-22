@@ -1,5 +1,6 @@
 aiura	aiura/
-anime	youtube/anime/
+anime	anime/
+y2b/anime	youtube/anime/
 books	http://s.cympfh.cc/books
 dosoku	dosoku/
 gist	gist/

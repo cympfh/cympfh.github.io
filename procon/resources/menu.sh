@@ -3,6 +3,7 @@
 # make menu.html
 #
 
+sed 's/\.md/\.html/g' |
 pandoc |
   awk '
 BEGIN { first = 1 }

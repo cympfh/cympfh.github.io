@@ -20,41 +20,46 @@
         <section class="main-content columns is-fullheight">
 
           <div class="article column is-8 is-10-mobile">
-            <h1 id="container.priority_queue">container.priority_queue</h1>
-<h2 id="container.priority_queue.cc"><a href="container.priority_queue.cc" class="uri">container.priority_queue.cc</a></h2>
-<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp">
-  {
-    priority_queue&lt;<span class="dt">int</span>&gt; q;
-    rep (i, <span class="dv">10</span>) q.push(rand() % <span class="dv">10</span>);
-    vi v; <span class="cf">while</span> (q.size()) v.push_back( q.top() ), q.pop();
-    trace(v); <span class="co">// 降順</span>
-  }
-
-  {
-    priority_queue&lt;<span class="dt">int</span>,vector&lt;<span class="dt">int</span>&gt;,greater&lt;<span class="dt">int</span>&gt;&gt; q;
-    rep (i, <span class="dv">10</span>) q.push(rand() % <span class="dv">10</span>);
-    vi v; <span class="cf">while</span> (q.size()) v.push_back( q.top() ), q.pop();
-    trace(v); <span class="co">// 昇順</span>
-  }
-
-  {
-    <span class="co">// ペアのキュー</span>
-    priority_queue&lt;pair&lt;<span class="dt">int</span>,<span class="dt">int</span>&gt;&gt; q;
-    rep (i, <span class="dv">10</span>) q.push({rand() % <span class="dv">10</span>, i});
-    vector&lt;pair&lt;<span class="dt">int</span>,<span class="dt">int</span>&gt;&gt; v; <span class="cf">while</span> (q.size()) v.push_back( q.top() ), q.pop();
-    trace(v); <span class="co">// 降順</span>
-  }
-
-  {
-    <span class="co">// ペアのキュー</span>
-    <span class="kw">using</span> P = pair&lt;<span class="dt">int</span>, <span class="dt">int</span>&gt;;
-    priority_queue&lt;P, vector&lt;P&gt;, greater&lt;P&gt;&gt; q;
-    rep (i, <span class="dv">10</span>) q.push({rand() % <span class="dv">10</span>, i});
-    vector&lt;pair&lt;<span class="dt">int</span>,<span class="dt">int</span>&gt;&gt; v; <span class="cf">while</span> (q.size()) v.push_back( q.top() ), q.pop();
-    trace(v); <span class="co">// 昇順</span>
-  }
-
-  <span class="cf">return</span> <span class="dv">0</span>;
+            <h1 id="超整数">超整数</h1>
+<p>整数に無限大とマイナス無限大を付け足したものを超実数に倣って超整数 (Hyper Int) と呼ぶことにする.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="at">#[</span>derive<span class="at">(</span><span class="bu">PartialEq</span><span class="at">,</span> <span class="bu">Eq</span><span class="at">,</span> <span class="bu">PartialOrd</span><span class="at">,</span> <span class="bu">Ord</span><span class="at">,</span> <span class="bu">Clone</span><span class="at">,</span> <span class="bu">Copy</span><span class="at">,</span> <span class="bu">Debug</span><span class="at">)]</span>
+<span class="kw">enum</span> HypInt {
+    NegInf, Real(<span class="dt">i64</span>), Inf
+}
+<span class="kw">use</span> HypInt::{Real, NegInf, Inf};
+<span class="kw">use</span> std::ops::{Add, Sub, Neg};
+<span class="kw">impl</span> Add <span class="kw">for</span> HypInt {
+    <span class="kw">type</span> Output = <span class="kw">Self</span>;
+    <span class="kw">fn</span> add(<span class="kw">self</span>, rhs: HypInt) -&gt; HypInt {
+        <span class="kw">match</span> (<span class="kw">self</span>, rhs) {
+            (Real(x), Real(y)) =&gt; Real(x + y),
+            (Inf, _) =&gt; Inf,
+            (_, Inf) =&gt; Inf,
+            _ =&gt; NegInf,
+        }
+    }
+}
+<span class="kw">impl</span> Sub <span class="kw">for</span> HypInt {
+    <span class="kw">type</span> Output = <span class="kw">Self</span>;
+    <span class="kw">fn</span> sub(<span class="kw">self</span>, rhs: HypInt) -&gt; HypInt {
+        <span class="kw">match</span> (<span class="kw">self</span>, rhs) {
+            (Real(x), Real(y)) =&gt; Real(x - y),
+            (Inf, _) =&gt; Inf,
+            (_, Inf) =&gt; NegInf,
+            (NegInf, _) =&gt; NegInf,
+            (_, NegInf) =&gt; Inf,
+        }
+    }
+}
+<span class="kw">impl</span> Neg <span class="kw">for</span> HypInt {
+    <span class="kw">type</span> Output = <span class="kw">Self</span>;
+    <span class="kw">fn</span> neg(<span class="kw">self</span>) -&gt; HypInt {
+        <span class="kw">match</span> <span class="kw">self</span> {
+            Inf =&gt; NegInf,
+            NegInf =&gt; Inf,
+            Real(x) =&gt; Real(-x),
+        }
+    }
 }</code></pre></div>
           </div>
 
@@ -176,7 +181,7 @@
 </ul>
 </details>
 
-<details class=menu>
+<details class=menu open>
 <summary class=menu>整数</summary>
 <ul>
 <li><a href="int_max_and_min.html">整数の最大値、最小値 (gcc)</a></li>
@@ -263,7 +268,7 @@
 </ul>
 </details>
 
-<details class=menu open>
+<details class=menu>
 <summary class=menu>STL</summary>
 <h2 id="コンテナ">コンテナ</h2>
 <ul>

@@ -93,6 +93,7 @@
 - [離散対数](int.dislog.html)
 - [完全順列](int.derangement.html)
 - [オイラーの関数](int.euler_phi.html)
+- [超整数](int.hyper.md)
 
 ## モジュラ演算
 

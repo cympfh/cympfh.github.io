@@ -40,7 +40,7 @@ $$h_t = o_t \odot c_t$$
 - $i_t$ を省略する場合、$i_t = 1 - f_t$ とする
 - $o_t$ を省略する場合、$o_t = 1$ $(c_t = h_t)$ とする
 
-どれを省略するかによって、$f$-pooling, $fo$-pooling, $ifo$-pooling と呼ぶ.
+どれを省略するかによって、$\mathit{f}$-pooling, $\mathit{fo}$-pooling, $\mathit{ifo}$-pooling と呼ぶ.
 
 系列に沿った逆伝播は pooling のところだけだけど、LSTM と異なってただの掛け算だけなので、
 マシな計算量で済むのが特長.

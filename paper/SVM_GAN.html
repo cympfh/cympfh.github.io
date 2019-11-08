@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>[1910.06922] Connections between Support Vector Machines, Wasserstein distance and gradient-penalty GANs</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">[1910.06922] Connections between Support Vector Machines, Wasserstein distance and gradient-penalty GANs</h1>
+</header>
+<ul>
+<li>
+original paper: <a href=https://arxiv.org/abs/1910.06922>https://arxiv.org/abs/1910.06922</a>
+</li>
+</ul>
+<div class="is-pulled-right">
+<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#読みかけ>読みかけ</a></p>
+</div>
+<p><span class="math display">\[\def\relu#1{\left[ #1 \right]^+}\def\X{\mathcal X}\def\Z{\mathcal Z}\def\R{\mathcal R}\def\D{\mathcal D}\def\E#1#2{\mathbb E_{#1}\left[ #2 \right]}\]</span></p>
+<h2 id="概要">概要</h2>
+<p>SVM と GAN との関連性を考える.</p>
+<h2 id="svm">SVM</h2>
+<p>SVM は Maximum-Margin Classifiers の一種である.</p>
+<p>簡単に二値分類としての線形 SVM を考える. ラベル <span class="math inline">\(y\)</span> を <span class="math inline">\(\{-1, +1\}\)</span> とし, 超平面 <span class="math inline">\(w\)</span> の上と下で分類するとすると, <span class="math display">\[wx&gt;0 \iff y=+1\]</span> <span class="math display">\[wx&lt;0 \iff y=-1\]</span> という条件がデータを正しく分離できたことを表す. <span class="math inline">\(y=+1\)</span> のときと <span class="math inline">\(y=-1\)</span> のときとをまとめるとこの条件はさらに簡単に <span class="math display">\[y(wx) &gt; 0\]</span> だと書き直せる.</p>
+<p>ところでこの <span class="math inline">\(wx\)</span> という量はデータ <span class="math inline">\(x\)</span> と平面との距離という量に関連していて, その距離は <span class="math inline">\(\frac{|wx|}{\|w\|_2}\)</span> である. SVM はこの距離が大きいほどよいとしている. 分子の絶対値はラベルを掛けてしまえばよくて, すなわち <span class="math display">\[\max_w \frac{y(wx)}{\|w\|_2}\]</span> を目指すものと言える.</p>
+<p>ただしどの点 <span class="math inline">\(x\)</span> からも上記の最大化を目指すのではなくて, データの中でも最も平面に近いものとの距離だけに注目する（そのような距離をマージンと呼ぶのだった）. すなわち、<span class="math inline">\(w\)</span> を固定したときに <span class="math display">\[\min_x \frac{y(wx)}{\|w\|_2}\]</span> を取ってくれるような操作があるとしている.</p>
+<p>２つの最大化と最小化を合わせると <span class="math display">\[\max_w \min_x \frac{y(wx)}{\|w\|_2}\]</span> となる.</p>
+<blockquote>
+<p>max min の最適化は GAN として解釈できる. <span class="math inline">\(\min_x\)</span> の部分は判別器を騙す生成器であって, <span class="math inline">\(\max_w\)</span> の部分は騙されないような頑強な分類器を表す. GAN の場合はこの２つを交互に学習させるが, SVM では一発で最適化する.</p>
+</blockquote>
+<p>実際には SVM はこの max min の式を直接解くのでは無く, まず <span class="math display">\[\min_w \frac{1}{N} \relu{y(wx)} \text{ s.t. } \|w\|_2=1\]</span> という制約付き最適化問題に書き直し（双対を取った）, さらに KKT 条件を用いて <span class="math display">\[\min_{w,\lambda} \frac{1}{N} \sum_{(x,y)} \relu{y(wx)} + \lambda ( \|w\|_2^2 - 1 )\]</span> とする. ここで <span class="math inline">\(\relu{x} = \max(0,x)\)</span> のこと. この最適化問題を解く.</p>
+<h2 id="gan">GAN</h2>
+<p>実データの空間 <span class="math inline">\(\X\)</span> とその上の分布があるとする. また適当な分布を仮定した空間 <span class="math inline">\(\Z\)</span> を用意する. 関数 <span class="math inline">\(G \colon \Z \to \X\)</span> は実データらしいものを生成する. 関数 <span class="math inline">\(C \colon \X \to \R\)</span> はデータが実データ由来か <span class="math inline">\(G\)</span> 由来かを判定する.</p>
+<p>そのために <span class="math inline">\(C, G\)</span> に関して次の２つの最適化を解く.</p>
+<ul>
+<li><span class="math inline">\(\max_C \E{x}{f_1(C(x_1))} + \E{z}{f_2(C(G(z)))}\)</span></li>
+<li><span class="math inline">\(\min_G \E{z}{f_3(C(G(z)))}\)</span></li>
+</ul>
+<p>ただしここで <span class="math inline">\(f_1,f_2,f_3\)</span> は値を補正する関数 <span class="math inline">\(\R \to \R\)</span> で, いくつものバリエーションが有る.</p>
+<ul>
+<li>Standard GAN
+<ul>
+<li><span class="math inline">\(f_1(z) = \log(\sigma(z))\)</span></li>
+<li><span class="math inline">\(f_2(z) = \log(\sigma(-z))\)</span></li>
+<li><span class="math inline">\(f_3 = -f_1\)</span></li>
+</ul></li>
+<li>Least-Squares GAN
+<ul>
+<li><span class="math inline">\(f_1 = -(1-z)^2\)</span></li>
+<li><span class="math inline">\(f_2 = -(1+z)^2\)</span></li>
+<li><span class="math inline">\(f_3 = -f_1\)</span></li>
+</ul></li>
+<li>HingeGAN
+<ul>
+<li><span class="math inline">\(f_1(z) = -\relu{1-z}\)</span></li>
+<li><span class="math inline">\(f_2(z) = -\relu{1+z}\)</span></li>
+<li><span class="math inline">\(f_3(z) = -z\)</span></li>
+</ul></li>
+</ul>
+<h3 id="ipm-based-gan">IPM-based GAN</h3>
+<p>違う形式の GAN もある.</p>
+<p>Integral Probability Metrics (IPMs) は２つの確率分布どうしの距離を測る指標で <span class="math display">\[\mathrm{IPM}(P \| Q) = \sup_C \E{x}{C(x)} - \E{x}{C(x)}\]</span> としている（ただし <span class="math inline">\(C\)</span> は実数関数全体から取る）. ところで GAN の <span class="math inline">\(G\)</span> というのは結局 <span class="math inline">\(G(z)\)</span> が実データの分布に近くなることを目指してるのだから, IPM の最小化を目的関数にすることが考えられる. <span class="math display">\[\min_G \max_C \sup_C \E{x}{C(x)} - \E{z}{C(G(z))}\]</span> これが IPM-based GAN と呼ばれる. IPM based なものも多く亜種があるが, WGAN もその一つ.</p>
+<p>WGAN は距離に Wasserstein 距離を使う. これは <span class="math inline">\(C\)</span> として 1-Lipschitz 連続なものに限定した IPM である.</p>
+<h2 id="一般化-svm">一般化(?) SVM</h2>
+<p><span class="math inline">\(f(x) = wx\)</span> とする. 一時近似してやると <span class="math inline">\(\|w\|_2 \approx \nabla_x f(x)\)</span>. このためさっきの <span class="math inline">\(\frac{y(wx)}{\|w\|_2}\)</span> という量は <span class="math inline">\(\frac{yf(x)}{\| \nabla_x f(x) \|_2}\)</span> に近似できる. これの最大化を目的関数にしていい.</p>
+<blockquote>
+<p>カーネルも一般化して <span class="math inline">\(f(x) = w \phi(x)\)</span> としても <span class="math inline">\(f(x) \approx wx\)</span> である範囲ではこの近似は通用すると言っている.</p>
+</blockquote>
+<p>ここまではデータが線形分離可能であることを仮定していた. そうでない場合のために SVM には soft-margin という考え方があった. <span class="math inline">\(\gamma\)</span> の修正する関数 <span class="math inline">\(F \colon \R \to \R\)</span> を用意して <span class="math inline">\(F(\gamma(x,y;f))\)</span> の最大化を目指すことに置き換える.</p>
+<p>先に掲げた SVM の目的関数は <span class="math display">\[\min_{w,\lambda} \frac{1}{N} \sum_{(x,y)} \relu{y(wx)} + \lambda ( \|w\|_2^2 - 1 )\]</span> であった. 今言った近似と soft-margin をこれに導入する. また <span class="math inline">\(\frac{1}{N} \sum_{(x,y)}\)</span> の部分は要はデータ上の期待値だと見れるのでそうする.</p>
+<p><span class="math display">\[\min_{w,\lambda} \E{(x,y)}{ F(y f(x)) } + \lambda \left( (\nabla_x f(x))^2 - 1 \right)\]</span></p>
+<p>この最後の部分は罰則化項に見える. すると <span class="math inline">\(g\)</span> で一般化したくなってきて <span class="math display">\[\min_{w,\lambda} \E{(x,y)}{ F(y f(x)) } + \lambda g(\nabla_x f(x))\]</span> となる. SVM であれば <span class="math inline">\(g(z) = z^2-1\)</span> である. しかしまあ実際はもっと緩やかな罰則でいいので <span class="math inline">\(g(z)=(z-1)^2\)</span> とか <span class="math inline">\(g(z)=\relu{z-1}\)</span> がいいそう.</p>
+<h2 id="gan-との関連">GAN との関連</h2>
+<p>SVM の最後の式はだいぶ WGAN っぽい. <span class="math inline">\(F(z)=z\)</span>, <span class="math inline">\(g(z)=\relu{z-1}\)</span> にするとそのもの？</p>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

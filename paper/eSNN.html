@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Learning Similarity Measures from Data (extended Siamese Neural Network; eSNN)</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">Learning Similarity Measures from Data (extended Siamese Neural Network; eSNN)</h1>
+</header>
+<ul>
+<li>
+original paper: <a href=https://link.springer.com/content/pdf/10.1007%2Fs13748-019-00201-2.pdf>https://link.springer.com/content/pdf/10.1007%2Fs13748-019-00201-2.pdf</a>
+</li>
+</ul>
+<div class="is-pulled-right">
+<p><a class='tag is-blue' href=index.html#類似度学習>類似度学習</a></p>
+</div>
+<p><span class="math display">\[\def\X{\mathcal X}\def\E{\mathcal E}\def\R{\mathbb R}\]</span></p>
+<h2 id="概要">概要</h2>
+<p>距離学習に分類タスクを足した</p>
+<h2 id="手法">手法</h2>
+<h3 id="枠組み">枠組み</h3>
+<p>データの空間を <span class="math inline">\(\X\)</span>, 埋め込み空間を <span class="math inline">\(\E\)</span>, 実数全体を <span class="math inline">\(\R\)</span> とする. ただし <span class="math inline">\(\X, \E\)</span> は暗にユークリッド空間の部分空間としている.</p>
+<p>よくある形式は <span class="math display">\[S \colon \X \times \X \to \R\]</span> <span class="math display">\[S(x, y) = C(G(x), G(y))\]</span> というように <span class="math inline">\(G \colon \X \to \E\)</span> と <span class="math inline">\(C \colon \E \times \E \to \R\)</span> に分けるもの. そしてそれぞれを学習可能なモデルにするか, あるいは手で設計してしまうかでバリエーションがある. 特に <span class="math inline">\(G(x)=I(x)=x\)</span> としてしまうようなものもある.</p>
+<h3 id="g-補助タスク"><span class="math inline">\(G\)</span>: 補助タスク</h3>
+<p><span class="math inline">\(G\)</span> 自体はそれぞれの良い特徴を得る必要がある. データにラベルがあったとして <span class="math inline">\(G(x)\)</span> から分類できるようにする.</p>
+<h3 id="c-拡張"><span class="math inline">\(C\)</span>: 拡張</h3>
+<p>拡張なのかわからないけど <span class="math inline">\(C \colon \E \times \E \to \R\)</span> を <span class="math inline">\(C \colon \E \to \R\)</span> にして <span class="math inline">\(S(x, y) = C(|G(x) - G(y)|)\)</span> とする. ここで <span class="math inline">\(| \cdot - \cdot |\)</span> は要素ごとの差の絶対値を取る操作. <span class="math inline">\(C\)</span> は NN なんかで設計する.</p>
+<h3 id="まとめ">まとめ</h3>
+<p>まとめると次の損失関数になる:</p>
+<p><span class="math display">\[\mathcal L = \alpha \left( \mathcal L_c (G(x), t_x) + \mathcal L_c(G(y), t_y) \right) + \mathcal L_s(S(x, y), s)\]</span></p>
+<p><span class="math inline">\(t_x, t_y\)</span> はそれぞれのラベルで, <span class="math inline">\(\mathcal L_c\)</span> はラベル分類としての損失関数. <span class="math inline">\(\mathcal L_s\)</span> は類似度（実数） <span class="math inline">\(s\)</span> との回帰損失. 分類では <span class="math inline">\(G\)</span> だけを, 回帰では <span class="math inline">\(G\)</span> と <span class="math inline">\(C\)</span> とをセットで更新されることになる.</p>
+<h2 id="感想">感想</h2>
+<p>新規性全然無い。補助タスクに分類を足すなんて１万回聞いたことがある。 けど、<span class="math inline">\(C\)</span> を <span class="math inline">\(\E \times \E \to \R\)</span> じゃなくて <span class="math inline">\(\E \to \R\)</span> にしちゃうのは初めて見た。 こっちのほうがいいのか？</p>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

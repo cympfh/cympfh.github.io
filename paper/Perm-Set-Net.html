@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Deep Perm-Set Net: Learn to predict sets with unknown permutation and cardinality using deep neural networks</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">Deep Perm-Set Net: Learn to predict sets with unknown permutation and cardinality using deep neural networks</h1>
+</header>
+<ul>
+<li>
+original paper: <a href=https://openreview.net/forum?id=rJVoEiCqKQ>https://openreview.net/forum?id=rJVoEiCqKQ</a>
+</li>
+</ul>
+<div class="is-pulled-right">
+<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#集合学習>集合学習</a></p>
+</div>
+<p><span class="math display">\[\def\D{\mathcal D}\]</span></p>
+<h2 id="概要">概要</h2>
+<p>集合がターゲットであるような予測器を構成する</p>
+<h2 id="手法">手法</h2>
+<h3 id="尤度">尤度</h3>
+<p>（空でない有限サイズの）集合の確率を次のように考える. 集合にはサイズがあり, そして要素には順序がない. サイズに関してはサイズそのものの事前分布があり, またサイズに指数的に比例する項があるとする. 順序については順序を入れてリストとして扱う方が確率を考える上では扱いやすい. それの周辺確率を求めればよい.</p>
+<p>したがって <span class="math inline">\(Y = \{y_1, \ldots, y_m\}\)</span> の確率は <span class="math display">\[p(Y) = p(m) \times U^m \times \sum_{\pi} p(\pi) p_m(y_{\pi_1}, \ldots, y_{\pi_m})\]</span> で表せる. ここで <span class="math inline">\(U\)</span> がさっき述べた <span class="math inline">\(m\)</span> に指数的に比例するための項で, 論文では &quot;U is the unit of hyper-volume in the feature space&quot; といってるが feature space がなんのことかよくわからない. 適当な補正項と思うことにする. <span class="math inline">\(\pi\)</span> は <span class="math inline">\((1,2,\ldots,m)\)</span> の置換であって <span class="math inline">\(m!\)</span> 通りあることになる. そして <span class="math inline">\(p_m\)</span> は長さ <span class="math inline">\(m\)</span> のリストの同時確率.</p>
+<p>ところでリスト <span class="math inline">\((y_{\pi_1}, \ldots, y_{\pi_m})\)</span> は <span class="math inline">\(Y^m_\pi\)</span> と書くことにする.</p>
+<p>今の <span class="math inline">\(Y\)</span> の確率を, 入力 <span class="math inline">\(x\)</span> とモデルのパラメータ <span class="math inline">\(w\)</span> によって条件付ければ予測器になる. <span class="math display">\[p(Y \mid x,w) = p(m \mid x,w) \times U^m \times \sum_{\pi} p_m(Y^m_\pi, \pi \mid x,w)\]</span></p>
+<h3 id="事後確率">事後確率</h3>
+<p>ではパラメータ <span class="math inline">\(w\)</span> をデータセット <span class="math inline">\(\D = \{(x_i, Y_i)\}_i\)</span> から事後確率の形で最尤推定する.</p>
+<p><span class="math display">\[\begin{align*}
+p(w \mid \D)
+&amp; = p(\D \mid w) p(w) / p(\D) \\
+&amp; \propto p(\D \mid w) p(w) \\
+&amp; = p(w) \prod_i p(Y_i \mid x_i, w)
+\end{align*}\]</span></p>
+<p>さて <span class="math inline">\(p(m \mid x,w), p(\pi \mid x,w)\)</span> というのがあるが, 実際には彼らはポアソン分布なり二項分布なりを使ったそう.</p>
+<h3 id="学習">学習</h3>
+<p><span class="math inline">\(\pi\)</span> はもちろん <span class="math inline">\(m!\)</span> 全通りは試せないのでサンプリングして使う.</p>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

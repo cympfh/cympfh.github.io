@@ -1,6 +1,6 @@
 % Set Transformer
 % https://arxiv.org/abs/1810.00825
-% 深層学習
+% 深層学習 集合学習
 
 $\def\pool{\mathit{pool}}\def\net{\mathit{net}}\def\Att{\mathit{Att}}\def\Multihead{\mathit{Multihead}}$
 $\def\MAB{\mathit{MAB}}\def\SAB{\mathit{SAB}}\def\ISAB{\mathit{ISAB}}\def\Norm{\mathit{Norm}}\def\rFF{\mathit{rFF}}\def\PMA{\mathit{PMA}}$

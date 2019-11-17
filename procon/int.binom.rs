@@ -28,6 +28,11 @@ fn comb(n: i64, k: i64, m: i64) -> i64 {
     if k == 0 { return 1; }
     if k == 1 { return n % m; }
     if n - k < k { return comb(n, n - k, m); }
-
-    (((comb(n - 1, k - 1, m) * n) % m) * mod_inv(k, m)) % m
+    let mut c = 1;
+    for i in 0..k {
+        c *= n - i; c %= m;
+        c *= mod_inv(k - i, m); c %= m;
+    }
+    c
 }
+

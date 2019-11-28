@@ -98,3 +98,9 @@ $s_{ij} = \sum_k t_{ik} t_{kj}$
 となる.
 $k$ を仲介にした類似度?
 
+## 関連
+
+- [ALS Implicit Collaborative Filtering](https://medium.com/radon-dev/als-implicit-collaborative-filtering-5ed653ba39fe)
+    - 解説記事. タイトルの ALS とは最適化の手法名で, パラメータをどれか止めて一つだけを最適化するのを交互にやる方法らしい
+- [implicit](https://implicit.readthedocs.io/en/latest/als.html)
+    - Python で実装されたライブラリ

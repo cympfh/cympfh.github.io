@@ -2,9 +2,11 @@
 
 - 2002/Q2
 
-「萌アニメ」を語るのにこれを知らないといけない.
-必修アニメ.
+「萌えアニメ」などと言うが、そもそも「萌え」とは何を指す言葉なのか.
+それを知るためにはあずまんが大王を見るのが早い.
 
-ありがちな、可愛らしいキャラが出てきて性的なことを匂わせたりラブコメ風なことをしたり、が萌えではない. 断じて.
+間違えてもそれは可愛らしくて性的なことを匂わせる女の子が出てくるラブコメ風のことを指す言葉ではない. それはもちろんあずまんが大王を見れば分かることだ.
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/EiMfQE7wqP4" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/NBzKXP9cnIQ" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>

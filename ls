@@ -1,3 +1,4 @@
+photos	photos/
 aiura	aiura/
 anime	anime/
 y2b/anime	youtube/anime/
@@ -8,7 +9,6 @@ gnuplot	gnuplot/
 memo	memo/
 neta	neta/
 paper	paper/
-photos	photos/
 procon	procon/
 taglibro	taglibro/
 youtube	youtube/

@@ -2,25 +2,29 @@
 
 cat resources/index.header.html
 
-ALBUMS="tickets dosoku houbunsha"
-for a in $ALBUMS; do
+cat <<EOM
+<script>
+var urls = [
+EOM
 
-    HASH=$(imgur album ls | grep "$a" | awk '{print $2}')
-    LINK="https://imgur.com/a/${HASH}"
+sed 's/.*/"&",/; $s/,$//' resources/photos_list
 
-    cat <<EOM
-<h2><a href=$LINK>${a}</a></h2>
+cat <<EOM
+];
+urls.sort((a, b) => 0.5 - Math.random());
+</script>
 <div class="outer">
     <div class="photos">
-EOM
 
-    imgur album ls "$a" | jq -Mrc .link | tac | head -n 20 |
-    sed 's#.*#<a href=&><img src=&></a>#g'
+    <script>
+        document.open();
+        for (var i = 0; i < 30; ++i) {
+            document.write(\`<a href="\${urls[i]}"><img src="\${urls[i]}" /></a>\`);
+        }
+        document.close();
+    </script>
 
-    cat <<EOM
     </div>
 </div>
-<div class="footer"><a href=$LINK>$LINK</a></div>
+<div class="footer">@cympfh</div>
 EOM
-
-done

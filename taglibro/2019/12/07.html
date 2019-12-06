@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Sat Dec 07 2019</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+</head>
+<body>
+<header class="page-header">
+    <a href='../../index.html'><i class="fa fa-save" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">Sat Dec 07 2019</h1>
+</header>
+<blockquote>
+<p>参加するアドベントカレンダーが無かったので今作りました. これは <a href="https://qiita.com/advent-calendar/2019/shellscript">Shell Script Advent Calendar 2019</a> の 7 日目の記事です.</p>
+</blockquote>
+<h2 id="日記---python-以外でディープラーニングしたい">日記 - Python 以外でディープラーニングしたい</h2>
+<h3 id="まえおき">まえおき</h3>
+<p>機械学習界隈で、ことディープラーニングとなると、Python を書かないとまともなプログラムが組めない。 これは大変、おかしな事態である。 ディープラーニング以外であれば必ずしも Python に限らなかったはずだ。 SVM を動かすのに必ずしも scikit learn である必要はなく、libsvm でも liblinear でもよかった。 それは単体のコマンドとして提供されているので、シェルが動く環境なら試すことが出来た。 シェルコマンドとして提供されていさえすれば、大抵の環境で触ることが出来る。</p>
+<p>ところで、ディープラーニングとは順伝播のことを考える限り、基本的には一列に前から後ろにデータを流す処理に他ならない。 それはシェルスクリプトのパイプによく似ている。 とは言え、途中で枝分かれをしたり合流をしたくなる。 それはディープラーニングであっても、シェルコマンドであってもだ。 ましてやディープラーニングでは逆伝播などという、逆流をしたいというのだ。 シェルスクリプトではまんま逆流をしたいということはなかなか無いだろうが、しかしそのような機構が提供されていないわけではない。 名前付きパイプという機能がある。</p>
+<h3 id="ここで名前付きパイプの説明を始める">ここで名前付きパイプの説明を始める</h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">(</span> <span class="bu">echo</span> 1 <span class="kw">)</span> <span class="kw">|</span> <span class="kw">(</span> <span class="fu">head</span> -1 <span class="kw">|</span> <span class="fu">awk</span> <span class="st">&#39;{ print $1 * 2 }&#39;</span> <span class="kw">)</span></a></code></pre></div>
+<p>これはパイプを通じて左から右にただデータを流す例だ。 <code>1</code> というデータを流して、それを二倍して出力している。 パイプ <code>|</code> の右側からは左側から流れるデータのサイズがわからないので <code>head -1</code> によって、データが一行に限られることを明示している。</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb2-1" title="1"><span class="fu">mkfifo</span> tunnel</a></code></pre></div>
+<p>これは <code>tunnel</code> という名前のパイプを作る。 パイプとはまさに <code>|</code> のことだが、<code>tunnel</code> はあたかもそういう名前のファイルのように見える。</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb3-1" title="1"><span class="bu">echo</span> hello <span class="op">&gt;</span> tunnel</a></code></pre></div>
+<p>これは</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb4-1" title="1"><span class="bu">echo</span> hello <span class="kw">|</span></a></code></pre></div>
+<p>に相当する。<code>|</code> の右側には通常、入力 <code>hello</code> を受け取る役が必要なはずだ。 だからさっきの <code>echo hello &gt; tunnel</code> は受け取る役が現れるまでシェルをブロックする。 そこでまた別なターミナルを開いて、 <code>tunnel</code> を受け取ってみる。</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb5-1" title="1"><span class="fu">cat</span> tunnel</a></code></pre></div>
+<p>これはまさに</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">|</span> <span class="fu">cat</span></a></code></pre></div>
+<p>に相当する。パイプは無事、入力から出力へと通じ、パイプへの入力のブロックは解消され、出力側には <code>hello</code> の表示がなされる。</p>
+<p>この <strong>名前付きパイプ</strong> は今、ターミナルさえも跨って入出力が行われた。 ということはだ。 通常のパイプ <code>|</code> の後ろから前へ跨ることすら、容易に実現するのではないか。 試してみよう。</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb7-1" title="1"><span class="kw">(</span> <span class="bu">echo</span> 1<span class="kw">;</span> <span class="fu">cat</span> tunnel <span class="op">&gt;&amp;2</span> <span class="kw">)</span> <span class="kw">|</span> <span class="kw">(</span> <span class="fu">head</span> -1 <span class="kw">|</span> <span class="fu">awk</span> <span class="st">&#39;{ print $1 * 2 }&#39;</span> <span class="op">&gt;</span> tunnel <span class="kw">)</span></a></code></pre></div>
+<p><code>2</code> と出力されたはずだ。 この出力はパイプ <code>|</code> の左にある <code>cat tunnel</code> より行われた。 信用できないならさらにこれを加工して、</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb8-1" title="1"><span class="kw">(</span> <span class="bu">echo</span> 1<span class="kw">;</span> <span class="fu">cat</span> tunnel <span class="kw">|</span> <span class="fu">awk</span> <span class="st">&#39;{print $1 * 3}&#39;</span> <span class="op">&gt;&amp;2</span> <span class="kw">)</span> <span class="kw">|</span> <span class="kw">(</span> <span class="fu">head</span> -1 <span class="kw">|</span> <span class="fu">awk</span> <span class="st">&#39;{ print $1 * 2 }&#39;</span> <span class="op">&gt;</span> tunnel <span class="kw">)</span></a></code></pre></div>
+<p>と、三倍してみる。すると <code>6</code> と出力された。 どうやら本当に左側の <code>cat tunnel</code> からの出力であるらしい。</p>
+<p>注意点が2つある。 左側で <code>&gt;&amp;2</code> としてある。<code>&amp;2</code> は標準エラー出力のことである。 もしこれを省いてただの標準出力とすると <code>|</code> の右側にただ渡されるので、ユーザーには <code>6</code> の出力が見えない。 もう一点として、パイプ <code>|</code> の右側で初めに <code>head -1</code> してあるが、これが無いと困ったことになる（かもしれない）。 左側では <code>echo 1</code> が終わってもその後に <code>cat tunnel</code> しようとする。 パイプの右側はパイプの左側の <code>cat tunnel</code> による標準出力を期待して待つ結果、ブロックし、プログラムが終わらないかもしれない。 というかたぶん終わらない。</p>
+<h3 id="最近やってる話">最近やってる話</h3>
+<p>長い前置きだったが。 要するにだ。 シェルスクリプトは普通にパイプを使えば一列に左から右へのデータのストリームが表現できるし、 そのつもりになれば、枝分かれだって合流だって、逆流だって何でも出来る。 じゃあ、シェルスクリプトでディープラーニングしてみようというのも自然な発想だ。</p>
+<p>ディープラーニングにおけるノードとして次のようなものがある。</p>
+<ul>
+<li>関数
+<ul>
+<li>例えば、行列を左または右から掛ける操作
+<ul>
+<li>これは Linear とか Dense とか全結合層とか呼ばれる</li>
+</ul></li>
+<li>パラメータを持ち、「学習」と呼ばれるフェーズではそのパラメータを更新する</li>
+</ul></li>
+<li>活性化
+<ul>
+<li>値をある範囲に収める操作
+<ul>
+<li>非線形であることがほとんど</li>
+</ul></li>
+</ul></li>
+<li>損失関数
+<ul>
+<li>入力 <code>x</code> があって、期待する <code>y</code> があって <code>assert x == y</code> みたいなことをする
+<ul>
+<li>というかその差を出すみたいなことをする</li>
+</ul></li>
+</ul></li>
+</ul>
+<p>ディープラーニングのフレームワークは例えばこれらを一列に並べる。 一列に限らないけど、大抵の場合は一列だ。 関数と活性化を交互に並べて、一番最後に損失関数を置く。</p>
+<p>シェルスクリプトがどうのこうの言ってたので、話は大体見えてると思う。 このノード1個1個をコマンドとして定義して、パイプでつなごうという話だ。</p>
+<h3 id="実装">実装</h3>
+<p><a href="https://github.com/cympfh/dlsh">cympfh/dlsh</a></p>
+<p>入力は全てテキストで、頭にサイズが明記されいてる。 プロコン形式と言ったほうが分かる人には分かるだろう。 それから今は各入力は行列に限っている。 行列の高さはインスタンスの個数で、幅が各インスタンスの次元。</p>
+<pre><code>3 5
+-5.5869226 2.384049 -3.234392 0.4512289 -5.5657387
+-1.0818138 -1.1542585 3.5078242 1.8856971 -1.1181798
+1.7649012 3.585418 11.034574 3.6150548 1.7477741</code></pre>
+<p>これは3つのインスタンスで各行が各インスタンスの5次元データを表している。</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb10-1" title="1">   <span class="fu">cat</span> <span class="op">&lt;&lt; EOM</span> <span class="op">&gt;</span> <span class="ex">x</span></a>
+<a class="sourceLine" id="cb10-2" title="2">3 5</a>
+<a class="sourceLine" id="cb10-3" title="3">-5.5869226 2.384049 -3.234392 0.4512289 -5.5657387</a>
+<a class="sourceLine" id="cb10-4" title="4">-1.0818138 -1.1542585 3.5078242 1.8856971 -1.1181798</a>
+<a class="sourceLine" id="cb10-5" title="5">1.7649012 3.585418 11.034574 3.6150548 1.7477741</a>
+<a class="sourceLine" id="cb10-6" title="6">EOM</a>
+<a class="sourceLine" id="cb10-7" title="7"></a>
+<a class="sourceLine" id="cb10-8" title="8">   cat <span class="op">x</span> <span class="kw">|</span> <span class="ex">linear</span> --dim 4 -w fc</a>
+<a class="sourceLine" id="cb10-9" title="9">3 4</a>
+<a class="sourceLine" id="cb10-10" title="10">-0.06950497 0.0535341 0.024406236 0.146945</a>
+<a class="sourceLine" id="cb10-11" title="11">0.026739486 0.044979442 -0.06527659 -0.006031174</a>
+<a class="sourceLine" id="cb10-12" title="12">0.11721376 -0.09086315 -0.104535446 -0.10547167</a></code></pre></div>
+<p><code>linear</code> コマンドは先述した全結合層である。 入力が5次元で <code>--dim 4</code> なので、5 次元を 4 次元に、行列を掛け算することで変換している。 もっと厳密に言うとバイアスがあるので 6x4 行列を右から掛けることで 4 次元にしている。 まあ、だいたいそんな感じ。</p>
+<p><code>fc</code> というのがその行列を保存するファイル名。 ファイルが既に存在すればそれを読む（その場合は読めばサイズが分かるので <code>--dim</code> は不要）し、存在しない場合はランダムに初期化する（今は適当な正規分布からサンプリングして作ってる）。</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb11-1" title="1">   <span class="fu">cat</span> x <span class="kw">|</span> <span class="ex">linear</span> --dim 4 -w fc <span class="kw">|</span> <span class="ex">sigmoid</span> <span class="kw">|</span> <span class="ex">linear</span> --dim 1 -w fc2 <span class="kw">|</span> <span class="ex">sigmoid</span></a>
+<a class="sourceLine" id="cb11-2" title="2"><span class="ex">3</span> 1</a>
+<a class="sourceLine" id="cb11-3" title="3"><span class="ex">0.5011598</span></a>
+<a class="sourceLine" id="cb11-4" title="4"><span class="ex">0.5012751</span></a>
+<a class="sourceLine" id="cb11-5" title="5"><span class="ex">0.5012964</span></a></code></pre></div>
+<p>同じノリで。 <code>linear</code> で4次元にして、 <a href="https://ja.wikipedia.org/wiki/%E3%82%B7%E3%82%B0%E3%83%A2%E3%82%A4%E3%83%89%E9%96%A2%E6%95%B0">シグモイド</a> して、また <code>linear</code> で一次元にして、またシグモイドする。 二個目の <code>linaer</code> は1個目と違う行列を使うので違うファイル名 <code>fc2</code> を指定している。</p>
+<h3 id="学習">学習</h3>
+<p>さっきのコマンドで次のような値を出力してほしいと願うことにする。</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb12-1" title="1">   <span class="fu">cat</span> <span class="op">&lt;&lt;EOM</span> <span class="op">&gt;</span> <span class="ex">y</span></a>
+<a class="sourceLine" id="cb12-2" title="2">3 1</a>
+<a class="sourceLine" id="cb12-3" title="3">1</a>
+<a class="sourceLine" id="cb12-4" title="4">0</a>
+<a class="sourceLine" id="cb12-5" title="5">0.5</a>
+<a class="sourceLine" id="cb12-6" title="6">EOM</a></code></pre></div>
+<p>まず、 <code>3x1</code> というサイズは先程のコマンドの出力のサイズと一致している。 これは一致する必要がある。 そして各値は今適当に決めた。 たぶん適当な値でもどうせ大丈夫だから。</p>
+<p><code>mse</code> で誤差を計測することにしよう。 mse は mean square error の略称で、目的の値との差の自乗の平均を意味する。 今データは 4 インスタンスあるので、それらの平均なんだけど、今はちょっと平均はとってないや。</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb13-1" title="1">   <span class="fu">cat</span> x <span class="kw">|</span> <span class="ex">linear</span> --dim 4 -w fc <span class="kw">|</span> <span class="ex">sigmoid</span> <span class="kw">|</span> <span class="ex">linear</span> --dim 1 -w fc2 <span class="kw">|</span> <span class="ex">sigmoid</span> <span class="kw">|</span> <span class="ex">mse</span> -t y</a>
+<a class="sourceLine" id="cb13-2" title="2"><span class="ex">3</span> 1</a>
+<a class="sourceLine" id="cb13-3" title="3"><span class="ex">0.2490536</span></a>
+<a class="sourceLine" id="cb13-4" title="4"><span class="ex">0.2509501</span></a>
+<a class="sourceLine" id="cb13-5" title="5"><span class="ex">0.0000009557709</span></a></code></pre></div>
+<p>例えばこの1個目の mse は <code>0.2490...</code> で大体 <code>1/4</code> くらい。 これは mse への入力、つまり最後の sigmoid の出力が <code>0.5011598</code> だったのに対して期待が <code>1</code> だった差の <code>0.5</code> の自乗がそのくらいだから。</p>
+<p>そして学習とはこの誤差をゼロにすること。</p>
+<p>誤差逆伝播を行う。 各コマンドはその直後の誤差を受け取って、それをゼロに近づけるようにパラメータを変更すればいい。 それより後ろの誤差を前へ受け渡すのに、先ほど説明した名前付きパイプを使う。</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb14-1" title="1">   <span class="fu">mkfifo</span> A B C D</a>
+<a class="sourceLine" id="cb14-2" title="2"></a>
+<a class="sourceLine" id="cb14-3" title="3">   <span class="fu">cat</span> x <span class="kw">|</span> <span class="ex">linear</span> --dim 4 -w fc -i D <span class="kw">|</span> <span class="ex">sigmoid</span> -i C -o D <span class="kw">|</span> <span class="ex">linear</span> --dim 1 -w fc2 -i B -o C <span class="kw">|</span> <span class="ex">sigmoid</span> -i A -o B <span class="kw">|</span> <span class="ex">mse</span> -t y -o A</a>
+<a class="sourceLine" id="cb14-4" title="4"><span class="ex">3</span> 1</a>
+<a class="sourceLine" id="cb14-5" title="5"><span class="ex">0.25347143</span></a>
+<a class="sourceLine" id="cb14-6" title="6"><span class="ex">0.2464506</span></a>
+<a class="sourceLine" id="cb14-7" title="7"><span class="ex">0.000013369168</span></a></code></pre></div>
+<p>一度の誤差伝播では学習は完了せず、何度か繰り返し行うことで収束する。 また更新をどのくらいの大きさ行うかのパラメータ <code>--lr</code> もある。 この値は大きければ大きいほど更新を積極的に行うので収束を早めるが、大きすぎると値が壊れる（誤差爆発）。</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb15-1" title="1"><span class="kw">while</span> <span class="bu">:</span><span class="kw">;</span> <span class="kw">do</span></a>
+<a class="sourceLine" id="cb15-2" title="2">    <span class="fu">cat</span> x <span class="kw">|</span></a>
+<a class="sourceLine" id="cb15-3" title="3">        <span class="ex">linear</span> --dim 4 -w fc -i D --lr 0.2 <span class="kw">|</span></a>
+<a class="sourceLine" id="cb15-4" title="4">        <span class="ex">sigmoid</span> -i C -o D <span class="kw">|</span></a>
+<a class="sourceLine" id="cb15-5" title="5">        <span class="ex">linear</span> --dim 1 -w fc2 -i B -o C --lr 0.2 <span class="kw">|</span></a>
+<a class="sourceLine" id="cb15-6" title="6">        <span class="ex">sigmoid</span> -i A -o B <span class="kw">|</span></a>
+<a class="sourceLine" id="cb15-7" title="7">        <span class="ex">mse</span> -t y -o A</a>
+<a class="sourceLine" id="cb15-8" title="8"><span class="kw">done</span></a></code></pre></div>
+<p>出力される値がゼロに近づいていて、十分小さくなったら止めて良い。 もし値が大きくなっていったら、 <code>lr</code> の値が大きいということだから小さくする必要がある。</p>
+<p>収束を確認したら、改めて出力を確認する。</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb16-1" title="1">   <span class="fu">cat</span> x <span class="kw">|</span> <span class="ex">linear</span> -w fc <span class="kw">|</span> <span class="ex">sigmoid</span> <span class="kw">|</span> <span class="ex">linear</span> -w fc2<span class="kw">|</span> <span class="ex">sigmoid</span></a>
+<a class="sourceLine" id="cb16-2" title="2"><span class="ex">3</span> 1</a>
+<a class="sourceLine" id="cb16-3" title="3"><span class="ex">0.9915571</span></a>
+<a class="sourceLine" id="cb16-4" title="4"><span class="ex">0.029510455</span></a>
+<a class="sourceLine" id="cb16-5" title="5"><span class="ex">0.4975897</span></a>
+<a class="sourceLine" id="cb16-6" title="6"></a>
+<a class="sourceLine" id="cb16-7" title="7">   <span class="fu">cat</span> y</a>
+<a class="sourceLine" id="cb16-8" title="8"><span class="ex">3</span> 1</a>
+<a class="sourceLine" id="cb16-9" title="9"><span class="ex">1</span></a>
+<a class="sourceLine" id="cb16-10" title="10"><span class="ex">0</span></a>
+<a class="sourceLine" id="cb16-11" title="11"><span class="ex">0.5</span></a></code></pre></div>
+<p>確かに期待する値に近くなっている。</p>
+<p>ところで、パイプ <code>|</code> の直前と直後で逆伝播するのは頻出だろう。 そのためんだけに <code>mkfifo</code> をし、 <code>-i</code> と <code>-o</code> と指定するのは面倒だ。 だから <code>bp</code> というコマンドを用意した。 これは <code>|</code> に代わって <code>+</code> というパイプを提供する。</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb17-1" title="1"><span class="fu">cat</span> x <span class="kw">|</span></a>
+<a class="sourceLine" id="cb17-2" title="2">    <span class="ex">bp</span> linear --dim 4 -w fc --lr 0.2 + \</a>
+<a class="sourceLine" id="cb17-3" title="3">    sigmoid + \</a>
+<a class="sourceLine" id="cb17-4" title="4">    linear --dim 1 -w fc2 --lr 0.2 + \</a>
+<a class="sourceLine" id="cb17-5" title="5">    sigmoid + \</a>
+<a class="sourceLine" id="cb17-6" title="6">    mse -t y</a></code></pre></div>
+<p>と書ける。</p>
+<h3 id="感想">感想</h3>
+<p>実用の域に達するためにはいくつか課題がある。</p>
+<p>まずは速度面。 入出力が全てテキストベースなのはUNIX的だが、速度では不利かもしれない。 或いはテキストベースだとしてもストリーム的に処理するようにするだけでも違うだろう。</p>
+<p>それから、なんと言っても逆伝播の記法。 最後に紹介した <code>bp</code> コマンドと <code>+</code> パイプはなかなか苦し紛れである。 パイプの直後から直前にデータを流す特別なパイプを発明した方が早く、そうなると結局専用のシェル自体を作ることになる。 なんだか本末転倒に思える。</p>
+<p>しかしパイプをすっ飛ばし、コマンドを跨ぐような逆伝播をするような時に、名前付きパイプを利用出来るのは大変自然だし利点だと思う。 そもそも順伝播とはストリーム処理なのだから、シェルスクリプトで表現するのは自分にとってはあまりに自然で、何故誰もやらないのか分からない。 そんなに Python が好きなのか。</p>
+<p>簡単な実験をするのにいちいち、プログラムを書きたくない、というのがある。 シェルスクリプトはスクリプトだからプログラムと言えばプログラムなのだが、あまりにも手に馴染んでいるので、プログラムを書いているという感覚がない。 シェルスクリプトで機械学習をするというのは、 マウスを動かしダブルクリックをする感覚でディープラーニングが出来る、と謳うソフトウェアと同じなのだと思う。</p>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

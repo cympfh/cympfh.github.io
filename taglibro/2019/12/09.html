@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Mon Dec 09 2019</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='../../index.html'><i class="fa fa-save" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">Mon Dec 09 2019</h1>
+</header>
+<blockquote>
+<p>先日作成したアドベントカレンダーに登録されてる記事が自分の書いた１件というのは寂しいので水増しします. これは <a href="https://qiita.com/advent-calendar/2019/shellscript">Shell Script Advent Calendar 2019</a> の 9 日目の記事です.</p>
+</blockquote>
+<h2 id="今年書いて良かった-.zshrc-2019">今年書いて良かった .zshrc 2019</h2>
+<p>これは2018年に書いた <a href="../../2018/12/14.html">今年書いて良かった .zshrc</a> の 2019 年版です.</p>
+<p>zshrc もシェルスクリプトなのでね.</p>
+<h3 id="去年の記事について">去年の記事について</h3>
+<p>本題に入る前に、去年書いた設定を今年どれだけ使ったか反省したいと思います.</p>
+<p>2018年に書いた記事を見ると <code>Ctrl-R</code> で <code>history</code> から <code>peco</code> するとかありますが、 fzf が提供する zsh スクリプトにまんまこれがあるのをついこないだ知りました. 今はそれを使ってます.</p>
+<p><code>Ctrl-G Ctrl-R</code> で履歴から <code>cd</code> するやつ. これは普通に使ってます. <code>peco</code> 部分は <code>fzf</code> に変えてもいいと思ってますが、 お好みで. 私は普段 GNU screen の上で生きてるのですが、 これだと fzf の preview は表示がよく壊れるので preview は切っており、 peco とそんなに変わらないので peco のままにしてます.</p>
+<h3 id="今年新たに書いた設定">今年新たに書いた設定</h3>
+<h4 id="bindkey-で-screen-の起動">bindkey で screen の起動</h4>
+<p>ターミナルを新たに開いた時、 ほとんどの場合は screen を新たに起動するか、 既存のセッションへのアタッチをします. 私は. 毎回 <code>screen -x ...</code> とか入力するのだだるいので、 bindkey で呼べるようにしました. (ターミナルを新たに開いたら強制的に screen を起動する画面に入るくらい積極的にする手も考えられますが、 今はそこまでしてないです)</p>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span class="co"># https://github.com/cympfh/dots/blob/326eda0f388864eab751c06a47e8a0d61b8ab99f/sh/bindkey.zsh#L50</span>
+
+<span class="fu">insert-screen-x()</span> <span class="kw">{</span>
+    <span class="ot">BUFFER=</span>screen-x
+    <span class="ot">CURSOR=$#</span>BUFFER
+    <span class="kw">zle</span> .accept-line
+<span class="kw">}</span>
+<span class="kw">zle</span> -N insert-screen-x
+<span class="kw">bindkey</span> <span class="st">&quot;^K^X&quot;</span> insert-screen-x
+
+<span class="fu">insert-screen-s()</span> <span class="kw">{</span>
+    <span class="ot">BUFFER=</span>screen-s
+    <span class="ot">CURSOR=$#</span>BUFFER
+    <span class="kw">zle</span> .accept-line
+<span class="kw">}</span>
+<span class="kw">zle</span> -N insert-screen-s
+<span class="kw">bindkey</span> <span class="st">&quot;^K^S&quot;</span> insert-screen-s</code></pre></div>
+<p><code>BUFFER</code> に文字列を代入することで強引にコマンドを入力して、 <code>zle .accept-line</code> でエンターを押すのをシミュレートしてます. こんなややこしいことをせずに直接コマンドを関数から呼べばいいのでは？ とはじめは思ったのですが、 screen のようにターミナルを奪うコマンドを bindkey から呼ぶとなかなかややこしいようなので、上のような方式にしました.</p>
+<p>ちなみに <code>screen-x</code> とか <code>screen-s</code> は <code>screen -x</code> とか <code>screen -S</code> をいい感じに呼ぶエイリアスです ( <a href="https://github.com/cympfh/dots/blob/326eda0f388864eab751c06a47e8a0d61b8ab99f/sh/screen.sh#L19">screen.sh#L19</a> ). １つ目は既存のセッション名を列挙して <code>peco</code> で選んでそれを起動します. 後者は今いるディレクトリ名からいい感じにセッション名を決めて新しく screen を起動します.</p>
+<h4 id="やけに時間の掛かったコマンドは終わり際に経過時間を報告する-効果音を鳴らす">やけに時間の掛かったコマンドは終わり際に経過時間を報告する &amp; 効果音を鳴らす</h4>
+<p>ところで私のプロンプトは次のようになっています. 画像と見比べて意味はだいたい察してください.</p>
+<figure>
+<img src="https://i.imgur.com/pPJphpk.png" />
+</figure>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span class="co"># https://github.com/cympfh/dots/blob/326eda0f388864eab751c06a47e8a0d61b8ab99f/sh/prompt.sh#L5</span>
+<span class="ot">PROMPT=</span><span class="st">&quot;</span>
+<span class="dt">\`</span><span class="st">prompt-time</span><span class="dt">\`</span><span class="st"> </span><span class="dt">\`</span><span class="st">prompt-host</span><span class="dt">\`\`</span><span class="st">prompt-pwd</span><span class="dt">\`\`</span><span class="st">prompt-git-status</span><span class="dt">\`</span>
+<span class="st">   &quot;</span></code></pre></div>
+<p>このようにプロンプトの頭に時刻を出すことにしています. それはもちろんいつでも今の時刻を素早く知りたいから、ではなくて、あとからスクロールして見返したときに、このコマンドを打った時刻はいつだったかを知れると便利だからです. ちなみに iTerm2 の上で tmux を使ってるみなさんは iTerm2 に &quot;show timestamp&quot; という設定項目があり、 これとだいたい同じことをもっと格好良くやってくれるので、それで十分です.</p>
+<p>ところで他にも使いみちがあり、プロンプトとプロンプトの間の時刻の差を見ることで、コマンド実行に掛かった時間を計測することができます. 秒単位なので厳密な計測ではありませんが、そういえばさっきやった処理は思ったより時間が掛かったけどどのくらい掛かったんだろう、というのが後から思い返せるのは便利です.</p>
+<pre class="console"><code>(PROMPT) (time1) command1
+runnning
+
+(PROMPT) (time2) command2
+...</code></pre>
+<p>思い出したときに <code>(time2) - (time1)</code> を計算することで <code>command1</code> の実行時間が分かる.</p>
+<p>これも罠があって、プロンプトの入力待ち状態で数分間コマンドを打たずにぼーっとしていると、時刻だけが更新しています. つまりプロンプトに表示される時刻は正確にはその直後のコマンドを実行し始めた時刻であり、直前のコマンド実行が終わった時刻ではないことです.</p>
+<p>前々から不便だと思っていたので、真面目に計測しておくことにしました. すべてのコマンドの時間を計測しておきます. コマンド実行が数分未満も掛からなかったような場合は、掛かった時間も知りたくないでしょうから、数分以上掛かった場合のみ、時間を報告することにします.</p>
+<p>スクリプト全体を貼ると大変なので抜粋</p>
+<div class="sourceCode"><pre class="sourceCode zsh"><code class="sourceCode zsh"><span class="co"># https://github.com/cympfh/dots/blob/326eda0f388864eab751c06a47e8a0d61b8ab99f/sh/exec_time_report.sh</span>
+
+<span class="co"># コマンドを実行したら時刻を記録</span>
+<span class="fu">preexec_lastcommand()</span> <span class="kw">{</span>
+    <span class="ot">last_command=$1</span>
+    <span class="ot">last_prompt_time=$(</span><span class="kw">date</span> <span class="st">&quot;+%s&quot;</span><span class="ot">)</span>
+    <span class="ot">time_report_waiting=</span>1
+<span class="kw">}</span>
+
+<span class="co"># コマンドが終わった == 次のコマンドの precmd</span>
+<span class="fu">precmd_timereport()</span> <span class="kw">{</span>
+    <span class="ot">cur_prompt_time=$(</span><span class="kw">date</span> <span class="st">&quot;+%s&quot;</span><span class="ot">)</span>
+    <span class="ot">duration=</span><span class="st">&quot;</span><span class="ot">$((</span> cur_prompt_time - last_prompt_time <span class="ot">))</span><span class="st">&quot;</span>
+    <span class="co"># duration をいい感じに報告</span>
+    <span class="ot">time_report_waiting=</span>0
+<span class="kw">}</span></code></pre></div>
+<p><code>date &quot;+%s&quot;</code> で unixtime を出してるので単純に引き算すれば掛かった秒数が得られます.</p>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

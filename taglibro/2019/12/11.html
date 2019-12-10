@@ -94,50 +94,50 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <a class="sourceLine" id="cb1-2" title="2">  <span class="ex">hogehogehoge...</span></a>
 <a class="sourceLine" id="cb1-3" title="3"><span class="kw">fi</span></a></code></pre></div>
 <p>にはコマンド <code>[</code> が使われていたりします. 試しに手元の bash で <code>which [</code> すると</p>
-<pre class="console"><code>$ which [
-/usr/bin/[</code></pre>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb2-1" title="1">$ <span class="fu">which</span> [</a>
+<a class="sourceLine" id="cb2-2" title="2"><span class="ex">/usr/bin</span>/[</a></code></pre></div>
 <p>と返ってきて、確かに外部コマンドであることが分かります. （ちなみに zsh だと built-in でした.）</p>
 <p>このようにシェルスクリプトというのは、基本的には外のコマンドを呼び出しながらデータを処理する言語です. それでもシェルスクリプトとの親和性というのが考えられ、特に親和性が高いのが行志向で処理するようなコマンドでしょう. その一つが sed です.</p>
 <p>よく使われる sed の例がたぶんこんなん. 良い例ではないですが.</p>
-<pre class="console"><code>$ cat test.txt
-function fuga(x) {
-    return 42
-}
-print fuga(1)
-print fuga(2)
-print [fuga(&quot;3&quot;), fuga(&quot;4&quot;)]
-
-$ cat test.txt | sed &#39;s/fuga/hoge/g&#39;
-function hoge(x) {
-    return 42
-}
-print hoge(1)
-print hoge(2)
-print hoge(&quot;3&quot;)
-print [hoge(&quot;3&quot;), hoge(&quot;4&quot;)]</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb3-1" title="1">$ <span class="fu">cat</span> test.txt</a>
+<a class="sourceLine" id="cb3-2" title="2"><span class="kw">function</span><span class="fu"> fuga</span><span class="kw">(</span><span class="ex">x</span><span class="kw">)</span> <span class="kw">{</span></a>
+<a class="sourceLine" id="cb3-3" title="3">    <span class="bu">return</span> 42</a>
+<a class="sourceLine" id="cb3-4" title="4"><span class="kw">}</span></a>
+<a class="sourceLine" id="cb3-5" title="5"><span class="ex">print</span> fuga(1)</a>
+<a class="sourceLine" id="cb3-6" title="6"><span class="ex">print</span> fuga(2)</a>
+<a class="sourceLine" id="cb3-7" title="7"><span class="ex">print</span> [fuga(<span class="st">&quot;3&quot;</span>), <span class="ex">fuga</span>(<span class="st">&quot;4&quot;</span>)]</a>
+<a class="sourceLine" id="cb3-8" title="8"></a>
+<a class="sourceLine" id="cb3-9" title="9">$ <span class="fu">cat</span> test.txt <span class="kw">|</span> <span class="fu">sed</span> <span class="st">&#39;s/fuga/hoge/g&#39;</span></a>
+<a class="sourceLine" id="cb3-10" title="10"><span class="kw">function</span><span class="fu"> hoge</span><span class="kw">(</span><span class="ex">x</span><span class="kw">)</span> <span class="kw">{</span></a>
+<a class="sourceLine" id="cb3-11" title="11">    <span class="bu">return</span> 42</a>
+<a class="sourceLine" id="cb3-12" title="12"><span class="kw">}</span></a>
+<a class="sourceLine" id="cb3-13" title="13"><span class="ex">print</span> hoge(1)</a>
+<a class="sourceLine" id="cb3-14" title="14"><span class="ex">print</span> hoge(2)</a>
+<a class="sourceLine" id="cb3-15" title="15"><span class="ex">print</span> hoge(<span class="st">&quot;3&quot;</span>)</a>
+<a class="sourceLine" id="cb3-16" title="16"><span class="ex">print</span> [hoge(<span class="st">&quot;3&quot;</span>), <span class="ex">hoge</span>(<span class="st">&quot;4&quot;</span>)]</a></code></pre></div>
 <p>文字列の置換です. <code>s/.../.../g</code> は１個目の <code>...</code> を２つ目の <code>...</code> に置換するという意味. 最後の <code>g</code> はこの置換を全て行うということで、これがない場合は各行の最初の１個にしか適用されない.</p>
-<pre class="console"><code>$ cat test.txt | sed &#39;s/fuga/hoge/&#39;
-function hoge(x) {
-    return 42
-}
-print hoge(1)
-print hoge(2)
-print [hoge(&quot;3&quot;), fuga(&quot;4&quot;)]</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb4-1" title="1">$ <span class="fu">cat</span> test.txt <span class="kw">|</span> <span class="fu">sed</span> <span class="st">&#39;s/fuga/hoge/&#39;</span></a>
+<a class="sourceLine" id="cb4-2" title="2"><span class="kw">function</span><span class="fu"> hoge</span><span class="kw">(</span><span class="ex">x</span><span class="kw">)</span> <span class="kw">{</span></a>
+<a class="sourceLine" id="cb4-3" title="3">    <span class="bu">return</span> 42</a>
+<a class="sourceLine" id="cb4-4" title="4"><span class="kw">}</span></a>
+<a class="sourceLine" id="cb4-5" title="5"><span class="ex">print</span> hoge(1)</a>
+<a class="sourceLine" id="cb4-6" title="6"><span class="ex">print</span> hoge(2)</a>
+<a class="sourceLine" id="cb4-7" title="7"><span class="ex">print</span> [hoge(<span class="st">&quot;3&quot;</span>), <span class="ex">fuga</span>(<span class="st">&quot;4&quot;</span>)]</a></code></pre></div>
 <p>なんで各行なのかというと, そもそも sed はコード（コマンド引数として渡された文字列）を各行に適用するものだから.</p>
 <p>データは行ごとに分割された要素の列. sed はコードを列の各要素に適用して返す.</p>
-<pre class="console"><code>$ cat data
-x1
-x2
-x3
-:
-xN
-
-$ cat data | sed f
-f(x1)
-f(x2)
-f(x3)
-:
-f(xN)</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb5-1" title="1">$ <span class="fu">cat</span> data</a>
+<a class="sourceLine" id="cb5-2" title="2"><span class="ex">x1</span></a>
+<a class="sourceLine" id="cb5-3" title="3"><span class="ex">x2</span></a>
+<a class="sourceLine" id="cb5-4" title="4"><span class="ex">x3</span></a>
+<a class="sourceLine" id="cb5-5" title="5"><span class="bu">:</span></a>
+<a class="sourceLine" id="cb5-6" title="6"><span class="ex">xN</span></a>
+<a class="sourceLine" id="cb5-7" title="7"></a>
+<a class="sourceLine" id="cb5-8" title="8">$ <span class="fu">cat</span> data <span class="kw">|</span> <span class="fu">sed</span> f</a>
+<a class="sourceLine" id="cb5-9" title="9"><span class="ex">f</span>(x1)</a>
+<a class="sourceLine" id="cb5-10" title="10"><span class="ex">f</span>(x2)</a>
+<a class="sourceLine" id="cb5-11" title="11"><span class="ex">f</span>(x3)</a>
+<a class="sourceLine" id="cb5-12" title="12"><span class="bu">:</span></a>
+<a class="sourceLine" id="cb5-13" title="13"><span class="ex">f</span>(xN)</a></code></pre></div>
 <p>これが行志向と先に書いた意味です. シェルスクリプトに登場するコマンドはこの形式なことが多くて、 <code>while read ...; do ...; done</code> でも行ごとの処理が出来るし、 <code>awk</code> コマンドなんかもそうだし.</p>
 <p>というわけで sed を使いこなせることはシェルスクリプトを使いこなすことなので、皆さん sed を勉強しましょう.</p>
 <p>言語を学習するのに便利なサイトがあって、AtCoder っていうんですけど. これの “AtCoder Beginner Contest” の A 問題と B 問題くらいなら sed で解けます. A とか B とかは単に各コンテストの中の問題の番号ですが、若いほど簡単です. もっと正確には、各問題には点数が割り振られてるのでそれを参考にしてください.</p>

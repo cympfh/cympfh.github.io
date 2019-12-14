@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Sat Dec 14 2019</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+</head>
+<body>
+<header class="page-header">
+    <a href='../../index.html'><i class="fa fa-save" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">Sat Dec 14 2019</h1>
+</header>
+<h2 id="新しいhhkbが来た">新しいHHKBが来た</h2>
+<p>HHKB の Hybrid 版がついこないだ発表されて, 早速 Amazon で購入した. おそらく用意してる在庫はギリギリに絞っているらしく, すぐに Amazon からも在庫がなくなり, 私の注文も発送されるまで3日待たされた.</p>
+<p>新しい HHKB は USB (Type-C) での接続と, Bluetooth での接続の両方が選択できる. たしか 2016 年の春に HHKB BT が発売されたのを覚えているが, それは Bluettoth のみの接続であった. しかも既に発売されている静音タイプ Type-S も採用されなかった. 今回は Hybrid では Type-S を採用したバージョンもある. 私は一番クラシカルなモデル（USB Type-B で接続して静音でもない奴）と, Type-S のモデルと, それから HHKB BT の3つを持っている. Type-S は静音なだけでなく, 打鍵感も段違いで腱鞘炎になりにくい, と思う. だから Hybrid モデルは大変うれしい.</p>
+<p>前回の HHKB BT を Ubuntu に bluetooth 接続するのは大変困難を極め, ついに諦めてしまった. もしかしたら当時の Ubuntu で Bluetooth 3（それ以上のちゃんとしたバージョンは分からない）に接続するのは駄目だったのかもしれない.</p>
+<p>今改めて調べると</p>
+<p><a href="https://sioyaki.com/entry/2019/04/03/105625">UbuntuでHHKB BTを使うための設定 - 塩焼きブログ</a></p>
+<p>この方は普通に接続できてるようなので, 今となっては事情が違うのかもしれない.</p>
+<p>さて HHKB Hybrid は bluetooth 4.2 である. 全くさくっとはいかず, 何度かPC側のbluetoothをon/offしたり, キーボードの電源をon/offしたりしたが, 三度目くらいで接続できた. bluetooth 接続には <code>blueman</code> を用いた. HHKB の説明書にはもちろん Windows/MacOS の場合の説明しかないが, 「PC側で表示される数字をキーボード本体で入力してEnter」などと書いてあるが <code>blueman</code> の場合, そういったものは経験上, 表示されない. ただ勝手に接続が成功するか, しないかである.</p>
+<p>もうちょっと詳しく書くと, “Setup New Device” のウィザードはまるで役に立たなくて, “Devices” の画面でデバイスを選んで “Pair” を押す. 何の反応も無いように見えるが, ステータスバーの bluetooth のアイコンが変わってるかもしれない. しばらく待つと成功したりしなかったりする.</p>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

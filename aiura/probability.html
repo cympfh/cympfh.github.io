@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>確率の定義</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="../resources/css/c.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-stumbleupon" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">確率の定義</h1>
+</header>
+<p class="date" style="text-align: right">
+2019-12-14 (Sat.)
+</p>
+<div class="is-pulled-right">
+<p><a class='tag is-red' href=index.html#測度論>測度論</a> <a class='tag is-red' href=index.html#確率論>確率論</a></p>
+</div>
+<p><span class="math inline">\(\def\F{\mathcal{F}}\def\R{\mathbb{R}}\)</span></p>
+<h2 id="測度空間">測度空間</h2>
+<p><strong>測度空間</strong> とは, 集合 <span class="math inline">\(X\)</span>, <span class="math inline">\(X\)</span> の部分集合の族 <span class="math inline">\(\F\)</span>, 関数 <span class="math inline">\(m \colon \F \to \R\)</span> (<span class="math inline">\(\R\)</span> は実数) の三組 <span class="math display">\[(X, \F, m)\]</span> であって, <span class="math inline">\(\F\)</span> は次を満たすとする.</p>
+<ol type="1">
+<li><span class="math inline">\(\emptyset \in \F\)</span></li>
+<li><span class="math inline">\(A \in \F \implies A^c \in \F\)</span> （ここで <span class="math inline">\(A^c\)</span> は <span class="math inline">\(X \setminus A\)</span> のこと）</li>
+<li><span class="math inline">\(A, B \in \F \implies A \cup B \in \F\)</span></li>
+<li><span class="math inline">\(E_i \in \F \implies \bigcup_{i=1}^{\infty} E_i \in \F\)</span></li>
+</ol>
+<blockquote>
+<p>ちなみに 1~3 を満たす <span class="math inline">\(\F\)</span> を <span class="math inline">\(X\)</span> の f-集合体という. 1~4 を満たす <span class="math inline">\(\F\)</span> を <span class="math inline">\(X\)</span> の <span class="math inline">\(\sigma\)</span>-集合体という.</p>
+</blockquote>
+<p>そして更に <span class="math inline">\(m\)</span> は次を満たすとする.</p>
+<ol type="1">
+<li><span class="math inline">\(m(\emptyset) = 0\)</span></li>
+<li><span class="math inline">\(\forall A \in \F, 0 \leq m(A) \leq \infty\)</span></li>
+<li><span class="math inline">\(E_i \in \F \land (i \ne j \implies E_i \cap E_j = \emptyset) \implies m(\bigcup_{i=1}^{\infty} E_i) = \sum_{i=1}^{\infty} m(E_i)\)</span></li>
+</ol>
+<h3 id="性質">性質</h3>
+<p>導かれる性質として次のようなものがある.</p>
+<ol type="1">
+<li><span class="math inline">\(X \in \F\)</span></li>
+<li><span class="math inline">\(E_i \in \F \implies \bigcap_{i=1}^{\infty} E_i \in \F\)</span> （加算無限個の積もok）</li>
+<li><span class="math inline">\(A, B \in \F \implies A \setminus B \in \F\)</span></li>
+</ol>
+<h3 id="可測関数">可測関数</h3>
+<p>測度空間 <span class="math inline">\((X, \F, m)\)</span> に対して, 関数 <span class="math inline">\(f \colon X \to \R\)</span> があるとする.</p>
+<p>実数 <span class="math inline">\(a \in \R\)</span> について <span class="math inline">\(\{ x \mid f(x) &gt; a \}\)</span> のことを <span class="math inline">\([f &gt; a]\)</span> と書く. 全く同様に <span class="math inline">\(\{ x \mid f(x) \leq a \}\)</span> のことを <span class="math inline">\([f \leq a]\)</span> とか, <span class="math inline">\(\{ x \mid f(x) \in E \}\)</span> のことを <span class="math inline">\([f \in E]\)</span> とか書く.</p>
+<p>任意の実数 <span class="math inline">\(a\)</span> について <span class="math display">\[[f &gt; a] \in \F\]</span> のとき, <span class="math inline">\(f\)</span> を <strong>可測関数</strong> という.</p>
+<p>ここで定義中の <span class="math inline">\([f &gt; a]\)</span> を <span class="math inline">\([f \geq a]\)</span> とか <span class="math inline">\([f &lt; a]\)</span> とか <span class="math inline">\([f \leq a]\)</span> に置き換えても同値である. ここから <span class="math inline">\([f = a] \in \F\)</span> を導ける.</p>
+<h2 id="確率空間">確率空間</h2>
+<p>測度空間 <span class="math display">\[(\Omega, \F, P)\]</span> があって, その <span class="math inline">\(P\)</span> が更に</p>
+<p>を満たす時, これを <strong>確率空間</strong> という. また, <span class="math inline">\(\Omega\)</span> を <strong>標本空間</strong>, <span class="math inline">\(\F\)</span> を <strong>事象族</strong>, <span class="math inline">\(P\)</span> を <strong>確率</strong> という.</p>
+<h3 id="諸概念">諸概念</h3>
+<p>確率空間 <span class="math inline">\((\Omega, \F, P)\)</span> に対して, 関数 <span class="math inline">\(X\)</span> が <span class="math inline">\(\Omega \to \R\)</span> なる関数であってしかも可測関数であるとき, <span class="math inline">\(X\)</span> を <strong>確率変数</strong> という.</p>
+<p>例えば <span class="math inline">\([X = a] := \{ \omega \in \Omega \mid X(\omega) = a \}\)</span> であるが, 可測関数であることからこれは <span class="math inline">\(\F\)</span> に入ってる. 従って <span class="math inline">\(P([X=a])\)</span> が値を定める. これを普通 <span class="math inline">\([]\)</span> を省略して <span class="math inline">\(P(X=a)\)</span> と書く.</p>
+<p>特に <span class="math inline">\(X\)</span> に対して <span class="math inline">\(\mu_X(a) = P(X=a)\)</span> で定めた関数 <span class="math inline">\(\mu_X \colon \R \to \R\)</span> を <span class="math inline">\(X\)</span> の <strong>分布</strong> という.</p>
+<p>任意の実数区間 <span class="math inline">\([a,b]\)</span> について <span class="math display">\[P(X \in [a,b]) = \int_a^b f(x) dx\]</span> を満たすような関数 <span class="math inline">\(f\)</span> があったとする. このとき <span class="math inline">\(f\)</span> のことを <span class="math inline">\(X\)</span> の <strong>確率密度</strong> という.</p>
+<p>確率密度が存在するとき, <span class="math inline">\(\mu_X(a) = P(X=a) = P(X \in [a,a]) = \int_a^a f(x) dx = 0\)</span> である. 例えば実数区間の一様分布などがそれである.</p>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

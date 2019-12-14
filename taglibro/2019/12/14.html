@@ -22,14 +22,21 @@
 <h1 class="title">Sat Dec 14 2019</h1>
 </header>
 <h2 id="新しいhhkbが来た">新しいHHKBが来た</h2>
-<p>HHKB の Hybrid 版がついこないだ発表されて, 早速 Amazon で購入した. おそらく用意してる在庫はギリギリに絞っているらしく, すぐに Amazon からも在庫がなくなり, 私の注文も発送されるまで3日待たされた.</p>
-<p>新しい HHKB は USB (Type-C) での接続と, Bluetooth での接続の両方が選択できる. たしか 2016 年の春に HHKB BT が発売されたのを覚えているが, それは Bluettoth のみの接続であった. しかも既に発売されている静音タイプ Type-S も採用されなかった. 今回は Hybrid では Type-S を採用したバージョンもある. 私は一番クラシカルなモデル（USB Type-B で接続して静音でもない奴）と, Type-S のモデルと, それから HHKB BT の3つを持っている. Type-S は静音なだけでなく, 打鍵感も段違いで腱鞘炎になりにくい, と思う. だから Hybrid モデルは大変うれしい.</p>
-<p>前回の HHKB BT を Ubuntu に bluetooth 接続するのは大変困難を極め, ついに諦めてしまった. もしかしたら当時の Ubuntu で Bluetooth 3（それ以上のちゃんとしたバージョンは分からない）に接続するのは駄目だったのかもしれない.</p>
+<p>HHKB の Hybrid 版がついこないだ発表されて, 早速 Amazon で購入した. おそらく用意してる在庫はギリギリに絞っているらしく, すぐに Amazon からも在庫がなくなり, 私の注文も発送されるまで3日待たされた. （もとより発送まで2-3日かかります, とは書いてあったので何も間違えてはいない.）</p>
+<p>新しい HHKB は USB (Type-C) での接続と, Bluetooth での接続の両方が選択できる. たしか 2016 年の春に HHKB BT が発売されたのを覚えているが, それは Bluetooth のみの接続であった. しかも既に発売されている静音タイプ Type-S も採用されなかった. 今回は Hybrid では Type-S を採用したバージョンもある.</p>
+<p>私は一番クラシカルな Pro2 モデル（USB Type-B で接続して静音でもない奴）と, Pro2 の Type-S のモデルと, それから HHKB BT の3つを持っている. Type-S は静音なだけでなく, 打鍵感も段違いで腱鞘炎になりにくい, と思う. 今回の Hybrid では BT に Type-S が採用されている. 待ちわびたモデルというわけだった.</p>
+<p>ところで, 前回の HHKB BT を Ubuntu に bluetooth 接続するのは大変困難を極め, ついに諦めてしまった. もしかしたら当時の Ubuntu で Bluetooth 3（それ以上のちゃんとしたバージョンは分からない）に接続するのは駄目だったのかもしれない.</p>
 <p>今改めて調べると</p>
 <p><a href="https://sioyaki.com/entry/2019/04/03/105625">UbuntuでHHKB BTを使うための設定 - 塩焼きブログ</a></p>
 <p>この方は普通に接続できてるようなので, 今となっては事情が違うのかもしれない.</p>
 <p>さて HHKB Hybrid は bluetooth 4.2 である. 全くさくっとはいかず, 何度かPC側のbluetoothをon/offしたり, キーボードの電源をon/offしたりしたが, 三度目くらいで接続できた. bluetooth 接続には <code>blueman</code> を用いた. HHKB の説明書にはもちろん Windows/MacOS の場合の説明しかないが, 「PC側で表示される数字をキーボード本体で入力してEnter」などと書いてあるが <code>blueman</code> の場合, そういったものは経験上, 表示されない. ただ勝手に接続が成功するか, しないかである.</p>
 <p>もうちょっと詳しく書くと, “Setup New Device” のウィザードはまるで役に立たなくて, “Devices” の画面でデバイスを選んで “Pair” を押す. 何の反応も無いように見えるが, ステータスバーの bluetooth のアイコンが変わってるかもしれない. しばらく待つと成功したりしなかったりする.</p>
+<h3 id="hhkb-hybrid-が-bluetooth-接続してる間はラップトップ本体のキーボードを無効化する">HHKB Hybrid が bluetooth 接続してる間はラップトップ本体のキーボードを無効化する</h3>
+<p>MacOS だと, Karabina というソフトでそんなことが出来る. Ubuntu でもそういうことをしたい.</p>
+<p><code>xinput</code> で各デバイスの状態を見たり操作出来る. また <code>bluetoothctl</code> コマンドで bluetooth 接続状態が確認できる.</p>
+<p><code>bluetoothctl info</code> でなんとなく今の接続状態が分かる. キーボードっぽい名前がそこに出てきたら Bluetooth キーボードが接続されたということ.</p>
+<p><code>xinput list</code> で本体のキーボードっぽい名前を確認し, <code>xinput set-prop $BUILDIN_KBD_NAME &quot;Device Enabled&quot; 0</code> とすれば無効化できる.</p>
+<script src="https://gist.github.com/cympfh/1dafa0e1347f2607c42ad900782c994d.js"></script>
 <footer>
     <p class="is-pulled-right">
     @cympfh / cympfh@gmail.com

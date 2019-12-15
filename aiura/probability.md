@@ -27,6 +27,8 @@ $$(X, \F, m)$$
 1. $m(\emptyset) = 0$
 1. $\forall A \in \F, 0 \leq m(A) \leq \infty$
 1. $E_i \in \F \land (i \ne j \implies E_i \cap E_j = \emptyset) \implies m(\bigcup_{i=1}^{\infty} E_i) = \sum_{i=1}^{\infty} m(E_i)$
+    - 加算個の和も ok
+    - もちろん適切に $n>N \implies E_n=\emptyset$ と設定すれば, 有限個の和も ok であることが分かる
 
 ### 性質
 
@@ -35,6 +37,7 @@ $$(X, \F, m)$$
 1. $X \in \F$
 1. $E_i \in \F \implies \bigcap_{i=1}^{\infty} E_i \in \F$ （加算無限個の積もok）
 1. $A, B \in \F \implies A \setminus B \in \F$
+1. $m(A^c) = m(X) - m(A)$
 
 ### 可測関数
 

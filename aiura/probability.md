@@ -89,3 +89,6 @@ $$P(X \in [a,b]) = \int_a^b f(x) dx$$
 $\mu_X(a) = P(X=a) = P(X \in [a,a]) = \int_a^a f(x) dx = 0$
 である.
 例えば実数区間の一様分布などがそれである.
+
+$$E[X] = \int_\Omega X(\omega) dP(\omega)$$
+という積分値が定まるとき, それを $X$ の平均とか **期待値** とかいう.

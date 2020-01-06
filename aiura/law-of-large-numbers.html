@@ -23,18 +23,60 @@
 <h1 class="title">大数の法則</h1>
 </header>
 <p class="date" style="text-align: right">
-2019-12-15 (Sun.)
+2019-12-15 (Sun.), 2020-01-07 (Tue.)
 </p>
 <div class="is-pulled-right">
 <p><a class='tag is-red' href=index.html#確率論>確率論</a> <a class='tag is-red' href=index.html#測度論>測度論</a></p>
 </div>
 <p><span class="math inline">\(\def\F{\mathcal{F}}\def\R{\mathbb{R}}\def\BR{\mathcal{B}(\mathbb{R})}\)</span></p>
+<h2 id="確率変数">確率変数</h2>
+<p><a href="probability.html">確率空間</a> <span class="math inline">\((\Omega, \F, P)\)</span> について, 関数 <span class="math inline">\(X \colon \Omega \to \R\)</span> が可測であるとき, これを確率変数だという. 関数が可測であるとはすなわち, 任意の実数 <span class="math inline">\(a\)</span> について, <span class="math display">\[[X &gt; a] \equiv \{ \omega \in \Omega \mid X \omega &gt; a \}\]</span> が <span class="math inline">\(\F\)</span> に属する（つまり可測空間である）こと. ちなみに <span class="math inline">\([X &gt; a]\)</span> の代わりに <span class="math inline">\([X \geq a]\)</span> とか <span class="math inline">\([X &lt; a]\)</span> とかを使っても同値である.</p>
+<h3 id="確率変数の分布">確率変数の分布</h3>
+<p>確率変数 <span class="math inline">\(X\)</span> に対してその分布を <span class="math inline">\(\mu_X\)</span> と書くが, これは次のような関数 <span class="math inline">\(\Omega \to \R\)</span>.</p>
+<p><span class="math display">\[\mu_X(a) = P(X = a) = P \{ \omega \in \Omega \mid X \omega = a \}\]</span></p>
+<p>以下で確率空間は固定して考える.</p>
 <h2 id="確率変数の独立性">確率変数の独立性</h2>
-<p>確率空間 <span class="math inline">\((\Omega, \F, P)\)</span> の上の加算無限個の確率変数 <span class="math display">\[X_1, X_2, \ldots\]</span> について次が成り立つ時, これらは <strong>独立</strong> であるという.</p>
+<p>加算無限個の確率変数 <span class="math display">\[X_1, X_2, \ldots\]</span> について次が成り立つ時, これらは <strong>独立</strong> であるという.</p>
 <p>実数の上のボレル集合族 <span class="math inline">\(\BR\)</span> の任意の集合 （要は加算無限個の開区間を和積差で組み合わせて出来る集合） <span class="math display">\[E_1, E_2, \ldots \in \BR\]</span> に対して <span class="math display">\[P(X_1 \in E_1, X_2 \in E_2, \ldots) = \prod_i P(X_i \in E_i)\]</span> が成り立つ.</p>
 <p>念の為に補足すると, 左辺は <span class="math inline">\(\{ \omega \in \Omega \mid X_1(\omega) \in E_1 \land X_2(\omega) \in E_2 \land \cdots \}\)</span> の確率測度で, 右辺は個々 <span class="math inline">\(\{ \omega \in \Omega \mid X_i(\omega) \in E_i \}\)</span> の確率測度の積.</p>
+<h2 id="期待値分散">期待値、分散</h2>
+<p>確率変数 <span class="math inline">\(X\)</span> の <strong>期待値</strong> を次で定義してそれを <span class="math inline">\(EX\)</span> と書く.</p>
+<p><span class="math display">\[EX = \int_\Omega X \, dP\]</span></p>
+<p>特に <span class="math inline">\(P\)</span> が離散であれば <span class="math inline">\(EX = \sum_{\omega \in \Omega} X \omega \times P(\omega)\)</span> と書ける.</p>
+<p>確率変数 <span class="math inline">\(X\)</span> の <strong>分散</strong> を次で定義しそれを <span class="math inline">\(VX\)</span> と書く.</p>
+<p><span class="math display">\[VX = E (X - EX)^2\]</span></p>
+<h3 id="性質">性質</h3>
+<ul>
+<li><span class="math inline">\(E(aX + b) = a EX + b \; (a, b \in \R)\)</span></li>
+<li><span class="math inline">\(V(aX + b) = a^2 VX \; (a, b \in \R)\)</span></li>
+<li><span class="math inline">\(VX = E(X^2) - (EX)^2\)</span></li>
+</ul>
+<p>独立であるが同じ分布を持つ（このことを iid と言う） <span class="math inline">\(X_1, X_2, \ldots, X_n\)</span> を考える. これについて次が成り立つ.</p>
+<ul>
+<li><span class="math inline">\(E (\sum_i X_i) = \sum_i E X_i\)</span></li>
+<li><span class="math inline">\(E (\prod X_i) = \prod_i E X_i\)</span></li>
+<li><span class="math inline">\(V (\sum_i X_i) = \sum_i V X_i\)</span></li>
+</ul>
+<h2 id="マルコフの不等式">マルコフの不等式</h2>
+<p>確率変数 <span class="math inline">\(X\)</span> について次が成り立つ.</p>
+<p><span class="math display">\[\forall \epsilon &gt; 0, P(|X| \geq \epsilon) \leq \frac{1}{\epsilon} E |X|\]</span></p>
+<h3 id="証明">証明</h3>
+<p><span class="math inline">\(A = [ |X| \geq \epsilon ] \subset \Omega\)</span> と置くと <span class="math inline">\(E |X| = \int_\Omega |X| \, dP \geq \int_A |X| \, dP \geq \int_A \epsilon \, dP = \epsilon \times P(A)\)</span> より従う.</p>
+<h2 id="チェビシェフの不等式">チェビシェフの不等式</h2>
+<p><span class="math display">\[\forall \epsilon &gt; 0, P(|X - EX| \geq \epsilon ) \leq \frac{1}{\epsilon^2} VX\]</span></p>
+<h3 id="証明-1">証明</h3>
+<p>マルコフの不等式と全く同様. <span class="math inline">\(A = |X-EX| \geq \epsilon \subset \Omega\)</span> と置いて, <span class="math inline">\(VX = E(X-EX)^2 \geq \int_A (X-EX)^2 \, dP \geq \epsilon^2 \times P(A)\)</span> から従う.</p>
+<h2 id="確率変数の収束">確率変数の収束</h2>
+<p>確率変数の列 <span class="math inline">\(\{ X_i \}_{i=1,2,\ldots}\)</span> の収束を次の二通りで定義する.</p>
+<h3 id="確率収束">確率収束</h3>
+<p>次が成り立つとき, <span class="math inline">\(\{X_i\}\)</span> は <span class="math inline">\(X\)</span> に確率収束するという. <span class="math display">\[\forall \epsilon &gt; 0, \lim_{n \to \infty} P(|X_n - X| &gt; \epsilon) = 0\]</span></p>
+<h3 id="ほとんど確実に収束-almost-surely-convergence">ほとんど確実に収束 (almost surely convergence)</h3>
+<p>一般に、確率変数 <span class="math inline">\(X\)</span> に関するある命題 <span class="math inline">\(\Phi(X)\)</span> が成立する確率が 1 のとき, 「ほとんど確実に <span class="math inline">\(\Phi(X)\)</span> は成立する」と言い、「<span class="math inline">\(\Phi(X)\)</span> a.s.」と書く. ここで “a.s.” は almost surely の略.</p>
+<p><strong>ほとんど確実に</strong> 確率変数の列 <span class="math inline">\(X_i\)</span> が <span class="math inline">\(X\)</span> に収束するとは <span class="math display">\[P(\lim_i X_i = X) = 1\]</span> のこと.</p>
+<p>一般に「ほとんど確実に収束する」とき確率収束することは従う. 確率収束はほとんど確実の収束より弱い.</p>
 <h2 id="大数の法則">大数の法則</h2>
-<p>分布が等しく, 独立な確率変数 <span class="math inline">\(X_1, X_2, \ldots\)</span> があるとき, <span class="math display">\[\frac{1}{n} \left( X_1 + X_2 + \cdots + X_n \right)\]</span> は <span class="math inline">\(n \to \infty\)</span> のとき <span class="math inline">\(E[X_1]\)</span> を定める.</p>
+<p>iid な <span class="math inline">\(X_1, X_2, \ldots\)</span> を考える. 分布が等しいので <span class="math inline">\(m=E X_i\)</span> と置いておく. <span class="math inline">\(n\)</span> 個の平均 <span class="math display">\[Y_n = \frac{1}{n} \left( X_1 + X_2 + \cdots + X_n \right)\]</span> は <span class="math inline">\(n \to \infty\)</span> のとき <span class="math inline">\(m\)</span> に収束する.</p>
+<p>この収束の仕方として確率収束を言うのを「弱法則」、ほとんど確実収束を言うのを「強法則」という.</p>
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.

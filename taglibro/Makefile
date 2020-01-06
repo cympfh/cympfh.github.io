@@ -9,6 +9,7 @@ index:
 %.html: %.md
 	mdc $^ | \
 		pandoc -s -t html5 \
+		--template templates/post.body.html \
 		-B templates/post.header.html \
 		-A templates/post.footer.html \
 		-A ../resources/js/toc.html \

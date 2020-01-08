@@ -75,22 +75,22 @@ $X_1, X_2, \ldots, X_n$
 
 確率変数 $X$ について次が成り立つ.
 
-$$\forall \epsilon > 0, P(|X| \geq \epsilon) \leq \frac{1}{\epsilon} E |X|$$
+$$\forall \epsilon > 0, P(|X| > \epsilon) \leq \frac{1}{\epsilon} E |X|$$
 
 ### 証明
 
-$A = [ |X| \geq \epsilon ] \subset \Omega$ と置くと
+$A = [ |X| > \epsilon ] \subset \Omega$ と置くと
 $E |X| = \int_\Omega |X| \, dP \geq \int_A |X| \, dP \geq \int_A \epsilon \, dP = \epsilon \times P(A)$
 より従う.
 
 ## チェビシェフの不等式
 
-$$\forall \epsilon > 0, P(|X - EX| \geq \epsilon ) \leq \frac{1}{\epsilon^2} VX$$
+$$\forall \epsilon > 0, P(|X - EX| > \epsilon ) \leq \frac{1}{\epsilon^2} VX$$
 
 ### 証明
 
 マルコフの不等式と全く同様.
-$A = |X-EX| \geq \epsilon \subset \Omega$ と置いて,
+$A = \left[ |X-EX| > \epsilon \right] \subset \Omega$ と置いて,
 $VX = E(X-EX)^2 \geq \int_A (X-EX)^2 \, dP \geq \epsilon^2 \times P(A)$
 から従う.
 
@@ -119,12 +119,39 @@ $$P(\lim_i X_i = X) = 1$$
 
 ## 大数の法則
 
-iid な
-$X_1, X_2, \ldots$
-を考える.
+iid な $X_1, X_2, \ldots$ を考える.
 分布が等しいので $m=E X_i$ と置いておく.
+期待値 $m$ も分散 $VX_i$ も（発散せず）値を定めるとする.
 $n$ 個の平均
 $$Y_n = \frac{1}{n} \left( X_1 + X_2 + \cdots + X_n \right)$$
 は $n \to \infty$ のとき $m$ に収束する.
 
 この収束の仕方として確率収束を言うのを「弱法則」、ほとんど確実収束を言うのを「強法則」という.
+
+### 弱法則の証明
+
+$\lim_n P(Y_n > \epsilon) = 0$ が成り立つことを言う.
+
+まず先に確認することとして,
+$EY_n = E(\frac{1}{n} \sum X_i) = m$,
+
+$$\begin{align*}
+VY_n & = E(Y_n)^2 - (EY_n)^2 \\
+& = \frac{1}{n^2} E(\sum_i X_i)^2 - m^2 \\
+& = \frac{1}{n^2} E(\sum_i X_i^2 + \sum_{i \ne j} X_i X_j) - m^2 \\
+& = \frac{1}{n^2} E(n X_i^2 + n(n-1) X_i X_j) - m^2 \\
+& = \frac{1}{n} E(X_i^2 - m^2) \\
+& = \frac{1}{n} VX_i \\
+\end{align*}$$
+
+> $i \ne j$ について $E(X_i X_j) = m^2$ としたところに, 独立性を利用している
+
+チェビシェフの不等式によれば,
+
+$$\begin{align*}
+P(|Y_n - m| > \epsilon) & \leq \frac{1}{\epsilon^2} VY_n \\
+& = \frac{1}{n\epsilon^2} VX_i \\
+\end{align*}$$
+
+最後の右辺は $n \to \infty$ のとき $\to 0$ なので,
+$\lim_n P(Y_n > \epsilon) = 0$ が言えた.

@@ -2,7 +2,7 @@
 % 2019-12-15 (Sun.), 2020-01-07 (Tue.)
 % 確率論 測度論
 
-$\def\F{\mathcal{F}}\def\R{\mathbb{R}}\def\BR{\mathcal{B}(\mathbb{R})}$
+$\def\F{\mathcal{F}}\def\R{\mathbb{R}}\def\BR{\mathcal{B}(\mathbb{R})}\def\RX{\mathbb R_X}$
 
 ## 確率変数
 
@@ -16,9 +16,14 @@ $$[X > a] \equiv \{ \omega \in \Omega \mid X \omega > a \}$$
 が $\F$ に属する（つまり可測空間である）こと.
 ちなみに $[X > a]$ の代わりに $[X \geq a]$ とか $[X < a]$ とかを使っても同値である.
 
+$X$ の像
+$\{ X\omega \mid \omega \in \Omega \} (\subset \R)$
+を
+$\RX$ と書く.
+
 ### 確率変数の分布
 
-確率変数 $X$ に対してその分布を $\mu_X$ と書くが, これは次のような関数 $\Omega \to \R$.
+確率変数 $X$ に対してその分布を $\mu_X$ と書くが, これは次のような関数 $\RX \to \R$.
 
 $$\mu_X(a) = P(X = a) = P \{ \omega \in \Omega \mid X \omega = a \}$$
 

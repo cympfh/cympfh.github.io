@@ -69,10 +69,10 @@
 <p>確率変数の列 <span class="math inline">\(\{ X_i \}_{i=1,2,\ldots}\)</span> の収束を次の二通りで定義する.</p>
 <h3 id="確率収束">確率収束</h3>
 <p>次が成り立つとき, <span class="math inline">\(\{X_i\}\)</span> は <span class="math inline">\(X\)</span> に確率収束するという. <span class="math display">\[\forall \epsilon &gt; 0, \lim_{n \to \infty} P(|X_n - X| &gt; \epsilon) = 0\]</span></p>
-<h3 id="ほとんど確実に収束-almost-surely-convergence">ほとんど確実に収束 (almost surely convergence)</h3>
-<p>一般に、確率変数 <span class="math inline">\(X\)</span> に関するある命題 <span class="math inline">\(\Phi(X)\)</span> が成立する確率が 1 のとき, 「ほとんど確実に <span class="math inline">\(\Phi(X)\)</span> は成立する」と言い、「<span class="math inline">\(\Phi(X)\)</span> a.s.」と書く. ここで &quot;a.s.&quot; は almost surely の略.</p>
-<p><strong>ほとんど確実に</strong> 確率変数の列 <span class="math inline">\(X_i\)</span> が <span class="math inline">\(X\)</span> に収束するとは <span class="math display">\[P(\lim_i X_i = X) = 1\]</span> のこと.</p>
-<p>一般に「ほとんど確実に収束する」とき確率収束することは従う. 確率収束はほとんど確実の収束より弱い.</p>
+<h3 id="概収束-almost-surely-convergence">概収束 (almost surely convergence)</h3>
+<p>一般に、確率変数 <span class="math inline">\(X\)</span> に関するある命題 <span class="math inline">\(\Phi(X)\)</span> が成立する確率が 1 のとき, 「 <strong>ほとんど確実に</strong> <span class="math inline">\(\Phi(X)\)</span> は成立する」と言い、「<span class="math inline">\(\Phi(X)\)</span> a.s.」と書く. ここで &quot;a.s.&quot; は almost surely の略.</p>
+<p><strong>ほとんど確実に</strong> 確率変数の列 <span class="math inline">\(X_i\)</span> が <span class="math inline">\(X\)</span> に収束すること <span class="math display">\[P(\lim_i X_i = X) = 1\]</span> を <strong>概収束</strong> という.</p>
+<p>一般に「概収束 <span class="math inline">\(\implies\)</span> 確率収束」は成り立つ. つまり概収束のほうが確率収束より強い.</p>
 <h2 id="大数の法則">大数の法則</h2>
 <p>iid な <span class="math inline">\(X_1, X_2, \ldots\)</span> を考える. 分布が等しいので <span class="math inline">\(m=E X_i\)</span> と置いておく. 期待値 <span class="math inline">\(m\)</span> も分散 <span class="math inline">\(VX_i\)</span> も（発散せず）値を定めるとする. <span class="math inline">\(n\)</span> 個の平均 <span class="math display">\[Y_n = \frac{1}{n} \left( X_1 + X_2 + \cdots + X_n \right)\]</span> は <span class="math inline">\(n \to \infty\)</span> のとき <span class="math inline">\(m\)</span> に収束する.</p>
 <p>この収束の仕方として確率収束を言うのを「弱法則」、ほとんど確実収束を言うのを「強法則」という.</p>
@@ -96,6 +96,28 @@ P(|Y_n - m| &gt; \epsilon) &amp; \leq \frac{1}{\epsilon^2} VY_n \\
 &amp; = \frac{1}{n\epsilon^2} VX_i \\
 \end{align*}\]</span></p>
 <p>最後の右辺は <span class="math inline">\(n \to \infty\)</span> のとき <span class="math inline">\(\to 0\)</span> なので, <span class="math inline">\(\lim_n P(Y_n &gt; \epsilon) = 0\)</span> が言えた.</p>
+<h3 id="条件付きの強法則の証明">（条件付きの）強法則の証明</h3>
+<p><span class="math inline">\(E(X_i^4)\)</span> の値（この値を4次モーメントという）が無限大に発散せずに値を定めると仮定したときに, <span class="math inline">\(P(\lim_n Y_n = m) = 1\)</span> であることを示す.</p>
+<blockquote>
+<p>4次モーメントが存在しなくても実はこの法則は成り立つ. もとの <span class="math inline">\(X_i\)</span> が iid であって期待値が存在しさえすれば本当はいいんだけど, 証明が難しい.</p>
+</blockquote>
+<p><span class="math inline">\(E \left( \sum_i (X_i - m) \right)^4\)</span> という値を考える. <span class="math inline">\(E\)</span> の線形性から, 和について分解することを考える. このときに, <span class="math inline">\(E (X_i - m) (X_j - m)^3\)</span> といった値は <span class="math inline">\(i \ne j\)</span> とするとその独立性より <span class="math inline">\(E (X_i - m) \times E(X_j-m)^3\)</span> に等しく, <span class="math inline">\(E (X_i-m)=0\)</span> よりゼロである. 従って結局残るのは <span class="math inline">\(E(X_i-m)^4\)</span> という項と, <span class="math inline">\(E(X_i-m)^2(X_j-m)^2\)</span> という項だけ. このことに注目すると,</p>
+<p><span class="math display">\[\begin{align*}
+E \left( \sum_i (X_i - m) \right)^4
+&amp; = n E(X_i-m)^4 +
+\left( \begin{array}{cc} 4 \\ 2\end{array} \right)
+\left( \begin{array}{cc} n \\ 2\end{array} \right)
+E(X_i-m)^2(X_j-m)^2 \\
+&amp; = n E(X_i-m)^4 + 3n(n-1) (E(X_i-m)^2)^2
+\end{align*}\]</span></p>
+<p>従って, <span class="math inline">\(E(Y_n^4) = \frac{1}{n^4} E(X_i-m)^n = o(n^{-2})\)</span>. すなわちある定数 <span class="math inline">\(C\)</span> があって, <span class="math inline">\(E(Y_n^4) \leq C/n^2\)</span> といえる.</p>
+<p>次に列 <span class="math inline">\(Y_i\)</span> の累積和を考えると, これは次のように収束する. <span class="math inline">\(E(\sum_{n=1}^\infty Y_n^4) = \sum E Y_n^4 \leq C \sum_i \frac{1}{i^2} &lt; \infty\)</span></p>
+<p>さてここで次の補題を主張する.</p>
+<h4 id="補題">補題</h4>
+<p>iid な <span class="math inline">\(X_i\)</span> について, <span class="math display">\[\sum_i E|X_i| &lt; \infty \implies P(\sum_i |X_i| &lt; \infty) = 1.\]</span></p>
+<p>絶対値を取ってるのは単に、正の確率変数であることを約束させるために過ぎない. 甘んじて <span class="math inline">\(\sum_i E|X_i| = E(\sum_i |X_i|)\)</span> であることまでは認めてもらうと, <span class="math inline">\(A = [ \sum_i |X_i| &lt; \infty ] \subset \Omega\)</span> とおいて <span class="math inline">\(\sum_i E|X_i| = \int_A |X_i| \, dP + \int_{\Omega \setminus A} |X_i| \, dP \geq \int_{\Omega \setminus A} |X_i| \, dP = P(\Omega \setminus A) \times \infty\)</span> なので, <span class="math inline">\(P(\Omega \setminus A)=0\)</span> でなければならない. 従って <span class="math inline">\(P(A)=1\)</span>.</p>
+<p>この補題を <span class="math inline">\(|X_n| = Y_n^4\)</span> として適用すると, <span class="math display">\[P(\sum_n Y_n^4 &lt; \infty) = 1\]</span> が言えた.</p>
+<p>数列 <span class="math inline">\({Y_n^4}\)</span> が非減少単調列でこれの累積和が概収束するので, <span class="math display">\[P(\lim_n Y_n^4 = 0) = 1\]</span> が言えた. 従って <span class="math display">\[\lim_{n \to \infty} Y_n = 0 ~~~ a.s.\]</span> であることも明らか.</p>
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.

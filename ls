@@ -1,8 +1,8 @@
 photos	photos/
+search	http://s.cympfh.cc/search
 aiura	aiura/
 anime	anime/
 y2b/anime	youtube/anime/
-books	http://s.cympfh.cc/books
 dosoku	dosoku/
 gist	gist/
 gnuplot	gnuplot/

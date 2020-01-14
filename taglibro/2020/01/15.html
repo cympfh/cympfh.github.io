@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="description" content="cympfh.cc/taglibro" />
+  <meta property="og:url" content="http://cympfh.cc/taglibro">
+  <meta property="og:title" content="Wed Jan 15 2020" />
+  <meta property="og:description" content="cympfh.cc/taglibro" />
+  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@cympfh" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Wed Jan 15 2020</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+</head>
+<body>
+<header class="page-header">
+    <a href='../../index.html'><i class="fa fa-save" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">Wed Jan 15 2020</h1>
+</header>
+<h2 id="画像分類について">画像分類について</h2>
+<p>画像データの 1 pixel は普通有限 bit で表現される. 簡単にグレイスケール画像で 1 pixel が 8bit とすれば, 各ピクセルとは整数 <span class="math inline">\([0, 256)\)</span> の値のこと. しかしながら画像処理に置いても人間の認知を考えても整数とは思っておらず, 実数 <span class="math inline">\([0, 256)\)</span> の上の代表値としてその整数を取ったものと見做すのが普通だ. だから, 画像 <span class="math inline">\(x\)</span> が与えられたときには, それは, まあ大体 <span class="math inline">\((x-1, x+1)\)</span> という値の範囲から一つ代表値を選んで表示したものと思うだろう.</p>
+<p>次に実数の上の滑らかな確率分布のことを思い出す. 例えば区間 <span class="math inline">\([0,1]\)</span> の上の一様分布を考えてみる. つまり <span class="math inline">\(0\)</span> 以上 <span class="math inline">\(1\)</span> 以下の実数がどれも等しい確率で選ばれるような確率変数 <span class="math inline">\(X\)</span>. この値がぴったり <span class="math inline">\(X = 0.5\)</span> を取る確率はゼロである. 無限に値を取り得る値がピッタリ 0.5 であるようなことは確かにゼロに思える. つまり任意の実数 <span class="math inline">\(a \in [0,1]\)</span> について <span class="math inline">\(P(X=a)=0\)</span> である. 実数の上の分布の場合については <span class="math inline">\(P(a \leq X \leq b)\)</span> を考えることしか出来ない. 例えば今の一様分布の場合, <span class="math inline">\(0 \leq a \leq b \leq 1\)</span> について, <span class="math inline">\(P(a \leq X \leq b) = b - a\)</span> である. さらにこれを微分することで確率分布という概念が出来る. 確率分布 <span class="math inline">\(\mu\)</span> とは <span class="math inline">\(\int_a^b \mu(x) dx = P(a \leq X \leq b)\)</span> であるような関数のこと. 今の一様分布なら <span class="math inline">\(\mu(x) = 1\)</span> がそれになる.</p>
+<p>画像とは実数（以上の濃度）の空間の上の部分空間で, その上に何かの確率分布を考えてみる. 例えば猫画像であることの確率を考える. 画像データを表す確率変数 <span class="math inline">\(X\)</span> と, 猫画像であることを表す確率変数 <span class="math inline">\(C\)</span> を考える. <span class="math inline">\(X\)</span> の値域はユークリッド空間の部分空間. <span class="math inline">\(C\)</span> の値域は <span class="math inline">\(\{0,1\}\)</span> で <span class="math inline">\(C=1\)</span> が猫であることを意味する. 画像空間の上の分布なので, <span class="math inline">\(P(X|C=1)\)</span> という条件付き確率を考えるとちゃんと確率分布になる. それを <span class="math inline">\(\mu_C\)</span> と書くことにする.</p>
+<p><span class="math inline">\(\mu_C\)</span> が本当に存在するなら（そしてそれはきっとあると思う）, さっき延べたように <span class="math inline">\(\forall x, P(X=x|C=1) = 0\)</span> である. 条件付き確率の定義（或いはベイズの定理）から, <span class="math inline">\(P(X=x,C=1)=0\)</span>. では, <span class="math inline">\(P(C=1|X=x) = P(X=x,C=1) / P(X=x)\)</span> は? 右辺は素直に計算するとゼロ割るゼロとなって値を定めない. 厳密には極限で計算しないといけない.</p>
+<p>で, 思ったのは, 実際に画像 <span class="math inline">\(x\)</span> が与えられた場合, それは実は区間 <span class="math inline">\((x-1,x+1)\)</span> から与えられているという話だ. 確率 <span class="math inline">\(P(X=x)\)</span> を考えるべきではなくて, <span class="math inline">\(\int_{x-1}^{x+1} dx ~ \mu_C(x)\)</span> という積分値を考えないといけないのではないか? それだったら, <span class="math inline">\(P(C=1 | x-1&lt;X&lt;x+1) = P(x-1 &lt; X &lt; x+1 ,C=1) / P(x-1 &lt; X &lt; X)\)</span> を計算することになって, 右辺は実数割る実数になって計算が容易になる.</p>
+<p>などと考えた.</p>
+<p>実際には <span class="math inline">\((x-1,x+1)\)</span> 上でそれらの確率はほぼ定数だから, 関係ないだろうけど.</p>
+<p>普通のカテゴリ予測器であれば, <span class="math inline">\(P(C|X)\)</span> という関数を, <span class="math inline">\(X\)</span> を入れたら <span class="math inline">\(P(C|X)\)</span> を返す機械として定めてモデル化するのに対して, 上の方法では <span class="math inline">\(P(x-1 &lt; X &lt; x+1 ,C=1)\)</span> と <span class="math inline">\(P(x-1 &lt; X &lt; X)\)</span> とのそれぞれを予測するモデルが必要になるので手間だ. しかも学習するのは <span class="math inline">\(P(X=x)\)</span> という確率ではなくて, 確率分布. 確率分布は結局積分する形式でしか利用しないので, 入力 <span class="math inline">\(a,b\)</span> について <span class="math inline">\(P(a &lt; X &lt; b)\)</span> を計算する機械として定めれば同じことだ. 訓練データとして実数のペア <span class="math inline">\(a,b\)</span> について <span class="math inline">\((a,b)\)</span> の範囲にある学習データとその尤度確率をラベルに学習すればいいのかも？ <span class="math inline">\(C\)</span> との同時確率バージョンなら, 訓練データ <span class="math inline">\(D = \{(x_i, y_i)\}\)</span> に対して <span class="math inline">\(A = \{ i \mid a &lt; x_i &lt; b \land y_i = C \}\)</span> を取ってきて, <span class="math inline">\(P(a &lt; X &lt; b, C) = |A| / |D|\)</span> を学習するみたいな感じ. <span class="math inline">\(b=a+2\)</span> に制限してもしなくてもいいかもしれない.</p>
+<h2 id="確率の学習について">確率の学習について</h2>
+<p>本当はこんなことを考えてたわけじゃなくて, ディープラーニングって確率を考えてたことをいつの間にかカテゴリ分類, 乃至は one-hot encoding をターゲットにすり替えていて, それが気持ち悪いなあとずっと考えてた. つまり, 本当は 0.8 みたいな中途半端な確率を取るはずなのに, 訓練データでは簡単に 0 か 1 か或いはせいぜいそれをスムージングした値くらいを学習データに入れてしまう. それでいて最終層には softmax なんかを入れて, これは確率ですよって顔をしている. 確かに, 予測時にはちゃんと微妙な値を取ったりするので, なんだか確率らしきものを学習してる気分にならなくもない. でも学習データにおける平均を出してるだけだとも思う. だったら初めから平均を算出してそれを訓練信号にしたほうが, 学習もスムーズになったりしないだろうか?</p>
+<p>考えている確率のほとんどは先に述べたような確率分布を持つ, と思う. 確率分布を学習させるのは本質な気がする.</p>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

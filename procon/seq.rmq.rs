@@ -98,7 +98,7 @@ impl RMQ {
             i = (i - 1) / 2;
             if i == 0 { break }
             self.heap_max[i] = max(self.heap_max[i*2+1], self.heap_max[i*2+2]);
-            self.heap_min[i] = min(self.heap_max[i*2+1], self.heap_max[i*2+2]);
+            self.heap_min[i] = min(self.heap_min[i*2+1], self.heap_min[i*2+2]);
         }
     }
 
@@ -116,31 +116,5 @@ impl Index<usize> for RMQ {
     type Output = i32;
     fn index(&self, i: usize) -> &i32 {
         &self.heap_max[i + self.size / 2]
-    }
-}
-
-fn main() {
-
-    let a = vec![1,2,3,4];
-    let mut rmq = RMQ::new(&a);
-
-    for i in 0..rmq.len() {
-        println!("rmq[{}] = {}", i, rmq[i]);
-    }
-
-    trace!(rmq.to_vec());
-    for i in 0..rmq.len() {
-        for j in i..rmq.len() {
-            println!("max{:?} = {}, min(..) = {}", (i, j), rmq.max(i..j), rmq.min(i..j));
-        }
-    }
-
-    rmq.update(1, 4);
-
-    trace!(rmq.to_vec());
-    for i in 0..rmq.len() {
-        for j in i..rmq.len() {
-            println!("max{:?} = {}, min(..) = {}", (i, j), rmq.max(i..j), rmq.min(i..j));
-        }
     }
 }

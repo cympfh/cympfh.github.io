@@ -105,6 +105,31 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>確かにそのようだ.</p>
 <p>で例えば整数 <span class="math inline">\(x\)</span> を適当な定数 <span class="math inline">\(E\)</span> の下で <span class="math inline">\(x = x_0 + x_1 E\)</span> と分解して <span class="math inline">\(x\)</span> の代わりに <span class="math inline">\(x_0, x_1\)</span> を持つことにする. <span class="math inline">\(x_0, x_1\)</span> が <span class="math inline">\(\pm 2^{31}\)</span> に入ってればいいんだけど, 掛け算をするときは一時的に掛け算しないといけないので（それはそう）, <span class="math inline">\(2^{31}\)</span> ギリギリどうしの掛け算しちゃうと <span class="math inline">\(2^{31}\)</span> を超えてしまう. だからそのルートをとって <span class="math inline">\(\pm 2^{15}\)</span> の範囲に抑えておかないといけない. キリ良くしておいて <span class="math inline">\(\pm 10^4\)</span>. それに合わせて <span class="math inline">\(E=10^4\)</span>. 結構小さいなあ. これで真面目に64bit整数にしようとしたら数を5つにして <span class="math inline">\(\sum_{i=0}^4 x_i E^i\)</span> にすることになる. 掛け算とか10進数表示にするのとか, 多いと大変さが線形以上に増すのでやりたくくない.</p>
 <p>ちなみにこれは, 12桁までの整数で足し引きと大小比較をする例 <a href="https://atcoder.jp/contests/abc149/submissions/9539386">abc149/submissions/9539386</a></p>
+<h2 id="関数のローカル変数がない問題">関数のローカル変数がない問題</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode awk"><code class="sourceCode awk"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">function</span> f(x) {</a>
+<a class="sourceLine" id="cb2-2" title="2">    x <span class="op">=</span> <span class="dv">1</span></a>
+<a class="sourceLine" id="cb2-3" title="3">    y <span class="op">=</span> <span class="dv">2</span></a>
+<a class="sourceLine" id="cb2-4" title="4">}</a>
+<a class="sourceLine" id="cb2-5" title="5">{</a>
+<a class="sourceLine" id="cb2-6" title="6">    x <span class="op">=</span> <span class="dv">0</span></a>
+<a class="sourceLine" id="cb2-7" title="7">    y <span class="op">=</span> <span class="dv">0</span></a>
+<a class="sourceLine" id="cb2-8" title="8">    f(x)</a>
+<a class="sourceLine" id="cb2-9" title="9">    <span class="kw">print</span> x, y  <span class="co"># 0, 2</span></a>
+<a class="sourceLine" id="cb2-10" title="10">}</a></code></pre></div>
+<p>関数 <code>f</code> で <code>x</code> は引数で, それ以外に <code>y</code> という変数を参照している. 残念ながら変数には引数であるか, さもなくばグローバル変数でしかない. だからローカル変数のつもりで <code>y</code> を使うと誤って破壊してしまう危険性がある.</p>
+<p><a href="https://www.gnu.org/software/gawk/manual/html_node/Variable-Scope.html">www.gnu.org/software/gawk/manual/html_node/Variable-Scope.html</a></p>
+<p>引数はちゃんと引数であることを利用して, 関数の中で使うローカル変数を引数として列挙してしまうテクがあった. 呼び出す場合は空にしておいて問題ないらしい.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode awk"><code class="sourceCode awk"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">function</span> f(x, y) {</a>
+<a class="sourceLine" id="cb3-2" title="2">    x <span class="op">=</span> <span class="dv">1</span></a>
+<a class="sourceLine" id="cb3-3" title="3">    y <span class="op">=</span> <span class="dv">2</span></a>
+<a class="sourceLine" id="cb3-4" title="4">}</a>
+<a class="sourceLine" id="cb3-5" title="5">{</a>
+<a class="sourceLine" id="cb3-6" title="6">    x <span class="op">=</span> <span class="dv">0</span></a>
+<a class="sourceLine" id="cb3-7" title="7">    y <span class="op">=</span> <span class="dv">0</span></a>
+<a class="sourceLine" id="cb3-8" title="8">    f(x)</a>
+<a class="sourceLine" id="cb3-9" title="9">    <span class="kw">print</span> x, y  <span class="co"># 0, 0</span></a>
+<a class="sourceLine" id="cb3-10" title="10">}</a></code></pre></div>
+<p>自分ルールだけど, <code>function f(x, _, y)</code> と書くことにする. <code>_</code> 以降は不要なただのローカル変数の列挙であることを意味するということにする.</p>
 <footer>
     <p class="is-pulled-right">
     @cympfh / cympfh@gmail.com

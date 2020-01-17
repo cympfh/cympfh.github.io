@@ -24,6 +24,9 @@ edit:
 today:
 	bash script/edit.sh --query today
 
+new:
+	bash script/edit.sh --query new
+
 git: index
 	git add .
 	git commit -a -m "taglibro/ `LANG=en date`"

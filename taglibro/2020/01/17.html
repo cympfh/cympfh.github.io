@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="description" content="cympfh.cc/taglibro" />
+  <meta property="og:url" content="http://cympfh.cc/taglibro">
+  <meta property="og:title" content="Fri Jan 17 2020" />
+  <meta property="og:description" content="cympfh.cc/taglibro" />
+  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@cympfh" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Fri Jan 17 2020</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+</head>
+<body>
+<header class="page-header">
+    <a href='../../index.html'><i class="fa fa-save" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">Fri Jan 17 2020</h1>
+</header>
+<h2 id="awk-のプロコン用ライブラリを作りたい">awk のプロコン用ライブラリを作りたい</h2>
+<p>構造体もないし, まともな変数スコープもない. 例えば関数の中で for を回す時に変数 <code>i</code> なんて宣言すれば, 他のブロックの中の <code>i</code> が壊れる. ライブラリ化する上ではそういうところに気を使わないといけない.</p>
+<p>awk はよくあるスクリプト言語のように数値に int も float も区別がない. かと言って Ruby のように気が利いてるわけでもない. たぶん内部的には全部 float64 なんだと思う. 精度が壊れてない間はあたかも int かのように見せてくれるが桁が大きくなるとすぐ壊れる. たぶんよくある javascript の実装に近い.</p>
+<p>それだと困るので int64 を実装したい.</p>
+<p>int32 くらいの精度は素の数値でも担保出来てると思う. つまり <span class="math inline">\(\pm 2^{31}\)</span> くらいはそのまま持てる.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb1-1" title="1">$ <span class="fu">awk</span> <span class="st">&#39;BEGIN { print 2147483647 }&#39;</span></a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="ex">2147483647</span></a>
+<a class="sourceLine" id="cb1-3" title="3"></a>
+<a class="sourceLine" id="cb1-4" title="4">$ <span class="fu">awk</span> <span class="st">&#39;BEGIN { print 2147483648 }&#39;</span></a>
+<a class="sourceLine" id="cb1-5" title="5"><span class="ex">2.14748e+09</span></a></code></pre></div>
+<p>確かにそのようだ.</p>
+<p>で例えば整数 <span class="math inline">\(x\)</span> を適当な定数 <span class="math inline">\(E\)</span> の下で <span class="math inline">\(x = x_0 + x_1 E\)</span> と分解して <span class="math inline">\(x\)</span> の代わりに <span class="math inline">\(x_0, x_1\)</span> を持つことにする. <span class="math inline">\(x_0, x_1\)</span> が <span class="math inline">\(\pm 2^{31}\)</span> に入ってればいいんだけど, 掛け算をするときは一時的に掛け算しないといけないので（それはそう）, <span class="math inline">\(2^{31}\)</span> ギリギリどうしの掛け算しちゃうと <span class="math inline">\(2^{31}\)</span> を超えてしまう. だからそのルートをとって <span class="math inline">\(\pm 2^{15}\)</span> の範囲に抑えておかないといけない. キリ良くしておいて <span class="math inline">\(\pm 10^4\)</span>. それに合わせて <span class="math inline">\(E=10^4\)</span>. 結構小さいなあ. これで真面目に64bit整数にしようとしたら数を5つにして <span class="math inline">\(\sum_{i=0}^4 x_i E^i\)</span> にすることになる. 掛け算とか10進数表示にするのとか, 多いと大変さが線形以上に増すのでやりたくくない.</p>
+<p>言うて, 書いてみたら案外書けるものだった.</p>
+<script src="https://gist.github.com/cympfh/242ee06b348c2e5017c83784c4f66f5d.js"></script>
+<p><span class="math inline">\(\pm 10^{12}\)</span> 同士の和積が出来る. 手元のランダムテストしたけど大丈夫っぽそうかな.</p>
+<h2 id="関数のローカル変数がない問題">関数のローカル変数がない問題</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode awk"><code class="sourceCode awk"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">function</span> f(x) {</a>
+<a class="sourceLine" id="cb2-2" title="2">    x <span class="op">=</span> <span class="dv">1</span></a>
+<a class="sourceLine" id="cb2-3" title="3">    y <span class="op">=</span> <span class="dv">2</span></a>
+<a class="sourceLine" id="cb2-4" title="4">}</a>
+<a class="sourceLine" id="cb2-5" title="5">{</a>
+<a class="sourceLine" id="cb2-6" title="6">    x <span class="op">=</span> <span class="dv">0</span></a>
+<a class="sourceLine" id="cb2-7" title="7">    y <span class="op">=</span> <span class="dv">0</span></a>
+<a class="sourceLine" id="cb2-8" title="8">    f(x)</a>
+<a class="sourceLine" id="cb2-9" title="9">    <span class="kw">print</span> x, y  <span class="co"># 0, 2</span></a>
+<a class="sourceLine" id="cb2-10" title="10">}</a></code></pre></div>
+<p>関数 <code>f</code> で <code>x</code> は引数で, それ以外に <code>y</code> という変数を参照している. 残念ながら変数には引数であるか, さもなくばグローバル変数でしかない. だからローカル変数のつもりで <code>y</code> を使うと誤って破壊してしまう危険性がある.</p>
+<p><a href="https://www.gnu.org/software/gawk/manual/html_node/Variable-Scope.html">www.gnu.org/software/gawk/manual/html_node/Variable-Scope.html</a></p>
+<p>引数はちゃんと引数であることを利用して, 関数の中で使うローカル変数を引数として列挙してしまうテクがあった. 呼び出す場合は空にしておいて問題ないらしい.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode awk"><code class="sourceCode awk"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">function</span> f(x, y) {</a>
+<a class="sourceLine" id="cb3-2" title="2">    x <span class="op">=</span> <span class="dv">1</span></a>
+<a class="sourceLine" id="cb3-3" title="3">    y <span class="op">=</span> <span class="dv">2</span></a>
+<a class="sourceLine" id="cb3-4" title="4">}</a>
+<a class="sourceLine" id="cb3-5" title="5">{</a>
+<a class="sourceLine" id="cb3-6" title="6">    x <span class="op">=</span> <span class="dv">0</span></a>
+<a class="sourceLine" id="cb3-7" title="7">    y <span class="op">=</span> <span class="dv">0</span></a>
+<a class="sourceLine" id="cb3-8" title="8">    f(x)</a>
+<a class="sourceLine" id="cb3-9" title="9">    <span class="kw">print</span> x, y  <span class="co"># 0, 0</span></a>
+<a class="sourceLine" id="cb3-10" title="10">}</a></code></pre></div>
+<p>自分ルールだけど, <code>function f(x, _, y)</code> と書くことにする. <code>_</code> 以降は不要なただのローカル変数の列挙であることを意味するということにする.</p>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

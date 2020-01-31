@@ -56,6 +56,9 @@ impl<K: MatrixElement> Matrix<K>
             &m.pow(n / 2) * self
         }
     }
+    fn sum(&self) -> K {
+        self.data.iter().map(|row| row.iter().map(|&x| x).sum::<K>()).sum()
+    }
     fn map<F>(&self, f: F) -> Matrix<K>
         where F: Fn(&K) -> K
     {

@@ -211,16 +211,14 @@ $$\{ U_z \cap Z \}_{z \in Z'}$$
 が $Z$ の被覆である.
 これに対応して
 
-$$V = \{ V_z \}_{z \in Z'}$$
+$$V = \cap_{z \in Z'} V_z$$
 
-は、$Z$ と積を持たない.
-また、有限個の積であるから、開集合.
+を作れて、これは $Z$ と積を持たない.
+また、有限個の積であるから、$V$ は開集合.
 
-結局、任意の $x \in X \setminus Z$ に対して、
-
-$$x \in Z \subseteq X \setminus Z$$
-
-なる開集合 $Z$ が得られた.
+したがって、任意の $x \in X \setminus Z$ に対して、
+$$x \in V \subseteq X \setminus Z$$
+なる開集合 $V$ が得られた.
 
 従って、$X \setminus Z$ は開集合である.
 

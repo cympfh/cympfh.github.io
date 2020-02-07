@@ -11,7 +11,7 @@ $\Rn$
 においては,
 コンパクトであることと有界閉集合であることは同値.
 
-$$\forall Z \in \Rn, Z \text{ is compact } \iff Z \text{ is bounded and closed.}$$
+$$\forall Z \subset \Rn, Z \text{ is compact } \iff Z \text{ is bounded and closed.}$$
 
 証明は次の3つに分けた補題から示される.
 

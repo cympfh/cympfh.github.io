@@ -12,6 +12,8 @@ impl Point {
         let x = self.0 / self.norm();
         (if x < -1.0 { -1.0 } else if x > 1.0 { 1.0 } else { x } as f64).acos()
     }
+    fn zero() -> Point { Point(0.0, 0.0) }
+    fn one() -> Point { Point(1.0, 1.0) }
 }
 
 use std::cmp::{PartialEq, Eq};

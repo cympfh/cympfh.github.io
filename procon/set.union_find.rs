@@ -4,11 +4,9 @@ enum UF { Root(usize), Child(usize) }
 #[derive(Debug)]
 struct UnionFind { table: Vec<UF> }
 impl UnionFind {
-
     fn new(n: usize) -> UnionFind {
         UnionFind { table: vec![UF::Root(1); n], }
     }
-
     fn root(&mut self, x: usize) -> usize {
         match self.table[x] {
             UF::Root(_) => x,
@@ -19,11 +17,9 @@ impl UnionFind {
             }
         }
     }
-
     fn is_same(&mut self, x: usize, y: usize) -> bool {
         self.root(x) == self.root(y)
     }
-
     fn size(&mut self, x: usize) -> usize {
         let r = self.root(x);
         match self.table[r] {
@@ -31,7 +27,6 @@ impl UnionFind {
             UF::Child(_) => 0
         }
     }
-
     fn merge(&mut self, x: usize, y: usize) {
         let root_x = self.root(x);
         let root_y = self.root(y);
@@ -47,21 +42,4 @@ impl UnionFind {
             self.table[j] = UF::Child(i);
         }
     }
-}
-
-
-// sample
-fn main() {
-    let mut uf = UnionFind::new(10);
-    println!("{:?}", uf);
-    uf.merge(0, 1);
-    println!("{:?}", uf);
-    println!("{:?}", uf.is_same(0, 1));
-    println!("{:?}", uf.is_same(0, 2));
-    uf.merge(2, 3);
-    uf.merge(2, 4);
-    println!("{:?}", uf);
-    uf.merge(0, 3);
-    println!("{:?}", uf);
-
 }

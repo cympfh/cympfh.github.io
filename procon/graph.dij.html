@@ -22,67 +22,25 @@
           <div class="article column is-8 is-10-mobile">
             <h1 id="graph.dij---ダイクストラ法">graph.dij - ダイクストラ法</h1>
 <h2 id="graph.dij.rs"><a href="graph.dij.rs" class="uri">graph.dij.rs</a></h2>
-<ul>
-<li>入力;
-<ul>
-<li><code>type Cost = u64</code> (マイナス <code>-</code> が取れる必要)</li>
-<li>始点 <code>s: usize</code></li>
-<li>コスト付き隣接リスト
-<ul>
-<li><code>neigh: Vec&lt;Vec&lt;(usize, Cost)&gt;&gt;</code>
-<ul>
-<li><code>(j, c)</code> <span class="math inline">\(\in\)</span> <code>neigh[i]</code> <span class="math inline">\(\iff\)</span> 点 <code>i</code> から点 <code>j</code> へコスト <code>c</code> の枝が存在</li>
-</ul></li>
-</ul></li>
-</ul></li>
-<li>出力;
-<ul>
-<li>各点までの最短コストの列
-<ul>
-<li><code>d: Vec&lt;Cost&gt;</code></li>
-</ul></li>
-</ul></li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">use</span> std::collections::BinaryHeap;
+<p><code>type Cost</code> は <code>i64</code> か <code>f64</code>. 始点を <code>s</code> として, 各頂点までの最短コストの列を返す.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// @algebra.hyper.rs</span>
+<span class="co">/// @algebra.total.rs</span>
 
-<span class="kw">type</span> Cost = <span class="dt">i64</span>;
-<span class="kw">const</span> MaxCost: Cost = <span class="dv">1_000_000_000_000_000</span>;
-
-<span class="kw">fn</span> dij(s: <span class="dt">usize</span>, neigh: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;(<span class="dt">usize</span>, Cost)&gt;&gt;) -&gt; <span class="dt">Vec</span>&lt;Cost&gt; {
+<span class="kw">fn</span> dij&lt;Cost: Group + <span class="bu">PartialOrd</span>&gt; (s: <span class="dt">usize</span>, neigh: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;(<span class="dt">usize</span>, Cost)&gt;&gt;) -&gt; <span class="dt">Vec</span>&lt;Hyper&lt;Cost&gt;&gt; {
     <span class="kw">let</span> n = neigh.len();
-    <span class="kw">let</span> <span class="kw">mut</span> d: <span class="dt">Vec</span>&lt;Cost&gt; = <span class="pp">vec!</span>[MaxCost; n];
-    <span class="kw">let</span> <span class="kw">mut</span> q = BinaryHeap::new();
-    q.push((<span class="dv">0</span>, s));
-    d[s] = <span class="dv">0</span>;
+    <span class="kw">let</span> <span class="kw">mut</span> d: <span class="dt">Vec</span>&lt;Hyper&lt;Cost&gt;&gt; = <span class="pp">vec!</span>[Inf; n];
+    <span class="kw">let</span> <span class="kw">mut</span> q = std::collections::BinaryHeap::new();
+    d[s] = Real(Cost::zero());
+    q.push((Total(d[s]), s));
     <span class="kw">while</span> <span class="kw">let</span> <span class="cn">Some</span>((_, u)) = q.pop() {
         <span class="kw">for</span> &amp;(v, cost) <span class="kw">in</span> neigh[u].iter() {
-            <span class="kw">if</span> d[v] &gt; d[u] + cost {
-                d[v] = d[u] + cost;
-                q.push((-d[v], v));
+            <span class="kw">if</span> d[v] &gt; d[u] + Real(cost) {
+                d[v] = d[u] + Real(cost);
+                q.push((Total(-d[v]), v));
             }
         }
     }
     d
-}
-
-<span class="kw">fn</span> main() {
-
-    <span class="kw">let</span> <span class="kw">mut</span> sc = Scanner::new();
-
-    <span class="kw">let</span> n: <span class="dt">usize</span> = sc.cin(); <span class="co">// nodes</span>
-    <span class="kw">let</span> m: <span class="dt">usize</span> = sc.cin(); <span class="co">// edges</span>
-    <span class="kw">let</span> <span class="kw">mut</span> neigh = <span class="pp">vec!</span>[<span class="pp">vec!</span>[]; n];
-    <span class="kw">for</span> _ <span class="kw">in</span> <span class="dv">0.</span>.m {
-        <span class="kw">let</span> u = sc.cin::&lt;<span class="dt">usize</span>&gt;() - <span class="dv">1</span>;
-        <span class="kw">let</span> v = sc.cin::&lt;<span class="dt">usize</span>&gt;() - <span class="dv">1</span>;
-        <span class="kw">let</span> c: Cost = sc.cin();
-        neigh[u].push((v, c));
-        neigh[v].push((u, c));
-    }
-
-    <span class="kw">let</span> d = dij(<span class="dv">0</span>, &amp;neigh);
-    <span class="pp">trace!</span>(d);
-
 }</code></pre></div>
 <h2 id="graph.dij.cc"><a href="graph.dij.cc" class="uri">graph.dij.cc</a></h2>
 <ul>
@@ -137,6 +95,15 @@ dij(<span class="dt">int</span> s, vector&lt;vector&lt;pair&lt;<span class="dt">
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
+<details class=menu>
+<summary class=menu>代数</summary>
+<ul>
+<li><a href="algebra.group.html">群</a></li>
+<li><a href="algebra.hyper.html">超数</a></li>
+<li><a href="algebra.total.html">全順序化</a></li>
+</ul>
+</details>
+
 <details class=menu open>
 <summary class=menu>グラフ</summary>
 <h2 id="最短路">最短路</h2>
@@ -265,7 +232,6 @@ dij(<span class="dt">int</span> s, vector&lt;vector&lt;pair&lt;<span class="dt">
 <li><a href="int.dislog.html">離散対数</a></li>
 <li><a href="int.derangement.html">完全順列</a></li>
 <li><a href="int.euler_phi.html">オイラーの関数</a></li>
-<li><a href="int.hyper.html">超整数</a></li>
 </ul>
 <h2 id="モジュラ演算">モジュラ演算</h2>
 <ul>

@@ -21,30 +21,22 @@
 
           <div class="article column is-8 is-10-mobile">
             <h1 id="graph.kruskal">graph.kruskal</h1>
-<h2 id="graph.kruskal.cc"><a href="graph.kruskal.cc" class="uri">graph.kruskal.cc</a></h2>
-<ul>
-<li>priority の向き変えればそのまま最大全域木</li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="co">///</span> {{{
-<span class="kw">struct</span> UnionFind {
-  vector&lt;<span class="dt">int</span>&gt; table;
-  UnionFind(<span class="dt">int</span> size) : table(size, <span class="dv">-1</span>) {}
-  <span class="dt">int</span> root(<span class="dt">int</span> x) {
-    <span class="cf">if</span> (table[x] &lt; <span class="dv">0</span>) <span class="cf">return</span> x;
-    table[x] = root(table[x]);
-    <span class="cf">return</span> table[x];
-  }
-  <span class="dt">bool</span> merge (<span class="dt">int</span> x, <span class="dt">int</span> y) {
-    x = root(x); y = root(y);
-    <span class="cf">if</span> (x != y) {
-      <span class="cf">if</span> (table[y] &lt; table[x]) swap(x, y);
-      table[x] += table[y]; table[y] = x;
+<h2 id="graph.kruskal.rs"><a href="graph.kruskal.rs" class="uri">graph.kruskal.rs</a></h2>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// @algebra.group.rs</span>
+<span class="kw">fn</span> kruskal&lt;Cost: Group + <span class="bu">PartialOrd</span>&gt;(n: <span class="dt">usize</span>, edges: &amp;<span class="dt">Vec</span>&lt;(<span class="dt">usize</span>, <span class="dt">usize</span>, Cost)&gt;) -&gt; Cost {
+    <span class="kw">let</span> <span class="kw">mut</span> total = Cost::zero();
+    <span class="kw">let</span> <span class="kw">mut</span> uf = UnionFind::new(n);
+    <span class="kw">let</span> <span class="kw">mut</span> q: <span class="dt">Vec</span>&lt;_&gt; = edges.iter().map(|&amp;(i, j, c)| (Total(c), i, j)).collect();
+    q.sort();
+    <span class="kw">for</span> &amp;(cost, i, j) <span class="kw">in</span> q.iter() {
+        <span class="kw">if</span> uf.is_same(i, j) { <span class="kw">continue</span> }
+        uf.merge(i, j);
+        total = total + cost.<span class="dv">0</span>;
     }
-    <span class="cf">return</span> x != y;
-  }
-};
-<span class="co">///</span> }}}
-
+    total
+}</code></pre></div>
+<h2 id="graph.kruskal.cc"><a href="graph.kruskal.cc" class="uri">graph.kruskal.cc</a></h2>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="co">///</span> <span class="er">@</span>set.union_find.cc
 <span class="dt">int</span> kruskal(<span class="dt">int</span> n, vvi&amp;adj, vvi&amp;cost) {
   <span class="dt">int</span> total = <span class="dv">0</span>;
   UnionFind uf(n);
@@ -66,47 +58,18 @@
   }
   <span class="cf">return</span> total;
 }</code></pre></div>
-<h2 id="example">Example</h2>
-<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="kw">using</span> vi = vector&lt;<span class="dt">int</span>&gt;;
-<span class="kw">using</span> vvi = vector&lt;vi&gt;;
-<span class="dt">int</span> main() {
-
-  <span class="co">// this graph is an example</span>
-  <span class="co">// on the page: http://ja.wikipedia.org/wiki/プリム法</span>
-stringstream input(
-<span class="st">&quot;  7&quot;</span>
-<span class="st">&quot;  0 1 7&quot;</span>
-<span class="st">&quot;  0 3 5&quot;</span>
-<span class="st">&quot;  1 2 8&quot;</span>
-<span class="st">&quot;  1 3 9&quot;</span>
-<span class="st">&quot;  1 4 7&quot;</span>
-<span class="st">&quot;  2 4 5&quot;</span>
-<span class="st">&quot;  3 4 15&quot;</span>
-<span class="st">&quot;  3 5 6&quot;</span>
-<span class="st">&quot;  4 5 8&quot;</span>
-<span class="st">&quot;  4 6 9&quot;</span>
-<span class="st">&quot;  5 6 11&quot;</span>);
-  <span class="dt">int</span> answer = <span class="dv">39</span>;
-  
-  {
-    <span class="dt">int</span> n; input &gt;&gt; n;
-    vvi adjacency_list(n);
-    vvi cost_table(n, vi(n, inf));
-    loop {
-      <span class="dt">int</span> a, b, c; input &gt;&gt; a &gt;&gt; b &gt;&gt; c;
-      <span class="cf">if</span> (<span class="kw">not</span> input) <span class="cf">break</span>;
-      adjacency_list[a].push_back(b);
-      adjacency_list[b].push_back(a);
-      cost_table[a][b] = cost_table[b][a] = c;
-    }
-    assert(kruskal(n, adjacency_list, cost_table) == answer);
-  }
-  <span class="cf">return</span> <span class="dv">0</span>;
-}
-</code></pre></div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
+<details class=menu>
+<summary class=menu>代数</summary>
+<ul>
+<li><a href="algebra.group.html">群</a></li>
+<li><a href="algebra.hyper.html">超数</a></li>
+<li><a href="algebra.total.html">全順序化</a></li>
+</ul>
+</details>
+
 <details class=menu open>
 <summary class=menu>グラフ</summary>
 <h2 id="最短路">最短路</h2>
@@ -235,7 +198,6 @@ stringstream input(
 <li><a href="int.dislog.html">離散対数</a></li>
 <li><a href="int.derangement.html">完全順列</a></li>
 <li><a href="int.euler_phi.html">オイラーの関数</a></li>
-<li><a href="int.hyper.html">超整数</a></li>
 </ul>
 <h2 id="モジュラ演算">モジュラ演算</h2>
 <ul>

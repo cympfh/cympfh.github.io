@@ -1,41 +1,19 @@
-use std::collections::BinaryHeap;
+/// @algebra.hyper.rs
+/// @algebra.total.rs
 
-type Cost = i64;
-const MaxCost: Cost = 1_000_000_000_000_000;
-
-fn dij(s: usize, neigh: &Vec<Vec<(usize, Cost)>>) -> Vec<Cost> {
+fn dij<Cost: Group + PartialOrd> (s: usize, neigh: &Vec<Vec<(usize, Cost)>>) -> Vec<Hyper<Cost>> {
     let n = neigh.len();
-    let mut d: Vec<Cost> = vec![MaxCost; n];
-    let mut q = BinaryHeap::new();
-    q.push((0, s));
-    d[s] = 0;
+    let mut d: Vec<Hyper<Cost>> = vec![Inf; n];
+    let mut q = std::collections::BinaryHeap::new();
+    d[s] = Real(Cost::zero());
+    q.push((Total(d[s]), s));
     while let Some((_, u)) = q.pop() {
         for &(v, cost) in neigh[u].iter() {
-            if d[v] > d[u] + cost {
-                d[v] = d[u] + cost;
-                q.push((-d[v], v));
+            if d[v] > d[u] + Real(cost) {
+                d[v] = d[u] + Real(cost);
+                q.push((Total(-d[v]), v));
             }
         }
     }
     d
-}
-
-fn main() {
-
-    let mut sc = Scanner::new();
-
-    let n: usize = sc.cin(); // nodes
-    let m: usize = sc.cin(); // edges
-    let mut neigh = vec![vec![]; n];
-    for _ in 0..m {
-        let u = sc.cin::<usize>() - 1;
-        let v = sc.cin::<usize>() - 1;
-        let c: Cost = sc.cin();
-        neigh[u].push((v, c));
-        neigh[v].push((u, c));
-    }
-
-    let d = dij(0, &neigh);
-    trace!(d);
-
 }

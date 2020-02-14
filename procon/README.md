@@ -1,3 +1,9 @@
+# 代数
+
+- [群](algebra.group.html)
+- [超数](algebra.hyper.html)
+- [全順序化](algebra.total.html)
+
 # グラフ
 
 ## 最短路
@@ -93,7 +99,6 @@
 - [離散対数](int.dislog.html)
 - [完全順列](int.derangement.html)
 - [オイラーの関数](int.euler_phi.html)
-- [超整数](int.hyper.md)
 
 ## モジュラ演算
 

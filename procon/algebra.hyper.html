@@ -20,17 +20,43 @@
         <section class="main-content columns is-fullheight">
 
           <div class="article column is-8 is-10-mobile">
-            <h1 id="円周率">円周率</h1>
-<h2 id="円周率百万桁-から-小数点以下100桁-の引用"><a href="http://www.geocities.jp/f9305710/PAI1000000.html">円周率百万桁</a> から 小数点以下100桁 の引用</h2>
-<pre><code>3.
-14159 26535  89793 23846  26433 83279  50288 41971  69399 37510
-58209 74944  59230 78164  06286 20899  86280 34825  34211 70679
-82148 08651  32823 06647  09384 46095  50582 23172  53594 08128
-48111 74502  84102 70193  85211 05559  64462 29489  54930 38196</code></pre>
+            <h1 id="代数---超数">代数 - 超数</h1>
+<p>int や float に <span class="math inline">\(\{ \pm \infty \}\)</span> を付加する.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// @algebra.group.rs</span>
+<span class="at">#[</span>derive<span class="at">(</span><span class="bu">PartialEq</span><span class="at">,</span> <span class="bu">Eq</span><span class="at">,</span> <span class="bu">PartialOrd</span><span class="at">,</span> <span class="bu">Ord</span><span class="at">,</span> <span class="bu">Clone</span><span class="at">,</span> <span class="bu">Copy</span><span class="at">,</span> <span class="bu">Debug</span><span class="at">)]</span>
+<span class="kw">enum</span> Hyper&lt;X&gt; { NegInf, Real(X), Inf }
+<span class="kw">use</span> Hyper::{Real, NegInf, Inf};
+<span class="kw">impl</span>&lt;X: Group&gt; std::ops::Add <span class="kw">for</span> Hyper&lt;X&gt; {
+    <span class="kw">type</span> Output = <span class="kw">Self</span>;
+    <span class="kw">fn</span> add(<span class="kw">self</span>, rhs: Hyper&lt;X&gt;) -&gt; Hyper&lt;X&gt; {
+        <span class="kw">match</span> (<span class="kw">self</span>, rhs) {
+            (Real(x), Real(y)) =&gt; Real(x + y),
+            (Inf, _) =&gt; Inf,
+            (_, Inf) =&gt; Inf,
+            _ =&gt; NegInf,
+        }
+    }
+}
+<span class="kw">impl</span>&lt;X: Group&gt; std::ops::Sub <span class="kw">for</span> Hyper&lt;X&gt; {
+    <span class="kw">type</span> Output = <span class="kw">Self</span>;
+    <span class="kw">fn</span> sub(<span class="kw">self</span>, rhs: Hyper&lt;X&gt;) -&gt; Hyper&lt;X&gt; {
+        <span class="kw">self</span> + (-rhs)
+    }
+}
+<span class="kw">impl</span>&lt;X: Group&gt; std::ops::Neg <span class="kw">for</span> Hyper&lt;X&gt; {
+    <span class="kw">type</span> Output = <span class="kw">Self</span>;
+    <span class="kw">fn</span> neg(<span class="kw">self</span>) -&gt; Hyper&lt;X&gt; {
+        <span class="kw">match</span> <span class="kw">self</span> {
+            Inf =&gt; NegInf,
+            NegInf =&gt; Inf,
+            Real(x) =&gt; Real(-x),
+        }
+    }
+}</code></pre></div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
-<details class=menu>
+<details class=menu open>
 <summary class=menu>代数</summary>
 <ul>
 <li><a href="algebra.group.html">群</a></li>
@@ -260,7 +286,7 @@
 </ul>
 </details>
 
-<details class=menu open>
+<details class=menu>
 <summary class=menu>misc</summary>
 <ul>
 <li><a href="bit.count.html">bit count</a></li>

@@ -1,4 +1,4 @@
-use std::ops::Range;
+/// Sequence - Cumulative Summation
 struct Cumsum { array: Vec<i32> }
 impl Cumsum {
     fn new(xs: &Vec<i32>) -> Cumsum {
@@ -17,7 +17,7 @@ impl Cumsum {
             0
         }
     }
-    fn sum(&self, range: Range<usize>) -> i32 { // sum(i..j) = sum of [i, j)
+    fn sum(&self, range: std::ops::Range<usize>) -> i32 { // sum(i..j) = sum of [i, j)
         assert!(range.start <= range.end);
         self.sum_up(range.end) - self.sum_up(range.start)
     }

@@ -22,65 +22,65 @@
           <div class="article column is-8 is-10-mobile">
             <h1 id="geo.closest_pair">geo.closest_pair</h1>
 <h2 id="geo.closest_pair.cc"><a href="geo.closest_pair.cc" class="uri">geo.closest_pair.cc</a></h2>
-<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="co">/*</span>
-<span class="co"> * 平面の上の最近点対を求める</span>
-<span class="co"> * 分割統治によるやり方</span>
-<span class="co"> * O(n * log(n) * log(n))</span>
-<span class="co"> *</span>
-<span class="co"> * 参考;  http://www.geeksforgeeks.org/closest-pair-of-points/</span>
-<span class="co"> */</span>
-
-pair&lt;P, P&gt; closest_point_pair(vector&lt;P&gt;&amp;ps, <span class="dt">bool</span> sorted=<span class="kw">false</span>) {
-  <span class="at">const</span> <span class="dt">int</span> n = ps.size();
-  <span class="cf">if</span> (<span class="kw">not</span> sorted) sort(begin(ps), end(ps));
-  <span class="cf">if</span> (n &lt; <span class="dv">5</span>) {
-    Real r = inf;
-    P p, q;
-    rep (i, n)
-      rep (j, i) {
-        Real d = Euclidean_distance(ps[i], ps[j]);
-        <span class="cf">if</span> (r &gt; d) r = d, p = ps[i], q = ps[j];
-      }
-    <span class="cf">return</span> {p, q};
-  }
-  pair&lt;P, P&gt; left_pair, right_pair;
-  { <span class="co">// left sub-area</span>
-    vector&lt;P&gt; qs(n/<span class="dv">2</span>);
-    rep (i, n/<span class="dv">2</span>) qs[i] = ps[i];
-    left_pair = closest_point_pair(qs, <span class="kw">true</span>);
-  }
-  { <span class="co">// right sub-area</span>
-    vector&lt;P&gt; qs(n - n/<span class="dv">2</span>);
-    rep (i, n-n/<span class="dv">2</span>) qs[i] = ps[n/<span class="dv">2</span> + i];
-    right_pair = closest_point_pair(qs, <span class="kw">true</span>);
-  }
-  Real left_min_d = Euclidean_distance(left_pair.first, left_pair.second),
-       right_min_d = Euclidean_distance(right_pair.first, right_pair.second);
-  Real min_d = min&lt;Real&gt;(left_min_d, right_min_d);
-  P p, q;
-  <span class="cf">if</span> (left_min_d &lt; right_min_d) {
-    p = left_pair.first; q = left_pair.second;
-  } <span class="cf">else</span> {
-    p = right_pair.first; q = right_pair.second;
-  }
-  Real lower_x = ps[n/<span class="dv">2</span>].first - min_d,
-       upper_x = ps[n/<span class="dv">2</span>].first + min_d;
-  <span class="co">// around the middle line</span>
-  vector&lt;P&gt; qs;
-  rep (i, n)
-    <span class="cf">if</span> (lower_x &lt;= ps[i].first <span class="kw">and</span> ps[i].first &lt;= upper_x)
-      qs.push_back(ps[i]);
-  sort(begin(qs), end(qs), [](P&amp;p, P&amp;q) { <span class="cf">return</span> p.second &lt; q.second; });
-  <span class="at">const</span> <span class="dt">int</span> m = qs.size();
-  Real r = min_d;
-  rep (i, m) {
-    <span class="cf">for</span> (<span class="dt">int</span> j = i<span class="dv">+1</span>; j &lt;= i<span class="dv">+7</span> <span class="kw">and</span> j &lt; m; ++j) {
-      Real d = Euclidean_distance(qs[i], qs[j]);
-      <span class="cf">if</span> (d &lt; r) r = d, p = qs[i], q = qs[j];
-    }
-  }
-  <span class="cf">return</span> {p, q};
-}</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb1-1" title="1"><span class="co">/*</span></a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="co"> * 平面の上の最近点対を求める</span></a>
+<a class="sourceLine" id="cb1-3" title="3"><span class="co"> * 分割統治によるやり方</span></a>
+<a class="sourceLine" id="cb1-4" title="4"><span class="co"> * O(n * log(n) * log(n))</span></a>
+<a class="sourceLine" id="cb1-5" title="5"><span class="co"> *</span></a>
+<a class="sourceLine" id="cb1-6" title="6"><span class="co"> * 参考;  http://www.geeksforgeeks.org/closest-pair-of-points/</span></a>
+<a class="sourceLine" id="cb1-7" title="7"><span class="co"> */</span></a>
+<a class="sourceLine" id="cb1-8" title="8"></a>
+<a class="sourceLine" id="cb1-9" title="9">pair&lt;P, P&gt; closest_point_pair(vector&lt;P&gt;&amp;ps, <span class="dt">bool</span> sorted=<span class="kw">false</span>) {</a>
+<a class="sourceLine" id="cb1-10" title="10">  <span class="at">const</span> <span class="dt">int</span> n = ps.size();</a>
+<a class="sourceLine" id="cb1-11" title="11">  <span class="cf">if</span> (<span class="kw">not</span> sorted) sort(begin(ps), end(ps));</a>
+<a class="sourceLine" id="cb1-12" title="12">  <span class="cf">if</span> (n &lt; <span class="dv">5</span>) {</a>
+<a class="sourceLine" id="cb1-13" title="13">    Real r = inf;</a>
+<a class="sourceLine" id="cb1-14" title="14">    P p, q;</a>
+<a class="sourceLine" id="cb1-15" title="15">    rep (i, n)</a>
+<a class="sourceLine" id="cb1-16" title="16">      rep (j, i) {</a>
+<a class="sourceLine" id="cb1-17" title="17">        Real d = Euclidean_distance(ps[i], ps[j]);</a>
+<a class="sourceLine" id="cb1-18" title="18">        <span class="cf">if</span> (r &gt; d) r = d, p = ps[i], q = ps[j];</a>
+<a class="sourceLine" id="cb1-19" title="19">      }</a>
+<a class="sourceLine" id="cb1-20" title="20">    <span class="cf">return</span> {p, q};</a>
+<a class="sourceLine" id="cb1-21" title="21">  }</a>
+<a class="sourceLine" id="cb1-22" title="22">  pair&lt;P, P&gt; left_pair, right_pair;</a>
+<a class="sourceLine" id="cb1-23" title="23">  { <span class="co">// left sub-area</span></a>
+<a class="sourceLine" id="cb1-24" title="24">    vector&lt;P&gt; qs(n/<span class="dv">2</span>);</a>
+<a class="sourceLine" id="cb1-25" title="25">    rep (i, n/<span class="dv">2</span>) qs[i] = ps[i];</a>
+<a class="sourceLine" id="cb1-26" title="26">    left_pair = closest_point_pair(qs, <span class="kw">true</span>);</a>
+<a class="sourceLine" id="cb1-27" title="27">  }</a>
+<a class="sourceLine" id="cb1-28" title="28">  { <span class="co">// right sub-area</span></a>
+<a class="sourceLine" id="cb1-29" title="29">    vector&lt;P&gt; qs(n - n/<span class="dv">2</span>);</a>
+<a class="sourceLine" id="cb1-30" title="30">    rep (i, n-n/<span class="dv">2</span>) qs[i] = ps[n/<span class="dv">2</span> + i];</a>
+<a class="sourceLine" id="cb1-31" title="31">    right_pair = closest_point_pair(qs, <span class="kw">true</span>);</a>
+<a class="sourceLine" id="cb1-32" title="32">  }</a>
+<a class="sourceLine" id="cb1-33" title="33">  Real left_min_d = Euclidean_distance(left_pair.first, left_pair.second),</a>
+<a class="sourceLine" id="cb1-34" title="34">       right_min_d = Euclidean_distance(right_pair.first, right_pair.second);</a>
+<a class="sourceLine" id="cb1-35" title="35">  Real min_d = min&lt;Real&gt;(left_min_d, right_min_d);</a>
+<a class="sourceLine" id="cb1-36" title="36">  P p, q;</a>
+<a class="sourceLine" id="cb1-37" title="37">  <span class="cf">if</span> (left_min_d &lt; right_min_d) {</a>
+<a class="sourceLine" id="cb1-38" title="38">    p = left_pair.first; q = left_pair.second;</a>
+<a class="sourceLine" id="cb1-39" title="39">  } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb1-40" title="40">    p = right_pair.first; q = right_pair.second;</a>
+<a class="sourceLine" id="cb1-41" title="41">  }</a>
+<a class="sourceLine" id="cb1-42" title="42">  Real lower_x = ps[n/<span class="dv">2</span>].first - min_d,</a>
+<a class="sourceLine" id="cb1-43" title="43">       upper_x = ps[n/<span class="dv">2</span>].first + min_d;</a>
+<a class="sourceLine" id="cb1-44" title="44">  <span class="co">// around the middle line</span></a>
+<a class="sourceLine" id="cb1-45" title="45">  vector&lt;P&gt; qs;</a>
+<a class="sourceLine" id="cb1-46" title="46">  rep (i, n)</a>
+<a class="sourceLine" id="cb1-47" title="47">    <span class="cf">if</span> (lower_x &lt;= ps[i].first <span class="kw">and</span> ps[i].first &lt;= upper_x)</a>
+<a class="sourceLine" id="cb1-48" title="48">      qs.push_back(ps[i]);</a>
+<a class="sourceLine" id="cb1-49" title="49">  sort(begin(qs), end(qs), [](P&amp;p, P&amp;q) { <span class="cf">return</span> p.second &lt; q.second; });</a>
+<a class="sourceLine" id="cb1-50" title="50">  <span class="at">const</span> <span class="dt">int</span> m = qs.size();</a>
+<a class="sourceLine" id="cb1-51" title="51">  Real r = min_d;</a>
+<a class="sourceLine" id="cb1-52" title="52">  rep (i, m) {</a>
+<a class="sourceLine" id="cb1-53" title="53">    <span class="cf">for</span> (<span class="dt">int</span> j = i+<span class="dv">1</span>; j &lt;= i+<span class="dv">7</span> <span class="kw">and</span> j &lt; m; ++j) {</a>
+<a class="sourceLine" id="cb1-54" title="54">      Real d = Euclidean_distance(qs[i], qs[j]);</a>
+<a class="sourceLine" id="cb1-55" title="55">      <span class="cf">if</span> (d &lt; r) r = d, p = qs[i], q = qs[j];</a>
+<a class="sourceLine" id="cb1-56" title="56">    }</a>
+<a class="sourceLine" id="cb1-57" title="57">  }</a>
+<a class="sourceLine" id="cb1-58" title="58">  <span class="cf">return</span> {p, q};</a>
+<a class="sourceLine" id="cb1-59" title="59">}</a></code></pre></div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
@@ -88,8 +88,11 @@ pair&lt;P, P&gt; closest_point_pair(vector&lt;P&gt;&amp;ps, <span class="dt">boo
 <summary class=menu>代数</summary>
 <ul>
 <li><a href="algebra.group.html">群</a></li>
+<li><a href="algebra.ring.html">環</a></li>
 <li><a href="algebra.hyper.html">超数</a></li>
 <li><a href="algebra.total.html">全順序化</a></li>
+<li><a href="algebra.complex.html">虚数</a></li>
+<li><a href="algebra.modint.html">ModInt</a></li>
 </ul>
 </details>
 
@@ -147,14 +150,7 @@ pair&lt;P, P&gt; closest_point_pair(vector&lt;P&gt;&amp;ps, <span class="dt">boo
 <h2 id="行列式">行列式</h2>
 <ul>
 <li><a href="matrix.det.naiiv.html">定義に拠る算法</a></li>
-<li><a href="matrix.det.cramer.html">Cramer's rule</a></li>
-</ul>
-</details>
-
-<details class=menu>
-<summary class=menu>虚数</summary>
-<ul>
-<li><a href="complex.html">虚数の定義と演算</a></li>
+<li><a href="matrix.det.cramer.html">Cramer’s rule</a></li>
 </ul>
 </details>
 
@@ -224,7 +220,6 @@ pair&lt;P, P&gt; closest_point_pair(vector&lt;P&gt;&amp;ps, <span class="dt">boo
 </ul>
 <h2 id="モジュラ演算">モジュラ演算</h2>
 <ul>
-<li><a href="int.modint.html">ModInt</a></li>
 <li><a href="int.mod.inv.html">逆数</a></li>
 <li><a href="int.mod.pow.html">べき乗</a></li>
 </ul>

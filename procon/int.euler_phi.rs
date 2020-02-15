@@ -1,3 +1,4 @@
+/// Integer function - Euler Phi
 fn euler_phi(n: i32) -> usize {
     let mut divs = vec![];
     {

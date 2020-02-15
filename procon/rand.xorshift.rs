@@ -1,10 +1,7 @@
-use std::u64;
-
+/// Random - Xor-Shift Algorithm
 pub trait FromU64 {
     fn coerce(x: u64) -> Self;
 }
-
-// cast
 impl FromU64 for u64 { fn coerce(x: u64) -> Self { x } }
 impl FromU64 for i64 { fn coerce(x: u64) -> Self { x as i64 } }
 impl FromU64 for u32 { fn coerce(x: u64) -> Self { x as u32 } }
@@ -15,17 +12,16 @@ impl FromU64 for bool { fn coerce(x: u64) -> Self { x % 2 == 0 } }
 // returns [0, 1]
 impl FromU64 for f64 {
     fn coerce(x: u64) -> Self {
-        (x as f64) / (u64::MAX as f64)
+        (x as f64) / (std::u64::MAX as f64)
     }
 }
 impl FromU64 for f32 {
     fn coerce(x: u64) -> Self {
-        (x as f32) / (u64::MAX as f32)
+        (x as f32) / (std::u64::MAX as f32)
     }
 }
 
 struct XorShift(u64);
-
 impl XorShift {
     fn new() -> Self {
         XorShift(88172645463325252)

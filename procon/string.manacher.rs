@@ -1,3 +1,4 @@
+/// String - Test Palindric - Manacher Algorithm
 fn manacher<A: Ord>(s: &Vec<A>) -> Vec<usize> {
     let n = s.len();
     let mut r = vec![0; 2 * n - 1];

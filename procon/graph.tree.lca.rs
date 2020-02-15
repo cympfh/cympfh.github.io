@@ -1,3 +1,4 @@
+/// Graph - Tree - Lowest Common Ancestor (LCA)
 struct LCA {
     depth: Vec<usize>,
     parent: Vec<Vec<Option<usize>>>

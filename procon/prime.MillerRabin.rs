@@ -1,23 +1,6 @@
-struct Rand(u64);
-impl Rand {
-    fn next(&mut self) -> u64 {
-        let a = 1000000007;
-        let b = 127;
-        let m = 1 << 20;
-        self.0 = (self.0 * a + b) % m;
-        self.0
-    }
-}
-
-fn powmod(a: u64, k: u64, m: u64) -> u64 {
-    if k == 0 {
-        1
-    } else {
-        let t = powmod(a, k / 2, m);
-        let t2 = (t * t) % m;
-        (t2 * (if a % 2 == 0 { 1 } else { a })) % m
-    }
-}
+/// Prime numbres - Miller Rabin Test
+// @rand.lcg.rs
+// @int.mod.pow.rs
 
 // is_prime?
 fn mrtest(n: u64) -> bool {
@@ -45,10 +28,4 @@ fn mrtest(n: u64) -> bool {
         }
         true
     }
-}
-
-fn main() {
-    const M: u64 = 127;
-    let bl = mrtest(M);
-    println!("{}", if bl { "YES" } else { "NO" });
 }

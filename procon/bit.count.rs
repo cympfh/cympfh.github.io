@@ -1,5 +1,5 @@
-fn main() {
-
+/// Bit - BitCount - An Example
+{
     {
         let a = 3usize;
         println!("{}", a.count_ones());
@@ -12,5 +12,4 @@ fn main() {
         let a = 3i32;
         println!("{}", a.count_ones());
     }
-
 }

@@ -1,8 +1,8 @@
+/// Geometry - CCW (直線と点の関係)
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 enum CCW {
     FRONT, BACK, RIGHT, LEFT, ON
 }
-
 fn ccw(l: Line, p: Point) -> CCW {
     use CCW::*;
     fn equal(x: f64, y: f64) -> bool { (x - y).abs() < 0.00001 }

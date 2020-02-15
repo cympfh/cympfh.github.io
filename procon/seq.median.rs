@@ -1,10 +1,8 @@
-use std::cmp::Reverse;
-use std::collections::BinaryHeap;
-
+/// Sequence - Median Heap
 #[derive(Debug)]
 struct MedianHeap<T> where T: Ord + Copy {
-    head: BinaryHeap<T>,
-    tail: BinaryHeap<Reverse<T>>
+    head: std::collections::BinaryHeap<T>,
+    tail: std::collections::BinaryHeap<std::cmp::Reverse<T>>
 }
 #[derive(Debug, PartialEq, Eq)]
 enum Median<T> {
@@ -14,7 +12,10 @@ enum Median<T> {
 }
 impl<T: Ord + Copy> MedianHeap<T> {
     fn new() -> MedianHeap<T> {
-        MedianHeap { head: BinaryHeap::new(), tail: BinaryHeap::new() }
+        MedianHeap {
+            head: std::collections::BinaryHeap::new(),
+            tail: std::collections::BinaryHeap::new()
+        }
     }
     fn len(&self) -> usize {
         (self.head.len() + self.tail.len()) / 2
@@ -23,20 +24,20 @@ impl<T: Ord + Copy> MedianHeap<T> {
         match (self.head.peek(), self.tail.peek()) {
             (None, None) => {
                 self.head.push(x);
-                self.tail.push(Reverse(x));
+                self.tail.push(std::cmp::Reverse(x));
             },
-            (Some(&a), Some(&Reverse(b))) => {
+            (Some(&a), Some(&std::cmp::Reverse(b))) => {
                 if a <= x && x <= b {
                     self.head.push(x);
-                    self.tail.push(Reverse(x));
+                    self.tail.push(std::cmp::Reverse(x));
                 } else if x < a {
                     self.head.push(x);
                     self.head.push(x);
                     let _ = self.head.pop();
-                    self.tail.push(Reverse(a));
+                    self.tail.push(std::cmp::Reverse(a));
                 } else {
-                    self.tail.push(Reverse(x));
-                    self.tail.push(Reverse(x));
+                    self.tail.push(std::cmp::Reverse(x));
+                    self.tail.push(std::cmp::Reverse(x));
                     let _ = self.tail.pop();
                     self.head.push(b);
                 }

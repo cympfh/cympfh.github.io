@@ -1,3 +1,4 @@
+/// String Compression - Run-Length
 fn runlength<A: Copy + PartialEq>(xs: &Vec<A>) -> Vec<(A, usize)> {
     let m = xs.len();
     if m == 0 { return vec![]; }

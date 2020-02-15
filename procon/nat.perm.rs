@@ -1,3 +1,4 @@
+/// Natual Iterator - Permutation (n!)
 struct Permutation { n: usize, idx: usize }
 impl Permutation {
     fn new(n: usize) -> Permutation {

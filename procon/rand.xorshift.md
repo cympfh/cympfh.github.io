@@ -1,6 +1,4 @@
-# xor-shift 疑似乱数
-
-## Rust
+# 乱数 - xor-shift
 
 [Wikipedia:Xorshift](https://ja.wikipedia.org/wiki/Xorshift) の `xor64` の実装
 

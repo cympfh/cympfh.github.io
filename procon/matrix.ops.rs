@@ -1,3 +1,4 @@
+/// Matrix
 use std::ops::{Add, Sub, Mul, Neg};
 use std::iter::Sum;
 

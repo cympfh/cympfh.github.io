@@ -1,5 +1,4 @@
-use std::collections::BinaryHeap;
-
+/// Graph - Tree - Diameter
 fn diameter(tree: &Vec<Vec<usize>>) -> usize {
     let n = tree.len();
     let mut s = 0;
@@ -7,7 +6,7 @@ fn diameter(tree: &Vec<Vec<usize>>) -> usize {
     for _ in 0..2 {
         let mut memo = vec![n * 10; n];
         memo[s] = 0;
-        let mut q = BinaryHeap::new();
+        let mut q = std::collections::BinaryHeap::new();
         q.push((0, s));
         while let Some((_, u)) = q.pop() {
             for &v in tree[u].iter() {

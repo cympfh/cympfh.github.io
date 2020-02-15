@@ -1,8 +1,9 @@
-/// @algebra.group.rs
+/// Algebra - Hyper Numbers (numbers with infinity)
+// @algebra.ring.rs
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Debug)]
 enum Hyper<X> { NegInf, Real(X), Inf }
 use Hyper::{Real, NegInf, Inf};
-impl<X: Group> std::ops::Add for Hyper<X> {
+impl<X: Ring> std::ops::Add for Hyper<X> {
     type Output = Self;
     fn add(self, rhs: Hyper<X>) -> Hyper<X> {
         match (self, rhs) {
@@ -13,13 +14,13 @@ impl<X: Group> std::ops::Add for Hyper<X> {
         }
     }
 }
-impl<X: Group> std::ops::Sub for Hyper<X> {
+impl<X: Ring> std::ops::Sub for Hyper<X> {
     type Output = Self;
     fn sub(self, rhs: Hyper<X>) -> Hyper<X> {
         self + (-rhs)
     }
 }
-impl<X: Group> std::ops::Neg for Hyper<X> {
+impl<X: Ring> std::ops::Neg for Hyper<X> {
     type Output = Self;
     fn neg(self) -> Hyper<X> {
         match self {

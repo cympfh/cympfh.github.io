@@ -1,3 +1,4 @@
+/// Natural function - Minimal Exclusion number, mex
 fn mex(xs: &Vec<usize>) -> usize {
     let mut memo = vec![false; xs.len() + 1];
     for &x in xs.iter() { memo[x] = true; }

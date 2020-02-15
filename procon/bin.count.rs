@@ -1,3 +1,4 @@
+/// Binary Search - Couting Elements
 fn bsearch(xs: &Vec<i64>, x: i64) -> usize {
     if xs[0] >= x { return 0 }
     let mut left = 0;  // xs[left] < x
@@ -12,7 +13,6 @@ fn bsearch(xs: &Vec<i64>, x: i64) -> usize {
     }
     right
 }
-
 fn bcount(xs: &Vec<i64>, x: i64) -> usize {
     bsearch(&xs, x + 1) - bsearch(&xs, x)
 }

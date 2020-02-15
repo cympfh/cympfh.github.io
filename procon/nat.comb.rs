@@ -1,4 +1,4 @@
-// C[n;m]
+/// Natual Iterator - Binomial (C[n;m])
 struct Combination { n: usize, m: usize, ar: Vec<usize> }
 impl Combination {
     fn new(n: usize, m: usize) -> Combination {

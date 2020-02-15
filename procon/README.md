@@ -1,8 +1,11 @@
 # 代数
 
 - [群](algebra.group.html)
+- [環](algebra.ring.html)
 - [超数](algebra.hyper.html)
 - [全順序化](algebra.total.html)
+- [虚数](algebra.complex.html)
+- [ModInt](algebra.modint.html)
 
 # グラフ
 
@@ -52,10 +55,6 @@
 - [定義に拠る算法](matrix.det.naiiv.html)
 - [Cramer's rule](matrix.det.cramer.html)
 
-# 虚数
-
-- [虚数の定義と演算](complex.html)
-
 # 幾何
 
 - [図形表現](geo.2d.html)
@@ -102,14 +101,12 @@
 
 ## モジュラ演算
 
-- [ModInt](int.modint.html)
 - [逆数](int.mod.inv.html)
 - [べき乗](int.mod.pow.html)
 
 ## 素数
 
 - [エラトステネスの篩](prime.sieve.html)
-- [メビウス関数](moebius.html)
 - [素朴な判定](prime.predicate.html)
 - [ミラー・ラビン素数判定](prime.MillerRabin.html)
 - [フェルマーの小定理](prime.fermat.little.html)
@@ -118,6 +115,7 @@
 - [ビッグエンディアンベクタ](bigint.html)
 
 ## 自然数
+- [メビウス関数](nat.moebius.html)
 - [自然数の対 ↔ 自然数 の変換](nat.n_vs_nn.html)
 - [最小自由数 (最小除外数)](nat.mex.html)
 
@@ -129,6 +127,7 @@
 
 # 乱数
 
+- [線形合同法](rand.lcg.html)
 - [xor-shift](rand.xorshift.html)
 
 # フーリエ変換

@@ -1,3 +1,4 @@
+/// Algebra - Group
 trait Group: std::ops::Add<Output=Self> + std::ops::Sub<Output=Self> + std::ops::Neg<Output=Self>
     + std::iter::Sum + Clone + Copy {
     fn zero() -> Self;

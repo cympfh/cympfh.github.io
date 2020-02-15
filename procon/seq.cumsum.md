@@ -10,5 +10,3 @@ $$\{ a_0, a_1,\ldots, a_n \} \mapsto \{ a_0, (a_0+a_1), \ldots, \sum_{i=0}^n a_n
 ## [[seq.cumsum.rs]]
 
 @[rust](seq.cumsum.rs)
-
-@[rust](seq.cumsum.main.rs)

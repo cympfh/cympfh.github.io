@@ -1,4 +1,4 @@
-// n^m
+/// Natural Iterator - Power (n^m)
 struct PowerPermutation { n: usize, m: usize, ar: Vec<usize> }
 impl PowerPermutation {
     fn new(n: usize, m: usize) -> PowerPermutation {

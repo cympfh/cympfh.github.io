@@ -86,7 +86,6 @@
 
 # 二分探索
 - [二分探索](bin.search.html)
-- [出現回数](bin.count.html)
 
 # 整数
 

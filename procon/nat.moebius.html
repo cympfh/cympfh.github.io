@@ -31,23 +31,24 @@
 <h3 id="求め方">求め方</h3>
 <p>エラトステネスの篩の拡張でできる. <span class="math inline">\(\mu(n)\)</span> は <span class="math inline">\(O(n \times \text{ちょっと}) (\leq O(n \log(n)))\)</span> で求まる.</p>
 <h2 id="rust">Rust</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">fn</span> moebius(n: <span class="dt">usize</span>) -&gt; <span class="dt">Vec</span>&lt;<span class="dt">i64</span>&gt; <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-2" title="2">    <span class="kw">let</span> <span class="kw">mut</span> moe = <span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>; n<span class="op">]</span>;</a>
-<a class="sourceLine" id="cb1-3" title="3">    <span class="kw">let</span> <span class="kw">mut</span> prime = <span class="pp">vec!</span><span class="op">[</span><span class="cn">true</span>; n<span class="op">]</span>;</a>
-<a class="sourceLine" id="cb1-4" title="4">    moe<span class="op">[</span><span class="dv">0</span><span class="op">]</span> = <span class="dv">0</span>;</a>
-<a class="sourceLine" id="cb1-5" title="5">    <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">2</span>..n <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-6" title="6">        <span class="kw">if</span> !prime<span class="op">[</span>i<span class="op">]</span> <span class="op">{</span> <span class="kw">continue</span> <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-7" title="7">        moe<span class="op">[</span>i<span class="op">]</span> = -<span class="dv">1</span>;</a>
-<a class="sourceLine" id="cb1-8" title="8">        <span class="kw">for</span> j <span class="kw">in</span> <span class="dv">2</span>..(n - <span class="dv">1</span>) / i + <span class="dv">1</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-9" title="9">            moe<span class="op">[</span>i * j<span class="op">]</span> *= -<span class="dv">1</span>;</a>
-<a class="sourceLine" id="cb1-10" title="10">            prime<span class="op">[</span>i * j<span class="op">]</span> = <span class="cn">false</span>;</a>
-<a class="sourceLine" id="cb1-11" title="11">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-12" title="12">        <span class="kw">for</span> j <span class="kw">in</span> <span class="dv">1</span>..(n - <span class="dv">1</span>) / i / i + <span class="dv">1</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-13" title="13">            moe<span class="op">[</span>i * i * j<span class="op">]</span> = <span class="dv">0</span>;</a>
-<a class="sourceLine" id="cb1-14" title="14">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-15" title="15">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-16" title="16">    moe</a>
-<a class="sourceLine" id="cb1-17" title="17"><span class="op">}</span></a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb1-1" title="1"><span class="co">/// Natural function - Moebius function</span></a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="kw">fn</span> moebius(n: <span class="dt">usize</span>) -&gt; <span class="dt">Vec</span>&lt;<span class="dt">i64</span>&gt; <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-3" title="3">    <span class="kw">let</span> <span class="kw">mut</span> moe = <span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>; n<span class="op">]</span>;</a>
+<a class="sourceLine" id="cb1-4" title="4">    <span class="kw">let</span> <span class="kw">mut</span> prime = <span class="pp">vec!</span><span class="op">[</span><span class="cn">true</span>; n<span class="op">]</span>;</a>
+<a class="sourceLine" id="cb1-5" title="5">    moe<span class="op">[</span><span class="dv">0</span><span class="op">]</span> = <span class="dv">0</span>;</a>
+<a class="sourceLine" id="cb1-6" title="6">    <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">2</span>..n <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-7" title="7">        <span class="kw">if</span> !prime<span class="op">[</span>i<span class="op">]</span> <span class="op">{</span> <span class="kw">continue</span> <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-8" title="8">        moe<span class="op">[</span>i<span class="op">]</span> = -<span class="dv">1</span>;</a>
+<a class="sourceLine" id="cb1-9" title="9">        <span class="kw">for</span> j <span class="kw">in</span> <span class="dv">2</span>..(n - <span class="dv">1</span>) / i + <span class="dv">1</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-10" title="10">            moe<span class="op">[</span>i * j<span class="op">]</span> *= -<span class="dv">1</span>;</a>
+<a class="sourceLine" id="cb1-11" title="11">            prime<span class="op">[</span>i * j<span class="op">]</span> = <span class="cn">false</span>;</a>
+<a class="sourceLine" id="cb1-12" title="12">        <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-13" title="13">        <span class="kw">for</span> j <span class="kw">in</span> <span class="dv">1</span>..(n - <span class="dv">1</span>) / i / i + <span class="dv">1</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-14" title="14">            moe<span class="op">[</span>i * i * j<span class="op">]</span> = <span class="dv">0</span>;</a>
+<a class="sourceLine" id="cb1-15" title="15">        <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-16" title="16">    <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-17" title="17">    moe</a>
+<a class="sourceLine" id="cb1-18" title="18"><span class="op">}</span></a></code></pre></div>
 <h2 id="例題-icpcpacific-northwest-div1---b-coprime-integers">例題: <a href="https://codeforces.com/gym/245895/attachments">ICPC/pacific-northwest-div1 - B: Coprime Integers</a></h2>
 <p>問題が pdf で読みにくいので簡単に問題を説明する.</p>
 <h3 id="問題概要">問題概要</h3>
@@ -183,7 +184,6 @@
 <summary class=menu>二分探索</summary>
 <ul>
 <li><a href="bin.search.html">二分探索</a></li>
-<li><a href="bin.count.html">出現回数</a></li>
 </ul>
 </details>
 
@@ -207,7 +207,6 @@
 <h2 id="素数">素数</h2>
 <ul>
 <li><a href="prime.sieve.html">エラトステネスの篩</a></li>
-<li><a href="moebius.html">メビウス関数</a></li>
 <li><a href="prime.predicate.html">素朴な判定</a></li>
 <li><a href="prime.MillerRabin.html">ミラー・ラビン素数判定</a></li>
 <li><a href="prime.fermat.little.html">フェルマーの小定理</a></li>
@@ -218,6 +217,7 @@
 </ul>
 <h2 id="自然数">自然数</h2>
 <ul>
+<li><a href="nat.moebius.html">メビウス関数</a></li>
 <li><a href="nat.n_vs_nn.html">自然数の対 ↔ 自然数 の変換</a></li>
 <li><a href="nat.mex.html">最小自由数 (最小除外数)</a></li>
 </ul>
@@ -232,6 +232,7 @@
 <details class=menu>
 <summary class=menu>乱数</summary>
 <ul>
+<li><a href="rand.lcg.html">線形合同法</a></li>
 <li><a href="rand.xorshift.html">xor-shift</a></li>
 </ul>
 </details>

@@ -26,51 +26,52 @@
 <li><a href="http://www.prefield.com/algorithm/container/union_find.html" class="uri">http://www.prefield.com/algorithm/container/union_find.html</a></li>
 </ul>
 <h2 id="set.union_find.rs"><a href="set.union_find.rs" class="uri">set.union_find.rs</a></h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb1-1" title="1"><span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">,</span> <span class="bu">Clone</span><span class="at">)]</span></a>
-<a class="sourceLine" id="cb1-2" title="2"><span class="kw">enum</span> UF <span class="op">{</span> Root(<span class="dt">usize</span>), Child(<span class="dt">usize</span>) <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-3" title="3"></a>
-<a class="sourceLine" id="cb1-4" title="4"><span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">)]</span></a>
-<a class="sourceLine" id="cb1-5" title="5"><span class="kw">struct</span> UnionFind <span class="op">{</span> table: <span class="dt">Vec</span>&lt;UF&gt; <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-6" title="6"><span class="kw">impl</span> UnionFind <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-7" title="7">    <span class="kw">fn</span> new(n: <span class="dt">usize</span>) -&gt; UnionFind <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-8" title="8">        UnionFind <span class="op">{</span> table: <span class="pp">vec!</span><span class="op">[</span><span class="pp">UF::</span>Root(<span class="dv">1</span>); n<span class="op">]</span>, <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-9" title="9">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-10" title="10">    <span class="kw">fn</span> root(&amp;<span class="kw">mut</span> <span class="kw">self</span>, x: <span class="dt">usize</span>) -&gt; <span class="dt">usize</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-11" title="11">        <span class="kw">match</span> <span class="kw">self</span>.table<span class="op">[</span>x<span class="op">]</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-12" title="12">            <span class="pp">UF::</span>Root(_) =&gt; x,</a>
-<a class="sourceLine" id="cb1-13" title="13">            <span class="pp">UF::</span>Child(parent) =&gt; <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-14" title="14">                <span class="kw">let</span> root = <span class="kw">self</span>.root(parent);</a>
-<a class="sourceLine" id="cb1-15" title="15">                <span class="kw">self</span>.table<span class="op">[</span>x<span class="op">]</span> = <span class="pp">UF::</span>Child(root);</a>
-<a class="sourceLine" id="cb1-16" title="16">                root</a>
-<a class="sourceLine" id="cb1-17" title="17">            <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-18" title="18">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-19" title="19">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-20" title="20">    <span class="kw">fn</span> is_same(&amp;<span class="kw">mut</span> <span class="kw">self</span>, x: <span class="dt">usize</span>, y: <span class="dt">usize</span>) -&gt; <span class="dt">bool</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-21" title="21">        <span class="kw">self</span>.root(x) == <span class="kw">self</span>.root(y)</a>
-<a class="sourceLine" id="cb1-22" title="22">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-23" title="23">    <span class="kw">fn</span> size(&amp;<span class="kw">mut</span> <span class="kw">self</span>, x: <span class="dt">usize</span>) -&gt; <span class="dt">usize</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-24" title="24">        <span class="kw">let</span> r = <span class="kw">self</span>.root(x);</a>
-<a class="sourceLine" id="cb1-25" title="25">        <span class="kw">match</span> <span class="kw">self</span>.table<span class="op">[</span>r<span class="op">]</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-26" title="26">            <span class="pp">UF::</span>Root(size) =&gt; size,</a>
-<a class="sourceLine" id="cb1-27" title="27">            <span class="pp">UF::</span>Child(_) =&gt; <span class="dv">0</span></a>
-<a class="sourceLine" id="cb1-28" title="28">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-29" title="29">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-30" title="30">    <span class="kw">fn</span> merge(&amp;<span class="kw">mut</span> <span class="kw">self</span>, x: <span class="dt">usize</span>, y: <span class="dt">usize</span>) <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-31" title="31">        <span class="kw">let</span> root_x = <span class="kw">self</span>.root(x);</a>
-<a class="sourceLine" id="cb1-32" title="32">        <span class="kw">let</span> root_y = <span class="kw">self</span>.root(y);</a>
-<a class="sourceLine" id="cb1-33" title="33">        <span class="kw">if</span> root_x != root_y <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-34" title="34">            <span class="kw">let</span> size_x = <span class="kw">self</span>.size(root_x);</a>
-<a class="sourceLine" id="cb1-35" title="35">            <span class="kw">let</span> size_y = <span class="kw">self</span>.size(root_y);</a>
-<a class="sourceLine" id="cb1-36" title="36">            <span class="kw">let</span> (i, j) = <span class="kw">if</span> size_x &gt; size_y <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-37" title="37">                (root_x, root_y)</a>
-<a class="sourceLine" id="cb1-38" title="38">            <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-39" title="39">                (root_y, root_x)</a>
-<a class="sourceLine" id="cb1-40" title="40">            <span class="op">}</span>;</a>
-<a class="sourceLine" id="cb1-41" title="41">            <span class="kw">self</span>.table<span class="op">[</span>i<span class="op">]</span> = <span class="pp">UF::</span>Root(size_x + size_y);</a>
-<a class="sourceLine" id="cb1-42" title="42">            <span class="kw">self</span>.table<span class="op">[</span>j<span class="op">]</span> = <span class="pp">UF::</span>Child(i);</a>
-<a class="sourceLine" id="cb1-43" title="43">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-44" title="44">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-45" title="45"><span class="op">}</span></a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb1-1" title="1"><span class="co">/// Set - Union-Find</span></a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">,</span> <span class="bu">Clone</span><span class="at">)]</span></a>
+<a class="sourceLine" id="cb1-3" title="3"><span class="kw">enum</span> UF <span class="op">{</span> Root(<span class="dt">usize</span>), Child(<span class="dt">usize</span>) <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-4" title="4"></a>
+<a class="sourceLine" id="cb1-5" title="5"><span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">)]</span></a>
+<a class="sourceLine" id="cb1-6" title="6"><span class="kw">struct</span> UnionFind <span class="op">{</span> table: <span class="dt">Vec</span>&lt;UF&gt; <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-7" title="7"><span class="kw">impl</span> UnionFind <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-8" title="8">    <span class="kw">fn</span> new(n: <span class="dt">usize</span>) -&gt; UnionFind <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-9" title="9">        UnionFind <span class="op">{</span> table: <span class="pp">vec!</span><span class="op">[</span><span class="pp">UF::</span>Root(<span class="dv">1</span>); n<span class="op">]</span>, <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-10" title="10">    <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-11" title="11">    <span class="kw">fn</span> root(&amp;<span class="kw">mut</span> <span class="kw">self</span>, x: <span class="dt">usize</span>) -&gt; <span class="dt">usize</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-12" title="12">        <span class="kw">match</span> <span class="kw">self</span>.table<span class="op">[</span>x<span class="op">]</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-13" title="13">            <span class="pp">UF::</span>Root(_) =&gt; x,</a>
+<a class="sourceLine" id="cb1-14" title="14">            <span class="pp">UF::</span>Child(parent) =&gt; <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-15" title="15">                <span class="kw">let</span> root = <span class="kw">self</span>.root(parent);</a>
+<a class="sourceLine" id="cb1-16" title="16">                <span class="kw">self</span>.table<span class="op">[</span>x<span class="op">]</span> = <span class="pp">UF::</span>Child(root);</a>
+<a class="sourceLine" id="cb1-17" title="17">                root</a>
+<a class="sourceLine" id="cb1-18" title="18">            <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-19" title="19">        <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-20" title="20">    <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-21" title="21">    <span class="kw">fn</span> is_same(&amp;<span class="kw">mut</span> <span class="kw">self</span>, x: <span class="dt">usize</span>, y: <span class="dt">usize</span>) -&gt; <span class="dt">bool</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-22" title="22">        <span class="kw">self</span>.root(x) == <span class="kw">self</span>.root(y)</a>
+<a class="sourceLine" id="cb1-23" title="23">    <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-24" title="24">    <span class="kw">fn</span> size(&amp;<span class="kw">mut</span> <span class="kw">self</span>, x: <span class="dt">usize</span>) -&gt; <span class="dt">usize</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-25" title="25">        <span class="kw">let</span> r = <span class="kw">self</span>.root(x);</a>
+<a class="sourceLine" id="cb1-26" title="26">        <span class="kw">match</span> <span class="kw">self</span>.table<span class="op">[</span>r<span class="op">]</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-27" title="27">            <span class="pp">UF::</span>Root(size) =&gt; size,</a>
+<a class="sourceLine" id="cb1-28" title="28">            <span class="pp">UF::</span>Child(_) =&gt; <span class="dv">0</span></a>
+<a class="sourceLine" id="cb1-29" title="29">        <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-30" title="30">    <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-31" title="31">    <span class="kw">fn</span> merge(&amp;<span class="kw">mut</span> <span class="kw">self</span>, x: <span class="dt">usize</span>, y: <span class="dt">usize</span>) <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-32" title="32">        <span class="kw">let</span> root_x = <span class="kw">self</span>.root(x);</a>
+<a class="sourceLine" id="cb1-33" title="33">        <span class="kw">let</span> root_y = <span class="kw">self</span>.root(y);</a>
+<a class="sourceLine" id="cb1-34" title="34">        <span class="kw">if</span> root_x != root_y <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-35" title="35">            <span class="kw">let</span> size_x = <span class="kw">self</span>.size(root_x);</a>
+<a class="sourceLine" id="cb1-36" title="36">            <span class="kw">let</span> size_y = <span class="kw">self</span>.size(root_y);</a>
+<a class="sourceLine" id="cb1-37" title="37">            <span class="kw">let</span> (i, j) = <span class="kw">if</span> size_x &gt; size_y <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-38" title="38">                (root_x, root_y)</a>
+<a class="sourceLine" id="cb1-39" title="39">            <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-40" title="40">                (root_y, root_x)</a>
+<a class="sourceLine" id="cb1-41" title="41">            <span class="op">}</span>;</a>
+<a class="sourceLine" id="cb1-42" title="42">            <span class="kw">self</span>.table<span class="op">[</span>i<span class="op">]</span> = <span class="pp">UF::</span>Root(size_x + size_y);</a>
+<a class="sourceLine" id="cb1-43" title="43">            <span class="kw">self</span>.table<span class="op">[</span>j<span class="op">]</span> = <span class="pp">UF::</span>Child(i);</a>
+<a class="sourceLine" id="cb1-44" title="44">        <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-45" title="45">    <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-46" title="46"><span class="op">}</span></a></code></pre></div>
 <h2 id="set.union_find.cc"><a href="set.union_find.cc" class="uri">set.union_find.cc</a></h2>
 <div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb2-1" title="1"><span class="co">/*</span></a>
 <a class="sourceLine" id="cb2-2" title="2"><span class="co"> * 参考; http://www.prefield.com/algorithm/container/union_find.html</span></a>
@@ -215,7 +216,6 @@
 <summary class=menu>二分探索</summary>
 <ul>
 <li><a href="bin.search.html">二分探索</a></li>
-<li><a href="bin.count.html">出現回数</a></li>
 </ul>
 </details>
 
@@ -239,7 +239,6 @@
 <h2 id="素数">素数</h2>
 <ul>
 <li><a href="prime.sieve.html">エラトステネスの篩</a></li>
-<li><a href="moebius.html">メビウス関数</a></li>
 <li><a href="prime.predicate.html">素朴な判定</a></li>
 <li><a href="prime.MillerRabin.html">ミラー・ラビン素数判定</a></li>
 <li><a href="prime.fermat.little.html">フェルマーの小定理</a></li>
@@ -250,6 +249,7 @@
 </ul>
 <h2 id="自然数">自然数</h2>
 <ul>
+<li><a href="nat.moebius.html">メビウス関数</a></li>
 <li><a href="nat.n_vs_nn.html">自然数の対 ↔ 自然数 の変換</a></li>
 <li><a href="nat.mex.html">最小自由数 (最小除外数)</a></li>
 </ul>
@@ -264,6 +264,7 @@
 <details class=menu>
 <summary class=menu>乱数</summary>
 <ul>
+<li><a href="rand.lcg.html">線形合同法</a></li>
 <li><a href="rand.xorshift.html">xor-shift</a></li>
 </ul>
 </details>

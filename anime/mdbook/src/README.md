@@ -1,5 +1,6 @@
 # anime/
 
+- [2020](2020/index.md)
 - [2019](2019/index.md)
 - [2018](2018/index.md)
 - [2017](2017/index.md)

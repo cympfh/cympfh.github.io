@@ -4,6 +4,11 @@
 
 --------
 
+- [2020](2020/README.md)
+    - [推しが武道館いってくれたら死ぬ](2020/Q1/oshi.md)
+    - [おーばーふろぉ](2020/Q1/overflow.md)
+    - [映像研には手を出すな](2020/Q1/eizouken.md)
+    - [虚構推理](2020/Q1/kyokou.md)
 - [2019](2019/README.md)
     - [放課後さいころ倶楽部](2019/Q4/houkago-saikoro-club.md)
     - [ちはやふる3](2019/Q4/chihayafuru3.md)

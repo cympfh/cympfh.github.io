@@ -1,5 +1,5 @@
+/// Fast Fourier Transform
 struct FFT;
-
 impl FFT {
 
     fn _fft(f: &Vec<Complex>, dir: K) -> Vec<Complex> {

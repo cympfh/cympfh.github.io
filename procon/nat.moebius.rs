@@ -1,3 +1,4 @@
+/// Natural function - Moebius function
 fn moebius(n: usize) -> Vec<i64> {
     let mut moe = vec![1; n];
     let mut prime = vec![true; n];

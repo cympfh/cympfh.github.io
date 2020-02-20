@@ -1,3 +1,4 @@
+/// Geometry - Definition of Point, Line and Circle
 #[derive(Debug, Clone, Copy)]
 struct Point(f64, f64);
 
@@ -16,7 +17,6 @@ impl Point {
     fn one() -> Point { Point(1.0, 1.0) }
 }
 
-use std::cmp::{PartialEq, Eq};
 impl PartialEq for Point {
     fn eq(&self, other: &Point) -> bool {
         let eps = 0.0001;
@@ -28,22 +28,21 @@ impl PartialEq for Point {
 }
 impl Eq for Point { }
 
-use std::ops::{Add, Sub, Neg, Mul, Div};
-impl Add for Point {
+impl std::ops::Add for Point {
     type Output = Point;
     fn add(self, other: Point) -> Point {
         Point(self.0 + other.0, self.1 + other.1)
     }
 }
 
-impl Neg for Point {
+impl std::ops::Neg for Point {
     type Output = Point;
     fn neg(self) -> Point {
         Point(-self.0, -self.1)
     }
 }
 
-impl Sub for Point {
+impl std::ops::Sub for Point {
     type Output = Point;
     fn sub(self, other: Point) -> Point {
         self + (-other)
@@ -51,14 +50,14 @@ impl Sub for Point {
 }
 
 // scalar multiplication
-impl Mul<Point> for f64 {
+impl std::ops::Mul<Point> for f64 {
     type Output = Point;
     fn mul(self, other: Point) -> Point {
         Point(self * other.0, self * other.1)
     }
 }
 
-impl Mul<f64> for Point {
+impl std::ops::Mul<f64> for Point {
     type Output = Point;
     fn mul(self, other: f64) -> Point {
         Point(other * self.0, other * self.1)
@@ -66,14 +65,14 @@ impl Mul<f64> for Point {
 }
 
 // inner-product
-impl Mul<Point> for Point {
+impl std::ops::Mul<Point> for Point {
     type Output = f64;
     fn mul(self, other: Point) -> f64 {
         self.0 * other.0 + self.1 * other.1
     }
 }
 
-impl Div<f64> for Point {
+impl std::ops::Div<f64> for Point {
     type Output = Point;
     fn div(self, other: f64) -> Point {
         Point(self.0 / other, self.1 / other)

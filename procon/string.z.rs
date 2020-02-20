@@ -1,3 +1,4 @@
+/// String Search - Z Algorithm
 fn z(s: &str) -> Vec<usize> {
     let s: Vec<char> = s.chars().collect();
     let n = s.len();

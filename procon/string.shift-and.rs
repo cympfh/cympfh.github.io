@@ -1,3 +1,4 @@
+/// String Serach - Shift-And Algorithm
 fn shift_and(text: &String, pattern: &String) -> Option<usize> {
     let text_chars = text.chars().map(|c| c as usize).collect::<Vec<_>>();
     let pattern_chars = pattern.chars().map(|c| c as usize).collect::<Vec<_>>();

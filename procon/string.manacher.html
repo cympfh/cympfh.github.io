@@ -33,51 +33,52 @@
 <li>中心 <span class="math inline">\(j = (j_0, j_1)\)</span> に就いて <span class="math inline">\(s(j_0 - x, j_1 + x)\)</span></li>
 </ul>
 <p>のこと.</p>
-<p>以下ソースコードは Spaghetthi Source <a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> より拝借したものを多少自分好みにアレンジしたもの. いずれも返り値は <span class="math display">\[1, (1, 2), 2, (2, 3), 3, \ldots, n-1, (n-1, n)\]</span> を中心としたする回分の最大長を収めたベクトル.</p>
+<p>以下ソースコードは Spaghetthi Source <a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> より拝借したものを多少自分好みにアレンジしたもの. いずれも返り値は <span class="math display">\[1, (1, 2), 2, (2, 3), 3, \ldots, n-1, (n-1, n)\]</span> を中心としたする回分の最大長を収めたベクトル.</p>
 <h2 id="string.manacher.rs"><a href="string.manacher.rs" class="uri">string.manacher.rs</a></h2>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> manacher&lt;A: <span class="bu">Ord</span>&gt;(s: &amp;<span class="dt">Vec</span>&lt;A&gt;) -&gt; <span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt; {
-    <span class="kw">let</span> n = s.len();
-    <span class="kw">let</span> <span class="kw">mut</span> r = <span class="pp">vec!</span>[<span class="dv">0</span>; <span class="dv">2</span> * n - <span class="dv">1</span>];
-    <span class="kw">let</span> <span class="kw">mut</span> i = <span class="dv">0</span>;
-    <span class="kw">let</span> <span class="kw">mut</span> j = <span class="dv">0</span>;
-    <span class="kw">while</span> i &lt; <span class="dv">2</span> * n - <span class="dv">1</span> {
-        <span class="kw">while</span> i &gt;= j &amp;&amp; i + j + <span class="dv">1</span> &lt; <span class="dv">2</span> * n &amp;&amp; s[(i - j) / <span class="dv">2</span>] == s[(i + j + <span class="dv">1</span>) / <span class="dv">2</span>] {
-            j += <span class="dv">1</span>;
-        }
-        r[i] = j;
-        <span class="kw">let</span> <span class="kw">mut</span> k = <span class="dv">1</span>;
-        <span class="kw">while</span> i + k &lt; <span class="dv">2</span> * n - <span class="dv">1</span> &amp;&amp; i &gt;= k &amp;&amp; r[i] &gt;= k &amp;&amp; r[i - k] != r[i] - k {
-            r[i + k] = min(r[i - k], r[i] - k);
-            k += <span class="dv">1</span>;
-        }
-        i += k;
-        j = <span class="kw">if</span> j &gt; k { j - k } <span class="kw">else</span> { <span class="dv">0</span> }
-    }
-    r
-}</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb1-1" title="1"><span class="co">/// String - Test Palindric - Manacher Algorithm</span></a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="kw">fn</span> manacher&lt;A: <span class="bu">Ord</span>&gt;(s: &amp;<span class="dt">Vec</span>&lt;A&gt;) -&gt; <span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt; <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-3" title="3">    <span class="kw">let</span> n = s.len();</a>
+<a class="sourceLine" id="cb1-4" title="4">    <span class="kw">let</span> <span class="kw">mut</span> r = <span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>; <span class="dv">2</span> * n - <span class="dv">1</span><span class="op">]</span>;</a>
+<a class="sourceLine" id="cb1-5" title="5">    <span class="kw">let</span> <span class="kw">mut</span> i = <span class="dv">0</span>;</a>
+<a class="sourceLine" id="cb1-6" title="6">    <span class="kw">let</span> <span class="kw">mut</span> j = <span class="dv">0</span>;</a>
+<a class="sourceLine" id="cb1-7" title="7">    <span class="kw">while</span> i &lt; <span class="dv">2</span> * n - <span class="dv">1</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-8" title="8">        <span class="kw">while</span> i &gt;= j &amp;&amp; i + j + <span class="dv">1</span> &lt; <span class="dv">2</span> * n &amp;&amp; s<span class="op">[</span>(i - j) / <span class="dv">2</span><span class="op">]</span> == s<span class="op">[</span>(i + j + <span class="dv">1</span>) / <span class="dv">2</span><span class="op">]</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-9" title="9">            j += <span class="dv">1</span>;</a>
+<a class="sourceLine" id="cb1-10" title="10">        <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-11" title="11">        r<span class="op">[</span>i<span class="op">]</span> = j;</a>
+<a class="sourceLine" id="cb1-12" title="12">        <span class="kw">let</span> <span class="kw">mut</span> k = <span class="dv">1</span>;</a>
+<a class="sourceLine" id="cb1-13" title="13">        <span class="kw">while</span> i + k &lt; <span class="dv">2</span> * n - <span class="dv">1</span> &amp;&amp; i &gt;= k &amp;&amp; r<span class="op">[</span>i<span class="op">]</span> &gt;= k &amp;&amp; r<span class="op">[</span>i - k<span class="op">]</span> != r<span class="op">[</span>i<span class="op">]</span> - k <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-14" title="14">            r<span class="op">[</span>i + k<span class="op">]</span> = min(r<span class="op">[</span>i - k<span class="op">]</span>, r<span class="op">[</span>i<span class="op">]</span> - k);</a>
+<a class="sourceLine" id="cb1-15" title="15">            k += <span class="dv">1</span>;</a>
+<a class="sourceLine" id="cb1-16" title="16">        <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-17" title="17">        i += k;</a>
+<a class="sourceLine" id="cb1-18" title="18">        j = <span class="kw">if</span> j &gt; k <span class="op">{</span> j - k <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span> <span class="dv">0</span> <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-19" title="19">    <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-20" title="20">    r</a>
+<a class="sourceLine" id="cb1-21" title="21"><span class="op">}</span></a></code></pre></div>
 <h2 id="string.manacher.cc"><a href="string.manacher.cc" class="uri">string.manacher.cc</a></h2>
-<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp">vector&lt;<span class="dt">int</span>&gt; manacher(string&amp;s) {
-    <span class="at">const</span> <span class="dt">int</span> n = s.size();
-    vector&lt;<span class="dt">int</span>&gt; r(<span class="dv">2</span> * n - <span class="dv">1</span>);
-    <span class="cf">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>, j = <span class="dv">0</span>; i &lt; <span class="dv">2</span> * n - <span class="dv">1</span>;) {
-        <span class="cf">while</span> (i &gt;= j <span class="kw">and</span> i + j + <span class="dv">1</span> &lt; <span class="dv">2</span> * n <span class="kw">and</span> s[(i - j) / <span class="dv">2</span>] == s[(i + j + <span class="dv">1</span>) / <span class="dv">2</span>]) {
-            ++j;
-        }
-        r[i] = j;
-        <span class="dt">int</span> k;
-        <span class="cf">for</span> (k = <span class="dv">1</span>; i &gt;= k <span class="kw">and</span> i + k &lt; <span class="dv">2</span> * n - <span class="dv">1</span> <span class="kw">and</span> r[i] &gt;= k <span class="kw">and</span> r[i - k] != r[i] - k; ++k) {
-            r[i + k] = min(r[i - k], r[i] - k);
-        }
-        i += k;
-        j = max(j - k, <span class="dv">0</span>);
-    }
-    <span class="cf">return</span> r;
-}</code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb2-1" title="1">vector&lt;<span class="dt">int</span>&gt; manacher(string&amp;s) {</a>
+<a class="sourceLine" id="cb2-2" title="2">    <span class="at">const</span> <span class="dt">int</span> n = s.size();</a>
+<a class="sourceLine" id="cb2-3" title="3">    vector&lt;<span class="dt">int</span>&gt; r(<span class="dv">2</span> * n - <span class="dv">1</span>);</a>
+<a class="sourceLine" id="cb2-4" title="4">    <span class="cf">for</span> (<span class="dt">int</span> i = <span class="dv">0</span>, j = <span class="dv">0</span>; i &lt; <span class="dv">2</span> * n - <span class="dv">1</span>;) {</a>
+<a class="sourceLine" id="cb2-5" title="5">        <span class="cf">while</span> (i &gt;= j <span class="kw">and</span> i + j + <span class="dv">1</span> &lt; <span class="dv">2</span> * n <span class="kw">and</span> s[(i - j) / <span class="dv">2</span>] == s[(i + j + <span class="dv">1</span>) / <span class="dv">2</span>]) {</a>
+<a class="sourceLine" id="cb2-6" title="6">            ++j;</a>
+<a class="sourceLine" id="cb2-7" title="7">        }</a>
+<a class="sourceLine" id="cb2-8" title="8">        r[i] = j;</a>
+<a class="sourceLine" id="cb2-9" title="9">        <span class="dt">int</span> k;</a>
+<a class="sourceLine" id="cb2-10" title="10">        <span class="cf">for</span> (k = <span class="dv">1</span>; i &gt;= k <span class="kw">and</span> i + k &lt; <span class="dv">2</span> * n - <span class="dv">1</span> <span class="kw">and</span> r[i] &gt;= k <span class="kw">and</span> r[i - k] != r[i] - k; ++k) {</a>
+<a class="sourceLine" id="cb2-11" title="11">            r[i + k] = min(r[i - k], r[i] - k);</a>
+<a class="sourceLine" id="cb2-12" title="12">        }</a>
+<a class="sourceLine" id="cb2-13" title="13">        i += k;</a>
+<a class="sourceLine" id="cb2-14" title="14">        j = max(j - k, <span class="dv">0</span>);</a>
+<a class="sourceLine" id="cb2-15" title="15">    }</a>
+<a class="sourceLine" id="cb2-16" title="16">    <span class="cf">return</span> r;</a>
+<a class="sourceLine" id="cb2-17" title="17">}</a></code></pre></div>
 <h2 id="参考">参考</h2>
 <section class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p><a href="http://www.prefield.com/algorithm/string/manacher.html">Spaghetti Source - 最長回文 (Manacher)</a><a href="#fnref1">↩</a></p></li>
+<li id="fn1"><p><a href="http://www.prefield.com/algorithm/string/manacher.html">Spaghetti Source - 最長回文 (Manacher)</a><a href="#fnref1" class="footnote-back">↩</a></p></li>
 </ol>
 </section>
           </div>
@@ -87,8 +88,11 @@
 <summary class=menu>代数</summary>
 <ul>
 <li><a href="algebra.group.html">群</a></li>
+<li><a href="algebra.ring.html">環</a></li>
 <li><a href="algebra.hyper.html">超数</a></li>
 <li><a href="algebra.total.html">全順序化</a></li>
+<li><a href="algebra.complex.html">虚数</a></li>
+<li><a href="algebra.modint.html">ModInt</a></li>
 </ul>
 </details>
 
@@ -146,14 +150,7 @@
 <h2 id="行列式">行列式</h2>
 <ul>
 <li><a href="matrix.det.naiiv.html">定義に拠る算法</a></li>
-<li><a href="matrix.det.cramer.html">Cramer's rule</a></li>
-</ul>
-</details>
-
-<details class=menu>
-<summary class=menu>虚数</summary>
-<ul>
-<li><a href="complex.html">虚数の定義と演算</a></li>
+<li><a href="matrix.det.cramer.html">Cramer’s rule</a></li>
 </ul>
 </details>
 
@@ -205,7 +202,6 @@
 <summary class=menu>二分探索</summary>
 <ul>
 <li><a href="bin.search.html">二分探索</a></li>
-<li><a href="bin.count.html">出現回数</a></li>
 </ul>
 </details>
 
@@ -223,14 +219,12 @@
 </ul>
 <h2 id="モジュラ演算">モジュラ演算</h2>
 <ul>
-<li><a href="int.modint.html">ModInt</a></li>
 <li><a href="int.mod.inv.html">逆数</a></li>
 <li><a href="int.mod.pow.html">べき乗</a></li>
 </ul>
 <h2 id="素数">素数</h2>
 <ul>
 <li><a href="prime.sieve.html">エラトステネスの篩</a></li>
-<li><a href="moebius.html">メビウス関数</a></li>
 <li><a href="prime.predicate.html">素朴な判定</a></li>
 <li><a href="prime.MillerRabin.html">ミラー・ラビン素数判定</a></li>
 <li><a href="prime.fermat.little.html">フェルマーの小定理</a></li>
@@ -241,6 +235,7 @@
 </ul>
 <h2 id="自然数">自然数</h2>
 <ul>
+<li><a href="nat.moebius.html">メビウス関数</a></li>
 <li><a href="nat.n_vs_nn.html">自然数の対 ↔ 自然数 の変換</a></li>
 <li><a href="nat.mex.html">最小自由数 (最小除外数)</a></li>
 </ul>
@@ -255,6 +250,7 @@
 <details class=menu>
 <summary class=menu>乱数</summary>
 <ul>
+<li><a href="rand.lcg.html">線形合同法</a></li>
 <li><a href="rand.xorshift.html">xor-shift</a></li>
 </ul>
 </details>

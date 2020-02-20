@@ -1,3 +1,4 @@
+/// Sequence - Binary Indexed Tree (Fenwick Tree)
 use std::ops::Range;
 struct BIT { size: usize, array: Vec<i32> }
 impl BIT {

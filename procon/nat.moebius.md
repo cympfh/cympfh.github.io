@@ -22,7 +22,7 @@ $\mu(n)$ は $O(n \times \text{ちょっと}) (\leq O(n \log(n)))$ で求まる.
 
 ## Rust
 
-@[rust](moebius.rs)
+@[rust](nat.moebius.rs)
 
 ## 例題: [ICPC/pacific-northwest-div1 - B: Coprime Integers](https://codeforces.com/gym/245895/attachments)
 

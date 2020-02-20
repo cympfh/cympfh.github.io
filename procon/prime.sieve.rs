@@ -1,3 +1,4 @@
+/// Prime numbres - Sieve of Eratosthenes
 fn prime_sieve(n: usize) -> Vec<bool> {
     let mut s = vec![true; n];
     s[0] = false; s[1] = false;

@@ -1,10 +1,8 @@
-use std::fmt;
-
+/// Calendar - Zeller's Theorem
 #[derive(Debug)]
 enum Day {
   Sat, Sun, Mon, Tue, Wed, Thu, Fri
 }
-
 impl Day {
     fn from(i: usize) -> Day {
         match i {
@@ -19,9 +17,8 @@ impl Day {
         }
     }
 }
-
-impl fmt::Display for Day {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+impl std::fmt::Display for Day {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "{}",
             match self {
                 Day::Sat => "Saturday",
@@ -55,13 +52,4 @@ fn zeller(y: usize, m: usize, d: usize) -> Day {
     // };
     let h = d + (26 * (month + 1) / 10) + y_up + y_up / 4 + gamma;
     Day::from(h % 7)
-}
-
-fn main() {
-    for m in 11..13 {
-        for d in 1..32 {
-            let day = zeller(2018, m, d);
-            println!("2018-{}-{}: {} {:?}", m, d, day, day);
-        }
-    }
 }

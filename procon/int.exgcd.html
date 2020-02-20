@@ -23,34 +23,35 @@
             <h1 id="拡張ユークリッド互除法">拡張ユークリッド互除法</h1>
 <p><span class="math inline">\(0\)</span> でない整数の組 <span class="math inline">\((x, y)\)</span> について、 <span class="math display">\[ax + by = c\]</span> なる整数の組 <span class="math inline">\((a, b, c)\)</span> を返す. ここで <span class="math inline">\(c = gcd(x, y)\)</span>.</p>
 <h2 id="rust"><a href="int.exgcd.rs">Rust</a></h2>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> ex_gcd(x: <span class="dt">i32</span>, y: <span class="dt">i32</span>) -&gt; (<span class="dt">i32</span>, <span class="dt">i32</span>, <span class="dt">i32</span>) {
-    <span class="kw">let</span> <span class="kw">mut</span> r0 = x;
-    <span class="kw">let</span> <span class="kw">mut</span> a0 = <span class="dv">1</span>;
-    <span class="kw">let</span> <span class="kw">mut</span> b0 = <span class="dv">0</span>;
-    <span class="kw">let</span> <span class="kw">mut</span> r = y;
-    <span class="kw">let</span> <span class="kw">mut</span> a = <span class="dv">0</span>;
-    <span class="kw">let</span> <span class="kw">mut</span> b = <span class="dv">1</span>;
-    <span class="kw">while</span> r &gt; <span class="dv">0</span> {
-        <span class="kw">let</span> (r2, a2, b2) = (r0 % r, a0 - r0 / r * a, b0 - r0 / r * b);
-        r0 = r; r = r2;
-        a0 = a; a = a2;
-        b0 = b; b = b2;
-    }
-    (a0, b0, r0)
-}</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb1-1" title="1"><span class="co">/// Integer function - Extended GCD</span></a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="kw">fn</span> ex_gcd(x: <span class="dt">i32</span>, y: <span class="dt">i32</span>) -&gt; (<span class="dt">i32</span>, <span class="dt">i32</span>, <span class="dt">i32</span>) <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-3" title="3">    <span class="kw">let</span> <span class="kw">mut</span> r0 = x;</a>
+<a class="sourceLine" id="cb1-4" title="4">    <span class="kw">let</span> <span class="kw">mut</span> a0 = <span class="dv">1</span>;</a>
+<a class="sourceLine" id="cb1-5" title="5">    <span class="kw">let</span> <span class="kw">mut</span> b0 = <span class="dv">0</span>;</a>
+<a class="sourceLine" id="cb1-6" title="6">    <span class="kw">let</span> <span class="kw">mut</span> r = y;</a>
+<a class="sourceLine" id="cb1-7" title="7">    <span class="kw">let</span> <span class="kw">mut</span> a = <span class="dv">0</span>;</a>
+<a class="sourceLine" id="cb1-8" title="8">    <span class="kw">let</span> <span class="kw">mut</span> b = <span class="dv">1</span>;</a>
+<a class="sourceLine" id="cb1-9" title="9">    <span class="kw">while</span> r &gt; <span class="dv">0</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-10" title="10">        <span class="kw">let</span> (r2, a2, b2) = (r0 % r, a0 - r0 / r * a, b0 - r0 / r * b);</a>
+<a class="sourceLine" id="cb1-11" title="11">        r0 = r; r = r2;</a>
+<a class="sourceLine" id="cb1-12" title="12">        a0 = a; a = a2;</a>
+<a class="sourceLine" id="cb1-13" title="13">        b0 = b; b = b2;</a>
+<a class="sourceLine" id="cb1-14" title="14">    <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-15" title="15">    (a0, b0, r0)</a>
+<a class="sourceLine" id="cb1-16" title="16"><span class="op">}</span></a></code></pre></div>
 <h2 id="c"><a href="int.exgcd.cc">C++</a></h2>
-<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp">tuple&lt;<span class="dt">int</span>, <span class="dt">int</span>, <span class="dt">int</span>&gt; ex_gcd(<span class="dt">int</span> x, <span class="dt">int</span> y) {
-  <span class="dt">int</span> r0 = x, a0 = <span class="dv">1</span>, b0 = <span class="dv">0</span>;
-  <span class="cf">for</span> (<span class="dt">int</span> r = y, a = <span class="dv">0</span>, b = <span class="dv">1</span>; r &gt; <span class="dv">0</span>; ) {
-    <span class="dt">int</span> r2 = r0 % r;
-    <span class="dt">int</span> a2 = a0 - r0 / r * a;
-    <span class="dt">int</span> b2 = b0 - r0 / r * b;
-    r0 = r; r = r2;
-    a0 = a; a = a2;
-    b0 = b; b = b2;
-  }
-  <span class="cf">return</span> make_tuple(a0, b0, r0);
-}</code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb2-1" title="1">tuple&lt;<span class="dt">int</span>, <span class="dt">int</span>, <span class="dt">int</span>&gt; ex_gcd(<span class="dt">int</span> x, <span class="dt">int</span> y) {</a>
+<a class="sourceLine" id="cb2-2" title="2">  <span class="dt">int</span> r0 = x, a0 = <span class="dv">1</span>, b0 = <span class="dv">0</span>;</a>
+<a class="sourceLine" id="cb2-3" title="3">  <span class="cf">for</span> (<span class="dt">int</span> r = y, a = <span class="dv">0</span>, b = <span class="dv">1</span>; r &gt; <span class="dv">0</span>; ) {</a>
+<a class="sourceLine" id="cb2-4" title="4">    <span class="dt">int</span> r2 = r0 % r;</a>
+<a class="sourceLine" id="cb2-5" title="5">    <span class="dt">int</span> a2 = a0 - r0 / r * a;</a>
+<a class="sourceLine" id="cb2-6" title="6">    <span class="dt">int</span> b2 = b0 - r0 / r * b;</a>
+<a class="sourceLine" id="cb2-7" title="7">    r0 = r; r = r2;</a>
+<a class="sourceLine" id="cb2-8" title="8">    a0 = a; a = a2;</a>
+<a class="sourceLine" id="cb2-9" title="9">    b0 = b; b = b2;</a>
+<a class="sourceLine" id="cb2-10" title="10">  }</a>
+<a class="sourceLine" id="cb2-11" title="11">  <span class="cf">return</span> make_tuple(a0, b0, r0);</a>
+<a class="sourceLine" id="cb2-12" title="12">}</a></code></pre></div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
@@ -58,8 +59,11 @@
 <summary class=menu>代数</summary>
 <ul>
 <li><a href="algebra.group.html">群</a></li>
+<li><a href="algebra.ring.html">環</a></li>
 <li><a href="algebra.hyper.html">超数</a></li>
 <li><a href="algebra.total.html">全順序化</a></li>
+<li><a href="algebra.complex.html">虚数</a></li>
+<li><a href="algebra.modint.html">ModInt</a></li>
 </ul>
 </details>
 
@@ -117,14 +121,7 @@
 <h2 id="行列式">行列式</h2>
 <ul>
 <li><a href="matrix.det.naiiv.html">定義に拠る算法</a></li>
-<li><a href="matrix.det.cramer.html">Cramer's rule</a></li>
-</ul>
-</details>
-
-<details class=menu>
-<summary class=menu>虚数</summary>
-<ul>
-<li><a href="complex.html">虚数の定義と演算</a></li>
+<li><a href="matrix.det.cramer.html">Cramer’s rule</a></li>
 </ul>
 </details>
 
@@ -176,7 +173,6 @@
 <summary class=menu>二分探索</summary>
 <ul>
 <li><a href="bin.search.html">二分探索</a></li>
-<li><a href="bin.count.html">出現回数</a></li>
 </ul>
 </details>
 
@@ -194,14 +190,12 @@
 </ul>
 <h2 id="モジュラ演算">モジュラ演算</h2>
 <ul>
-<li><a href="int.modint.html">ModInt</a></li>
 <li><a href="int.mod.inv.html">逆数</a></li>
 <li><a href="int.mod.pow.html">べき乗</a></li>
 </ul>
 <h2 id="素数">素数</h2>
 <ul>
 <li><a href="prime.sieve.html">エラトステネスの篩</a></li>
-<li><a href="moebius.html">メビウス関数</a></li>
 <li><a href="prime.predicate.html">素朴な判定</a></li>
 <li><a href="prime.MillerRabin.html">ミラー・ラビン素数判定</a></li>
 <li><a href="prime.fermat.little.html">フェルマーの小定理</a></li>
@@ -212,6 +206,7 @@
 </ul>
 <h2 id="自然数">自然数</h2>
 <ul>
+<li><a href="nat.moebius.html">メビウス関数</a></li>
 <li><a href="nat.n_vs_nn.html">自然数の対 ↔ 自然数 の変換</a></li>
 <li><a href="nat.mex.html">最小自由数 (最小除外数)</a></li>
 </ul>
@@ -226,6 +221,7 @@
 <details class=menu>
 <summary class=menu>乱数</summary>
 <ul>
+<li><a href="rand.lcg.html">線形合同法</a></li>
 <li><a href="rand.xorshift.html">xor-shift</a></li>
 </ul>
 </details>

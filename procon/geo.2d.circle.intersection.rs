@@ -1,10 +1,11 @@
+/// Geometry - 円同士の交差判定
+// @geo.2d.rs
 #[derive(Debug)]
 enum CircleRelation {
     EQUAL,
     SUB, SUP,  // one contains the other
     INTERSECTION(usize)  // intersection with `n` points
 }
-
 fn circle_relation(a: Circle, b: Circle) -> CircleRelation {
     use CircleRelation::*;
     let d = (a.0 - b.0).norm();

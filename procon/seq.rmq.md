@@ -22,7 +22,6 @@
         - リストに戻す `rmq.to_vec()`
 
 @[rust](seq.rmq.rs)
-@[rust](seq.rmq.ex.rs)
 
 ## [[seq.rmq.cc]]
 

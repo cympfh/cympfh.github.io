@@ -1,12 +1,8 @@
-# ModInt
+# 代数 - ModInt ($\mathbb Z_p$)
 
-勝手に mod を取ってくれる int ライブラリ.
+勝手に剰余を取る整数の環
 
-## [int.modint.rs](int.modint.rs)
-
-あらかた演算は用意してある.
-
-@[rust](int.modint.rs)
+@[rust](algebra.modint.rs)
 
 ## 例題
 

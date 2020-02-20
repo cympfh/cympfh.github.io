@@ -1,48 +1,42 @@
 # 二分探索
 
-整数について Yes/No を返す述語 $P$ があるとする.
-$$P \colon \mathbb Z \to \mathrm{Bool}$$
+## 問題概要
+
+整数（のようなデータ）について Yes/No を返す述語 $P$ があるとする:
+$$P \colon \mathbb Z \to \mathrm{Bool}.$$
 
 そして今, この $P$ はある整数 $m$ があって,
 
 - $n < m \implies P(n) = \mathrm{No}$
 - $n \geq m \implies P(n) = \mathrm{Yes}$
 
-を満たすことが分かっているとする.
+を満たすとする.
 このとき, この整数 $m$ を求めたい.
 
-ただし, 次のような2つの値 $l, r$ も予め分かっているとする.
-すなわち $l$ は十分小さく $P(l) = \mathrm{No}$ を満たし,
-$r$ は十分大きく $P(r) = \mathrm{Yes}$ を満たす.
+ただし, 次のような2つの値 $l, r (l < r)$ が予め与えられるとする:
 
-## 解
+- $P(l) = \mathrm{No}$,
+- $P(r) = \mathrm{Yes}$.
 
-```rust
-// sample P
-fn P(n: i64) -> bool {
-    n * n * n > 100
-}
+## 解法
 
-fn main() {
+区間 $(l,r]$ は $m$ を含んでいる.
+このことを不変条件に持つように上手く区間のサイズを半分にしてく.
+そのためには $l, r$ の適当な中間値を持ってきて, それが $P$ を満たすかをチェックするだけでいい.
+これを繰り返して, 区間のサイズがちょうど $1$ になったとき, その要素が求める答え $m$ である.
 
-    let mut left = -10000;  // small enough
-    let mut right = 100000;  // large enough
+ところで $l,r,m$ の乗ってるデータは, 中間値を取る操作 `middle` と,
+区間のサイズが $1$ であることをチェックする操作 `close` を必要とする.
+逆に言えばこの二つさえあれば整数そのものに限らなくて良い.
+例えば十分小さい値 `eps` を定めて `close(l, r) = (r - l < eps)` とすることで浮動小数点数であっても, 精度 `eps` で `m` が求まる.
 
-    while left + 2 <= right {
-        let mid = (left + right) / 2;
-        println!("{:?} {} => {} {}", left, right, mid, P(mid));
-        if P(mid) {
-            right = mid;
-        } else {
-            left = mid;
-        }
-        // condition:
-        //   P(left) == false
-        //   P(right) == true
-    }
-    // right is the answer
-    println!("The smallest number that satisfies P is {}", right);
-}
-```
+## コード
 
+@[rust](bin.search.rs)
 
+### 応用
+
+整数として配列のインデックス (`usize`) を選び, `prop` を上手く作ることで,
+昇順ソート済みの配列 `xs` 中に `x` がいくつあるか, `x` 以上/以下 がいくつあるか, などを対数時間で計算できる.
+
+@[rust](bin.count.rs)

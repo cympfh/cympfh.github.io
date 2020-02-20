@@ -1,0 +1,77 @@
+#!/bin/bash
+
+err=0
+for dep in peco; do
+  if ! which $dep >/dev/null; then
+    echo "Please install $dep"
+    err=1
+  fi
+done
+if [ $err = 1 ]; then
+  exit 1
+fi
+
+BASEDIR=$(dirname $0)/../
+
+list() {
+  for f in $(find $BASEDIR -type f -name '*.rs'); do
+    FNAME=${f##*/}
+    FNAME=${FNAME%.rs}
+    HEAD="$(head -1 $BASEDIR/$FNAME.rs)"
+    case "$HEAD" in
+      ///* )
+        printf "%s\t%s\n" "$FNAME" "$HEAD"
+        ;;
+      * )
+        printf "%s\n" "$FNAME"
+        ;;
+    esac
+  done |
+    sort
+}
+
+show() {
+
+  # skip if already imported
+  if grep "$1" $IMPORT_LIST; then
+    continue
+  fi
+  echo "$1" >> $IMPORT_LIST
+
+  # has a header?
+  HEAD="$(head -1 $BASEDIR/$1)"
+  case "$HEAD" in
+    ///* )
+      AWK_HEADER_FILTER="NR > 1"
+      ;;
+    * )
+      AWK_HEADER_FILTER="1"
+      ;;
+  esac
+
+  tmpf=$(mktemp)
+  cat $BASEDIR/$1 | awk "$AWK_HEADER_FILTER" >$tmpf
+
+  cat $tmpf | while read line; do
+    case "$line" in
+      "// @"* )
+        import=$(echo "$line" | sed 's/^.*@//g')
+        show $import
+        ;;
+    esac
+  done
+
+  cat $tmpf | sed '/^\/\/ @/d'
+  echo
+  rm $tmpf
+}
+
+SELECT="$(list | peco | sed 's/\t.*//g')"
+if [ -z "$SELECT" ]; then
+  exit
+fi
+
+IMPORT_LIST=$(mktemp)
+: > $IMPORT_LIST
+show "${SELECT}.rs"
+rm -f $IMPORT_LIST

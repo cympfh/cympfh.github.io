@@ -1,3 +1,4 @@
+/// Graph - Minimal Spanning Tree - Kruskal Algorithm
 /// @algebra.group.rs
 fn kruskal<Cost: Group + PartialOrd>(n: usize, edges: &Vec<(usize, usize, Cost)>) -> Cost {
     let mut total = Cost::zero();

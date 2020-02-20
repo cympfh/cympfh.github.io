@@ -1,3 +1,4 @@
+/// Integer function - Extended GCD
 fn ex_gcd(x: i32, y: i32) -> (i32, i32, i32) {
     let mut r0 = x;
     let mut a0 = 1;

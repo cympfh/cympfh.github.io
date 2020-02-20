@@ -1,3 +1,4 @@
+/// Set - Union-Find
 #[derive(Debug, Clone)]
 enum UF { Root(usize), Child(usize) }
 

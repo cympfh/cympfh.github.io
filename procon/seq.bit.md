@@ -20,8 +20,6 @@
 
 @[rust](seq.bit.rs)
 
-@[rust](seq.bit.ex.rs)
-
 ## [seq.bit.cc](seq.bit.cc)
 
 @[cpp](seq.bit.cc)

@@ -1,8 +1,7 @@
-use std::time::SystemTime;
-
+/// Time Limited While-loop
 macro_rules! loop_timeout {
     ( $sec:expr; $body:expr ) => {
-        let now = SystemTime::now();
+        let now = std::time::SystemTime::now();
         loop {
             match now.elapsed() {
                 Ok(elapsed) => {
@@ -19,7 +18,8 @@ macro_rules! loop_timeout {
     };
 }
 
-fn main() {
+// Example
+{
     // yes while 3sec
     use std::time::Duration;
     use std::thread::sleep;

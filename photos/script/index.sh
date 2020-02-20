@@ -29,15 +29,20 @@ sed 's/.*/"&",/; $s/,$//' resources/photos_list
 
 cat <<EOM
 ];
-urls.sort((a, b) => 0.5 - Math.random());
+const beta = 1.0;  // randomness coeff
+urls = urls.map((url, i) => [i + Math.random() * urls.length * beta, url])
+  .sort((a, b) => b[0] - a[0])
+  .map((item) => item[1]);
 </script>
 <div class="outer">
   <div class="photos">
   <script>
+    var rows = 15;
     document.open();
-    let num = Math.min(30, urls.length);
+    let num = Math.min(2 * rows, urls.length);
     for (var i = 0; i < num; ++i) {
-      document.write(\`<img src="\${urls[i]}" />\`);
+      var idx = i < rows ? i * 2 : (i - rows) * 2 + 1;
+      document.write(\`<img src="\${urls[idx]}" />\`);
     }
     document.close();
   </script>

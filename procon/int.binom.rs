@@ -1,3 +1,4 @@
+/// Integer function - Binomial
 fn ex_gcd(x: i64, y: i64) -> (i64, i64) {
     let mut r0 = x;
     let mut a0 = 1;

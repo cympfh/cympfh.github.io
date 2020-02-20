@@ -1,3 +1,4 @@
+/// Graph - MaxFlow - Dinic Algorithm
 mod dinic {
     use std::collections::VecDeque;
     use std::cmp::min;

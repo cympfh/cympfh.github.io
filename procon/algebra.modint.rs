@@ -1,3 +1,4 @@
+/// Algebra - ModInt (Zp)
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 struct ModInt { res: i64, md: i64 }
 

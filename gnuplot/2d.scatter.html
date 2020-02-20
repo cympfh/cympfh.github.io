@@ -19,49 +19,57 @@
       <div class="container">
         <section class="main-content columns is-fullheight">
 
-          <div class="article column is-8">
+          <div class="article column is-8 is-10-mobile">
             <h1 id="散布図">散布図</h1>
 <h2 id="点の散布図">点の散布図</h2>
-<p><img src="2d.scatter.png" /></p>
+<figure>
+<img src="2d.scatter.png" />
+</figure>
 <p>点をプロットするだけなら gnuplot で何も修飾しない <code>plot</code> によって実現できる.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode ruby"><code class="sourceCode ruby"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co"># gen.rb</span></a>
-<a class="sourceLine" id="cb1-2" data-line-number="2">N = <span class="dv">26</span></a>
-<a class="sourceLine" id="cb1-3" data-line-number="3">N.times <span class="kw">do</span></a>
-<a class="sourceLine" id="cb1-4" data-line-number="4">  x = rand**<span class="dv">2</span></a>
-<a class="sourceLine" id="cb1-5" data-line-number="5">  y = rand**<span class="dv">2</span></a>
-<a class="sourceLine" id="cb1-6" data-line-number="6">  puts <span class="st">&quot;</span><span class="ot">#{</span>x<span class="ot">}</span><span class="st"> </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st">&quot;</span></a>
-<a class="sourceLine" id="cb1-7" data-line-number="7"><span class="kw">end</span></a></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="ex">plot</span> <span class="st">&#39;&lt;ruby gen.rb&#39;</span></a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="co"># gen.rb</span>
+N = <span class="dv">26</span>
+N.times <span class="kw">do</span>
+  x = rand**<span class="dv">2</span>
+  y = rand**<span class="dv">2</span>
+  puts <span class="st">&quot;</span><span class="ot">#{</span>x<span class="ot">}</span><span class="st"> </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st">&quot;</span>
+<span class="kw">end</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">plot</span> <span class="st">&#39;&lt;ruby gen.rb&#39;</span></code></pre></div>
 <h2 id="テキストの散布図-ラベル付き点">テキストの散布図 (ラベル付き点)</h2>
-<p><img src="2d.scatter.labels.png" /></p>
+<figure>
+<img src="2d.scatter.labels.png" />
+</figure>
 <p>点の代わりにテキストを置くには <code>with labels</code> によって点をプロットすればよい.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode ruby"><code class="sourceCode ruby"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># gen.rb</span></a>
-<a class="sourceLine" id="cb3-2" data-line-number="2">N = <span class="dv">26</span></a>
-<a class="sourceLine" id="cb3-3" data-line-number="3">N.times <span class="kw">do</span> |i|</a>
-<a class="sourceLine" id="cb3-4" data-line-number="4">  x = rand</a>
-<a class="sourceLine" id="cb3-5" data-line-number="5">  y = rand</a>
-<a class="sourceLine" id="cb3-6" data-line-number="6">  puts <span class="st">&quot;</span><span class="ot">#{</span>x<span class="ot">}</span><span class="st"> </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st"> label_</span><span class="ot">#{</span>(<span class="ch">&#39;a&#39;</span>.ord + i).chr<span class="ot">}</span><span class="st">&quot;</span></a>
-<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="kw">end</span></a></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="ex">plot</span> <span class="st">&#39;&lt;ruby gen.rb&#39;</span> with labels</a></code></pre></div>
-<p>ラベルといったテキストには “Enhanced Text Control Codes” が機能し、上の例では <code>_</code> によって下付き文字になっている.</p>
+<div class="sourceCode"><pre class="sourceCode ruby"><code class="sourceCode ruby"><span class="co"># gen.rb</span>
+N = <span class="dv">26</span>
+N.times <span class="kw">do</span> |i|
+  x = rand
+  y = rand
+  puts <span class="st">&quot;</span><span class="ot">#{</span>x<span class="ot">}</span><span class="st"> </span><span class="ot">#{</span>y<span class="ot">}</span><span class="st"> label_</span><span class="ot">#{</span>(<span class="st">&#39;a&#39;</span>.ord + i).chr<span class="ot">}</span><span class="st">&quot;</span>
+<span class="kw">end</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">plot</span> <span class="st">&#39;&lt;ruby gen.rb&#39;</span> with labels</code></pre></div>
+<p>ラベルといったテキストには &quot;Enhanced Text Control Codes&quot; が機能し、上の例では <code>_</code> によって下付き文字になっている.</p>
 <h3 id="装飾">装飾</h3>
 <p><code>with labels</code> に対して 枠付きやフォント、フォントサイズの指定が出来る.</p>
-<p><img src="2d.scatter.labels.boxed.png" /></p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="ex">plot</span> <span class="st">&#39;&lt;ruby gen.rb&#39;</span> with labels boxed font <span class="st">&quot;,20&quot;</span></a></code></pre></div>
+<figure>
+<img src="2d.scatter.labels.boxed.png" />
+</figure>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">plot</span> <span class="st">&#39;&lt;ruby gen.rb&#39;</span> with labels boxed font <span class="st">&quot;,20&quot;</span></code></pre></div>
 <h2 id="画像の散布図">画像の散布図</h2>
 <p>点の代わりに画像を置きたい.</p>
 <ul>
 <li><a href="http://www.ss.scphys.kyoto-u.ac.jp/person/yonezawa/contents/program/gnuplot/enbed_figure.html">gnuplotのグラフに画像を埋め込む - 米澤進吾 ホームページ</a></li>
 </ul>
 <p>できなくはないっぽい. リンク先では 4.2.2 では png 等が扱えないとあるが 5.0 では png 画像でも問題なく埋め込めた.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="ex">plot</span> <span class="st">&#39;/tmp/tmp1.png&#39;</span> binary filetype=png array=100x100 origin=(0, 0) <span class="ex">with</span> rgbimage not, \</a>
-<a class="sourceLine" id="cb6-2" data-line-number="2">     <span class="st">&#39;/tmp/tmp2.png&#39;</span> binary filetype=png array=100x100 origin=(200, 200) <span class="ex">with</span> rgbimage not,</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">plot</span> <span class="st">&#39;/tmp/tmp1.png&#39;</span> binary filetype=png array=100x100 origin=(0, 0) <span class="ex">with</span> rgbimage not, \
+     <span class="st">&#39;/tmp/tmp2.png&#39;</span> binary filetype=png array=100x100 origin=(200, 200) <span class="ex">with</span> rgbimage not,</code></pre></div>
 <p><code>origin</code> を起点座標とし、<code>array</code> で指定したサイズ分だけを表示する. <code>array</code> を省略すれば画像全体を埋め込み、 デフォルトでは画像 1x1px をグラフ中の 1x1 に相当させる (ここは <code>dx, dy</code> でスケールさせられる). ただ場合によっては予め画像のサイズをリサイズしておいたほうが使いやすい. またプロットする点の数だけ、<code>plot</code> コマンドを並べることになるので、あまり、散布図の作成に適してるとは言えないかも.</p>
 <h3 id="例">例</h3>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="ex">system</span>(<span class="st">&quot;wget -O xfce.png https://gnulinux.guide/images/d/d1/XfceLogo.png&quot;</span>)</a>
-<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="ex">plot</span> <span class="st">&#39;xfce.png&#39;</span> binary filetype=png origin=(0, 0) <span class="ex">with</span> rgbimage not, \</a>
-<a class="sourceLine" id="cb7-3" data-line-number="3">     <span class="st">&#39;xfce.png&#39;</span> binary filetype=png origin=(200, 200) <span class="ex">with</span> rgbimage not,</a></code></pre></div>
-<p><img src="2d.scatter.images.png" /></p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">system</span>(<span class="st">&quot;wget -O xfce.png https://gnulinux.guide/images/d/d1/XfceLogo.png&quot;</span>)
+<span class="ex">plot</span> <span class="st">&#39;xfce.png&#39;</span> binary filetype=png origin=(0, 0) <span class="ex">with</span> rgbimage not, \
+     <span class="st">&#39;xfce.png&#39;</span> binary filetype=png origin=(200, 200) <span class="ex">with</span> rgbimage not,</code></pre></div>
+<figure>
+<img src="2d.scatter.images.png" />
+</figure>
 <p>PNGの透過などは適切に処理されなかったりするので、あまり期待しすぎないほうがよさそう.</p>
           </div>
 
@@ -84,6 +92,7 @@
 <li><a href="style.linestyle.html">linestyle</a></li>
 <li><a href="style.xtics_ytics.html">xtics/ytics</a></li>
 <li><a href="style.awesome.html">awesome</a></li>
+<li><a href="style.pointinterval.html">pointinterval</a></li>
 </ul>
 <h2 id="fitting">fitting</h2>
 <ul>

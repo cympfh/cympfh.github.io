@@ -19,7 +19,7 @@
       <div class="container">
         <section class="main-content columns is-fullheight">
 
-          <div class="article column is-8">
+          <div class="article column is-8 is-10-mobile">
             <h1 id="箱ひげ図-boxplot-box-and-whisker-plot">箱ひげ図 (boxplot, box-and-whisker plot)</h1>
 <h2 id="参考">参考</h2>
 <ul>
@@ -28,7 +28,9 @@
 </ul>
 <h2 id="概要">概要</h2>
 <p><span class="math inline">\(\{ (\text{label}_i, z_i) \}_i\)</span> <span class="math inline">\((z_i \in \mathbb{R})\)</span> というデータ列から、 次の図のような、いわゆる箱ひげ図を作成する.</p>
-<p><img src="2d.box.png" /></p>
+<figure>
+<img src="2d.box.png" />
+</figure>
 <h2 id="data-format">data format</h2>
 <p>一列目にデータのラベル (またはカテゴリ) を文字列で与える. これに関してソートする必要はない. 二列目にデータの実数値を与える.</p>
 <pre><code>Label_1 z1
@@ -36,7 +38,7 @@ Label_2 z2
 :
 Label_n zn</code></pre>
 <h2 id="with-boxplot"><code>with boxplot</code></h2>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="ex">plot</span> ... using <span class="op">&lt;</span>x<span class="op">&gt;</span>:<span class="op">&lt;</span>z<span class="op">&gt;</span><span class="dt">{:&lt;box_width&gt;{:&lt;label&gt;}}</span> with boxplot</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">plot</span> ... using <span class="op">&lt;</span>x<span class="op">&gt;</span>:<span class="op">&lt;</span>z<span class="op">&gt;</span><span class="dt">{:&lt;box_width&gt;{:&lt;label&gt;}}</span> with boxplot</code></pre></div>
 <table>
 <thead>
 <tr class="header">
@@ -49,25 +51,25 @@ Label_n zn</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;"><code>x</code></td>
-<td style="text-align: center;">–</td>
+<td style="text-align: center;">--</td>
 <td style="text-align: left;">(double)x</td>
 <td style="text-align: left;">データ (箱ひげ) を置く x 座標</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><code>z</code></td>
-<td style="text-align: center;">–</td>
+<td style="text-align: center;">--</td>
 <td style="text-align: left;">(double)z</td>
 <td style="text-align: left;">データ (実数値)</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><code>box_width</code></td>
-<td style="text-align: center;">–</td>
+<td style="text-align: center;">--</td>
 <td style="text-align: left;">(double)</td>
 <td style="text-align: left;">箱の横幅サイズ</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><code>label</code></td>
-<td style="text-align: center;">–</td>
+<td style="text-align: center;">--</td>
 <td style="text-align: left;">(string)</td>
 <td style="text-align: left;">データのラベル. これを与えるとき <code>x</code> は無視される</td>
 </tr>
@@ -75,20 +77,22 @@ Label_n zn</code></pre>
 </table>
 <p>ラベルを与えるときは <code>x</code> は無視されて自動的に配置される.</p>
 <p>先述の data format に合わせると</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="ex">using</span> (0):<span class="ex">2</span>:(1):<span class="ex">1</span> with boxplot</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">using</span> (0):<span class="ex">2</span>:(1):<span class="ex">1</span> with boxplot</code></pre></div>
 <p>などとなる.</p>
 <h2 id="example">example</h2>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw">set</span> <span class="ex">terminal</span> pngcairo size 350,600</a>
-<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="kw">set</span> <span class="ex">output</span> <span class="st">&#39;box.png&#39;</span></a>
-<a class="sourceLine" id="cb4-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="kw">set</span> <span class="ex">grid</span></a>
-<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="kw">set</span> <span class="ex">ytics</span> 0.1</a>
-<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="bu">unset</span> <span class="va">key</span></a>
-<a class="sourceLine" id="cb4-7" data-line-number="7"><span class="ex">plot</span> <span class="st">&#39;box.dat&#39;</span> u (0):<span class="ex">2</span>:(0):<span class="ex">1</span> with boxplot</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">set</span> <span class="ex">terminal</span> pngcairo size 350,600
+<span class="kw">set</span> <span class="ex">output</span> <span class="st">&#39;box.png&#39;</span>
+
+<span class="kw">set</span> <span class="ex">grid</span>
+<span class="kw">set</span> <span class="ex">ytics</span> 0.1
+<span class="bu">unset</span> <span class="va">key</span>
+<span class="ex">plot</span> <span class="st">&#39;box.dat&#39;</span> u (0):<span class="ex">2</span>:(0):<span class="ex">1</span> with boxplot</code></pre></div>
 <ul>
 <li><a href="2d.box.dat">box.dat</a></li>
 </ul>
-<p><img src="2d.box.png" /></p>
+<figure>
+<img src="2d.box.png" />
+</figure>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
@@ -110,6 +114,7 @@ Label_n zn</code></pre>
 <li><a href="style.linestyle.html">linestyle</a></li>
 <li><a href="style.xtics_ytics.html">xtics/ytics</a></li>
 <li><a href="style.awesome.html">awesome</a></li>
+<li><a href="style.pointinterval.html">pointinterval</a></li>
 </ul>
 <h2 id="fitting">fitting</h2>
 <ul>

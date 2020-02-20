@@ -19,19 +19,19 @@
       <div class="container">
         <section class="main-content columns is-fullheight">
 
-          <div class="article column is-8">
+          <div class="article column is-8 is-10-mobile">
             <h1 id="日付時刻データ">日付時刻データ</h1>
 <h2 id="timefmt-を使う方法">timefmt を使う方法</h2>
 <p>用いるデータの中に出現する日付時刻のフォーマットがただ一通りの場合に有効.</p>
 <p>まず、 読み込むデータの <code>x</code> 及び <code>y</code> が日付時刻であることを宣言する必要がある.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">set</span> <span class="ex">xdata</span> time</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">set</span> <span class="ex">ydata</span> time</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">set</span> <span class="ex">xdata</span> time
+<span class="kw">set</span> <span class="ex">ydata</span> time</code></pre></div>
 <p>日付時刻データのフォーマットはデフォルトでは <code>&quot;%d/%m/%y,%H:%M&quot;</code> である. <code>%-</code>指定子の意味は後述. C言語の printf みたいな感じでフォーマットを作って、</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">set</span> <span class="ex">timefmt</span> <span class="op">&lt;</span>format<span class="op">&gt;</span></a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">set</span> <span class="ex">timefmt</span> <span class="op">&lt;</span>format<span class="op">&gt;</span></code></pre></div>
 <p>を用いて自由にフォーマットを変更できる.</p>
 <p>また <code>xtics</code> <code>ytics</code> の表示に関しても、そのフォーマットを別途指定する必要がある (<code>timefmt</code> に勝手に揃う気がしてたんだけど、バージョンによるのかもしれない).</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">set</span> <span class="ex">format</span> x <span class="op">&lt;</span>format<span class="op">&gt;</span></a>
-<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="kw">set</span> <span class="ex">format</span> y <span class="op">&lt;</span>format<span class="op">&gt;</span></a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">set</span> <span class="ex">format</span> x <span class="op">&lt;</span>format<span class="op">&gt;</span>
+<span class="kw">set</span> <span class="ex">format</span> y <span class="op">&lt;</span>format<span class="op">&gt;</span></code></pre></div>
 <p>この <code>&lt;format&gt;</code> も先ほどのと同じ、%-指定子を用いた文字列である.</p>
 <h2 id="timeformat--指定子">timeformat <code>%-</code>指定子</h2>
 <table>
@@ -90,14 +90,14 @@
 </table>
 <h3 id="例">例</h3>
 <p>時刻表示の中にスペース文字など、通常区切り文字として使われるようなものが含まれることが多々ある. そういうときのために <code>using 1:2</code> などを明示的に指定する必要がある.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw">set</span> <span class="ex">terminal</span> pngcairo size 700,400</a>
-<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="kw">set</span> <span class="ex">output</span> <span class="st">&#39;data.timefmt.png&#39;</span></a>
-<a class="sourceLine" id="cb4-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="kw">set</span> <span class="ex">xdata</span> time</a>
-<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="kw">set</span> <span class="ex">timefmt</span> <span class="st">&#39;%Y/%m&#39;</span></a>
-<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="kw">set</span> <span class="ex">format</span> x <span class="st">&#39;%Y/%m&#39;</span></a>
-<a class="sourceLine" id="cb4-7" data-line-number="7"><span class="kw">set</span> <span class="ex">grid</span></a>
-<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="ex">plot</span> <span class="st">&#39;data.timefmt.dat&#39;</span> u 1:2 smooth cspline</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">set</span> <span class="ex">terminal</span> pngcairo size 700,400
+<span class="kw">set</span> <span class="ex">output</span> <span class="st">&#39;data.timefmt.png&#39;</span>
+
+<span class="kw">set</span> <span class="ex">xdata</span> time
+<span class="kw">set</span> <span class="ex">timefmt</span> <span class="st">&#39;%Y/%m&#39;</span>
+<span class="kw">set</span> <span class="ex">format</span> x <span class="st">&#39;%Y/%m&#39;</span>
+<span class="kw">set</span> <span class="ex">grid</span>
+<span class="ex">plot</span> <span class="st">&#39;data.timefmt.dat&#39;</span> u 1:2 smooth cspline</code></pre></div>
 <pre class="dat"><code># data.timefmt.dat
 2015/07 2677
 2015/08 5065
@@ -128,35 +128,39 @@
 2017/09 4054
 2017/10 3459
 </code></pre>
-<p><img src="data.timefmt.png" /></p>
+<figure>
+<img src="data.timefmt.png" />
+</figure>
 <h2 id="異なるフォーマットを共存させるには">異なるフォーマットを共存させるには</h2>
 <p><code>x</code> と <code>y</code> が異なるフォーマットの日付時刻データである、 あるいは複数のデータを同時にプロットさせるに当たって別のフォーマットが使われてるなどの場合、 異なるフォーマットを指定したい. <code>set timefmt</code> は設定を上書きするだけで、 <code>plot</code> 時点での設定が使われるので、 基本的に1つのフォーマットしか使えない.</p>
-<p>StackOverFlow の “Plot two files in gnuplot with different timefmt” という質問にあった回答の <a href="https://stackoverflow.com/a/31009235" class="uri">https://stackoverflow.com/a/31009235</a> で出来た. <code>using</code> の中で <code>strptime</code> 関数を直接呼び出せばよい. <code>gnuplot 5.0</code> 以上ならより簡素な <code>timecolumn</code> 関数の方が便利</p>
+<p>StackOverFlow の &quot;Plot two files in gnuplot with different timefmt&quot; という質問にあった回答の <a href="https://stackoverflow.com/a/31009235" class="uri">https://stackoverflow.com/a/31009235</a> で出来た. <code>using</code> の中で <code>strptime</code> 関数を直接呼び出せばよい. <code>gnuplot 5.0</code> 以上ならより簡素な <code>timecolumn</code> 関数の方が便利</p>
 <h3 id="例-1">例</h3>
 <p><code>timecolumn</code> 関数を使って、x, y で別のフォーマットが使われているデータをプロットする.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw">set</span> <span class="ex">terminal</span> pngcairo size 700,400</a>
-<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="kw">set</span> <span class="ex">output</span> <span class="st">&#39;data.timefmt2.png&#39;</span></a>
-<a class="sourceLine" id="cb6-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb6-4" data-line-number="4"><span class="va">$data</span> <span class="op">&lt;&lt; EOD</span></a>
-<a class="sourceLine" id="cb6-5" data-line-number="5">2017-10-23 13:43:00</a>
-<a class="sourceLine" id="cb6-6" data-line-number="6">2017-10-24 14:37:45</a>
-<a class="sourceLine" id="cb6-7" data-line-number="7">2017-10-25 14:18:06</a>
-<a class="sourceLine" id="cb6-8" data-line-number="8">2017-10-26 14:31:48</a>
-<a class="sourceLine" id="cb6-9" data-line-number="9">2017-10-27 12:12:41</a>
-<a class="sourceLine" id="cb6-10" data-line-number="10">2017-10-30 13:56:49</a>
-<a class="sourceLine" id="cb6-11" data-line-number="11"><span class="op">EOD</span></a>
-<a class="sourceLine" id="cb6-12" data-line-number="12"></a>
-<a class="sourceLine" id="cb6-13" data-line-number="13"><span class="kw">set</span> <span class="ex">xdata</span> time</a>
-<a class="sourceLine" id="cb6-14" data-line-number="14"><span class="kw">set</span> <span class="ex">ydata</span> time</a>
-<a class="sourceLine" id="cb6-15" data-line-number="15"></a>
-<a class="sourceLine" id="cb6-16" data-line-number="16"><span class="ex">xformat</span> = <span class="st">&#39;%Y-%m-%d&#39;</span>  # parse format (for timecolumn)</a>
-<a class="sourceLine" id="cb6-17" data-line-number="17"><span class="ex">yformat</span> = <span class="st">&#39;%H:%M:%S&#39;</span></a>
-<a class="sourceLine" id="cb6-18" data-line-number="18"></a>
-<a class="sourceLine" id="cb6-19" data-line-number="19"><span class="kw">set</span> <span class="ex">format</span> x <span class="st">&#39;%m/%d&#39;</span>  # tics format</a>
-<a class="sourceLine" id="cb6-20" data-line-number="20"><span class="kw">set</span> <span class="ex">format</span> y <span class="st">&#39;%H:%M&#39;</span></a>
-<a class="sourceLine" id="cb6-21" data-line-number="21"></a>
-<a class="sourceLine" id="cb6-22" data-line-number="22"><span class="ex">plot</span> <span class="va">$data</span> using (timecolumn(1, xformat))<span class="bu">:</span>(timecolumn(2, yformat)) <span class="fu">w</span> lp</a></code></pre></div>
-<p><img src="data.timefmt2.png" /></p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">set</span> <span class="ex">terminal</span> pngcairo size 700,400
+<span class="kw">set</span> <span class="ex">output</span> <span class="st">&#39;data.timefmt2.png&#39;</span>
+
+<span class="va">$data</span> &lt;&lt; EOD
+2017-10-23 13:43:00
+2017-10-24 14:37:45
+2017-10-25 14:18:06
+2017-10-26 14:31:48
+2017-10-27 12:12:41
+2017-10-30 13:56:49
+EOD
+
+se<span class="op">t</span> <span class="ex">xdata</span> time
+set yd<span class="op">a</span><span class="ex">ta</span> time
+
+xform<span class="op">a</span><span class="ex">t</span> = <span class="st">&#39;%Y-%m-%d&#39;</span>  <span class="co"># parse format (for timecolumn)</span>
+yforma<span class="op">t</span> = <span class="st">&#39;%H:%M:%S&#39;</span>
+
+se<span class="op">t</span> <span class="ex">format</span> x <span class="st">&#39;%m/%d&#39;</span>  <span class="co"># tics format</span>
+se<span class="op">t</span> <span class="ex">format</span> y <span class="st">&#39;%H:%M&#39;</span>
+
+plo<span class="op">t</span> <span class="va">$data</span> <span class="ex">using</span> (timecolumn(1, xformat))<span class="bu">:</span>(timecolumn(2, yformat)) <span class="fu">w</span> lp</code></pre></div>
+<figure>
+<img src="data.timefmt2.png" />
+</figure>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
@@ -178,6 +182,7 @@
 <li><a href="style.linestyle.html">linestyle</a></li>
 <li><a href="style.xtics_ytics.html">xtics/ytics</a></li>
 <li><a href="style.awesome.html">awesome</a></li>
+<li><a href="style.pointinterval.html">pointinterval</a></li>
 </ul>
 <h2 id="fitting">fitting</h2>
 <ul>

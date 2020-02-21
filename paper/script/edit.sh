@@ -26,7 +26,7 @@ if [ "$ID" = "*arxiv" ]; then
     ARXIV_ID=$(echo "$URL" | grep -Eo '[0-9]{4}\.[0-9]*')
 
     URL="https://arxiv.org/abs/$ARXIV_ID"
-    TITLE=$(curl -s "$URL" | grep '<title>' | sed 's/^ *<title>//g; s#</title> *$##g')
+    TITLE=$(curl -s "$URL" | grep '<title>' | head -1 | sed 's/^ *<title>//g; s#</title> *$##g')
 
     echo -n "ID for $TITLE > "
     read ID

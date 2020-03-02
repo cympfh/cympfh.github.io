@@ -6,6 +6,7 @@
 - [全順序化](algebra.total.html)
 - [虚数](algebra.complex.html)
 - [ModInt](algebra.modint.html)
+- [行列](algebra.matrix.html)
 
 # グラフ
 
@@ -46,14 +47,6 @@
 - [RMQ](seq.rmq.html)
 - [Starry Sky Tree](seq.starry.html)
 - [SeqSearch](seq.search.html)
-
-# 行列
-
-- [行列演算](matrix.ops.html)
-
-## 行列式
-- [定義に拠る算法](matrix.det.naiiv.html)
-- [Cramer's rule](matrix.det.cramer.html)
 
 # 幾何
 

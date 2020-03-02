@@ -1,37 +1,15 @@
-/// Matrix
-use std::ops::{Add, Sub, Mul, Neg};
-use std::iter::Sum;
-
+/// Algebra - Matrix
+// @algebra.ring.rs
 #[derive(Debug, Clone, PartialEq)]
 struct Matrix<K> { data: Vec<Vec<K>> }
 
-trait MatrixElement: Add<Output=Self> + Mul<Output=Self> + Neg<Output=Self> + Sum + Clone + Copy
-{
-    fn zero() -> Self;
-    fn one() -> Self;
-}
-
-macro_rules! impl_matrix {
-    ($t:tt, $zero:expr, $one:expr) => {
-        impl MatrixElement for $t {
-            fn zero() -> Self { $zero }
-            fn one() -> Self { $one }
-        }
-    }
-}
-impl_matrix!(i64, 0, 1);
-impl_matrix!(i32, 0, 1);
-impl_matrix!(f64, 0., 1.);
-impl_matrix!(f32, 0., 1.);
-
 macro_rules! mat {
-    ( $( $( $x:expr )* );* ) => ( Matrix::new( vec![ $( vec![ $( $x ),* ] ),* ] ) )
+    ( $( $( $x:expr ),* );* ) => ( Matrix::new( vec![ $( vec![ $( $x ),* ] ),* ] ) )
 }
 
-impl<K: MatrixElement> Matrix<K>
-{
-    fn new(data: Vec<Vec<K>>) -> Matrix<K> {
-        Matrix {data: data}
+impl<K: Ring> Matrix<K> {
+    fn new(data: Vec<Vec<K>>) -> Self {
+        Matrix { data: data }
     }
     fn size(&self) -> (usize, usize) {
         (self.data.len(), self.data[0].len())
@@ -44,7 +22,7 @@ impl<K: MatrixElement> Matrix<K>
     fn zero(h: usize, w: usize) -> Matrix<K> {
         Matrix::new(vec![vec![K::zero(); w]; h])
     }
-    fn pow(&self, n: u64) -> Matrix<K> {
+    fn pow(&self, n: usize) -> Matrix<K> {
         if n == 0 {
             Matrix::eye(self.data.len())
         } else if n == 1 {
@@ -66,9 +44,28 @@ impl<K: MatrixElement> Matrix<K>
         let data = self.data.iter().map(|row| row.iter().map(&f).collect()).collect();
         Matrix::new(data)
     }
+    /// O(n!)
+    /// self should be square matrix.
+    fn det(&self) -> K {
+        let (n, m) = self.size();
+        assert!(n == m);
+        if n == 1 { return self.data[0][0] }
+        let mut b = Matrix::<K>::zero(n - 1, m - 1);
+        let mut d = K::zero();
+        for i in 0..n {
+            for bi in 0..n-1 {
+                for bj in 0..n-1 {
+                    let ai = if bi < i { bi } else { bi + 1 };
+                    b.data[bi][bj] = self.data[ai][1 + bj];
+                }
+            }
+            d = d + (if i % 2 == 0 { K::one() } else { -K::one() }) * self.data[i][0] * b.det();
+        }
+        d
+    }
 }
 
-impl<K: MatrixElement> Matrix<K>
+impl<K: Ring> Matrix<K>
 where K: std::ops::RemAssign + std::ops::Rem<Output=K>
 {
     fn powmod(&self, n: u64, modulo: K) -> Matrix<K> {
@@ -88,13 +85,13 @@ where K: std::ops::RemAssign + std::ops::Rem<Output=K>
 }
 
 // -M
-impl<K: MatrixElement> Neg for &Matrix<K> {
+impl<K: Ring> std::ops::Neg for &Matrix<K> {
     type Output = Matrix<K>;
     fn neg(self) -> Matrix<K> { self.map(|&x| -x) }
 }
 
 // M + N
-impl<K: MatrixElement> Add<&Matrix<K>> for &Matrix<K> {
+impl<K: Ring> std::ops::Add<&Matrix<K>> for &Matrix<K> {
     type Output = Matrix<K>;
     fn add(self, other: &Matrix<K>) -> Matrix<K> {
         let (h, w) = self.size();
@@ -104,7 +101,7 @@ impl<K: MatrixElement> Add<&Matrix<K>> for &Matrix<K> {
 }
 
 // M - N
-impl<K: MatrixElement> Sub<&Matrix<K>> for &Matrix<K> {
+impl<K: Ring> std::ops::Sub<&Matrix<K>> for &Matrix<K> {
     type Output = Matrix<K>;
     fn sub(self, other: &Matrix<K>) -> Matrix<K> {
         self + &-other
@@ -112,10 +109,11 @@ impl<K: MatrixElement> Sub<&Matrix<K>> for &Matrix<K> {
 }
 
 // M * N
-impl<K: MatrixElement> Mul<&Matrix<K>> for &Matrix<K> {
+impl<K: Ring> std::ops::Mul<&Matrix<K>> for &Matrix<K> {
     type Output = Matrix<K>;
     fn mul(self, other: &Matrix<K>) -> Matrix<K> {
-        let (h, w, v) = (self.data.len(), other.data.len(), other.data[0].len());
+        let (h, w) = self.size();
+        let (_, v) = other.size();
         let data =
             (0..h).map(|i| (0..v).map(|k| (0..w).map(|j| self.data[i][j] * other.data[j][k]).sum()).collect())
                   .collect();
@@ -124,7 +122,7 @@ impl<K: MatrixElement> Mul<&Matrix<K>> for &Matrix<K> {
 }
 
 // M * k
-impl<K: MatrixElement> Mul<K> for &Matrix<K> {
+impl<K: Ring> std::ops::Mul<K> for &Matrix<K> {
     type Output = Matrix<K>;
     fn mul(self, k: K) -> Matrix<K> {
         self.map(|&x| x * k)

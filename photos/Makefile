@@ -1,7 +1,7 @@
 index:
 	bash script/index.sh > index.html
 
-git:
+git: index
 	git add .
 	git commit -m "Update photo/"
 	git push

@@ -7,6 +7,7 @@
 - [虚数](algebra.complex.html)
 - [ModInt](algebra.modint.html)
 - [行列](algebra.matrix.html)
+- [モノイド](algebra.monoid.html)
 
 # グラフ
 
@@ -46,6 +47,7 @@
 - [BIT](seq.bit.html)
 - [RMQ](seq.rmq.html)
 - [Starry Sky Tree](seq.starry.html)
+- [一般セグメントツリー](seq.segment_tree.html)
 - [SeqSearch](seq.search.html)
 
 # 幾何

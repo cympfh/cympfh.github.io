@@ -22,43 +22,43 @@
           <div class="article column is-8 is-10-mobile">
             <h1 id="graph.kruskal">graph.kruskal</h1>
 <h2 id="graph.kruskal.rs"><a href="graph.kruskal.rs" class="uri">graph.kruskal.rs</a></h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb1-1" title="1"><span class="co">/// Graph - Minimal Spanning Tree - Kruskal Algorithm</span></a>
-<a class="sourceLine" id="cb1-2" title="2"><span class="co">/// @algebra.group.rs</span></a>
-<a class="sourceLine" id="cb1-3" title="3"><span class="kw">fn</span> kruskal&lt;Cost: Group + <span class="bu">PartialOrd</span>&gt;(n: <span class="dt">usize</span>, edges: &amp;<span class="dt">Vec</span>&lt;(<span class="dt">usize</span>, <span class="dt">usize</span>, Cost)&gt;) -&gt; Cost <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-4" title="4">    <span class="kw">let</span> <span class="kw">mut</span> total = <span class="pp">Cost::</span>zero();</a>
-<a class="sourceLine" id="cb1-5" title="5">    <span class="kw">let</span> <span class="kw">mut</span> uf = <span class="pp">UnionFind::</span>new(n);</a>
-<a class="sourceLine" id="cb1-6" title="6">    <span class="kw">let</span> <span class="kw">mut</span> q: <span class="dt">Vec</span>&lt;_&gt; = edges.iter().map(|&amp;(i, j, c)| (Total(c), i, j)).collect();</a>
-<a class="sourceLine" id="cb1-7" title="7">    q.sort();</a>
-<a class="sourceLine" id="cb1-8" title="8">    <span class="kw">for</span> &amp;(cost, i, j) <span class="kw">in</span> q.iter() <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-9" title="9">        <span class="kw">if</span> uf.is_same(i, j) <span class="op">{</span> <span class="kw">continue</span> <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-10" title="10">        uf.merge(i, j);</a>
-<a class="sourceLine" id="cb1-11" title="11">        total = total + cost.<span class="dv">0</span>;</a>
-<a class="sourceLine" id="cb1-12" title="12">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-13" title="13">    total</a>
-<a class="sourceLine" id="cb1-14" title="14"><span class="op">}</span></a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Graph - Minimal Spanning Tree - Kruskal Algorithm</span>
+<span class="co">/// @algebra.group.rs</span>
+<span class="kw">fn</span> kruskal&lt;Cost: Group + <span class="bu">PartialOrd</span>&gt;(n: <span class="dt">usize</span>, edges: &amp;<span class="dt">Vec</span>&lt;(<span class="dt">usize</span>, <span class="dt">usize</span>, Cost)&gt;) -&gt; Cost <span class="op">{</span>
+    <span class="kw">let</span> <span class="kw">mut</span> total = Cost::zero();
+    <span class="kw">let</span> <span class="kw">mut</span> uf = UnionFind::new(n);
+    <span class="kw">let</span> <span class="kw">mut</span> q: <span class="dt">Vec</span>&lt;_&gt; = edges.iter().map(|&amp;(i, j, c)| (Total(c), i, j)).collect();
+    q.sort();
+    <span class="kw">for</span> &amp;(cost, i, j) <span class="kw">in</span> q.iter() <span class="op">{</span>
+        <span class="kw">if</span> uf.is_same(i, j) <span class="op">{</span> <span class="kw">continue</span> <span class="op">}</span>
+        uf.merge(i, j);
+        total = total + cost.<span class="dv">0</span>;
+    <span class="op">}</span>
+    total
+<span class="op">}</span></code></pre></div>
 <h2 id="graph.kruskal.cc"><a href="graph.kruskal.cc" class="uri">graph.kruskal.cc</a></h2>
-<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb2-1" title="1"><span class="co">/// </span><span class="an">@set.union_find.cc</span></a>
-<a class="sourceLine" id="cb2-2" title="2"><span class="dt">int</span> kruskal(<span class="dt">int</span> n, vvi&amp;adj, vvi&amp;cost) {</a>
-<a class="sourceLine" id="cb2-3" title="3">  <span class="dt">int</span> total = <span class="dv">0</span>;</a>
-<a class="sourceLine" id="cb2-4" title="4">  UnionFind uf(n);</a>
-<a class="sourceLine" id="cb2-5" title="5">  <span class="kw">using</span> Edge = tuple&lt;<span class="dt">int</span>, <span class="dt">int</span>, <span class="dt">int</span>&gt;; <span class="co">// cost, from, to</span></a>
-<a class="sourceLine" id="cb2-6" title="6">  priority_queue&lt;Edge, vector&lt;Edge&gt;, greater&lt;Edge&gt;&gt; q; <span class="co">// minimize</span></a>
-<a class="sourceLine" id="cb2-7" title="7">  rep (u, n) {</a>
-<a class="sourceLine" id="cb2-8" title="8">    <span class="cf">for</span> (<span class="dt">int</span> v: adj[u]) {</a>
-<a class="sourceLine" id="cb2-9" title="9">      q.push(make_tuple(cost[u][v], u, v));</a>
-<a class="sourceLine" id="cb2-10" title="10">    }</a>
-<a class="sourceLine" id="cb2-11" title="11">  }</a>
-<a class="sourceLine" id="cb2-12" title="12">  <span class="cf">while</span> (<span class="kw">not</span> q.empty()) {</a>
-<a class="sourceLine" id="cb2-13" title="13">    Edge e = q.top(); q.pop();</a>
-<a class="sourceLine" id="cb2-14" title="14">    <span class="dt">int</span> c = get&lt;<span class="dv">0</span>&gt;(e);</a>
-<a class="sourceLine" id="cb2-15" title="15">    <span class="dt">int</span> u = get&lt;<span class="dv">1</span>&gt;(e),</a>
-<a class="sourceLine" id="cb2-16" title="16">        v = get&lt;<span class="dv">2</span>&gt;(e);</a>
-<a class="sourceLine" id="cb2-17" title="17">    <span class="cf">if</span> (uf.root(u) == uf.root(v)) <span class="cf">continue</span>;</a>
-<a class="sourceLine" id="cb2-18" title="18">    uf.merge(u, v);</a>
-<a class="sourceLine" id="cb2-19" title="19">    total += c;</a>
-<a class="sourceLine" id="cb2-20" title="20">  }</a>
-<a class="sourceLine" id="cb2-21" title="21">  <span class="cf">return</span> total;</a>
-<a class="sourceLine" id="cb2-22" title="22">}</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="co">/// </span><span class="an">@set.union_find.cc</span>
+<span class="dt">int</span> kruskal(<span class="dt">int</span> n, vvi&amp;adj, vvi&amp;cost) {
+  <span class="dt">int</span> total = <span class="dv">0</span>;
+  UnionFind uf(n);
+  <span class="kw">using</span> Edge = tuple&lt;<span class="dt">int</span>, <span class="dt">int</span>, <span class="dt">int</span>&gt;; <span class="co">// cost, from, to</span>
+  priority_queue&lt;Edge, vector&lt;Edge&gt;, greater&lt;Edge&gt;&gt; q; <span class="co">// minimize</span>
+  rep (u, n) {
+    <span class="cf">for</span> (<span class="dt">int</span> v: adj[u]) {
+      q.push(make_tuple(cost[u][v], u, v));
+    }
+  }
+  <span class="cf">while</span> (<span class="kw">not</span> q.empty()) {
+    Edge e = q.top(); q.pop();
+    <span class="dt">int</span> c = get&lt;<span class="dv">0</span>&gt;(e);
+    <span class="dt">int</span> u = get&lt;<span class="dv">1</span>&gt;(e),
+        v = get&lt;<span class="dv">2</span>&gt;(e);
+    <span class="cf">if</span> (uf.root(u) == uf.root(v)) <span class="cf">continue</span>;
+    uf.merge(u, v);
+    total += c;
+  }
+  <span class="cf">return</span> total;
+}</code></pre></div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
@@ -72,6 +72,7 @@
 <li><a href="algebra.complex.html">虚数</a></li>
 <li><a href="algebra.modint.html">ModInt</a></li>
 <li><a href="algebra.matrix.html">行列</a></li>
+<li><a href="algebra.monoid.html">モノイド</a></li>
 </ul>
 </details>
 
@@ -117,6 +118,7 @@
 <li><a href="seq.bit.html">BIT</a></li>
 <li><a href="seq.rmq.html">RMQ</a></li>
 <li><a href="seq.starry.html">Starry Sky Tree</a></li>
+<li><a href="seq.segment_tree.html">一般セグメントツリー</a></li>
 <li><a href="seq.search.html">SeqSearch</a></li>
 </ul>
 </details>

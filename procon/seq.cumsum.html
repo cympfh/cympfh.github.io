@@ -28,30 +28,30 @@
 <li>範囲の合計を返すメソッドを提供する</li>
 </ul>
 <h2 id="seq.cumsum.rs"><a href="seq.cumsum.rs" class="uri">seq.cumsum.rs</a></h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb1-1" title="1"><span class="co">/// Sequence - Cumulative Summation</span></a>
-<a class="sourceLine" id="cb1-2" title="2"><span class="kw">struct</span> Cumsum <span class="op">{</span> array: <span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt; <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-3" title="3"><span class="kw">impl</span> Cumsum <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-4" title="4">    <span class="kw">fn</span> new(xs: &amp;<span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt;) -&gt; Cumsum <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-5" title="5">        <span class="kw">let</span> <span class="kw">mut</span> ac = <span class="dv">0</span>;</a>
-<a class="sourceLine" id="cb1-6" title="6">        <span class="kw">let</span> <span class="kw">mut</span> arr = <span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>; xs.len()<span class="op">]</span>;</a>
-<a class="sourceLine" id="cb1-7" title="7">        <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0</span>..arr.len() <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-8" title="8">            ac += xs<span class="op">[</span>i<span class="op">]</span>;</a>
-<a class="sourceLine" id="cb1-9" title="9">            arr<span class="op">[</span>i<span class="op">]</span> = ac;</a>
-<a class="sourceLine" id="cb1-10" title="10">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-11" title="11">        Cumsum <span class="op">{</span> array: arr <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-12" title="12">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-13" title="13">    <span class="kw">fn</span> sum_up(&amp;<span class="kw">self</span>, idx: <span class="dt">usize</span>) -&gt; <span class="dt">i32</span> <span class="op">{</span> <span class="co">// [0, idx)</span></a>
-<a class="sourceLine" id="cb1-14" title="14">        <span class="kw">if</span> idx &gt; <span class="dv">0</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-15" title="15">            <span class="kw">self</span>.array<span class="op">[</span>idx - <span class="dv">1</span><span class="op">]</span></a>
-<a class="sourceLine" id="cb1-16" title="16">        <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-17" title="17">            <span class="dv">0</span></a>
-<a class="sourceLine" id="cb1-18" title="18">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-19" title="19">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-20" title="20">    <span class="kw">fn</span> sum(&amp;<span class="kw">self</span>, range: <span class="pp">std::ops::</span>Range&lt;<span class="dt">usize</span>&gt;) -&gt; <span class="dt">i32</span> <span class="op">{</span> <span class="co">// sum(i..j) = sum of [i, j)</span></a>
-<a class="sourceLine" id="cb1-21" title="21">        <span class="pp">assert!</span>(range.start &lt;= range.end);</a>
-<a class="sourceLine" id="cb1-22" title="22">        <span class="kw">self</span>.sum_up(range.end) - <span class="kw">self</span>.sum_up(range.start)</a>
-<a class="sourceLine" id="cb1-23" title="23">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-24" title="24"><span class="op">}</span></a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Sequence - Cumulative Summation</span>
+<span class="kw">struct</span> Cumsum <span class="op">{</span> array: <span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt; <span class="op">}</span>
+<span class="kw">impl</span> Cumsum <span class="op">{</span>
+    <span class="kw">fn</span> new(xs: &amp;<span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt;) -&gt; Cumsum <span class="op">{</span>
+        <span class="kw">let</span> <span class="kw">mut</span> ac = <span class="dv">0</span>;
+        <span class="kw">let</span> <span class="kw">mut</span> arr = <span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>; xs.len()<span class="op">]</span>;
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.arr.len() <span class="op">{</span>
+            ac += xs<span class="op">[</span>i<span class="op">]</span>;
+            arr<span class="op">[</span>i<span class="op">]</span> = ac;
+        <span class="op">}</span>
+        Cumsum <span class="op">{</span> array: arr <span class="op">}</span>
+    <span class="op">}</span>
+    <span class="kw">fn</span> sum_up(&amp;<span class="kw">self</span>, idx: <span class="dt">usize</span>) -&gt; <span class="dt">i32</span> <span class="op">{</span> <span class="co">// [0, idx)</span>
+        <span class="kw">if</span> idx &gt; <span class="dv">0</span> <span class="op">{</span>
+            <span class="kw">self</span>.array<span class="op">[</span>idx - <span class="dv">1</span><span class="op">]</span>
+        <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
+            <span class="dv">0</span>
+        <span class="op">}</span>
+    <span class="op">}</span>
+    <span class="kw">fn</span> sum(&amp;<span class="kw">self</span>, range: std::ops::Range&lt;<span class="dt">usize</span>&gt;) -&gt; <span class="dt">i32</span> <span class="op">{</span> <span class="co">// sum(i..j) = sum of [i, j)</span>
+        <span class="pp">assert!</span>(range.start &lt;= range.end);
+        <span class="kw">self</span>.sum_up(range.end) - <span class="kw">self</span>.sum_up(range.start)
+    <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
@@ -65,6 +65,7 @@
 <li><a href="algebra.complex.html">虚数</a></li>
 <li><a href="algebra.modint.html">ModInt</a></li>
 <li><a href="algebra.matrix.html">行列</a></li>
+<li><a href="algebra.monoid.html">モノイド</a></li>
 </ul>
 </details>
 
@@ -110,6 +111,7 @@
 <li><a href="seq.bit.html">BIT</a></li>
 <li><a href="seq.rmq.html">RMQ</a></li>
 <li><a href="seq.starry.html">Starry Sky Tree</a></li>
+<li><a href="seq.segment_tree.html">一般セグメントツリー</a></li>
 <li><a href="seq.search.html">SeqSearch</a></li>
 </ul>
 </details>

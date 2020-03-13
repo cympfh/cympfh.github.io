@@ -46,90 +46,90 @@
 </ul></li>
 </ul>
 <h2 id="seq.bit.rs"><a href="seq.bit.rs" class="uri">seq.bit.rs</a></h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb1-1" title="1"><span class="co">/// Sequence - Binary Indexed Tree (Fenwick Tree)</span></a>
-<a class="sourceLine" id="cb1-2" title="2"><span class="kw">use</span> <span class="pp">std::ops::</span>Range;</a>
-<a class="sourceLine" id="cb1-3" title="3"><span class="kw">struct</span> BIT <span class="op">{</span> size: <span class="dt">usize</span>, array: <span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt; <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-4" title="4"><span class="kw">impl</span> BIT <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-5" title="5">    <span class="kw">fn</span> new(n: <span class="dt">usize</span>) -&gt; BIT <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-6" title="6">        BIT  <span class="op">{</span> size: n, array: <span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>; n + <span class="dv">1</span><span class="op">]</span> <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-7" title="7">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-8" title="8">    <span class="kw">fn</span> add(&amp;<span class="kw">mut</span> <span class="kw">self</span>, idx: <span class="dt">usize</span>, w: <span class="dt">i32</span>) <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-9" title="9">        <span class="kw">let</span> <span class="kw">mut</span> x = idx + <span class="dv">1</span>;</a>
-<a class="sourceLine" id="cb1-10" title="10">        <span class="kw">while</span> x &lt;= <span class="kw">self</span>.size <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-11" title="11">            <span class="kw">self</span>.array<span class="op">[</span>x<span class="op">]</span> += w;</a>
-<a class="sourceLine" id="cb1-12" title="12">            <span class="kw">let</span> xi = x <span class="kw">as</span> <span class="dt">i32</span>;</a>
-<a class="sourceLine" id="cb1-13" title="13">            x += (xi&amp;-xi) <span class="kw">as</span> <span class="dt">usize</span>;</a>
-<a class="sourceLine" id="cb1-14" title="14">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-15" title="15">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-16" title="16">    <span class="kw">fn</span> sum_up(&amp;<span class="kw">self</span>, idx: <span class="dt">usize</span>) -&gt; <span class="dt">i32</span> <span class="op">{</span> <span class="co">// [0, idx)</span></a>
-<a class="sourceLine" id="cb1-17" title="17">        <span class="kw">let</span> <span class="kw">mut</span> sum = <span class="dv">0</span>;</a>
-<a class="sourceLine" id="cb1-18" title="18">        <span class="kw">let</span> <span class="kw">mut</span> x = idx;</a>
-<a class="sourceLine" id="cb1-19" title="19">        <span class="kw">while</span> x &gt; <span class="dv">0</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-20" title="20">            sum += <span class="kw">self</span>.array<span class="op">[</span>x<span class="op">]</span>;</a>
-<a class="sourceLine" id="cb1-21" title="21">            <span class="kw">let</span> xi = x <span class="kw">as</span> <span class="dt">i32</span>;</a>
-<a class="sourceLine" id="cb1-22" title="22">            x -= (xi&amp;-xi) <span class="kw">as</span> <span class="dt">usize</span>;</a>
-<a class="sourceLine" id="cb1-23" title="23">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-24" title="24">        sum</a>
-<a class="sourceLine" id="cb1-25" title="25">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-26" title="26">    <span class="kw">fn</span> sum(&amp;<span class="kw">self</span>, range: Range&lt;<span class="dt">usize</span>&gt;) -&gt; <span class="dt">i32</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-27" title="27">        <span class="kw">self</span>.sum_up(range.end) - <span class="kw">self</span>.sum_up(range.start)</a>
-<a class="sourceLine" id="cb1-28" title="28">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-29" title="29"><span class="op">}</span></a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Sequence - Binary Indexed Tree (Fenwick Tree)</span>
+<span class="kw">use</span> std::ops::Range;
+<span class="kw">struct</span> BIT <span class="op">{</span> size: <span class="dt">usize</span>, array: <span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt; <span class="op">}</span>
+<span class="kw">impl</span> BIT <span class="op">{</span>
+    <span class="kw">fn</span> new(n: <span class="dt">usize</span>) -&gt; BIT <span class="op">{</span>
+        BIT  <span class="op">{</span> size: n, array: <span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>; n + <span class="dv">1</span><span class="op">]</span> <span class="op">}</span>
+    <span class="op">}</span>
+    <span class="kw">fn</span> add(&amp;<span class="kw">mut</span> <span class="kw">self</span>, idx: <span class="dt">usize</span>, w: <span class="dt">i32</span>) <span class="op">{</span>
+        <span class="kw">let</span> <span class="kw">mut</span> x = idx + <span class="dv">1</span>;
+        <span class="kw">while</span> x &lt;= <span class="kw">self</span>.size <span class="op">{</span>
+            <span class="kw">self</span>.array<span class="op">[</span>x<span class="op">]</span> += w;
+            <span class="kw">let</span> xi = x <span class="kw">as</span> <span class="dt">i32</span>;
+            x += (xi&amp;-xi) <span class="kw">as</span> <span class="dt">usize</span>;
+        <span class="op">}</span>
+    <span class="op">}</span>
+    <span class="kw">fn</span> sum_up(&amp;<span class="kw">self</span>, idx: <span class="dt">usize</span>) -&gt; <span class="dt">i32</span> <span class="op">{</span> <span class="co">// [0, idx)</span>
+        <span class="kw">let</span> <span class="kw">mut</span> sum = <span class="dv">0</span>;
+        <span class="kw">let</span> <span class="kw">mut</span> x = idx;
+        <span class="kw">while</span> x &gt; <span class="dv">0</span> <span class="op">{</span>
+            sum += <span class="kw">self</span>.array<span class="op">[</span>x<span class="op">]</span>;
+            <span class="kw">let</span> xi = x <span class="kw">as</span> <span class="dt">i32</span>;
+            x -= (xi&amp;-xi) <span class="kw">as</span> <span class="dt">usize</span>;
+        <span class="op">}</span>
+        sum
+    <span class="op">}</span>
+    <span class="kw">fn</span> sum(&amp;<span class="kw">self</span>, range: Range&lt;<span class="dt">usize</span>&gt;) -&gt; <span class="dt">i32</span> <span class="op">{</span>
+        <span class="kw">self</span>.sum_up(range.end) - <span class="kw">self</span>.sum_up(range.start)
+    <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
 <h2 id="seq.bit.cc"><a href="seq.bit.cc" class="uri">seq.bit.cc</a></h2>
-<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">struct</span> BIT {</a>
-<a class="sourceLine" id="cb2-2" title="2">  <span class="dt">int</span> N;</a>
-<a class="sourceLine" id="cb2-3" title="3">  <span class="dt">int</span> *ar;</a>
-<a class="sourceLine" id="cb2-4" title="4">  BIT(<span class="dt">int</span> n) {</a>
-<a class="sourceLine" id="cb2-5" title="5">    N = n;</a>
-<a class="sourceLine" id="cb2-6" title="6">    ar = <span class="kw">new</span> <span class="dt">int</span>[n+<span class="dv">1</span>];</a>
-<a class="sourceLine" id="cb2-7" title="7">    <span class="cf">for</span>(<span class="dt">int</span> i=<span class="dv">0</span>;i&lt;n+<span class="dv">1</span>;ar[i++]=<span class="dv">0</span>);</a>
-<a class="sourceLine" id="cb2-8" title="8">  }</a>
-<a class="sourceLine" id="cb2-9" title="9">  ~BIT() {</a>
-<a class="sourceLine" id="cb2-10" title="10">    <span class="kw">delete</span>[] ar;</a>
-<a class="sourceLine" id="cb2-11" title="11">  }</a>
-<a class="sourceLine" id="cb2-12" title="12">  <span class="dt">void</span> add(<span class="dt">int</span> idx, <span class="dt">int</span> w) {</a>
-<a class="sourceLine" id="cb2-13" title="13">    <span class="cf">for</span> (<span class="dt">int</span> x = idx+<span class="dv">1</span>; x &lt;= N; x += x&amp;-x) {</a>
-<a class="sourceLine" id="cb2-14" title="14">      ar[x] += w;</a>
-<a class="sourceLine" id="cb2-15" title="15">    }</a>
-<a class="sourceLine" id="cb2-16" title="16">  }</a>
-<a class="sourceLine" id="cb2-17" title="17">  <span class="dt">int</span> sum_up(<span class="dt">int</span> idx) {</a>
-<a class="sourceLine" id="cb2-18" title="18">    <span class="dt">int</span> ret = <span class="dv">0</span>;</a>
-<a class="sourceLine" id="cb2-19" title="19">    <span class="cf">for</span> (<span class="dt">int</span> x = idx; x &gt; <span class="dv">0</span>; x -= x&amp;-x) {</a>
-<a class="sourceLine" id="cb2-20" title="20">      ret += ar[x];</a>
-<a class="sourceLine" id="cb2-21" title="21">    }</a>
-<a class="sourceLine" id="cb2-22" title="22">    <span class="cf">return</span> ret;</a>
-<a class="sourceLine" id="cb2-23" title="23">  }</a>
-<a class="sourceLine" id="cb2-24" title="24">  <span class="dt">int</span> sum(<span class="dt">int</span> left, <span class="dt">int</span> right) {  <span class="co">// [left, right)</span></a>
-<a class="sourceLine" id="cb2-25" title="25">      <span class="cf">return</span> sum_up(right) - sum_up(left);</a>
-<a class="sourceLine" id="cb2-26" title="26">  }</a>
-<a class="sourceLine" id="cb2-27" title="27">};</a></code></pre></div>
-<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb3-1" title="1"><span class="dt">int</span> main() {</a>
-<a class="sourceLine" id="cb3-2" title="2"></a>
-<a class="sourceLine" id="cb3-3" title="3">    <span class="kw">auto</span> bit = BIT(<span class="dv">5</span>);</a>
-<a class="sourceLine" id="cb3-4" title="4"></a>
-<a class="sourceLine" id="cb3-5" title="5">    bit.add(<span class="dv">0</span>, <span class="dv">1</span>);</a>
-<a class="sourceLine" id="cb3-6" title="6">    bit.add(<span class="dv">4</span>, <span class="dv">1</span>);  <span class="co">// [1, 0, 0, 0, 1]</span></a>
-<a class="sourceLine" id="cb3-7" title="7">    trace(bit.sum(<span class="dv">0</span>, <span class="dv">0</span>));  <span class="co">// 0</span></a>
-<a class="sourceLine" id="cb3-8" title="8">    trace(bit.sum(<span class="dv">0</span>, <span class="dv">1</span>));  <span class="co">// 1</span></a>
-<a class="sourceLine" id="cb3-9" title="9">    trace(bit.sum(<span class="dv">0</span>, <span class="dv">2</span>));  <span class="co">// 1</span></a>
-<a class="sourceLine" id="cb3-10" title="10">    trace(bit.sum(<span class="dv">0</span>, <span class="dv">3</span>));  <span class="co">// 1</span></a>
-<a class="sourceLine" id="cb3-11" title="11">    trace(bit.sum(<span class="dv">0</span>, <span class="dv">4</span>));  <span class="co">// 1</span></a>
-<a class="sourceLine" id="cb3-12" title="12">    trace(bit.sum(<span class="dv">0</span>, <span class="dv">5</span>));  <span class="co">// 2</span></a>
-<a class="sourceLine" id="cb3-13" title="13">    trace(bit.sum(<span class="dv">1</span>, <span class="dv">4</span>));  <span class="co">// 0</span></a>
-<a class="sourceLine" id="cb3-14" title="14">    trace(bit.sum(<span class="dv">1</span>, <span class="dv">5</span>));  <span class="co">// 1</span></a>
-<a class="sourceLine" id="cb3-15" title="15">    trace(bit.sum(<span class="dv">2</span>, <span class="dv">5</span>));  <span class="co">// 1</span></a>
-<a class="sourceLine" id="cb3-16" title="16"></a>
-<a class="sourceLine" id="cb3-17" title="17">    bit.add(<span class="dv">4</span>, -<span class="dv">1</span>);</a>
-<a class="sourceLine" id="cb3-18" title="18">    bit.add(<span class="dv">3</span>, <span class="dv">1</span>);</a>
-<a class="sourceLine" id="cb3-19" title="19">    bit.add(<span class="dv">2</span>, <span class="dv">2</span>);  <span class="co">// [1, 0, 2, 1, 0]</span></a>
-<a class="sourceLine" id="cb3-20" title="20">    trace(bit.sum(<span class="dv">0</span>, <span class="dv">1</span>));  <span class="co">// 1</span></a>
-<a class="sourceLine" id="cb3-21" title="21">    trace(bit.sum(<span class="dv">0</span>, <span class="dv">2</span>));  <span class="co">// 1</span></a>
-<a class="sourceLine" id="cb3-22" title="22">    trace(bit.sum(<span class="dv">0</span>, <span class="dv">3</span>));  <span class="co">// 3</span></a>
-<a class="sourceLine" id="cb3-23" title="23">    trace(bit.sum(<span class="dv">0</span>, <span class="dv">4</span>));  <span class="co">// 4</span></a>
-<a class="sourceLine" id="cb3-24" title="24">    trace(bit.sum(<span class="dv">2</span>, <span class="dv">5</span>));  <span class="co">// 3</span></a>
-<a class="sourceLine" id="cb3-25" title="25"></a>
-<a class="sourceLine" id="cb3-26" title="26">    <span class="cf">return</span> <span class="dv">0</span>;</a>
-<a class="sourceLine" id="cb3-27" title="27">}</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="kw">struct</span> BIT {
+  <span class="dt">int</span> N;
+  <span class="dt">int</span> *ar;
+  BIT(<span class="dt">int</span> n) {
+    N = n;
+    ar = <span class="kw">new</span> <span class="dt">int</span>[n<span class="dv">+1</span>];
+    <span class="cf">for</span>(<span class="dt">int</span> i=<span class="dv">0</span>;i&lt;n<span class="dv">+1</span>;ar[i++]=<span class="dv">0</span>);
+  }
+  ~BIT() {
+    <span class="kw">delete</span>[] ar;
+  }
+  <span class="dt">void</span> add(<span class="dt">int</span> idx, <span class="dt">int</span> w) {
+    <span class="cf">for</span> (<span class="dt">int</span> x = idx<span class="dv">+1</span>; x &lt;= N; x += x&amp;-x) {
+      ar[x] += w;
+    }
+  }
+  <span class="dt">int</span> sum_up(<span class="dt">int</span> idx) {
+    <span class="dt">int</span> ret = <span class="dv">0</span>;
+    <span class="cf">for</span> (<span class="dt">int</span> x = idx; x &gt; <span class="dv">0</span>; x -= x&amp;-x) {
+      ret += ar[x];
+    }
+    <span class="cf">return</span> ret;
+  }
+  <span class="dt">int</span> sum(<span class="dt">int</span> left, <span class="dt">int</span> right) {  <span class="co">// [left, right)</span>
+      <span class="cf">return</span> sum_up(right) - sum_up(left);
+  }
+};</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="dt">int</span> main() {
+
+    <span class="kw">auto</span> bit = BIT(<span class="dv">5</span>);
+
+    bit.add(<span class="dv">0</span>, <span class="dv">1</span>);
+    bit.add(<span class="dv">4</span>, <span class="dv">1</span>);  <span class="co">// [1, 0, 0, 0, 1]</span>
+    trace(bit.sum(<span class="dv">0</span>, <span class="dv">0</span>));  <span class="co">// 0</span>
+    trace(bit.sum(<span class="dv">0</span>, <span class="dv">1</span>));  <span class="co">// 1</span>
+    trace(bit.sum(<span class="dv">0</span>, <span class="dv">2</span>));  <span class="co">// 1</span>
+    trace(bit.sum(<span class="dv">0</span>, <span class="dv">3</span>));  <span class="co">// 1</span>
+    trace(bit.sum(<span class="dv">0</span>, <span class="dv">4</span>));  <span class="co">// 1</span>
+    trace(bit.sum(<span class="dv">0</span>, <span class="dv">5</span>));  <span class="co">// 2</span>
+    trace(bit.sum(<span class="dv">1</span>, <span class="dv">4</span>));  <span class="co">// 0</span>
+    trace(bit.sum(<span class="dv">1</span>, <span class="dv">5</span>));  <span class="co">// 1</span>
+    trace(bit.sum(<span class="dv">2</span>, <span class="dv">5</span>));  <span class="co">// 1</span>
+
+    bit.add(<span class="dv">4</span>, <span class="dv">-1</span>);
+    bit.add(<span class="dv">3</span>, <span class="dv">1</span>);
+    bit.add(<span class="dv">2</span>, <span class="dv">2</span>);  <span class="co">// [1, 0, 2, 1, 0]</span>
+    trace(bit.sum(<span class="dv">0</span>, <span class="dv">1</span>));  <span class="co">// 1</span>
+    trace(bit.sum(<span class="dv">0</span>, <span class="dv">2</span>));  <span class="co">// 1</span>
+    trace(bit.sum(<span class="dv">0</span>, <span class="dv">3</span>));  <span class="co">// 3</span>
+    trace(bit.sum(<span class="dv">0</span>, <span class="dv">4</span>));  <span class="co">// 4</span>
+    trace(bit.sum(<span class="dv">2</span>, <span class="dv">5</span>));  <span class="co">// 3</span>
+
+    <span class="cf">return</span> <span class="dv">0</span>;
+}</code></pre></div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
@@ -143,6 +143,7 @@
 <li><a href="algebra.complex.html">虚数</a></li>
 <li><a href="algebra.modint.html">ModInt</a></li>
 <li><a href="algebra.matrix.html">行列</a></li>
+<li><a href="algebra.monoid.html">モノイド</a></li>
 </ul>
 </details>
 
@@ -188,6 +189,7 @@
 <li><a href="seq.bit.html">BIT</a></li>
 <li><a href="seq.rmq.html">RMQ</a></li>
 <li><a href="seq.starry.html">Starry Sky Tree</a></li>
+<li><a href="seq.segment_tree.html">一般セグメントツリー</a></li>
 <li><a href="seq.search.html">SeqSearch</a></li>
 </ul>
 </details>

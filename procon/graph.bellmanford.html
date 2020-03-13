@@ -23,74 +23,74 @@
             <h1 id="bellman-ford-algorithm">Bellman-Ford Algorithm</h1>
 <p>辺のコストに負数を許すグラフ最短路探索アルゴリズム. 計算量は <span class="math inline">\(O(|E||V|)\)</span> で, コストが全て正ならダイクストラ法の方が高速.</p>
 <p>以下の実装では <span class="math inline">\(u \rightarrow^c v\)</span> (<span class="math inline">\(c\)</span> はコスト) という辺を <code>CostedEdge(u, v, Cost::Value(c))</code> で表現し, <code>Vec&lt;CostedEdge&gt;</code> を渡すと <code>s</code> から <code>t</code> の最小コストを返す. その途中に負の閉路がある場合はそれを検出して <code>Cost::MinusInfinity</code> を返すようにしている.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">struct</span> BellmanFord;</a>
-<a class="sourceLine" id="cb1-2" title="2"></a>
-<a class="sourceLine" id="cb1-3" title="3"><span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">,</span> <span class="bu">PartialOrd</span><span class="at">,</span> <span class="bu">Ord</span><span class="at">,</span> <span class="bu">PartialEq</span><span class="at">,</span> <span class="bu">Eq</span><span class="at">,</span> <span class="bu">Clone</span><span class="at">,</span> <span class="bu">Copy</span><span class="at">)]</span></a>
-<a class="sourceLine" id="cb1-4" title="4"><span class="kw">enum</span> Cost <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-5" title="5">    MinusInfinity,</a>
-<a class="sourceLine" id="cb1-6" title="6">    Value(<span class="dt">i64</span>),</a>
-<a class="sourceLine" id="cb1-7" title="7">    Infinity,</a>
-<a class="sourceLine" id="cb1-8" title="8"><span class="op">}</span></a>
-<a class="sourceLine" id="cb1-9" title="9"></a>
-<a class="sourceLine" id="cb1-10" title="10"><span class="kw">use</span> <span class="pp">std::ops::</span>Add;</a>
-<a class="sourceLine" id="cb1-11" title="11"><span class="kw">impl</span> Add <span class="kw">for</span> Cost <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-12" title="12">    <span class="kw">type</span> Output = Cost;</a>
-<a class="sourceLine" id="cb1-13" title="13">    <span class="kw">fn</span> add(<span class="kw">self</span>, other: Cost) -&gt; Cost <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-14" title="14">        <span class="kw">use</span> <span class="pp">Cost::</span><span class="op">{</span>MinusInfinity, Value, Infinity<span class="op">}</span>;</a>
-<a class="sourceLine" id="cb1-15" title="15">        <span class="kw">match</span> (<span class="kw">self</span>, other) <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-16" title="16">            (Infinity, _) =&gt; Infinity,</a>
-<a class="sourceLine" id="cb1-17" title="17">            (_, Infinity) =&gt; Infinity,</a>
-<a class="sourceLine" id="cb1-18" title="18">            (Value(x), Value(y)) =&gt; Value(x + y),</a>
-<a class="sourceLine" id="cb1-19" title="19">            _ =&gt; MinusInfinity</a>
-<a class="sourceLine" id="cb1-20" title="20">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-21" title="21">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-22" title="22"><span class="op">}</span></a>
-<a class="sourceLine" id="cb1-23" title="23"></a>
-<a class="sourceLine" id="cb1-24" title="24"><span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">,</span> <span class="bu">PartialOrd</span><span class="at">,</span> <span class="bu">Ord</span><span class="at">,</span> <span class="bu">PartialEq</span><span class="at">,</span> <span class="bu">Eq</span><span class="at">,</span> <span class="bu">Clone</span><span class="at">,</span> <span class="bu">Copy</span><span class="at">)]</span></a>
-<a class="sourceLine" id="cb1-25" title="25"><span class="kw">struct</span> CostedEdge(<span class="dt">usize</span>, <span class="dt">usize</span>, Cost);</a>
-<a class="sourceLine" id="cb1-26" title="26"></a>
-<a class="sourceLine" id="cb1-27" title="27"><span class="kw">impl</span> BellmanFord <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-28" title="28">    <span class="kw">fn</span> yen(edges: &amp;<span class="dt">Vec</span>&lt;CostedEdge&gt;) -&gt; <span class="dt">Vec</span>&lt;CostedEdge&gt; <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-29" title="29">        <span class="kw">let</span> <span class="kw">mut</span> edges_f = <span class="pp">vec!</span><span class="op">[]</span>;</a>
-<a class="sourceLine" id="cb1-30" title="30">        <span class="kw">let</span> <span class="kw">mut</span> edges_b = <span class="pp">vec!</span><span class="op">[]</span>;</a>
-<a class="sourceLine" id="cb1-31" title="31">        <span class="kw">for</span> &amp;CostedEdge(i, j, c) <span class="kw">in</span> edges.iter() <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-32" title="32">            <span class="kw">if</span> i &lt;= j <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-33" title="33">                edges_f.push(CostedEdge(i, j, c));</a>
-<a class="sourceLine" id="cb1-34" title="34">            <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-35" title="35">                edges_b.push(CostedEdge(i, j, c));</a>
-<a class="sourceLine" id="cb1-36" title="36">            <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-37" title="37">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-38" title="38">        edges_f.sort();</a>
-<a class="sourceLine" id="cb1-39" title="39">        edges_b.sort();</a>
-<a class="sourceLine" id="cb1-40" title="40">        edges_b.reverse();</a>
-<a class="sourceLine" id="cb1-41" title="41">        edges_f.iter().chain(edges_b.iter()).map(|&amp;p| p).collect()</a>
-<a class="sourceLine" id="cb1-42" title="42">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-43" title="43">    <span class="kw">fn</span> shortest(n: <span class="dt">usize</span>, edges: &amp;<span class="dt">Vec</span>&lt;CostedEdge&gt;, s: <span class="dt">usize</span>, t: <span class="dt">usize</span>) -&gt; Cost <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-44" title="44">        <span class="kw">let</span> <span class="kw">mut</span> dist = <span class="pp">vec!</span><span class="op">[</span><span class="pp">Cost::</span>Infinity; n<span class="op">]</span>;</a>
-<a class="sourceLine" id="cb1-45" title="45">        dist<span class="op">[</span>s<span class="op">]</span> = <span class="pp">Cost::</span>Value(<span class="dv">0</span>);</a>
-<a class="sourceLine" id="cb1-46" title="46">        <span class="kw">for</span> _ <span class="kw">in</span> <span class="dv">1</span>..n <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-47" title="47">            <span class="kw">for</span> &amp;CostedEdge(i, j, c) <span class="kw">in</span> edges.iter() <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-48" title="48">                <span class="kw">if</span> dist<span class="op">[</span>j<span class="op">]</span> &gt; dist<span class="op">[</span>i<span class="op">]</span> + c <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-49" title="49">                    dist<span class="op">[</span>j<span class="op">]</span> = dist<span class="op">[</span>i<span class="op">]</span> + c;</a>
-<a class="sourceLine" id="cb1-50" title="50">                <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-51" title="51">            <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-52" title="52">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-53" title="53">        <span class="kw">for</span> &amp;CostedEdge(i, j, c) <span class="kw">in</span> edges.iter() <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-54" title="54">            <span class="kw">if</span> dist<span class="op">[</span>i<span class="op">]</span> + c &lt; dist<span class="op">[</span>j<span class="op">]</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-55" title="55">                dist<span class="op">[</span>i<span class="op">]</span> = <span class="pp">Cost::</span>MinusInfinity</a>
-<a class="sourceLine" id="cb1-56" title="56">                <span class="co">// return Cost::MinusInfinity</span></a>
-<a class="sourceLine" id="cb1-57" title="57">            <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-58" title="58">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-59" title="59">        <span class="kw">for</span> _ <span class="kw">in</span> <span class="dv">1</span>..n <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-60" title="60">            <span class="kw">for</span> &amp;CostedEdge(i, j, c) <span class="kw">in</span> edges.iter() <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-61" title="61">                <span class="kw">if</span> dist<span class="op">[</span>j<span class="op">]</span> &gt; dist<span class="op">[</span>i<span class="op">]</span> + c <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-62" title="62">                    dist<span class="op">[</span>j<span class="op">]</span> = dist<span class="op">[</span>i<span class="op">]</span> + c;</a>
-<a class="sourceLine" id="cb1-63" title="63">                <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-64" title="64">            <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-65" title="65">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-66" title="66">        dist<span class="op">[</span>t<span class="op">]</span></a>
-<a class="sourceLine" id="cb1-67" title="67">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-68" title="68"><span class="op">}</span></a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">struct</span> BellmanFord;
+
+<span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">,</span> <span class="bu">PartialOrd</span><span class="at">,</span> <span class="bu">Ord</span><span class="at">,</span> <span class="bu">PartialEq</span><span class="at">,</span> <span class="bu">Eq</span><span class="at">,</span> <span class="bu">Clone</span><span class="at">,</span> <span class="bu">Copy</span><span class="at">)]</span>
+<span class="kw">enum</span> Cost <span class="op">{</span>
+    MinusInfinity,
+    Value(<span class="dt">i64</span>),
+    Infinity,
+<span class="op">}</span>
+
+<span class="kw">use</span> std::ops::Add;
+<span class="kw">impl</span> Add <span class="kw">for</span> Cost <span class="op">{</span>
+    <span class="kw">type</span> Output = Cost;
+    <span class="kw">fn</span> add(<span class="kw">self</span>, other: Cost) -&gt; Cost <span class="op">{</span>
+        <span class="kw">use</span> Cost::<span class="op">{</span>MinusInfinity, Value, Infinity<span class="op">}</span>;
+        <span class="kw">match</span> (<span class="kw">self</span>, other) <span class="op">{</span>
+            (Infinity, _) =&gt; Infinity,
+            (_, Infinity) =&gt; Infinity,
+            (Value(x), Value(y)) =&gt; Value(x + y),
+            _ =&gt; MinusInfinity
+        <span class="op">}</span>
+    <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">,</span> <span class="bu">PartialOrd</span><span class="at">,</span> <span class="bu">Ord</span><span class="at">,</span> <span class="bu">PartialEq</span><span class="at">,</span> <span class="bu">Eq</span><span class="at">,</span> <span class="bu">Clone</span><span class="at">,</span> <span class="bu">Copy</span><span class="at">)]</span>
+<span class="kw">struct</span> CostedEdge(<span class="dt">usize</span>, <span class="dt">usize</span>, Cost);
+
+<span class="kw">impl</span> BellmanFord <span class="op">{</span>
+    <span class="kw">fn</span> yen(edges: &amp;<span class="dt">Vec</span>&lt;CostedEdge&gt;) -&gt; <span class="dt">Vec</span>&lt;CostedEdge&gt; <span class="op">{</span>
+        <span class="kw">let</span> <span class="kw">mut</span> edges_f = <span class="pp">vec!</span><span class="op">[]</span>;
+        <span class="kw">let</span> <span class="kw">mut</span> edges_b = <span class="pp">vec!</span><span class="op">[]</span>;
+        <span class="kw">for</span> &amp;CostedEdge(i, j, c) <span class="kw">in</span> edges.iter() <span class="op">{</span>
+            <span class="kw">if</span> i &lt;= j <span class="op">{</span>
+                edges_f.push(CostedEdge(i, j, c));
+            <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
+                edges_b.push(CostedEdge(i, j, c));
+            <span class="op">}</span>
+        <span class="op">}</span>
+        edges_f.sort();
+        edges_b.sort();
+        edges_b.reverse();
+        edges_f.iter().chain(edges_b.iter()).map(|&amp;p| p).collect()
+    <span class="op">}</span>
+    <span class="kw">fn</span> shortest(n: <span class="dt">usize</span>, edges: &amp;<span class="dt">Vec</span>&lt;CostedEdge&gt;, s: <span class="dt">usize</span>, t: <span class="dt">usize</span>) -&gt; Cost <span class="op">{</span>
+        <span class="kw">let</span> <span class="kw">mut</span> dist = <span class="pp">vec!</span><span class="op">[</span>Cost::Infinity; n<span class="op">]</span>;
+        dist<span class="op">[</span>s<span class="op">]</span> = Cost::Value(<span class="dv">0</span>);
+        <span class="kw">for</span> _ <span class="kw">in</span> <span class="dv">1.</span>.n <span class="op">{</span>
+            <span class="kw">for</span> &amp;CostedEdge(i, j, c) <span class="kw">in</span> edges.iter() <span class="op">{</span>
+                <span class="kw">if</span> dist<span class="op">[</span>j<span class="op">]</span> &gt; dist<span class="op">[</span>i<span class="op">]</span> + c <span class="op">{</span>
+                    dist<span class="op">[</span>j<span class="op">]</span> = dist<span class="op">[</span>i<span class="op">]</span> + c;
+                <span class="op">}</span>
+            <span class="op">}</span>
+        <span class="op">}</span>
+        <span class="kw">for</span> &amp;CostedEdge(i, j, c) <span class="kw">in</span> edges.iter() <span class="op">{</span>
+            <span class="kw">if</span> dist<span class="op">[</span>i<span class="op">]</span> + c &lt; dist<span class="op">[</span>j<span class="op">]</span> <span class="op">{</span>
+                dist<span class="op">[</span>i<span class="op">]</span> = Cost::MinusInfinity
+                <span class="co">// return Cost::MinusInfinity</span>
+            <span class="op">}</span>
+        <span class="op">}</span>
+        <span class="kw">for</span> _ <span class="kw">in</span> <span class="dv">1.</span>.n <span class="op">{</span>
+            <span class="kw">for</span> &amp;CostedEdge(i, j, c) <span class="kw">in</span> edges.iter() <span class="op">{</span>
+                <span class="kw">if</span> dist<span class="op">[</span>j<span class="op">]</span> &gt; dist<span class="op">[</span>i<span class="op">]</span> + c <span class="op">{</span>
+                    dist<span class="op">[</span>j<span class="op">]</span> = dist<span class="op">[</span>i<span class="op">]</span> + c;
+                <span class="op">}</span>
+            <span class="op">}</span>
+        <span class="op">}</span>
+        dist<span class="op">[</span>t<span class="op">]</span>
+    <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
@@ -104,6 +104,7 @@
 <li><a href="algebra.complex.html">虚数</a></li>
 <li><a href="algebra.modint.html">ModInt</a></li>
 <li><a href="algebra.matrix.html">行列</a></li>
+<li><a href="algebra.monoid.html">モノイド</a></li>
 </ul>
 </details>
 
@@ -149,6 +150,7 @@
 <li><a href="seq.bit.html">BIT</a></li>
 <li><a href="seq.rmq.html">RMQ</a></li>
 <li><a href="seq.starry.html">Starry Sky Tree</a></li>
+<li><a href="seq.segment_tree.html">一般セグメントツリー</a></li>
 <li><a href="seq.search.html">SeqSearch</a></li>
 </ul>
 </details>

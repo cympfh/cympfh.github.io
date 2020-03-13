@@ -23,30 +23,30 @@
             <h1 id="graph.tree.diameter---木の直径">graph.tree.diameter - 木の直径</h1>
 <p>木の最長距離を求める.</p>
 <p>任意の点 <span class="math inline">\(s\)</span> の最遠点を <span class="math inline">\(u\)</span> とし, <span class="math inline">\(u\)</span> の最遠点を <span class="math inline">\(v\)</span> とすれば <span class="math inline">\(d(u,v)\)</span> が最長距離であることを使う.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb1-1" title="1"><span class="co">/// Graph - Tree - Diameter</span></a>
-<a class="sourceLine" id="cb1-2" title="2"><span class="kw">fn</span> diameter(tree: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt;&gt;) -&gt; <span class="dt">usize</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-3" title="3">    <span class="kw">let</span> n = tree.len();</a>
-<a class="sourceLine" id="cb1-4" title="4">    <span class="kw">let</span> <span class="kw">mut</span> s = <span class="dv">0</span>;</a>
-<a class="sourceLine" id="cb1-5" title="5">    <span class="kw">let</span> <span class="kw">mut</span> maxd = <span class="dv">0</span>;</a>
-<a class="sourceLine" id="cb1-6" title="6">    <span class="kw">for</span> _ <span class="kw">in</span> <span class="dv">0</span>..<span class="dv">2</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-7" title="7">        <span class="kw">let</span> <span class="kw">mut</span> memo = <span class="pp">vec!</span><span class="op">[</span>n * <span class="dv">10</span>; n<span class="op">]</span>;</a>
-<a class="sourceLine" id="cb1-8" title="8">        memo<span class="op">[</span>s<span class="op">]</span> = <span class="dv">0</span>;</a>
-<a class="sourceLine" id="cb1-9" title="9">        <span class="kw">let</span> <span class="kw">mut</span> q = <span class="pp">std::collections::BinaryHeap::</span>new();</a>
-<a class="sourceLine" id="cb1-10" title="10">        q.push((<span class="dv">0</span>, s));</a>
-<a class="sourceLine" id="cb1-11" title="11">        <span class="kw">while</span> <span class="kw">let</span> <span class="cn">Some</span>((_, u)) = q.pop() <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-12" title="12">            <span class="kw">for</span> &amp;v <span class="kw">in</span> tree<span class="op">[</span>u<span class="op">]</span>.iter() <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-13" title="13">                <span class="kw">if</span> memo<span class="op">[</span>v<span class="op">]</span> &gt; memo<span class="op">[</span>u<span class="op">]</span> + <span class="dv">1</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-14" title="14">                    memo<span class="op">[</span>v<span class="op">]</span> = memo<span class="op">[</span>u<span class="op">]</span> + <span class="dv">1</span>;</a>
-<a class="sourceLine" id="cb1-15" title="15">                    <span class="kw">let</span> priority = - (memo<span class="op">[</span>v<span class="op">]</span> <span class="kw">as</span> <span class="dt">i32</span>);</a>
-<a class="sourceLine" id="cb1-16" title="16">                    q.push((priority, v));</a>
-<a class="sourceLine" id="cb1-17" title="17">                <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-18" title="18">            <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-19" title="19">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-20" title="20">        s = (<span class="dv">0</span>..n).map(|i| (memo<span class="op">[</span>i<span class="op">]</span>, i)).max().unwrap().<span class="dv">1</span>;</a>
-<a class="sourceLine" id="cb1-21" title="21">        maxd = *memo.iter().max().unwrap();</a>
-<a class="sourceLine" id="cb1-22" title="22">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-23" title="23">    maxd</a>
-<a class="sourceLine" id="cb1-24" title="24"><span class="op">}</span></a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Graph - Tree - Diameter</span>
+<span class="kw">fn</span> diameter(tree: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt;&gt;) -&gt; <span class="dt">usize</span> <span class="op">{</span>
+    <span class="kw">let</span> n = tree.len();
+    <span class="kw">let</span> <span class="kw">mut</span> s = <span class="dv">0</span>;
+    <span class="kw">let</span> <span class="kw">mut</span> maxd = <span class="dv">0</span>;
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="dv">0.</span>.<span class="dv">2</span> <span class="op">{</span>
+        <span class="kw">let</span> <span class="kw">mut</span> memo = <span class="pp">vec!</span><span class="op">[</span>n * <span class="dv">10</span>; n<span class="op">]</span>;
+        memo<span class="op">[</span>s<span class="op">]</span> = <span class="dv">0</span>;
+        <span class="kw">let</span> <span class="kw">mut</span> q = std::collections::BinaryHeap::new();
+        q.push((<span class="dv">0</span>, s));
+        <span class="kw">while</span> <span class="kw">let</span> <span class="cn">Some</span>((_, u)) = q.pop() <span class="op">{</span>
+            <span class="kw">for</span> &amp;v <span class="kw">in</span> tree<span class="op">[</span>u<span class="op">]</span>.iter() <span class="op">{</span>
+                <span class="kw">if</span> memo<span class="op">[</span>v<span class="op">]</span> &gt; memo<span class="op">[</span>u<span class="op">]</span> + <span class="dv">1</span> <span class="op">{</span>
+                    memo<span class="op">[</span>v<span class="op">]</span> = memo<span class="op">[</span>u<span class="op">]</span> + <span class="dv">1</span>;
+                    <span class="kw">let</span> priority = - (memo<span class="op">[</span>v<span class="op">]</span> <span class="kw">as</span> <span class="dt">i32</span>);
+                    q.push((priority, v));
+                <span class="op">}</span>
+            <span class="op">}</span>
+        <span class="op">}</span>
+        s = (<span class="dv">0.</span>.n).map(|i| (memo<span class="op">[</span>i<span class="op">]</span>, i)).max().unwrap().<span class="dv">1</span>;
+        maxd = *memo.iter().max().unwrap();
+    <span class="op">}</span>
+    maxd
+<span class="op">}</span></code></pre></div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
@@ -60,6 +60,7 @@
 <li><a href="algebra.complex.html">虚数</a></li>
 <li><a href="algebra.modint.html">ModInt</a></li>
 <li><a href="algebra.matrix.html">行列</a></li>
+<li><a href="algebra.monoid.html">モノイド</a></li>
 </ul>
 </details>
 
@@ -105,6 +106,7 @@
 <li><a href="seq.bit.html">BIT</a></li>
 <li><a href="seq.rmq.html">RMQ</a></li>
 <li><a href="seq.starry.html">Starry Sky Tree</a></li>
+<li><a href="seq.segment_tree.html">一般セグメントツリー</a></li>
 <li><a href="seq.search.html">SeqSearch</a></li>
 </ul>
 </details>

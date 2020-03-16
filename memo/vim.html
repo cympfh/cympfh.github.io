@@ -59,61 +59,125 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="is-pulled-right">
 <p><a class='tag is-green' href=index.html#linux>linux</a></p>
 </div>
-<h2 id="build">build</h2>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">./configure</span> --with-features=huge --enable-rubyinterp=yes --enable-pythoninterp=yes --with-python-config-dir=/usr/lib/python2.7/config-x86_64-linux-gnu_d --enable-python3interp=yes --with-python3-config-dir=/usr/lib/python3.4/config-3.4m-x86_64-linux-gnu --enable-luainterp=yes --with-luajit --enable-fontset --enable-fail-if-missing</code></pre></div>
-<p>必要な依存が無いものは勝手に無視される. <code>--enable-fail-if-missing</code> で自分で付け加えたオプションは無視せずエラーにさせられる. しかしながら、<code>huge</code> の中については、依存が足りないものは無視してすすめる.</p>
-<h2 id="参考-huge-を全て有効にする">参考: huge を全て有効にする</h2>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sudo</span> apt-get install libncurses5-dev libgnome2-dev libgnomeui-dev libgtk2.0-dev libatk1.0-dev libbonoboui2-dev libcairo2-dev libx11-dev libxpm-dev libxt-dev
-<span class="ex">./configure</span> --with-features=huge
+<h2 id="build">Build</h2>
+<h3 id="default-build">default build</h3>
+<p>特に追加のプラグインを指定しないデフォルトのビルド.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sudo</span> apt install libncursesw5-dev
+
+<span class="ex">./configure</span>
+
 <span class="fu">make</span></code></pre></div>
+<h3 id="huge-build">huge Build</h3>
+<p>プラグインてんこもりバージョン</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sudo</span> apt-get install libncurses5-dev libgnome2-dev libgnomeui-dev libgtk2.0-dev libatk1.0-dev libbonoboui2-dev libcairo2-dev libx11-dev libxpm-dev libxt-dev
+
+<span class="ex">./configure</span> --with-features=huge --enable-rubyinterp=yes --enable-pythoninterp=yes --with-python-config-dir=/usr/lib/python2.7/config-x86_64-linux-gnu_d --enable-python3interp=yes --with-python3-config-dir=/usr/lib/python3.4/config-3.4m-x86_64-linux-gnu --enable-luainterp=yes --with-luajit --enable-fontset --enable-fail-if-missing
+
+<span class="fu">make</span></code></pre></div>
+<p>デフォルトだと, オプションで指定してても必要なパッケージが見つからなかったら勝手に無視して進めてしまう. <code>--enable-fail-if-missing</code> はそのような場合に失敗して落ちるようにする. しかしながら、<code>huge</code> の中については、依存が足りないものは無視してすすめる.</p>
 
 <!--
 
-  HTML として pandoc -B で include する.
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
 
-  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
-  markdown で書いてるだろうから例として次のような段落を書けばよい.
+    <div id=toc></div>
 
-```
-## INDEX
-<div id=toc></div>
-```
 
-  used in
-  - /memo/gnuplot
-  - /memo/linux
-  - /memo/imagemagick
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
 
 -->
 <script>
 (function() {
-  var sections = document.getElementsByTagName('h2');
-  var i;
-  var OL = document.createElement('ol');
-  for (i=0; i < sections.length; ++i) {
-    var LI = document.createElement('li');
-    var A = document.createElement('a');
-    A.innerHTML = sections[i].innerHTML;
-    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
-    A.href = '#' + i;
-    LI.appendChild(A);
-    OL.appendChild(LI);
 
-    var PREF = document.createElement('a');
-    PREF.name = i;
-    sections[i].appendChild(PREF);
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
   }
 
-  var done = false;
-  function work() {
-    if (done) return;
-    if ( document.getElementById('toc') === null) return; // no toc element
-    document.getElementById('toc').appendChild(OL);
-    done = true;
-  };
+  function level1() {
 
-  window.onload = work;
-  setTimeout(work,800);
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
 </body>

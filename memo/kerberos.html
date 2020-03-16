@@ -92,13 +92,13 @@ $ <span class="ex">ktutil</span>
 <h3 id="hdfscli-2.1.0"><a href="https://hdfscli.readthedocs.io/en/latest/quickstart.html">HdfsCLI 2.1.0</a></h3>
 <p>Python製クライアント. Pythonプログラムの中からも使えるが、CLIも提供している. バージョンによって動作の説明が激しく異なるようなので注意が必要.</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">pip</span> install pykerberos==1.2.1 requests-kerberos==0.11.0 hdfs==2.1.0
-$ <span class="fu">cat</span> &lt;&lt;EOM &gt; ~/.hdfscli.cfg
-[global]
+$ <span class="fu">cat</span> <span class="op">&lt;&lt;EOM</span> <span class="op">&gt;</span> <span class="ex">~/.hdfscli.cfg</span>
+[<span class="op">g</span><span class="ex">lobal</span>]
 autoload.modules = hdfs.ext.kerberos
 default.alias = server
 
 [server.alias]
-url = htt<span class="op">p</span>:<span class="ex">/</span>/domain.co.jp:<span class="ex">80</span>
+url = http://domain.co.jp:80
 client = KerberosClient
 
 $ hdfscli  # ipython が立ち上がる
@@ -106,63 +106,118 @@ $ hdfscli  # ipython が立ち上がる
 Welcome to the interactive HDFS python shell.
 The HDFS client is available as <span class="kw">`</span><span class="ex">CLIENT</span><span class="kw">`</span>.
 
-In [1]: CLIEN<span class="op">T</span><span class="ex">.list</span>(<span class="st">&#39;/&#39;</span>)  <span class="co"># 認証に失敗したらここでコケる</span>
-Ou<span class="op">t</span>[<span class="ex">1</span>]: [<span class="st">&#39;lib&#39;</span>, <span class="st">&#39;system&#39;</span>, <span class="st">&#39;tmp&#39;</span>, <span class="st">&#39;user&#39;</span>]
+In [1]: CLIENT.list(&#39;/&#39;)  # 認証に失敗したらここでコケる
+Out[1]: [&#39;lib&#39;, &#39;system&#39;, &#39;tmp&#39;, &#39;user&#39;]
 
 In [2]:</code></pre></div>
 <h3 id="curl-webhdfs">curl (webhdfs)</h3>
 <p><a href="https://hadoop.apache.org/docs/r1.0.4/webhdfs.html">webhdfs REST API</a> という API が提供されている. これを curl で直接叩けば、ファイル操作が一通りできる. 大抵は、サーバの url <code>domain.co.jp</code> に対して <code>/webhdfs/v1/</code> が API のエンドポイント.</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">kinit</span> -kt <span class="va">$KRB5_CLIENT_KTNAME</span> <span class="va">${USER}</span>@DOMAIN.CO.JP  <span class="co"># はじめの認証. 一定時間で切れる</span>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">kinit</span> -kt <span class="va">$KRB5_CLIENT_KTNAME</span> <span class="va">${USER}</span>@DOMAIN.CO.JP  # はじめの認証. 一定時間で切れる
 $ <span class="ex">curl</span> --negotiate -u : <span class="st">&#39;http://domain.co.jp/webhdfs/v1/?op=LISTSTATUS&#39;</span>
 <span class="dt">{&quot;FileStatuses&quot;:{&quot;FileStatus&quot;:[{&quot;pathSuffix&quot;:&quot;lib&quot;,&quot;type&quot;:&quot;DIRECTORY&quot;,...},{&quot;pathSuffix&quot;:&quot;system&quot;,&quot;type&quot;:&quot;DIRECTORY&quot;,...},{&quot;pathSuffix&quot;:&quot;tmp&quot;,&quot;type&quot;:&quot;DIRECTORY&quot;,...},{&quot;pathSuffix&quot;:&quot;user&quot;,&quot;type&quot;:&quot;DIRECTORY&quot;,...}]}}</span></code></pre></div>
 
 <!--
 
-  HTML として pandoc -B で include する.
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
 
-  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
-  markdown で書いてるだろうから例として次のような段落を書けばよい.
+    <div id=toc></div>
 
-```
-## INDEX
-<div id=toc></div>
-```
 
-  used in
-  - /memo/gnuplot
-  - /memo/linux
-  - /memo/imagemagick
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
 
 -->
 <script>
 (function() {
-  var sections = document.getElementsByTagName('h2');
-  var i;
-  var OL = document.createElement('ol');
-  for (i=0; i < sections.length; ++i) {
-    var LI = document.createElement('li');
-    var A = document.createElement('a');
-    A.innerHTML = sections[i].innerHTML;
-    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
-    A.href = '#' + i;
-    LI.appendChild(A);
-    OL.appendChild(LI);
 
-    var PREF = document.createElement('a');
-    PREF.name = i;
-    sections[i].appendChild(PREF);
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
   }
 
-  var done = false;
-  function work() {
-    if (done) return;
-    if ( document.getElementById('toc') === null) return; // no toc element
-    document.getElementById('toc').appendChild(OL);
-    done = true;
-  };
+  function level1() {
 
-  window.onload = work;
-  setTimeout(work,800);
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
 </body>

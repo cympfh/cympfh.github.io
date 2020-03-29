@@ -2,13 +2,9 @@ photos	photos/
 search	http://s.cympfh.cc/search
 aiura	aiura/
 anime	anime/
-y2b/anime	youtube/anime/
-dosoku	dosoku/
-gist	gist/
 gnuplot	gnuplot/
 memo	memo/
 neta	neta/
 paper	paper/
 procon	procon/
 taglibro	taglibro/
-youtube	youtube/

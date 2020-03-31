@@ -14,33 +14,22 @@ $$\def\true{\mathrm{true}}$$
 
 任意の
 
-```dot
-digraph {
-    graph [bgcolor=transparent];
-    node [shape=plaintext];
-    edge [arrowhead=vee];
-    rankdir=LR;
-    A:e -> B [label=f];
-    A:e -> B [label=g];
-    A [shape=plaintext];
-    B [shape=plaintext];
-}
+```tikzcd
+A \ar[r,shift left=.75ex,"f"]
+  \ar[r,shift right=.75ex,swap,"g"]
+&
+B
 ```
 
 について必ずイコライザー $e$ がある.
 
-```dot
-digraph {
-    graph [bgcolor=transparent];
-    node [shape=plaintext];
-    edge [arrowhead=vee];
-    rankdir=LR;
-    E -> A [label=e];
-    A:e -> B [label=f];
-    A:e -> B [label=g];
-    A [shape=plaintext];
-    B [shape=plaintext];
-}
+```tikzcd
+E \ar[r,"e"]
+&
+A \ar[r,shift left=.75ex,"f"]
+  \ar[r,shift right=.75ex,swap,"g"]
+&
+B
 ```
 
 ### 復習と直感的な説明

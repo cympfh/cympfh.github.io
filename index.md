@@ -25,7 +25,7 @@ document.getElementById('identicon').href = children[(children.length * Math.ran
 <script>
 // portrait photo
 var photos = [
-< tail -n 3 photos/resources/photos_list | awk '{print "\""$1"\","}'
+< tail -n 10 photos/resources/photos_list | awk '{print "\""$1"\","}'
 ""
 ];
 photos.pop();

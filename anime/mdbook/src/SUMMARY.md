@@ -5,6 +5,9 @@
 --------
 
 - [2020](2020/README.md)
+    - [ギャルと恐竜](2020/Q2/gal_kyouryu.md)
+    - [かくしごと](2020/Q2/kakushigoto.md)
+    - [波よ聞いてくれ](2020/Q2/namiyo_kiitekure.md)
     - [推しが武道館いってくれたら死ぬ](2020/Q1/oshi.md)
     - [おーばーふろぉ](2020/Q1/overflow.md)
     - [映像研には手を出すな](2020/Q1/eizouken.md)

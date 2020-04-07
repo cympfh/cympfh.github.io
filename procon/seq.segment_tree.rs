@@ -1,6 +1,8 @@
 /// Seq - Segment Tree
+// @algebra.monoid.rs
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 enum MaxInt { Minimal, Val(i64) }
+impl MaxInt { fn unwrap(self) -> i64 { if let Self::Val(x) = self { x } else { panic!(); } } }
 impl std::ops::Mul for MaxInt {
     type Output = Self;
     fn mul(self, other: Self) -> Self {
@@ -13,6 +15,7 @@ impl Monoid for MaxInt {
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 enum MinInt { Val(i64), Maximal }
+impl MinInt { fn unwrap(self) -> i64 { if let Self::Val(x) = self { x } else { panic!(); } } }
 impl std::ops::Mul for MinInt {
     type Output = Self;
     fn mul(self, other: Self) -> Self {

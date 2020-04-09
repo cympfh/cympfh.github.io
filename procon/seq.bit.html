@@ -47,31 +47,31 @@
 </ul>
 <h2 id="seq.bit.rs"><a href="seq.bit.rs" class="uri">seq.bit.rs</a></h2>
 <div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Sequence - Binary Indexed Tree (Fenwick Tree)</span>
-<span class="kw">use</span> std::ops::Range;
-<span class="kw">struct</span> BIT <span class="op">{</span> size: <span class="dt">usize</span>, array: <span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt; <span class="op">}</span>
-<span class="kw">impl</span> BIT <span class="op">{</span>
-    <span class="kw">fn</span> new(n: <span class="dt">usize</span>) -&gt; BIT <span class="op">{</span>
-        BIT  <span class="op">{</span> size: n, array: <span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>; n + <span class="dv">1</span><span class="op">]</span> <span class="op">}</span>
+<span class="co">// @algebra.group.rs</span>
+<span class="kw">struct</span> BIT&lt;T&gt; <span class="op">{</span> size: <span class="dt">usize</span>, array: <span class="dt">Vec</span>&lt;T&gt; <span class="op">}</span>
+<span class="kw">impl</span>&lt;T: Group&gt; BIT&lt;T&gt; <span class="op">{</span>
+    <span class="kw">fn</span> new(n: <span class="dt">usize</span>) -&gt; BIT&lt;T&gt; <span class="op">{</span>
+        BIT  <span class="op">{</span> size: n, array: <span class="pp">vec!</span><span class="op">[</span>T::zero(); n + <span class="dv">1</span><span class="op">]</span> <span class="op">}</span>
     <span class="op">}</span>
-    <span class="kw">fn</span> add(&amp;<span class="kw">mut</span> <span class="kw">self</span>, idx: <span class="dt">usize</span>, w: <span class="dt">i32</span>) <span class="op">{</span>
+    <span class="kw">fn</span> add(&amp;<span class="kw">mut</span> <span class="kw">self</span>, idx: <span class="dt">usize</span>, w: T) <span class="op">{</span>
         <span class="kw">let</span> <span class="kw">mut</span> x = idx + <span class="dv">1</span>;
         <span class="kw">while</span> x &lt;= <span class="kw">self</span>.size <span class="op">{</span>
-            <span class="kw">self</span>.array<span class="op">[</span>x<span class="op">]</span> += w;
+            <span class="kw">self</span>.array<span class="op">[</span>x<span class="op">]</span> = <span class="kw">self</span>.array<span class="op">[</span>x<span class="op">]</span> + w;
             <span class="kw">let</span> xi = x <span class="kw">as</span> <span class="dt">i32</span>;
             x += (xi&amp;-xi) <span class="kw">as</span> <span class="dt">usize</span>;
         <span class="op">}</span>
     <span class="op">}</span>
-    <span class="kw">fn</span> sum_up(&amp;<span class="kw">self</span>, idx: <span class="dt">usize</span>) -&gt; <span class="dt">i32</span> <span class="op">{</span> <span class="co">// [0, idx)</span>
-        <span class="kw">let</span> <span class="kw">mut</span> sum = <span class="dv">0</span>;
+    <span class="kw">fn</span> sum_up(&amp;<span class="kw">self</span>, idx: <span class="dt">usize</span>) -&gt; T <span class="op">{</span> <span class="co">// [0, idx)</span>
+        <span class="kw">let</span> <span class="kw">mut</span> sum = T::zero();
         <span class="kw">let</span> <span class="kw">mut</span> x = idx;
         <span class="kw">while</span> x &gt; <span class="dv">0</span> <span class="op">{</span>
-            sum += <span class="kw">self</span>.array<span class="op">[</span>x<span class="op">]</span>;
+            sum = sum + <span class="kw">self</span>.array<span class="op">[</span>x<span class="op">]</span>;
             <span class="kw">let</span> xi = x <span class="kw">as</span> <span class="dt">i32</span>;
-            x -= (xi&amp;-xi) <span class="kw">as</span> <span class="dt">usize</span>;
+            x -= (xi&amp; - xi) <span class="kw">as</span> <span class="dt">usize</span>;
         <span class="op">}</span>
         sum
     <span class="op">}</span>
-    <span class="kw">fn</span> sum(&amp;<span class="kw">self</span>, range: Range&lt;<span class="dt">usize</span>&gt;) -&gt; <span class="dt">i32</span> <span class="op">{</span>
+    <span class="kw">fn</span> sum(&amp;<span class="kw">self</span>, range: std::ops::Range&lt;<span class="dt">usize</span>&gt;) -&gt; T <span class="op">{</span>
         <span class="kw">self</span>.sum_up(range.end) - <span class="kw">self</span>.sum_up(range.start)
     <span class="op">}</span>
 <span class="op">}</span></code></pre></div>

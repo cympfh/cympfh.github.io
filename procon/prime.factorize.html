@@ -20,75 +20,21 @@
         <section class="main-content columns is-fullheight">
 
           <div class="article column is-8 is-10-mobile">
-            <h1 id="int.dislog">int.dislog</h1>
-<h2 id="int.dislog.cc"><a href="int.dislog.cc" class="uri">int.dislog.cc</a></h2>
-<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="co">/*</span>
-<span class="co"> * 離散対数問題</span>
-<span class="co"> *</span>
-<span class="co"> * baby-step giant-step による方法</span>
-<span class="co"> *</span>
-<span class="co"> * x = dlog(a, b, m):</span>
-<span class="co"> * solve</span>
-<span class="co"> *   a^x == b (mod m)</span>
-<span class="co"> *</span>
-<span class="co"> */</span>
-
-<span class="co">// </span><span class="re">{{{</span>
-tuple&lt;<span class="dt">int</span>, <span class="dt">int</span>, <span class="dt">int</span>&gt; ex_gcd(<span class="dt">int</span> x, <span class="dt">int</span> y) {
-  <span class="dt">int</span> r0 = x, a0 = <span class="dv">1</span>, b0 = <span class="dv">0</span>;
-  <span class="cf">for</span> (<span class="dt">int</span> r = y, a = <span class="dv">0</span>, b = <span class="dv">1</span>; r &gt; <span class="dv">0</span>; ) {
-    <span class="dt">int</span> r2 = r0 % r;
-    <span class="dt">int</span> a2 = a0 - r0 / r * a;
-    <span class="dt">int</span> b2 = b0 - r0 / r * b;
-    r0 = r; r = r2;
-    a0 = a; a = a2;
-    b0 = b; b = b2;
-  }
-  <span class="cf">return</span> make_tuple(a0, b0, r0);
-}
-
-<span class="dt">int</span> mod_inv(<span class="dt">int</span> a, <span class="dt">int</span> m) {
-  <span class="kw">auto</span> r = ex_gcd(a, m);
-  <span class="cf">if</span> (get&lt;<span class="dv">2</span>&gt;(r) != <span class="dv">1</span>) <span class="cf">throw</span>;
-  <span class="dt">int</span> b = get&lt;<span class="dv">0</span>&gt;(r);
-  <span class="cf">while</span> (b &lt; <span class="dv">0</span>) b += m;
-  <span class="cf">return</span> b;
-}
-<span class="co">// </span><span class="re">}}}</span>
-
-<span class="co">/*</span>
-<span class="co"> * solve a^x = b (mod m)</span>
-<span class="co"> */</span>
-<span class="dt">int</span> dlog(<span class="dt">int</span> a, <span class="dt">int</span> b, <span class="dt">int</span> m) {
-  map&lt;<span class="dt">int</span>, <span class="dt">int</span>&gt; pows;
-
-  <span class="dt">int</span> ac = <span class="dv">1</span>;
-  <span class="dt">int</span> s = <span class="dt">int</span>(sqrt(m));
-  <span class="dt">int</span> A = <span class="dv">1</span>; <span class="co">// (pow a s)</span>
-  rep (i, s) {
-    <span class="cf">if</span> (<span class="kw">not</span> pows.count(ac)) pows[ac] = i;
-    ac  = (ac * a) % m;
-    A = ac;
-  }
-  <span class="co">// cerr &lt;&lt; &quot;a^s = &quot; &lt;&lt; a &lt;&lt; &quot;^&quot; &lt;&lt; s &lt;&lt; &quot; = &quot; &lt;&lt; A &lt;&lt; endl;</span>
-  A = mod_inv(A, m);
-  <span class="co">// cerr &lt;&lt; &quot;a^{-s} = &quot; &lt;&lt; A &lt;&lt; endl;</span>
-  ac = b;
-  rep (i, s) {
-    <span class="cf">if</span> (pows.count(ac)) {
-      <span class="cf">if</span> (<span class="dv">0</span>)
-      {
-        <span class="dt">int</span> x = pows[ac], y = i;
-        cerr &lt;&lt; <span class="st">&quot;a^x = &quot;</span> &lt;&lt; a &lt;&lt; <span class="st">&#39;^&#39;</span> &lt;&lt; x &lt;&lt; endl;
-        cerr &lt;&lt; <span class="st">&quot;b a^{-sy} = &quot;</span> &lt;&lt; b &lt;&lt; <span class="st">&#39; &#39;</span> &lt;&lt; a &lt;&lt; <span class="st">&quot;^{-&quot;</span> &lt;&lt; s &lt;&lt; <span class="st">&#39; &#39;</span> &lt;&lt; y &lt;&lt; <span class="st">&quot;} = &quot;</span> &lt;&lt; ac &lt;&lt; endl;
-      }
-      <span class="cf">return</span> pows[ac] + i*s;
-    }
-    ac = (ac * A) % m;
-  }
-  <span class="cf">return</span> <span class="dv">-1</span>;
-}
-</code></pre></div>
+            <h1 id="素因数分解">素因数分解</h1>
+<p><code>u64</code> 整数 <span class="math inline">\(N\)</span> を試し割りによって <span class="math inline">\(O(\sqrt{N})\)</span> で素因数分解する</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> prime_factorize(n: <span class="dt">u64</span>) -&gt; <span class="dt">Vec</span>&lt;(<span class="dt">u64</span>, <span class="dt">usize</span>)&gt; <span class="op">{</span>
+    <span class="kw">let</span> <span class="kw">mut</span> m = n;
+    <span class="kw">let</span> <span class="kw">mut</span> r = <span class="pp">vec!</span><span class="op">[]</span>;
+    <span class="kw">for</span> x <span class="kw">in</span> <span class="dv">2.</span>.n + <span class="dv">1</span> <span class="op">{</span>
+        <span class="kw">if</span> m == <span class="dv">1</span> <span class="op">{</span> <span class="kw">break</span> <span class="op">}</span>
+        <span class="kw">if</span> x * x &gt; n <span class="op">{</span> r.push((m, <span class="dv">1</span>)); <span class="kw">break</span> <span class="op">}</span>
+        <span class="kw">if</span> n % x != <span class="dv">0</span> <span class="op">{</span> <span class="kw">continue</span> <span class="op">}</span>
+        <span class="kw">let</span> <span class="kw">mut</span> c = <span class="dv">0</span>;
+        <span class="kw">while</span> m % x == <span class="dv">0</span> <span class="op">{</span> m /= x; c += <span class="dv">1</span>; <span class="op">}</span>
+        r.push((x, c));
+    <span class="op">}</span>
+    r
+<span class="op">}</span></code></pre></div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">

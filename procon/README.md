@@ -152,6 +152,10 @@
 
 - [Zobrist Hash](hash.zobrist.html)
 
+# collections
+
+- [defaultmap](collections.defaultmap.html)
+
 # STL
 
 ## コンテナ

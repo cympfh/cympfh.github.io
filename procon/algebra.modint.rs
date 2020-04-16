@@ -1,11 +1,8 @@
 /// Algebra - ModInt (Zp)
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
-struct ModInt { res: i64, md: i64 }
-
+struct ModInt(i64, i64);  // (residual, modulo)
 impl ModInt {
-    fn new(res: i64, md: i64) -> Self {
-        ModInt { res: res, md: md }
-    }
+    fn unwrap(self) -> i64 { self.0 }
     fn inv(self) -> Self {
         fn exgcd(r0: i64, a0: i64, b0: i64, r: i64, a: i64, b: i64)
                 -> (i64, i64, i64) {
@@ -15,15 +12,15 @@ impl ModInt {
                 (a0, b0, r0)
             }
         }
-        let (a, _, r) = exgcd(self.res, 1, 0, self.md, 0, 1);
+        let (a, _, r) = exgcd(self.0, 1, 0, self.1, 0, 1);
         if r != 1 { panic!("{:?} has no inverse!", self); }
-        ModInt::new(((a % self.md) + self.md) % self.md, self.md)
+        ModInt(((a % self.1) + self.1) % self.1, self.1)
     }
     fn pow(self, n: i64) -> Self {
         if n < 0 {
             self.pow(-n).inv()
         } else if n == 0 {
-            ModInt::new(1, self.md)
+            ModInt(1, self.1)
         } else if n == 1 {
             self
         } else {
@@ -35,142 +32,108 @@ impl ModInt {
 }
 impl std::fmt::Display for ModInt {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{}", self.res)
+        write!(f, "{}", self.0)
     }
 }
 impl std::ops::Neg for ModInt {
     type Output = Self;
     fn neg(self) -> Self {
-        if self.res == 0 { return self }
-        ModInt { res: self.md - self.res, md: self.md }
+        if self.0 == 0 { return self }
+        ModInt(self.1 - self.0, self.1)
     }
 }
 impl std::ops::Add<i64> for ModInt {
     type Output = Self;
     fn add(self, other: i64) -> Self {
-        let res = if self.res + other >= self.md {
-            self.res + other - self.md
+        let res = if self.0 + other >= self.1 {
+            self.0 + other - self.1
         } else {
-            self.res + other
+            self.0 + other
         };
-        ModInt { res: res, md: self.md }
+        ModInt(res, self.1)
     }
 }
 impl std::ops::Add for ModInt {
     type Output = Self;
-    fn add(self, other: ModInt) -> Self {
-        self + other.res
-    }
+    fn add(self, other: ModInt) -> Self { self + other.0 }
 }
 impl std::ops::Add<ModInt> for i64 {
     type Output = ModInt;
-    fn add(self, other: ModInt) -> ModInt {
-        other + self
-    }
+    fn add(self, other: ModInt) -> ModInt { other + self }
 }
 impl std::ops::AddAssign<i64> for ModInt {
     fn add_assign(&mut self, other: i64) {
-        self.res += other;
-        if self.res >= self.md {
-            self.res -= self.md;
-        }
+        self.0 += other;
+        if self.0 >= self.1 { self.0 -= self.1; }
     }
 }
 impl std::ops::AddAssign for ModInt {
-    fn add_assign(&mut self, other: ModInt) {
-        *self += other.res;
-    }
+    fn add_assign(&mut self, other: ModInt) { *self += other.0; }
 }
 impl std::ops::Sub<i64> for ModInt {
     type Output = Self;
     fn sub(self, other: i64) -> Self {
-        let res = if self.res < other {
-            self.res + self.md - other
+        let res = if self.0 < other {
+            self.0 + self.1 - other
         } else {
-            self.res - other
+            self.0 - other
         };
-        ModInt { res: res, md: self.md }
+        ModInt(res, self.1)
     }
 }
 impl std::ops::Sub for ModInt {
     type Output = Self;
-    fn sub(self, other: ModInt) -> Self {
-        self - other.res
-    }
+    fn sub(self, other: ModInt) -> Self { self - other.0 }
 }
 impl std::ops::Sub<ModInt> for i64 {
     type Output = ModInt;
-    fn sub(self, other: ModInt) -> ModInt {
-        -other + self
-    }
+    fn sub(self, other: ModInt) -> ModInt { -other + self }
 }
 impl std::ops::SubAssign<i64> for ModInt {
     fn sub_assign(&mut self, other: i64) {
-        if self.res < other {
-            self.res = self.res - other + self.md;
+        if self.0 < other {
+            self.0 = self.1 - other + self.0;
         } else {
-            self.res -= other;
+            self.0 -= other;
         }
     }
 }
 impl std::ops::SubAssign for ModInt {
-    fn sub_assign(&mut self, other: ModInt) {
-        *self -= other.res;
-    }
+    fn sub_assign(&mut self, other: ModInt) { *self -= other.0; }
 }
 impl std::ops::Mul<i64> for ModInt {
     type Output = Self;
-    fn mul(self, other: i64) -> Self {
-        ModInt { res: (self.res * other) % self.md, md: self.md }
-    }
+    fn mul(self, other: i64) -> Self { ModInt((self.0 * other) % self.1, self.1) }
 }
 impl std::ops::Mul for ModInt {
     type Output = Self;
-    fn mul(self, other: ModInt) -> Self {
-        self * other.res
-    }
+    fn mul(self, other: ModInt) -> Self { self * other.0 }
 }
 impl std::ops::Mul<ModInt> for i64 {
     type Output = ModInt;
-    fn mul(self, other: ModInt) -> ModInt {
-        other * self
-    }
+    fn mul(self, other: ModInt) -> ModInt { other * self }
 }
 impl std::ops::MulAssign<i64> for ModInt {
-    fn mul_assign(&mut self, other: i64) {
-        self.res = (self.res * other) % self.md;
-    }
+    fn mul_assign(&mut self, other: i64) { self.0 = (self.0 * other) % self.1; }
 }
 impl std::ops::MulAssign for ModInt {
-    fn mul_assign(&mut self, other: ModInt) {
-        *self *= other.res;
-    }
+    fn mul_assign(&mut self, other: ModInt) { *self *= other.0; }
 }
 impl std::ops::Div<i64> for ModInt {
     type Output = Self;
-    fn div(self, other: i64) -> Self {
-        self * ModInt::new(other, self.md).inv()
-    }
+    fn div(self, other: i64) -> Self { self * ModInt(other, self.1).inv() }
 }
 impl std::ops::Div for ModInt {
     type Output = Self;
-    fn div(self, other: ModInt) -> Self {
-        self * other.inv()
-    }
+    fn div(self, other: ModInt) -> Self { self * other.inv() }
 }
 impl std::ops::Div<ModInt> for i64 {
     type Output = ModInt;
-    fn div(self, other: ModInt) -> ModInt {
-        other.inv() * self
-    }
+    fn div(self, other: ModInt) -> ModInt { other.inv() * self }
 }
 impl std::ops::DivAssign for ModInt {
-    fn div_assign(&mut self, other: ModInt) {
-        self.res = (self.res * other.inv().res) % self.md;
-    }
+    fn div_assign(&mut self, other: ModInt) { self.0 = (self.0 * other.inv().0) % self.1; }
 }
 impl std::ops::DivAssign<i64> for ModInt {
-    fn div_assign(&mut self, other: i64) {
-        *self /= ModInt::new(other, self.md);
-    }
+    fn div_assign(&mut self, other: i64) { *self /= ModInt(other, self.1); }
 }

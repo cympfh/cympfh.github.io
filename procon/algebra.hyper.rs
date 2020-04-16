@@ -3,6 +3,9 @@
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Debug)]
 enum Hyper<X> { NegInf, Real(X), Inf }
 use Hyper::{Real, NegInf, Inf};
+impl<X> Hyper<X> {
+    fn unwrap(self) -> X { if let Hyper::Real(x) = self { x } else { panic!() } }
+}
 impl<X: Ring> std::ops::Add for Hyper<X> {
     type Output = Self;
     fn add(self, rhs: Hyper<X>) -> Hyper<X> {
@@ -16,9 +19,7 @@ impl<X: Ring> std::ops::Add for Hyper<X> {
 }
 impl<X: Ring> std::ops::Sub for Hyper<X> {
     type Output = Self;
-    fn sub(self, rhs: Hyper<X>) -> Hyper<X> {
-        self + (-rhs)
-    }
+    fn sub(self, rhs: Hyper<X>) -> Hyper<X> { self + (-rhs) }
 }
 impl<X: Ring> std::ops::Neg for Hyper<X> {
     type Output = Self;

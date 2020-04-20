@@ -24,12 +24,14 @@
 <p>勝手に剰余を取る整数の環</p>
 <div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Algebra - ModInt (Zp)</span>
 <span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">,</span> <span class="bu">PartialEq</span><span class="at">,</span> <span class="bu">Eq</span><span class="at">,</span> <span class="bu">Clone</span><span class="at">,</span> <span class="bu">Copy</span><span class="at">)]</span>
-<span class="kw">struct</span> ModInt <span class="op">{</span> res: <span class="dt">i64</span>, md: <span class="dt">i64</span> <span class="op">}</span>
-
+<span class="kw">struct</span> ModInt(<span class="dt">i64</span>, <span class="dt">i64</span>);  <span class="co">// (residual, modulo)</span>
 <span class="kw">impl</span> ModInt <span class="op">{</span>
-    <span class="kw">fn</span> new(res: <span class="dt">i64</span>, md: <span class="dt">i64</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span>
-        ModInt <span class="op">{</span> res: res, md: md <span class="op">}</span>
+    <span class="kw">fn</span> new(residual: <span class="dt">i64</span>, modulo: <span class="dt">i64</span>) -&gt; ModInt <span class="op">{</span>
+        <span class="kw">if</span> residual &gt;= modulo <span class="op">{</span> ModInt(residual % modulo, modulo) <span class="op">}</span>
+        <span class="kw">else</span> <span class="kw">if</span> residual &lt; <span class="dv">0</span> <span class="op">{</span> ModInt((residual % modulo) + modulo, modulo) <span class="op">}</span>
+        <span class="kw">else</span> <span class="op">{</span> ModInt(residual, modulo) <span class="op">}</span>
     <span class="op">}</span>
+    <span class="kw">fn</span> unwrap(<span class="kw">self</span>) -&gt; <span class="dt">i64</span> <span class="op">{</span> <span class="kw">self</span>.<span class="dv">0</span> <span class="op">}</span>
     <span class="kw">fn</span> inv(<span class="kw">self</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span>
         <span class="kw">fn</span> exgcd(r0: <span class="dt">i64</span>, a0: <span class="dt">i64</span>, b0: <span class="dt">i64</span>, r: <span class="dt">i64</span>, a: <span class="dt">i64</span>, b: <span class="dt">i64</span>)
                 -&gt; (<span class="dt">i64</span>, <span class="dt">i64</span>, <span class="dt">i64</span>) <span class="op">{</span>
@@ -39,15 +41,15 @@
                 (a0, b0, r0)
             <span class="op">}</span>
         <span class="op">}</span>
-        <span class="kw">let</span> (a, _, r) = exgcd(<span class="kw">self</span>.res, <span class="dv">1</span>, <span class="dv">0</span>, <span class="kw">self</span>.md, <span class="dv">0</span>, <span class="dv">1</span>);
+        <span class="kw">let</span> (a, _, r) = exgcd(<span class="kw">self</span>.<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="kw">self</span>.<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>);
         <span class="kw">if</span> r != <span class="dv">1</span> <span class="op">{</span> <span class="pp">panic!</span>(<span class="st">&quot;{:?} has no inverse!&quot;</span>, <span class="kw">self</span>); <span class="op">}</span>
-        ModInt::new(((a % <span class="kw">self</span>.md) + <span class="kw">self</span>.md) % <span class="kw">self</span>.md, <span class="kw">self</span>.md)
+        ModInt(((a % <span class="kw">self</span>.<span class="dv">1</span>) + <span class="kw">self</span>.<span class="dv">1</span>) % <span class="kw">self</span>.<span class="dv">1</span>, <span class="kw">self</span>.<span class="dv">1</span>)
     <span class="op">}</span>
     <span class="kw">fn</span> pow(<span class="kw">self</span>, n: <span class="dt">i64</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span>
         <span class="kw">if</span> n &lt; <span class="dv">0</span> <span class="op">{</span>
             <span class="kw">self</span>.pow(-n).inv()
         <span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> n == <span class="dv">0</span> <span class="op">{</span>
-            ModInt::new(<span class="dv">1</span>, <span class="kw">self</span>.md)
+            ModInt(<span class="dv">1</span>, <span class="kw">self</span>.<span class="dv">1</span>)
         <span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> n == <span class="dv">1</span> <span class="op">{</span>
             <span class="kw">self</span>
         <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
@@ -59,144 +61,87 @@
 <span class="op">}</span>
 <span class="kw">impl</span> std::fmt::<span class="bu">Display</span> <span class="kw">for</span> ModInt <span class="op">{</span>
     <span class="kw">fn</span> fmt(&amp;<span class="kw">self</span>, f: &amp;<span class="kw">mut</span> std::fmt::Formatter) -&gt; std::fmt::<span class="dt">Result</span> <span class="op">{</span>
-        <span class="pp">write!</span>(f, <span class="st">&quot;{}&quot;</span>, <span class="kw">self</span>.res)
+        <span class="pp">write!</span>(f, <span class="st">&quot;{}&quot;</span>, <span class="kw">self</span>.<span class="dv">0</span>)
     <span class="op">}</span>
 <span class="op">}</span>
 <span class="kw">impl</span> std::ops::Neg <span class="kw">for</span> ModInt <span class="op">{</span>
     <span class="kw">type</span> Output = <span class="kw">Self</span>;
     <span class="kw">fn</span> neg(<span class="kw">self</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span>
-        <span class="kw">if</span> <span class="kw">self</span>.res == <span class="dv">0</span> <span class="op">{</span> <span class="kw">return</span> <span class="kw">self</span> <span class="op">}</span>
-        ModInt <span class="op">{</span> res: <span class="kw">self</span>.md - <span class="kw">self</span>.res, md: <span class="kw">self</span>.md <span class="op">}</span>
+        <span class="kw">if</span> <span class="kw">self</span>.<span class="dv">0</span> == <span class="dv">0</span> <span class="op">{</span> <span class="kw">return</span> <span class="kw">self</span> <span class="op">}</span>
+        ModInt(<span class="kw">self</span>.<span class="dv">1</span> - <span class="kw">self</span>.<span class="dv">0</span>, <span class="kw">self</span>.<span class="dv">1</span>)
     <span class="op">}</span>
 <span class="op">}</span>
 <span class="kw">impl</span> std::ops::Add&lt;<span class="dt">i64</span>&gt; <span class="kw">for</span> ModInt <span class="op">{</span>
     <span class="kw">type</span> Output = <span class="kw">Self</span>;
-    <span class="kw">fn</span> add(<span class="kw">self</span>, other: <span class="dt">i64</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span>
-        <span class="kw">let</span> res = <span class="kw">if</span> <span class="kw">self</span>.res + other &gt;= <span class="kw">self</span>.md <span class="op">{</span>
-            <span class="kw">self</span>.res + other - <span class="kw">self</span>.md
-        <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
-            <span class="kw">self</span>.res + other
-        <span class="op">}</span>;
-        ModInt <span class="op">{</span> res: res, md: <span class="kw">self</span>.md <span class="op">}</span>
-    <span class="op">}</span>
+    <span class="kw">fn</span> add(<span class="kw">self</span>, other: <span class="dt">i64</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span> ModInt::new(<span class="kw">self</span>.<span class="dv">0</span> + other, <span class="kw">self</span>.<span class="dv">1</span>) <span class="op">}</span>
 <span class="op">}</span>
 <span class="kw">impl</span> std::ops::Add <span class="kw">for</span> ModInt <span class="op">{</span>
     <span class="kw">type</span> Output = <span class="kw">Self</span>;
-    <span class="kw">fn</span> add(<span class="kw">self</span>, other: ModInt) -&gt; <span class="kw">Self</span> <span class="op">{</span>
-        <span class="kw">self</span> + other.res
-    <span class="op">}</span>
+    <span class="kw">fn</span> add(<span class="kw">self</span>, other: ModInt) -&gt; <span class="kw">Self</span> <span class="op">{</span> <span class="kw">self</span> + other.<span class="dv">0</span> <span class="op">}</span>
 <span class="op">}</span>
 <span class="kw">impl</span> std::ops::Add&lt;ModInt&gt; <span class="kw">for</span> <span class="dt">i64</span> <span class="op">{</span>
     <span class="kw">type</span> Output = ModInt;
-    <span class="kw">fn</span> add(<span class="kw">self</span>, other: ModInt) -&gt; ModInt <span class="op">{</span>
-        other + <span class="kw">self</span>
-    <span class="op">}</span>
+    <span class="kw">fn</span> add(<span class="kw">self</span>, other: ModInt) -&gt; ModInt <span class="op">{</span> other + <span class="kw">self</span> <span class="op">}</span>
 <span class="op">}</span>
 <span class="kw">impl</span> std::ops::AddAssign&lt;<span class="dt">i64</span>&gt; <span class="kw">for</span> ModInt <span class="op">{</span>
-    <span class="kw">fn</span> add_assign(&amp;<span class="kw">mut</span> <span class="kw">self</span>, other: <span class="dt">i64</span>) <span class="op">{</span>
-        <span class="kw">self</span>.res += other;
-        <span class="kw">if</span> <span class="kw">self</span>.res &gt;= <span class="kw">self</span>.md <span class="op">{</span>
-            <span class="kw">self</span>.res -= <span class="kw">self</span>.md;
-        <span class="op">}</span>
-    <span class="op">}</span>
+    <span class="kw">fn</span> add_assign(&amp;<span class="kw">mut</span> <span class="kw">self</span>, other: <span class="dt">i64</span>) <span class="op">{</span> <span class="kw">self</span>.<span class="dv">0</span> = ModInt::new(<span class="kw">self</span>.<span class="dv">0</span> + other, <span class="kw">self</span>.<span class="dv">1</span>).<span class="dv">0</span>; <span class="op">}</span>
 <span class="op">}</span>
 <span class="kw">impl</span> std::ops::AddAssign <span class="kw">for</span> ModInt <span class="op">{</span>
-    <span class="kw">fn</span> add_assign(&amp;<span class="kw">mut</span> <span class="kw">self</span>, other: ModInt) <span class="op">{</span>
-        *<span class="kw">self</span> += other.res;
-    <span class="op">}</span>
+    <span class="kw">fn</span> add_assign(&amp;<span class="kw">mut</span> <span class="kw">self</span>, other: ModInt) <span class="op">{</span> *<span class="kw">self</span> += other.<span class="dv">0</span>; <span class="op">}</span>
 <span class="op">}</span>
 <span class="kw">impl</span> std::ops::Sub&lt;<span class="dt">i64</span>&gt; <span class="kw">for</span> ModInt <span class="op">{</span>
     <span class="kw">type</span> Output = <span class="kw">Self</span>;
-    <span class="kw">fn</span> sub(<span class="kw">self</span>, other: <span class="dt">i64</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span>
-        <span class="kw">let</span> res = <span class="kw">if</span> <span class="kw">self</span>.res &lt; other <span class="op">{</span>
-            <span class="kw">self</span>.res + <span class="kw">self</span>.md - other
-        <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
-            <span class="kw">self</span>.res - other
-        <span class="op">}</span>;
-        ModInt <span class="op">{</span> res: res, md: <span class="kw">self</span>.md <span class="op">}</span>
-    <span class="op">}</span>
+    <span class="kw">fn</span> sub(<span class="kw">self</span>, other: <span class="dt">i64</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span> ModInt::new(<span class="kw">self</span>.<span class="dv">0</span> - other, <span class="kw">self</span>.<span class="dv">1</span>) <span class="op">}</span>
 <span class="op">}</span>
 <span class="kw">impl</span> std::ops::Sub <span class="kw">for</span> ModInt <span class="op">{</span>
     <span class="kw">type</span> Output = <span class="kw">Self</span>;
-    <span class="kw">fn</span> sub(<span class="kw">self</span>, other: ModInt) -&gt; <span class="kw">Self</span> <span class="op">{</span>
-        <span class="kw">self</span> - other.res
-    <span class="op">}</span>
+    <span class="kw">fn</span> sub(<span class="kw">self</span>, other: ModInt) -&gt; <span class="kw">Self</span> <span class="op">{</span> <span class="kw">self</span> - other.<span class="dv">0</span> <span class="op">}</span>
 <span class="op">}</span>
 <span class="kw">impl</span> std::ops::Sub&lt;ModInt&gt; <span class="kw">for</span> <span class="dt">i64</span> <span class="op">{</span>
     <span class="kw">type</span> Output = ModInt;
-    <span class="kw">fn</span> sub(<span class="kw">self</span>, other: ModInt) -&gt; ModInt <span class="op">{</span>
-        -other + <span class="kw">self</span>
-    <span class="op">}</span>
+    <span class="kw">fn</span> sub(<span class="kw">self</span>, other: ModInt) -&gt; ModInt <span class="op">{</span> ModInt::new(<span class="kw">self</span> - other.<span class="dv">0</span>, other.<span class="dv">1</span>) <span class="op">}</span>
 <span class="op">}</span>
 <span class="kw">impl</span> std::ops::SubAssign&lt;<span class="dt">i64</span>&gt; <span class="kw">for</span> ModInt <span class="op">{</span>
-    <span class="kw">fn</span> sub_assign(&amp;<span class="kw">mut</span> <span class="kw">self</span>, other: <span class="dt">i64</span>) <span class="op">{</span>
-        <span class="kw">if</span> <span class="kw">self</span>.res &lt; other <span class="op">{</span>
-            <span class="kw">self</span>.res = <span class="kw">self</span>.res - other + <span class="kw">self</span>.md;
-        <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
-            <span class="kw">self</span>.res -= other;
-        <span class="op">}</span>
-    <span class="op">}</span>
+    <span class="kw">fn</span> sub_assign(&amp;<span class="kw">mut</span> <span class="kw">self</span>, other: <span class="dt">i64</span>) <span class="op">{</span> <span class="kw">self</span>.<span class="dv">0</span> = ModInt::new(<span class="kw">self</span>.<span class="dv">0</span> - other, <span class="kw">self</span>.<span class="dv">1</span>).<span class="dv">0</span>; <span class="op">}</span>
 <span class="op">}</span>
 <span class="kw">impl</span> std::ops::SubAssign <span class="kw">for</span> ModInt <span class="op">{</span>
-    <span class="kw">fn</span> sub_assign(&amp;<span class="kw">mut</span> <span class="kw">self</span>, other: ModInt) <span class="op">{</span>
-        *<span class="kw">self</span> -= other.res;
-    <span class="op">}</span>
+    <span class="kw">fn</span> sub_assign(&amp;<span class="kw">mut</span> <span class="kw">self</span>, other: ModInt) <span class="op">{</span> *<span class="kw">self</span> -= other.<span class="dv">0</span>; <span class="op">}</span>
 <span class="op">}</span>
 <span class="kw">impl</span> std::ops::Mul&lt;<span class="dt">i64</span>&gt; <span class="kw">for</span> ModInt <span class="op">{</span>
     <span class="kw">type</span> Output = <span class="kw">Self</span>;
-    <span class="kw">fn</span> mul(<span class="kw">self</span>, other: <span class="dt">i64</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span>
-        ModInt <span class="op">{</span> res: (<span class="kw">self</span>.res * other) % <span class="kw">self</span>.md, md: <span class="kw">self</span>.md <span class="op">}</span>
-    <span class="op">}</span>
+    <span class="kw">fn</span> mul(<span class="kw">self</span>, other: <span class="dt">i64</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span> ModInt::new(<span class="kw">self</span>.<span class="dv">0</span> * other, <span class="kw">self</span>.<span class="dv">1</span>) <span class="op">}</span>
 <span class="op">}</span>
 <span class="kw">impl</span> std::ops::Mul <span class="kw">for</span> ModInt <span class="op">{</span>
     <span class="kw">type</span> Output = <span class="kw">Self</span>;
-    <span class="kw">fn</span> mul(<span class="kw">self</span>, other: ModInt) -&gt; <span class="kw">Self</span> <span class="op">{</span>
-        <span class="kw">self</span> * other.res
-    <span class="op">}</span>
+    <span class="kw">fn</span> mul(<span class="kw">self</span>, other: ModInt) -&gt; <span class="kw">Self</span> <span class="op">{</span> <span class="kw">self</span> * other.<span class="dv">0</span> <span class="op">}</span>
 <span class="op">}</span>
 <span class="kw">impl</span> std::ops::Mul&lt;ModInt&gt; <span class="kw">for</span> <span class="dt">i64</span> <span class="op">{</span>
     <span class="kw">type</span> Output = ModInt;
-    <span class="kw">fn</span> mul(<span class="kw">self</span>, other: ModInt) -&gt; ModInt <span class="op">{</span>
-        other * <span class="kw">self</span>
-    <span class="op">}</span>
+    <span class="kw">fn</span> mul(<span class="kw">self</span>, other: ModInt) -&gt; ModInt <span class="op">{</span> other * <span class="kw">self</span> <span class="op">}</span>
 <span class="op">}</span>
 <span class="kw">impl</span> std::ops::MulAssign&lt;<span class="dt">i64</span>&gt; <span class="kw">for</span> ModInt <span class="op">{</span>
-    <span class="kw">fn</span> mul_assign(&amp;<span class="kw">mut</span> <span class="kw">self</span>, other: <span class="dt">i64</span>) <span class="op">{</span>
-        <span class="kw">self</span>.res = (<span class="kw">self</span>.res * other) % <span class="kw">self</span>.md;
-    <span class="op">}</span>
+    <span class="kw">fn</span> mul_assign(&amp;<span class="kw">mut</span> <span class="kw">self</span>, other: <span class="dt">i64</span>) <span class="op">{</span> <span class="kw">self</span>.<span class="dv">0</span> = ModInt::new(<span class="kw">self</span>.<span class="dv">0</span> * other, <span class="kw">self</span>.<span class="dv">1</span>).<span class="dv">0</span>; <span class="op">}</span>
 <span class="op">}</span>
 <span class="kw">impl</span> std::ops::MulAssign <span class="kw">for</span> ModInt <span class="op">{</span>
-    <span class="kw">fn</span> mul_assign(&amp;<span class="kw">mut</span> <span class="kw">self</span>, other: ModInt) <span class="op">{</span>
-        *<span class="kw">self</span> *= other.res;
-    <span class="op">}</span>
-<span class="op">}</span>
-<span class="kw">impl</span> std::ops::Div&lt;<span class="dt">i64</span>&gt; <span class="kw">for</span> ModInt <span class="op">{</span>
-    <span class="kw">type</span> Output = <span class="kw">Self</span>;
-    <span class="kw">fn</span> div(<span class="kw">self</span>, other: <span class="dt">i64</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span>
-        <span class="kw">self</span> * ModInt::new(other, <span class="kw">self</span>.md).inv()
-    <span class="op">}</span>
+    <span class="kw">fn</span> mul_assign(&amp;<span class="kw">mut</span> <span class="kw">self</span>, other: ModInt) <span class="op">{</span> *<span class="kw">self</span> *= other.<span class="dv">0</span>; <span class="op">}</span>
 <span class="op">}</span>
 <span class="kw">impl</span> std::ops::Div <span class="kw">for</span> ModInt <span class="op">{</span>
     <span class="kw">type</span> Output = <span class="kw">Self</span>;
-    <span class="kw">fn</span> div(<span class="kw">self</span>, other: ModInt) -&gt; <span class="kw">Self</span> <span class="op">{</span>
-        <span class="kw">self</span> * other.inv()
-    <span class="op">}</span>
+    <span class="kw">fn</span> div(<span class="kw">self</span>, other: ModInt) -&gt; <span class="kw">Self</span> <span class="op">{</span> <span class="kw">self</span> * other.inv() <span class="op">}</span>
+<span class="op">}</span>
+<span class="kw">impl</span> std::ops::Div&lt;<span class="dt">i64</span>&gt; <span class="kw">for</span> ModInt <span class="op">{</span>
+    <span class="kw">type</span> Output = <span class="kw">Self</span>;
+    <span class="kw">fn</span> div(<span class="kw">self</span>, other: <span class="dt">i64</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span> <span class="kw">self</span> / ModInt(other, <span class="kw">self</span>.<span class="dv">1</span>) <span class="op">}</span>
 <span class="op">}</span>
 <span class="kw">impl</span> std::ops::Div&lt;ModInt&gt; <span class="kw">for</span> <span class="dt">i64</span> <span class="op">{</span>
     <span class="kw">type</span> Output = ModInt;
-    <span class="kw">fn</span> div(<span class="kw">self</span>, other: ModInt) -&gt; ModInt <span class="op">{</span>
-        other.inv() * <span class="kw">self</span>
-    <span class="op">}</span>
+    <span class="kw">fn</span> div(<span class="kw">self</span>, other: ModInt) -&gt; ModInt <span class="op">{</span> other.inv() * <span class="kw">self</span> <span class="op">}</span>
 <span class="op">}</span>
 <span class="kw">impl</span> std::ops::DivAssign <span class="kw">for</span> ModInt <span class="op">{</span>
-    <span class="kw">fn</span> div_assign(&amp;<span class="kw">mut</span> <span class="kw">self</span>, other: ModInt) <span class="op">{</span>
-        <span class="kw">self</span>.res = (<span class="kw">self</span>.res * other.inv().res) % <span class="kw">self</span>.md;
-    <span class="op">}</span>
+    <span class="kw">fn</span> div_assign(&amp;<span class="kw">mut</span> <span class="kw">self</span>, other: ModInt) <span class="op">{</span> <span class="kw">self</span>.<span class="dv">0</span> = (<span class="kw">self</span>.clone() / other).<span class="dv">0</span>; <span class="op">}</span>
 <span class="op">}</span>
 <span class="kw">impl</span> std::ops::DivAssign&lt;<span class="dt">i64</span>&gt; <span class="kw">for</span> ModInt <span class="op">{</span>
-    <span class="kw">fn</span> div_assign(&amp;<span class="kw">mut</span> <span class="kw">self</span>, other: <span class="dt">i64</span>) <span class="op">{</span>
-        *<span class="kw">self</span> /= ModInt::new(other, <span class="kw">self</span>.md);
-    <span class="op">}</span>
+    <span class="kw">fn</span> div_assign(&amp;<span class="kw">mut</span> <span class="kw">self</span>, other: <span class="dt">i64</span>) <span class="op">{</span> *<span class="kw">self</span> /= ModInt(other, <span class="kw">self</span>.<span class="dv">1</span>); <span class="op">}</span>
 <span class="op">}</span></code></pre></div>
 <h2 id="例題">例題</h2>
 <ul>

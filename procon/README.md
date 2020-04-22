@@ -42,9 +42,13 @@
 - [std::nth_element](seq.nth.html)
 - [中央値](seq.median.html)
 
+## 累積処理
+
+- [一次元累積和](seq.cumsum.html)
+- [二次元累積和](seq.cumsum2d.html)
+
 ## 区間木
 
-- [累積和](seq.cumsum.html)
 - [BIT](seq.bit.html)
 - [RMQ](seq.rmq.html)
 - [Starry Sky Tree](seq.starry.html)

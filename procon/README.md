@@ -8,6 +8,7 @@
 - [ModInt](algebra.modint.html)
 - [行列](algebra.matrix.html)
 - [モノイド](algebra.monoid.html)
+- [有理数](algebra.ratio.html)
 
 # グラフ
 

@@ -20,95 +20,47 @@
         <section class="main-content columns is-fullheight">
 
           <div class="article column is-8 is-10-mobile">
-            <h1 id="seqsearch-by-accumulate-arrays">SeqSearch (by accumulate arrays)</h1>
-<p>列について範囲を指定して要素の検索を行う. 複数ある場合は最も左にあるものを返す.</p>
-<ul>
-<li>計算量
-<ul>
-<li>検索は要素ごとに前処理 <span class="math inline">\(O(N)\)</span> と二分探索 <span class="math inline">\(O(\log N)\)</span>
-<ul>
-<li>個数の累積和を作って持っておく</li>
-<li>途中で列の変更は出来ない</li>
-</ul></li>
-<li>毎回異なる要素で検索すると毎度 <span class="math inline">\(O(N)\)</span> 掛かるので注意</li>
-</ul></li>
-<li>使い方
-<ul>
-<li><code>let mut ss = SeqSearch::new(&amp;v)</code>
-<ul>
-<li>where <span class="math inline">\(v = \left[ v_0, v_1, \ldots, v_{n-1} \right]\)</span></li>
-</ul></li>
-<li><code>ss.search(a, i..j)</code>
-<ul>
-<li><span class="math inline">\(\min \{ k \mid i \leq k &lt; j, v_k = a \}\)</span>
-<ul>
-<li>where <span class="math inline">\(0 \leq i \leq j &lt; n\)</span></li>
-</ul></li>
-</ul></li>
-</ul></li>
-</ul>
-<h2 id="seq.search.rs"><a href="seq.search.rs" class="uri">seq.search.rs</a></h2>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">use</span> std::ops::Range;
-<span class="kw">use</span> std::collections::HashMap;
-<span class="kw">struct</span> SeqSearch&lt;T&gt; <span class="op">{</span>
-    raw: <span class="dt">Vec</span>&lt;T&gt;,
-    acc: HashMap&lt;T, <span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt;&gt;,
+            <h1 id="代数---有理数">代数 - 有理数</h1>
+<p>有理数 <span class="math inline">\(\frac{n}{m}\)</span> を <code>i64</code> の２つ組 <code>Ratio(n, m)</code> で表す. <code>Ratio::new(n, m)</code> は約分を行うがその分コストがあるので注意.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">,</span> <span class="bu">Clone</span><span class="at">,</span> <span class="bu">Copy</span><span class="at">)]</span>
+<span class="kw">struct</span> Ratio(<span class="dt">i64</span>, <span class="dt">i64</span>);  <span class="co">// (numerator / denominator)</span>
+<span class="kw">impl</span> Ratio <span class="op">{</span>
+    <span class="kw">fn</span> new(a: <span class="dt">i64</span>, b: <span class="dt">i64</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span>
+        <span class="kw">let</span> x = <span class="kw">Self</span>::gcd(a.abs(), b.abs());
+        <span class="kw">let</span> sign = <span class="kw">if</span> b &gt; <span class="dv">0</span> <span class="op">{</span> <span class="dv">1</span> <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span> -<span class="dv">1</span> <span class="op">}</span>;
+        Ratio(sign * a / x, sign * b / x)
+    <span class="op">}</span>
+    <span class="kw">fn</span> inv(<span class="kw">self</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span> <span class="kw">Self</span>::new(<span class="kw">self</span>.<span class="dv">1</span>, <span class="kw">self</span>.<span class="dv">0</span>) <span class="op">}</span>
+    <span class="kw">fn</span> gcd(a: <span class="dt">i64</span>, b: <span class="dt">i64</span>) -&gt; <span class="dt">i64</span> <span class="op">{</span> <span class="kw">if</span> b == <span class="dv">0</span> <span class="op">{</span> a <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span> <span class="kw">Self</span>::gcd(b, a % b) <span class="op">}</span> <span class="op">}</span>
+    <span class="kw">fn</span> lcm(a: <span class="dt">i64</span>, b: <span class="dt">i64</span>) -&gt; <span class="dt">i64</span> <span class="op">{</span> a / <span class="kw">Self</span>::gcd(a, b) * b <span class="op">}</span>
 <span class="op">}</span>
-<span class="kw">impl</span>&lt;T&gt; SeqSearch&lt;T&gt;
-<span class="kw">where</span> T: std::hash::<span class="bu">Hash</span> + <span class="bu">Eq</span> + <span class="bu">Copy</span>
-<span class="op">{</span>
-    <span class="kw">fn</span> new(xs: &amp;<span class="dt">Vec</span>&lt;T&gt;) -&gt; SeqSearch&lt;T&gt; <span class="op">{</span>
-        SeqSearch <span class="op">{</span> raw: xs.to_vec(), acc: HashMap::new() <span class="op">}</span>
+<span class="kw">impl</span> std::ops::Neg <span class="kw">for</span> Ratio <span class="op">{</span>
+    <span class="kw">type</span> Output = <span class="kw">Self</span>;
+    <span class="kw">fn</span> neg(<span class="kw">self</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span> Ratio(-<span class="kw">self</span>.<span class="dv">0</span>, <span class="kw">self</span>.<span class="dv">1</span>) <span class="op">}</span>
+<span class="op">}</span>
+<span class="kw">impl</span> std::ops::Add <span class="kw">for</span> Ratio <span class="op">{</span>
+    <span class="kw">type</span> Output = <span class="kw">Self</span>;
+    <span class="kw">fn</span> add(<span class="kw">self</span>, other: <span class="kw">Self</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span>
+        <span class="kw">let</span> num = <span class="kw">Self</span>::lcm(<span class="kw">self</span>.<span class="dv">1</span>, other.<span class="dv">1</span>);
+        Ratio(<span class="kw">self</span>.<span class="dv">0</span> * num / <span class="kw">self</span>.<span class="dv">1</span> + other.<span class="dv">0</span> * num / other.<span class="dv">1</span>, num)
     <span class="op">}</span>
-    <span class="kw">fn</span> len(&amp;<span class="kw">self</span>) -&gt; <span class="dt">usize</span> <span class="op">{</span> <span class="kw">return</span> <span class="kw">self</span>.raw.len() <span class="op">}</span>
-    <span class="kw">fn</span> new_alphabet(&amp;<span class="kw">mut</span> <span class="kw">self</span>, alphabet: T) <span class="op">{</span>
-        <span class="kw">if</span> <span class="kw">self</span>.acc.contains_key(&amp;alphabet) <span class="op">{</span>
-            <span class="kw">return</span>
-        <span class="op">}</span>
-        <span class="kw">let</span> n = <span class="kw">self</span>.raw.len();
-        <span class="kw">let</span> <span class="kw">mut</span> ac = <span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>; n + <span class="dv">1</span><span class="op">]</span>;  <span class="co">// ac = count alphabet xs[0, i)</span>
-        <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.n <span class="op">{</span>
-            ac<span class="op">[</span>i + <span class="dv">1</span><span class="op">]</span> = ac<span class="op">[</span>i<span class="op">]</span> + <span class="kw">if</span> <span class="kw">self</span>.raw<span class="op">[</span>i<span class="op">]</span> == alphabet <span class="op">{</span> <span class="dv">1</span> <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span> <span class="dv">0</span> <span class="op">}</span>;
-        <span class="op">}</span>
-        <span class="kw">self</span>.acc.insert(alphabet, ac);
-    <span class="op">}</span>
-    <span class="kw">fn</span> count(&amp;<span class="kw">mut</span> <span class="kw">self</span>, alphabet: T, range: Range&lt;<span class="dt">usize</span>&gt;) -&gt; <span class="dt">usize</span> <span class="op">{</span>
-        <span class="kw">if</span> <span class="kw">let</span> <span class="cn">Some</span>(ac) = <span class="kw">self</span>.acc.get(&amp;alphabet) <span class="op">{</span>
-            ac<span class="op">[</span>range.end<span class="op">]</span> - ac<span class="op">[</span>range.start<span class="op">]</span>
-        <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
-            <span class="kw">self</span>.new_alphabet(alphabet);
-            <span class="kw">self</span>.count(alphabet, range)
-        <span class="op">}</span>
-    <span class="op">}</span>
-    <span class="co">// most-left index in range [i, j)</span>
-    <span class="kw">fn</span> search(&amp;<span class="kw">mut</span> <span class="kw">self</span>, alphabet: T, range: Range&lt;<span class="dt">usize</span>&gt;) -&gt; <span class="dt">Option</span>&lt;<span class="dt">usize</span>&gt; <span class="op">{</span>
-        <span class="kw">if</span> <span class="kw">self</span>.count(alphabet, range.clone()) == <span class="dv">0</span> <span class="op">{</span>
-            <span class="kw">return</span> <span class="cn">None</span>
-        <span class="op">}</span>
-        <span class="kw">let</span> <span class="kw">mut</span> left = range.start;
-        <span class="kw">let</span> <span class="kw">mut</span> right = range.end;
-        <span class="kw">for</span> _ <span class="kw">in</span> <span class="dv">0.</span>.<span class="dv">100</span> <span class="op">{</span>
-            <span class="kw">let</span> mid = (left + right) / <span class="dv">2</span>;
-            <span class="kw">if</span> <span class="kw">self</span>.count(alphabet, range.start..mid) == <span class="dv">0</span> <span class="op">{</span>
-                left = mid;
-            <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
-                right = mid;
-            <span class="op">}</span>
-        <span class="op">}</span>
-        <span class="cn">Some</span>(left)
-    <span class="op">}</span>
+<span class="op">}</span>
+<span class="kw">impl</span> std::ops::Sub <span class="kw">for</span> Ratio <span class="op">{</span>
+    <span class="kw">type</span> Output = <span class="kw">Self</span>;
+    <span class="kw">fn</span> sub(<span class="kw">self</span>, other: <span class="kw">Self</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span> <span class="kw">self</span> + (-other) <span class="op">}</span>
+<span class="op">}</span>
+<span class="kw">impl</span> std::ops::Mul <span class="kw">for</span> Ratio <span class="op">{</span>
+    <span class="kw">type</span> Output = <span class="kw">Self</span>;
+    <span class="kw">fn</span> mul(<span class="kw">self</span>, other: <span class="kw">Self</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span> <span class="kw">Self</span>::new(<span class="kw">self</span>.<span class="dv">0</span> * other.<span class="dv">0</span>, <span class="kw">self</span>.<span class="dv">1</span> * other.<span class="dv">1</span>) <span class="op">}</span>
+<span class="op">}</span>
+<span class="kw">impl</span> std::ops::Div <span class="kw">for</span> Ratio <span class="op">{</span>
+    <span class="kw">type</span> Output = <span class="kw">Self</span>;
+    <span class="kw">fn</span> div(<span class="kw">self</span>, other: <span class="kw">Self</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span> <span class="kw">Self</span>::new(<span class="kw">self</span>.<span class="dv">0</span> * other.<span class="dv">1</span>, <span class="kw">self</span>.<span class="dv">1</span> * other.<span class="dv">0</span>) <span class="op">}</span>
 <span class="op">}</span></code></pre></div>
-<h2 id="例題">例題</h2>
-<ul>
-<li><a href="https://atcoder.jp/contests/abc138/tasks/abc138_e">ABC 138 - Strings of Impurity</a>
-<ul>
-<li><a href="https://atcoder.jp/contests/abc138/submissions/7013148">submissions/7013148</a></li>
-</ul></li>
-</ul>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
-<details class=menu>
+<details class=menu open>
 <summary class=menu>代数</summary>
 <ul>
 <li><a href="algebra.group.html">群</a></li>
@@ -152,7 +104,7 @@
 <h2 id="強連結成分分解"><a href="graph.scc.html">強連結成分分解</a></h2>
 </details>
 
-<details class=menu open>
+<details class=menu>
 <summary class=menu>数列</summary>
 <ul>
 <li><a href="seq.lsi.html">最長増加部分列 (LSI)</a></li>

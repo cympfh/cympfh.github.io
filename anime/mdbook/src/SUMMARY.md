@@ -5,6 +5,7 @@
 --------
 
 - [2020](2020/README.md)
+    - [グレイプニル](2020/Q2/gleipnir.md)
     - [ギャルと恐竜](2020/Q2/gal_kyouryu.md)
     - [かくしごと](2020/Q2/kakushigoto.md)
     - [波よ聞いてくれ](2020/Q2/namiyo_kiitekure.md)

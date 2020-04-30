@@ -1,5 +1,5 @@
-/// Integer function - Euler Phi
-fn euler_phi(n: i32) -> usize {
+/// Integer function - Euler's Phi Function
+fn euler_phi(n: i64) -> usize {
     let mut divs = vec![];
     {
         let mut m = n;
@@ -8,8 +8,7 @@ fn euler_phi(n: i32) -> usize {
             while m % k == 0 { m /= k; }
         }
     }
-
-    let mut cx: i32 = 0;
+    let mut cx: i64 = 0;
     {
         let m = divs.len();
         for b in 1..(1<<m) {
@@ -18,6 +17,5 @@ fn euler_phi(n: i32) -> usize {
             cx += n / d * if popcnt % 2 == 1 { 1 } else { -1 };
         }
     }
-
     (n - cx) as usize
 }

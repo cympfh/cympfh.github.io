@@ -1,6 +1,6 @@
-# int.binom
+# 二項係数 (ModInt)
 
-二項係数
+mod 付きの二項係数
 $\left(\begin{array}{c}n\\k\end{array}\right)$
 を計算量 $O(n \log n)$ で計算する.
 

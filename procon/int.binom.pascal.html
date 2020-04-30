@@ -20,183 +20,27 @@
         <section class="main-content columns is-fullheight">
 
           <div class="article column is-8 is-10-mobile">
-            <h1 id="puzzle">15puzzle</h1>
-<h2 id="puzzle.cc"><a href="15puzzle.cc" class="uri">15puzzle.cc</a></h2>
-<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="co">/*</span>
-<span class="co"> * (W * H - 1) パズル (a.k.a 15パズル)</span>
-<span class="co"> * を解く最小手数を求めます</span>
-<span class="co"> *</span>
-<span class="co"> * これは</span>
-<span class="co"> * http://indeednow-quala.contest.atcoder.jp/tasks/indeednow_2015_quala_4</span>
-<span class="co"> * の解答です</span>
-<span class="co"> *</span>
-<span class="co"> * 24手数以内であることが保証されており、</span>
-<span class="co"> * この解答は双方向探索を行います</span>
-<span class="co"> *</span>
-<span class="co"> */</span>
-
-<span class="pp">#include </span><span class="im">&lt;bits/stdc++.h&gt;</span>
-<span class="kw">using</span> <span class="kw">namespace</span> std;
-
-<span class="pp">#define rep(i,n) for(int i=0;i&lt;(n);++i)</span>
-<span class="pp">#define loop for(;;)</span>
-<span class="pp">#define trace(var) cerr&lt;&lt;&quot;&gt;&gt;&gt; &quot;&lt;&lt;#var&lt;&lt;&quot; = &quot;&lt;&lt;var&lt;&lt;endl;</span>
-<span class="at">const</span> <span class="dt">double</span> PI = acos(<span class="dv">-1</span>);
-
-<span class="kw">template</span>&lt;<span class="kw">class</span> S, <span class="kw">class</span> T&gt;
-ostream&amp; <span class="kw">operator</span>&lt;&lt;(ostream&amp; os, pair&lt;S,T&gt; p) {
-  os &lt;&lt; <span class="st">&#39;(&#39;</span> &lt;&lt; p.first &lt;&lt; <span class="st">&quot;, &quot;</span> &lt;&lt; p.second &lt;&lt; <span class="st">&#39;)&#39;</span>;
-  <span class="cf">return</span> os;
-}
-
-<span class="kw">template</span>&lt;<span class="kw">class</span> T&gt;
-ostream&amp; <span class="kw">operator</span>&lt;&lt;(ostream&amp; os, vector&lt;T&gt; v) {
-  <span class="cf">if</span> (v.size() == <span class="dv">0</span>) {
-    os &lt;&lt; <span class="st">&quot;(empty)&quot;</span>;
-    <span class="cf">return</span> os;
-  }
-  os &lt;&lt; v[<span class="dv">0</span>];
-  <span class="cf">for</span> (<span class="dt">int</span> i=<span class="dv">1</span>, len=v.size(); i&lt;len; ++i) os &lt;&lt; <span class="st">&#39; &#39;</span> &lt;&lt; v[i];
-  <span class="cf">return</span> os;
-}
-
-<span class="dt">int</span> h, w;
-<span class="dt">int</span> area;
-
-vector&lt;vector&lt;<span class="dt">int</span>&gt; &gt; step(vector&lt;<span class="dt">int</span>&gt;&amp;s) {
-  vector&lt;vector&lt;<span class="dt">int</span>&gt;&gt; ret;
-  rep (idx, area) {
-    <span class="cf">if</span> (s[idx] != <span class="dv">0</span>) <span class="cf">continue</span>;
-    <span class="dt">int</span> i = idx / w;
-    <span class="dt">int</span> j = idx % w;
-    <span class="cf">if</span> (i &gt; <span class="dv">0</span>) {
-      <span class="co">// trace(&quot;up&quot;);</span>
-      <span class="kw">auto</span> t = s;
-      swap(t[idx], t[idx - w]);
-      ret.push_back(t);
-    }
-    <span class="cf">if</span> (i &lt; h<span class="dv">-1</span>) {
-      <span class="kw">auto</span> t = s;
-      swap(t[idx], t[idx + w]);
-      ret.push_back(t);
-    }
-    <span class="cf">if</span> (j &gt; <span class="dv">0</span>) {
-      <span class="co">// trace(&quot;left&quot;);</span>
-      <span class="kw">auto</span> t = s;
-      swap(t[idx], t[idx - <span class="dv">1</span>]);
-      ret.push_back(t);
-    }
-    <span class="cf">if</span> (j &lt; w<span class="dv">-1</span>) {
-      <span class="co">// trace(&quot;right&quot;);</span>
-      <span class="kw">auto</span> t = s;
-      swap(t[idx], t[idx + <span class="dv">1</span>]);
-      ret.push_back(t);
-    }
-  }
-  <span class="cf">return</span> ret;
-}
-
-<span class="co">// 板の状態を vector&lt;int&gt; で持つ</span>
-
-<span class="co">// スタートからその状態までの最小手数</span>
-map&lt;vector&lt;<span class="dt">int</span>&gt;, <span class="dt">int</span>&gt; table;
-
-<span class="co">// ゴールからその状態までの最小手数</span>
-map&lt;vector&lt;<span class="dt">int</span>&gt;, <span class="dt">int</span>&gt; r_table;
-
-<span class="dt">int</span> main() {
-  cin.tie(<span class="dv">0</span>);
-  ios::sync_with_stdio(<span class="dv">0</span>);
-  cout.setf(ios::fixed);
-  cout.precision(<span class="dv">10</span>);
-
-  <span class="co">// 入力</span>
-  cin &gt;&gt; h &gt;&gt; w;
-  area = h * w;
-
-  vector&lt;<span class="dt">int</span>&gt; s(area);
-  rep (i, area) cin &gt;&gt; s[i];
-
-  <span class="co">// ゴールの状態はこう</span>
-  vector&lt;<span class="dt">int</span>&gt; g(area);
-  rep (i, area) g[i] = (i + <span class="dv">1</span>) % area;
-
-  <span class="co">// 双方向から幅優先するだけ</span>
-  queue&lt;tuple&lt;<span class="dt">int</span>, vector&lt;<span class="dt">int</span>&gt;, <span class="dt">bool</span>&gt;&gt; q;
-  q.push(make_tuple(<span class="dv">0</span>, s, <span class="kw">true</span>)); <span class="co">// true はスタートから</span>
-  q.push(make_tuple(<span class="dv">0</span>, g, <span class="kw">false</span>)); <span class="co">// false はゴールから</span>
-  table[s] = <span class="dv">0</span>;
-  r_table[g] = <span class="dv">0</span>;
-
-  <span class="dt">int</span> ans = <span class="dv">-1</span>;
-
-  <span class="cf">while</span> (!q.empty()) {
-    <span class="kw">auto</span> tup = q.front(); q.pop();
-    <span class="dt">int</span> depth = get&lt;<span class="dv">0</span>&gt;(tup);
-    <span class="kw">auto</span>&amp;s = get&lt;<span class="dv">1</span>&gt;(tup);
-    <span class="dt">bool</span> dir = get&lt;<span class="dv">2</span>&gt;(tup);
-    <span class="cf">if</span> (depth &gt; <span class="dv">12</span>) <span class="cf">continue</span>;
-
-    <span class="cf">if</span> (dir) {
-      <span class="cf">if</span> (r_table.count(s) &gt; <span class="dv">0</span>) {
-        ans = depth + r_table[s];
-        <span class="cf">break</span>;
-      }
-    } <span class="cf">else</span> {
-      <span class="cf">if</span> (table.count(s) &gt; <span class="dv">0</span>) {
-        ans = depth + table[s];
-        <span class="cf">break</span>;
-      }
-    }
-
-    <span class="kw">auto</span> ss = step(s);
-    <span class="cf">for</span> (<span class="kw">auto</span>&amp;s: ss) {
-      <span class="cf">if</span> (dir) {
-        <span class="cf">if</span> (table.count(s) &gt; <span class="dv">0</span>) <span class="cf">continue</span>;
-        table[s] = depth + <span class="dv">1</span>;
-      }
-      <span class="cf">if</span> (<span class="kw">not</span> dir) {
-        <span class="cf">if</span> (r_table.count(s) &gt; <span class="dv">0</span>) <span class="cf">continue</span>;
-        r_table[s] = depth + <span class="dv">1</span>;
-      }
-      q.push(make_tuple(depth + <span class="dv">1</span>, s, dir));
-    }
-  }
-  cout &lt;&lt; ans &lt;&lt; endl;
-  <span class="cf">return</span> <span class="dv">0</span>;
-}
-
-<span class="co">/*</span>
-<span class="co"> * 入力例1</span>
-<span class="co">3 3</span>
-<span class="co">1 0 2</span>
-<span class="co">4 5 3</span>
-<span class="co">7 8 6</span>
-
-<span class="co">ゴールとなる状態は</span>
-
-<span class="co">1 2 3</span>
-<span class="co">4 5 6</span>
-<span class="co">7 8 0</span>
-
-<span class="co">であるので、解答は</span>
-
-<span class="co">3</span>
-
-<span class="co">*/</span>
-
-<span class="co">/*</span>
-<span class="co"> * 入力例2</span>
-<span class="co">3 5</span>
-<span class="co">6 1 2 8 5</span>
-<span class="co">7 0 4 3 10</span>
-<span class="co">11 12 13 9 14</span>
-
-<span class="co">解答は</span>
-
-<span class="co">12</span>
-
-<span class="co">*/</span></code></pre></div>
+            <h1 id="二項係数---パスカルの三角形">二項係数 - パスカルの三角形</h1>
+<p>パスカルの三角形を用いて, <span class="math inline">\(1 \leq n \leq N, 0 \leq k \leq n\)</span> についての <span class="math inline">\(\left(\begin{array}{c}n\\k\end{array}\right)\)</span> を <span class="math inline">\(O(N^2)\)</span> で求める.</p>
+<p>二次元配列 <code>binom</code> を返し, <span class="math inline">\(\left(\begin{array}{c}n\\k\end{array}\right)\)</span> が <code>binom[n][k]</code> に入ってる. 範囲外にはゼロが入ってる.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Binomial Coefficient - Pascal&#39;s Triangle</span>
+<span class="kw">fn</span> pascal_triagle(n: <span class="dt">usize</span>) -&gt; <span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;<span class="dt">u64</span>&gt;&gt; <span class="op">{</span>
+    <span class="kw">let</span> <span class="kw">mut</span> binom = <span class="pp">vec!</span><span class="op">[</span><span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>; n + <span class="dv">1</span><span class="op">]</span>; n + <span class="dv">1</span><span class="op">]</span>;
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">1.</span>.n + <span class="dv">1</span> <span class="op">{</span>
+        <span class="kw">for</span> j <span class="kw">in</span> <span class="dv">0.</span>.i + <span class="dv">1</span> <span class="op">{</span>
+            binom<span class="op">[</span>i<span class="op">][</span>j<span class="op">]</span> = <span class="op">{</span>
+                <span class="kw">if</span> i == <span class="dv">1</span> || j == <span class="dv">0</span> <span class="op">{</span>
+                    <span class="dv">1</span>
+                <span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> j + j &gt; i <span class="op">{</span>
+                    binom<span class="op">[</span>i<span class="op">][</span>i - j<span class="op">]</span>
+                <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
+                    binom<span class="op">[</span>i - <span class="dv">1</span><span class="op">][</span>j<span class="op">]</span> + binom<span class="op">[</span>i - <span class="dv">1</span><span class="op">][</span>j - <span class="dv">1</span><span class="op">]</span>
+                <span class="op">}</span>
+            <span class="op">}</span>;
+        <span class="op">}</span>
+    <span class="op">}</span>
+    binom
+<span class="op">}</span></code></pre></div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
@@ -317,7 +161,7 @@ map&lt;vector&lt;<span class="dt">int</span>&gt;, <span class="dt">int</span>&gt
 </ul>
 </details>
 
-<details class=menu>
+<details class=menu open>
 <summary class=menu>整数</summary>
 <ul>
 <li><a href="int_max_and_min.html">整数の最大値、最小値 (gcc)</a></li>
@@ -430,7 +274,7 @@ map&lt;vector&lt;<span class="dt">int</span>&gt;, <span class="dt">int</span>&gt
 </ul>
 </details>
 
-<details class=menu open>
+<details class=menu>
 <summary class=menu>misc</summary>
 <ul>
 <li><a href="bit.count.html">bit count</a></li>

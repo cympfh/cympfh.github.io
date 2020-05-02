@@ -161,6 +161,7 @@
 # collections
 
 - [defaultmap](collections.defaultmap.html)
+- [リスト内包表記マクロ](collections.list_comprehension_macro.md)
 
 # STL
 

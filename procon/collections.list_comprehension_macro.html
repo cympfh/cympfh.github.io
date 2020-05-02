@@ -20,26 +20,52 @@
         <section class="main-content columns is-fullheight">
 
           <div class="article column is-8 is-10-mobile">
-            <h1 id="二項係数---パスカルの三角形">二項係数 - パスカルの三角形</h1>
-<p>パスカルの三角形を用いて, <span class="math inline">\(1 \leq n \leq N, 0 \leq k \leq n\)</span> についての <span class="math inline">\(\left(\begin{array}{c}n\\k\end{array}\right)\)</span> を <span class="math inline">\(O(N^2)\)</span> で求める.</p>
-<p>二次元配列 <code>binom</code> を返し, <span class="math inline">\(\left(\begin{array}{c}n\\k\end{array}\right)\)</span> が <code>binom[n][k]</code> に入ってる. 範囲外にはゼロが入ってる.</p>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Binomial Coefficient - Pascal&#39;s Triangle</span>
-<span class="kw">fn</span> pascal_triagle(n: <span class="dt">usize</span>) -&gt; <span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;<span class="dt">u64</span>&gt;&gt; <span class="op">{</span>
-    <span class="kw">let</span> <span class="kw">mut</span> binom = <span class="pp">vec!</span><span class="op">[</span><span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>; n + <span class="dv">1</span><span class="op">]</span>; n + <span class="dv">1</span><span class="op">]</span>;
-    <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">1.</span>.n + <span class="dv">1</span> <span class="op">{</span>
-        <span class="kw">for</span> j <span class="kw">in</span> <span class="dv">0.</span>.i + <span class="dv">1</span> <span class="op">{</span>
-            binom<span class="op">[</span>i<span class="op">][</span>j<span class="op">]</span> = <span class="op">{</span>
-                <span class="kw">if</span> i == <span class="dv">1</span> || j == <span class="dv">0</span> <span class="op">{</span>
-                    <span class="dv">1</span>
-                <span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> j + j &gt; i <span class="op">{</span>
-                    binom<span class="op">[</span>i<span class="op">][</span>i - j<span class="op">]</span>
-                <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
-                    binom<span class="op">[</span>i - <span class="dv">1</span><span class="op">][</span>j<span class="op">]</span> + binom<span class="op">[</span>i - <span class="dv">1</span><span class="op">][</span>j - <span class="dv">1</span><span class="op">]</span>
-                <span class="op">}</span>
-            <span class="op">}</span>;
-        <span class="op">}</span>
-    <span class="op">}</span>
-    binom
+            <h1 id="collections---リスト内包表記マクロ">collections - リスト内包表記マクロ</h1>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="pp">macro_rules!</span> list <span class="op">{</span>
+    ($($t:tt)*) =&gt; <span class="op">{{</span> <span class="kw">let</span> <span class="kw">mut</span> r = <span class="pp">vec!</span><span class="op">[]</span>; <span class="pp">list_inner!</span>(r, $($t)*); r <span class="op">}}</span>
+<span class="op">}</span>
+<span class="pp">macro_rules!</span> list_inner <span class="op">{</span>
+    ($r:expr) =&gt; <span class="op">{}</span>;
+    ($r:expr, $e:expr) =&gt; <span class="op">{</span> $r.push($e) <span class="op">}</span>;
+    ($r:expr, $e:expr;) =&gt; <span class="op">{</span> $r.push($e) <span class="op">}</span>;
+    ($r:expr, $e:expr; <span class="kw">for</span> $k:ident <span class="kw">in</span> $range:expr) =&gt; <span class="op">{</span> <span class="kw">for</span> $k <span class="kw">in</span> $range <span class="op">{</span> <span class="pp">list_inner!</span>($r, $e) <span class="op">}</span> <span class="op">}</span>;
+    ($r:expr, $e:expr; <span class="kw">if</span> $cond:expr) =&gt; <span class="op">{</span> <span class="kw">if</span> $cond <span class="op">{</span> <span class="pp">list_inner!</span>($r, $e) <span class="op">}</span> <span class="op">}</span>;
+    ($r:expr, $e:expr; <span class="kw">for</span> $k:ident <span class="kw">in</span> $range:expr ; $($t:tt)*) =&gt; <span class="op">{</span> <span class="kw">for</span> $k <span class="kw">in</span> $range <span class="op">{</span> <span class="pp">list_inner!</span>($r, $e ; $($t)*); <span class="op">}</span> <span class="op">}</span>;
+    ($r:expr, $e:expr; <span class="kw">if</span> $cond:expr ; $($t:tt)*) =&gt; <span class="op">{</span> <span class="kw">if</span> $cond <span class="op">{</span> <span class="pp">list_inner!</span>($r, $e ; $($t)*); <span class="op">}</span> <span class="op">}</span>;
+<span class="op">}</span></code></pre></div>
+<h2 id="使い方">使い方</h2>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="pp">list!</span> <span class="op">{</span>
+    (expression);
+    $(
+        (<span class="kw">for</span>-range);
+        (<span class="kw">if</span>-condition);
+    );*
+<span class="op">}</span></code></pre></div>
+<p>式間の区切りは全てセミコロン (<code>;</code>). 一番最後のセミコロンはあっても無くても良い.</p>
+<h3 id="例">例</h3>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="pp">list!</span> <span class="op">{</span>
+    x;
+    <span class="kw">for</span> x <span class="kw">in</span> <span class="dv">0.</span>.<span class="dv">10</span>
+<span class="op">}</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="pp">list!</span> <span class="op">{</span>
+    x;
+    <span class="kw">for</span> x <span class="kw">in</span> <span class="dv">0.</span>.<span class="dv">10</span>;
+    <span class="kw">if</span> x % <span class="dv">2</span> == <span class="dv">0</span>
+<span class="op">}</span></code></pre></div>
+<p><code>for</code> と <code>if</code> は上から順に実行される. 必要ならば早めに <code>if</code> でフィルタできる.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="pp">list!</span> <span class="op">{</span>
+    (x, y);
+    <span class="kw">for</span> x <span class="kw">in</span> <span class="dv">0.</span>.<span class="dv">10</span>;
+    <span class="kw">if</span> x % <span class="dv">2</span> == <span class="dv">0</span>;
+    <span class="kw">for</span> y <span class="kw">in</span> x..<span class="dv">20</span>;
+    <span class="kw">if</span> y % <span class="dv">2</span> == <span class="dv">0</span>
+<span class="op">}</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="pp">list!</span> <span class="op">{</span>
+    (x, y, z);
+    <span class="kw">for</span> x <span class="kw">in</span> <span class="dv">1.</span>.<span class="dv">100</span>;
+    <span class="kw">for</span> y <span class="kw">in</span> x..<span class="dv">100</span>;
+    <span class="kw">for</span> z <span class="kw">in</span> y..x + y;
+    <span class="kw">if</span> x * x + y * y == z * z;
 <span class="op">}</span></code></pre></div>
           </div>
 
@@ -161,7 +187,7 @@
 </ul>
 </details>
 
-<details class=menu open>
+<details class=menu>
 <summary class=menu>整数</summary>
 <ul>
 <li><a href="int_max_and_min.html">整数の最大値、最小値 (gcc)</a></li>
@@ -256,7 +282,7 @@
 </ul>
 </details>
 
-<details class=menu>
+<details class=menu open>
 <summary class=menu>collections</summary>
 <ul>
 <li><a href="collections.defaultmap.html">defaultmap</a></li>

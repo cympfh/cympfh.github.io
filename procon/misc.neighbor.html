@@ -20,14 +20,46 @@
         <section class="main-content columns is-fullheight">
 
           <div class="article column is-8 is-10-mobile">
-            <h1 id="geo.2d.triangle">geo.2d.triangle</h1>
-<h2 id="geo.2d.triangle.cc"><a href="geo.2d.triangle.cc" class="uri">geo.2d.triangle.cc</a></h2>
-<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp">Real triangle_area(P a, P b, P c) {
-  P u = b - a;
-  P v = c - a;
-  <span class="cf">return</span> abs(det(u, v)) / <span class="fl">2.0</span>;
-}
-</code></pre></div>
+            <h1 id="近傍">近傍</h1>
+<p>点を与えるとその近傍を返すようなデータ構造</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Neighbor</span>
+<span class="co">// @collections.list_comprehension_macro.rs</span>
+<span class="kw">mod</span> neighbor <span class="op">{</span>
+    <span class="kw">pub</span> <span class="kw">struct</span> Grid4(<span class="kw">pub</span> <span class="dt">usize</span>, <span class="kw">pub</span> <span class="dt">usize</span>);
+    <span class="kw">impl</span> Grid4 <span class="op">{</span>
+        <span class="kw">pub</span> <span class="kw">fn</span> iter(&amp;<span class="kw">self</span>, i: <span class="dt">usize</span>, j: <span class="dt">usize</span>) -&gt; NeighborIter&lt;(<span class="dt">usize</span>, <span class="dt">usize</span>)&gt; <span class="op">{</span>
+            NeighborIter::new(<span class="pp">list!</span> <span class="op">{</span>
+                (i + s - <span class="dv">1</span>, j + t - <span class="dv">1</span>);
+                <span class="kw">for</span> s <span class="kw">in</span> <span class="dv">0.</span>.<span class="dv">3</span>;
+                <span class="kw">for</span> t <span class="kw">in</span> <span class="dv">0.</span>.<span class="dv">3</span>;
+                <span class="kw">if</span> (s + t) % <span class="dv">2</span> == <span class="dv">1</span>;
+                <span class="kw">if</span> (<span class="dv">1.</span>.<span class="kw">self</span>.<span class="dv">0</span> + <span class="dv">1</span>).contains(&amp;(i + s));
+                <span class="kw">if</span> (<span class="dv">1.</span>.<span class="kw">self</span>.<span class="dv">1</span> + <span class="dv">1</span>).contains(&amp;(j + t));
+            <span class="op">}</span>)
+        <span class="op">}</span>
+    <span class="op">}</span>
+    <span class="kw">pub</span> <span class="kw">struct</span> Grid8(<span class="kw">pub</span> <span class="dt">usize</span>, <span class="kw">pub</span> <span class="dt">usize</span>);
+    <span class="kw">impl</span> Grid8 <span class="op">{</span>
+        <span class="kw">pub</span> <span class="kw">fn</span> iter&lt;<span class="ot">&#39;a</span>&gt;(&amp;<span class="ot">&#39;a</span> <span class="kw">self</span>, i: <span class="dt">usize</span>, j: <span class="dt">usize</span>) -&gt; NeighborIter&lt;(<span class="dt">usize</span>, <span class="dt">usize</span>)&gt; <span class="op">{</span>
+            NeighborIter::new(<span class="pp">list!</span> <span class="op">{</span>
+                (i + s - <span class="dv">1</span>, j + t - <span class="dv">1</span>);
+                <span class="kw">for</span> s <span class="kw">in</span> <span class="dv">0.</span>.<span class="dv">3</span>;
+                <span class="kw">for</span> t <span class="kw">in</span> <span class="dv">0.</span>.<span class="dv">3</span>;
+                <span class="kw">if</span> s * t != <span class="dv">1</span>;
+                <span class="kw">if</span> (<span class="dv">1.</span>.<span class="kw">self</span>.<span class="dv">0</span> + <span class="dv">1</span>).contains(&amp;(i + s));
+                <span class="kw">if</span> (<span class="dv">1.</span>.<span class="kw">self</span>.<span class="dv">1</span> + <span class="dv">1</span>).contains(&amp;(j + t));
+            <span class="op">}</span>)
+        <span class="op">}</span>
+    <span class="op">}</span>
+    <span class="kw">pub</span> <span class="kw">struct</span> NeighborIter&lt;T&gt;(<span class="dt">Vec</span>&lt;T&gt;, <span class="dt">usize</span>);
+    <span class="kw">impl</span>&lt;T&gt; NeighborIter&lt;T&gt; <span class="op">{</span> <span class="kw">fn</span> new(data: <span class="dt">Vec</span>&lt;T&gt;) -&gt; <span class="kw">Self</span> <span class="op">{</span> NeighborIter(data, <span class="dv">0</span>) <span class="op">}</span> <span class="op">}</span>
+    <span class="kw">impl</span>&lt;T: <span class="bu">Copy</span>&gt; <span class="bu">Iterator</span> <span class="kw">for</span> NeighborIter&lt;T&gt; <span class="op">{</span>
+        <span class="kw">type</span> Item = T;
+        <span class="kw">fn</span> next(&amp;<span class="kw">mut</span> <span class="kw">self</span>) -&gt; <span class="dt">Option</span>&lt;<span class="kw">Self</span>::Item&gt; <span class="op">{</span>
+            <span class="kw">if</span> <span class="kw">self</span>.<span class="dv">0.</span>len() &gt; <span class="kw">self</span>.<span class="dv">1</span> <span class="op">{</span> <span class="kw">self</span>.<span class="dv">1</span> += <span class="dv">1</span>; <span class="cn">Some</span>(<span class="kw">self</span>.<span class="dv">0</span><span class="op">[</span><span class="kw">self</span>.<span class="dv">1</span> - <span class="dv">1</span><span class="op">]</span>) <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span> <span class="cn">None</span> <span class="op">}</span>
+        <span class="op">}</span>
+    <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
@@ -97,7 +129,7 @@
 </ul>
 </details>
 
-<details class=menu open>
+<details class=menu>
 <summary class=menu>幾何</summary>
 <ul>
 <li><a href="geo.2d.html">図形表現</a></li>
@@ -262,7 +294,7 @@
 </ul>
 </details>
 
-<details class=menu>
+<details class=menu open>
 <summary class=menu>misc</summary>
 <ul>
 <li><a href="bit.count.html">bit count</a></li>

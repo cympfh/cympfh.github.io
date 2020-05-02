@@ -180,4 +180,5 @@
 - [スターリングの近似式](misc.stirling.html)
 - [サイコロ](dice.html)
 - [円周率](misc.pi.html)
+- [近傍](misc.neighbor.md)
 

@@ -12,9 +12,9 @@ card() {
 
     date_span=$(echo $ANIMETA | jq -r '.date | "\(.start) - \(.end)"')
     episodes=$(echo $ANIMETA | jq -r '"\(.type) - \(.episodecount) episodes"')
-    companies=$(echo $ANIMETA | jq -r '.company | join(", ")')
+    companies=$(echo $ANIMETA | jq -r 'if .company then (.company | join(", ")) else empty end')
 
-    pic=$(echo $ANIMETA | jq -r '.picture[0]')
+    pic=$(echo $ANIMETA | jq -r '.picture? | .[0]')
     if [ "$pic" != null ]; then
         pic="https://cdn-us.anidb.net/images/main/$pic"
     else
@@ -36,7 +36,7 @@ card() {
     <div class="content">
 
       <div class="eye-catch">
-        <img class="eye-catch" src="$pic" />
+        <img class="eye-catch" src="$pic" loading="lazy" />
       </div>
 
       <div class="doc" id="${aid}">

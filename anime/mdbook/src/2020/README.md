@@ -1,9 +1,0 @@
-# anime/2020/
-- [波よ聞いてくれ](Q2/namiyo_kiitekure.md)
-- [かくしごと](Q2/kakushigoto.md)
-- [グレイプニル](Q2/gleipnir.md)
-- [ギャルと恐竜](Q2/gal_kyouryu.md)
-- [おーばーふろぉ](Q1/overflow.md)
-- [推しが武道館にいってくれたら死ぬ](Q1/oshi.md)
-- [虚構推理](Q1/kyokou.md)
-- [映像研には手を出すな](Q1/eizouken.md)

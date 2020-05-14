@@ -36,7 +36,7 @@ card() {
     <div class="content">
 
       <div class="eye-catch">
-        <img class="eye-catch" src="$pic" loading="lazy" />
+        <img class="eye-catch lazyload" data-src="$pic" />
       </div>
 
       <div class="doc" id="${aid}">
@@ -69,6 +69,7 @@ cat <<TEMPLATE
   <title>anime/</title>
   <link rel="stylesheet" href="../resources/css/bulma/bulma.css" />
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/lazyload@2.0.0-rc.2/lazyload.js"></script>
   <style>
 
 div.content {
@@ -140,6 +141,12 @@ cat $POSTLIST |
 cat <<TEMPLATE
     </div>
   </section>
+
+  <script>
+
+    lazyload();
+
+  </script>
 
 </body></html>
 TEMPLATE

@@ -35,10 +35,6 @@ card() {
   <div class="card-content">
     <div class="content">
 
-      <div class="eye-catch">
-        <img class="eye-catch lazyload" data-src="$pic" />
-      </div>
-
       <div class="doc" id="${aid}">
         $( cat ${src%md}html )
       </div>
@@ -71,6 +67,11 @@ cat <<TEMPLATE
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/lazyload@2.0.0-rc.2/lazyload.js"></script>
   <style>
+
+
+div.card {
+width: 45%;
+}
 
 div.content {
   overflow: hidden;

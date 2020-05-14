@@ -29,7 +29,7 @@ card() {
   <header class="card-header">
     <p class="card-header-title"><a href="#${aid}">${title}</a></p>
     <a href="https://anidb.net/anime/${aid}" target="_blank" class="card-header-icon" aria-label="more options">
-      <span class="icon has-text-success">
+      <span class="icon has-text-danger">
         <i class="fa fa-database" aria-hidden="true"></i>
       </span>
     </a>

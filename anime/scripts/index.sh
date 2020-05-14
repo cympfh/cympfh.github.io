@@ -23,20 +23,26 @@ card() {
 
     cat <<EOM
 
-<div class="card">
+    <div class="column is-half">
+
+<div class="card" id="${aid}">
   <header class="card-header">
-    <p class="card-header-title"><a name="${aid}" href="#${aid}">${title}</a></p>
-    <a href="#${aid}" class="card-header-icon" aria-label="more options">
-      <span class="icon">
-        <i class="fa fa-angle-double-down" aria-hidden="true"></i>
+    <p class="card-header-title"><a href="#${aid}">${title}</a></p>
+    <a href="https://anidb.net/anime/${aid}" target="_blank" class="card-header-icon" aria-label="more options">
+      <span class="icon has-text-success">
+        <i class="fa fa-database" aria-hidden="true"></i>
       </span>
     </a>
   </header>
   <div class="card-content">
     <div class="content">
 
-      <div class="doc" id="${aid}">
+      <div class="doc">
         $( cat ${src%md}html )
+      </div>
+
+      <div class="collapse" aid="$aid">
+        <i class="fa fa-chevron-circle-down"></i>
       </div>
 
     </div>
@@ -45,9 +51,10 @@ card() {
     <p class="card-footer-item"><time>${date_span}</time></p>
     <p class="card-footer-item is-info">${episodes}</p>
     <p class="card-footer-item is-info">${companies}</p>
-    <p class="card-footer-item"><i class="fa fa-link"></i> <a href="https://anidb.net/anime/${aid}">aniDB</a></p>
   </footer>
 </div>
+
+    </div>
 
 EOM
 
@@ -64,56 +71,10 @@ cat <<TEMPLATE
   <meta name="viewport" content="width=device-width, initial-scale=0.9">
   <title>anime/</title>
   <link rel="stylesheet" href="../resources/css/bulma/bulma.css" />
+  <link rel="stylesheet" href="./resources/css/base.css" />
+  <link rel="stylesheet" href="./resources/css/youtube.css" />
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/lazyload@2.0.0-rc.2/lazyload.js"></script>
-  <style>
-
-
-div.card {
-width: 45%;
-}
-
-div.content {
-  overflow: hidden;
-}
-
-div.card-content {
-  padding: 0 !important;
-}
-
-div.doc {
-  padding: 1.5rem;
-  height: auto;
-  transition-duration: 0.8s;
-}
-
-div.doc:target {
-  height: auto;
-  max-height: none;
-  opacity: 1.0;
-}
-
-div.doc:not(target) {
-  height: auto;
-  max-height: 100px;
-  opacity: 0.6;
-}
-
-div.content img.eye-catch {
-  width: 100%;
-  height: 160px;
-  object-fit: cover;
-}
-
-aside.menu {
-  position: fixed;
-}
-
-img:not(.eye-catch) {
-width: 50%;
-}
-
-  </style>
   </head>
 <body>
 
@@ -125,6 +86,7 @@ width: 50%;
 
   <section class="section">
     <div class="container">
+      <div class="columns is-multiline">
 TEMPLATE
 
 last_year=0
@@ -140,14 +102,15 @@ cat $POSTLIST |
     done
 
 cat <<TEMPLATE
+      </div>
     </div>
   </section>
 
   <script>
-
     lazyload();
-
   </script>
+  <script src="./resources/js/base.js"></script>
+  <script src="./resources/js/youtube.js"></script>
 
 </body></html>
 TEMPLATE

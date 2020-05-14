@@ -16,7 +16,7 @@ card() {
 
     pic=$(echo $ANIMETA | jq -r '.picture? | .[0]')
     if [ "$pic" != null ]; then
-        pic="https://cdn-us.anidb.net/images/main/$pic"
+        pic="https://cdn.anidb.net/images/main/$pic"
     else
         pic=""
     fi

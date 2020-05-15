@@ -13,13 +13,20 @@ refresh-md-list() {
         sort > resources/md-list
 }
 
-edit-list() {
+select-edit() {
     aid=$(
-        cat resources/md-list |
+        (
+            echo "* new";
+            cat resources/md-list
+        ) |
             peco |
             awk '{print $2}'
     )
-    [ -n "$aid" ] && edit $aid
+    if [ "$aid" = "new" ]; then
+        new
+    elif [ -n "$aid" ]; then
+        edit "$aid"
+    fi
 }
 
 create() {
@@ -61,6 +68,6 @@ case "$1" in
         refresh-md-list
         ;;
     * )
-        edit-list
+        select-edit
         ;;
 esac

@@ -60,6 +60,20 @@ EOM
 
 }
 
+card-year() {
+  cat <<EOM
+    <div class="column is-half">
+      <div class="card card-year">
+        <div class="card-content">
+          <div class="content">
+            <span class="title">$1</span>
+          </div>
+        </div>
+      </div>
+    </div>
+EOM
+}
+
 #
 # HTML generation
 #
@@ -95,7 +109,7 @@ cat $POSTLIST |
     while read src aid; do
         year=$(echo $src | sed 's#^src/##; s#/.*##g')
         if [ $last_year -ne $year ]; then
-            echo "<section class=hero><div class=hero-body><div class=container><h2 class=title>$year</h2></div></div></section>"
+            card-year "$year"
             last_year=$year
         fi
         card "$src" "$aid"

@@ -24,12 +24,13 @@
 <h2 id="概要">概要</h2>
 <p>二次元配列を与えたとき, <code>(0, 0)</code> から <code>(i, j)</code> までの矩形の和を保存することで 任意の矩形 <code>(i0..i1, j0..j1)</code> (<code>i1</code>, <code>j1</code> は含まない半開区間) の和を <span class="math inline">\(O(1)\)</span> で求める.</p>
 <div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Sequence - 2D Cumulative Summation</span>
-<span class="kw">struct</span> CumSum2D(<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;<span class="dt">i64</span>&gt;&gt;);
-<span class="kw">impl</span> CumSum2D <span class="op">{</span>
-    <span class="kw">fn</span> new(data: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;<span class="dt">i64</span>&gt;&gt;) -&gt; CumSum2D <span class="op">{</span>
+<span class="co">// @algebra.group.rs</span>
+<span class="kw">struct</span> CumSum2D&lt;T&gt;(<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;T&gt;&gt;);
+<span class="kw">impl</span>&lt;T: Group&gt; CumSum2D&lt;T&gt; <span class="op">{</span>
+    <span class="kw">fn</span> new(data: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;T&gt;&gt;) -&gt; CumSum2D&lt;T&gt; <span class="op">{</span>
         <span class="kw">let</span> h = data.len();
         <span class="kw">let</span> w = data<span class="op">[</span><span class="dv">0</span><span class="op">]</span>.len();
-        <span class="kw">let</span> <span class="kw">mut</span> cs = <span class="pp">vec!</span><span class="op">[</span><span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>; w + <span class="dv">1</span><span class="op">]</span>; h + <span class="dv">1</span><span class="op">]</span>;
+        <span class="kw">let</span> <span class="kw">mut</span> cs = <span class="pp">vec!</span><span class="op">[</span><span class="pp">vec!</span><span class="op">[</span>T::zero(); w + <span class="dv">1</span><span class="op">]</span>; h + <span class="dv">1</span><span class="op">]</span>;
         <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.h <span class="op">{</span>
             <span class="kw">for</span> j <span class="kw">in</span> <span class="dv">0.</span>.w <span class="op">{</span>
                 cs<span class="op">[</span>i + <span class="dv">1</span><span class="op">][</span>j + <span class="dv">1</span><span class="op">]</span> = data<span class="op">[</span>i<span class="op">][</span>j<span class="op">]</span> + cs<span class="op">[</span>i<span class="op">][</span>j + <span class="dv">1</span><span class="op">]</span> + cs<span class="op">[</span>i + <span class="dv">1</span><span class="op">][</span>j<span class="op">]</span> - cs<span class="op">[</span>i<span class="op">][</span>j<span class="op">]</span>;
@@ -37,14 +38,14 @@
         <span class="op">}</span>
         CumSum2D(cs)
     <span class="op">}</span>
-    <span class="kw">fn</span> sum_up(&amp;<span class="kw">self</span>, x: <span class="dt">usize</span>, y: <span class="dt">usize</span>) -&gt; <span class="dt">i64</span> <span class="op">{</span>
+    <span class="kw">fn</span> sum_up(&amp;<span class="kw">self</span>, x: <span class="dt">usize</span>, y: <span class="dt">usize</span>) -&gt; T <span class="op">{</span>
         <span class="kw">let</span> x = std::cmp::min(x, <span class="kw">self</span>.<span class="dv">0.</span>len());
         <span class="kw">let</span> y = std::cmp::min(y, <span class="kw">self</span>.<span class="dv">0</span><span class="op">[</span><span class="dv">0</span><span class="op">]</span>.len());
         <span class="kw">self</span>.<span class="dv">0</span><span class="op">[</span>x<span class="op">][</span>y<span class="op">]</span>
     <span class="op">}</span>
-    <span class="kw">fn</span> sum(&amp;<span class="kw">self</span>, xrange: std::ops::Range&lt;<span class="dt">usize</span>&gt;, yrange: std::ops::Range&lt;<span class="dt">usize</span>&gt;) -&gt; <span class="dt">i64</span> <span class="op">{</span>
+    <span class="kw">fn</span> sum(&amp;<span class="kw">self</span>, xrange: std::ops::Range&lt;<span class="dt">usize</span>&gt;, yrange: std::ops::Range&lt;<span class="dt">usize</span>&gt;) -&gt; T <span class="op">{</span>
         <span class="kw">if</span> xrange.end &lt;= xrange.start || yrange.end &lt;= yrange.start <span class="op">{</span>
-            <span class="dv">0</span>
+            T::zero()
         <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
             <span class="kw">self</span>.sum_up(xrange.end, yrange.end)
                 - <span class="kw">self</span>.sum_up(xrange.start, yrange.end)

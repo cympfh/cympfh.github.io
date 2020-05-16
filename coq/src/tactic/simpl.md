@@ -2,7 +2,7 @@
 
 自明な計算で簡略化できる部分をする.
 
-```c
+```haskell
 Coq < Theorem test: 1 + 1 = 2.
 1 subgoal
 

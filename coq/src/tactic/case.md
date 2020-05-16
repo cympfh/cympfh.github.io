@@ -4,7 +4,7 @@
 
 `nat` であれば `0` か `n.+1` (ssreflect の場合) かに分岐される.
 
-```
+```haskell
 1 subgoal
 
   m, n : nat

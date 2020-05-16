@@ -1,7 +1,8 @@
+anime	anime/
+coq	coq/book/
 photos	photos/
 search	http://s.cympfh.cc/search
 aiura	aiura/
-anime	anime/
 gnuplot	gnuplot/
 memo	memo/
 neta	neta/

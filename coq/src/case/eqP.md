@@ -5,7 +5,7 @@ eqP
      : reflect (?x = ?y) (?x == ?y)
 ```
 
-を使う.
+を `move/` して使う.
 
 ```haskell
 1 subgoal

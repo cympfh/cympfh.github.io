@@ -13,5 +13,7 @@
 - [Use Case](#.md)
     - [仮定と前件の移動](case/intros.md)
     - [選言の分解](case/or.md)
+    - [同値 iff の分解](case/iff.md)
     - [補題の導入](case/lemma.md)
     - [= と == の言い換え](case/eqP.md)
+    - [存在量化子](case/exists.md)

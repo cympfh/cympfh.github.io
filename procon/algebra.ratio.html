@@ -22,21 +22,34 @@
           <div class="article column is-8 is-10-mobile">
             <h1 id="代数---有理数">代数 - 有理数</h1>
 <p>有理数 <span class="math inline">\(\frac{n}{m}\)</span> を <code>i64</code> の２つ組 <code>Ratio(n, m)</code> で表す. <code>Ratio::new(n, m)</code> は約分を行うがその分コストがあるので注意.</p>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">,</span> <span class="bu">Clone</span><span class="at">,</span> <span class="bu">Copy</span><span class="at">)]</span>
-<span class="kw">struct</span> Ratio(<span class="dt">i64</span>, <span class="dt">i64</span>);  <span class="co">// (numerator / denominator)</span>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Algebra - Ratio</span>
+<span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">,</span> <span class="bu">Clone</span><span class="at">,</span> <span class="bu">Copy</span><span class="at">,</span> <span class="bu">PartialEq</span><span class="at">,</span> <span class="bu">Eq</span><span class="at">,</span> <span class="bu">Hash</span><span class="at">)]</span>
+<span class="kw">struct</span> Ratio(<span class="dt">i64</span>, <span class="dt">i64</span>); <span class="co">// Normalized (numerator / denominator)</span>
 <span class="kw">impl</span> Ratio <span class="op">{</span>
     <span class="kw">fn</span> new(a: <span class="dt">i64</span>, b: <span class="dt">i64</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span>
         <span class="kw">let</span> x = <span class="kw">Self</span>::gcd(a.abs(), b.abs());
         <span class="kw">let</span> sign = <span class="kw">if</span> b &gt; <span class="dv">0</span> <span class="op">{</span> <span class="dv">1</span> <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span> -<span class="dv">1</span> <span class="op">}</span>;
         Ratio(sign * a / x, sign * b / x)
     <span class="op">}</span>
-    <span class="kw">fn</span> inv(<span class="kw">self</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span> <span class="kw">Self</span>::new(<span class="kw">self</span>.<span class="dv">1</span>, <span class="kw">self</span>.<span class="dv">0</span>) <span class="op">}</span>
-    <span class="kw">fn</span> gcd(a: <span class="dt">i64</span>, b: <span class="dt">i64</span>) -&gt; <span class="dt">i64</span> <span class="op">{</span> <span class="kw">if</span> b == <span class="dv">0</span> <span class="op">{</span> a <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span> <span class="kw">Self</span>::gcd(b, a % b) <span class="op">}</span> <span class="op">}</span>
-    <span class="kw">fn</span> lcm(a: <span class="dt">i64</span>, b: <span class="dt">i64</span>) -&gt; <span class="dt">i64</span> <span class="op">{</span> a / <span class="kw">Self</span>::gcd(a, b) * b <span class="op">}</span>
+    <span class="kw">fn</span> inv(<span class="kw">self</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span>
+        <span class="kw">Self</span>::new(<span class="kw">self</span>.<span class="dv">1</span>, <span class="kw">self</span>.<span class="dv">0</span>)
+    <span class="op">}</span>
+    <span class="kw">fn</span> gcd(a: <span class="dt">i64</span>, b: <span class="dt">i64</span>) -&gt; <span class="dt">i64</span> <span class="op">{</span>
+        <span class="kw">if</span> b == <span class="dv">0</span> <span class="op">{</span>
+            a
+        <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
+            <span class="kw">Self</span>::gcd(b, a % b)
+        <span class="op">}</span>
+    <span class="op">}</span>
+    <span class="kw">fn</span> lcm(a: <span class="dt">i64</span>, b: <span class="dt">i64</span>) -&gt; <span class="dt">i64</span> <span class="op">{</span>
+        a / <span class="kw">Self</span>::gcd(a, b) * b
+    <span class="op">}</span>
 <span class="op">}</span>
 <span class="kw">impl</span> std::ops::Neg <span class="kw">for</span> Ratio <span class="op">{</span>
     <span class="kw">type</span> Output = <span class="kw">Self</span>;
-    <span class="kw">fn</span> neg(<span class="kw">self</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span> Ratio(-<span class="kw">self</span>.<span class="dv">0</span>, <span class="kw">self</span>.<span class="dv">1</span>) <span class="op">}</span>
+    <span class="kw">fn</span> neg(<span class="kw">self</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span>
+        Ratio(-<span class="kw">self</span>.<span class="dv">0</span>, <span class="kw">self</span>.<span class="dv">1</span>)
+    <span class="op">}</span>
 <span class="op">}</span>
 <span class="kw">impl</span> std::ops::Add <span class="kw">for</span> Ratio <span class="op">{</span>
     <span class="kw">type</span> Output = <span class="kw">Self</span>;
@@ -47,15 +60,33 @@
 <span class="op">}</span>
 <span class="kw">impl</span> std::ops::Sub <span class="kw">for</span> Ratio <span class="op">{</span>
     <span class="kw">type</span> Output = <span class="kw">Self</span>;
-    <span class="kw">fn</span> sub(<span class="kw">self</span>, other: <span class="kw">Self</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span> <span class="kw">self</span> + (-other) <span class="op">}</span>
+    <span class="kw">fn</span> sub(<span class="kw">self</span>, other: <span class="kw">Self</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span>
+        <span class="kw">self</span> + (-other)
+    <span class="op">}</span>
 <span class="op">}</span>
 <span class="kw">impl</span> std::ops::Mul <span class="kw">for</span> Ratio <span class="op">{</span>
     <span class="kw">type</span> Output = <span class="kw">Self</span>;
-    <span class="kw">fn</span> mul(<span class="kw">self</span>, other: <span class="kw">Self</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span> <span class="kw">Self</span>::new(<span class="kw">self</span>.<span class="dv">0</span> * other.<span class="dv">0</span>, <span class="kw">self</span>.<span class="dv">1</span> * other.<span class="dv">1</span>) <span class="op">}</span>
+    <span class="kw">fn</span> mul(<span class="kw">self</span>, other: <span class="kw">Self</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span>
+        <span class="kw">Self</span>::new(<span class="kw">self</span>.<span class="dv">0</span> * other.<span class="dv">0</span>, <span class="kw">self</span>.<span class="dv">1</span> * other.<span class="dv">1</span>)
+    <span class="op">}</span>
 <span class="op">}</span>
 <span class="kw">impl</span> std::ops::Div <span class="kw">for</span> Ratio <span class="op">{</span>
     <span class="kw">type</span> Output = <span class="kw">Self</span>;
-    <span class="kw">fn</span> div(<span class="kw">self</span>, other: <span class="kw">Self</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span> <span class="kw">Self</span>::new(<span class="kw">self</span>.<span class="dv">0</span> * other.<span class="dv">1</span>, <span class="kw">self</span>.<span class="dv">1</span> * other.<span class="dv">0</span>) <span class="op">}</span>
+    <span class="kw">fn</span> div(<span class="kw">self</span>, other: <span class="kw">Self</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span>
+        <span class="kw">Self</span>::new(<span class="kw">self</span>.<span class="dv">0</span> * other.<span class="dv">1</span>, <span class="kw">self</span>.<span class="dv">1</span> * other.<span class="dv">0</span>)
+    <span class="op">}</span>
+<span class="op">}</span>
+<span class="kw">impl</span> <span class="bu">PartialOrd</span> <span class="kw">for</span> Ratio <span class="op">{</span>
+    <span class="kw">fn</span> partial_cmp(&amp;<span class="kw">self</span>, other: &amp;<span class="kw">Self</span>) -&gt; <span class="dt">Option</span>&lt;std::cmp::Ordering&gt; <span class="op">{</span>
+        <span class="kw">let</span> left = <span class="kw">self</span>.<span class="dv">0</span> * other.<span class="dv">1</span>;
+        <span class="kw">let</span> right = other.<span class="dv">0</span> * <span class="kw">self</span>.<span class="dv">1</span>;
+        left.partial_cmp(&amp;right)
+    <span class="op">}</span>
+<span class="op">}</span>
+<span class="kw">impl</span> <span class="bu">Ord</span> <span class="kw">for</span> Ratio <span class="op">{</span>
+    <span class="kw">fn</span> cmp(&amp;<span class="kw">self</span>, other: &amp;<span class="kw">Self</span>) -&gt; std::cmp::Ordering <span class="op">{</span>
+        <span class="kw">self</span>.partial_cmp(&amp;other).unwrap()
+    <span class="op">}</span>
 <span class="op">}</span></code></pre></div>
           </div>
 

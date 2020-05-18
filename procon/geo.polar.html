@@ -20,89 +20,35 @@
         <section class="main-content columns is-fullheight">
 
           <div class="article column is-8 is-10-mobile">
-            <h1 id="二分探索">二分探索</h1>
-<h2 id="問題概要">問題概要</h2>
-<p>整数（のようなデータ）について Yes/No を返す述語 <span class="math inline">\(P\)</span> があるとする: <span class="math display">\[P \colon \mathbb Z \to \mathrm{Bool}.\]</span></p>
-<p>そして今, この <span class="math inline">\(P\)</span> はある整数 <span class="math inline">\(m\)</span> があって,</p>
-<ul>
-<li><span class="math inline">\(n &lt; m \implies P(n) = \mathrm{No}\)</span></li>
-<li><span class="math inline">\(n \geq m \implies P(n) = \mathrm{Yes}\)</span></li>
-</ul>
-<p>を満たすとする. このとき, この整数 <span class="math inline">\(m\)</span> を求めたい.</p>
-<p>ただし, 次のような2つの値 <span class="math inline">\(l, r (l &lt; r)\)</span> が予め与えられるとする:</p>
-<ul>
-<li><span class="math inline">\(P(l) = \mathrm{No}\)</span>,</li>
-<li><span class="math inline">\(P(r) = \mathrm{Yes}\)</span>.</li>
-</ul>
-<h2 id="解法">解法</h2>
-<p>区間 <span class="math inline">\((l,r]\)</span> は <span class="math inline">\(m\)</span> を含んでいる. このことを不変条件に持つように上手く区間のサイズを半分にしてく. そのためには <span class="math inline">\(l, r\)</span> の適当な中間値を持ってきて, それが <span class="math inline">\(P\)</span> を満たすかをチェックするだけでいい. これを繰り返して, 区間のサイズがちょうど <span class="math inline">\(1\)</span> になったとき, その要素が求める答え <span class="math inline">\(m\)</span> である.</p>
-<p>ところで <span class="math inline">\(l,r,m\)</span> の乗ってるデータは, 中間値を取る操作 <code>middle</code> と, 区間のサイズが <span class="math inline">\(1\)</span> であることをチェックする操作 <code>close</code> を必要とする. 逆に言えばこの二つさえあれば整数そのものに限らなくて良い. 例えば十分小さい値 <code>eps</code> を定めて <code>close(l, r) = (r - l &lt; eps)</code> とすることで浮動小数点数であっても, 精度 <code>eps</code> で <code>m</code> が求まる.</p>
-<h2 id="コード">コード</h2>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Binary Search</span>
-<span class="kw">trait</span> Integer <span class="op">{</span>
-    <span class="kw">fn</span> close(x: <span class="kw">Self</span>, y: <span class="kw">Self</span>) -&gt; <span class="dt">bool</span>;
-    <span class="kw">fn</span> middle(x: <span class="kw">Self</span>, y: <span class="kw">Self</span>) -&gt; <span class="kw">Self</span>;
+            <h1 id="幾何---極座標系">幾何 - 極座標系</h1>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Geometry - Polar Coordinates System</span>
+<span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">,</span> <span class="bu">Clone</span><span class="at">,</span> <span class="bu">Copy</span><span class="at">,</span> <span class="bu">PartialEq</span><span class="at">)]</span>
+<span class="kw">struct</span> Polar <span class="op">{</span>
+    theta: <span class="dt">f64</span>,
+    r: <span class="dt">f64</span>,
 <span class="op">}</span>
-<span class="kw">impl</span> Integer <span class="kw">for</span> <span class="dt">usize</span> <span class="op">{</span>
-    <span class="kw">fn</span> close(x: <span class="kw">Self</span>, y: <span class="kw">Self</span>) -&gt; <span class="dt">bool</span> <span class="op">{</span> x + <span class="dv">1</span> &gt;= y <span class="op">}</span>
-    <span class="kw">fn</span> middle(x: <span class="kw">Self</span>, y: <span class="kw">Self</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span> (x + y) / <span class="dv">2</span> <span class="op">}</span>
-<span class="op">}</span>
-<span class="kw">impl</span> Integer <span class="kw">for</span> <span class="dt">i64</span> <span class="op">{</span>
-    <span class="kw">fn</span> close(x: <span class="kw">Self</span>, y: <span class="kw">Self</span>) -&gt; <span class="dt">bool</span> <span class="op">{</span> x + <span class="dv">1</span> &gt;= y <span class="op">}</span>
-    <span class="kw">fn</span> middle(x: <span class="kw">Self</span>, y: <span class="kw">Self</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span> (x + y) / <span class="dv">2</span> <span class="op">}</span>
-<span class="op">}</span>
-<span class="kw">impl</span> Integer <span class="kw">for</span> <span class="dt">f64</span> <span class="op">{</span>
-    <span class="kw">fn</span> close(x: <span class="kw">Self</span>, y: <span class="kw">Self</span>) -&gt; <span class="dt">bool</span> <span class="op">{</span> x + <span class="dv">0.00000001</span> &gt;= y <span class="op">}</span>
-    <span class="kw">fn</span> middle(x: <span class="kw">Self</span>, y: <span class="kw">Self</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span> (x + y) / <span class="dv">2.0</span> <span class="op">}</span>
-<span class="op">}</span>
-
-<span class="co">// the most left element in [l, r] such that prop holds</span>
-<span class="kw">fn</span> binsearch&lt;X: Integer + <span class="bu">Copy</span>&gt;(l: X, r: X, prop: &amp;<span class="bu">Fn</span>(X) -&gt; <span class="dt">bool</span>) -&gt; X <span class="op">{</span>
-    <span class="kw">if</span> X::close(l, r) <span class="op">{</span>
-        r
-    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
-        <span class="kw">let</span> mid = X::middle(l, r);
-        <span class="kw">if</span> prop(mid) <span class="op">{</span>
-            binsearch(l, mid, prop)
+<span class="kw">impl</span> Polar <span class="op">{</span>
+    <span class="kw">const</span> PI: <span class="dt">f64</span> = std::<span class="dt">f64</span>::consts::PI;
+    <span class="kw">const</span> PI2: <span class="dt">f64</span> = std::<span class="dt">f64</span>::consts::PI * <span class="dv">2.0</span>;
+    <span class="kw">fn</span> new(theta: <span class="dt">f64</span>, r: <span class="dt">f64</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span>
+        <span class="kw">let</span> <span class="kw">mut</span> t = theta;
+        <span class="kw">let</span> r = <span class="kw">if</span> r &gt;= <span class="dv">0.0</span> <span class="op">{</span>
+            r
         <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
-            binsearch(mid, r, prop)
+            t += <span class="kw">Self</span>::PI;
+            -r
+        <span class="op">}</span>;
+        t %= <span class="kw">Self</span>::PI * <span class="dv">2.0</span>;
+        <span class="kw">if</span> t &lt; <span class="dv">0.0</span> <span class="op">{</span>
+            t += <span class="kw">Self</span>::PI * <span class="dv">2.0</span>;
         <span class="op">}</span>
+        Polar <span class="op">{</span> theta: t, r <span class="op">}</span>
     <span class="op">}</span>
-<span class="op">}</span></code></pre></div>
-<h3 id="応用">応用</h3>
-<p>整数として配列のインデックス (<code>usize</code>) を選び, <code>prop</code> を上手く作ることで, 昇順ソート済みの配列 <code>xs</code> 中に <code>x</code> がいくつあるか, <code>x</code> 以上/以下 がいくつあるか, などを対数時間で計算できる.</p>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Binary Search - Counting Elements in a Sorted Array</span>
-<span class="co">// @bin.search.rs</span>
-<span class="co">// the number of elements == x</span>
-<span class="kw">fn</span> binsearch_count&lt;T: <span class="bu">Ord</span>&gt;(x: T, xs: &amp;<span class="dt">Vec</span>&lt;T&gt;) -&gt; <span class="dt">usize</span> <span class="op">{</span>
-    <span class="kw">let</span> n = xs.len();
-    <span class="kw">let</span> i = binsearch(<span class="dv">0</span>, n, &amp;|i| xs<span class="op">[</span>i<span class="op">]</span> &gt;= x);
-    <span class="kw">let</span> j = binsearch(<span class="dv">0</span>, n, &amp;|i| xs<span class="op">[</span>i<span class="op">]</span> &gt; x);
-    j - i
-<span class="op">}</span>
-
-<span class="co">// the number of elements &gt;= x</span>
-<span class="kw">fn</span> binsearch_count_geq&lt;T: <span class="bu">Ord</span>&gt;(x: T, xs: &amp;<span class="dt">Vec</span>&lt;T&gt;) -&gt; <span class="dt">usize</span> <span class="op">{</span>
-    <span class="kw">let</span> n = xs.len();
-    <span class="kw">if</span> xs<span class="op">[</span><span class="dv">0</span><span class="op">]</span> &gt;= x <span class="op">{</span> <span class="kw">return</span> n <span class="op">}</span>
-    n - binsearch(<span class="dv">0</span>, n, &amp;|i| xs<span class="op">[</span>i<span class="op">]</span> &gt;= x)
-<span class="op">}</span>
-
-<span class="co">// the number of elements &gt; x</span>
-<span class="kw">fn</span> binsearch_count_gt&lt;T: <span class="bu">Ord</span>&gt;(x: T, xs: &amp;<span class="dt">Vec</span>&lt;T&gt;) -&gt; <span class="dt">usize</span> <span class="op">{</span>
-    <span class="kw">let</span> n = xs.len();
-    <span class="kw">if</span> xs<span class="op">[</span><span class="dv">0</span><span class="op">]</span> &gt; x <span class="op">{</span> <span class="kw">return</span> n <span class="op">}</span>
-    n - binsearch(<span class="dv">0</span>, n, &amp;|i| xs<span class="op">[</span>i<span class="op">]</span> &gt; x)
-<span class="op">}</span>
-
-<span class="co">// the number of elements &lt;= x</span>
-<span class="kw">fn</span> binsearch_count_leq&lt;T: <span class="bu">Ord</span>&gt;(x: T, xs: &amp;<span class="dt">Vec</span>&lt;T&gt;) -&gt; <span class="dt">usize</span> <span class="op">{</span>
-    xs.len() - binsearch_count_gt(x, &amp;xs)
-<span class="op">}</span>
-
-<span class="co">// the number of elements &lt; x</span>
-<span class="kw">fn</span> binsearch_count_lt&lt;T: <span class="bu">Ord</span>&gt;(x: T, xs: &amp;<span class="dt">Vec</span>&lt;T&gt;) -&gt; <span class="dt">usize</span> <span class="op">{</span>
-    xs.len() - binsearch_count_geq(x, &amp;xs)
+    <span class="kw">fn</span> distance(&amp;<span class="kw">self</span>, other: &amp;<span class="kw">Self</span>) -&gt; <span class="dt">f64</span> <span class="op">{</span>
+        (<span class="kw">self</span>.r.powi(<span class="dv">2</span>) + other.r.powi(<span class="dv">2</span>)
+            - <span class="dv">2.0</span> * <span class="kw">self</span>.r * other.r * (<span class="kw">self</span>.theta - other.theta).abs().cos())
+        .sqrt()
+    <span class="op">}</span>
 <span class="op">}</span></code></pre></div>
           </div>
 
@@ -173,7 +119,7 @@
 </ul>
 </details>
 
-<details class=menu>
+<details class=menu open>
 <summary class=menu>幾何</summary>
 <ul>
 <li><a href="geo.2d.html">図形表現</a></li>
@@ -221,7 +167,7 @@
 </ul>
 </details>
 
-<details class=menu open>
+<details class=menu>
 <summary class=menu>二分探索</summary>
 <ul>
 <li><a href="bin.search.html">二分探索</a></li>

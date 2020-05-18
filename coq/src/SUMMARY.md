@@ -9,6 +9,7 @@
     - [congruence - 合同](tactic/congruence.md)
     - [discriminate - 構築子の区別](tactics/discriminate.md)
     - [injection - 単射性](tactics/injection.md)
+    - [inversion - 単射の逆](tactic/inversion.md)
     - [simpl - 簡略化](tactic/simpl.md)
 - [Use Case](#.md)
     - [仮定と前件の移動](case/intros.md)

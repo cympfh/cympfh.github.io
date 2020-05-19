@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>= と == の言い換え - Coq/SSReflect/MathComp</title>
+        <title>同値 iff の分解 - Coq/SSReflect/MathComp</title>
         
 
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
@@ -84,7 +84,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="../template.html"><strong aria-hidden="true">1.</strong> テンプレート</a></li><li class="chapter-item expanded "><a href="../proof_handling.html"><strong aria-hidden="true">2.</strong> Proof handling</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../search.html"><strong aria-hidden="true">2.1.</strong> Search</a></li></ol></li><li class="chapter-item expanded "><a href="../#.html"><strong aria-hidden="true">3.</strong> Tactics</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../tactic/apply.html"><strong aria-hidden="true">3.1.</strong> apply - 適用</a></li><li class="chapter-item expanded "><a href="../tactic/case.html"><strong aria-hidden="true">3.2.</strong> case - 条件分岐</a></li><li class="chapter-item expanded "><a href="../tactic/congruence.html"><strong aria-hidden="true">3.3.</strong> congruence - 合同</a></li><li class="chapter-item expanded "><a href="../tactics/discriminate.html"><strong aria-hidden="true">3.4.</strong> discriminate - 構築子の区別</a></li><li class="chapter-item expanded "><a href="../tactics/injection.html"><strong aria-hidden="true">3.5.</strong> injection - 単射性</a></li><li class="chapter-item expanded "><a href="../tactic/inversion.html"><strong aria-hidden="true">3.6.</strong> inversion - 単射の逆</a></li><li class="chapter-item expanded "><a href="../tactic/simpl.html"><strong aria-hidden="true">3.7.</strong> simpl - 簡略化</a></li></ol></li><li class="chapter-item expanded "><a href="../#.html"><strong aria-hidden="true">4.</strong> Use Case</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../case/intros.html"><strong aria-hidden="true">4.1.</strong> 仮定と前件の移動</a></li><li class="chapter-item expanded "><a href="../case/or.html"><strong aria-hidden="true">4.2.</strong> 選言の分解</a></li><li class="chapter-item expanded "><a href="../case/iff.html"><strong aria-hidden="true">4.3.</strong> 同値 iff の分解</a></li><li class="chapter-item expanded "><a href="../case/lemma.html"><strong aria-hidden="true">4.4.</strong> 補題の導入</a></li><li class="chapter-item expanded "><a href="../case/eqP.html" class="active"><strong aria-hidden="true">4.5.</strong> = と == の言い換え</a></li><li class="chapter-item expanded "><a href="../case/exists.html"><strong aria-hidden="true">4.6.</strong> 存在量化子</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../template.html"><strong aria-hidden="true">1.</strong> テンプレート</a></li><li class="chapter-item expanded "><a href="../proof_handling.html"><strong aria-hidden="true">2.</strong> Proof handling</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../search.html"><strong aria-hidden="true">2.1.</strong> Search</a></li></ol></li><li class="chapter-item expanded "><a href="../#.html"><strong aria-hidden="true">3.</strong> Tactics</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../tactics/apply.html"><strong aria-hidden="true">3.1.</strong> apply - 適用</a></li><li class="chapter-item expanded "><a href="../tactics/case.html"><strong aria-hidden="true">3.2.</strong> case - 条件分岐</a></li><li class="chapter-item expanded "><a href="../tactics/congruence.html"><strong aria-hidden="true">3.3.</strong> congruence - 合同</a></li><li class="chapter-item expanded "><a href="../tactics/discriminate.html"><strong aria-hidden="true">3.4.</strong> discriminate - 構築子の区別</a></li><li class="chapter-item expanded "><a href="../tactics/injection.html"><strong aria-hidden="true">3.5.</strong> injection - 単射性</a></li><li class="chapter-item expanded "><a href="../tactics/inversion.html"><strong aria-hidden="true">3.6.</strong> inversion - 単射の逆</a></li><li class="chapter-item expanded "><a href="../tactics/simpl.html"><strong aria-hidden="true">3.7.</strong> simpl - 簡略化</a></li></ol></li><li class="chapter-item expanded "><a href="../#.html"><strong aria-hidden="true">4.</strong> Use Case</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../cases/intros.html"><strong aria-hidden="true">4.1.</strong> 仮定と前件の移動</a></li><li class="chapter-item expanded "><a href="../cases/or.html"><strong aria-hidden="true">4.2.</strong> 選言の分解</a></li><li class="chapter-item expanded "><a href="../cases/iff.html" class="active"><strong aria-hidden="true">4.3.</strong> 同値 iff の分解</a></li><li class="chapter-item expanded "><a href="../cases/lemma.html"><strong aria-hidden="true">4.4.</strong> 補題の導入</a></li><li class="chapter-item expanded "><a href="../cases/eqP.html"><strong aria-hidden="true">4.5.</strong> = と == の言い換え</a></li><li class="chapter-item expanded "><a href="../cases/exists.html"><strong aria-hidden="true">4.6.</strong> 存在量化子</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -150,36 +150,63 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#-と--の言い換え" id="-と--の言い換え">= と == の言い換え</a></h1>
-<pre><code class="language-haskell">eqP
-     : reflect (?x = ?y) (?x == ?y)
-</code></pre>
-<p>を <code>move/</code> して使う.</p>
+                        <h1><a class="header" href="#同値-iff-の分解" id="同値-iff-の分解">同値 iff の分解</a></h1>
+<h2><a class="header" href="#split" id="split">split</a></h2>
+<p>Goal の帰結 \(P \iff Q\) を \(P \implies Q\) と \(Q \implies P\) とに分解する.</p>
 <pre><code class="language-haskell">1 subgoal
   
-  n, m : nat
+  P, Q : Prop
   ============================
-  n = m -&gt; n == m
+  P &lt;-&gt; Q
 
-ex &lt;   move/eqP.
-1 subgoal
+ex &lt;   split.
+2 subgoals
   
-  n, m : nat
+  P, Q : Prop
   ============================
-  n == m -&gt; n == m
+  P -&gt; Q
+
+subgoal 2 is:
+ Q -&gt; P
 </code></pre>
+<p>注意としてこれは帰結にのみ適用され, 前件は勝手に全て仮定に動かされる.</p>
+<h2><a class="header" href="#intros" id="intros">intros</a></h2>
+<p><a href="./intros.html">intros</a> で紹介してない機能があり,
+上述の split をしながら仮定に持っていくという機能がある.</p>
+<p>Goal が \( ( P \iff Q ) \implies \dots \) のときに,
+<code>intros [PQ QP]</code> とすると,
+前件 \( P \iff Q \) を split してからそれぞれを <code>PQ</code> <code>QP</code> という名前で仮定に移動する.</p>
 <pre><code class="language-haskell">1 subgoal
   
-  n, m : nat
+  P, Q : Prop
   ============================
-  n == m -&gt; n = m
+  P &lt;-&gt; Q -&gt; Q &lt;-&gt; P
 
-ex &lt;   move/eqP.
+ex &lt;   intros PQ.
+(* ただの intros だと &lt;-&gt; のまま持ってくだけ *)
 1 subgoal
   
-  n, m : nat
+  P, Q : Prop
+  PQ : P &lt;-&gt; Q
   ============================
-  n = m -&gt; n = m
+  Q &lt;-&gt; P
+
+ex &lt; Undo.
+1 subgoal
+  
+  P, Q : Prop
+  ============================
+  P &lt;-&gt; Q -&gt; Q &lt;-&gt; P
+
+ex &lt;   intros [PQ QP].
+(* 同時に split もされる!! *)
+1 subgoal
+  
+  P, Q : Prop
+  PQ : P -&gt; Q
+  QP : Q -&gt; P
+  ============================
+  Q &lt;-&gt; P
 </code></pre>
 
                     </main>
@@ -187,13 +214,13 @@ ex &lt;   move/eqP.
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-                            <a rel="prev" href="../case/lemma.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../cases/or.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
 
                         
-                            <a rel="next" href="../case/exists.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="../cases/lemma.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -205,13 +232,13 @@ ex &lt;   move/eqP.
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-                    <a rel="prev" href="../case/lemma.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../cases/or.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
                 
-                    <a rel="next" href="../case/exists.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="../cases/lemma.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 
@@ -219,6 +246,21 @@ ex &lt;   move/eqP.
 
         </div>
 
+        
+        <!-- Livereload script (if served using the cli tool) -->
+        <script type="text/javascript">
+            var socket = new WebSocket("ws://localhost:3001");
+            socket.onmessage = function (event) {
+                if (event.data === "reload") {
+                    socket.close();
+                    location.reload();
+                }
+            };
+
+            window.onbeforeunload = function() {
+                socket.close();
+            }
+        </script>
         
 
         

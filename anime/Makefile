@@ -15,3 +15,7 @@ pages:
 
 %.html: %.md
 	cat $< | awk c++ | pandoc -t html5 -o $@
+
+git: index.html
+	git add -A .
+	git commit -m "anime/ $(shell LANG=C date)"

@@ -19,3 +19,7 @@ pages:
 git: index.html
 	git add -A .
 	git commit -m "anime/ $(shell LANG=C date)"
+
+# ゴミだけ削除する
+cache-clean:
+	bash ./scripts/cache-clean.sh

@@ -62,9 +62,9 @@ EOM
 
 card-year() {
   cat <<EOM
-    <div class="column is-half">
+    <div class="column is-half" id="bread-$1">
       <div class="card card-year">
-        <div class="card-content">
+        <div class="card-content year">
           <div class="content">
             <span class="title">$1</span>
           </div>
@@ -88,7 +88,6 @@ cat <<TEMPLATE
   <link rel="stylesheet" href="./resources/css/base.css" />
   <link rel="stylesheet" href="./resources/css/youtube.css" />
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
-  <script src="https://cdn.jsdelivr.net/npm/lazyload@2.0.0-rc.2/lazyload.js"></script>
   </head>
 <body>
 
@@ -98,13 +97,14 @@ cat <<TEMPLATE
     </div>
   </section>
 
-  <section class="section">
+  <section class="section main">
     <div class="container">
       <div class="columns is-multiline">
 TEMPLATE
 
 last_year=0
 cat $POSTLIST |
+    awk '{print $1,$2}' |
     tac |
     while read src aid; do
         year=$(echo $src | sed 's#^src/##; s#/.*##g')
@@ -120,9 +120,6 @@ cat <<TEMPLATE
     </div>
   </section>
 
-  <script>
-    lazyload();
-  </script>
   <script src="./resources/js/base.js"></script>
   <script src="./resources/js/youtube.js"></script>
 

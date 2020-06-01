@@ -10,6 +10,9 @@ new() {
 refresh-md-list() {
     find src -type f -name '*.md' |
         sed 's#/\([0-9]*\)\.md$#& \1#' |
+        while read f id; do
+            echo "$f $id $(head -1 $f)"
+        done |
         sort > resources/md-list
 }
 
@@ -47,7 +50,7 @@ create() {
 # ${title}
 
 EOM
-    refresh-md-list
+    echo "src/$year/$aid.md $aid # $title" >> resources/md-list
 }
 
 edit() {

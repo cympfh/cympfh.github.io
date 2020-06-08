@@ -96,6 +96,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ol>
 <p>怪しいのは Windows の再起動か, あるいは WSL2 への変換を何度かやると上手く行くときと上手く行かないときとがある? とかか.</p>
 <p>何はともあれ動いた. いくつか設定は変える必要がある.</p>
+<h4 id="追記-20200608-1236">追記 (2020/06/08 12:36)</h4>
+<p>ネットワークが死ぬ原因が今分かった. 会社のVPNに接続するのに &quot;Cisco AnyConnect ナンタラ Client&quot; というのを使ってるんだけど, これで VPN に繋いでる間は死んでた. VPN 接続をやめたら解消された. 設定で Allow local (LAN) access を許可し, Block connections to untrusted servers をオフにしたら問題が解決した!!</p>
 <h3 id="docker">docker</h3>
 <p>Windows に Docker Desktop を入れるのがいい. 最新のものは WSL2 Integration なんてものがあるのでそのあたりの設定を全てオンにする. すると, WSL2/docker と WSL2/docker-data というイメージが追加されて起動される. WSL2/Ubuntu からは Docker Desktop の方が見えるようになっており, シームレスに利用できる. このとき <code>DOCKER_HOST</code> といった環境変数は消しておくこと. apt で入れていたかもしれない <code>docker-ce</code> は不要なので紛らわしくないように消す. クライアントコマンドとして <code>docker-ce-cli</code> は引き続き必要なので残す.</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="bu">unset</span> <span class="va">DOCKER_HOST</span>

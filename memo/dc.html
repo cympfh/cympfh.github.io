@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>GNU dc</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-sticky-note" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">GNU dc</h1>
+</header>
+<div class="is-pulled-right">
+<p><a class='tag is-green' href=index.html#言語>言語</a></p>
+</div>
+<h2 id="リンク">リンク</h2>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Dc_(computer_program)">wikipedia/dc</a></li>
+<li><a href="https://linuxjm.osdn.jp/html/GNU_bc/man1/dc.1.html">Man Page of DC</a>
+<ul>
+<li>man の日本語版</li>
+</ul></li>
+<li><a href="https://ftp.gnu.org/gnu/bc/">ソースコード</a>
+<ul>
+<li>&quot;bc&quot; と一緒にされてるので注意</li>
+</ul></li>
+</ul>
+<h2 id="man">man</h2>
+<p><code>man dc</code> は用意されてるけど, 全部のコマンドが載ってないようなのでソースコード読みながらまとめる. 読むのは &quot;bc-1.07.tar.gz&quot; です.</p>
+<h3 id="レジスタ">レジスタ</h3>
+<h4 id="dc_ibase">dc_ibase</h4>
+<p>入力の基底（進数）. 2 以上 16 以下整数. 初期値は 10.</p>
+<h4 id="dc_obase">dc_obase</h4>
+<p>出力の基底. 2 以上. 初期値は 10.</p>
+<h4 id="dc_scale">dc_scale</h4>
+<p>計算の精度. 初期値は 0.</p>
+<h4 id="ascii-registers">ASCII registers</h4>
+<p>0 から 255 までの ASCII 文字に対応するレジスタが用意されている. その文字でレジスタに名前がついており, いくつかのコマンドはこの名前で指定する.</p>
+<p>例えば 61 に対応するのは <code>a</code> という文字だから, 61 番目のレジスタには <code>a</code> という名前がついている. 後述する <code>s</code> コマンドはこの後ろにレジスタ名を続けて指定するので <code>sa</code> で <code>a</code> レジスタへの操作を宣言する.</p>
+<p>各レジスタは次の3つの用途がある.</p>
+<ol type="1">
+<li>一個の値（数値または文字列）</li>
+<li>スタック</li>
+<li>配列</li>
+</ol>
+<p>実際にはこの 1 つ目は長さ（深さ） 1 のスタックで表現されており 2 つ芽とデータを共有している. 一方で 2 つ目と 3 つ目はたまたま同じ名前が与えられているだけで, 全く別のデータとして確保されている （内部データとしては, どちらも linked list で持ってる）.</p>
+<h3 id="コマンド">コマンド</h3>
+<h4 id="数値-_.0-9a-f">数値 <code>[_.0-9A-F]*</code></h4>
+<p>数値として解釈してスタック. マイナス単符号は <code>_</code>.</p>
+<h4 id="四則演算--">四則演算 <code>+-*/</code></h4>
+<p>2つ値をポップして順に <code>y</code>, <code>x</code> とするとき, <code>x op y</code> を計算してプッシュする.</p>
+<p>例えば <code>3 2 -</code> は <code>1</code> をプッシュする.</p>
+<h4 id="剰余">剰余 <code>%</code>, <code>~</code></h4>
+<p><code>%</code> は単に剰余を取る.</p>
+<p><code>~</code> は商と余りを両方取る. スタックのトップが余りで二番目に商を置く.</p>
+<h4 id="べき乗">べき乗 <code>^</code>, <code>|</code></h4>
+<p><code>^</code> は単にべき乗を計算する.</p>
+<p><code>|</code> は剰余を取りながらべき乗計算をする. これはスタックの頭から3つをポップして, 頭から順に <code>mod, exp, base</code> だとし, <code>base</code> の <code>exp</code> 乗の <code>mod</code> 剰余を計算してスタックする.</p>
+<h4 id="平方根-v">平方根 <code>v</code></h4>
+<p>値一個をポップして平方根を計算する.</p>
+<h4 id="条件分岐">条件分岐 <code>&lt;</code>, <code>=</code> <code>&gt;</code>, <code>!</code></h4>
+<p>スタックの頭から2つをポップして順に <code>a</code>, <code>b</code> だとするとき, <code>&lt;, =, &gt;</code> はそれぞれ <code>a &lt; b, a = b, a &gt; b</code> のとき, 続いて指定するレジスタに入ってる文字列をコマンドとして解釈して実行する. さもなくば何もしない.</p>
+<p><code>!</code> をこの前につけることで条件を否定できる.</p>
+<h4 id="入力">入力 <code>?</code></h4>
+<p>一行文字列を読み込んでコマンドとして解釈し実行.</p>
+<h4 id="文字列">文字列 <code>[ ]</code></h4>
+<p><code>[</code> から対応する <code>]</code> を一つの文字列データとしてスタックに積む.</p>
+<h4 id="コメント">コメント <code>#</code></h4>
+<p><code>#</code> から行末まではコメント</p>
+<h4 id="文字への変換-a">文字への変換 <code>a</code></h4>
+<p>ポップしてきた数値データを ASCII コードで文字に変換してプッシュ.</p>
+<h4 id="eval-x">eval <code>x</code></h4>
+<p>ポップしてきた値を dc のコマンドとして解釈して実行.</p>
+<h4 id="dc_ibase-の設定-i-i">dc_ibase の設定 <code>i</code>, <code>I</code></h4>
+<p><code>i</code> でポップした値を dc_ibase にセット. <code>I</code> で dc_ibase の値をプッシュ.</p>
+<h4 id="dc_obase-の設定-o-o">dc_obase の設定 <code>o</code>, <code>O</code></h4>
+<p>同様</p>
+<h4 id="dc_scale-の設定-k-k-x">dc_scale の設定 <code>k</code>, <code>K</code>, <code>X</code></h4>
+<p><code>k</code> でポップしてセット. <code>K</code> でプッシュ.</p>
+<p><code>X</code> は現在の dc_scale の値でスタックのトップを上書きする.</p>
+<h4 id="store-s-s">Store <code>s</code>, <code>S</code></h4>
+<p>レジスタ一文字を続けて指定して使う. ポップした値をそこにセットする.</p>
+<p><code>s</code> はレジスタを一個の値で上書きする. これは一度レジスタを空にしてからプッシュする. <code>S</code> はレジスタにプッシュする.</p>
+<h4 id="load-l-l">Load <code>l</code>, <code>L</code></h4>
+<p>続いてレジスタ名を一文字で指定して使う. レジスタから値を読み出してプッシュ. <code>l</code> はレジスタを単に一個の値として読んでプッシュ. <code>L</code> はレジスタをスタックだとし, スタックからポップした値をプッシュする.</p>
+<h4 id="print-n-p-p">Print <code>n</code>, <code>p</code>, <code>P</code></h4>
+<p><code>n</code> は 値をポップして出力する. 数値データは数値として出力される. このとき, 改行は出力<strong>されない</strong>.</p>
+<p><code>p</code> は値をピークして（ポップせず覗き見るだけ）出力する. 数値データは数値として出力される. このとき改行も出力<strong>される</strong>.</p>
+<p><code>P</code> は値をポップして出力する. 数値データは ASCII として解釈して文字で出力する (<code>a</code>). このとき, 改行は出力<strong>されない</strong>.</p>
+<h4 id="quit-q-q">Quit <code>q</code>, <code>Q</code></h4>
+<p><code>q</code> で実行から抜け出す. dc の一部のコマンドは再帰的に dc のコマンドを呼び出すため, 実行環境は入れ子構造をしているが, <code>q</code> は二段階までしか抜け出さない.</p>
+<p><code>Q</code> はポップしてきた値で何段階抜け出すかを指定する.</p>
+<h4 id="stack-clear-c">Stack Clear <code>c</code></h4>
+<p><code>c</code> で現在のスタックを空にする.</p>
+<h4 id="duplicate-d">Duplicate <code>d</code></h4>
+<p><code>d</code> でトップの値をプッシュする. （ポップしてその値を2回プッシュする.）</p>
+<h4 id="stack-printall-f">Stack PrintAll <code>f</code></h4>
+<p>スタックの中身を全て表示する:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="bu">echo</span> 1 2 3 f <span class="kw">|</span> <span class="fu">dc</span>
+<span class="ex">3</span>
+<span class="ex">2</span>
+<span class="ex">1</span></code></pre></div>
+<h4 id="rotate-swap-r-r">Rotate (Swap) <code>r</code>, <code>R</code></h4>
+<p><code>r</code> はスタックの頭2つを入れ替える.</p>
+<p><code>R</code> はまず値をポップし, 数値データ <span class="math inline">\(n\)</span> を得る. この値は 1 以上の整数か -1 以下の整数でなければならない. <span class="math inline">\(n\)</span> が 1 以上の場合, この時点でスタックの頭から <span class="math inline">\(n\)</span> 番目のものをスタックのトップに持ってくる. <span class="math inline">\(n\)</span> が -1 以下の場合, この時点でスタックの頭にある値を, 頭から <span class="math inline">\(-n\)</span> 番目にあるように持っていく.</p>
+<p>以下に例を示す:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="bu">echo</span> 1 0 0 3R f <span class="kw">|</span> <span class="fu">dc</span>
+<span class="ex">1</span>
+<span class="ex">0</span>
+<span class="ex">0</span>
+
+$ <span class="bu">echo</span> 0 0 0 1 _3R f <span class="kw">|</span> <span class="fu">dc</span>
+<span class="ex">0</span>
+<span class="ex">0</span>
+<span class="ex">1</span>
+<span class="ex">0</span></code></pre></div>
+<h4 id="スタック長-z">スタック長 <code>z</code></h4>
+<p>現在のスタックの長さ（深さ）をプッシュする.</p>
+<h4 id="データ長-z">データ長 <code>Z</code></h4>
+<p>ポップしてきた値のデータ長をプッシュする. データ長の定義は数値ならマイナス符号と小数点を除いた桁数. 文字列ならその長さ.</p>
+<h4 id="配列への代入">配列への代入 <code>:</code></h4>
+<p>レジスタ名を続く一文字 (<code>a-z</code>) で指定する. <code>:</code> は値を 2 つポップする. 順に <code>index</code>, <code>value</code> とし, レジスタの配列の <code>index</code> に紐づく値に <code>value</code> をセットする.</p>
+<h4 id="配列からの取得">配列からの取得 <code>;</code></h4>
+<p>レジスタ名一文字を続けて指定する. 2つ値をポップして <code>index</code>, <code>value</code> として紐づく値をプッシュする.</p>
+
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

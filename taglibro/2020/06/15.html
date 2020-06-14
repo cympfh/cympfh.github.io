@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="description" content="cympfh.cc/taglibro" />
+  <meta property="og:url" content="http://cympfh.cc/taglibro">
+  <meta property="og:title" content="Mon Jun 15 2020" />
+  <meta property="og:description" content="cympfh.cc/taglibro" />
+  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@cympfh" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Mon Jun 15 2020</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+</head>
+<body>
+<header class="page-header">
+    <a href='../../index.html'><i class="fa fa-save" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">Mon Jun 15 2020</h1>
+</header>
+<h2 id="dc-やってく">dc やってく</h2>
+<p>dc はパズルとして面白い. 逆に本来の計算機として使う人なんていないんじゃないだろうか. シェルスクリプトからさっと呼ぶ計算コマンドとして使えなくはないけど.</p>
+<h3 id="man">man</h3>
+<p>マニュアルとして <code>man dc</code> があるが, ここには主要コマンドが載っているだけで, そこに載っていないコマンドや仕様がある. ソースコードをこないだ読んでまとめた → <a href="https://cympfh.cc/memo/dc">memo/dc</a>.</p>
+<h3 id="tac">tac</h3>
+<p>何行かわからないけれど何行かの整数が与えられる. これを逆順に出力せよ.</p>
+<p>例えば</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="fu">seq</span> 5 <span class="kw">|</span> <span class="fu">dc</span> -e <span class="st">&#39;(FILL YOUR CODE)&#39;</span>
+<span class="ex">5</span>
+<span class="ex">4</span>
+<span class="ex">3</span>
+<span class="ex">2</span>
+<span class="ex">1</span></code></pre></div>
+<p>ここで入力が整数だけとしているのは dc に都合が良いから (<code>?</code> で読めるから). 何行か分からないというのが dc に優しくない. <code>?</code> はちょうど一行を受け取って, dc コマンドとして実行する.</p>
+<p>一旦問題を易しく</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="fu">seq</span> 5 <span class="kw">|</span> <span class="fu">tr</span> <span class="st">&#39;\n&#39;</span> <span class="st">&#39; &#39;</span> <span class="kw">|</span> <span class="fu">dc</span> -e <span class="st">&#39;(FILL YOUR CODE)&#39;</span>
+<span class="ex">5</span>
+<span class="ex">4</span>
+<span class="ex">3</span>
+<span class="ex">2</span>
+<span class="ex">1</span></code></pre></div>
+<p>だとする. ここで <code>seq 5 | tr '\n' ' '</code> の出力はちょうど一行の</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">1</span> 2 3 4 5</code></pre></div>
+<p>である. <code>?</code> は一行読み込んで実行する. <code>1 2 3 4 5</code> というのは dc 的には, 5 つのコマンドから成っている（空白区切りで）. <code>1</code> というコマンドはスタックに 1 を積む操作にほかならない. <code>2</code> から <code>5</code> も全く同様. というわけで,</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">seq</span> <span class="kw">|</span> <span class="fu">tr</span> ... <span class="kw">|</span> <span class="fu">dc</span> -e <span class="st">&#39;?&#39;</span></code></pre></div>
+<p>をすると内部のスタックに</p>
+<pre><code>(TOP)
+5
+4
+3
+2
+1
+(BOTTOM)</code></pre>
+<p>という状態を残して終了する. 何もプリントさせてないので何も出力しないで終了するが, <code>f</code> はこのスタックの状態をプリントしてくれる. このとき, 今上に書いたように, スタックの頭から順に書いてくれる. というわけで,</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="fu">seq</span> 5 <span class="kw">|</span> <span class="fu">tr</span> <span class="st">&#39;\n&#39;</span> <span class="st">&#39; &#39;</span> <span class="kw">|</span> <span class="fu">dc</span> -e <span class="st">&#39;?f&#39;</span>
+<span class="ex">5</span>
+<span class="ex">4</span>
+<span class="ex">3</span>
+<span class="ex">2</span>
+<span class="ex">1</span></code></pre></div>
+<p>で tac が出来た.</p>
+<p>じゃあ元の問題に戻る. tr とかを挟まずに直接 dc に入力が渡されるパターン.</p>
+<p>この入力のとき, 一回 <code>?</code> を読んだところで一つの数値をスタックに積むことしかできない. <code>z</code> コマンドは現在のスタックのサイズ（長さ, 深さ）を取得する. <code>?</code> で読んで入力がない場合, 何も実行されないのでスタックサイズが変わらない. ということで, この２つを組み合わせればできそうだ.</p>
+<p>擬似コードで書くと次のような感じ:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">seq</span> 5 <span class="kw">|</span> <span class="fu">dc</span> -e <span class="st">&#39;</span>
+<span class="st">  stack_size = 0  # 前のスタックサイズを記録しておく変数</span>
+<span class="st">  loop {</span>
+<span class="st">    ?</span>
+<span class="st">    # z() で現在のスタックサイズを取得</span>
+<span class="st">    if (stack_size &lt; z()) {  # 増えてるということは入力を受け取ったということ</span>
+<span class="st">      stack_size = z()</span>
+<span class="st">      continue</span>
+<span class="st">    } else {</span>
+<span class="st">      break</span>
+<span class="st">    }</span>
+<span class="st">  }</span>
+<span class="st">  f</span>
+<span class="st">&#39;</span></code></pre></div>
+<p>こんな上手い <code>loop</code> や <code>if</code> は dc には用意されていない.</p>
+<p>もう１段階 dc に近い擬似コードに翻訳するとこんな:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">seq</span> 5 <span class="kw">|</span> <span class="fu">dc</span> -e <span class="st">&#39;</span>
+<span class="st">  var@ = 0</span>
+<span class="st">  function r() {</span>
+<span class="st">    ?</span>
+<span class="st">    tmp_@ = var@</span>
+<span class="st">    var@ = z()</span>
+<span class="st">    if z() &lt; tmp@ {</span>
+<span class="st">      r()  # recursive call</span>
+<span class="st">    }</span>
+<span class="st">  }</span>
+<span class="st">  r()</span>
+<span class="st">&#39;</span></code></pre></div>
+<p>これを完全に翻訳して次を得る.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="fu">seq</span> 5 <span class="kw">|</span> <span class="fu">dc</span> -e <span class="st">&#39;0s@[?zdl@rs@&lt;r]dsrxf&#39;</span>
+<span class="ex">5</span>
+<span class="ex">4</span>
+<span class="ex">3</span>
+<span class="ex">2</span>
+<span class="ex">1</span></code></pre></div>
+<p><code>[...]</code> が <code>function</code> の中身.</p>
+<p>スタックサイズを記録するのにレジスタ <code>@</code> を使ってるが, 入力が整数しか無い場合 scale レジスタが使える. <code>s@</code> が <code>k</code> にできて, <code>l@</code> を <code>K</code> に置き換えて良くなる. しかもこれは最初 0 で初期化されてるのも都合が良い.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">seq</span> 5 <span class="kw">|</span> <span class="fu">dc</span> -e <span class="st">&#39;[?zdKrk&lt;r]dsrxf&#39;</span></code></pre></div>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

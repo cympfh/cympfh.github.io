@@ -1,30 +1,19 @@
 /// Time Limited While-loop
-macro_rules! loop_timeout {
+macro_rules! loop_timeout_ms {
     ( $sec:expr; $body:expr ) => {
         let now = std::time::SystemTime::now();
         loop {
             match now.elapsed() {
                 Ok(elapsed) => {
-                    if elapsed.as_secs() > $sec {
-                        break
+                    if elapsed.as_millis() > $sec {
+                        break;
                     }
                     $body
-                },
+                }
                 Err(e) => {
                     eprintln!("Err, {:?}", e);
                 }
             }
         }
     };
-}
-
-// Example
-{
-    // yes while 3sec
-    use std::time::Duration;
-    use std::thread::sleep;
-    loop_timeout!(3; {
-        println!("yes");
-        sleep(Duration::new(0, 100000000));
-    });
 }

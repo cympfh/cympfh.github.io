@@ -85,19 +85,19 @@ EOM</code></pre></div>
    <span class="ex">qj</span> -e .x=1 -e .y=2 -e .z[0]=3
 <span class="dt">{&quot;x&quot;:1,&quot;y&quot;:2,&quot;z&quot;:[3]}</span>
 
-   <span class="ex">qj</span> -e <span class="st">&#39;.hello=&quot;world&quot;&#39;</span>  # Use quoting for Shell Escaping
+   <span class="ex">qj</span> -e <span class="st">&#39;.hello=&quot;world&quot;&#39;</span>
 <span class="dt">{&quot;hello&quot;:&quot;world&quot;}</span>
 
    <span class="ex">qj</span> -e <span class="st">&#39;.persons[1].name=&quot;Alice&quot;&#39;</span>
 <span class="dt">{&quot;persons&quot;:[null,{&quot;name&quot;:&quot;Alice&quot;}]}</span></code></pre></div>
-<p>jq 方式の値一個をフィルタする式と, その値のペアを <code>=</code> で区切って指定してく. 値の数だけこれを並べないといけないので, 出来上がる式の割にかなり冗長に書いていかないといけない.</p>
+<p>jq 方式の値一個をフィルタする式と, その値のペアを <code>=</code> で区切って指定してく. 値の数だけこれを並べないといけないので, 組み立てる JSON の割にかなり冗長に書いていかないといけない.</p>
 <p>だから本当は jq がそうであるようにパイプを使って上手いこと</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="ex">qj</span> -e <span class="st">&#39;.x | (.y=2, .z=3)&#39;</span>
 <span class="kw">{</span>
   <span class="st">&quot;x&quot;</span>: {<span class="st">&quot;y&quot;</span>: <span class="ex">2</span>, <span class="st">&quot;z&quot;</span>: 3<span class="kw">}</span>
 }</code></pre></div>
 <p>このくらい書けるのがいいんだけど, そういうことまでは書けない.</p>
-<p>またこのコマンドがほしかったモチベーションの全てが, 文字列のエスケープが面倒くさい, なので, 値は特にパースできなかったときは丸々全て文字列ということにする.</p>
+<p>また, このコマンドが欲しかったモチベーションの全てが, 文字列のエスケープが面倒くさいということだったので, 値は特にパースできなかったときは丸々全て文字列ということにしている.</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">   <span class="ex">qj</span> -e <span class="st">&#39;.=hoge&#39;</span>
 <span class="st">&quot;hoge&quot;</span>
 
@@ -108,7 +108,7 @@ EOM</code></pre></div>
 <span class="st">&quot;1\n2\n3&quot;</span></code></pre></div>
 <p>クオーテーションが入ってても改行が入ってても出来るだけ文字列として解釈するようにする.</p>
 <p>シェルスクリプトから Slack の incoming webhook に POST は次のように出来る</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">qj</span> .channel=#channel .username=bot .text=hello! .icon_emoji=:ghost: <span class="kw">|</span>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">qj</span> -e .channel=#channel .username=bot .text=hello! .icon_emoji=:ghost: <span class="kw">|</span>
     <span class="ex">curl</span> -XPOST --data @- https://hooks.slack.com/services/XXXXXXXXXXXX</code></pre></div>
 <p>このくらいの単純な JSON なら記述量も減るし, エスケープのこと考えなくていいし楽.</p>
 <h3 id="web-grep"><a href="https://github.com/cympfh/web-grep">web-grep</a></h3>
@@ -133,6 +133,11 @@ EOM</code></pre></div>
 <span class="ex">1</span>
 <span class="ex">2</span>
 <span class="ex">3</span></code></pre></div>
+<h3 id="web-manga-check"><a href="https://github.com/cympfh/web-manga-check">web-manga-check</a></h3>
+<p>Webで連載されてる漫画の更新情報をチェックする. master ブランチには載ってないけど, 更新されてたら Slack に通知するのまで裏で実装されている.</p>
+<p>更新チェックするのには, 適当な web ページの適当な箇所を見つければいい. 例えば作品ページがあって, そのどこかに最終更新日が書かれてることがある. その該当の innerText を見ればいい. 作品ごとのページが与えられてない場合は, 最新話へのリンクがどこかに貼られてるのを探してそのリンクを見る, とか. ここにさっき言った web-grep を使ってる.</p>
+<p>web ページ丸々の差分を見る, ヘッダにある ETag を見る, とかはたいてい通用しない. 出版社がきちんと運営するような web ページはたいてい毎日, 漫画更新とは関係ない箇所の変更をしているものだ. 別な漫画の新着情報が載ってたりね.</p>
+<p>web-manga-check は徹底してシェルスクリプトとして書かれている. そこで Slack への通知にはさっき言った qj を使って組み立てた JSON を curl でポストしている. テキスト中に <code>&quot;</code> が含まれているばっかりに, という経験を何度も味わっているが, これなら安心.</p>
 <footer>
     <p class="is-pulled-right">
     @cympfh / cympfh@gmail.com

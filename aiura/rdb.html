@@ -26,7 +26,7 @@
 <div class="is-pulled-right">
 <p><a class='tag is-red' href=index.html#RDB>RDB</a></p>
 </div>
-<p><span class="math inline">\(\def\null{\mathrm{null}}\def\A{\mathcal{A}}\def\D{\mathcal{D}}\def\dom{\mathrm{dom}}\def\Bool{\mathrm{Bool}}\)</span></p>
+<p><span class="math inline">\(\def\null{\mathrm{null}}\def\A{\mathcal{A}}\def\D{\mathcal{D}}\def\dom{\mathrm{dom}}\def\Bool{\mathrm{Bool}}\)</span> <span class="math inline">\(\def\mvdarrow{\rightarrow\!\rightarrow}\def\fdarrow{\rightarrow}\)</span></p>
 <h2 id="index">INDEX</h2>
 <div id="toc">
 
@@ -82,6 +82,8 @@
 <p>列 <span class="math inline">\(A\)</span> と <span class="math inline">\(B\)</span> の差 <span class="math inline">\(A - B\)</span> とは <span class="math inline">\(A\)</span> の内, <span class="math inline">\(B\)</span> に登場するものを取り除いたもの. <span class="math inline">\((1, 2, 3) - (2, 4, 6) = (1, 3)\)</span>.</p>
 <p>列 <span class="math inline">\(A\)</span> と <span class="math inline">\(B\)</span> の和 <span class="math inline">\(A \lor B\)</span> とは <span class="math inline">\(\overline{A} \cup \overline{B}\)</span> の要素を <span class="math inline">\(A\)</span> の順序で, <span class="math inline">\(A\)</span> に登場しないものは <span class="math inline">\(B\)</span> の順序で並べたもの. <span class="math inline">\(A \lor B = A + (A - B)\)</span>. <span class="math inline">\((1, 2) \lor (1, 3) = (1, 2, 3)\)</span>.</p>
 <p>また今後は, 名前列 <span class="math inline">\(A = (A_1, \ldots, A_n)\)</span> の上の関係 <span class="math inline">\(R(A_1, \ldots, A_n)\)</span> を <span class="math inline">\(R(A)\)</span> と書くことにする.</p>
+<h4 id="候補キーの再定義">候補キーの再定義</h4>
+<p>以上の補足を踏まえると, 候補キーはもっと簡潔に言い直せる. <span class="math inline">\(X \prec A\)</span> が <span class="math inline">\(R(A)\)</span> の候補キーであるとは, <span class="math display">\[\forall r, r&#39; \in R, r[X] = r&#39;[X] \implies r = r&#39;\]</span></p>
 <h2 id="データベース">データベース</h2>
 <p>データベースとは以上の <span class="math inline">\((\D, \A, \dom)\)</span> 及び, その上の有限個の関係集合 <span class="math inline">\(\{R_1, R_2, \ldots, R_M\}\)</span> のこと.</p>
 <h2 id="関係代数-relational-algebra">関係代数 (Relational Algebra)</h2>
@@ -320,10 +322,38 @@
 <p>自然結合が元の関係に一致するような分解を <strong>情報無損失分解</strong> という.</p>
 <h4 id="定理">定理</h4>
 <p>関係 <span class="math inline">\(R(A)\)</span> は以下の時に限って情報無損失分解される.</p>
-<p>名前列 <span class="math inline">\(A\)</span> を <span class="math inline">\(X_1, X_2\)</span> に分解したとする. <span class="math inline">\(C = X_1 \land X_2\)</span>, <span class="math inline">\(D = X_2 - X_1\)</span> とする. このときに次が成り立つこと <span class="math display">\[\forall t, t&#39; \in R,
-t[C] = t&#39;[C] \implies
-(t[X_1], t&#39;[X_2])[A] \in R.\]</span></p>
-<p>あんまり定理という程でもなくて, <span class="math inline">\(R_1 \ast R_2 \subset R\)</span> というのを, そのまま言い換えてるだけ. <span class="math inline">\(t[C]=t&#39;[C]\)</span> というのが自然結合で結合される条件を言ってて, このとき任意に <span class="math inline">\(R_1, R_2\)</span> から持ってきたタプルを結合したものが <span class="math inline">\(R\)</span> に属してる, と言ってるだけ.</p>
+<p>名前列 <span class="math inline">\(A\)</span> を <span class="math inline">\(X_1, X_2\)</span> に分解したとする. <span class="math inline">\(C = X_1 \land X_2\)</span>, <span class="math inline">\(D = X_2 - X_1\)</span> とする. このときに次が成り立つこと <span class="math display">\[\forall r, r&#39; \in R,
+r[C] = r&#39;[C] \implies
+(r[X_1], r&#39;[X_2])[A] \in R.\]</span></p>
+<p>あんまり定理という程でもなくて, <span class="math inline">\(R_1 \ast R_2 \subset R\)</span> というのを, そのまま言い換えてるだけ. <span class="math inline">\(r[C]=r&#39;[C]\)</span> というのが自然結合で結合される条件を言ってて, このとき任意に <span class="math inline">\(R_1, R_2\)</span> から持ってきたタプルを結合したものが <span class="math inline">\(R\)</span> に属してる, と言ってるだけ.</p>
+<h2 id="従属性">従属性</h2>
+<h3 id="多値従属性-multi-valued-dependency">多値従属性 (Multi-valued Dependency)</h3>
+<p><span class="math inline">\(R(A)\)</span> と <span class="math inline">\(X, Y \prec A\)</span> について <span class="math display">\[X \mvdarrow Y\]</span> とは <span class="math inline">\(R(A)\)</span> が <span class="math inline">\(R[X \lor Y]\)</span> と <span class="math inline">\(R[X \lor (A - Y)]\)</span> とに情報無損失分解されること. <span class="math display">\[X \mvdarrow Y \iff R = R[X \lor Y] \ast R[X \lor (A - Y)]\]</span></p>
+<p>このとき <span class="math inline">\(Y\)</span> は <span class="math inline">\(X\)</span> に <strong>多値に従属する</strong> といい, 逆に <span class="math inline">\(X\)</span> は <span class="math inline">\(Y\)</span> を <strong>多値に決定する</strong> という.</p>
+<p>この <span class="math inline">\(Y\)</span> と <span class="math inline">\(A-Y\)</span> の関係は当然対称的なので, <span class="math display">\[X \mvdarrow Y \iff X \mvdarrow A-Y\]</span> である. この二つを合わせて <span class="math display">\[X \mvdarrow Y \mid A-Y\]</span> と書いたりもする.</p>
+<p>自明な多値従属性として <span class="math inline">\(Y \prec X \implies X \mvdarrow Y\)</span> がある. これは <span class="math inline">\(R[X \lor Y] = R[X], R[X \lor (A-Y)]=R[A]\)</span> なので当然に情報無損失分解. 特に <span class="math inline">\(X \mvdarrow ()\)</span> である.</p>
+<h3 id="関数従属性-functional-dependency">関数従属性 (Functional Dependency)</h3>
+<p><span class="math inline">\(r \in R(A)\)</span> と <span class="math inline">\(X, Y \prec A\)</span> について, <span class="math inline">\(r[X]\)</span> が決まるとき <span class="math inline">\(r[Y]\)</span> が決定することを, <span class="math inline">\(Y\)</span> は <span class="math inline">\(X\)</span> に関数的に従属するという. これを <span class="math display">\[X \fdarrow Y\]</span> と書く.</p>
+<p><span class="math display">\[X \fdarrow Y \iff (\forall r, r&#39; \in R(A), r[X] = r&#39;[X] \implies r[Y], r&#39;[Y])\]</span></p>
+<p>自明な関数従属性として <span class="math inline">\(Y \prec X\)</span> のときは常に <span class="math inline">\(X \fdarrow Y\)</span>.</p>
+<h4 id="完全関数従属性">完全関数従属性</h4>
+<p><span class="math inline">\(X \fdarrow Y\)</span> であるような <span class="math inline">\(X\)</span> の内, 極小なものを <span class="math inline">\(X^*\)</span> とする. <span class="math inline">\(X^* \fdarrow Y\)</span> を <strong>完全関数従属</strong> という. <span class="math inline">\(R(A)\)</span> の主キーが <span class="math inline">\(X\)</span> であるとはまさに <span class="math inline">\(X \fdarrow A\)</span> が完全関数従属であることを言う.</p>
+<h3 id="定理-1">定理</h3>
+<p>関数従属ならば多値従属である. <span class="math display">\[X \fdarrow Y \implies X \mvdarrow Y.\]</span></p>
+<h4 id="証明">証明</h4>
+<p>ゴールの多値従属性について再確認すると, <span class="math inline">\(R(A)\)</span> について,</p>
+<ul>
+<li><span class="math inline">\(X \mvdarrow Y\)</span></li>
+<li><span class="math inline">\(\iff X_1 = X \lor Y, X_2 = X \lor (A - Y)\)</span> として <span class="math inline">\(R[X_1], R[X_2]\)</span> が <span class="math inline">\(R(A)\)</span> の情報無損失分解</li>
+<li><span class="math inline">\(\iff R[X_1] \ast R[X_2] = R\)</span></li>
+<li><span class="math inline">\(\iff \forall r, r&#39; \in R, r[X] = r&#39;[X] \implies (r[X_1], r&#39;[X_2])[A] \in R\)</span>
+<ul>
+<li>ここで <span class="math inline">\(X_1 \land X_2 = X\)</span> に注意</li>
+</ul></li>
+</ul>
+<p>従って <span class="math inline">\(X \fdarrow Y \implies X \mvdarrow Y\)</span> を確認するためには, <span class="math inline">\(X \fdarrow Y\)</span> と <span class="math inline">\(r[X] = r&#39;[X]\)</span> を仮定して, <span class="math inline">\((r[X_1], r&#39;[X_2])[A] \in R\)</span> が成り立つことを確認できればよい.</p>
+<p><span class="math inline">\(X \fdarrow Y \iff (r[X]=r&#39;[X] \implies r[Y] = r&#39;[Y])\)</span> なので, <span class="math inline">\(r[X]=r&#39;[X]\)</span> と合わせて <span class="math inline">\(r[Y] = r&#39;[Y]\)</span> を得る. 従って <span class="math inline">\(r[X_1] = r[X \lor Y] = r&#39;[X \lor Y] = r&#39;[X_1]\)</span>. <span class="math inline">\((r[X_1], r&#39;[X_2])[A] = (r&#39;[X_1], r&#39;[X_2])[A] = r&#39; \in R\)</span>.</p>
+<p>ということで多値従属性が確認できた.</p>
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.

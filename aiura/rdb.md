@@ -3,6 +3,7 @@
 % RDB
 
 $\def\null{\mathrm{null}}\def\A{\mathcal{A}}\def\D{\mathcal{D}}\def\dom{\mathrm{dom}}\def\Bool{\mathrm{Bool}}$
+$\def\mvdarrow{\rightarrow\!\rightarrow}\def\fdarrow{\rightarrow}$
 
 ## INDEX
 <div id=toc></div>
@@ -135,6 +136,12 @@ $(1, 2) \lor (1, 3) = (1, 2, 3)$.
 
 また今後は,
 名前列 $A = (A_1, \ldots, A_n)$ の上の関係 $R(A_1, \ldots, A_n)$ を $R(A)$ と書くことにする.
+
+#### 候補キーの再定義
+
+以上の補足を踏まえると, 候補キーはもっと簡潔に言い直せる.
+$X \prec A$ が $R(A)$ の候補キーであるとは,
+$$\forall r, r' \in R, r[X] = r'[X] \implies r = r'$$
 
 ## データベース
 
@@ -362,12 +369,84 @@ $r_2 = r[X_2] \in R_2$.
 $C = X_1 \land X_2$,
 $D = X_2 - X_1$ とする.
 このときに次が成り立つこと
-$$\forall t, t' \in R,
-t[C] = t'[C] \implies
-(t[X_1], t'[X_2])[A] \in R.$$
+$$\forall r, r' \in R,
+r[C] = r'[C] \implies
+(r[X_1], r'[X_2])[A] \in R.$$
 
 あんまり定理という程でもなくて,
 $R_1 \ast R_2 \subset R$
 というのを, そのまま言い換えてるだけ.
-$t[C]=t'[C]$ というのが自然結合で結合される条件を言ってて,
+$r[C]=r'[C]$ というのが自然結合で結合される条件を言ってて,
 このとき任意に $R_1, R_2$ から持ってきたタプルを結合したものが $R$ に属してる, と言ってるだけ.
+
+## 従属性
+
+### 多値従属性 (Multi-valued Dependency)
+
+$R(A)$ と $X, Y \prec A$ について
+$$X \mvdarrow Y$$
+とは
+$R(A)$ が
+$R[X \lor Y]$ と $R[X \lor (A - Y)]$ とに情報無損失分解されること.
+$$X \mvdarrow Y \iff R = R[X \lor Y] \ast R[X \lor (A - Y)]$$
+
+このとき $Y$ は $X$ に **多値に従属する** といい,
+逆に $X$ は $Y$ を **多値に決定する** という.
+
+この $Y$ と $A-Y$ の関係は当然対称的なので,
+$$X \mvdarrow Y \iff X \mvdarrow A-Y$$
+である.
+この二つを合わせて
+$$X \mvdarrow Y \mid A-Y$$
+と書いたりもする.
+
+自明な多値従属性として
+$Y \prec X \implies X \mvdarrow Y$
+がある.
+これは $R[X \lor Y] = R[X], R[X \lor (A-Y)]=R[A]$ なので当然に情報無損失分解.
+特に $X \mvdarrow ()$ である.
+
+### 関数従属性 (Functional Dependency)
+
+$r \in R(A)$ と $X, Y \prec A$ について,
+$r[X]$ が決まるとき $r[Y]$ が決定することを,
+$Y$ は $X$ に関数的に従属するという.
+これを $$X \fdarrow Y$$ と書く.
+
+$$X \fdarrow Y \iff (\forall r, r' \in R(A), r[X] = r'[X] \implies r[Y], r'[Y])$$
+
+自明な関数従属性として $Y \prec X$ のときは常に $X \fdarrow Y$.
+
+#### 完全関数従属性
+
+$X \fdarrow Y$ であるような $X$ の内, 極小なものを $X^*$ とする.
+$X^* \fdarrow Y$ を **完全関数従属** という.
+$R(A)$ の主キーが $X$ であるとはまさに $X \fdarrow A$ が完全関数従属であることを言う.
+
+### 定理
+
+関数従属ならば多値従属である.
+$$X \fdarrow Y \implies X \mvdarrow Y.$$
+
+#### 証明
+
+ゴールの多値従属性について再確認すると,
+$R(A)$ について,
+
+- $X \mvdarrow Y$
+- $\iff X_1 = X \lor Y, X_2 = X \lor (A - Y)$ として $R[X_1], R[X_2]$ が $R(A)$ の情報無損失分解
+- $\iff R[X_1] \ast R[X_2] = R$
+- $\iff \forall r, r' \in R, r[X] = r'[X] \implies (r[X_1], r'[X_2])[A] \in R$
+    - ここで $X_1 \land X_2 = X$ に注意
+
+従って $X \fdarrow Y \implies X \mvdarrow Y$ を確認するためには,
+$X \fdarrow Y$ と $r[X] = r'[X]$ を仮定して,
+$(r[X_1], r'[X_2])[A] \in R$
+が成り立つことを確認できればよい.
+
+$X \fdarrow Y \iff (r[X]=r'[X] \implies r[Y] = r'[Y])$ なので,
+$r[X]=r'[X]$ と合わせて $r[Y] = r'[Y]$ を得る.
+従って $r[X_1] = r[X \lor Y] = r'[X \lor Y] = r'[X_1]$.
+$(r[X_1], r'[X_2])[A] = (r'[X_1], r'[X_2])[A] = r' \in R$.
+
+ということで多値従属性が確認できた.

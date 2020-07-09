@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Relational Database</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-stumbleupon" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">Relational Database</h1>
+</header>
+<p class="date" style="text-align: right">
+2020-07-09 (Thu.)
+</p>
+<div class="is-pulled-right">
+<p><a class='tag is-red' href=index.html#RDB>RDB</a></p>
+</div>
+<p><span class="math inline">\(\def\null{\mathrm{null}}\def\A{\mathcal{A}}\def\D{\mathcal{D}}\def\dom{\mathrm{dom}}\def\Bool{\mathrm{Bool}}\)</span> <span class="math inline">\(\def\mvdarrow{\rightarrow\!\rightarrow}\def\fdarrow{\rightarrow}\)</span></p>
+<h2 id="index">INDEX</h2>
+<div id="toc">
+
+</div>
+<h2 id="note">NOTE</h2>
+<p>部分的に厳密でない定義が出てきてしまう. 書き直せたら書き直したい.</p>
+<h2 id="ドメイン">ドメイン</h2>
+<p>適当な（無限を許す）集合のクラス <span class="math display">\[\D = \{D_\lambda \}_\lambda\]</span> についてこの各 <span class="math inline">\(D_\lambda\)</span> を <strong>ドメイン</strong> と呼ぶ. このうちのいくつかを特に, プリミティブなドメインと呼ぶことにする. そしてそれ以外の全てのドメインは, プリミティブなドメインの組み合わせから適当な操作で得られる集合であるとする（直積集合とか冪集合など）.</p>
+<h2 id="関係-relation">関係 (Relation)</h2>
+<p><span class="math inline">\(R\)</span> が関係であるとは, ある有限個のドメイン <span class="math inline">\(D_1, D_2, \ldots, D_N\)</span> の直積の部分集合であること: <span class="math display">\[R \subset D_1 \times D_2 \times \cdots \times D_N.\]</span></p>
+<p>関係 <span class="math inline">\(R\)</span> の各要素のことをタプルと呼ぶ. <span class="math display">\[r = (x_1, x_2, \ldots, x_n) \in R; x_i \in D_i\]</span></p>
+<p>タプル <span class="math inline">\(r\)</span> に対してその各要素 <span class="math inline">\(x_i\)</span> を属性値とかカラム値と呼ぶ. 添字 <span class="math inline">\(i\)</span> を属性とかカラムと呼ぶ.</p>
+<h3 id="空値-null">空値 (null)</h3>
+<p>特別な値 <span class="math inline">\(\null\)</span> を用意する. ドメイン <span class="math inline">\(D\)</span> に対して <span class="math inline">\(x \in D\)</span> と書いたとき, これは集合 <span class="math inline">\(D\)</span> に属するかまたは <span class="math inline">\(x = \null\)</span> であると意味を拡張する <span class="math inline">\((x \in D \cup \{\null\})\)</span>. 部分集合についても同様の拡張をする. 特に関係 <span class="math inline">\(R \subset D_1 \times D_2 \times \cdots \times D_N\)</span> と書いた時, <span class="math inline">\((x_1, x_2, \ldots, x_n) \in R\)</span> は <span class="math inline">\(x_i = \null\)</span> でありえる.</p>
+<p><span class="math inline">\(=\)</span> の意味も拡張する. 空値はどの値とも等しくない: <span class="math display">\[\forall x, x \ne \null.\]</span> 特に <span class="math inline">\(\null \ne \null\)</span>. 代わりに null かを判定する述語 <span class="math inline">\(\null?\)</span> を用意しておく.</p>
+<h3 id="属性名カラム名">属性名（カラム名）</h3>
+<p>同じドメインに異なる意味を与えたい. そこで関係をドメインではなく名前で定義する.</p>
+<p>名前とはシンボルのことで, ある無限集合 <span class="math inline">\(\A\)</span> の要素を名前（属性名, カラム名）と呼ぶことにする. 各名前には一意にドメインを対応付ける: <span class="math display">\[\dom \colon \A \to \D.\]</span></p>
+<p>これを以て関係を再定義する.</p>
+<p>互いに相異なる <span class="math inline">\(A_i \in \A\)</span> に対して, 関係 <span class="math inline">\(R(A_1, A_2, \ldots, A_N)\)</span> とは <span class="math display">\[R \subset \dom A_1 \times \dom A_2 \times \cdots \times \dom A_N\]</span> のこと.</p>
+<p>添字 <span class="math inline">\(i\)</span> を属性（カラム）と呼んだのに対して, 名前 <span class="math inline">\(A_i\)</span> を <strong>属性名（カラム名）</strong> と呼んだりする.</p>
+<h3 id="第一正規形">第一正規形</h3>
+<p>関係 <span class="math inline">\(R(A_1, A_2, \ldots, A_N)\)</span> について, 全ての <span class="math inline">\(\dom A_i\)</span> がプリミティブであるとき, <span class="math inline">\(R\)</span> は第一正規形を満たすという.</p>
+<h3 id="射影">射影</h3>
+<p>関係 <span class="math inline">\(R(A_1, A_2, \ldots, A_N)\)</span> のタプル <span class="math inline">\(r = (x_1, x_2, \ldots, x_n) \in R\)</span> (<span class="math inline">\(x_i \in \dom A_i\)</span>) について, <span class="math display">\[r[A_i] = x_i\]</span> <span class="math display">\[r[A_i, A_j, \ldots, A_k] = (x_i, x_j, \ldots, x_k)\]</span> と書くことにする.</p>
+<h3 id="キー">キー</h3>
+<p>関係 <span class="math inline">\(R(A_1, A_2, \ldots, A_N)\)</span> について, この名前の列 <span class="math inline">\((A_1, \ldots, A_N)\)</span> の <strong>部分列</strong> <span class="math inline">\((A_i, A_j, \ldots, A_k)\)</span> が <span class="math inline">\(R\)</span> の <strong>候補キー</strong> であるとは, 次を満たすこと.</p>
+<ul>
+<li><span class="math inline">\(\forall (x_i, x_j, \ldots, x_k) \in \dom A_i \times \dom A_j \times \cdots \times \dom A_k,\)</span>
+<ul>
+<li><span class="math inline">\(\#\{ r \mid r \in R, r[A_i, A_j, \ldots, A_k] = (x_i, x_j, \ldots, x_k) \} \leq 1\)</span></li>
+</ul></li>
+</ul>
+<p>ここで <span class="math inline">\(\#\)</span> は集合のサイズ. 非形式的に定義を言い直せば, 該当する箇所の成分だけを取り出したものも尚集合であるような名前のセットのこと. 特に, <span class="math inline">\((A_1, A_2, \ldots, A_N)\)</span> 自体は必ず候補キーである. これは <span class="math inline">\(R\)</span> 自体が集合だから.</p>
+<p>さらに極小な候補キーのことを <strong>主キー</strong> と呼ぶ. 主キーはただ一通りとは限らない. 候補キーが必ず存在するので, 主キーも必ず存在する.</p>
+<h2 id="補足-列名前列">補足: 列（名前列）</h2>
+<p>本筋から外れてしまうけど, さっき <strong>部分列</strong> という言葉を無断で使ってしまったし, 今後も列に関する云々が出てくるので予め定義しておく.</p>
+<p>列とはタプルそのもの, 或いは順序つきの有限集合のことで, 丸括弧で括って <span class="math inline">\(A = (A_1, A_2, \ldots, A_N)\)</span> と書く. 特に本記事で登場する <strong>名前列</strong> とは全て相異なる有限個の <span class="math inline">\(A_i \in \A\)</span> を並べたもののこと. 特にゼロ個の要素を並べた <span class="math inline">\(()\)</span> も列だとする.</p>
+<p>二つの列について, それらが等しいとは並べた要素数が等しく, 中の要素もそれぞれ等しいこと. <span class="math inline">\((A_1, \ldots, A_N) = (B_1, \ldots, B_N) \iff \forall i, A_i = B_i\)</span>.</p>
+<p>列 <span class="math inline">\(A=(A_1,A_2,\ldots,A_N)\)</span> に対して, 順序を忘れて集合にしたものを <span class="math inline">\(\overline{A} = \{A_1,A_2,\ldots,A_N\}\)</span> と書くことにする.</p>
+<p>列 <span class="math inline">\(A&#39;\)</span> が列 <span class="math inline">\(A\)</span> の <strong>部分列</strong> であるとは, <span class="math inline">\(\overline{A&#39;} \subset \overline{A}\)</span> であって, <span class="math inline">\(A\)</span> の中での順序を保っているもののこと. 部分列の関係を <span class="math inline">\(\subset\)</span> と同じ気持ちで <span class="math inline">\(\prec\)</span> と書く.</p>
+<ul>
+<li>例
+<ul>
+<li><span class="math inline">\((1) \prec (1, 2, 3)\)</span></li>
+<li><span class="math inline">\((1, 3) \prec (1, 2, 3)\)</span></li>
+<li><span class="math inline">\((1, 2, 3) \prec (1, 2, 3)\)</span> (一般に <span class="math inline">\(A \prec A\)</span>)</li>
+<li><span class="math inline">\(() \prec (1, 2, 3)\)</span> (一般に <span class="math inline">\(() \prec A\)</span>)</li>
+</ul></li>
+</ul>
+<p>列 <span class="math inline">\(A\)</span> と <span class="math inline">\(B\)</span> との共通列 <span class="math inline">\(A \land B\)</span> とは <span class="math inline">\(\overline{A} \cap \overline{B}\)</span> の要素を <span class="math inline">\(A\)</span> の順序で並べたもの.</p>
+<p>列 <span class="math inline">\(A\)</span> と <span class="math inline">\(B\)</span> の直和（結合） <span class="math inline">\(A + B\)</span> とは <span class="math inline">\(A\)</span> の後ろに <span class="math inline">\(B\)</span> を続けて並べたもの. ただし名前列の場合は中の要素は相異なるようにしたいので, 名前が被った場合はエイリアスとして, 別な名前をつけることで区別する. これは後述する関係代数での直積演算で詳細に述べる.</p>
+<p>列 <span class="math inline">\(A\)</span> と <span class="math inline">\(B\)</span> の差 <span class="math inline">\(A - B\)</span> とは <span class="math inline">\(A\)</span> の内, <span class="math inline">\(B\)</span> に登場するものを取り除いたもの. <span class="math inline">\((1, 2, 3) - (2, 4, 6) = (1, 3)\)</span>.</p>
+<p>列 <span class="math inline">\(A\)</span> と <span class="math inline">\(B\)</span> の和 <span class="math inline">\(A \lor B\)</span> とは <span class="math inline">\(\overline{A} \cup \overline{B}\)</span> の要素を <span class="math inline">\(A\)</span> の順序で, <span class="math inline">\(A\)</span> に登場しないものは <span class="math inline">\(B\)</span> の順序で並べたもの. <span class="math inline">\(A \lor B = A + (A - B)\)</span>. <span class="math inline">\((1, 2) \lor (1, 3) = (1, 2, 3)\)</span>.</p>
+<p>また今後は, 名前列 <span class="math inline">\(A = (A_1, \ldots, A_n)\)</span> の上の関係 <span class="math inline">\(R(A_1, \ldots, A_n)\)</span> を <span class="math inline">\(R(A)\)</span> と書くことにする.</p>
+<h4 id="候補キーの再定義">候補キーの再定義</h4>
+<p>以上の補足を踏まえると, 候補キーはもっと簡潔に言い直せる. <span class="math inline">\(X \prec A\)</span> が <span class="math inline">\(R(A)\)</span> の候補キーであるとは, <span class="math display">\[\forall r, r&#39; \in R, r[X] = r&#39;[X] \implies r = r&#39;\]</span></p>
+<h2 id="データベース">データベース</h2>
+<p>データベースとは以上の <span class="math inline">\((\D, \A, \dom)\)</span> 及び, その上の有限個の関係集合 <span class="math inline">\(\{R_1, R_2, \ldots, R_M\}\)</span> のこと.</p>
+<h2 id="関係代数-relational-algebra">関係代数 (Relational Algebra)</h2>
+<p>データベースが与えられたとき, 関係の上の代数を構築する. この代数演算はいくつかの関係から別の関係を作る. 最初に与えられる関係の集合について閉じてるわけではないので, この演算で作ることの出来る関係全体はもっと大きなクラスになる.</p>
+<p>次の8つの演算を定める:</p>
+<ol type="1">
+<li>和</li>
+<li>差</li>
+<li>共通</li>
+<li>直積</li>
+<li>射影</li>
+<li>選択 (<span class="math inline">\(\theta\)</span>-選択)</li>
+<li>結合 (<span class="math inline">\(\theta\)</span>-結合)</li>
+<li>商</li>
+</ol>
+<h3 id="和">和</h3>
+<p>二つの関係 <span class="math inline">\(R(A), S(B)\)</span> について, 名前列が等しい <span class="math inline">\((A=B)\)</span> とする. この関係を「<span class="math inline">\(R\)</span> と <span class="math inline">\(S\)</span> は両立している (compatible)」と呼ぶことにする.</p>
+<p>和はこのように両立した二つの関係について定義される.</p>
+<p>両立した関係 <span class="math inline">\(R(A), S(A)\)</span> について, この和を <span class="math inline">\(R \cup S\)</span> と書いて次で定める: <span class="math display">\[R \cup S := \{ r \mid r \in R \lor r \in S\}\]</span></p>
+<p>この新しく出来た <span class="math inline">\(R \cup S\)</span> は <span class="math inline">\((R \cup S)(A)\)</span> という新しい関係になっている.</p>
+<h3 id="差">差</h3>
+<p>両立してる二つの関係 <span class="math inline">\(R(A), S(A)\)</span> について差は次で定められる: <span class="math display">\[R - S := \{ r \mid r \in R \land r \not\in S\}\]</span></p>
+<h3 id="共通">共通</h3>
+<p>両立してる二つの関係 <span class="math inline">\(R(A), S(A)\)</span> について <span class="math display">\[R \cap S := \{ r \mid r \in R \land r \in S\}\]</span></p>
+<p>ここで <span class="math inline">\(R \cap S = (R \cup S) - (R - S) - (S - R)\)</span> である. 従って共通演算は直接与えなくても再現できる.</p>
+<h3 id="直積">直積</h3>
+<p>二つの関係 <span class="math inline">\(R(A), S(B)\)</span> について, <span class="math display">\[R \times S := \{ (r, s) \mid r \in R, s \in S \}\]</span> と定める.</p>
+<p>これは <span class="math inline">\((R \times S)(A + B)\)</span> という関係であり, このタプルを <span class="math inline">\(r = (x_1, \ldots, x_m) \in R\)</span> と <span class="math inline">\(s = (y_1, \ldots, y_n) \in S\)</span> に対して <span class="math inline">\((r, s) = (x_1, \ldots, x_m, y_1, \ldots, y_n)\)</span> と書くことにする.</p>
+<p>カラム名について, <span class="math inline">\(A \land B \ne ()\)</span> の場合に <span class="math inline">\(A+B\)</span> を単に結合とすると名前が被ってしまう. そこで <span class="math inline">\(A=(A_1, \ldots, A_m), B=(B_1, \ldots, B_n)\)</span> に対して, <span class="math display">\[A+B = (R.\!A_1, ~ \ldots, ~ R.\!A_m, ~ S.\!B_1, ~ \ldots, ~ S.\!B_n)\]</span> とリネームすることで回避する. ただし名前が被らない場合は特にリネームはしないで済ます.</p>
+<h3 id="射影-1">射影</h3>
+<p>タプルに対して射影を定義したが, 同じことが関係に対して出来る.</p>
+<p>関係 <span class="math inline">\(R(A)\)</span> とこの名前の部分列 <span class="math inline">\(A&#39; \prec A\)</span> について, <span class="math display">\[R[A&#39;] := \{ r[A&#39;] \mid r \in R \}.\]</span></p>
+<h3 id="選択">選択</h3>
+<p>二つのドメインの <span class="math inline">\(D_i, D_j\)</span> の上の比較演算子 <span class="math display">\[\theta \colon D_i \times D_j \to \Bool\]</span> <span class="math display">\[(x, y) \mapsto x \theta y\]</span> があるとする.</p>
+<p>このとき関係 <span class="math inline">\(R(A)\)</span> があって, <span class="math inline">\(\dom A_i = D_i, \dom A_j = D_j\)</span> だとする. このとき, <span class="math display">\[R[A_i \theta A_j] := \{ r \in R \mid r[A_i] ~ \theta ~ r[A_j] \}\]</span> とする.</p>
+<p>これを <strong><span class="math inline">\(\theta\)</span>-選択</strong> という. 例えば <span class="math inline">\(\leq\)</span> に対して <span class="math inline">\(\leq\)</span>-選択と言う.</p>
+<p>選択の定義は以上だが, 便利なので次のようなことも出来るようにする. 定数 <span class="math inline">\(c\)</span> について, <span class="math display">\[R[A_i \theta c] := \{ r \in R \mid r[A_i] ~ \theta ~ c \}.\]</span> これは定数 <span class="math inline">\(c\)</span> だけからなる関係 <span class="math inline">\(C\)</span> を以て <span class="math inline">\((R \times C)\)</span> から選択することで再現できる. なのでこれの糖衣構文だということにする.</p>
+<h3 id="結合">結合</h3>
+<p>二つの関係 <span class="math inline">\(R(A), S(B)\)</span> 及び, <span class="math inline">\(\dom A_i, \dom B_j\)</span> の上の比較演算子 <span class="math inline">\(\theta\)</span> があるとする. <span class="math display">\[\theta \colon \dom A_i \times \dom B_j \to \Bool\]</span></p>
+<p>このとき <span class="math display">\[R[A_i \theta B_j]S := \{(r,s) \in R \times S \mid r[A_i] ~ \theta ~ s[B_j] \}.\]</span></p>
+<p>これを <strong><span class="math inline">\(\theta\)</span>-結合</strong> という. この結合は <span class="math inline">\(R[A_i \theta B_j]S = (R \times S)[A_i \theta B_j]\)</span> と書けるので, このような糖衣構文だと思うこともできる.</p>
+<p>また自然に, 複数の比較演算子 <span class="math inline">\(\theta^1, \theta^2, \ldots\)</span> で以て <span class="math inline">\(R [A_{i_1} \theta^1 B_{j_1}, A_{i_2} \theta^2 B_{j_2}, \ldots]S\)</span> も定義できる.</p>
+<h4 id="自然結合">自然結合</h4>
+<p><span class="math inline">\(R(A), S(B)\)</span> の名前列に空でない共通列 <span class="math inline">\(C = A \land B \ne ()\)</span> があったとする. このとき <span class="math inline">\(C = (C_1, \ldots, C_k)\)</span> について次のように <span class="math inline">\(=\)</span>-結合をとったものを <strong>自然結合</strong> と呼ぶ.</p>
+<p><span class="math display">\[R \ast S := (R[C_1=C_1, \ldots, C_k=C_k]S)[A \lor B].\]</span></p>
+<p>例くらい書いておくと,</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><span class="math inline">\(R_1\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(A_1\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(A_2\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">2</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><span class="math inline">\(R_2\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(A_2\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(A_3\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"></td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">x</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"></td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">y</td>
+</tr>
+</tbody>
+</table>
+<p>に対しては,</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><span class="math inline">\(R_1 \ast R_2\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(A_1\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(A_2\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(A_3\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">x</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">y</td>
+</tr>
+</tbody>
+</table>
+<h3 id="商">商</h3>
+<p>二つの関係が <span class="math inline">\(R(A + B), S(B)\)</span> とあるとき, <span class="math display">\[R \div S := \{ r \in R[A] \mid \forall s \in S, (r, s) \in R\}\]</span> を <strong>商</strong> という.</p>
+<p>特に <span class="math inline">\((R \times S) \div S = R\)</span> である.</p>
+<h2 id="情報無損失分解">情報無損失分解</h2>
+<h3 id="分解">分解</h3>
+<p>関係 <span class="math inline">\(R(A)\)</span> を次のようにして二つの関係に <strong>分解</strong> する. まず, 名前列 <span class="math inline">\(A\)</span> を重なる二つに分解する.</p>
+<ul>
+<li><span class="math inline">\(X_1 \lor X_2 = A\)</span></li>
+<li><span class="math inline">\(X_1 \land X_2 \ne ()\)</span></li>
+</ul>
+<p>これによって <span class="math inline">\(R_1 = R[X_1], R_2 = R[X_2]\)</span> の二つに射影することが出来る. 名前が重なっているので自然結合することができ, 関係 <span class="math display">\[(R_1 \ast R_2)(A_1, \ldots, A_n)\]</span> を得るが, 一般に <span class="math display">\[R \subset R_1 \ast R_2\]</span> が成立する. そして一般には <span class="math display">\[R \ne R_1 \ast R_2\]</span> である.</p>
+<h4 id="subset-の証明"><span class="math inline">\(\subset\)</span> の証明</h4>
+<p>任意の <span class="math inline">\(r \in R\)</span> が <span class="math inline">\(r \in R_1 \ast R_2\)</span> であることを確認すればよい. <span class="math inline">\(r_1 = r[X_1] \in R_1\)</span>. <span class="math inline">\(r_2 = r[X_2] \in R_2\)</span>. この二つの自然結合はまさに <span class="math inline">\(r\)</span> そのもの. ほとんど自明.</p>
+<h4 id="ne-の証明"><span class="math inline">\(\ne\)</span> の証明</h4>
+<p>反例を一つ見れば良い.</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><span class="math inline">\(R\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(A_1\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(A_2\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(A_3\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">a</td>
+<td style="text-align: center;">x</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"></td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">a</td>
+<td style="text-align: center;">x</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"></td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">a</td>
+<td style="text-align: center;">y</td>
+</tr>
+</tbody>
+</table>
+<p>これを <span class="math inline">\(X_1=(A_1,A_2)\)</span> と <span class="math inline">\(X_2=(A_2,A_3)\)</span> に分割すると,</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><span class="math inline">\(R_1\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(A_1\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(A_2\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">a</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"></td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">a</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><span class="math inline">\(R_2\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(A_2\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(A_3\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"></td>
+<td style="text-align: center;">a</td>
+<td style="text-align: center;">x</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"></td>
+<td style="text-align: center;">a</td>
+<td style="text-align: center;">y</td>
+</tr>
+</tbody>
+</table>
+<p>これを自然結合すると, どのタプルでも <span class="math inline">\(r_1[A_2] = r_2[A_2]\)</span> が成り立つようになってるので,</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><span class="math inline">\(R_1 \ast R_2\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(A_1\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(A_2\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(A_3\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">a</td>
+<td style="text-align: center;">x</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"></td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">a</td>
+<td style="text-align: center;">y</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"></td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">a</td>
+<td style="text-align: center;">x</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"></td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">a</td>
+<td style="text-align: center;">y</td>
+</tr>
+</tbody>
+</table>
+<p>を得てしまう.</p>
+<h3 id="情報無損失分解-1">情報無損失分解</h3>
+<p>自然結合が元の関係に一致するような分解を <strong>情報無損失分解</strong> という.</p>
+<h4 id="定理">定理</h4>
+<p>関係 <span class="math inline">\(R(A)\)</span> は以下の時に限って情報無損失分解される.</p>
+<p>名前列 <span class="math inline">\(A\)</span> を <span class="math inline">\(X_1, X_2\)</span> に分解したとする. <span class="math inline">\(C = X_1 \land X_2\)</span>, <span class="math inline">\(D = X_2 - X_1\)</span> とする. このときに次が成り立つこと <span class="math display">\[\forall r, r&#39; \in R,
+r[C] = r&#39;[C] \implies
+(r[X_1], r&#39;[X_2])[A] \in R.\]</span></p>
+<p>あんまり定理という程でもなくて, <span class="math inline">\(R_1 \ast R_2 \subset R\)</span> というのを, そのまま言い換えてるだけ. <span class="math inline">\(r[C]=r&#39;[C]\)</span> というのが自然結合で結合される条件を言ってて, このとき任意に <span class="math inline">\(R_1, R_2\)</span> から持ってきたタプルを結合したものが <span class="math inline">\(R\)</span> に属してる, と言ってるだけ.</p>
+<h2 id="従属性">従属性</h2>
+<h3 id="多値従属性-multi-valued-dependency">多値従属性 (Multi-valued Dependency)</h3>
+<p><span class="math inline">\(R(A)\)</span> と <span class="math inline">\(X, Y \prec A\)</span> について <span class="math display">\[X \mvdarrow Y\]</span> とは <span class="math inline">\(R(A)\)</span> が <span class="math inline">\(R[X \lor Y]\)</span> と <span class="math inline">\(R[X \lor (A - Y)]\)</span> とに情報無損失分解されること. <span class="math display">\[X \mvdarrow Y \iff R = R[X \lor Y] \ast R[X \lor (A - Y)]\]</span></p>
+<p>このとき <span class="math inline">\(Y\)</span> は <span class="math inline">\(X\)</span> に <strong>多値に従属する</strong> といい, 逆に <span class="math inline">\(X\)</span> は <span class="math inline">\(Y\)</span> を <strong>多値に決定する</strong> という.</p>
+<p>この <span class="math inline">\(Y\)</span> と <span class="math inline">\(A-Y\)</span> の関係は当然対称的なので, <span class="math display">\[X \mvdarrow Y \iff X \mvdarrow A-Y\]</span> である. この二つを合わせて <span class="math display">\[X \mvdarrow Y \mid A-Y\]</span> と書いたりもする.</p>
+<p>自明な多値従属性として <span class="math inline">\(Y \prec X \implies X \mvdarrow Y\)</span> がある. これは <span class="math inline">\(R[X \lor Y] = R[X], R[X \lor (A-Y)]=R[A]\)</span> なので当然に情報無損失分解. 特に <span class="math inline">\(X \mvdarrow ()\)</span> である.</p>
+<h3 id="関数従属性-functional-dependency">関数従属性 (Functional Dependency)</h3>
+<p><span class="math inline">\(r \in R(A)\)</span> と <span class="math inline">\(X, Y \prec A\)</span> について, <span class="math inline">\(r[X]\)</span> が決まるとき <span class="math inline">\(r[Y]\)</span> が決定することを, <span class="math inline">\(Y\)</span> は <span class="math inline">\(X\)</span> に関数的に従属するという. これを <span class="math display">\[X \fdarrow Y\]</span> と書く.</p>
+<p><span class="math display">\[X \fdarrow Y \iff (\forall r, r&#39; \in R(A), r[X] = r&#39;[X] \implies r[Y], r&#39;[Y])\]</span></p>
+<p>自明な関数従属性として <span class="math inline">\(Y \prec X\)</span> のときは常に <span class="math inline">\(X \fdarrow Y\)</span>.</p>
+<h4 id="完全関数従属性">完全関数従属性</h4>
+<p><span class="math inline">\(X \fdarrow Y\)</span> であるような <span class="math inline">\(X\)</span> の内, 極小なものを <span class="math inline">\(X^*\)</span> とする. <span class="math inline">\(X^* \fdarrow Y\)</span> を <strong>完全関数従属</strong> という. <span class="math inline">\(R(A)\)</span> の主キーが <span class="math inline">\(X\)</span> であるとはまさに <span class="math inline">\(X \fdarrow A\)</span> が完全関数従属であることを言う.</p>
+<h3 id="定理-1">定理</h3>
+<p>関数従属ならば多値従属である. <span class="math display">\[X \fdarrow Y \implies X \mvdarrow Y.\]</span></p>
+<h4 id="証明">証明</h4>
+<p>ゴールの多値従属性について再確認すると, <span class="math inline">\(R(A)\)</span> について,</p>
+<ul>
+<li><span class="math inline">\(X \mvdarrow Y\)</span></li>
+<li><span class="math inline">\(\iff X_1 = X \lor Y, X_2 = X \lor (A - Y)\)</span> として <span class="math inline">\(R[X_1], R[X_2]\)</span> が <span class="math inline">\(R(A)\)</span> の情報無損失分解</li>
+<li><span class="math inline">\(\iff R[X_1] \ast R[X_2] = R\)</span></li>
+<li><span class="math inline">\(\iff \forall r, r&#39; \in R, r[X] = r&#39;[X] \implies (r[X_1], r&#39;[X_2])[A] \in R\)</span>
+<ul>
+<li>ここで <span class="math inline">\(X_1 \land X_2 = X\)</span> に注意</li>
+</ul></li>
+</ul>
+<p>従って <span class="math inline">\(X \fdarrow Y \implies X \mvdarrow Y\)</span> を確認するためには, <span class="math inline">\(X \fdarrow Y\)</span> と <span class="math inline">\(r[X] = r&#39;[X]\)</span> を仮定して, <span class="math inline">\((r[X_1], r&#39;[X_2])[A] \in R\)</span> が成り立つことを確認できればよい.</p>
+<p><span class="math inline">\(X \fdarrow Y \iff (r[X]=r&#39;[X] \implies r[Y] = r&#39;[Y])\)</span> なので, <span class="math inline">\(r[X]=r&#39;[X]\)</span> と合わせて <span class="math inline">\(r[Y] = r&#39;[Y]\)</span> を得る. 従って <span class="math inline">\(r[X_1] = r[X \lor Y] = r&#39;[X \lor Y] = r&#39;[X_1]\)</span>. <span class="math inline">\((r[X_1], r&#39;[X_2])[A] = (r&#39;[X_1], r&#39;[X_2])[A] = r&#39; \in R\)</span>.</p>
+<p>ということで多値従属性が確認できた.</p>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

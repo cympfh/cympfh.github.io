@@ -20,7 +20,7 @@ select-edit() {
     aid=$(
         (
             echo "* new";
-            cat resources/md-list
+            cat resources/md-list | sort -V
         ) |
             peco |
             awk '{print $2}'

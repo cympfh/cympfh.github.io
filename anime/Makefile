@@ -17,7 +17,7 @@ pages:
 	cat $< | awk c++ | pandoc -t html5 -o $@
 
 git: index.html
-	git add -A .
+	git add ./
 	git commit -m "anime/ $(shell LANG=C date)"
 
 # ゴミだけ削除する

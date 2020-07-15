@@ -3,7 +3,7 @@
 % RDB
 
 $\def\null{\mathrm{null}}\def\A{\mathcal{A}}\def\D{\mathcal{D}}\def\dom{\mathrm{dom}}\def\Bool{\mathrm{Bool}}$
-$\def\mvdarrow{\rightarrow\!\rightarrow}\def\fdarrow{\rightarrow}$
+$\def\mvdarrow{\rightarrow\!\!\!\rightarrow}\def\fdarrow{\rightarrow}$
 
 ## INDEX
 <div id=toc></div>
@@ -396,6 +396,10 @@ $$X \mvdarrow Y \iff X \mvdarrow A-Y$$
 $$X \mvdarrow Y \mid A-Y$$
 と書いたりもする.
 
+> 同じことを言い直すが,
+> 名前列 $A$ を適当な二つ $A_1, A_2$ (ただし $A_1 \lor A_2 = A, A_1 \land A_2 \ne ()$) に分解してこのとき,
+> $$A_1 \land A_2 \mvdarrow A_1 \mid A_2 \iff R[X_1] \ast R[X_2] = R$$
+
 自明な多値従属性として
 $Y \prec X \implies X \mvdarrow Y$
 がある.
@@ -447,7 +451,7 @@ $(r[X_1], r'[X_2])[A] = (r'[X_1], r'[X_2])[A] = r' \in R$.
 
 ということで多値従属性が確認できた.
 
-## アームストロングの公理系
+#### アームストロングの公理系
 
 関係 $R(A)$ について,
 
@@ -466,3 +470,21 @@ $F^+$ に入ってるルールが確かに $R(A)$ で関数従属性になって
 名前列 $X$ について,
 $X$ の（$F$ に関する）閉包 $X^+$ を次で定める:
 $$X^+ := \{Y \mid (X \fdarrow Y) \in F^+\}$$
+
+### 結合従属性 (Join Dependency)
+
+$R(A)$ について, $A$ を
+$A_1, A_2, \ldots, A_n$
+に分割する.
+ただしこのとき,
+$A_1 \lor A_2 \lor \cdots \lor A_n = A$
+であるとする.
+
+このときに
+$$R = R[A_1] \ast R[A_2] \ast \cdots \ast R[A_n]$$
+が成り立つことを結合従属性といい,
+$\ast(A_1, A_2, \ldots, A_n)$
+などと書く.
+$n=2$ の場合を多値従属性と呼んだので,
+結合従属性は多値従属性と一般化だとみなせる.
+$$\ast(A_1, A_2) \iff (A_1 \land A_2 \mvdarrow A_1 \mid A_2)$$

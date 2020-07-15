@@ -12,9 +12,8 @@ edit:
 	bash script/edit.sh
 
 git: index
-	git add --all
+	git add ./
 	git commit -a -m "aiura/ `date`"
-	git push
 
 ## posts
 

@@ -62,6 +62,7 @@ EOM
 
 card-year() {
   cat <<EOM
+    <a name="year-$1"></a>
     <div class="column is-half" id="bread-$1">
       <div class="card card-year">
         <div class="card-content year">
@@ -86,10 +87,22 @@ cat <<TEMPLATE
   <title>anime/</title>
   <link rel="stylesheet" href="../resources/css/bulma/bulma.css" />
   <link rel="stylesheet" href="./resources/css/base.css" />
+  <link rel="stylesheet" href="./resources/css/menu.css" />
   <link rel="stylesheet" href="./resources/css/youtube.css" />
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
   </head>
 <body>
+
+  <aside class="menu">
+    <ul class="menu-list">
+TEMPLATE
+
+  cat resources/md-list | awk -F/ '$0=$2' | uniq | sort -nr |
+    sed 's,.*,<li><a href="#year-&">&</a></li>,'
+
+cat <<TEMPLATE
+    </ul>
+  </aside>
 
   <section class="section">
     <div class="container">

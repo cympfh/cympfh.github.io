@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="description" content="cympfh.cc/taglibro" />
+  <meta property="og:url" content="http://cympfh.cc/taglibro">
+  <meta property="og:title" content="ICFPC2020" />
+  <meta property="og:description" content="cympfh.cc/taglibro" />
+  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@cympfh" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>ICFPC2020</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+</head>
+<body>
+<header class="page-header">
+    <a href='../../index.html'><i class="fa fa-save" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">ICFPC2020</h1>
+</header>
+<p>negainoido で参加してた.</p>
+<h2 id="コンテスト前">コンテスト前</h2>
+<p>コンテスト一週間前より公式Twitterが <a href="https://message-from-space.readthedocs.io/en/latest/index.html">message-from-space.readthedocs.io/en/latest/index.html</a> に言及を始める. 当時は12章くらいまでだけが公開されており, それから徐々に内容が増えた. このストーリーを真面目に読むと, 宇宙から電波がキャッチされ, まずそれをビット画像になおして, そこからさらにギャラクシー語として解釈できるということらしい. 第1フェーズとして電波 (wav) から画像に変換する作業, 第2フェーズとして画像からギャラクシー語 (Lisp) に変換する作業があり, コンテストが始まるまでにその第1フェーズは一応は完了していた（チームメンバーが作業していた）.</p>
+<p>ところでコンテストが始まってもないのにこんな情報が出るのはおかしい. 少なくともこんなの知らなくても有利不利にならないように配慮されるはずだ, といったメタ読みが始まったが, 考えてもしょうがない.</p>
+<h2 id="コンテスト1日目">コンテスト1日目</h2>
+<p>先のドキュメントが増えた. 今は章ごとにギャラクシー語 (Lisp コマンド) に名前がついてるが, 初めは単に ??? という名前で公開され, 中身の解釈もまるで分からなかったが, 今回は discrod 上で公式の下で参加者たちがこの内容を解読（エスパー）しあい, 次第に内容が判明し, 今では名前がついている. 今年のICFPCは協力ゲーだった？</p>
+<p>果たして, 電波から画像, 画像からギャラクシー語への変換は無意味だった. 全てに名前がついた時点で, 運営はギャラクシー語に変換済みの, 巨大な galaxy.txt を手に入れたと, 公開した. そして今回のコンテストのエッセンス（以上のもの）全てがこのテキストファイルの中に詰め込まれていた.</p>
+<p>まず我々がスべきことはギャラクシー語の処理系だった.</p>
+<p>今年我々はRustで参加することに事前に決めていた. したがって処理系もRustで書いた. トークン列までにはすでになっているので, 適切に構文木にし, 適切にevalするだけの作業であり, そんなに難しいことはなかった. call-by-name が必要だと判明するまでは.</p>
+<h2 id="コンテスト2日目">コンテスト2日目</h2>
+<p>おそらく評価するとループを含む箇所があり, または評価すると死ぬ（プログラムとして破綻する）箇所があり, 本当に必要なところだけを順序よく評価する必要があった.</p>
+<p>他のチームメンバーによりHaskell製処理系が実装された. これが最後まで使われた.</p>
+<p>galaxy.txt は全てが詰め込まれたプログラムであり, とある宇宙戦争ゲームのチュートリアル及びヒント集だった. しかし一切説明がなくどこをクリックすれば次に進めるのかといったことを自分で全て推測シなければならなかった. そもそもゲームのチュートリアルであること自体を察しないといけないなどなど.</p>
+<h2 id="コンテスト3日目">コンテスト3日目</h2>
+<p>ICFPC本番. チュートリアルで遊んだゲームのAIを書けというもの. 細かな仕様（ダメージ計算とか各パラメータの意味とか）は galaxy.txt にあったらしいが, そんなものは分からずにカンだけで適当にやった.</p>
+<p>ゲームはというと, 1vs1のシューティングゲームであり, 宇宙を飛びながら一方はアタッカーとなりもう一方を打ち倒せば勝ち. 一方はディフェンダーとなって時間まで逃げ切れば勝ちというもの. 出来る操作として, 加速, ビーム, 自爆, 分身. アタッカーはディフェンダー全てを倒す必要があるので, ディフェンダーは分身で最大100体（くらい）まで増やしておくのが有利. アタッカーはビームの仕様をよく知っておく必要がある. 撃つ意味のないビームを打っても無駄な消費をする（自機の温度を無闇に上げて自滅するだけ、相手にダメージを与えられない）. しかし我々は結局この仕様が分からず, 最初はマンハッタン距離で適度に近かったら打つなどしていた. どうもそうではないことが観察から分かり, 自機の温度がゼロだったら限度いっぱいの出力で打つことにした.</p>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

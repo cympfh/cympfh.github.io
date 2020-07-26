@@ -7,9 +7,11 @@ index:
 	bash script/index.sh > index.html
 
 %.html: %.md
+	$(eval DESCRIPTION := $(shell cat $^ | grep '^## ' | sed 's/^#* //g' | tr '\n' ' ' | sed 's/ *$$//g'))
 	mdc $^ | \
 		pandoc -s -t html5 \
 		--template templates/post.body.html \
+		-V "description=$(DESCRIPTION)" \
 		-B templates/post.header.html \
 		-A templates/post.footer.html \
 		-A ../resources/js/toc.html \

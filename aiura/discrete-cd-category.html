@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="概要 参考文献 notation CD圏 離散確率分布" />
+  <meta property="og:url" content="http://cympfh.cc/taglibro">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="離散確率分布のCD圏" />
+  <meta property="og:description" content="概要 参考文献 notation CD圏 離散確率分布" />
+  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@cympfh" />
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>離散確率分布のCD圏</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-stumbleupon" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">離散確率分布のCD圏</h1>
+</header>
+<p class="date" style="text-align: right">
+2020-08-03 (Mon.)
+</p>
+<div class="is-pulled-right">
+<p><a class='tag is-red' href=index.html#CD圏>CD圏</a> <a class='tag is-red' href=index.html#マルコフ圏>マルコフ圏</a></p>
+</div>
+<p><span class="math inline">\(\def\C{\mathcal C}\def\Sets{\mathbb{Sets}}\def\D{\mathcal D}\def\Kl{\mathcal{Kl(D)}}\)</span></p>
+<h2 id="概要">概要</h2>
+<p>CD圏は Copy/Discard と呼ばれる特別な射を持つ対称モノイド圏 (symmetric monoidal category) のことで, 確率を一般化して表現できることからマルコフ圏とも呼ばれる.</p>
+<p>ここではCD圏の定義と簡単なケースとして離散確率分布を表現する方法を紹介する.</p>
+<h2 id="参考文献">参考文献</h2>
+<ul>
+<li><a href="https://m-hiyama.hatenablog.com/entry/2020/06/09/154044">マルコフ圏 A First Look -- 圏論的確率論の最良の定式化 - 檜山正幸のキマイラ飼育記 (はてなBlog)</a></li>
+<li><a href="https://www.cs.ru.nl/K.Cho/papers/disintegration.pdf">Disintegration and Bayesian Inversion,Both Abstractly and Concretely</a></li>
+</ul>
+<h2 id="notation">notation</h2>
+<p>単集合 <span class="math inline">\(1 = \{\ast\}\)</span> をドメインとする写像 <span class="math inline">\(f \colon 1 \to X\)</span> があるとき, 値 <span class="math inline">\(f(\ast)\)</span> も記号を乱用して単に <span class="math inline">\(f ~(\in X)\)</span> と書く.</p>
+<h2 id="cd圏">CD圏</h2>
+<p>考える圏は対称モノイド圏だとする. すなわちテンソル積 <span class="math inline">\(\otimes\)</span> と対象 <span class="math inline">\(I\)</span> があって,</p>
+<ul>
+<li><span class="math inline">\(X \otimes I \simeq I \otimes X \simeq X\)</span></li>
+<li><span class="math inline">\((X \otimes Y) \otimes Z \simeq X \otimes (Y \otimes Z)\)</span></li>
+</ul>
+<p>が成り立つ.</p>
+<p>ここに更に, 各対象 <span class="math inline">\(X\)</span> について copy 射 <span class="math inline">\(c_X\)</span> と discard 射 <span class="math inline">\(d_X\)</span> があるとする.</p>
+<ul>
+<li><span class="math inline">\(c_X \colon X \to X \otimes X\)</span></li>
+<li><span class="math inline">\(d_X \colon X \to I\)</span></li>
+</ul>
+<p>この二つは次を満たすことを要請する:</p>
+<ul>
+<li><span class="math inline">\((d_X \otimes 1_X) c_X = (1_X \otimes d_X) c_X = 1_X\)</span></li>
+<li><span class="math inline">\((c_X \otimes 1_X) c_X = (1_X \otimes c_X) c_X\)</span></li>
+</ul>
+<p>特にこの二つ目は <span class="math inline">\(X\)</span> から copy 射によって作った <span class="math inline">\((X \otimes X) \otimes X\)</span> と <span class="math inline">\(X \otimes (X \otimes X)\)</span> が等しいことを言っている. したがって単に <span class="math inline">\(c_X^3 \colon X \to X \otimes X \otimes X\)</span> などと書いていいし一般に <span class="math inline">\(c_X^n \colon X \to X^{\otimes n}\)</span> があると言っていい.</p>
+<p>以上の copy/discard 射を持つ対称モノイド圏を CD 圏という.</p>
+<h3 id="用語の定義">用語の定義</h3>
+<p>CD圏 <span class="math inline">\(\C\)</span> において, 射 <span class="math inline">\(f \colon X \to Y\)</span> が <span class="math inline">\(d_Y f = d_X\)</span> を満たす時, <span class="math inline">\(f\)</span> は <strong>因果的 (causal)</strong> という. 因果的な射のことを <strong>チャンネル (channel)</strong> という.</p>
+<p><span class="math inline">\(\C\)</span> のすべての射が因果的であるとき, <span class="math inline">\(\C\)</span> は <strong>affine</strong> であるという.</p>
+<p>チャンネル <span class="math inline">\(\omega\)</span> のドメインが <span class="math inline">\(I\)</span> のとき, つまり <span class="math inline">\(\omega \colon I \to X\)</span> のとき, <span class="math inline">\(\omega\)</span> を <span class="math inline">\(X\)</span> 上の <strong>状態 (state)</strong> という.</p>
+<h2 id="離散確率分布">離散確率分布</h2>
+<p>離散確率分布をまずモナドとして定式化し, そこから導かれるクライスリ圏がまさに確率分布を表現する圏であることを, これから見ていく.</p>
+<h3 id="離散確率分布の定義">離散確率分布の定義</h3>
+<p>集合 <span class="math inline">\(X\)</span> について, これの有限部分集合 <span class="math inline">\(\{x_1,x_2,\ldots,x_n\} \subset X\)</span> を取り出して, これらに確率分布 <span class="math inline">\((r_1,r_2, \ldots,r_n); ~~ r_i \in [0,1], \sum_i r_i=1\)</span> を載せたものが離散確率分布と呼ばれる. ここでは便利さのために, 関数</p>
+<ul>
+<li><span class="math inline">\(\omega: X \to [0,1]\)</span>
+<ul>
+<li><span class="math inline">\(\sum_{x \in X} \omega(x) = 1\)</span></li>
+<li><span class="math inline">\(\{ x \mid \omega(x) \ne 0\}\)</span> が有限集合</li>
+</ul></li>
+</ul>
+<p>のことを <span class="math inline">\(X\)</span> の上の <strong>離散確率分布</strong> と呼ぶことにする.</p>
+<h3 id="離散確率分布モナド">離散確率分布モナド</h3>
+<p><span class="math inline">\(X\)</span> に対して, <span class="math inline">\(X\)</span> 上の離散確率分布すべてを集めたもの（これは集合になる）を <span class="math inline">\(\D(X)\)</span> と書く. すると <span class="math inline">\(\D\)</span> は <span class="math inline">\(\Sets\)</span> 上のモナドになる.</p>
+<ul>
+<li>functor
+<ul>
+<li><span class="math inline">\(f \colon X \to Y\)</span> に対して</li>
+<li><span class="math inline">\(\D f \colon DX \to DY\)</span>
+<ul>
+<li><span class="math inline">\(\omega \mapsto \psi\)</span></li>
+<li><span class="math inline">\(; \psi(y) = \sum_{y = fx} \omega(x)\)</span></li>
+</ul></li>
+</ul></li>
+<li>return
+<ul>
+<li><span class="math inline">\(\eta_X \colon X \to \D(X)\)</span>
+<ul>
+<li><span class="math inline">\(x \mapsto \omega\)</span></li>
+<li><span class="math inline">\(; \omega(x) = 1\)</span></li>
+</ul></li>
+</ul></li>
+<li>掛け算
+<ul>
+<li><span class="math inline">\(\mu_X \colon \D^2(X) \to \D(X)\)</span>
+<ul>
+<li><span class="math inline">\(\phi \mapsto \omega\)</span></li>
+<li><span class="math inline">\(; \omega(x) = \sum_{\omega&#39; \in \D(X)} \phi(\omega&#39;) \cdot \omega&#39;(x)\)</span></li>
+<li>補足: <span class="math inline">\(\D^2(X)\)</span> というのは分布の分布
+<ul>
+<li>事前分布 <span class="math inline">\(\omega&#39;\)</span> が与えられる確率が <span class="math inline">\(\phi(\omega&#39;)\)</span> で, その上で <span class="math inline">\(x\)</span> が与えられる確率 <span class="math inline">\(\omega&#39;(x)\)</span> を掛け算してる</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>bind
+<ul>
+<li><span class="math inline">\(f \colon X \to \D(Y)\)</span> に対して <span class="math inline">\(f^\ast \colon \D(X) \to \D(Y)\)</span> は,
+<ul>
+<li><span class="math inline">\(\omega \mapsto \psi\)</span></li>
+<li><span class="math inline">\(; \psi(y) = \sum_x \omega(x) \cdot f(x)(y)\)</span></li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="離散確率分布のクライスリ圏">離散確率分布のクライスリ圏</h3>
+<p>モナド <span class="math inline">\(\D\)</span> についてのクライスリ圏 <span class="math inline">\(\Kl\)</span> が定められる. これは次のようなもの</p>
+<ul>
+<li>対象は <span class="math inline">\(\Sets\)</span> と同じ</li>
+<li>射 <span class="math inline">\(f \colon X \to Y\)</span> とは <span class="math inline">\(\Sets\)</span> での写像 <span class="math inline">\(f \colon X \to \D(Y)\)</span> のこと
+<ul>
+<li>恒等射 <span class="math inline">\(1_X \colon X \to X\)</span> は写像 <span class="math inline">\(\eta_X\)</span></li>
+<li><span class="math inline">\(f \colon X \to Y; g \colon Y \to Z\)</span> の合成は bind を用いて <span class="math inline">\(g^\ast f \colon X \to Z\)</span></li>
+</ul></li>
+</ul>
+<h3 id="kl-は-affine-cd-圏"><span class="math inline">\(\Kl\)</span> は affine CD 圏</h3>
+<p>copy/discard 射を導入できればオッケーだけどこれは次の通り.</p>
+<ul>
+<li>copy
+<ul>
+<li><span class="math inline">\(c_X \colon X \to X \otimes X\)</span></li>
+<li><span class="math inline">\(c_X(x)(x, x) = 1\)</span>
+<ul>
+<li>NOTE: <span class="math inline">\(c_X(x)\)</span> は <span class="math inline">\(X \otimes X\)</span> 上の離散確率分布</li>
+</ul></li>
+</ul></li>
+<li>discard
+<ul>
+<li><span class="math inline">\(d_X \colon X \to I\)</span>
+<ul>
+<li>集合の <span class="math inline">\(I\)</span> は単集合で終対象の <span class="math inline">\(1\)</span>.</li>
+<li>そして <span class="math inline">\(\D(I) = 1\)</span>.</li>
+</ul></li>
+</ul></li>
+</ul>
+<p>以上から <span class="math inline">\(\Kl\)</span> は CD 圏であり, <span class="math inline">\(\D(I)\)</span> が終対象であることに由来して affine である.</p>
+<h3 id="確率-同時確率">確率, 同時確率</h3>
+<p><span class="math inline">\(\Kl\)</span> は確率分布としての機能を備えている.</p>
+<p>状態と定義した <span class="math inline">\(I \to X\)</span> の形をしたチャンネル <span class="math inline">\(p\)</span> があるとき, <span class="math inline">\(p\)</span> は <span class="math inline">\(X\)</span> の上の離散確率分布を表している. このことから, 対象 <span class="math inline">\(X\)</span> のことを確率変数だと, <span class="math inline">\(p(x)\)</span> のことを確率 <span class="math inline">\(P(X=x)\)</span> だと思うことができる.</p>
+<p>同時確率はテンソル積への射である. すなわち状態 <span class="math inline">\(\omega \colon I \to X \otimes Y\)</span> があるとき, これは <span class="math inline">\(X \otimes Y\)</span> の上の確率分布を与えるから <span class="math inline">\(\omega(x,y)\)</span> は <span class="math inline">\(P(x, y)\)</span> を表す.</p>
+<h3 id="射のテンソル積">射のテンソル積</h3>
+<p><span class="math inline">\(\Kl\)</span> における射 <span class="math inline">\(f \colon X \to Y\)</span>, <span class="math inline">\(g \colon U \to V\)</span> があるとき, <span class="math display">\[f \otimes g \colon X \otimes U \to Y \otimes V\]</span> <span class="math display">\[(x, u) \mapsto ((y, v) \mapsto f(x)(y) \times g(u)(v))\]</span></p>
+<h3 id="周辺化">周辺化</h3>
+<p>次に確率の周辺化を考える. これは確率変数 <span class="math inline">\(X,Y\)</span> について同時確率 <span class="math inline">\(P(x,y)\)</span> があるとき, <span class="math inline">\(X\)</span> の確率が <span class="math display">\[P(x) = \sum_y P(x,y)\]</span> で求まるというものだった.</p>
+<p><span class="math inline">\(\Kl\)</span> では同時確率 <span class="math inline">\(P(x,y)\)</span> を状態 <span class="math inline">\(\omega \colon I \to X \otimes Y\)</span> が与えるとする.</p>
+<p>周辺化によって確率変数 <span class="math inline">\(Y\)</span> を消すことを考える. これは discard <span class="math inline">\(d_Y\)</span> を合成することが対応する. ちゃんというと, <span class="math inline">\(X \otimes Y\)</span> の <span class="math inline">\(Y\)</span> にだけ discard を適用したいので <span class="math inline">\((1_X \otimes d_Y)\)</span> を合成する.</p>
+<p>射の合成の定義に振り返るとこれは <span class="math inline">\(\Sets\)</span> において bind すればいいのだった.</p>
+<ul>
+<li><span class="math inline">\(1_X \colon X \to X \in \Kl\)</span> は <span class="math inline">\(\eta_X \colon X \to \D(X) \in \Sets\)</span>
+<ul>
+<li><span class="math inline">\(\eta_X(x)\)</span> は <span class="math inline">\(x\)</span> のときだけ 1 という分布</li>
+<li><span class="math inline">\(x&#39;=x\)</span> かどうか判定する特徴関数 <span class="math inline">\(1[x&#39;=x]\)</span> にもなっている</li>
+</ul></li>
+<li><span class="math inline">\(d_Y \colon Y \to I \in \Kl\)</span> は <span class="math inline">\(DI \simeq I\)</span> に注意して <span class="math inline">\(d_Y \colon Y \to I\)</span></li>
+</ul>
+<p><span class="math inline">\((\eta_X \otimes d_Y)^\ast(\omega) = \psi\)</span> と置くと, <span class="math display">\[\begin{align*}
+\psi(x) &amp; = \sum_{(x&#39;,y&#39;) \in X \otimes Y} \omega(x&#39;,y&#39;) \cdot (\eta_X \otimes d_Y)(x&#39;,y&#39;)(x) \\
+&amp; = \sum_{(x&#39;,y&#39;)} \omega(x&#39;,y&#39;) \cdot 1[x&#39;=x] \\
+&amp; = \sum_{y&#39; \in Y} \omega(x,y&#39;)
+\end{align*}\]</span></p>
+<p>を得る. これはまさに <span class="math inline">\(\sum_y P(x,y)\)</span> と対応している.</p>
+<h3 id="条件付き確率">条件付き確率</h3>
+<p>チャンネル <span class="math inline">\(f \colon X \to Y\)</span> があるとき, これは条件付き確率 <span class="math inline">\(P(y \mid x)\)</span> とみなせる. 状態 <span class="math inline">\(\omega \colon I \to X\)</span> との合成を考えると, <span class="math display">\[f \circ \omega = \sum_x \omega(\ast)(x) f(x)(y)\]</span> となって, これは <span class="math display">\[P(y) = \sum_x P(x) P(y|x)\]</span> に対応している.</p>
+<h3 id="確率の乗法定理">確率の乗法定理</h3>
+<p>今度は <span class="math inline">\(X\)</span> の確率 <span class="math inline">\(\omega \colon I \to X\)</span> から始めて, これをコピーしてから <span class="math inline">\(f \colon X \to Y\)</span> を適用してみる. すなわち <span class="math display">\[(1 \otimes f) c_X \sigma \colon I \to X \otimes Y\]</span> という合成射を考える. 全体としてみるとこの射は状態 <span class="math inline">\(I \to X \otimes Y\)</span> なので単に同時確率 <span class="math inline">\(P(x,y)\)</span> を表していそう.</p>
+<p>この射を <span class="math inline">\(\Sets\)</span> に持ってくると, <span class="math display">\[(\eta_X \otimes f)^\ast c_X^\ast \sigma \colon I \to \D(X \otimes Y)\]</span> 実際の値を計算すると, <span class="math inline">\(c_X(x_0)(x_1,x_2) = 1 \iff x_0=x_1=x_2\)</span> と <span class="math inline">\(\eta_X(x)(x_1) = 1 \iff x=x_1\)</span> に注意して, <span class="math display">\[\begin{align*}
+\ast \mapsto (x,y)
+&amp; \mapsto \sum_{x_0} \sigma(\ast)(x_0) \times \sum_{(x_1,x_2)} c_X(x_0)(x_1,x_2) \times (\eta_X \otimes f)(x_1,x_2)(x,y) \\
+&amp; = \sigma(\ast)(x) \times f(x)(y)
+\end{align*}\]</span> この右辺値は <span class="math inline">\(P(x) \times P(y|x)\)</span> に相当していて結局 <span class="math display">\[P(x,y) = P(x) P(y|x)\]</span> を表している.</p>
+<p>このように <span class="math inline">\(\sigma\)</span> と <span class="math inline">\(f\)</span> をうまく合成することで同時確率を得る操作を <strong>integration</strong> という. 逆に同時確率からこのような <span class="math inline">\(f\)</span> を取り出すことを <strong>disintegration</strong> という. この操作はいつでも上手く行く.</p>
+<h3 id="disintegration">Disintegration</h3>
+<p><span class="math inline">\(P(y|x) = \frac{P(x,y)}{P(x)}\)</span> をやるとこれができる.</p>
+<p>状態 <span class="math inline">\(\omega \colon I \to X \otimes Y\)</span> があるとき, <span class="math inline">\(X\)</span> だけの確率は周辺化によって取り出せて, <span class="math display">\[\omega_1 = (1 \otimes d_Y) \omega \colon I \to X.\]</span> こうして <span class="math display">\[f \colon X \to Y\]</span> <span class="math display">\[f(x)(y) = \frac{\omega(x,y)}{\omega_1(x)}\]</span> ただし <span class="math inline">\(\omega_1(x)=0\)</span> のときは適当な（なんでも良い）確率分布を割り当てればオッケー.</p>
+<p>とすれば, <span class="math inline">\(\omega = (1 \otimes f) c_X \omega_1\)</span> と分解される.</p>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

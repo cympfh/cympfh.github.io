@@ -182,7 +182,7 @@ $$\begin{align*}
 
 チャンネル $f \colon X \to Y$ があるとき, これは条件付き確率 $P(y \mid x)$ とみなせる.
 状態 $\omega \colon I \to X$ との合成を考えると,
-$$f \circ \omega = \sum_x \omega(\ast)(x) f(x)(y)$$
+$$(f \circ \omega)(y) = \sum_x \omega(x) \cdot f(x)(y)$$
 となって, これは
 $$P(y) = \sum_x P(x) P(y|x)$$
 に対応している.

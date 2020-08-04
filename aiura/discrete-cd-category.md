@@ -209,20 +209,26 @@ $$P(x,y) = P(x) P(y|x)$$
 を表している.
 
 このように $\sigma$ と $f$ をうまく合成することで同時確率を得る操作を **integration** という.
-逆に同時確率からこのような $f$ を取り出すことを **disintegration** という.
-この操作はいつでも上手く行く.
 
 ### Disintegration
 
-$P(y|x) = \frac{P(x,y)}{P(x)}$ をやるとこれができる.
+integration の逆の操作を考えることができる.
+
+確率の等式
+$$P(y|x) = \frac{P(x,y)}{P(x)}$$
+を考えると次のようなことができる.
 
 状態 $\omega \colon I \to X \otimes Y$ があるとき,
-$X$ だけの確率は周辺化によって取り出せて,
-$$\omega_1 = (1 \otimes d_Y) \omega \colon I \to X.$$
-こうして
+確率 $P(x)$ は周辺化によって取り出せて,
+$$\omega_1 \colon I \to X$$
+$$\omega_1 = (1 \otimes d_Y) \omega.$$
+これを用いて
 $$f \colon X \to Y$$
 $$f(x)(y) = \frac{\omega(x,y)}{\omega_1(x)}$$
 ただし $\omega_1(x)=0$ のときは適当な（なんでも良い）確率分布を割り当てればオッケー.
 
-とすれば, $\omega = (1 \otimes f) c_X \omega_1$ と分解される.
+このようにすると
+$$\omega = (1 \otimes f) c_X \omega_1$$
+という分解ができる.
 
+$\omega \colon I \to X \otimes Y$ からこのような $f \colon X \to Y$ （或いは $Y \to X$）を作ることを **disintegration** という.

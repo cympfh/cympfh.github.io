@@ -1,6 +1,6 @@
 % 離散確率分布のCD圏
 % 2020-08-03 (Mon.)
-% CD圏 マルコフ圏
+% 確率論 圏論 CD圏 マルコフ圏
 
 $\def\C{\mathcal C}\def\Sets{\mathbb{Sets}}\def\D{\mathcal D}\def\Kl{\mathcal{Kl(D)}}$
 

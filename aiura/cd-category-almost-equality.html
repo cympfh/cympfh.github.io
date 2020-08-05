@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="概同値 (Almost Equality) 状態の圏 強概同値 (Strong Almost Equality)" />
+  <meta property="og:url" content="http://cympfh.cc/taglibro">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="CD圏での概同値 (Almost Equality)" />
+  <meta property="og:description" content="概同値 (Almost Equality) 状態の圏 強概同値 (Strong Almost Equality)" />
+  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@cympfh" />
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>CD圏での概同値 (Almost Equality)</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-stumbleupon" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">CD圏での概同値 (Almost Equality)</h1>
+</header>
+<p class="date" style="text-align: right">
+2020-08-06 (Thu.)
+</p>
+<div class="is-pulled-right">
+<p><a class='tag is-red' href=index.html#確率論>確率論</a> <a class='tag is-red' href=index.html#圏論>圏論</a> <a class='tag is-red' href=index.html#CD圏>CD圏</a> <a class='tag is-red' href=index.html#マルコフ圏>マルコフ圏</a></p>
+</div>
+<p><a href="discrete-cd-category.html">前回</a> の続き.</p>
+<p><span class="math inline">\(\def\Hom{\mathrm{Hom}}\def\C{\mathcal C}\def\Coupl{\mathrm{Coupl}}\)</span></p>
+<h2 id="概同値-almost-equality">概同値 (Almost Equality)</h2>
+<blockquote>
+<p>「概同値」という言葉は今考えた. どこかの測度論の教科書でこんな感じに概を頭につけた対訳を与えていたような薄い記憶もあるけどもう分からない.</p>
+</blockquote>
+<p>測度論では「ほとんど至るところで等しい」などと呼ばれる関係. これはCD圏では次のように定義される.</p>
+<p>CD圏 <span class="math inline">\(\C\)</span> と, <span class="math inline">\(X\)</span> の確率を与える状態 <span class="math inline">\(\sigma \colon I \to X\)</span> と, 二つのチャンネル <span class="math inline">\(f, g \colon X \to Y\)</span> について, <span class="math display">\[f \sim_\sigma g \iff (1 \otimes f) c_X \sigma = (1 \otimes g) c_X \sigma.\]</span></p>
+<p>この <span class="math inline">\(\sim_\sigma\)</span> の関係を, <strong><span class="math inline">\(\sigma\)</span>-概同値 (<span class="math inline">\(\sigma\)</span>-almost equal)</strong> という.</p>
+<p>これはCD圏では <span class="math inline">\(\Hom(X,Y)\)</span> の上の同値関係として定義される. この同値で割った商集合を <span class="math display">\[\Hom(X,Y)/\sigma\]</span> と書くことにする.</p>
+<h2 id="状態の圏">状態の圏</h2>
+<h3 id="定義">定義</h3>
+<p>CD圏 <span class="math inline">\(\C\)</span> の状態とは <span class="math inline">\(\sigma \colon I \to X\)</span> なる <span class="math inline">\(\sigma\)</span> のことを言うのだった. これを対象にする圏を考えることが出来る. これはコンマ圏 <span class="math inline">\(I \downarrow \C\)</span> と呼ばれる.</p>
+<p>二つの状態 <span class="math inline">\(\sigma \colon I \to X\)</span> と <span class="math inline">\(\tau \colon I \to Y\)</span> の間の射 <span class="math inline">\(f \colon \sigma \to \tau\)</span> とは, <span class="math inline">\(\C\)</span> で可換性 <span class="math inline">\(f\sigma=\tau\)</span> を与える射 <span class="math inline">\(f \colon X \to Y\)</span> のこと. というわけで, この圏でのHomsetはさっき考えていたようなものに可換性の制約を追加したものになる: <span class="math display">\[(I \downarrow \C) (\sigma, \tau) \simeq \{ f \in \C(X, Y) \mid f\sigma=\tau \}.\]</span></p>
+<p>さっき導入した <span class="math inline">\(/\sigma\)</span> を右辺に適用することで次のような集合を定めることができる: <span class="math display">\[(I \downarrow \C) (\sigma, \tau)/\sigma \simeq \{ f \in \C(X, Y) \mid f\sigma=\tau\}/\sigma.\]</span></p>
+<h3 id="coupling">Coupling</h3>
+<p>二つの状態 <span class="math inline">\(\sigma \colon I \to X\)</span> と <span class="math inline">\(\tau \colon I \to Y\)</span> について, この二つの coupling とは次を満たすような <span class="math inline">\(\omega \colon I \to X \otimes Y\)</span> のこと:</p>
+<ul>
+<li><span class="math inline">\((1 \otimes d_Y) \omega = \sigma\)</span> かつ</li>
+<li><span class="math inline">\((d_X \otimes 1) \omega = \tau\)</span></li>
+</ul>
+<p>このような coupling <span class="math inline">\(\omega\)</span> を集めたものを集合 <span class="math inline">\(\Coupl(\sigma, \tau)\)</span> と書くことにする.</p>
+<h3 id="定理">定理</h3>
+<p>CD圏 <span class="math inline">\(\C\)</span> が disintegration がいつでも出来るとき, <span class="math display">\[(I \downarrow \C) (\sigma, \tau)/\sigma \simeq \Coupl(\sigma, \tau)\]</span></p>
+<h4 id="証明">証明</h4>
+<p><span class="math inline">\(f \in (I \downarrow \C) (\sigma, \tau)/\sigma\)</span> があるとき, <span class="math inline">\(f\)</span> と <span class="math inline">\(\sigma\)</span> の次のような合成を考える: <span class="math display">\[(1 \otimes f) c_X \sigma.\]</span> これが実は <span class="math inline">\(f\)</span> に対応する coupling になっている. <span class="math inline">\(d_Y f = d_Y\)</span>, <span class="math inline">\(f\sigma=\tau\)</span> に注意するとこれは明らか.</p>
+<p>逆に coupling <span class="math inline">\(\omega\)</span> が与えられた時, これを disintegration することで <span class="math inline">\(f \colon X \to Y\)</span> が手に入って, これが <span class="math inline">\(f \in (I \downarrow \C) (\sigma, \tau)/\sigma\)</span> に入っている.</p>
+<p>さて対称性から明らかに <span class="math inline">\(\Coupl(\sigma, \tau) \simeq Coupl(\tau, \sigma)\)</span> なので, <span class="math display">\[(I \downarrow \C) (\sigma, \tau)/\sigma \simeq (I \downarrow \C) (\tau, \sigma)/\tau\]</span> である. これは確率論で言えば <span class="math inline">\(P(y\mid x)\)</span> と <span class="math inline">\(P(x \mid y)\)</span> の間に自然な一対一対応があることを言っており, この対応のさせ方のことは &quot;Bayesian Inversion&quot; として知られている.</p>
+<h2 id="強概同値-strong-almost-equality">強概同値 (Strong Almost Equality)</h2>
+<p>もっと条件の強い定義の仕方がある.</p>
+<h3 id="定義-1">定義</h3>
+<p>状態 <span class="math inline">\(\sigma \colon I \to X\)</span> に対して, <span class="math inline">\(f, g \colon X \to Y\)</span> について次の関係を定義する. <span class="math display">\[f \sim_\sigma&#39; g \iff
+\Big(~
+\forall Z,
+\forall \omega \colon I \to X \otimes Z,
+\sigma = (1_X \otimes d_Z) \omega \implies (f \otimes 1) \omega = (g \otimes 1) \omega
+~\Big).\]</span></p>
+<h3 id="性質">性質</h3>
+<p>強概同値が成り立つとき概同値も成り立つ: <span class="math display">\[f \sim_\sigma&#39; g \implies f \sim_\sigma g.\]</span> <span class="math inline">\(\omega\)</span> として <span class="math inline">\(c_X \sigma\)</span> を使えばすぐに確認できる.</p>
+<h3 id="定理-1">定理</h3>
+<p>disintegration が出来る CD圏の場合, 強概同値とただの概同値は同じ: <span class="math display">\[f \sim_\sigma&#39; g \iff f \sim_\sigma g.\]</span></p>
+<h4 id="証明-1">証明</h4>
+<p><span class="math inline">\(f \sim_\sigma g\)</span> のときに強概同値であることを見ればいい. <span class="math display">\[f \sim_\sigma g \iff (f \otimes 1) c_X \sigma = (g \otimes 1) c_X \sigma\]</span> 次に <span class="math inline">\(\sigma = (1_X \otimes d_Z) \omega\)</span> であるような任意の <span class="math inline">\(\omega \colon I \to X \otimes Z\)</span> について, これを disintegration すると次のような <span class="math inline">\(e \colon X \to Z\)</span> が手に入る: <span class="math display">\[\omega = (1 \otimes e) c_X \sigma.\]</span></p>
+<p>以上を使うと <span class="math display">\[\begin{align*}
+(f \otimes 1) \omega
+&amp; = (f \otimes 1) (1 \otimes e) \sigma \\
+&amp; = (f \otimes e) \sigma \\
+&amp; = (1 \otimes e) (f \otimes 1) \sigma \\
+&amp; = (1 \otimes e) (g \otimes 1) \sigma \\
+&amp; = (g \otimes 1) (1 \otimes e) \sigma \\
+&amp; = (g \otimes 1) \omega
+\end{align*}\]</span> というわけで <span class="math inline">\(f \sim_\sigma&#39; g\)</span> が成り立つ.</p>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

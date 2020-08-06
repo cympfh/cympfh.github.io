@@ -1,6 +1,6 @@
 % CD圏での概同値 (Almost Equality)
 % 2020-08-06 (Thu.)
-% 確率論 圏論 CD圏 マルコフ圏
+% 確率論 CD圏 マルコフ圏
 
 [前回](discrete-cd-category.html) の続き.
 
@@ -101,7 +101,7 @@ $\omega$ として $c_X \sigma$ を使えばすぐに確認できる.
 
 ### 定理
 
-disintegration が出来る CD圏の場合, 強概同値とただの概同値は同じ:
+disintegration が出来る affine CD圏の場合, 強概同値とただの概同値は同じ:
 $$f \sim_\sigma' g \iff f \sim_\sigma g.$$
 
 #### 証明

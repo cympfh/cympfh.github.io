@@ -9,14 +9,13 @@ TABLE=resources/table  # tag-post table
 #
 write-item() {
     MD="$1.md"
-    HTML="$1.html"
     head -n 3 "$MD" | sed 's/^..//g' | (
         read title; read date; read tags
         cat <<EOM
         <div class="card">
             <header class="card-header">
                 <p class="card-header-title">
-                    <a href="$HTML" class="card-header-title">$title</a>
+                    <a href="$1" class="card-header-title">$title</a>
                 </p>
             </header>
             <div class="card-content">

@@ -2,6 +2,8 @@
 % 2017-02-04 (Sat.)
 % 圏論
 
+$\def\Hom{\mathrm{Hom}}$
+
 ## INDEX
 
 <div id=toc></div>
@@ -55,9 +57,9 @@ digraph {
 $$\rho : (G, S) \to S$$
 $$\rho(g,s) = s'$$
 
-$\rho$ は $G$ を $Hom(S,S)$ に写すしてるとも思えるので、そのような書き方も許容する.
+$\rho$ は $G$ を $\Hom(S,S)$ に写すしてるとも思えるので、そのような書き方も許容する.
 
-$$\rho : G \to Hom(S,S)$$
+$$\rho : G \to \Hom(S,S)$$
 $$\rho(g) = f
 ~~\text{s.t.}~~
 f(s) = s'$$
@@ -171,17 +173,16 @@ digraph {
 右関手の $\rho$ は、元の射を逆向きの射に写しているので、
 これはまさに **反変関手** である.
 
-## 双対(線形)空間
+## 双対空間
 
 2つの線形空間 $V,W$ の間の線形写像全体を
-$Hom(V,W)$
+$\Hom(V,W)$
 などと書く.
 
-- 線形空間 $V, V', W$ について
-    - 線形写像 $f \in Hom(V, V')$ に対して
-    - 写像 $f^*$ を次のように定める
-        - 引数を $g \in Hom(V', W)$ として、これを
-        - $f^*(g) = g \circ f$ に写すもの
+- 線形空間 $U, V, W$ について
+    - 線形写像 $f \in \Hom(U, V)$ に対して,
+    - 写像 $f^*$ を次のように定める:
+        - $g \in \Hom(V, W)$ を $f^*(g) = g \circ f$ に写すもの
 
 ```dot
 digraph {
@@ -189,22 +190,21 @@ digraph {
     node [ width=0.0; shape=plaintext; ];
     edge [ arrowhead=vee ]
     rankdir=LR;
-    V -> V2 [label=f];
-    V2 -> W [label=g];
-    V2 [label="V'"];
+    U -> V [label=f];
+    V -> W [label=g];
 }
 ```
 
-線形空間 $W$ を固定して考えて、
-自由に選んだ $f: V \to V'$ について以上のように $f^*$ を定めることができる.
+このようにして,
+自由に選んだ $f: U \to V$ について以上のように $f^*$ を定めることができる.
 では $f \mapsto f^*$ なる関数は一体何なのだろうか.
 $f^*$ の型を考えると整理が附く.
 
-$$f : V \to V'$$
-$$f^* : Hom(V', W) \to Hom(V, W)$$
+$$f : U \to V$$
+$$f^* : \Hom(V, W) \to \Hom(U, W)$$
 
 つまりこれは
-$Hom(-,W)$
+$\Hom(-,W)$
 なる **反変** 関手である.
 線形空間からなる圏から、線形写像からなる圏に写している.
 
@@ -214,10 +214,12 @@ $Hom(-,W)$
 > $B(-,y)$ とは $x \mapsto B(x,y)$ なる関数である.
 
 とくに自明な $W$ として、体 $K$ を選んで、
-$V, V', \ldots$ を $K$ の上の線形空間に限るとする.
-関手 $Hom(-,K)$ は線形空間 $V$ を $Hom(V,K)$ に写すわけだが、
-この $Hom(V,K)$ を $V$ の双対空間と呼んで $V^*$ と書いたりする.
-(${}^*$ は $f^*$ の ${}^*$.)
+$U, V, \ldots$ を $K$ の上の線形空間に限るとする.
+関手 $\Hom(-,K)$ は線形空間 $V$ を $\Hom(V,K)$ に写すわけだが、
+この $\Hom(V,K)$ を $V$ の双対空間と呼んで $V^*$ と書いたりする.
+
+$$f : U \to V$$
+$$f^* : V^* \to U^*$$
 
 ## 反対圏と圏同型
 
@@ -234,7 +236,7 @@ $V, V', \ldots$ を $K$ の上の線形空間に限るとする.
 
 - $Ob(\mathcal{C}^{op}) = Ob(\mathcal{C})$
     - $A \in \mathcal{C}$ に対して明示的に $A^{op} \in \mathcal{C}^{op}$ とも書くが、大抵気にせず $A \in \mathcal{C}^{op}$ とも書く
-- $Hom_{\mathcal{C}^{op}}(A,B) = Hom_\mathcal{C}(B,A)$
+- $\Hom_{\mathcal{C}^{op}}(A,B) = \Hom_\mathcal{C}(B,A)$
     - 明示的に、$f: B \to A$ に対して $f^{op}: A \to B$ と書く.
 
 そして $\mathcal{C}^{op}$ における射の合成則は $\mathcal{C}$ から自然に導かれるもので定める:

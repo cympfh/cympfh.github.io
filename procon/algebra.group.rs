@@ -19,6 +19,11 @@ impl Group for i64 {
         0
     }
 }
+impl Group for i128 {
+    fn zero() -> Self {
+        0
+    }
+}
 impl Group for f32 {
     fn zero() -> Self {
         0.0

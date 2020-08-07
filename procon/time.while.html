@@ -23,33 +23,35 @@
             <h1 id="制限時間付きループ">制限時間付きループ</h1>
 <h2 id="time.while.rs"><a href="time.while.rs" class="uri">time.while.rs</a></h2>
 <div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Time Limited While-loop</span>
-<span class="pp">macro_rules!</span> loop_timeout <span class="op">{</span>
+<span class="pp">macro_rules!</span> loop_timeout_ms <span class="op">{</span>
     ( $sec:expr; $body:expr ) =&gt; <span class="op">{</span>
         <span class="kw">let</span> now = std::time::SystemTime::now();
         <span class="kw">loop</span> <span class="op">{</span>
             <span class="kw">match</span> now.elapsed() <span class="op">{</span>
                 <span class="cn">Ok</span>(elapsed) =&gt; <span class="op">{</span>
-                    <span class="kw">if</span> elapsed.as_secs() &gt; $sec <span class="op">{</span>
-                        <span class="kw">break</span>
+                    <span class="kw">if</span> elapsed.as_millis() &gt; $sec <span class="op">{</span>
+                        <span class="kw">break</span>;
                     <span class="op">}</span>
                     $body
-                <span class="op">}</span>,
+                <span class="op">}</span>
                 <span class="cn">Err</span>(e) =&gt; <span class="op">{</span>
                     <span class="pp">eprintln!</span>(<span class="st">&quot;Err, {:?}&quot;</span>, e);
                 <span class="op">}</span>
             <span class="op">}</span>
         <span class="op">}</span>
     <span class="op">}</span>;
-<span class="op">}</span>
-
-<span class="co">// Example</span>
-<span class="op">{</span>
-    <span class="co">// yes while 3sec</span>
+<span class="op">}</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">// Example</span>
+<span class="kw">fn</span> slow_yes() <span class="op">{</span>
     <span class="kw">use</span> std::time::Duration;
     <span class="kw">use</span> std::thread::sleep;
-    <span class="pp">loop_timeout!</span>(<span class="dv">3</span>; <span class="op">{</span>
-        <span class="pp">println!</span>(<span class="st">&quot;yes&quot;</span>);
-        sleep(Duration::new(<span class="dv">0</span>, <span class="dv">100000000</span>));
+    <span class="pp">println!</span>(<span class="st">&quot;yes&quot;</span>);
+    sleep(Duration::new(<span class="dv">0</span>, <span class="dv">100000000</span>));
+<span class="op">}</span>
+
+<span class="kw">fn</span> main() <span class="op">{</span>
+    <span class="pp">loop_timeout_ms!</span>(<span class="dv">3000</span>; <span class="op">{</span>
+        slow_yes();
     <span class="op">}</span>);
 <span class="op">}</span></code></pre></div>
           </div>

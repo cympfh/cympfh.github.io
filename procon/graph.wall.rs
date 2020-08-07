@@ -5,10 +5,7 @@ fn wall<X: Group + PartialOrd>(d: &mut Vec<Vec<Hyper<X>>>) {
     for k in 0..n {
         for i in 0..n {
             for j in 0..n {
-                d[i][j] = min!(
-                    d[i][j],
-                    d[i][k] + d[k][j]
-                );
+                d[i][j] = min!(d[i][j], d[i][k] + d[k][j]);
             }
         }
     }

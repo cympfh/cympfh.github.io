@@ -6,7 +6,7 @@
 
 1. [Differential Evolutionで大域的最適化](http://wildpie.hatenablog.com/entry/20151003/1443863102)
     - わかりやすい
-1. [http://www.sfu.ca/~ssurjano/ackley.html](http://www.sfu.ca/~ssurjano/ackley.html)
+1. [www.sfu.ca/~ssurjano/ackley.html](http://www.sfu.ca/~ssurjano/ackley.html)
     - Ackley 関数の定義が書いてある
 
 Wikipedia は読まなくていいです.
@@ -18,13 +18,13 @@ scipy に実装があります.
 ## 実装
 
 勉強のために実装してみた.
-参考文献 [1] 先と同様に Ackley 関数を最適化してみる.
-この関数は少し外だと基本 cos なので勾配法だと死ぬ.
+参考文献 [1] 先と同様に Ackley 関数上での最適化を試してみる.
+下図に示すようにこの関数は $0$ で最小値 $0$ を取るが $\cos$ を重ねているのでいろんなところで極小値を取り,
+単純な勾配法だと簡単に局所解に落ち着いてしまう.
 
 ![](https://i.imgur.com/7ZqrQmU.png)
 
-見たとおり Ackley 関数はゼロで最小なのだが、この少し周りだと全然ただの凸関数になってるので、
-初めからゼロ付近に検討を付けて最適化を始めると実際より簡単になってしまう.
+注意点として, $0$ のすぐ付近だけだと単純な凸関数で, 実際より簡単な最適化問題になってしまうので, 広い範囲で実験しないと意味がない.
 (参考文献 [1] だと $[0,1)$ でしか探索してない?)
 
 
@@ -36,6 +36,7 @@ import numpy
 
 
 def Ackley(x: numpy.array) -> float:
+    """目的関数"""
     a = 20
     b = 0.2
     c = 2 * numpy.pi
@@ -45,6 +46,26 @@ def Ackley(x: numpy.array) -> float:
 
 
 def DE(target, ranges, np=40, cr=0.5, f=0.5, loop=10, verbose=False) -> Tuple[numpy.array, float]:
+    """最適化の実行
+
+    Parameters
+    ----------
+    target: numpy.array -> float
+        最小化する目的関数
+    ranges: List[Tuple(float, float)]
+        パラメータ空間（超区間とする）
+    np: int
+        num of population
+        シードを保存するプールのサイズ
+    cr: float
+        交叉確率
+        assert 0 < cr < 1
+    f: float
+        交叉のさせ方（混ぜ方）
+        assert 0 < f < 1
+    loop: int
+        ステップ実行回数
+    """
 
     def make_random():
         x = numpy.array([numpy.random.uniform(left, right) for left, right in ranges])

@@ -2,6 +2,14 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <meta name="description" content="参考文献 scipy 実装" />
+  <meta property="og:url" content="http://cympfh.cc/taglibro">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Differential Evolution (差分進化)" />
+  <meta property="og:description" content="参考文献 scipy 実装" />
+  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@cympfh" />
   <meta name="generator" content="pandoc">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Differential Evolution (差分進化)</title>
@@ -69,7 +77,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <ul>
 <li>わかりやすい</li>
 </ul></li>
-<li><a href="http://www.sfu.ca/~ssurjano/ackley.html" class="uri">http://www.sfu.ca/~ssurjano/ackley.html</a>
+<li><a href="http://www.sfu.ca/~ssurjano/ackley.html">www.sfu.ca/~ssurjano/ackley.html</a>
 <ul>
 <li>Ackley 関数の定義が書いてある</li>
 </ul></li>
@@ -78,11 +86,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h2 id="scipy">scipy</h2>
 <p>scipy に実装があります.</p>
 <h2 id="実装">実装</h2>
-<p>勉強のために実装してみた. 参考文献 [1] 先と同様に Ackley 関数を最適化してみる. この関数は少し外だと基本 cos なので勾配法だと死ぬ.</p>
+<p>勉強のために実装してみた. 参考文献 [1] 先と同様に Ackley 関数上での最適化を試してみる. 下図に示すようにこの関数は <span class="math inline">\(0\)</span> で最小値 <span class="math inline">\(0\)</span> を取るが <span class="math inline">\(\cos\)</span> を重ねているのでいろんなところで極小値を取り, 単純な勾配法だと簡単に局所解に落ち着いてしまう.</p>
 <figure>
 <img src="https://i.imgur.com/7ZqrQmU.png" />
 </figure>
-<p>見たとおり Ackley 関数はゼロで最小なのだが、この少し周りだと全然ただの凸関数になってるので、 初めからゼロ付近に検討を付けて最適化を始めると実際より簡単になってしまう. (参考文献 [1] だと <span class="math inline">\([0,1)\)</span> でしか探索してない?)</p>
+<p>注意点として, <span class="math inline">\(0\)</span> のすぐ付近だけだと単純な凸関数で, 実際より簡単な最適化問題になってしまうので, 広い範囲で実験しないと意味がない. (参考文献 [1] だと <span class="math inline">\([0,1)\)</span> でしか探索してない?)</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> random
 <span class="im">from</span> typing <span class="im">import</span> Tuple
 
@@ -90,6 +98,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 <span class="kw">def</span> Ackley(x: numpy.array) <span class="op">-&gt;</span> <span class="bu">float</span>:
+    <span class="co">&quot;&quot;&quot;目的関数&quot;&quot;&quot;</span>
     a <span class="op">=</span> <span class="dv">20</span>
     b <span class="op">=</span> <span class="fl">0.2</span>
     c <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> numpy.pi
@@ -99,6 +108,26 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 <span class="kw">def</span> DE(target, ranges, np<span class="op">=</span><span class="dv">40</span>, cr<span class="op">=</span><span class="fl">0.5</span>, f<span class="op">=</span><span class="fl">0.5</span>, loop<span class="op">=</span><span class="dv">10</span>, verbose<span class="op">=</span><span class="va">False</span>) <span class="op">-&gt;</span> Tuple[numpy.array, <span class="bu">float</span>]:
+    <span class="co">&quot;&quot;&quot;最適化の実行</span>
+
+<span class="co">    Parameters</span>
+<span class="co">    ----------</span>
+<span class="co">    target: numpy.array -&gt; float</span>
+<span class="co">        最小化する目的関数</span>
+<span class="co">    ranges: List[Tuple(float, float)]</span>
+<span class="co">        パラメータ空間（超区間とする）</span>
+<span class="co">    np: int</span>
+<span class="co">        num of population</span>
+<span class="co">        シードを保存するプールのサイズ</span>
+<span class="co">    cr: float</span>
+<span class="co">        交叉確率</span>
+<span class="co">        assert 0 &lt; cr &lt; 1</span>
+<span class="co">    f: float</span>
+<span class="co">        交叉のさせ方（混ぜ方）</span>
+<span class="co">        assert 0 &lt; f &lt; 1</span>
+<span class="co">    loop: int</span>
+<span class="co">        ステップ実行回数</span>
+<span class="co">    &quot;&quot;&quot;</span>
 
     <span class="kw">def</span> make_random():
         x <span class="op">=</span> numpy.array([numpy.random.uniform(left, right) <span class="cf">for</span> left, right <span class="kw">in</span> ranges])
@@ -141,51 +170,106 @@ result <span class="op">=</span> DE(Ackley, [[<span class="dv">0</span>, <span c
 <p>例えば探索範囲を 100 くらいにまで広げると、ループ回数が 10 とかだと全然到達できないが、100 までにしとけば大体安定する.</p>
 <!--
 
-  HTML として pandoc -B で include する.
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
 
-  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
-  markdown で書いてるだろうから例として次のような段落を書けばよい.
+    <div id=toc></div>
 
-```
-## INDEX
-<div id=toc></div>
-```
 
-  used in
-  - /memo/gnuplot
-  - /memo/linux
-  - /memo/imagemagick
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
 
 -->
 <script>
 (function() {
-  var sections = document.getElementsByTagName('h2');
-  var i;
-  var OL = document.createElement('ol');
-  for (i=0; i < sections.length; ++i) {
-    var LI = document.createElement('li');
-    var A = document.createElement('a');
-    A.innerHTML = sections[i].innerHTML;
-    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
-    A.href = '#' + i;
-    LI.appendChild(A);
-    OL.appendChild(LI);
 
-    var PREF = document.createElement('a');
-    PREF.name = i;
-    sections[i].appendChild(PREF);
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
   }
 
-  var done = false;
-  function work() {
-    if (done) return;
-    if ( document.getElementById('toc') === null) return; // no toc element
-    document.getElementById('toc').appendChild(OL);
-    done = true;
-  };
+  function level1() {
 
-  window.onload = work;
-  setTimeout(work,800);
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
 </body>

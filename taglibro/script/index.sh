@@ -13,7 +13,7 @@ summary() {
 
 write-item() {
     MD=$1
-    HTML=${MD%md}html
+    HTML=${MD%.md}
     cat <<EOM
     <div class="card">
         <header class="card-header">

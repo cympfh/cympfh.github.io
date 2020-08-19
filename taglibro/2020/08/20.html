@@ -67,7 +67,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h1 class="title">Thu Aug 20 2020</h1>
 </header>
 <h2 id="hake-の並列化">Hake の並列化</h2>
-<p>現在HakeのパラメータチューニングにはDEを使ってる。 要するに遺伝的アルゴリズム（交叉のさせ方が実数の場合にちょっと特殊）。 最初は一番最適化された並列化を書こうとしたが、自分の頭には敵わなかったので、世代ごとに join するようにした。</p>
+<p>現在HakeのパラメータチューニングにはDEを使ってる。 要するに遺伝的アルゴリズム（交叉のさせ方が実数の場合にちょっと特殊なだけ）。 最初は一番最適化された並列化を書こうとしたが、自分の頭には敵わなかった。 こういう実行順序にすれば最適だろうという考えはあったがそれを実行させる実装が出来なかった。 というわけで、世代ごとに join するようにした。</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">pool <span class="op">=</span> []  <span class="co"># 遺伝子プール</span>
 <span class="cf">for</span> gen <span class="kw">in</span> <span class="dv">0</span>..NUM_GENERATION:
   <span class="co"># この世代で行う予定のジョブキュー</span>
@@ -97,7 +97,12 @@ run:
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">hake</span> X=-3...3 Y=-3...3 --min loss -j 16 -F 0.03 -N 64 -L 100
 
 <span class="kw">(</span>中略<span class="kw">)</span>
-<span class="ex">Min</span> loss = 1.005537340697927 when [(<span class="st">&quot;X&quot;</span>, Float(1.002764848156282)), <span class="kw">(</span><span class="st">&quot;Y&quot;</span>, <span class="ex">Float</span>(-0.00000019068281648616569<span class="kw">)</span>)]</code></pre></div>
+<span class="ex">Min</span> loss = 1.005537340697927 when [(<span class="st">&quot;X&quot;</span>, Float(1.002764848156282)), <span class="kw">(</span><span class="st">&quot;Y&quot;</span>, <span class="ex">Float</span>(-0.00000019068281648616569<span class="kw">)</span>)]
+
+$ <span class="ex">hake</span> X=-3...3 Y=-3...3 --min loss -j 16 -F 0.03 -N 200 -L 10
+
+<span class="kw">(</span>中略<span class="kw">)</span>
+<span class="ex">Min</span> loss = 0 when [(<span class="st">&quot;X&quot;</span>, Float(0.0)), <span class="kw">(</span><span class="st">&quot;Y&quot;</span>, <span class="ex">Float</span>(0.0<span class="kw">)</span>)]</code></pre></div>
 <p>うーん、DEに関するパラメータをいじっても上手く最適解を出せたり出せなかったり、、、 世代数 <code>-L</code> だけじゃなくてプールサイズ <code>-N</code> もかなり意味があるし、 あと <code>-F</code> はいわば学習率みたいなもんで、ゼロに近い正数のほうが変な値で止まらない代わりに大きな世代数を要求するので学習時間が増える。</p>
 <footer>
     <p class="is-pulled-right">

@@ -9,7 +9,7 @@ TABLE=resources/table  # tag-post table
 #
 write-item() {
     MD="$1.md"
-    HTML="$1.html"
+    HTML="$1"
     head -n 3 "$MD" | sed 's/^% *//g' | (
     read title; read url; read tags
 

@@ -68,14 +68,14 @@ $$O := \log P(\Theta \mid >) = \sum_{(u,i,j) \in D_s} \log \sigma(x_u^{ij}) + \l
 
 さっきの $O$ を微分して勾配法をする.
 
-ここで, 最後の $+ \log P(\Theta)$ はいわゆる罰則化項に対応しており,
-最適化の計算の都合上 $- \lambda \| \Theta \|^2$ としておく.
-
 $$\begin{align*}
 \frac{\partial O}{\partial \Theta}
 & = \sum_{(u,i,j) \in D_s} \frac{\partial}{\partial \Theta} \log \sigma(x_u^{ij}) + \frac{\partial}{\partial \Theta} \log P(\Theta) \\
 & = \sum_{(u,i,j) \in D_s} (\sigma(x_u^{ij}) - 1) \frac{\partial x_u^{ij}(\Theta)}{\partial \Theta} + \frac{\partial}{\partial \Theta} \log P(\Theta) \\
 \end{align*}$$
+
+ここで, 最後の $+ \log P(\Theta)$ 及びその微分 $+\frac{\partial}{\partial \Theta} \log P(\Theta)$ はいわゆる罰則化項に対応している.
+ここは具体的に与えることは出来ないので, 例えば適当に $\log P(\Theta) = - \lambda \| \Theta \|^2$ などとして計算する.
 
 ## 行列分解への適用
 

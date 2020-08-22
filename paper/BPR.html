@@ -58,12 +58,12 @@ P(\Theta \mid &gt;) &amp; \propto P(&gt; \mid \Theta) P(\Theta)
 <p>シグモイド関数 <span class="math inline">\(\sigma\)</span> を用いると確率は適当な値 <span class="math inline">\(x\)</span> を以て, <span class="math display">\[P(i &gt;_u j \mid \Theta) = \sigma\left(x_u^{ij}(\Theta)\right)\]</span> と表せる. この <span class="math inline">\(x\)</span> を推定することにする. これを入れて, さっきの式の対数をとると, <span class="math display">\[O := \log P(\Theta \mid &gt;) = \sum_{(u,i,j) \in D_s} \log \sigma(x_u^{ij}) + \log P(\Theta)\]</span> これを最大化する <span class="math inline">\(\Theta\)</span> を探索すればよい.</p>
 <h3 id="bpr-learning">BPR Learning</h3>
 <p>さっきの <span class="math inline">\(O\)</span> を微分して勾配法をする.</p>
-<p>ここで, 最後の <span class="math inline">\(+ \log P(\Theta)\)</span> はいわゆる罰則化項に対応しており, 最適化の計算の都合上 <span class="math inline">\(- \lambda \| \Theta \|^2\)</span> としておく.</p>
 <p><span class="math display">\[\begin{align*}
 \frac{\partial O}{\partial \Theta}
 &amp; = \sum_{(u,i,j) \in D_s} \frac{\partial}{\partial \Theta} \log \sigma(x_u^{ij}) + \frac{\partial}{\partial \Theta} \log P(\Theta) \\
 &amp; = \sum_{(u,i,j) \in D_s} (\sigma(x_u^{ij}) - 1) \frac{\partial x_u^{ij}(\Theta)}{\partial \Theta} + \frac{\partial}{\partial \Theta} \log P(\Theta) \\
 \end{align*}\]</span></p>
+<p>ここで, 最後の <span class="math inline">\(+ \log P(\Theta)\)</span> 及びその微分 <span class="math inline">\(+\frac{\partial}{\partial \Theta} \log P(\Theta)\)</span> はいわゆる罰則化項に対応している. ここは具体的に与えることは出来ないので, 例えば適当に <span class="math inline">\(\log P(\Theta) = - \lambda \| \Theta \|^2\)</span> などとして計算する.</p>
 <h2 id="行列分解への適用">行列分解への適用</h2>
 <p><span class="math inline">\(x\)</span> に関して次のようにモデル化をする.</p>
 <ul>

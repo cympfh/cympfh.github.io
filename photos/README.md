@@ -1,4 +1,9 @@
-# imgur Photo Albums
+# How to Append New Picture
+
+Append to the tail of
+`./resources/photos_list`
+
+## imgur Photo Albums
 
 ```
 TITLE   ID      DELETEHASH

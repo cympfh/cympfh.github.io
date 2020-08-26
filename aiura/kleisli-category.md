@@ -114,3 +114,17 @@ $$\begin{align*}
 \end{align*}$$
 
 以上から $F \dashv G$ がわかった.
+
+### 例. 冪集合モナド
+
+冪集合モナド $P \colon \Set \to \Set$ の場合にクライスリ圏からどんな随伴が導かれるか見る.
+
+- $f \colon X \to Y \in \Set$
+    - $Ff \colon X \to PY$
+    - $Ff \colon x \mapsto \{ f(x) \} \subset Y$
+- $g \colon X \to PY \in \Set$
+    - $Gg \colon PX \to PY$
+    - $Gg \colon \alpha \mapsto \bigcup{x \in \alpha} g(x)$
+
+これらが随伴になる.
+

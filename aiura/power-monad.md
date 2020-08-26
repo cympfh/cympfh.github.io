@@ -152,8 +152,16 @@ B      @>\eta_B>>  PB  \\
 
 ただし、次の２つの図式を可換にすることを要請する:
 
-[TODO: ここに図式を書く. それまでは画像検索してもらうこと.
-例えば [https://tnomura9.exblog.jp/15292357/](https://tnomura9.exblog.jp/15292357/) の "定義7" ]
+$$\begin{CD}
+T^3 @>1 \mu>> T^2 \\
+@V\mu 1VV     @V\mu VV \\
+T^2 @>\mu>> T \\
+\end{CD},
+\begin{CD}
+1 \times T @>\eta 1>> T \times T @<1 \eta << T \times 1 \\
+@| @V\mu VV @| \\
+T @= T @= T \\
+\end{CD}$$
 
 Kleisli triple とモナドは等価で、違いは $f^\#$ と $\mu$ だが、それらは
 

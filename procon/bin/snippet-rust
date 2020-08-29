@@ -12,6 +12,11 @@ if [ $err = 1 ]; then
 fi
 
 BASEDIR=$(dirname $0)/../
+if [ $# -eq 1 ]; then
+  REFSRC=$1
+else
+  REFSRC=$(mktemp)
+fi
 
 list() {
   for f in $(find $BASEDIR -type f -name '*.rs'); do
@@ -33,10 +38,12 @@ list() {
 show() {
 
   # skip if already imported
-  if grep "$1" $IMPORT_LIST; then
-    continue
+  if grep "$1" "$REFSRC" > /dev/null; then
+    return
   fi
-  echo "$1" >> $IMPORT_LIST
+
+  # start import
+  echo "// @$1"
 
   # has a header?
   HEAD="$(head -1 $BASEDIR/$1)"
@@ -71,7 +78,4 @@ if [ -z "$SELECT" ]; then
   exit
 fi
 
-IMPORT_LIST=$(mktemp)
-: > $IMPORT_LIST
 show "${SELECT}.rs"
-rm -f $IMPORT_LIST

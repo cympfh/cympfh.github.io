@@ -20,76 +20,42 @@
         <section class="main-content columns is-fullheight">
 
           <div class="article column is-8 is-10-mobile">
-            <h1 id="graph.prim">graph.prim</h1>
-<h2 id="graph.prim.cc"><a href="graph.prim.cc" class="uri">graph.prim.cc</a></h2>
-<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="dt">int</span> prim(<span class="dt">int</span> n, vvi&amp;adj, vvi&amp;cost) {
-  vector&lt;<span class="dt">bool</span>&gt; used(n, <span class="kw">false</span>);
-  queue&lt;<span class="dt">int</span>&gt; q;
-  <span class="dt">int</span> total = <span class="dv">0</span>;
+            <h1 id="二次元ユークリッド幾何---多角形">二次元ユークリッド幾何 - 多角形</h1>
+<p>頂点を反時計回りに並べる.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Geometry - Polygon</span>
+<span class="co">// @geo.2d.point.rs</span>
 
-  <span class="dt">int</span> u = rand() % n;
-  vector&lt;<span class="dt">int</span>&gt; vs = { u };
-  used[u] = <span class="kw">true</span>;
-  loop {
-    <span class="dt">int</span> mc = inf; <span class="co">// minimize</span>
-    <span class="dt">int</span> mu = <span class="dv">-1</span>, mv;
-    <span class="cf">for</span> (<span class="dt">int</span> v: vs) {
-      <span class="cf">for</span> (<span class="dt">int</span> u: adj[v]) {
-        <span class="cf">if</span> (used[u]) <span class="cf">continue</span>;
-        <span class="cf">if</span> (mc &gt; cost[v][u]) {
-          mc = cost[v][u];
-          mv = v; mu = u;
-        }
-      }
-    }
-    <span class="cf">if</span> (mu &lt; <span class="dv">0</span>) {
-      <span class="cf">break</span>;
-    }
-    used[mu] = <span class="kw">true</span>;
-    vs.push_back(mu);
-    total += mc;
-  }
-  <span class="cf">return</span> total;
-}</code></pre></div>
-<h2 id="example">Example</h2>
-<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="kw">using</span> vi = vector&lt;<span class="dt">int</span>&gt;;
-<span class="kw">using</span> vvi = vector&lt;vi&gt;;
-<span class="dt">int</span> main() {
+<span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">,</span> <span class="bu">Clone</span><span class="at">)]</span>
+<span class="kw">struct</span> Polygon(<span class="dt">Vec</span>&lt;Point&gt;);
 
-  <span class="co">// this graph is an example</span>
-  <span class="co">// on the page: http://ja.wikipedia.org/wiki/プリム法</span>
-stringstream input(
-<span class="st">&quot;  7&quot;</span>
-<span class="st">&quot;  0 1 7&quot;</span>
-<span class="st">&quot;  0 3 5&quot;</span>
-<span class="st">&quot;  1 2 8&quot;</span>
-<span class="st">&quot;  1 3 9&quot;</span>
-<span class="st">&quot;  1 4 7&quot;</span>
-<span class="st">&quot;  2 4 5&quot;</span>
-<span class="st">&quot;  3 4 15&quot;</span>
-<span class="st">&quot;  3 5 6&quot;</span>
-<span class="st">&quot;  4 5 8&quot;</span>
-<span class="st">&quot;  4 6 9&quot;</span>
-<span class="st">&quot;  5 6 11&quot;</span>);
-  <span class="dt">int</span> answer = <span class="dv">39</span>;
-  
-  {
-    <span class="dt">int</span> n; input &gt;&gt; n;
-    vvi adjacency_list(n);
-    vvi cost_table(n, vi(n, inf));
-    loop {
-      <span class="dt">int</span> a, b, c; input &gt;&gt; a &gt;&gt; b &gt;&gt; c;
-      <span class="cf">if</span> (<span class="kw">not</span> input) <span class="cf">break</span>;
-      adjacency_list[a].push_back(b);
-      adjacency_list[b].push_back(a);
-      cost_table[a][b] = cost_table[b][a] = c;
-    }
+<span class="kw">impl</span> std::ops::Index&lt;<span class="dt">usize</span>&gt; <span class="kw">for</span> Polygon <span class="op">{</span>
+    <span class="kw">type</span> Output = Point;
+    <span class="kw">fn</span> index(&amp;<span class="kw">self</span>, idx: <span class="dt">usize</span>) -&gt; &amp;<span class="kw">Self</span>::Output <span class="op">{</span>
+        &amp;<span class="kw">self</span>.<span class="dv">0</span><span class="op">[</span>idx<span class="op">]</span>
+    <span class="op">}</span>
+<span class="op">}</span>
 
-    assert(prim(n, adjacency_list, cost_table) == answer);
-  }
+<span class="kw">impl</span> Polygon <span class="op">{</span>
+    <span class="kw">fn</span> area(&amp;<span class="kw">self</span>) -&gt; <span class="dt">f64</span> <span class="op">{</span>
+        <span class="kw">let</span> n = <span class="kw">self</span>.<span class="dv">0.</span>len();
+        (<span class="dv">1.</span>.n - <span class="dv">1</span>)
+            .map(|i| <span class="op">{</span>
+                <span class="kw">let</span> u = <span class="kw">self</span><span class="op">[</span>i<span class="op">]</span> - <span class="kw">self</span><span class="op">[</span><span class="dv">0</span><span class="op">]</span>;
+                <span class="kw">let</span> v = <span class="kw">self</span><span class="op">[</span>i + <span class="dv">1</span><span class="op">]</span> - <span class="kw">self</span><span class="op">[</span><span class="dv">0</span><span class="op">]</span>;
+                u.det(v).abs()
+            <span class="op">}</span>)
+            .sum::&lt;<span class="dt">f64</span>&gt;()
+            / <span class="dv">2.0</span>
+    <span class="op">}</span>
+<span class="op">}</span>
 
-  <span class="cf">return</span> <span class="dv">0</span>;
-}</code></pre></div>
+<span class="pp">macro_rules!</span> poly <span class="op">{</span>
+    ($($x:expr),+) =&gt; <span class="op">{{</span>
+        <span class="kw">let</span> v = <span class="pp">vec!</span><span class="op">[</span>$($x),+<span class="op">]</span>;
+        Polygon(v)
+    <span class="op">}}</span>;
+    ($($x:expr),+ ,) =&gt; (<span class="pp">poly!</span>($($x),+))
+<span class="op">}</span></code></pre></div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
@@ -108,7 +74,7 @@ stringstream input(
 </ul>
 </details>
 
-<details class=menu open>
+<details class=menu>
 <summary class=menu>グラフ</summary>
 <h2 id="最短路">最短路</h2>
 <ul>
@@ -159,7 +125,7 @@ stringstream input(
 </ul>
 </details>
 
-<details class=menu>
+<details class=menu open>
 <summary class=menu>二次元ユークリッド幾何</summary>
 <h2 id="図形の定義">図形の定義</h2>
 <ul>

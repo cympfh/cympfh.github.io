@@ -3,8 +3,9 @@
 #[derive(Debug)]
 enum CircleRelation {
     EQUAL,
-    SUB, SUP,  // one contains the other
-    INTERSECTION(usize)  // intersection with `n` points
+    SUB,
+    SUP,                 // one contains the other
+    INTERSECTION(usize), // intersection with `n` points
 }
 fn circle_relation(a: Circle, b: Circle) -> CircleRelation {
     use CircleRelation::*;

@@ -23,175 +23,7 @@
             <h1 id="図形表現の定義">図形表現の定義</h1>
 <p>他の幾何ライブラリはこれに依存する</p>
 <h2 id="geo.2d.rs"><a href="geo.2d.rs" class="uri">geo.2d.rs</a></h2>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Geometry - Definition of Point, Line and Circle</span>
-<span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">,</span> <span class="bu">Clone</span><span class="at">,</span> <span class="bu">Copy</span><span class="at">)]</span>
-<span class="kw">struct</span> Point(<span class="dt">f64</span>, <span class="dt">f64</span>);
-
-<span class="kw">impl</span> Point <span class="op">{</span>
-    <span class="kw">fn</span> norm(<span class="kw">self</span>) -&gt; <span class="dt">f64</span> <span class="op">{</span>
-        (<span class="kw">self</span> * <span class="kw">self</span>).sqrt()
-    <span class="op">}</span>
-    <span class="kw">fn</span> det(<span class="kw">self</span>, other: Point) -&gt; <span class="dt">f64</span> <span class="op">{</span>
-        <span class="kw">self</span>.<span class="dv">0</span> * other.<span class="dv">1</span> - <span class="kw">self</span>.<span class="dv">1</span> * other.<span class="dv">0</span>
-    <span class="op">}</span>
-    <span class="kw">fn</span> arg(<span class="kw">self</span>) -&gt; <span class="dt">f64</span> <span class="op">{</span>
-        <span class="kw">let</span> x = <span class="kw">self</span>.<span class="dv">0</span> / <span class="kw">self</span>.norm();
-        (<span class="kw">if</span> x &lt; -<span class="dv">1.0</span> <span class="op">{</span> -<span class="dv">1.0</span> <span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> x &gt; <span class="dv">1.0</span> <span class="op">{</span> <span class="dv">1.0</span> <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span> x <span class="op">}</span> <span class="kw">as</span> <span class="dt">f64</span>).acos()
-    <span class="op">}</span>
-    <span class="kw">fn</span> zero() -&gt; Point <span class="op">{</span> Point(<span class="dv">0.0</span>, <span class="dv">0.0</span>) <span class="op">}</span>
-    <span class="kw">fn</span> one() -&gt; Point <span class="op">{</span> Point(<span class="dv">1.0</span>, <span class="dv">1.0</span>) <span class="op">}</span>
-<span class="op">}</span>
-
-<span class="kw">impl</span> <span class="bu">PartialEq</span> <span class="kw">for</span> Point <span class="op">{</span>
-    <span class="kw">fn</span> eq(&amp;<span class="kw">self</span>, other: &amp;Point) -&gt; <span class="dt">bool</span> <span class="op">{</span>
-        <span class="kw">let</span> eps = <span class="dv">0.0001</span>;
-        (<span class="kw">self</span>.<span class="dv">0</span> - other.<span class="dv">0</span>).abs() &lt; eps &amp;&amp; (<span class="kw">self</span>.<span class="dv">1</span> - other.<span class="dv">1</span>).abs() &lt; eps
-    <span class="op">}</span>
-    <span class="kw">fn</span> ne(&amp;<span class="kw">self</span>, other: &amp;Point) -&gt; <span class="dt">bool</span> <span class="op">{</span>
-        !(<span class="kw">self</span> == other)
-    <span class="op">}</span>
-<span class="op">}</span>
-<span class="kw">impl</span> <span class="bu">Eq</span> <span class="kw">for</span> Point <span class="op">{</span> <span class="op">}</span>
-
-<span class="kw">impl</span> std::ops::Add <span class="kw">for</span> Point <span class="op">{</span>
-    <span class="kw">type</span> Output = Point;
-    <span class="kw">fn</span> add(<span class="kw">self</span>, other: Point) -&gt; Point <span class="op">{</span>
-        Point(<span class="kw">self</span>.<span class="dv">0</span> + other.<span class="dv">0</span>, <span class="kw">self</span>.<span class="dv">1</span> + other.<span class="dv">1</span>)
-    <span class="op">}</span>
-<span class="op">}</span>
-
-<span class="kw">impl</span> std::ops::Neg <span class="kw">for</span> Point <span class="op">{</span>
-    <span class="kw">type</span> Output = Point;
-    <span class="kw">fn</span> neg(<span class="kw">self</span>) -&gt; Point <span class="op">{</span>
-        Point(-<span class="kw">self</span>.<span class="dv">0</span>, -<span class="kw">self</span>.<span class="dv">1</span>)
-    <span class="op">}</span>
-<span class="op">}</span>
-
-<span class="kw">impl</span> std::ops::Sub <span class="kw">for</span> Point <span class="op">{</span>
-    <span class="kw">type</span> Output = Point;
-    <span class="kw">fn</span> sub(<span class="kw">self</span>, other: Point) -&gt; Point <span class="op">{</span>
-        <span class="kw">self</span> + (-other)
-    <span class="op">}</span>
-<span class="op">}</span>
-
-<span class="co">// scalar multiplication</span>
-<span class="kw">impl</span> std::ops::Mul&lt;Point&gt; <span class="kw">for</span> <span class="dt">f64</span> <span class="op">{</span>
-    <span class="kw">type</span> Output = Point;
-    <span class="kw">fn</span> mul(<span class="kw">self</span>, other: Point) -&gt; Point <span class="op">{</span>
-        Point(<span class="kw">self</span> * other.<span class="dv">0</span>, <span class="kw">self</span> * other.<span class="dv">1</span>)
-    <span class="op">}</span>
-<span class="op">}</span>
-
-<span class="kw">impl</span> std::ops::Mul&lt;<span class="dt">f64</span>&gt; <span class="kw">for</span> Point <span class="op">{</span>
-    <span class="kw">type</span> Output = Point;
-    <span class="kw">fn</span> mul(<span class="kw">self</span>, other: <span class="dt">f64</span>) -&gt; Point <span class="op">{</span>
-        Point(other * <span class="kw">self</span>.<span class="dv">0</span>, other * <span class="kw">self</span>.<span class="dv">1</span>)
-    <span class="op">}</span>
-<span class="op">}</span>
-
-<span class="co">// inner-product</span>
-<span class="kw">impl</span> std::ops::Mul&lt;Point&gt; <span class="kw">for</span> Point <span class="op">{</span>
-    <span class="kw">type</span> Output = <span class="dt">f64</span>;
-    <span class="kw">fn</span> mul(<span class="kw">self</span>, other: Point) -&gt; <span class="dt">f64</span> <span class="op">{</span>
-        <span class="kw">self</span>.<span class="dv">0</span> * other.<span class="dv">0</span> + <span class="kw">self</span>.<span class="dv">1</span> * other.<span class="dv">1</span>
-    <span class="op">}</span>
-<span class="op">}</span>
-
-<span class="kw">impl</span> std::ops::Div&lt;<span class="dt">f64</span>&gt; <span class="kw">for</span> Point <span class="op">{</span>
-    <span class="kw">type</span> Output = Point;
-    <span class="kw">fn</span> div(<span class="kw">self</span>, other: <span class="dt">f64</span>) -&gt; Point <span class="op">{</span>
-        Point(<span class="kw">self</span>.<span class="dv">0</span> / other, <span class="kw">self</span>.<span class="dv">1</span> / other)
-    <span class="op">}</span>
-<span class="op">}</span>
-
-<span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">,</span> <span class="bu">Clone</span><span class="at">,</span> <span class="bu">Copy</span><span class="at">)]</span>
-<span class="kw">struct</span> Line(Point, Point);
-
-<span class="kw">impl</span> Line <span class="op">{</span>
-    <span class="kw">fn</span> len(<span class="kw">self</span>) -&gt; <span class="dt">f64</span> <span class="op">{</span>
-        (<span class="kw">self</span>.<span class="dv">0</span> - <span class="kw">self</span>.<span class="dv">1</span>).norm()
-    <span class="op">}</span>
-    <span class="kw">fn</span> rev(<span class="kw">self</span>) -&gt; Line <span class="op">{</span>
-        Line(<span class="kw">self</span>.<span class="dv">1</span>, <span class="kw">self</span>.<span class="dv">0</span>)
-    <span class="op">}</span>
-<span class="op">}</span>
-
-<span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">,</span> <span class="bu">Clone</span><span class="at">,</span> <span class="bu">Copy</span><span class="at">)]</span>
-<span class="kw">struct</span> Circle(Point, <span class="dt">f64</span>);</code></pre></div>
-<h2 id="geo.2d.cc"><a href="geo.2d.cc" class="uri">geo.2d.cc</a></h2>
-<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="kw">using</span> Real = <span class="dt">long</span> <span class="dt">double</span>;
-<span class="at">const</span> Real PI = acosl(<span class="dv">-1</span>);
-<span class="kw">using</span> P = pair&lt;Real, Real&gt;; <span class="co">// Point</span>
-<span class="kw">using</span> L = pair&lt;P, P&gt;; <span class="co">// segment or line</span>
-
-<span class="co">/* inner dot */</span>
-Real dot(P&amp;a, P&amp;b) {
-    <span class="cf">return</span> a.first * b.first + a.second * b.second;
-}
-Real <span class="kw">operator</span>*(P&amp;a, P&amp;b) {
-    <span class="cf">return</span> a.first * b.first + a.second * b.second;
-}
-
-<span class="co">/* scalar multiple */</span>
-P <span class="kw">operator</span>*(P a, Real c) {
-    <span class="cf">return</span> {c * a.first, c * a.second};
-}
-P <span class="kw">operator</span>*(Real c, P a) {
-    <span class="cf">return</span> {c * a.first, c * a.second};
-}
-
-P <span class="kw">operator</span>/(P a, Real d) {
-    <span class="cf">return</span> {a.first / d, a.second / d};
-}
-
-Real det(P a, P b) {
-    <span class="cf">return</span> a.first * b.second - a.second * b.first;
-}
-
-<span class="co">/* vector operator */</span>
-P <span class="kw">operator</span>+(P a, P b) {
-    <span class="cf">return</span> {a.first + b.first, a.second + b.second};
-}
-
-P <span class="kw">operator</span>-(P a) {
-    <span class="cf">return</span> {-a.first, -a.second};
-}
-
-P <span class="kw">operator</span>-(P a, P b) {
-    <span class="cf">return</span> {a.first - b.first, a.second - b.second};
-}
-
-<span class="co">/* distance */</span>
-Real Manhattan(P a, P b) {
-    <span class="cf">return</span> abs(a.first - b.first) + abs(a.second - b.second);
-}
-Real Euclidean(P a, P b) {
-    P p = a - b;
-    <span class="cf">return</span> sqrt(p.first*p.first + p.second*p.second);
-}
-
-<span class="co">/* equality with eps (default: 1e-9) */</span>
-<span class="dt">bool</span> eq(Real x, Real y) {
-    <span class="cf">return</span> abs(x - y) &lt; eps;
-}
-<span class="dt">bool</span> <span class="kw">operator</span>==(P a, P b) {
-    <span class="cf">return</span> eq(a.first, b.first) &amp;&amp; eq(a.second, b.second);
-}
-
-<span class="dt">int</span> sign(Real a) {
-    <span class="cf">if</span> (eq(a, <span class="dv">0</span>)) <span class="cf">return</span> <span class="dv">0</span>;
-    <span class="cf">return</span> a &gt; <span class="dv">0</span> ? <span class="dv">1</span> : <span class="dv">-1</span>;
-}
-
-Real magnitude(P p) {
-    <span class="cf">return</span> sqrt(p.first*p.first + p.second*p.second);
-}
-
-Real arg(P a, P b) {
-    Real x = dot(a, b) / magnitude(a) / magnitude(b);
-    x = min&lt;Real&gt;(<span class="dv">1</span>, max&lt;Real&gt;(<span class="dv">-1</span>, x));
-    <span class="cf">return</span> acos(x);
-}</code></pre></div>
+<p>```rust</p>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
@@ -262,19 +94,21 @@ Real arg(P a, P b) {
 </details>
 
 <details class=menu open>
-<summary class=menu>幾何</summary>
+<summary class=menu>二次元ユークリッド幾何</summary>
+<h2 id="図形の定義">図形の定義</h2>
 <ul>
-<li><a href="geo.2d.html">図形表現</a></li>
+<li><a href="geo.2d.point">点</a></li>
+<li><a href="geo.2d.line">直線, 線分</a></li>
+<li><a href="geo.2d.polygon">多角形</a></li>
+<li><a href="geo.2d.circle">円</a></li>
 </ul>
 <h2 id="線分">線分</h2>
 <ul>
-<li><a href="geo.2d.length_from_point.html">線分と点との距離</a></li>
-<li><a href="geo.2d.ccw.html">線分と点の接触関係</a></li>
+<li><a href="geo.2d.ccw">線分と点の接触関係</a></li>
 <li><a href="geo.2d.intersection.html">線分と線分の交差判定</a></li>
 </ul>
 <h2 id="多角形">多角形</h2>
 <ul>
-<li><a href="geo.2d.triangle.html">三角形の面積</a></li>
 <li><a href="geo.2d.circum.html">三角形の外接円</a></li>
 <li><a href="geo.2d.isin_poly.html">多角形の内外判定</a></li>
 <li><a href="http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=0079">多角形の面積</a></li>
@@ -282,7 +116,6 @@ Real arg(P a, P b) {
 </ul>
 <h2 id="円">円</h2>
 <ul>
-<li><a href="geo.2d.circle.html">円の定義</a></li>
 <li><a href="geo.2d.circle.intersection.html">円と円の接触関係</a></li>
 </ul>
 <h2 id="最近点対">最近点対</h2>

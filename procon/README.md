@@ -55,24 +55,26 @@
 - [一般セグメントツリー](seq.segment_tree.html)
 - [SeqSearch](seq.search.html)
 
-# 幾何
+# 二次元ユークリッド幾何
 
-- [図形表現](geo.2d.html)
+## 図形の定義
+
+- [点](geo.2d.point)
+- [直線, 線分](geo.2d.line)
+- [多角形](geo.2d.polygon)
+- [円](geo.2d.circle)
 
 ## 線分
-- [線分と点との距離](geo.2d.length_from_point.html)
-- [線分と点の接触関係](geo.2d.ccw.html)
+- [線分と点の接触関係](geo.2d.ccw)
 - [線分と線分の交差判定](geo.2d.intersection.html)
 
 ## 多角形
-- [三角形の面積](geo.2d.triangle.html)
 - [三角形の外接円](geo.2d.circum.html)
 - [多角形の内外判定](geo.2d.isin_poly.html)
 - [多角形の面積](http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=0079)
 - [凸包](geo.2d.convex_hull.html)
 
 ## 円
-- [円の定義](geo.2d.circle.html)
 - [円と円の接触関係](geo.2d.circle.intersection.html)
 
 ## 最近点対

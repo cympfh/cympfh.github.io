@@ -25,7 +25,8 @@
 <ul>
 <li><a href="https://docs.python.org/ja/3/library/collections.html#collections.defaultdict">Python3 - collections.defaultdict</a></li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">struct</span> DefaultMap&lt;S, T&gt; <span class="op">{</span>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">,</span> <span class="bu">Clone</span><span class="at">)]</span>
+<span class="kw">struct</span> DefaultMap&lt;S, T&gt; <span class="op">{</span>
     data: std::collections::HashMap&lt;S, T&gt;,
     default: T,
 <span class="op">}</span>
@@ -33,12 +34,18 @@
     <span class="kw">fn</span> new(default: T) -&gt; DefaultMap&lt;S, T&gt; <span class="op">{</span>
         DefaultMap <span class="op">{</span>
             data: std::collections::HashMap::new(),
-            default: default
+            default,
         <span class="op">}</span>
     <span class="op">}</span>
-    <span class="kw">fn</span> keys(&amp;<span class="kw">self</span>) -&gt; std::collections::hash_map::Keys&lt;S, T&gt; <span class="op">{</span> <span class="kw">self</span>.data.keys() <span class="op">}</span>
-    <span class="kw">fn</span> iter(&amp;<span class="kw">self</span>) -&gt; std::collections::hash_map::Iter&lt;S, T&gt; <span class="op">{</span> <span class="kw">self</span>.data.iter() <span class="op">}</span>
-    <span class="kw">fn</span> len(&amp;<span class="kw">self</span>) -&gt; <span class="dt">usize</span> <span class="op">{</span> <span class="kw">self</span>.data.len() <span class="op">}</span>
+    <span class="kw">fn</span> keys(&amp;<span class="kw">self</span>) -&gt; std::collections::hash_map::Keys&lt;S, T&gt; <span class="op">{</span>
+        <span class="kw">self</span>.data.keys()
+    <span class="op">}</span>
+    <span class="kw">fn</span> iter(&amp;<span class="kw">self</span>) -&gt; std::collections::hash_map::Iter&lt;S, T&gt; <span class="op">{</span>
+        <span class="kw">self</span>.data.iter()
+    <span class="op">}</span>
+    <span class="kw">fn</span> len(&amp;<span class="kw">self</span>) -&gt; <span class="dt">usize</span> <span class="op">{</span>
+        <span class="kw">self</span>.data.len()
+    <span class="op">}</span>
 <span class="op">}</span>
 <span class="kw">impl</span>&lt;S: <span class="bu">Eq</span> + std::hash::<span class="bu">Hash</span>, T&gt; std::ops::Index&lt;S&gt; <span class="kw">for</span> DefaultMap&lt;S, T&gt; <span class="op">{</span>
     <span class="kw">type</span> Output = T;
@@ -52,7 +59,8 @@
 <span class="op">}</span>
 <span class="kw">impl</span>&lt;S: <span class="bu">Eq</span> + std::hash::<span class="bu">Hash</span> + <span class="bu">Clone</span>, T: <span class="bu">Clone</span>&gt; std::ops::IndexMut&lt;S&gt; <span class="kw">for</span> DefaultMap&lt;S, T&gt; <span class="op">{</span>
     <span class="kw">fn</span> index_mut(&amp;<span class="kw">mut</span> <span class="kw">self</span>, key: S) -&gt; &amp;<span class="kw">mut</span> <span class="kw">Self</span>::Output <span class="op">{</span>
-        <span class="kw">self</span>.data.entry(key.clone()).or_insert(<span class="kw">self</span>.default.clone());
+        <span class="kw">let</span> val = <span class="kw">self</span>.default.clone();
+        <span class="kw">self</span>.data.entry(key.clone()).or_insert(val);
         <span class="kw">self</span>.data.get_mut(&amp;key).unwrap()
     <span class="op">}</span>
 <span class="op">}</span></code></pre></div>
@@ -126,19 +134,21 @@
 </details>
 
 <details class=menu>
-<summary class=menu>幾何</summary>
+<summary class=menu>二次元ユークリッド幾何</summary>
+<h2 id="図形の定義">図形の定義</h2>
 <ul>
-<li><a href="geo.2d.html">図形表現</a></li>
+<li><a href="geo.2d.point">点</a></li>
+<li><a href="geo.2d.line">直線, 線分</a></li>
+<li><a href="geo.2d.polygon">多角形</a></li>
+<li><a href="geo.2d.circle">円</a></li>
 </ul>
 <h2 id="線分">線分</h2>
 <ul>
-<li><a href="geo.2d.length_from_point.html">線分と点との距離</a></li>
-<li><a href="geo.2d.ccw.html">線分と点の接触関係</a></li>
+<li><a href="geo.2d.ccw">線分と点の接触関係</a></li>
 <li><a href="geo.2d.intersection.html">線分と線分の交差判定</a></li>
 </ul>
 <h2 id="多角形">多角形</h2>
 <ul>
-<li><a href="geo.2d.triangle.html">三角形の面積</a></li>
 <li><a href="geo.2d.circum.html">三角形の外接円</a></li>
 <li><a href="geo.2d.isin_poly.html">多角形の内外判定</a></li>
 <li><a href="http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=0079">多角形の面積</a></li>
@@ -146,7 +156,6 @@
 </ul>
 <h2 id="円">円</h2>
 <ul>
-<li><a href="geo.2d.circle.html">円の定義</a></li>
 <li><a href="geo.2d.circle.intersection.html">円と円の接触関係</a></li>
 </ul>
 <h2 id="最近点対">最近点対</h2>

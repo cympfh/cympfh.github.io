@@ -14,7 +14,7 @@ struct Circumcenter {
     Real A = a * a;
     Real B = b * b;
     Real C = c * c;
-    
+
     Real den = 2 * (A * B + B * C + C * A) - (A * A + B * B + C * C);
     Real dec_a = A * (B + C - A);
     Real dec_b = B * (C + A - B);

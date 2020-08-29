@@ -1,4 +1,4 @@
-/// Geometry - Definition of Point, Line and Circle
+/// Geometry - Definition of Point
 #[derive(Debug, Clone, Copy)]
 struct Point(f64, f64);
 
@@ -11,10 +11,18 @@ impl Point {
     }
     fn arg(self) -> f64 {
         let x = self.0 / self.norm();
-        (if x < -1.0 { -1.0 } else if x > 1.0 { 1.0 } else { x } as f64).acos()
+        (if x < -1.0 {
+            -1.0
+        } else if x > 1.0 {
+            1.0
+        } else {
+            x
+        } as f64)
+            .acos()
     }
-    fn zero() -> Point { Point(0.0, 0.0) }
-    fn one() -> Point { Point(1.0, 1.0) }
+    fn zero() -> Point {
+        Point(0.0, 0.0)
+    }
 }
 
 impl PartialEq for Point {
@@ -26,7 +34,7 @@ impl PartialEq for Point {
         !(self == other)
     }
 }
-impl Eq for Point { }
+impl Eq for Point {}
 
 impl std::ops::Add for Point {
     type Output = Point;
@@ -78,18 +86,3 @@ impl std::ops::Div<f64> for Point {
         Point(self.0 / other, self.1 / other)
     }
 }
-
-#[derive(Debug, Clone, Copy)]
-struct Line(Point, Point);
-
-impl Line {
-    fn len(self) -> f64 {
-        (self.0 - self.1).norm()
-    }
-    fn rev(self) -> Line {
-        Line(self.1, self.0)
-    }
-}
-
-#[derive(Debug, Clone, Copy)]
-struct Circle(Point, f64);

@@ -2,7 +2,11 @@
 /// Thanks to: https://qiita.com/hatoo@github/items/fa14ad36a1b568d14f3e
 #[derive(Copy, Clone, Debug, PartialEq, PartialOrd)]
 struct Total<T>(T);
-impl<T> Total<T> { fn unwrap(self) -> T { self.0 } }
+impl<T> Total<T> {
+    fn unwrap(self) -> T {
+        self.0
+    }
+}
 impl<T: PartialEq> Eq for Total<T> {}
 impl<T: PartialOrd> Ord for Total<T> {
     fn cmp(&self, rhs: &Total<T>) -> std::cmp::Ordering {

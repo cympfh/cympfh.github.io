@@ -40,7 +40,7 @@ $\def\triangle{\mathop{}\!\mathbin\Delta\;}$
     - 型 $C$ の値 $c$ (或いは $c \in C$) と任意の型 (集合) $A$ について, $A \to C$ なる定数関数のこと
     - $\forall a \in A, \const{c}(a)=c$
 
-また対象 (型, 集合) に関する表記であまり一般的に思えないものについては次のように一般的表記を用いる.
+またこの論文で使われている表記で, あまり一般的に思えないものについては次の一般的な表記を用いる.
 
 - $A \times B$
     - 対象 $A, B$ の積
@@ -174,16 +174,19 @@ $1\dagger 1=1$, $f\dagger g \circ h \dagger j = fh \dagger gj$
 
 ### 積
 2つの対象 $A,B$ の積とは $A \times B$ なる対象.
+$\times$ は双関手であり,
 $f \colon A \to B$ と
-$g \colon C \to D$ との積として
+$g \colon C \to D$ とに対して
 $f \times g \colon A \times C \to B \times D$
 を定める.
-射影関数 $\pi_1 : A \times C \to A$,
-$\pi_2 : B \times D \to A$ を伴う.
+
+また任意の $A,B$ に対して
+射影関数 $\pi_1 : A \times B \to A$ と
+$\pi_2 : A \times B \to B$ を伴う.
 
 関数的に書くと
 
-- $(f \times g)(x, x')=(fx gx')$
+- $(f \times g)(x, x')=(fx, gx')$
 - $\pi_1(x,x')=x$
 - $\pi_2(x,x')=x'$
 
@@ -797,20 +800,12 @@ $\mu_F = (L, in_F)$, $\mu_M = (L, in_M)$
 でこの間にポリモーフィズム $\varphi \colon F \to M$ があるとき,
 $$\banana{in_M\circ\varphi}_F = \lense{\varphi\circ out_F}_M$$
 
-<center>
-```dot
-digraph {
-    node [shape=plaintext];
-    rankdir=LR;
-    graph [bgcolor=transparent];
-    L -> FL [label=out];
-    FL -> ML [label="φ"];
-    ML -> L2 [label=in];
-    L2 [label=L];
-    {rank=same; L L2};
-}
-```
-</center>
+$$\begin{CD}
+L @>\mathrm{out}>> FL \\
+@. @V{\varphi}VV \\
+L @<{\mathrm{in}}<< ML \\
+\end{CD}$$
+
 </div>
 
 <div class=thm>

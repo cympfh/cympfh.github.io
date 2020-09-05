@@ -2,44 +2,39 @@
 // @algebra.monoid.rmq.rs
 // @algebra.act.rs
 #[derive(Debug, Clone, Copy)]
-enum AssignInt<X> {
-    None,   // Do Nothing
-    Val(X), // Assign := x
-    Fuck,   // Assign Extremum
+enum Assign<X> {
+    None,    // Do Nothing
+    Just(X), // Assign := x
 }
-
-impl<X: Copy> std::ops::Mul for AssignInt<X> {
+impl<X: Copy> std::ops::Mul for Assign<X> {
     type Output = Self;
     fn mul(self, other: Self) -> Self {
         match (self, other) {
-            (x, AssignInt::None) => x,
+            (x, Assign::None) => x,
             _ => other,
         }
     }
 }
-
-impl<X: Copy> Monoid for AssignInt<X> {
+impl<X: Copy> Monoid for Assign<X> {
     fn unit() -> Self {
-        return AssignInt::None;
+        return Assign::None;
     }
 }
-
-impl<X: Copy> Act<MinInt<X>> for AssignInt<X> {
+impl<X: Copy> Act<MinInt<X>> for Assign<MinInt<X>> {
     fn act(&self, x: MinInt<X>) -> MinInt<X> {
-        match (x, self) {
-            (_, AssignInt::Fuck) => MinInt::Maximal,
-            (_, AssignInt::Val(m)) => MinInt::Val(*m),
-            _ => x,
+        if let &Assign::Just(z) = self {
+            z
+        } else {
+            x
         }
     }
 }
-
-impl<X: Copy> Act<MaxInt<X>> for AssignInt<X> {
+impl<X: Copy> Act<MaxInt<X>> for Assign<MaxInt<X>> {
     fn act(&self, x: MaxInt<X>) -> MaxInt<X> {
-        match (x, self) {
-            (_, AssignInt::Fuck) => MaxInt::Minimal,
-            (_, AssignInt::Val(m)) => MaxInt::Val(*m),
-            _ => x,
+        if let &Assign::Just(z) = self {
+            z
+        } else {
+            x
         }
     }
 }

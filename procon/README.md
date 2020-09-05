@@ -8,7 +8,10 @@
 - [ModInt](algebra.modint.html)
 - [行列](algebra.matrix.html)
 - [モノイド](algebra.monoid.html)
+    - [RMQモノイド](algebra.monoid.rmq)
 - [有理数](algebra.ratio.html)
+- [作用](algebra.act)
+    - [RMQ作用](algebra.act.rmq)
 
 # グラフ
 
@@ -52,7 +55,8 @@
 - [BIT](seq.bit.html)
 - [RMQ](seq.rmq.html)
 - [Starry Sky Tree](seq.starry.html)
-- [一般セグメントツリー](seq.segment_tree.html)
+- [セグメントツリー](seq.segment_tree)
+- [遅延セグメントツリー](seq.lazy_segment_tree)
 - [SeqSearch](seq.search.html)
 
 # 二次元ユークリッド幾何

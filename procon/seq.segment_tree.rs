@@ -1,33 +1,11 @@
 /// Seq - Segment Tree
 // @algebra.monoid.rs
-#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
-enum MaxInt { Minimal, Val(i64) }
-impl MaxInt { fn unwrap(self) -> i64 { if let Self::Val(x) = self { x } else { panic!(); } } }
-impl std::ops::Mul for MaxInt {
-    type Output = Self;
-    fn mul(self, other: Self) -> Self {
-        if self > other { self } else { other }
-    }
-}
-impl Monoid for MaxInt {
-    fn unit() -> Self { MaxInt::Minimal }
-}
-
-#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
-enum MinInt { Val(i64), Maximal }
-impl MinInt { fn unwrap(self) -> i64 { if let Self::Val(x) = self { x } else { panic!(); } } }
-impl std::ops::Mul for MinInt {
-    type Output = Self;
-    fn mul(self, other: Self) -> Self {
-        if self < other { self } else { other }
-    }
-}
-impl Monoid for MinInt {
-    fn unit() -> Self { MinInt::Maximal }
-}
-
 #[derive(Clone)]
-struct SegmentTree<T> { size: usize, depth: usize, data: Vec<Vec<T>> }
+struct SegmentTree<T> {
+    size: usize,
+    depth: usize,
+    data: Vec<Vec<T>>,
+}
 impl<T> std::ops::Index<usize> for SegmentTree<T> {
     type Output = T;
     fn index(&self, i: usize) -> &Self::Output {
@@ -40,10 +18,16 @@ impl<T: Monoid> SegmentTree<T> {
         let mut i = 1;
         loop {
             data.push(vec![T::unit(); i]);
-            if i >= size { break }
+            if i >= size {
+                break;
+            }
             i *= 2;
         }
-        SegmentTree { size: size, depth: data.len(), data: data }
+        SegmentTree {
+            size: size,
+            depth: data.len(),
+            data: data,
+        }
     }
     fn to_vec(self) -> Vec<T> {
         (self.data[self.depth - 1][0..self.size]).to_vec()
@@ -73,7 +57,7 @@ impl<T: Monoid> SegmentTree<T> {
                     d -= 1;
                     width *= 2;
                 } else {
-                    break
+                    break;
                 }
             }
             let right = range.start + width;

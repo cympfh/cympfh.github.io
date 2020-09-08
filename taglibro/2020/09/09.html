@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="description" content="Range Maximum (Minimum) Query 区間への加算 [AtCoder Library Practice Contest/ K - Range Affine Range Sum](https://atcoder.jp/contests/practice2/tasks/practice2_k) [AtCoder Library Practice Contest/ L - Range Affine Range Sum](https://atcoder.jp/contests/practice2/tasks/practice2_l)" />
+  <meta property="og:url" content="http://cympfh.cc/taglibro">
+  <meta property="og:title" content="Wed Sep 09 2020" />
+  <meta property="og:description" content="Range Maximum (Minimum) Query 区間への加算 [AtCoder Library Practice Contest/ K - Range Affine Range Sum](https://atcoder.jp/contests/practice2/tasks/practice2_k) [AtCoder Library Practice Contest/ L - Range Affine Range Sum](https://atcoder.jp/contests/practice2/tasks/practice2_l)" />
+  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@cympfh" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Wed Sep 09 2020</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+</head>
+<body>
+<header class="page-header">
+    <a href='../../index.html'><i class="fa fa-save" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+</header>
+<header>
+<h1 class="title">Wed Sep 09 2020</h1>
+</header>
+<p>2020 年になってようやく遅延（伝播）セグメントツリーを知ったので解ける問題が増えて今嬉しい.</p>
+<p>遅延セグメントツリーは一言で言えばこのようなもの. モノイド <span class="math inline">\(X\)</span> と, それに対するモノイド作用 <span class="math inline">\(M\)</span> があるときにこんなことが出来る. <span class="math inline">\(X\)</span> の要素からなる長さ <span class="math inline">\(N\)</span>の数列 <span class="math inline">\(x\)</span> について,</p>
+<ol type="1">
+<li>任意の添字区間 <span class="math inline">\(I\)</span> に対して <span class="math inline">\(\prod_{i \in I} x_i\)</span> を <span class="math inline">\(O(\log N)\)</span> 程度で計算する</li>
+<li>任意の添字区間 <span class="math inline">\(I\)</span> と（左）作用 <span class="math inline">\(m \in M\)</span> について <span class="math inline">\(x_i \leftarrow m(x) ~(i \in I)\)</span> という更新を <span class="math inline">\(O(\log N)\)</span> 程度で行う</li>
+</ol>
+<p>という2つの計算をサポートする. 特に2つ目の更新は区間に対して行えるのがただのセグメントツリーとの違い.</p>
+<ul>
+<li>プロコン用ライブラリ:
+<ul>
+<li><a href="https://cympfh.cc/procon/seq.lazy_segment_tree">procon/seq.lazy_segment_tree</a></li>
+</ul></li>
+</ul>
+<p>私が書いたライブラリは一般にモノイド作用つきモノイドについて定義できるようになっているので, 今の説明で言うところの <span class="math inline">\(X\)</span> と <span class="math inline">\(M\)</span> だけ問題に合わせたものを定義すればいつの間にか完成する.</p>
+<ul>
+<li>ちゃんとした説明:
+<ul>
+<li><a href="https://cympfh.cc/aiura/monoidic-act-and-lazy-segment-tree">aiura/monoidic-act-and-lazy-segment-tree</a></li>
+</ul></li>
+</ul>
+<h2 id="range-maximum-minimum-query">Range Maximum (Minimum) Query</h2>
+<p>整数の列 <span class="math inline">\(x\)</span> について</p>
+<ul>
+<li>区間取得: <span class="math inline">\(\sum_{i \in I} x_i\)</span></li>
+<li>区間更新: <span class="math inline">\(x_i \leftarrow z\)</span></li>
+</ul>
+<p>というタイプの問題を考える. 更新は区間と代入する値 <span class="math inline">\(z\)</span> を決めたらその区間の中の値を <span class="math inline">\(z\)</span> で上書きしてしまうタイプ.</p>
+<p>まず <span class="math inline">\(X\)</span> とその積は区間取得の方法をそのまま実装するだけ. 更新というのが作用に相当する. 作用の積は少し非自明だけど, 作用の合成を注意深く追えばいい.</p>
+<ul>
+<li><span class="math inline">\(X = \mathbb Z\)</span>
+<ul>
+<li>積
+<ul>
+<li><span class="math inline">\(x_1 \times x_2 := x_1 + x_2\)</span></li>
+</ul></li>
+<li>単位元
+<ul>
+<li><span class="math inline">\(0 \times x = x \times 0 = x\)</span></li>
+</ul></li>
+</ul></li>
+<li><span class="math inline">\(M = \mathbb Z + 1\)</span>
+<ul>
+<li>積
+<ul>
+<li><span class="math inline">\(\ast \times n = n\)</span></li>
+<li><span class="math inline">\(m \times n = m\)</span> (if <span class="math inline">\(m \ne \ast\)</span>)</li>
+</ul></li>
+<li>単位元
+<ul>
+<li><span class="math inline">\(\ast \times m = m \times \ast = m\)</span></li>
+</ul></li>
+</ul></li>
+</ul>
+<p>ここで <span class="math inline">\(M\)</span> は左作用として定義している. また <span class="math inline">\(\mathbb Z + 1\)</span> は整数集合と単集合 <span class="math inline">\(\{ \ast \}\)</span> との直和のこと.</p>
+<p><span class="math inline">\(M\)</span> の <span class="math inline">\(X\)</span> に対する作用は <span class="math inline">\(m \in M, x \in X\)</span> について</p>
+<ul>
+<li><span class="math inline">\(\ast(x) = x\)</span></li>
+<li><span class="math inline">\(m(x) = m\)</span> (if <span class="math inline">\(m \ne \ast\)</span>)</li>
+</ul>
+<p>この作用が数列の値の上書きを意味している. 特に <span class="math inline">\(\ast \in M\)</span> は何も上書きしないということを表していて, 単位元としての役割を与えている. <span class="math inline">\(M\)</span> の積だが, <span class="math inline">\(m(n(x)) = (m \times n)(x)\)</span> を満たすような <span class="math inline">\(m \times n\)</span> が定義できていれば正しい. 今回は値の上書きなので, 後から適用したものを優先していればいい.</p>
+<h2 id="区間への加算">区間への加算</h2>
+<p>先程は区間へ定数を代入するタイプだったが, それぞれに値を加算するタイプのものも見かける.</p>
+<ul>
+<li>区間取得: <span class="math inline">\(\sum_{i \in I} x_i\)</span></li>
+<li>区間更新: <span class="math inline">\(x_i \leftarrow x_i + z\)</span></li>
+</ul>
+<p>すぐ思いつくのは次のようなものだ. <span class="math inline">\(X\)</span> は先程と全く同じで良さそう. それから <span class="math inline">\(M\)</span> は <span class="math inline">\(M=\mathbb Z\)</span> で <span class="math inline">\(m(x) = m+x\)</span> とでもしておけば動きそう. これは実は間違えている.</p>
+<p>なぜなら, <span class="math inline">\(m(x_1 \times x_2) = m(x_1) \times m(x_2)\)</span> というモノイド作用が満たすべき準同型を満たしていない.</p>
+<p>例えば <span class="math inline">\(m\)</span> が <span class="math inline">\(+1\)</span> することを表してるとき, 各子ノードに <span class="math inline">\(+1\)</span> したのに親ノードにも <span class="math inline">\(+1\)</span> してるようなものだからだ. 親ノードは子ノードの値全ての和を表してるはずだから, 各子ノードに <span class="math inline">\(+1\)</span> したなら, ノード数分だけ, 加算する必要が生じる.</p>
+<p>じゃあ <span class="math inline">\(X\)</span> にそのノード数まで情報として持たせればいい. つまり <span class="math inline">\(X\)</span> はカバーする区間に含まれる値の和と区間の長さのペアにする.</p>
+<ul>
+<li><span class="math inline">\(X = \mathbb Z \times \mathbb N\)</span>
+<ul>
+<li>(和, 長さ)</li>
+<li>積
+<ul>
+<li><span class="math inline">\((x_1, \ell_1) \times (x_2, \ell_2) := (x_1 + x_2, \ell_1 + \ell_2)\)</span></li>
+</ul></li>
+<li>単位元
+<ul>
+<li><span class="math inline">\((0, 0)\)</span></li>
+</ul></li>
+</ul></li>
+<li><span class="math inline">\(M = \mathbb Z\)</span>
+<ul>
+<li><span class="math inline">\(m \in M\)</span> は <span class="math inline">\(+m\)</span> することを表す</li>
+<li>積
+<ul>
+<li><span class="math inline">\(m \times n = m + n\)</span></li>
+</ul></li>
+<li>単位元
+<ul>
+<li><span class="math inline">\(0\)</span></li>
+</ul></li>
+<li>作用
+<ul>
+<li><span class="math inline">\(m(x, \ell) = x + m \ell\)</span>
+<ul>
+<li>ここが重要</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+<p>長さ <span class="math inline">\(\ell\)</span> の区間があって今そこの和が <span class="math inline">\(x\)</span> のとき, この各値に <span class="math inline">\(m\)</span> を足すと, 和は <span class="math inline">\(x + m \ell\)</span>. 当たり前ですね.</p>
+<h2 id="atcoder-library-practice-contest-k---range-affine-range-sum"><a href="https://atcoder.jp/contests/practice2/tasks/practice2_k">AtCoder Library Practice Contest/ K - Range Affine Range Sum</a></h2>
+<ul>
+<li>区間取得: <span class="math inline">\(\sum_{i \in I} x_i\)</span></li>
+<li>区間更新: <span class="math inline">\(x_i \leftarrow b x_i + c\)</span></li>
+</ul>
+<p>今度は足すだけじゃなくて掛け算も入ってる. でもさっきのとほとんど同じ.</p>
+<p>作用 <span class="math inline">\(m = (b, c) \in \mathbb Z \times \mathbb Z\)</span> について,</p>
+<ul>
+<li><span class="math inline">\(m(x, \ell) = bx + c\)</span></li>
+</ul>
+<p>というのが実際の作用だし, <span class="math inline">\(M\)</span> の積はこれを満たすように適切に定めるだけ.</p>
+<h2 id="atcoder-library-practice-contest-l---range-affine-range-sum"><a href="https://atcoder.jp/contests/practice2/tasks/practice2_l">AtCoder Library Practice Contest/ L - Range Affine Range Sum</a></h2>
+<p>どんな情報があれば転倒数がマージできるか考えればおのずと <span class="math inline">\(X\)</span> が決まる.</p>
+<p>区間 <span class="math inline">\(I_1\)</span> を左に, <span class="math inline">\(I_2\)</span> を右にしてマージするとき, 出来上がった区間の転倒数は, それぞれの転倒数はそのまま足して, 新たに出来る転倒というのは <span class="math inline">\(I_1\)</span> に含まれる <span class="math inline">\(1\)</span> の数と <span class="math inline">\(0\)</span> の数との積, これを加える. 従って, まず <span class="math inline">\(0,1\)</span> それぞれの個数と, 転倒数を情報として持っておけば良さそう.</p>
+<p>さてこの問題における区間に対する更新というのが 0/1 のフリップ操作. フリップしたときに出来る転倒数は今述べた3つの情報だけからは分から無さそう. しかし, 「フリップしたら転倒する」数というのも転倒数と同じ計算量で計算できるに決まってるので, これも持っておけばいい. つまり, <span class="math inline">\(X\)</span> はその区間における</p>
+<ul>
+<li><span class="math inline">\(z =~\)</span> <span class="math inline">\(0\)</span> の個数</li>
+<li><span class="math inline">\(o =~\)</span> <span class="math inline">\(1\)</span> の個数</li>
+<li><span class="math inline">\(i =~\)</span> 転倒数</li>
+<li><span class="math inline">\(p =~\)</span> 逆転倒数 (0/1 をフリップした場合の転倒数)</li>
+</ul>
+<p>の組 <span class="math inline">\(x = (z,o,i,p)\)</span>. そして積は <span class="math display">\[x_1 \times x_2
+= (z_1, o_1, i_1, p_1) \times (z_2, o_2, i_2, p_2)
+= (z_1 + z_2, o_1 + o_2, i_1 + i_2 + o_1 z_2, p_1+p_2+o_2z_1)\]</span> で定義される.</p>
+<p>更新操作は簡単で, フリップするかしないかの2状態しかない. 「スリップする」をちょうど2回適用したときはもとに戻って「フリップしない」と等しいことに注意しよう.</p>
+<p><span class="math inline">\(\def\true{\mathrm{true}}\def\false{\mathrm{false}}\)</span> <span class="math inline">\(M = \{\true, \false\}\)</span> としておいて,</p>
+<ul>
+<li>作用
+<ul>
+<li><span class="math inline">\(\true(z,o,i,p) = (o,z,p,i)\)</span> (交換する)</li>
+<li><span class="math inline">\(\false(x) = x\)</span> (交換しない)</li>
+</ul></li>
+</ul>
+<p>を定める.</p>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

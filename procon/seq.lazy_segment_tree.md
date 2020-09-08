@@ -6,4 +6,5 @@
 
 ## 例題
 
-- [atcoder.jp/contests/abc177/submissions/16522911](https://atcoder.jp/contests/abc177/submissions/16522911)
+- [ABC177/F](https://atcoder.jp/contests/abc177/submissions/16522911)
+- [AtCoder Library Practice Contest/L](https://atcoder.jp/contests/practice2/submissions/16577269)

@@ -27,29 +27,28 @@
 <span class="co">// @algebra.act.rs</span>
 <span class="at">#[</span>derive<span class="at">(</span><span class="bu">Clone</span><span class="at">)]</span>
 <span class="kw">struct</span> LazySegmentTree&lt;X, M&gt; <span class="op">{</span>
-    size: <span class="dt">usize</span>,
-    size_upper: <span class="dt">usize</span>, <span class="co">// power of 2</span>
-    depth: <span class="dt">usize</span>,
-    data: <span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;X&gt;&gt;,
-    act: <span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;M&gt;&gt;,
+    length: <span class="dt">usize</span>,       <span class="co">// of leaves</span>
+    length_upper: <span class="dt">usize</span>, <span class="co">// power of 2</span>
+    size: <span class="dt">usize</span>,         <span class="co">// of nodes</span>
+    data: <span class="dt">Vec</span>&lt;X&gt;,
+    act: <span class="dt">Vec</span>&lt;M&gt;,
 <span class="op">}</span>
 <span class="kw">impl</span>&lt;X: Monoid, M: Monoid + Act&lt;X&gt;&gt; LazySegmentTree&lt;X, M&gt; <span class="op">{</span>
-    <span class="kw">fn</span> new(size: <span class="dt">usize</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span>
-        <span class="kw">let</span> <span class="kw">mut</span> data = <span class="pp">vec!</span><span class="op">[]</span>;
-        <span class="kw">let</span> <span class="kw">mut</span> act = <span class="pp">vec!</span><span class="op">[]</span>;
-        <span class="kw">let</span> <span class="kw">mut</span> i = <span class="dv">1</span>;
+    <span class="kw">fn</span> new(length: <span class="dt">usize</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span>
+        <span class="kw">let</span> <span class="kw">mut</span> length_upper = <span class="dv">1</span>;
         <span class="kw">loop</span> <span class="op">{</span>
-            data.push(<span class="pp">vec!</span><span class="op">[</span>X::unit(); i<span class="op">]</span>);
-            act.push(<span class="pp">vec!</span><span class="op">[</span>M::unit(); i<span class="op">]</span>);
-            <span class="kw">if</span> i &gt;= size <span class="op">{</span>
+            <span class="kw">if</span> length_upper &gt;= length <span class="op">{</span>
                 <span class="kw">break</span>;
             <span class="op">}</span>
-            i *= <span class="dv">2</span>;
+            length_upper *= <span class="dv">2</span>;
         <span class="op">}</span>
+        <span class="kw">let</span> size = length_upper * <span class="dv">2</span> - <span class="dv">1</span>;
+        <span class="kw">let</span> data = <span class="pp">vec!</span><span class="op">[</span>X::unit(); size<span class="op">]</span>;
+        <span class="kw">let</span> act = <span class="pp">vec!</span><span class="op">[</span>M::unit(); size<span class="op">]</span>;
         LazySegmentTree <span class="op">{</span>
+            length,
+            length_upper,
             size,
-            size_upper: i,
-            depth: data.len(),
             data,
             act,
         <span class="op">}</span>
@@ -57,92 +56,88 @@
     <span class="kw">fn</span> from(xs: <span class="dt">Vec</span>&lt;X&gt;) -&gt; <span class="kw">Self</span> <span class="op">{</span>
         <span class="kw">let</span> <span class="kw">mut</span> tree = <span class="kw">Self</span>::new(xs.len());
         <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.xs.len() <span class="op">{</span>
-            tree.data<span class="op">[</span>tree.depth - <span class="dv">1</span><span class="op">][</span>i<span class="op">]</span> = xs<span class="op">[</span>i<span class="op">]</span>;
+            tree.data<span class="op">[</span>tree.size / <span class="dv">2</span> + i<span class="op">]</span> = xs<span class="op">[</span>i<span class="op">]</span>;
         <span class="op">}</span>
-        <span class="kw">for</span> depth <span class="kw">in</span> (<span class="dv">0.</span>.tree.depth - <span class="dv">1</span>).rev() <span class="op">{</span>
-            <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.tree.data<span class="op">[</span>depth<span class="op">]</span>.len() <span class="op">{</span>
-                tree.data<span class="op">[</span>depth<span class="op">][</span>i<span class="op">]</span> = tree.data<span class="op">[</span>depth + <span class="dv">1</span><span class="op">][</span><span class="dv">2</span> * i<span class="op">]</span> * tree.data<span class="op">[</span>depth + <span class="dv">1</span><span class="op">][</span><span class="dv">2</span> * i + <span class="dv">1</span><span class="op">]</span>;
-            <span class="op">}</span>
+        <span class="kw">for</span> i <span class="kw">in</span> (<span class="dv">0.</span>.tree.size / <span class="dv">2</span>).rev() <span class="op">{</span>
+            tree.data<span class="op">[</span>i<span class="op">]</span> = tree.data<span class="op">[</span><span class="dv">2</span> * i + <span class="dv">1</span><span class="op">]</span> * tree.data<span class="op">[</span><span class="dv">2</span> * i + <span class="dv">2</span><span class="op">]</span>;
         <span class="op">}</span>
         tree
     <span class="op">}</span>
-    <span class="kw">fn</span> propagation(&amp;<span class="kw">mut</span> <span class="kw">self</span>, depth: <span class="dt">usize</span>, idx: <span class="dt">usize</span>) <span class="op">{</span>
-        <span class="kw">if</span> depth + <span class="dv">1</span> &lt; <span class="kw">self</span>.depth <span class="op">{</span>
-            <span class="kw">self</span>.act<span class="op">[</span>depth + <span class="dv">1</span><span class="op">][</span>idx * <span class="dv">2</span><span class="op">]</span> = <span class="kw">self</span>.act<span class="op">[</span>depth + <span class="dv">1</span><span class="op">][</span>idx * <span class="dv">2</span><span class="op">]</span> * <span class="kw">self</span>.act<span class="op">[</span>depth<span class="op">][</span>idx<span class="op">]</span>;
-            <span class="kw">self</span>.act<span class="op">[</span>depth + <span class="dv">1</span><span class="op">][</span>idx * <span class="dv">2</span> + <span class="dv">1</span><span class="op">]</span> =
-                <span class="kw">self</span>.act<span class="op">[</span>depth + <span class="dv">1</span><span class="op">][</span>idx * <span class="dv">2</span> + <span class="dv">1</span><span class="op">]</span> * <span class="kw">self</span>.act<span class="op">[</span>depth<span class="op">][</span>idx<span class="op">]</span>;
+    <span class="kw">fn</span> propagation(&amp;<span class="kw">mut</span> <span class="kw">self</span>, idx: <span class="dt">usize</span>) <span class="op">{</span>
+        <span class="kw">if</span> idx &lt; <span class="kw">self</span>.size / <span class="dv">2</span> <span class="op">{</span>
+            <span class="kw">self</span>.act<span class="op">[</span>idx * <span class="dv">2</span> + <span class="dv">1</span><span class="op">]</span> = <span class="kw">self</span>.act<span class="op">[</span>idx * <span class="dv">2</span> + <span class="dv">1</span><span class="op">]</span> * <span class="kw">self</span>.act<span class="op">[</span>idx<span class="op">]</span>;
+            <span class="kw">self</span>.act<span class="op">[</span>idx * <span class="dv">2</span> + <span class="dv">2</span><span class="op">]</span> = <span class="kw">self</span>.act<span class="op">[</span>idx * <span class="dv">2</span> + <span class="dv">2</span><span class="op">]</span> * <span class="kw">self</span>.act<span class="op">[</span>idx<span class="op">]</span>;
         <span class="op">}</span>
-        <span class="kw">self</span>.data<span class="op">[</span>depth<span class="op">][</span>idx<span class="op">]</span> = <span class="kw">self</span>.act<span class="op">[</span>depth<span class="op">][</span>idx<span class="op">]</span>.act(<span class="kw">self</span>.data<span class="op">[</span>depth<span class="op">][</span>idx<span class="op">]</span>);
-        <span class="kw">self</span>.act<span class="op">[</span>depth<span class="op">][</span>idx<span class="op">]</span> = M::unit();
+        <span class="kw">self</span>.data<span class="op">[</span>idx<span class="op">]</span> = <span class="kw">self</span>.act<span class="op">[</span>idx<span class="op">]</span>.act(<span class="kw">self</span>.data<span class="op">[</span>idx<span class="op">]</span>);
+        <span class="kw">self</span>.act<span class="op">[</span>idx<span class="op">]</span> = M::unit();
     <span class="op">}</span>
     <span class="kw">fn</span> update_sub(
         &amp;<span class="kw">mut</span> <span class="kw">self</span>,
         range: std::ops::Range&lt;<span class="dt">usize</span>&gt;,
         m: M,
-        depth: <span class="dt">usize</span>,
         idx: <span class="dt">usize</span>,
         focus: std::ops::Range&lt;<span class="dt">usize</span>&gt;,
     ) <span class="op">{</span>
-        <span class="kw">self</span>.propagation(depth, idx);
+        <span class="kw">self</span>.propagation(idx);
         <span class="kw">if</span> focus.end &lt;= range.start || range.end &lt;= focus.start <span class="op">{</span>
             <span class="kw">return</span>;
         <span class="op">}</span>
         <span class="kw">if</span> range.start &lt;= focus.start &amp;&amp; focus.end &lt;= range.end <span class="op">{</span>
-            <span class="kw">self</span>.act<span class="op">[</span>depth<span class="op">][</span>idx<span class="op">]</span> = <span class="kw">self</span>.act<span class="op">[</span>depth<span class="op">][</span>idx<span class="op">]</span> * m;
-            <span class="kw">self</span>.propagation(depth, idx);
-        <span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> depth + <span class="dv">1</span> &lt; <span class="kw">self</span>.depth <span class="op">{</span>
+            <span class="kw">self</span>.act<span class="op">[</span>idx<span class="op">]</span> = <span class="kw">self</span>.act<span class="op">[</span>idx<span class="op">]</span> * m;
+            <span class="kw">self</span>.propagation(idx);
+        <span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> idx &lt; <span class="kw">self</span>.data.len() / <span class="dv">2</span> <span class="op">{</span>
             <span class="kw">let</span> mid = (focus.start + focus.end) / <span class="dv">2</span>;
-            <span class="kw">self</span>.update_sub(range.clone(), m, depth + <span class="dv">1</span>, idx * <span class="dv">2</span>, focus.start..mid);
-            <span class="kw">self</span>.update_sub(range.clone(), m, depth + <span class="dv">1</span>, idx * <span class="dv">2</span> + <span class="dv">1</span>, mid..focus.end);
-            <span class="kw">self</span>.data<span class="op">[</span>depth<span class="op">][</span>idx<span class="op">]</span> =
-                <span class="kw">self</span>.data<span class="op">[</span>depth + <span class="dv">1</span><span class="op">][</span>idx * <span class="dv">2</span><span class="op">]</span> * <span class="kw">self</span>.data<span class="op">[</span>depth + <span class="dv">1</span><span class="op">][</span>idx * <span class="dv">2</span> + <span class="dv">1</span><span class="op">]</span>;
+            <span class="kw">self</span>.update_sub(range.clone(), m, idx * <span class="dv">2</span> + <span class="dv">1</span>, focus.start..mid);
+            <span class="kw">self</span>.update_sub(range.clone(), m, idx * <span class="dv">2</span> + <span class="dv">2</span>, mid..focus.end);
+            <span class="kw">self</span>.data<span class="op">[</span>idx<span class="op">]</span> = <span class="kw">self</span>.data<span class="op">[</span>idx * <span class="dv">2</span> + <span class="dv">1</span><span class="op">]</span> * <span class="kw">self</span>.data<span class="op">[</span>idx * <span class="dv">2</span> + <span class="dv">2</span><span class="op">]</span>;
         <span class="op">}</span>
     <span class="op">}</span>
     <span class="kw">fn</span> update(&amp;<span class="kw">mut</span> <span class="kw">self</span>, range: std::ops::Range&lt;<span class="dt">usize</span>&gt;, m: M) <span class="op">{</span>
-        <span class="kw">self</span>.update_sub(range, m, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0.</span>.<span class="kw">self</span>.size_upper);
+        <span class="kw">self</span>.update_sub(range, m, <span class="dv">0</span>, <span class="dv">0.</span>.<span class="kw">self</span>.length_upper);
     <span class="op">}</span>
     <span class="kw">fn</span> product_sub(
         &amp;<span class="kw">mut</span> <span class="kw">self</span>,
         range: std::ops::Range&lt;<span class="dt">usize</span>&gt;,
-        depth: <span class="dt">usize</span>,
         idx: <span class="dt">usize</span>,
         focus: std::ops::Range&lt;<span class="dt">usize</span>&gt;,
     ) -&gt; X <span class="op">{</span>
-        <span class="kw">self</span>.propagation(depth, idx);
+        <span class="kw">self</span>.propagation(idx);
         <span class="kw">if</span> focus.end &lt;= range.start || range.end &lt;= focus.start <span class="op">{</span>
             X::unit()
         <span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> range.start &lt;= focus.start &amp;&amp; focus.end &lt;= range.end <span class="op">{</span>
-            <span class="kw">self</span>.data<span class="op">[</span>depth<span class="op">][</span>idx<span class="op">]</span>
+            <span class="kw">self</span>.data<span class="op">[</span>idx<span class="op">]</span>
         <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
             <span class="kw">let</span> mid = (focus.start + focus.end) / <span class="dv">2</span>;
-            <span class="kw">let</span> a = <span class="kw">self</span>.product_sub(range.clone(), depth + <span class="dv">1</span>, idx * <span class="dv">2</span>, focus.start..mid);
-            <span class="kw">let</span> b = <span class="kw">self</span>.product_sub(range.clone(), depth + <span class="dv">1</span>, idx * <span class="dv">2</span> + <span class="dv">1</span>, mid..focus.end);
+            <span class="kw">let</span> a = <span class="kw">self</span>.product_sub(range.clone(), idx * <span class="dv">2</span> + <span class="dv">1</span>, focus.start..mid);
+            <span class="kw">let</span> b = <span class="kw">self</span>.product_sub(range.clone(), idx * <span class="dv">2</span> + <span class="dv">2</span>, mid..focus.end);
             a * b
         <span class="op">}</span>
     <span class="op">}</span>
     <span class="kw">fn</span> product(&amp;<span class="kw">mut</span> <span class="kw">self</span>, range: std::ops::Range&lt;<span class="dt">usize</span>&gt;) -&gt; X <span class="op">{</span>
-        <span class="kw">self</span>.product_sub(range, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0.</span>.<span class="kw">self</span>.size_upper)
+        <span class="kw">self</span>.product_sub(range, <span class="dv">0</span>, <span class="dv">0.</span>.<span class="kw">self</span>.length_upper)
     <span class="op">}</span>
     <span class="kw">fn</span> index(&amp;<span class="kw">mut</span> <span class="kw">self</span>, i: <span class="dt">usize</span>) -&gt; X <span class="op">{</span>
         <span class="kw">self</span>.product(i..i + <span class="dv">1</span>)
     <span class="op">}</span>
     <span class="kw">fn</span> to_vec(&amp;<span class="kw">mut</span> <span class="kw">self</span>) -&gt; <span class="dt">Vec</span>&lt;X&gt; <span class="op">{</span>
-        (<span class="dv">0.</span>.<span class="kw">self</span>.size).map(|i| <span class="kw">self</span>.index(i)).collect()
+        (<span class="dv">0.</span>.<span class="kw">self</span>.length).map(|i| <span class="kw">self</span>.index(i)).collect()
     <span class="op">}</span>
 <span class="op">}</span>
 <span class="kw">impl</span>&lt;X: std::fmt::<span class="bu">Debug</span>, M: std::fmt::<span class="bu">Debug</span>&gt; LazySegmentTree&lt;X, M&gt; <span class="op">{</span>
     <span class="kw">fn</span> debug(&amp;<span class="kw">self</span>) <span class="op">{</span>
-        <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.<span class="kw">self</span>.depth <span class="op">{</span>
-            <span class="kw">for</span> j <span class="kw">in</span> <span class="dv">0.</span>.<span class="kw">self</span>.data<span class="op">[</span>i<span class="op">]</span>.len() <span class="op">{</span>
-                <span class="pp">eprint!</span>(<span class="st">&quot;{:?} / {:?}; &quot;</span>, &amp;<span class="kw">self</span>.data<span class="op">[</span>i<span class="op">][</span>j<span class="op">]</span>, &amp;<span class="kw">self</span>.act<span class="op">[</span>i<span class="op">][</span>j<span class="op">]</span>);
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.<span class="kw">self</span>.size <span class="op">{</span>
+            <span class="kw">if</span> i &gt; <span class="dv">0</span> &amp;&amp; (i + <span class="dv">1</span>).count_ones() == <span class="dv">1</span> <span class="op">{</span>
+                <span class="pp">eprintln!</span>();
             <span class="op">}</span>
-            <span class="pp">eprintln!</span>();
+            <span class="pp">eprint!</span>(<span class="st">&quot;{:?} / {:?}; &quot;</span>, &amp;<span class="kw">self</span>.data<span class="op">[</span>i<span class="op">]</span>, &amp;<span class="kw">self</span>.act<span class="op">[</span>i<span class="op">]</span>);
         <span class="op">}</span>
+        <span class="pp">eprintln!</span>();
     <span class="op">}</span>
 <span class="op">}</span></code></pre></div>
 <h2 id="例題">例題</h2>
 <ul>
-<li><a href="https://atcoder.jp/contests/abc177/submissions/16522911">atcoder.jp/contests/abc177/submissions/16522911</a></li>
+<li><a href="https://atcoder.jp/contests/abc177/submissions/16522911">ABC177/F</a></li>
+<li><a href="https://atcoder.jp/contests/practice2/submissions/16577269">AtCoder Library Practice Contest/L</a></li>
 </ul>
           </div>
 

@@ -23,32 +23,46 @@
             <h1 id="自然数整数---関数---オイラーの-phi-関数">自然数/整数 - 関数 - オイラーの Phi 関数</h1>
 <h2 id="定義">定義</h2>
 <p><span class="math inline">\(\Phi(n)\)</span> は <span class="math inline">\(1\)</span> 以上 <span class="math inline">\(n\)</span> 以下の <span class="math inline">\(n\)</span> と互いに素な自然数の個数</p>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Number - Euler&#39;s Phi Function</span>
-<span class="kw">pub</span> <span class="kw">fn</span> euler_phi(n: <span class="dt">i64</span>) -&gt; <span class="dt">usize</span> <span class="op">{</span>
-    <span class="kw">let</span> <span class="kw">mut</span> divs = <span class="pp">vec!</span><span class="op">[]</span>;
-    <span class="op">{</span>
-        <span class="kw">let</span> <span class="kw">mut</span> m = n;
-        <span class="kw">for</span> k <span class="kw">in</span> <span class="dv">2.</span>.n <span class="op">{</span>
-            <span class="kw">if</span> m % k == <span class="dv">0</span> <span class="op">{</span>
-                divs.push(k);
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Number - Euler&#39;s totient function; Phi</span>
+<span class="kw">pub</span> <span class="kw">fn</span> phi(n: <span class="dt">u64</span>) -&gt; <span class="dt">u64</span> <span class="op">{</span>
+    <span class="kw">let</span> <span class="kw">mut</span> r = n;
+    <span class="kw">let</span> <span class="kw">mut</span> m = n;
+    <span class="kw">for</span> p <span class="kw">in</span> <span class="dv">2.</span>.=n <span class="op">{</span>
+        <span class="kw">if</span> m % p == <span class="dv">0</span> <span class="op">{</span>
+            <span class="kw">while</span> m % p == <span class="dv">0</span> <span class="op">{</span>
+                m /= p;
             <span class="op">}</span>
-            <span class="kw">while</span> m % k == <span class="dv">0</span> <span class="op">{</span>
-                m /= k;
-            <span class="op">}</span>
+            r -= r / p;
+        <span class="op">}</span>
+        <span class="kw">if</span> p * p &gt; n <span class="op">{</span>
+            <span class="kw">break</span>;
         <span class="op">}</span>
     <span class="op">}</span>
-    <span class="kw">let</span> <span class="kw">mut</span> cx: <span class="dt">i64</span> = <span class="dv">0</span>;
-    <span class="op">{</span>
-        <span class="kw">let</span> m = divs.len();
-        <span class="kw">for</span> b <span class="kw">in</span> <span class="dv">1.</span>.(<span class="dv">1</span> &lt;&lt; m) <span class="op">{</span>
-            <span class="kw">let</span> d = (<span class="dv">0.</span>.m)
-                .filter(|i| b &amp; <span class="dv">1</span> &lt;&lt; i &gt; <span class="dv">0</span>)
-                .fold(<span class="dv">1</span>, |ac, i| ac * divs<span class="op">[</span>i<span class="op">]</span>);
-            <span class="kw">let</span> popcnt = (<span class="dv">0.</span>.m).filter(|i| b &amp; <span class="dv">1</span> &lt;&lt; i &gt; <span class="dv">0</span>).collect::&lt;<span class="dt">Vec</span>&lt;_&gt;&gt;().len();
-            cx += n / d * <span class="kw">if</span> popcnt % <span class="dv">2</span> == <span class="dv">1</span> <span class="op">{</span> <span class="dv">1</span> <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span> -<span class="dv">1</span> <span class="op">}</span>;
-        <span class="op">}</span>
+    <span class="kw">if</span> m &gt; <span class="dv">1</span> <span class="op">{</span>
+        r -= r / m;
     <span class="op">}</span>
-    (n - cx) <span class="kw">as</span> <span class="dt">usize</span>
+    r
+<span class="op">}</span>
+
+<span class="at">#[</span>cfg<span class="at">(</span>test<span class="at">)]</span>
+<span class="kw">mod</span> test_euler_phi <span class="op">{</span>
+    <span class="kw">use</span> <span class="kw">crate</span>::num::euler_phi::*;
+
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> test_euler_phi() <span class="op">{</span>
+        <span class="kw">let</span> truth = <span class="pp">vec!</span><span class="op">[</span>
+            <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">2</span>, <span class="dv">6</span>, <span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">4</span>, <span class="dv">10</span>, <span class="dv">4</span>, <span class="dv">12</span>, <span class="dv">6</span>, <span class="dv">8</span>, <span class="dv">8</span>, <span class="dv">16</span>, <span class="dv">6</span>, <span class="dv">18</span>, <span class="dv">8</span>,
+        <span class="op">]</span>;
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.truth.len() <span class="op">{</span>
+            <span class="pp">assert_eq!</span>(phi((i + <span class="dv">1</span>) <span class="kw">as</span> <span class="dt">u64</span>), truth<span class="op">[</span>i<span class="op">]</span>);
+        <span class="op">}</span>
+
+        <span class="pp">assert_eq!</span>(phi(<span class="dv">5000</span>), <span class="dv">2000</span>);
+        <span class="pp">assert_eq!</span>(phi(<span class="dv">79523</span>), <span class="dv">78960</span>);
+        <span class="pp">assert_eq!</span>(phi(<span class="dv">80000</span>), <span class="dv">32000</span>);
+        <span class="pp">assert_eq!</span>(phi(<span class="dv">99999</span>), <span class="dv">64800</span>);
+        <span class="pp">assert_eq!</span>(phi(<span class="dv">100000</span>), <span class="dv">40000</span>);
+    <span class="op">}</span>
 <span class="op">}</span></code></pre></div>
           </div>
 

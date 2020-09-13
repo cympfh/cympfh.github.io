@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>procon/</title>
+
+    <link rel="stylesheet" href="./resources/c.css">
+    <link rel="stylesheet" href="./resources/highlight.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+
+  </head>
+  <body>
+    <section class="section">
+      <div class="container">
+        <section class="main-content columns is-fullheight">
+
+          <div class="article column is-8 is-10-mobile">
+            <h1 id="自然数整数---関数---拡張ユークリッド互除法">自然数/整数 - 関数 - 拡張ユークリッド互除法</h1>
+<h2 id="概要">概要</h2>
+<p><span class="math inline">\(0\)</span> でない整数の組 <span class="math inline">\((x, y)\)</span> について、 <span class="math display">\[ax + by = c\]</span> なる整数の組 <span class="math inline">\((a, b, c)\)</span> を返す. ここで <span class="math inline">\(c = gcd(x, y)\)</span>.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Number - Extended GCD on Integers</span>
+<span class="kw">use</span> <span class="kw">crate</span>::num::base::*;
+<span class="kw">pub</span> <span class="kw">fn</span> gcd_ex&lt;N: Int&gt;(x: N, y: N) -&gt; (N, N, N) <span class="op">{</span>
+    <span class="kw">let</span> <span class="kw">mut</span> r0 = x;
+    <span class="kw">let</span> <span class="kw">mut</span> a0 = N::one();
+    <span class="kw">let</span> <span class="kw">mut</span> b0 = N::zero();
+    <span class="kw">let</span> <span class="kw">mut</span> r = y;
+    <span class="kw">let</span> <span class="kw">mut</span> a = N::zero();
+    <span class="kw">let</span> <span class="kw">mut</span> b = N::one();
+    <span class="kw">while</span> r &gt; N::zero() <span class="op">{</span>
+        <span class="kw">let</span> (r2, a2, b2) = (r0 % r, a0 - r0 / r * a, b0 - r0 / r * b);
+        r0 = r;
+        r = r2;
+        a0 = a;
+        a = a2;
+        b0 = b;
+        b = b2;
+    <span class="op">}</span>
+    (a0, b0, r0)
+<span class="op">}</span>
+
+<span class="at">#[</span>cfg<span class="at">(</span>test<span class="at">)]</span>
+<span class="kw">mod</span> test_gcd <span class="op">{</span>
+    <span class="kw">use</span> <span class="kw">crate</span>::num::gcd_ex::*;
+
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> it_works() <span class="op">{</span>
+        <span class="pp">assert_eq!</span>(gcd_ex(<span class="dv">3_i32</span>, <span class="dv">5</span>), (<span class="dv">2</span>, -<span class="dv">1</span>, <span class="dv">1</span>));
+        <span class="pp">assert_eq!</span>(gcd_ex(<span class="dv">3_i64</span>, <span class="dv">6</span>), (<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">3</span>));
+    <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
+          </div>
+
+          <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
+<details class=menu>
+<summary class=menu>代数</summary>
+<ul>
+<li><a href="algebra.group">群</a></li>
+<li><a href="algebra.ring">環</a></li>
+<li><a href="algebra.ratio">有理数</a></li>
+<li><a href="algebra.complex">虚数</a></li>
+<li><a href="algebra.matrix">行列</a></li>
+<li><a href="algebra.hyper">超数</a></li>
+<li><a href="algebra.total">全順序化</a></li>
+<li><a href="algebra.modint">ModInt</a></li>
+<li><a href="algebra.monoid">モノイド</a>
+<ul>
+<li><a href="algebra.monoid.minmax">Min/Max モノイド</a></li>
+</ul></li>
+<li><a href="algebra.act">作用</a>
+<ul>
+<li><a href="algebra.act.assign">代入作用</a></li>
+</ul></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>グラフ</summary>
+<h2 id="最短路">最短路</h2>
+<ul>
+<li><a href="graph.dij">ダイクストラ法</a></li>
+<li><a href="graph.wall">ワーシャル-フロイド法</a></li>
+<li><a href="graph.bellmanford">ベルマンフォード法</a></li>
+</ul>
+<h2 id="無向グラフ">無向グラフ</h2>
+<ul>
+<li><a href="graph.undirected.bipartite">二部グラフ判定</a></li>
+<li><a href="graph.undirected.diameter">直径</a></li>
+</ul>
+<h2 id="最小全域木">最小全域木</h2>
+<ul>
+<li><a href="graph.prim">プリム法</a></li>
+<li><a href="graph.kruskal">クラスカル法</a></li>
+</ul>
+<h2 id="木">木</h2>
+<ul>
+<li><a href="graph.tree.height">高さ</a></li>
+<li><a href="graph.tree.diameter">直径</a></li>
+<li><a href="graph.tree.lca">最小共通祖先</a></li>
+</ul>
+<h2 id="有向グラフ">有向グラフ</h2>
+<ul>
+<li><a href="graph.maxflow">最大流量</a></li>
+<li><a href="graph.topological">トポロジカルソート</a></li>
+<li><a href="graph.scc">強連結成分分解</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>数列</summary>
+<ul>
+<li><a href="seq.lis">最長増加部分列</a></li>
+<li><a href="seq.median">中央値ヒープ</a></li>
+</ul>
+<h2 id="累積処理">累積処理</h2>
+<ul>
+<li><a href="seq.cumsum1d">一次元累積和</a></li>
+<li><a href="seq.cumsum2d">二次元累積和</a></li>
+</ul>
+<h2 id="区間木">区間木</h2>
+<ul>
+<li><a href="seq.bit">BIT</a></li>
+<li><a href="seq.segment_tree">セグメントツリー</a>
+<ul>
+<li><a href="seq.rmq">RMQ</a></li>
+</ul></li>
+<li><a href="seq.lazy_segment_tree">遅延セグメントツリー</a>
+<ul>
+<li><a href="seq.ranged_rmq">区間更新 RMQ</a></li>
+</ul></li>
+<li><a href="seq.starry">Starry Sky Tree</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>二次元ユークリッド幾何</summary>
+<h2 id="図形の定義">図形の定義</h2>
+<ul>
+<li><a href="geo.2d.point">点</a></li>
+<li><a href="geo.2d.line">直線, 線分</a></li>
+<li><a href="geo.2d.polygon">多角形</a></li>
+<li><a href="geo.2d.circle">円</a></li>
+</ul>
+<h2 id="線分">線分</h2>
+<ul>
+<li><a href="geo.2d.ccw">線分と点の接触判定</a></li>
+<li><a href="geo.2d.intersection">線分と線分の交差判定</a></li>
+</ul>
+<h2 id="多角形">多角形</h2>
+<ul>
+<li><a href="geo.2d.circum">三角形の外接円</a></li>
+<li><a href="geo.2d.isin_poly">多角形の内外判定</a></li>
+<li><a href="geo.2d.convex_hull">凸包</a></li>
+</ul>
+<h2 id="円">円</h2>
+<ul>
+<li><a href="geo.2d.circle.intersection">円と円との接触関係</a></li>
+</ul>
+<h2 id="最近点対">最近点対</h2>
+<ul>
+<li><a href="geo.closest_pair">平面上の分割統治法</a></li>
+</ul>
+<h2 id="その他">その他</h2>
+<ul>
+<li><a href="geo.polar">極座標</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>集合</summary>
+<ul>
+<li><a href="set.union_find">UnionFind</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>アルゴリズム</summary>
+<h2 id="動的計画法">動的計画法</h2>
+<ul>
+<li><a href="dp.knapsack.01">01-ナップザック</a></li>
+</ul>
+<h2 id="二分探索">二分探索</h2>
+<ul>
+<li><a href="bin.search">二分探索</a></li>
+</ul>
+<h2 id="フーリエ変換">フーリエ変換</h2>
+<ul>
+<li><a href="fft.convolution">畳み込み</a></li>
+</ul>
+</details>
+
+<details class=menu open>
+<summary class=menu>自然数/整数</summary>
+<h2 id="関数">関数</h2>
+<ul>
+<li><a href="num.gcd">GCD</a></li>
+<li><a href="num.exgcd">拡張GCD</a></li>
+<li><a href="num.binom.pascal">二項係数 (パスカルの三角形)</a></li>
+<li><a href="num.binom.modint">二項係数 (ModInt)</a></li>
+<li><a href="num.dislog">離散対数</a></li>
+<li><a href="num.derangement">完全順列</a></li>
+<li><a href="num.euler_phi">オイラーの関数</a></li>
+<li><a href="num.moebius">メビウス関数</a></li>
+<li><a href="num.n_vs_nn">自然数の対 ↔ 自然数 の変換</a></li>
+<li><a href="num.mex">最小自由数 (最小除外数)</a></li>
+</ul>
+<h2 id="素数">素数</h2>
+<ul>
+<li><a href="prime.sieve">エラトステネスの篩</a></li>
+<li><a href="prime.MillerRabin">ミラー・ラビン素数判定</a></li>
+<li><a href="prime.fermat.little">フェルマーの小定理</a></li>
+<li><a href="prime.factorize">素因数分解</a></li>
+</ul>
+<h2 id="多倍長">多倍長</h2>
+<ul>
+<li><a href="bigint">ビッグエンディアンベクタ</a></li>
+</ul>
+<h2 id="組み合わせのイテレーター">組み合わせのイテレーター</h2>
+<ul>
+<li><a href="num.iter.perm">階乗 - <span class="math inline"><em>n</em>!</span></a></li>
+<li><a href="num.iter.powperm">冪乗 - <span class="math inline"><em>n</em><sup><em>m</em></sup></span></a></li>
+<li><a href="num.iter.comb">二項係数 - <span class="math inline"><sub><em>n</em></sub><em>C</em><sub><em>m</em></sub></span></a></li>
+</ul>
+<h2 id="乱数">乱数</h2>
+<ul>
+<li><a href="rand.lcg">線形合同法</a></li>
+<li><a href="rand.xorshift">Xor-Shift 法</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>文字列 (Vector)</summary>
+<h2 id="文字列検索">文字列検索</h2>
+<ul>
+<li><a href="string.shift-and">Shift-And</a></li>
+<li><a href="string.z">Z-alogirhtm</a></li>
+</ul>
+<h2 id="回文">回文</h2>
+<ul>
+<li><a href="string.manacher">manacher</a></li>
+</ul>
+<h2 id="圧縮">圧縮</h2>
+<ul>
+<li><a href="string.runlength">Run-length</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>時間/時刻</summary>
+<ul>
+<li><a href="time.while">制限時間付きループ</a></li>
+</ul>
+<h2 id="暦">暦</h2>
+<ul>
+<li><a href="cal.zeller">ツェラーの公式</a></li>
+<li><a href="cal.uruu">閏年判定</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>ハッシュ</summary>
+<ul>
+<li><a href="hash.zobrist">Zobrist Hash</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>collections</summary>
+<ul>
+<li><a href="collections.defaultdict">defaultmap</a></li>
+<li><a href="collections.list_comprehension_macro">リスト内包表記マクロ</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>misc</summary>
+<ul>
+<li><a href="misc.kmeans">k-means</a></li>
+<li><a href="15puzzle">一般化15パズル</a></li>
+<li><a href="misc.sort-n">numeric sort</a></li>
+<li><a href="misc.3sat">乱択3-SAT</a></li>
+<li><a href="misc.stirling">スターリングの近似式</a></li>
+<li><a href="dice">サイコロ</a></li>
+<li><a href="misc.neighbor">近傍</a></li>
+</ul>
+</details>
+          </aside>
+
+        </section>
+    </div>
+  </section>
+  </body>
+</html>

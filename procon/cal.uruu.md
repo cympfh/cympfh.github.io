@@ -1,9 +1,3 @@
-# cal.uruu
+# 時間/時刻 - 暦 - うるう年判定
 
-## [cal.uruu.rs](cal.uruu.rs)
-
-@[rust](cal.uruu.rs)
-
-## [cal.uruu.cc](cal.uruu.cc)
-
-@[cpp](cal.uruu.cc)
+@[rust](procon-rs/src/datetime/leap.rs)

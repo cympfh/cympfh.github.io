@@ -27,4 +27,4 @@ def hash(X):
 
 ## 参考
 
-- [en.wikipedia.org/wiki/Zobrist_hashing](https://en.wikipedia.org/wiki/Zobrist_hashing)
+- [wikipedia/Zobrist_hashing](https://en.wikipedia.org/wiki/Zobrist_hashing)

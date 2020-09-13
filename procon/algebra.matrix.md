@@ -1,2 +1,3 @@
 # 代数 - 行列
-@[rust](algebra.matrix.rs)
+
+@[rust](procon-rs/src/algebra/matrix.rs)

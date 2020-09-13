@@ -2,4 +2,4 @@
 
 虚数の定義とその演算
 
-@[rust](algebra.complex.rs)
+@[rust](procon-rs/src/algebra/complex.rs)

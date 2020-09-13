@@ -1,8 +1,25 @@
 # 制限時間付きループ
 
-## [time.while.rs](time.while.rs)
+## 概要
 
-@[rust](time.while.rs)
+```rust
+loop {
+   ...
+}
+```
+
+の代わりに,
+
+```rust
+let milli_seconds = 1000
+loop_timeout_ms!(milli_seconds, {
+    ...
+}
+```
+
+と使う
+
+## 例
 
 ```rust
 // Example
@@ -19,3 +36,5 @@ fn main() {
     });
 }
 ```
+
+@[rust](procon-rs/src/datetime/timed_loop.rs)

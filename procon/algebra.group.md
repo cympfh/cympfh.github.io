@@ -1,5 +1,5 @@
 # 代数 - 群
 
-ここでは $(X, 0, \pm)$ を群と呼ぶ
+ここでは $(X, \pm, 0)$ を群と呼ぶ.
 
-@[rust](algebra.group.rs)
+@[rust](procon-rs/src/algebra/group.rs)

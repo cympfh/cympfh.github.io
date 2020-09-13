@@ -3,7 +3,15 @@
 # make menu.html
 #
 
-sed 's/\.md/\.html/g' |
+link_extension() {
+  if [ "$PROD" = 1 ]; then
+    sed 's/\.md//g'
+  else
+    sed 's/\.md/\.html/g'
+  fi
+}
+
+link_extension |
 pandoc |
   awk '
 BEGIN { first = 1 }

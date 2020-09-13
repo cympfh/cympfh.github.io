@@ -1,5 +1,6 @@
-# 素因数分解
+# 素数 -  素因数分解
 
-`u64` 整数 $N$ を試し割りによって $O(\sqrt{N})$ で素因数分解する
+自然数 $N$ を試し割りすることで素因数分解する.
+適切にループを打ち切ることで $O(\sqrt{N})$.
 
-@[rust](prime.factorize.rs)
+@[rust](procon-rs/src/num/prime/factorize.rs)

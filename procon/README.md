@@ -1,194 +1,175 @@
 # 代数
 
-- [群](algebra.group.html)
-- [環](algebra.ring.html)
-- [超数](algebra.hyper.html)
-- [全順序化](algebra.total.html)
-- [虚数](algebra.complex.html)
-- [ModInt](algebra.modint.html)
-- [行列](algebra.matrix.html)
-- [モノイド](algebra.monoid.html)
-    - [RMQモノイド](algebra.monoid.rmq)
-- [有理数](algebra.ratio.html)
-- [作用](algebra.act)
-    - [RMQ作用](algebra.act.rmq)
+- [群](algebra.group.md)
+- [環](algebra.ring.md)
+- [有理数](algebra.ratio.md)
+- [虚数](algebra.complex.md)
+- [行列](algebra.matrix.md)
+- [超数](algebra.hyper.md)
+- [全順序化](algebra.total.md)
+- [ModInt](algebra.modint.md)
+- [モノイド](algebra.monoid.md)
+    - [Min/Max モノイド](algebra.monoid.minmax.md)
+- [作用](algebra.act.md)
+    - [代入作用](algebra.act.assign.md)
 
 # グラフ
 
 ## 最短路
-- [Dijkstra](graph.dij.html)
-- [Warshall-Floyd](graph.wall.html)
-- [Bellman-Ford](graph.bellmanford.html)
+- [ダイクストラ法](graph.dij.md)
+- [ワーシャル-フロイド法](graph.wall.md)
+- [ベルマンフォード法](graph.bellmanford.md)
 
 ## 無向グラフ
-- [二部グラフ判定](graph.undirected.bipartite.html)
-- [直径](graph.undirected.diameter.html)
+- [二部グラフ判定](graph.undirected.bipartite.md)
+- [直径](graph.undirected.diameter.md)
 
 ## 最小全域木
-- [Prim](graph.prim.html)
-- [Kruskal](graph.kruskal.html)
+- [プリム法](graph.prim.md)
+- [クラスカル法](graph.kruskal.md)
 
 ## 木
-- [高さ](graph.tree.height.html)
-- [直径](graph.tree.diameter.html)
-- [最小共通祖先](graph.tree.lca.html)
+- [高さ](graph.tree.height.md)
+- [直径](graph.tree.diameter.md)
+- [最小共通祖先](graph.tree.lca.md)
 
-## [最大流量](graph.maxflow.html)
-
-## [トポロジカルソート](graph.topological.html)
-
-## [強連結成分分解](graph.scc.html)
+## 有向グラフ
+- [最大流量](graph.maxflow.md)
+- [トポロジカルソート](graph.topological.md)
+- [強連結成分分解](graph.scc.md)
 
 # 数列
 
-- [最長増加部分列 (LSI)](seq.lsi.html)
-- [std::nth_element](seq.nth.html)
-- [中央値](seq.median.html)
+- [最長増加部分列](seq.lis.md)
+- [中央値ヒープ](seq.median.md)
 
 ## 累積処理
 
-- [一次元累積和](seq.cumsum.html)
-- [二次元累積和](seq.cumsum2d.html)
+- [一次元累積和](seq.cumsum1d.md)
+- [二次元累積和](seq.cumsum2d.md)
 
 ## 区間木
 
-- [BIT](seq.bit.html)
-- [RMQ](seq.rmq.html)
-- [Starry Sky Tree](seq.starry.html)
-- [セグメントツリー](seq.segment_tree)
-- [遅延セグメントツリー](seq.lazy_segment_tree)
-- [SeqSearch](seq.search.html)
+- [BIT](seq.bit.md)
+- [セグメントツリー](seq.segment_tree.md)
+    - [RMQ](seq.rmq.md)
+- [遅延セグメントツリー](seq.lazy_segment_tree.md)
+    - [区間更新 RMQ](seq.ranged_rmq.md)
+- [Starry Sky Tree](seq.starry.md)
 
 # 二次元ユークリッド幾何
 
 ## 図形の定義
 
-- [点](geo.2d.point)
-- [直線, 線分](geo.2d.line)
-- [多角形](geo.2d.polygon)
-- [円](geo.2d.circle)
+- [点](geo.2d.point.md)
+- [直線, 線分](geo.2d.line.md)
+- [多角形](geo.2d.polygon.md)
+- [円](geo.2d.circle.md)
 
 ## 線分
-- [線分と点の接触関係](geo.2d.ccw)
-- [線分と線分の交差判定](geo.2d.intersection.html)
+- [線分と点の接触判定](geo.2d.ccw.md)
+- [線分と線分の交差判定](geo.2d.intersection.md)
 
 ## 多角形
-- [三角形の外接円](geo.2d.circum.html)
-- [多角形の内外判定](geo.2d.isin_poly.html)
-- [多角形の面積](http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=0079)
-- [凸包](geo.2d.convex_hull.html)
+- [三角形の外接円](geo.2d.circum.md)
+- [多角形の内外判定](geo.2d.isin_poly.md)
+- [凸包](geo.2d.convex_hull.md)
 
 ## 円
-- [円と円の接触関係](geo.2d.circle.intersection.html)
+- [円と円との接触関係](geo.2d.circle.intersection.md)
 
 ## 最近点対
-- [平面上の分割統治法](geo.closest_pair.html)
+- [平面上の分割統治法](geo.closest_pair.md)
 
 ## その他
 
 - [極座標](geo.polar.md)
 
 # 集合
-- [Union-Find](set.union_find.html)
+- [UnionFind](set.union_find.md)
 
-# 動的計画法
-- [01-ナップザック](dp.knapsack.01.html)
+# アルゴリズム
 
-# 二分探索
-- [二分探索](bin.search.html)
+## 動的計画法
+- [01-ナップザック](dp.knapsack.01.md)
 
-# 整数
+## 二分探索
+- [二分探索](bin.search.md)
 
-- [整数の最大値、最小値 (gcc)](int_max_and_min.html)
-- [GCD](int.gcd.html)
-- [拡張GCD](int.exgcd.html)
-- [パスカルの三角形](misc.pascal_triangle.html)
-- [二項係数 (パスカルの三角形)](int.binom.pascal.html)
-- [二項係数 (ModInt)](int.binom.html)
-- [離散対数](int.dislog.html)
-- [完全順列](int.derangement.html)
-- [オイラーの関数](int.euler_phi.html)
+## フーリエ変換
+- [畳み込み](fft.convolution.md)
 
-## モジュラ演算
+# 自然数/整数
 
-- [逆数](int.mod.inv.html)
-- [べき乗](int.mod.pow.html)
+## 関数
+
+- [GCD](num.gcd.md)
+- [拡張GCD](num.exgcd.md)
+- [二項係数 (パスカルの三角形)](num.binom.pascal.md)
+- [二項係数 (ModInt)](num.binom.modint.md)
+- [離散対数](num.dislog.md)
+- [完全順列](num.derangement.md)
+- [オイラーの関数](num.euler_phi.md)
+- [メビウス関数](num.moebius.md)
+- [自然数の対 ↔ 自然数 の変換](num.n_vs_nn.md)
+- [最小自由数 (最小除外数)](num.mex.md)
 
 ## 素数
 
-- [エラトステネスの篩](prime.sieve.html)
-- [素朴な判定](prime.predicate.html)
-- [ミラー・ラビン素数判定](prime.MillerRabin.html)
-- [フェルマーの小定理](prime.fermat.little.html)
-- [素因数分解](prime.factorize.html)
+- [エラトステネスの篩](prime.sieve.md)
+- [ミラー・ラビン素数判定](prime.MillerRabin.md)
+- [フェルマーの小定理](prime.fermat.little.md)
+- [素因数分解](prime.factorize.md)
 
 ## 多倍長
-- [ビッグエンディアンベクタ](bigint.html)
+- [ビッグエンディアンベクタ](bigint.md)
 
-## 自然数
-- [メビウス関数](nat.moebius.html)
-- [自然数の対 ↔ 自然数 の変換](nat.n_vs_nn.html)
-- [最小自由数 (最小除外数)](nat.mex.html)
+## 組み合わせのイテレーター
 
-## 組み合わせ
+- [階乗 - $n!$](num.iter.perm.md)
+- [冪乗 - $n^m$](num.iter.powperm.md)
+- [二項係数 - ${}_nC{}_m$](num.iter.comb.md)
 
-- [permutation - $n!$](nat.perm.html)
-- [permutation - $n^m$](nat.powperm.html)
-- [combination - ${}_nC{}_m$](nat.comb.html)
+## 乱数
 
-# 乱数
-
-- [線形合同法](rand.lcg.html)
-- [xor-shift](rand.xorshift.html)
-
-# フーリエ変換
-- [畳み込み](fft.convolution.html)
+- [線形合同法](rand.lcg.md)
+- [Xor-Shift 法](rand.xorshift.md)
 
 # 文字列 (Vector)
 
 ## 文字列検索
-- [Shift-And](string.shift-and.html)
-- [Z-alogirhtm](string.z.html)
+- [Shift-And](string.shift-and.md)
+- [Z-alogirhtm](string.z.md)
 
 ## 回文
-- [manacher](string.manacher.html)
+- [manacher](string.manacher.md)
 
 ## 圧縮
-- [Run-length](string.runlength.html)
+- [Run-length](string.runlength.md)
 
 # 時間/時刻
 
-- [制限時間付きループ](time.while.html)
+- [制限時間付きループ](time.while.md)
 
 ## 暦
-- [ツェラーの公式](cal.zeller.html)
-- [閏年判定](cal.uruu.html)
+- [ツェラーの公式](cal.zeller.md)
+- [閏年判定](cal.uruu.md)
 
 # ハッシュ
 
-- [Zobrist Hash](hash.zobrist.html)
+- [Zobrist Hash](hash.zobrist.md)
 
 # collections
 
-- [defaultmap](collections.defaultmap.html)
+- [defaultmap](collections.defaultdict.md)
 - [リスト内包表記マクロ](collections.list_comprehension_macro.md)
 
-# STL
-
-## コンテナ
-- [std::upper/lower_bound](container.bound.html)
-- [std::rotate](container.rotate.html)
-- [std::unique](container.unique.html)
-- [std::priority_queue](container.priority_queue.html)
-
 # misc
-- [bit count](bit.count.html)
-- [k-means](misc.kmeans.html)
-- [一般化15パズル](15puzzle.html)
-- [numeric sort](misc.sort-n.html)
-- [乱択3-SAT](misc.3sat.html)
-- [スターリングの近似式](misc.stirling.html)
-- [サイコロ](dice.html)
-- [円周率](misc.pi.html)
+- [k-means](misc.kmeans.md)
+- [一般化15パズル](15puzzle.md)
+- [numeric sort](misc.sort-n.md)
+- [乱択3-SAT](misc.3sat.md)
+- [スターリングの近似式](misc.stirling.md)
+- [サイコロ](dice.md)
 - [近傍](misc.neighbor.md)
 

@@ -1,10 +1,11 @@
-# Binary Indexed Tree (Fenwick Tree)
+# 数列 - Binary Indexed Tree (BIT; Fenwick Tree)
 
 ## 参考
-
-- [Fenwick tree - Wikipedia](http://en.wikipedia.org/wiki/Fenwick_tree)
+- [wikipedia/Fenwick tree](http://en.wikipedia.org/wiki/Fenwick_tree)
 
 ## 概要
+
+群 $(X, \pm, 0)$ 上の数列について,
 
 - 初期状態
     - 長さ $n$ の数列: $v = \{ v_0, v_1, \ldots, v_{n-1} \} = \{0,0,\ldots,0\}$
@@ -16,12 +17,4 @@
     - 時間計算量: 共に $O(log(n))$
     - 空間計算量: 数列の長さ $n$ 程度の配列.
 
-## [[seq.bit.rs]]
-
-@[rust](seq.bit.rs)
-
-## [seq.bit.cc](seq.bit.cc)
-
-@[cpp](seq.bit.cc)
-
-@[cpp](seq.bit.ex.cc)
+@[rust](procon-rs/src/sequence/tree/bit.rs)

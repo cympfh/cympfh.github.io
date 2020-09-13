@@ -20,18 +20,19 @@
         <section class="main-content columns is-fullheight">
 
           <div class="article column is-8 is-10-mobile">
-            <h1 id="graph.scc">graph.scc</h1>
-<p>有向グラフの強連結成分分解を行い、DAG を作る. 大まかにすることは、 元のグラフの頂点番号と、生成されたDAGの頂点番号を対応付けるベクトル <code>cmp</code> を見つけること. DAG は元のグラフの隣接関係と <code>cmp</code> を見て構成できる.</p>
-<h2 id="graph.scc.rs"><a href="graph.scc.rs" class="uri">graph.scc.rs</a></h2>
-<p>Rust 実装. グラフを隣接リストとして表現し、有向グラフを与えると <code>cmp</code> と DAG の組みを返す.</p>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// convert a DiGraph to a DAG</span>
+            <h1 id="有向グラフ---強連結成分分解-scc">有向グラフ - 強連結成分分解 (SCC)</h1>
+<h2 id="概要">概要</h2>
+<p>有向グラフの強連結成分分解を行い, DAG を作る.</p>
+<h2 id="入出力">入出力</h2>
+<p>出力は2つ組 <code>(cmp, dag)</code>. <code>cmp</code> は元のグラフから新たに作ったDAGへの頂点の対応付けで, 元のグラフの頂点 <code>i</code> を <code>cmp[i]</code> に写す. <code>dag</code> はDAGの隣接リスト表現.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Graph - Directed - Strongly Connected Component (SCC)</span>
+<span class="co">/// convert a DiGraph to a DAG</span>
 <span class="co">/// scc: (neigh) -&gt; (cmp, dag)</span>
 <span class="co">///   where</span>
 <span class="co">///     neigh is a neigh list of DiGraph</span>
 <span class="co">///     cmp is mapping vector; cmp[DiGraph-Vertex-Index] = DAG-Vertex-Index</span>
 <span class="co">///     dag is a neigh list of DAG</span>
-<span class="kw">fn</span> scc(neigh: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt;&gt;) -&gt; (<span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt;, <span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt;&gt;) <span class="op">{</span>
-
+<span class="kw">pub</span> <span class="kw">fn</span> scc(neigh: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt;&gt;) -&gt; (<span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt;, <span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt;&gt;) <span class="op">{</span>
     <span class="kw">let</span> n = neigh.len();
 
     <span class="co">// Post-order traversal</span>
@@ -42,12 +43,17 @@
             <span class="kw">let</span> <span class="kw">mut</span> stack = <span class="pp">vec!</span><span class="op">[</span>u<span class="op">]</span>;
             <span class="kw">let</span> <span class="kw">mut</span> pre = <span class="pp">vec!</span><span class="op">[]</span>;
             <span class="kw">while</span> <span class="kw">let</span> <span class="cn">Some</span>(v) = stack.pop() <span class="op">{</span>
-                <span class="kw">if</span> used<span class="op">[</span>v<span class="op">]</span> <span class="op">{</span> <span class="kw">continue</span> <span class="op">}</span>
+                <span class="kw">if</span> used<span class="op">[</span>v<span class="op">]</span> <span class="op">{</span>
+                    <span class="kw">continue</span>;
+                <span class="op">}</span>
                 used<span class="op">[</span>v<span class="op">]</span> = <span class="cn">true</span>;
                 pre.push(v);
-                <span class="kw">for</span> &amp;w <span class="kw">in</span> neigh<span class="op">[</span>v<span class="op">]</span>.iter() <span class="op">{</span> stack.push(w) <span class="op">}</span>
+                <span class="kw">for</span> &amp;w <span class="kw">in</span> neigh<span class="op">[</span>v<span class="op">]</span>.iter() <span class="op">{</span>
+                    stack.push(w)
+                <span class="op">}</span>
             <span class="op">}</span>
-            pre.reverse(); po.extend(pre);
+            pre.reverse();
+            po.extend(pre);
         <span class="op">}</span>
     <span class="op">}</span>
 
@@ -67,12 +73,18 @@
         po.reverse();
         <span class="kw">for</span> &amp;u <span class="kw">in</span> po.iter() <span class="op">{</span>
             <span class="kw">let</span> <span class="kw">mut</span> stack = <span class="pp">vec!</span><span class="op">[</span>u<span class="op">]</span>;
-            <span class="kw">if</span> used<span class="op">[</span>u<span class="op">]</span> <span class="op">{</span> <span class="kw">continue</span> <span class="op">}</span>
+            <span class="kw">if</span> used<span class="op">[</span>u<span class="op">]</span> <span class="op">{</span>
+                <span class="kw">continue</span>;
+            <span class="op">}</span>
             <span class="kw">while</span> <span class="kw">let</span> <span class="cn">Some</span>(v) = stack.pop() <span class="op">{</span>
-                <span class="kw">if</span> used<span class="op">[</span>v<span class="op">]</span> <span class="op">{</span> <span class="kw">continue</span> <span class="op">}</span>
+                <span class="kw">if</span> used<span class="op">[</span>v<span class="op">]</span> <span class="op">{</span>
+                    <span class="kw">continue</span>;
+                <span class="op">}</span>
                 used<span class="op">[</span>v<span class="op">]</span> = <span class="cn">true</span>;
                 cmp<span class="op">[</span>v<span class="op">]</span> = k;
-                <span class="kw">for</span> &amp;w <span class="kw">in</span> neigh_r<span class="op">[</span>v<span class="op">]</span>.iter() <span class="op">{</span> stack.push(w) <span class="op">}</span>
+                <span class="kw">for</span> &amp;w <span class="kw">in</span> neigh_r<span class="op">[</span>v<span class="op">]</span>.iter() <span class="op">{</span>
+                    stack.push(w)
+                <span class="op">}</span>
             <span class="op">}</span>
             k += <span class="dv">1</span>;
         <span class="op">}</span>
@@ -85,7 +97,9 @@
         <span class="kw">let</span> u2 = cmp<span class="op">[</span>u<span class="op">]</span>;
         <span class="kw">for</span> &amp;v <span class="kw">in</span> neigh<span class="op">[</span>u<span class="op">]</span>.iter() <span class="op">{</span>
             <span class="kw">let</span> v2 = cmp<span class="op">[</span>v<span class="op">]</span>;
-            <span class="kw">if</span> u2 != v2 <span class="op">{</span> dag<span class="op">[</span>u2<span class="op">]</span>.push(v2) <span class="op">}</span>
+            <span class="kw">if</span> u2 != v2 <span class="op">{</span>
+                dag<span class="op">[</span>u2<span class="op">]</span>.push(v2)
+            <span class="op">}</span>
         <span class="op">}</span>
     <span class="op">}</span>
     <span class="kw">for</span> u <span class="kw">in</span> <span class="dv">0.</span>.m <span class="op">{</span>
@@ -94,81 +108,27 @@
     <span class="op">}</span>
 
     (cmp, dag)
+<span class="op">}</span>
+
+<span class="at">#[</span>cfg<span class="at">(</span>test<span class="at">)]</span>
+<span class="kw">mod</span> test_scc <span class="op">{</span>
+    <span class="kw">use</span> <span class="kw">crate</span>::graph::directed::scc::*;
+
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> it_works() <span class="op">{</span>
+        <span class="kw">let</span> neigh = <span class="pp">vec!</span><span class="op">[</span><span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span><span class="op">]</span>, <span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>, <span class="dv">2</span><span class="op">]</span>, <span class="pp">vec!</span><span class="op">[</span><span class="dv">3</span><span class="op">]</span>, <span class="pp">vec!</span><span class="op">[</span><span class="dv">2</span><span class="op">]]</span>;
+        <span class="kw">let</span> (cmp, dag) = scc(&amp;neigh);
+        <span class="pp">assert_eq!</span>(cmp, <span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span><span class="op">]</span>);
+        <span class="pp">assert_eq!</span>(dag, <span class="pp">vec!</span><span class="op">[</span><span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span><span class="op">]</span>, <span class="pp">vec!</span><span class="op">[]]</span>);
+    <span class="op">}</span>
+
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> it_connected() <span class="op">{</span>
+        <span class="kw">let</span> neigh = <span class="pp">vec!</span><span class="op">[</span><span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span><span class="op">]</span>, <span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>, <span class="dv">2</span><span class="op">]</span>, <span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>, <span class="dv">3</span><span class="op">]</span>, <span class="pp">vec!</span><span class="op">[</span><span class="dv">2</span><span class="op">]]</span>;
+        <span class="kw">let</span> (cmp, _dag) = scc(&amp;neigh);
+        <span class="pp">assert_eq!</span>(cmp, <span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span><span class="op">]</span>);
+    <span class="op">}</span>
 <span class="op">}</span></code></pre></div>
-<h2 id="graph.scc.cc"><a href="graph.scc.cc" class="uri">graph.scc.cc</a></h2>
-<p>C++ 実装. class として定義してあり、コンストラクタで <code>cmp</code> のみ構成する. <code>.dag()</code> メソッドで DAG を返す. グラフは全て隣接リスト.</p>
-<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="kw">struct</span> StronglyConnectedComponents {
-  <span class="dt">int</span> N, K;
-
-  vector&lt;<span class="dt">bool</span>&gt; used;
-  vector&lt;<span class="dt">int</span>&gt; vs; <span class="co">// 帰り掛け順</span>
-  vector&lt;vector&lt;<span class="dt">int</span>&gt;&gt; arc;
-  vector&lt;vector&lt;<span class="dt">int</span>&gt;&gt; arc_r;
-  vector&lt;<span class="dt">int</span>&gt; cmp; <span class="co">// 連結成分</span>
-
-  <span class="dt">void</span> dfs(<span class="dt">int</span> v) {
-    used[v] = <span class="kw">true</span>;
-    <span class="cf">for</span> (<span class="dt">int</span> u: arc[v]) {
-      <span class="cf">if</span> (!used[u]) dfs(u);
-    }
-    vs.push_back(v);
-  }
-
-  <span class="dt">void</span> rdfs(<span class="dt">int</span> v, <span class="dt">int</span> k) {
-    used[v] = <span class="kw">true</span>;
-    cmp[v] = k;
-    <span class="cf">for</span> (<span class="dt">int</span> u: arc_r[v]) {
-      <span class="cf">if</span> (!used[u]) rdfs(u, k);
-    }
-  }
-
-  <span class="co">/* cmp の構成 */</span>
-  StronglyConnectedComponents(vector&lt;vector&lt;<span class="dt">int</span>&gt;&gt;&amp;d) {
-    N = d.size();
-
-    cmp.resize(N);
-    arc.resize(N);
-    arc_r.resize(N);
-    rep (u, N) {
-      <span class="cf">for</span> (<span class="dt">int</span> v: d[u]) {
-        arc[u].push_back(v);
-        arc_r[v].push_back(u);
-      }
-    }
-
-    vs.clear();
-    used = vector&lt;<span class="dt">bool</span>&gt;(N, <span class="kw">false</span>);
-    rep (i, N) <span class="cf">if</span> (!used[i]) dfs(i);
-
-    <span class="dt">int</span> k = <span class="dv">0</span>;
-    used = vector&lt;<span class="dt">bool</span>&gt;(N, <span class="kw">false</span>);
-    reverse(begin(vs), end(vs));
-    <span class="cf">for</span> (<span class="dt">int</span> u: vs) <span class="cf">if</span> (!used[u]) rdfs(u, k++);
-
-    K = k;
-  }
-
-  <span class="co">/* 隣接リスト dag */</span>
-  vector&lt;vector&lt;<span class="dt">int</span>&gt;&gt; dag()
-  {
-    vector&lt;vector&lt;<span class="dt">int</span>&gt;&gt; d(K, vector&lt;<span class="dt">int</span>&gt;(K, <span class="dv">0</span>));
-    rep (u, N) {
-      <span class="dt">int</span> u2 = cmp[u];
-      <span class="cf">for</span> (<span class="dt">int</span> v: arc[u]) {
-        <span class="dt">int</span> v2 = cmp[v];
-        <span class="cf">if</span> (u2 != v2) d[cmp[u]][cmp[v]] = <span class="dv">1</span>;
-      }
-    }
-    vector&lt;vector&lt;<span class="dt">int</span>&gt;&gt; neigh(K);
-    rep (u, K) {
-        rep (v, K) {
-            <span class="cf">if</span> (u != v &amp;&amp; d[u][v]) neigh[u].push_back(v);
-        }
-    }
-    <span class="cf">return</span> neigh;
-  }
-
-};</code></pre></div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
@@ -177,19 +137,19 @@
 <ul>
 <li><a href="algebra.group.html">群</a></li>
 <li><a href="algebra.ring.html">環</a></li>
+<li><a href="algebra.ratio.html">有理数</a></li>
+<li><a href="algebra.complex.html">虚数</a></li>
+<li><a href="algebra.matrix.html">行列</a></li>
 <li><a href="algebra.hyper.html">超数</a></li>
 <li><a href="algebra.total.html">全順序化</a></li>
-<li><a href="algebra.complex.html">虚数</a></li>
 <li><a href="algebra.modint.html">ModInt</a></li>
-<li><a href="algebra.matrix.html">行列</a></li>
 <li><a href="algebra.monoid.html">モノイド</a>
 <ul>
-<li><a href="algebra.monoid.rmq">RMQモノイド</a></li>
+<li><a href="algebra.monoid.minmax.html">Min/Max モノイド</a></li>
 </ul></li>
-<li><a href="algebra.ratio.html">有理数</a></li>
-<li><a href="algebra.act">作用</a>
+<li><a href="algebra.act.html">作用</a>
 <ul>
-<li><a href="algebra.act.rmq">RMQ作用</a></li>
+<li><a href="algebra.act.assign.html">代入作用</a></li>
 </ul></li>
 </ul>
 </details>
@@ -198,9 +158,9 @@
 <summary class=menu>グラフ</summary>
 <h2 id="最短路">最短路</h2>
 <ul>
-<li><a href="graph.dij.html">Dijkstra</a></li>
-<li><a href="graph.wall.html">Warshall-Floyd</a></li>
-<li><a href="graph.bellmanford.html">Bellman-Ford</a></li>
+<li><a href="graph.dij.html">ダイクストラ法</a></li>
+<li><a href="graph.wall.html">ワーシャル-フロイド法</a></li>
+<li><a href="graph.bellmanford.html">ベルマンフォード法</a></li>
 </ul>
 <h2 id="無向グラフ">無向グラフ</h2>
 <ul>
@@ -209,8 +169,8 @@
 </ul>
 <h2 id="最小全域木">最小全域木</h2>
 <ul>
-<li><a href="graph.prim.html">Prim</a></li>
-<li><a href="graph.kruskal.html">Kruskal</a></li>
+<li><a href="graph.prim.html">プリム法</a></li>
+<li><a href="graph.kruskal.html">クラスカル法</a></li>
 </ul>
 <h2 id="木">木</h2>
 <ul>
@@ -218,31 +178,37 @@
 <li><a href="graph.tree.diameter.html">直径</a></li>
 <li><a href="graph.tree.lca.html">最小共通祖先</a></li>
 </ul>
-<h2 id="最大流量"><a href="graph.maxflow.html">最大流量</a></h2>
-<h2 id="トポロジカルソート"><a href="graph.topological.html">トポロジカルソート</a></h2>
-<h2 id="強連結成分分解"><a href="graph.scc.html">強連結成分分解</a></h2>
+<h2 id="有向グラフ">有向グラフ</h2>
+<ul>
+<li><a href="graph.maxflow.html">最大流量</a></li>
+<li><a href="graph.topological.html">トポロジカルソート</a></li>
+<li><a href="graph.scc.html">強連結成分分解</a></li>
+</ul>
 </details>
 
 <details class=menu>
 <summary class=menu>数列</summary>
 <ul>
-<li><a href="seq.lsi.html">最長増加部分列 (LSI)</a></li>
-<li><a href="seq.nth.html">std::nth_element</a></li>
-<li><a href="seq.median.html">中央値</a></li>
+<li><a href="seq.lis.html">最長増加部分列</a></li>
+<li><a href="seq.median.html">中央値ヒープ</a></li>
 </ul>
 <h2 id="累積処理">累積処理</h2>
 <ul>
-<li><a href="seq.cumsum.html">一次元累積和</a></li>
+<li><a href="seq.cumsum1d.html">一次元累積和</a></li>
 <li><a href="seq.cumsum2d.html">二次元累積和</a></li>
 </ul>
 <h2 id="区間木">区間木</h2>
 <ul>
 <li><a href="seq.bit.html">BIT</a></li>
+<li><a href="seq.segment_tree.html">セグメントツリー</a>
+<ul>
 <li><a href="seq.rmq.html">RMQ</a></li>
+</ul></li>
+<li><a href="seq.lazy_segment_tree.html">遅延セグメントツリー</a>
+<ul>
+<li><a href="seq.ranged_rmq.html">区間更新 RMQ</a></li>
+</ul></li>
 <li><a href="seq.starry.html">Starry Sky Tree</a></li>
-<li><a href="seq.segment_tree">セグメントツリー</a></li>
-<li><a href="seq.lazy_segment_tree">遅延セグメントツリー</a></li>
-<li><a href="seq.search.html">SeqSearch</a></li>
 </ul>
 </details>
 
@@ -250,26 +216,25 @@
 <summary class=menu>二次元ユークリッド幾何</summary>
 <h2 id="図形の定義">図形の定義</h2>
 <ul>
-<li><a href="geo.2d.point">点</a></li>
-<li><a href="geo.2d.line">直線, 線分</a></li>
-<li><a href="geo.2d.polygon">多角形</a></li>
-<li><a href="geo.2d.circle">円</a></li>
+<li><a href="geo.2d.point.html">点</a></li>
+<li><a href="geo.2d.line.html">直線, 線分</a></li>
+<li><a href="geo.2d.polygon.html">多角形</a></li>
+<li><a href="geo.2d.circle.html">円</a></li>
 </ul>
 <h2 id="線分">線分</h2>
 <ul>
-<li><a href="geo.2d.ccw">線分と点の接触関係</a></li>
+<li><a href="geo.2d.ccw.html">線分と点の接触判定</a></li>
 <li><a href="geo.2d.intersection.html">線分と線分の交差判定</a></li>
 </ul>
 <h2 id="多角形">多角形</h2>
 <ul>
 <li><a href="geo.2d.circum.html">三角形の外接円</a></li>
 <li><a href="geo.2d.isin_poly.html">多角形の内外判定</a></li>
-<li><a href="http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=0079">多角形の面積</a></li>
 <li><a href="geo.2d.convex_hull.html">凸包</a></li>
 </ul>
 <h2 id="円">円</h2>
 <ul>
-<li><a href="geo.2d.circle.intersection.html">円と円の接触関係</a></li>
+<li><a href="geo.2d.circle.intersection.html">円と円との接触関係</a></li>
 </ul>
 <h2 id="最近点対">最近点対</h2>
 <ul>
@@ -284,46 +249,44 @@
 <details class=menu>
 <summary class=menu>集合</summary>
 <ul>
-<li><a href="set.union_find.html">Union-Find</a></li>
+<li><a href="set.union_find.html">UnionFind</a></li>
 </ul>
 </details>
 
 <details class=menu>
-<summary class=menu>動的計画法</summary>
+<summary class=menu>アルゴリズム</summary>
+<h2 id="動的計画法">動的計画法</h2>
 <ul>
 <li><a href="dp.knapsack.01.html">01-ナップザック</a></li>
 </ul>
-</details>
-
-<details class=menu>
-<summary class=menu>二分探索</summary>
+<h2 id="二分探索">二分探索</h2>
 <ul>
 <li><a href="bin.search.html">二分探索</a></li>
 </ul>
+<h2 id="フーリエ変換">フーリエ変換</h2>
+<ul>
+<li><a href="fft.convolution.html">畳み込み</a></li>
+</ul>
 </details>
 
 <details class=menu>
-<summary class=menu>整数</summary>
+<summary class=menu>自然数/整数</summary>
+<h2 id="関数">関数</h2>
 <ul>
-<li><a href="int_max_and_min.html">整数の最大値、最小値 (gcc)</a></li>
-<li><a href="int.gcd.html">GCD</a></li>
-<li><a href="int.exgcd.html">拡張GCD</a></li>
-<li><a href="misc.pascal_triangle.html">パスカルの三角形</a></li>
-<li><a href="int.binom.pascal.html">二項係数 (パスカルの三角形)</a></li>
-<li><a href="int.binom.html">二項係数 (ModInt)</a></li>
-<li><a href="int.dislog.html">離散対数</a></li>
-<li><a href="int.derangement.html">完全順列</a></li>
-<li><a href="int.euler_phi.html">オイラーの関数</a></li>
-</ul>
-<h2 id="モジュラ演算">モジュラ演算</h2>
-<ul>
-<li><a href="int.mod.inv.html">逆数</a></li>
-<li><a href="int.mod.pow.html">べき乗</a></li>
+<li><a href="num.gcd.html">GCD</a></li>
+<li><a href="num.exgcd.html">拡張GCD</a></li>
+<li><a href="num.binom.pascal.html">二項係数 (パスカルの三角形)</a></li>
+<li><a href="num.binom.modint.html">二項係数 (ModInt)</a></li>
+<li><a href="num.dislog.html">離散対数</a></li>
+<li><a href="num.derangement.html">完全順列</a></li>
+<li><a href="num.euler_phi.html">オイラーの関数</a></li>
+<li><a href="num.moebius.html">メビウス関数</a></li>
+<li><a href="num.n_vs_nn.html">自然数の対 ↔ 自然数 の変換</a></li>
+<li><a href="num.mex.html">最小自由数 (最小除外数)</a></li>
 </ul>
 <h2 id="素数">素数</h2>
 <ul>
 <li><a href="prime.sieve.html">エラトステネスの篩</a></li>
-<li><a href="prime.predicate.html">素朴な判定</a></li>
 <li><a href="prime.MillerRabin.html">ミラー・ラビン素数判定</a></li>
 <li><a href="prime.fermat.little.html">フェルマーの小定理</a></li>
 <li><a href="prime.factorize.html">素因数分解</a></li>
@@ -332,32 +295,16 @@
 <ul>
 <li><a href="bigint.html">ビッグエンディアンベクタ</a></li>
 </ul>
-<h2 id="自然数">自然数</h2>
+<h2 id="組み合わせのイテレーター">組み合わせのイテレーター</h2>
 <ul>
-<li><a href="nat.moebius.html">メビウス関数</a></li>
-<li><a href="nat.n_vs_nn.html">自然数の対 ↔ 自然数 の変換</a></li>
-<li><a href="nat.mex.html">最小自由数 (最小除外数)</a></li>
+<li><a href="num.iter.perm.html">階乗 - <span class="math inline"><em>n</em>!</span></a></li>
+<li><a href="num.iter.powperm.html">冪乗 - <span class="math inline"><em>n</em><sup><em>m</em></sup></span></a></li>
+<li><a href="num.iter.comb.html">二項係数 - <span class="math inline"><sub><em>n</em></sub><em>C</em><sub><em>m</em></sub></span></a></li>
 </ul>
-<h2 id="組み合わせ">組み合わせ</h2>
-<ul>
-<li><a href="nat.perm.html">permutation - <span class="math inline"><em>n</em>!</span></a></li>
-<li><a href="nat.powperm.html">permutation - <span class="math inline"><em>n</em><sup><em>m</em></sup></span></a></li>
-<li><a href="nat.comb.html">combination - <span class="math inline"><sub><em>n</em></sub><em>C</em><sub><em>m</em></sub></span></a></li>
-</ul>
-</details>
-
-<details class=menu>
-<summary class=menu>乱数</summary>
+<h2 id="乱数">乱数</h2>
 <ul>
 <li><a href="rand.lcg.html">線形合同法</a></li>
-<li><a href="rand.xorshift.html">xor-shift</a></li>
-</ul>
-</details>
-
-<details class=menu>
-<summary class=menu>フーリエ変換</summary>
-<ul>
-<li><a href="fft.convolution.html">畳み込み</a></li>
+<li><a href="rand.xorshift.html">Xor-Shift 法</a></li>
 </ul>
 </details>
 
@@ -400,33 +347,20 @@
 <details class=menu>
 <summary class=menu>collections</summary>
 <ul>
-<li><a href="collections.defaultmap.html">defaultmap</a></li>
+<li><a href="collections.defaultdict.html">defaultmap</a></li>
 <li><a href="collections.list_comprehension_macro.html">リスト内包表記マクロ</a></li>
-</ul>
-</details>
-
-<details class=menu>
-<summary class=menu>STL</summary>
-<h2 id="コンテナ">コンテナ</h2>
-<ul>
-<li><a href="container.bound.html">std::upper/lower_bound</a></li>
-<li><a href="container.rotate.html">std::rotate</a></li>
-<li><a href="container.unique.html">std::unique</a></li>
-<li><a href="container.priority_queue.html">std::priority_queue</a></li>
 </ul>
 </details>
 
 <details class=menu>
 <summary class=menu>misc</summary>
 <ul>
-<li><a href="bit.count.html">bit count</a></li>
 <li><a href="misc.kmeans.html">k-means</a></li>
 <li><a href="15puzzle.html">一般化15パズル</a></li>
 <li><a href="misc.sort-n.html">numeric sort</a></li>
 <li><a href="misc.3sat.html">乱択3-SAT</a></li>
 <li><a href="misc.stirling.html">スターリングの近似式</a></li>
 <li><a href="dice.html">サイコロ</a></li>
-<li><a href="misc.pi.html">円周率</a></li>
 <li><a href="misc.neighbor.html">近傍</a></li>
 </ul>
 </details>

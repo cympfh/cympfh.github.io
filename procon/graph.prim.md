@@ -1,9 +1,8 @@
-# graph.prim
+# グラフ - 最小全域木 - プリム法
 
-## [graph.prim.cc](graph.prim.cc)
+## 概要
 
-@[cpp](graph.prim.cc)
+点対ベースに最小の辺を足してくアルゴリズム.
+計算量は $O(E \log E)$.
 
-## Example
-
-@[cpp](graph.prim.ex.cc)
+@[rust](procon-rs/src/graph/minimal_span_tree/prim.rs)

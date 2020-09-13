@@ -84,5 +84,5 @@ rep (k, V+1){
 
 ## 例題
 
-- [D: ナップサック問題 - AtCoder Beginner Contest 032 | AtCoder](http://abc032.contest.atcoder.jp/tasks/abc032_d)
+- [ABC032/D - ナップサック問題](http://abc032.contest.atcoder.jp/tasks/abc032_d)
 

@@ -1,7 +1,5 @@
 # collections - リスト内包表記マクロ
 
-@[rust](collections.list_comprehension_macro.rs)
-
 ## 使い方
 
 ```rust
@@ -17,7 +15,7 @@ list! {
 式間の区切りは全てセミコロン (`;`).
 一番最後のセミコロンはあっても無くても良い.
 
-### 例
+## 例
 
 ```rust
 list! {
@@ -57,3 +55,4 @@ list! {
 }
 ```
 
+@[rust](procon-rs/src/collections/list_macro.rs)

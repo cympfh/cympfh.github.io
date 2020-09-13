@@ -20,26 +20,44 @@
         <section class="main-content columns is-fullheight">
 
           <div class="article column is-8 is-10-mobile">
-            <h1 id="遅延セグメントツリー">遅延セグメントツリー</h1>
-<p>モノイド <span class="math inline">\(X\)</span> 上の数列に対する更新操作をモノイド作用 <span class="math inline">\(M\)</span> だとしてこれを遅延評価することで区間に対する更新も <span class="math inline">\(O(\log N)\)</span> で出来るようになったセグメントツリー.</p>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Seq - Lazy Segment Tree</span>
-<span class="co">// @algebra.monoid.rs</span>
-<span class="co">// @algebra.act.rs</span>
-<span class="at">#[</span>derive<span class="at">(</span><span class="bu">Clone</span><span class="at">)]</span>
-<span class="kw">struct</span> LazySegmentTree&lt;X, M&gt; <span class="op">{</span>
+            <h1 id="数列---遅延セグメントツリー">数列 - 遅延セグメントツリー</h1>
+<h2 id="概要">概要</h2>
+<p>モノイド <span class="math inline">\(X\)</span> とその上のモノイド（右）作用 <span class="math inline">\(M\)</span> があるとする. このとき次のことが高速に出来る. <span class="math inline">\(X\)</span> 上の数列 <span class="math inline">\(v\)</span> について,</p>
+<ul>
+<li>区間取得
+<ul>
+<li>添字区間 <span class="math inline">\(I\)</span> について <span class="math inline">\(\prod_{i \in I} x_i\)</span></li>
+</ul></li>
+<li>区間更新
+<ul>
+<li>添字区間 <span class="math inline">\(I\)</span> と作用 <span class="math inline">\(m \in M\)</span> について
+<ul>
+<li>各 <span class="math inline">\(i \in I\)</span> に対して <span class="math inline">\(x_i \leftarrow x_i \ast m\)</span> (作用)</li>
+</ul></li>
+</ul></li>
+</ul>
+<p>すなわち数列に対する更新操作をモノイド作用だということにしている. 計算量はこの2つの操作がともに <span class="math inline">\(O(\log N)\)</span>.</p>
+<h2 id="例題">例題</h2>
+<ul>
+<li><a href="https://atcoder.jp/contests/abc177/submissions/16522911">ABC177/F</a></li>
+<li><a href="https://atcoder.jp/contests/practice2/submissions/16577269">AtCoder Library Practice Contest/L</a></li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Sequence - Lazy Segment Tree</span>
+<span class="kw">use</span> <span class="kw">crate</span>::algebra::act::*;
+<span class="kw">use</span> <span class="kw">crate</span>::algebra::monoid::*;
+
+<span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">,</span> <span class="bu">Clone</span><span class="at">)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> LazySegmentTree&lt;X, M&gt; <span class="op">{</span>
     length: <span class="dt">usize</span>,       <span class="co">// of leaves</span>
     length_upper: <span class="dt">usize</span>, <span class="co">// power of 2</span>
     size: <span class="dt">usize</span>,         <span class="co">// of nodes</span>
     data: <span class="dt">Vec</span>&lt;X&gt;,
     act: <span class="dt">Vec</span>&lt;M&gt;,
 <span class="op">}</span>
-<span class="kw">impl</span>&lt;X: Monoid, M: Monoid + Act&lt;X&gt;&gt; LazySegmentTree&lt;X, M&gt; <span class="op">{</span>
-    <span class="kw">fn</span> new(length: <span class="dt">usize</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span>
+<span class="kw">impl</span>&lt;X: <span class="bu">Copy</span> + Monoid, M: <span class="bu">Copy</span> + Monoid + Act&lt;X&gt;&gt; LazySegmentTree&lt;X, M&gt; <span class="op">{</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> new(length: <span class="dt">usize</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span>
         <span class="kw">let</span> <span class="kw">mut</span> length_upper = <span class="dv">1</span>;
-        <span class="kw">loop</span> <span class="op">{</span>
-            <span class="kw">if</span> length_upper &gt;= length <span class="op">{</span>
-                <span class="kw">break</span>;
-            <span class="op">}</span>
+        <span class="kw">while</span> length_upper &lt; length <span class="op">{</span>
             length_upper *= <span class="dv">2</span>;
         <span class="op">}</span>
         <span class="kw">let</span> size = length_upper * <span class="dv">2</span> - <span class="dv">1</span>;
@@ -53,7 +71,7 @@
             act,
         <span class="op">}</span>
     <span class="op">}</span>
-    <span class="kw">fn</span> from(xs: <span class="dt">Vec</span>&lt;X&gt;) -&gt; <span class="kw">Self</span> <span class="op">{</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> from(xs: <span class="dt">Vec</span>&lt;X&gt;) -&gt; <span class="kw">Self</span> <span class="op">{</span>
         <span class="kw">let</span> <span class="kw">mut</span> tree = <span class="kw">Self</span>::new(xs.len());
         <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.xs.len() <span class="op">{</span>
             tree.data<span class="op">[</span>tree.size / <span class="dv">2</span> + i<span class="op">]</span> = xs<span class="op">[</span>i<span class="op">]</span>;
@@ -92,7 +110,7 @@
             <span class="kw">self</span>.data<span class="op">[</span>idx<span class="op">]</span> = <span class="kw">self</span>.data<span class="op">[</span>idx * <span class="dv">2</span> + <span class="dv">1</span><span class="op">]</span> * <span class="kw">self</span>.data<span class="op">[</span>idx * <span class="dv">2</span> + <span class="dv">2</span><span class="op">]</span>;
         <span class="op">}</span>
     <span class="op">}</span>
-    <span class="kw">fn</span> update(&amp;<span class="kw">mut</span> <span class="kw">self</span>, range: std::ops::Range&lt;<span class="dt">usize</span>&gt;, m: M) <span class="op">{</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> update(&amp;<span class="kw">mut</span> <span class="kw">self</span>, range: std::ops::Range&lt;<span class="dt">usize</span>&gt;, m: M) <span class="op">{</span>
         <span class="kw">self</span>.update_sub(range, m, <span class="dv">0</span>, <span class="dv">0.</span>.<span class="kw">self</span>.length_upper);
     <span class="op">}</span>
     <span class="kw">fn</span> product_sub(
@@ -113,18 +131,18 @@
             a * b
         <span class="op">}</span>
     <span class="op">}</span>
-    <span class="kw">fn</span> product(&amp;<span class="kw">mut</span> <span class="kw">self</span>, range: std::ops::Range&lt;<span class="dt">usize</span>&gt;) -&gt; X <span class="op">{</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> product(&amp;<span class="kw">mut</span> <span class="kw">self</span>, range: std::ops::Range&lt;<span class="dt">usize</span>&gt;) -&gt; X <span class="op">{</span>
         <span class="kw">self</span>.product_sub(range, <span class="dv">0</span>, <span class="dv">0.</span>.<span class="kw">self</span>.length_upper)
     <span class="op">}</span>
-    <span class="kw">fn</span> index(&amp;<span class="kw">mut</span> <span class="kw">self</span>, i: <span class="dt">usize</span>) -&gt; X <span class="op">{</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> index(&amp;<span class="kw">mut</span> <span class="kw">self</span>, i: <span class="dt">usize</span>) -&gt; X <span class="op">{</span>
         <span class="kw">self</span>.product(i..i + <span class="dv">1</span>)
     <span class="op">}</span>
-    <span class="kw">fn</span> to_vec(&amp;<span class="kw">mut</span> <span class="kw">self</span>) -&gt; <span class="dt">Vec</span>&lt;X&gt; <span class="op">{</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> to_vec(&amp;<span class="kw">mut</span> <span class="kw">self</span>) -&gt; <span class="dt">Vec</span>&lt;X&gt; <span class="op">{</span>
         (<span class="dv">0.</span>.<span class="kw">self</span>.length).map(|i| <span class="kw">self</span>.index(i)).collect()
     <span class="op">}</span>
 <span class="op">}</span>
 <span class="kw">impl</span>&lt;X: std::fmt::<span class="bu">Debug</span>, M: std::fmt::<span class="bu">Debug</span>&gt; LazySegmentTree&lt;X, M&gt; <span class="op">{</span>
-    <span class="kw">fn</span> debug(&amp;<span class="kw">self</span>) <span class="op">{</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> debug(&amp;<span class="kw">self</span>) <span class="op">{</span>
         <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.<span class="kw">self</span>.size <span class="op">{</span>
             <span class="kw">if</span> i &gt; <span class="dv">0</span> &amp;&amp; (i + <span class="dv">1</span>).count_ones() == <span class="dv">1</span> <span class="op">{</span>
                 <span class="pp">eprintln!</span>();
@@ -134,11 +152,6 @@
         <span class="pp">eprintln!</span>();
     <span class="op">}</span>
 <span class="op">}</span></code></pre></div>
-<h2 id="例題">例題</h2>
-<ul>
-<li><a href="https://atcoder.jp/contests/abc177/submissions/16522911">ABC177/F</a></li>
-<li><a href="https://atcoder.jp/contests/practice2/submissions/16577269">AtCoder Library Practice Contest/L</a></li>
-</ul>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
@@ -147,19 +160,19 @@
 <ul>
 <li><a href="algebra.group.html">群</a></li>
 <li><a href="algebra.ring.html">環</a></li>
+<li><a href="algebra.ratio.html">有理数</a></li>
+<li><a href="algebra.complex.html">虚数</a></li>
+<li><a href="algebra.matrix.html">行列</a></li>
 <li><a href="algebra.hyper.html">超数</a></li>
 <li><a href="algebra.total.html">全順序化</a></li>
-<li><a href="algebra.complex.html">虚数</a></li>
 <li><a href="algebra.modint.html">ModInt</a></li>
-<li><a href="algebra.matrix.html">行列</a></li>
 <li><a href="algebra.monoid.html">モノイド</a>
 <ul>
-<li><a href="algebra.monoid.rmq">RMQモノイド</a></li>
+<li><a href="algebra.monoid.minmax.html">Min/Max モノイド</a></li>
 </ul></li>
-<li><a href="algebra.ratio.html">有理数</a></li>
-<li><a href="algebra.act">作用</a>
+<li><a href="algebra.act.html">作用</a>
 <ul>
-<li><a href="algebra.act.rmq">RMQ作用</a></li>
+<li><a href="algebra.act.assign.html">代入作用</a></li>
 </ul></li>
 </ul>
 </details>
@@ -168,9 +181,9 @@
 <summary class=menu>グラフ</summary>
 <h2 id="最短路">最短路</h2>
 <ul>
-<li><a href="graph.dij.html">Dijkstra</a></li>
-<li><a href="graph.wall.html">Warshall-Floyd</a></li>
-<li><a href="graph.bellmanford.html">Bellman-Ford</a></li>
+<li><a href="graph.dij.html">ダイクストラ法</a></li>
+<li><a href="graph.wall.html">ワーシャル-フロイド法</a></li>
+<li><a href="graph.bellmanford.html">ベルマンフォード法</a></li>
 </ul>
 <h2 id="無向グラフ">無向グラフ</h2>
 <ul>
@@ -179,8 +192,8 @@
 </ul>
 <h2 id="最小全域木">最小全域木</h2>
 <ul>
-<li><a href="graph.prim.html">Prim</a></li>
-<li><a href="graph.kruskal.html">Kruskal</a></li>
+<li><a href="graph.prim.html">プリム法</a></li>
+<li><a href="graph.kruskal.html">クラスカル法</a></li>
 </ul>
 <h2 id="木">木</h2>
 <ul>
@@ -188,31 +201,37 @@
 <li><a href="graph.tree.diameter.html">直径</a></li>
 <li><a href="graph.tree.lca.html">最小共通祖先</a></li>
 </ul>
-<h2 id="最大流量"><a href="graph.maxflow.html">最大流量</a></h2>
-<h2 id="トポロジカルソート"><a href="graph.topological.html">トポロジカルソート</a></h2>
-<h2 id="強連結成分分解"><a href="graph.scc.html">強連結成分分解</a></h2>
+<h2 id="有向グラフ">有向グラフ</h2>
+<ul>
+<li><a href="graph.maxflow.html">最大流量</a></li>
+<li><a href="graph.topological.html">トポロジカルソート</a></li>
+<li><a href="graph.scc.html">強連結成分分解</a></li>
+</ul>
 </details>
 
 <details class=menu open>
 <summary class=menu>数列</summary>
 <ul>
-<li><a href="seq.lsi.html">最長増加部分列 (LSI)</a></li>
-<li><a href="seq.nth.html">std::nth_element</a></li>
-<li><a href="seq.median.html">中央値</a></li>
+<li><a href="seq.lis.html">最長増加部分列</a></li>
+<li><a href="seq.median.html">中央値ヒープ</a></li>
 </ul>
 <h2 id="累積処理">累積処理</h2>
 <ul>
-<li><a href="seq.cumsum.html">一次元累積和</a></li>
+<li><a href="seq.cumsum1d.html">一次元累積和</a></li>
 <li><a href="seq.cumsum2d.html">二次元累積和</a></li>
 </ul>
 <h2 id="区間木">区間木</h2>
 <ul>
 <li><a href="seq.bit.html">BIT</a></li>
+<li><a href="seq.segment_tree.html">セグメントツリー</a>
+<ul>
 <li><a href="seq.rmq.html">RMQ</a></li>
+</ul></li>
+<li><a href="seq.lazy_segment_tree.html">遅延セグメントツリー</a>
+<ul>
+<li><a href="seq.ranged_rmq.html">区間更新 RMQ</a></li>
+</ul></li>
 <li><a href="seq.starry.html">Starry Sky Tree</a></li>
-<li><a href="seq.segment_tree">セグメントツリー</a></li>
-<li><a href="seq.lazy_segment_tree">遅延セグメントツリー</a></li>
-<li><a href="seq.search.html">SeqSearch</a></li>
 </ul>
 </details>
 
@@ -220,26 +239,25 @@
 <summary class=menu>二次元ユークリッド幾何</summary>
 <h2 id="図形の定義">図形の定義</h2>
 <ul>
-<li><a href="geo.2d.point">点</a></li>
-<li><a href="geo.2d.line">直線, 線分</a></li>
-<li><a href="geo.2d.polygon">多角形</a></li>
-<li><a href="geo.2d.circle">円</a></li>
+<li><a href="geo.2d.point.html">点</a></li>
+<li><a href="geo.2d.line.html">直線, 線分</a></li>
+<li><a href="geo.2d.polygon.html">多角形</a></li>
+<li><a href="geo.2d.circle.html">円</a></li>
 </ul>
 <h2 id="線分">線分</h2>
 <ul>
-<li><a href="geo.2d.ccw">線分と点の接触関係</a></li>
+<li><a href="geo.2d.ccw.html">線分と点の接触判定</a></li>
 <li><a href="geo.2d.intersection.html">線分と線分の交差判定</a></li>
 </ul>
 <h2 id="多角形">多角形</h2>
 <ul>
 <li><a href="geo.2d.circum.html">三角形の外接円</a></li>
 <li><a href="geo.2d.isin_poly.html">多角形の内外判定</a></li>
-<li><a href="http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=0079">多角形の面積</a></li>
 <li><a href="geo.2d.convex_hull.html">凸包</a></li>
 </ul>
 <h2 id="円">円</h2>
 <ul>
-<li><a href="geo.2d.circle.intersection.html">円と円の接触関係</a></li>
+<li><a href="geo.2d.circle.intersection.html">円と円との接触関係</a></li>
 </ul>
 <h2 id="最近点対">最近点対</h2>
 <ul>
@@ -254,46 +272,44 @@
 <details class=menu>
 <summary class=menu>集合</summary>
 <ul>
-<li><a href="set.union_find.html">Union-Find</a></li>
+<li><a href="set.union_find.html">UnionFind</a></li>
 </ul>
 </details>
 
 <details class=menu>
-<summary class=menu>動的計画法</summary>
+<summary class=menu>アルゴリズム</summary>
+<h2 id="動的計画法">動的計画法</h2>
 <ul>
 <li><a href="dp.knapsack.01.html">01-ナップザック</a></li>
 </ul>
-</details>
-
-<details class=menu>
-<summary class=menu>二分探索</summary>
+<h2 id="二分探索">二分探索</h2>
 <ul>
 <li><a href="bin.search.html">二分探索</a></li>
 </ul>
+<h2 id="フーリエ変換">フーリエ変換</h2>
+<ul>
+<li><a href="fft.convolution.html">畳み込み</a></li>
+</ul>
 </details>
 
 <details class=menu>
-<summary class=menu>整数</summary>
+<summary class=menu>自然数/整数</summary>
+<h2 id="関数">関数</h2>
 <ul>
-<li><a href="int_max_and_min.html">整数の最大値、最小値 (gcc)</a></li>
-<li><a href="int.gcd.html">GCD</a></li>
-<li><a href="int.exgcd.html">拡張GCD</a></li>
-<li><a href="misc.pascal_triangle.html">パスカルの三角形</a></li>
-<li><a href="int.binom.pascal.html">二項係数 (パスカルの三角形)</a></li>
-<li><a href="int.binom.html">二項係数 (ModInt)</a></li>
-<li><a href="int.dislog.html">離散対数</a></li>
-<li><a href="int.derangement.html">完全順列</a></li>
-<li><a href="int.euler_phi.html">オイラーの関数</a></li>
-</ul>
-<h2 id="モジュラ演算">モジュラ演算</h2>
-<ul>
-<li><a href="int.mod.inv.html">逆数</a></li>
-<li><a href="int.mod.pow.html">べき乗</a></li>
+<li><a href="num.gcd.html">GCD</a></li>
+<li><a href="num.exgcd.html">拡張GCD</a></li>
+<li><a href="num.binom.pascal.html">二項係数 (パスカルの三角形)</a></li>
+<li><a href="num.binom.modint.html">二項係数 (ModInt)</a></li>
+<li><a href="num.dislog.html">離散対数</a></li>
+<li><a href="num.derangement.html">完全順列</a></li>
+<li><a href="num.euler_phi.html">オイラーの関数</a></li>
+<li><a href="num.moebius.html">メビウス関数</a></li>
+<li><a href="num.n_vs_nn.html">自然数の対 ↔ 自然数 の変換</a></li>
+<li><a href="num.mex.html">最小自由数 (最小除外数)</a></li>
 </ul>
 <h2 id="素数">素数</h2>
 <ul>
 <li><a href="prime.sieve.html">エラトステネスの篩</a></li>
-<li><a href="prime.predicate.html">素朴な判定</a></li>
 <li><a href="prime.MillerRabin.html">ミラー・ラビン素数判定</a></li>
 <li><a href="prime.fermat.little.html">フェルマーの小定理</a></li>
 <li><a href="prime.factorize.html">素因数分解</a></li>
@@ -302,32 +318,16 @@
 <ul>
 <li><a href="bigint.html">ビッグエンディアンベクタ</a></li>
 </ul>
-<h2 id="自然数">自然数</h2>
+<h2 id="組み合わせのイテレーター">組み合わせのイテレーター</h2>
 <ul>
-<li><a href="nat.moebius.html">メビウス関数</a></li>
-<li><a href="nat.n_vs_nn.html">自然数の対 ↔ 自然数 の変換</a></li>
-<li><a href="nat.mex.html">最小自由数 (最小除外数)</a></li>
+<li><a href="num.iter.perm.html">階乗 - <span class="math inline"><em>n</em>!</span></a></li>
+<li><a href="num.iter.powperm.html">冪乗 - <span class="math inline"><em>n</em><sup><em>m</em></sup></span></a></li>
+<li><a href="num.iter.comb.html">二項係数 - <span class="math inline"><sub><em>n</em></sub><em>C</em><sub><em>m</em></sub></span></a></li>
 </ul>
-<h2 id="組み合わせ">組み合わせ</h2>
-<ul>
-<li><a href="nat.perm.html">permutation - <span class="math inline"><em>n</em>!</span></a></li>
-<li><a href="nat.powperm.html">permutation - <span class="math inline"><em>n</em><sup><em>m</em></sup></span></a></li>
-<li><a href="nat.comb.html">combination - <span class="math inline"><sub><em>n</em></sub><em>C</em><sub><em>m</em></sub></span></a></li>
-</ul>
-</details>
-
-<details class=menu>
-<summary class=menu>乱数</summary>
+<h2 id="乱数">乱数</h2>
 <ul>
 <li><a href="rand.lcg.html">線形合同法</a></li>
-<li><a href="rand.xorshift.html">xor-shift</a></li>
-</ul>
-</details>
-
-<details class=menu>
-<summary class=menu>フーリエ変換</summary>
-<ul>
-<li><a href="fft.convolution.html">畳み込み</a></li>
+<li><a href="rand.xorshift.html">Xor-Shift 法</a></li>
 </ul>
 </details>
 
@@ -370,33 +370,20 @@
 <details class=menu>
 <summary class=menu>collections</summary>
 <ul>
-<li><a href="collections.defaultmap.html">defaultmap</a></li>
+<li><a href="collections.defaultdict.html">defaultmap</a></li>
 <li><a href="collections.list_comprehension_macro.html">リスト内包表記マクロ</a></li>
-</ul>
-</details>
-
-<details class=menu>
-<summary class=menu>STL</summary>
-<h2 id="コンテナ">コンテナ</h2>
-<ul>
-<li><a href="container.bound.html">std::upper/lower_bound</a></li>
-<li><a href="container.rotate.html">std::rotate</a></li>
-<li><a href="container.unique.html">std::unique</a></li>
-<li><a href="container.priority_queue.html">std::priority_queue</a></li>
 </ul>
 </details>
 
 <details class=menu>
 <summary class=menu>misc</summary>
 <ul>
-<li><a href="bit.count.html">bit count</a></li>
 <li><a href="misc.kmeans.html">k-means</a></li>
 <li><a href="15puzzle.html">一般化15パズル</a></li>
 <li><a href="misc.sort-n.html">numeric sort</a></li>
 <li><a href="misc.3sat.html">乱択3-SAT</a></li>
 <li><a href="misc.stirling.html">スターリングの近似式</a></li>
 <li><a href="dice.html">サイコロ</a></li>
-<li><a href="misc.pi.html">円周率</a></li>
 <li><a href="misc.neighbor.html">近傍</a></li>
 </ul>
 </details>

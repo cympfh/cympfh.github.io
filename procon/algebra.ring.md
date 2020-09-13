@@ -4,4 +4,4 @@
 $(X, 0, 1, \pm, \times, \div)$
 のこと.
 
-@[rust](algebra.ring.rs)
+@[rust](procon-rs/src/algebra/ring.rs)

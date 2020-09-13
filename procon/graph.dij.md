@@ -1,19 +1,16 @@
-# graph.dij - ダイクストラ法
+# グラフ - 最短路 - ダイクストラ法
 
-## [graph.dij.rs](graph.dij.rs)
+## 概要
+BFS による最短ルートの探索アルゴリズム.
+ただし各辺の距離（コスト）は正であることを仮定している.
 
-`type Cost` は `i64` か `f64`.
-始点を `s` として, 各頂点までの最短コストの列を返す.
+優先度付きヒープでBFSして $O((E+V) \log V)$.
 
-@[rust](graph.dij.rs)
+## 入出力
 
-## [graph.dij.cc](graph.dij.cc)
+頂点 $u$ から $v$ へ, 距離（またはコスト）が $c$ の枝があるときこれを
+`neigh[u] = [(v, c)]`
+で表すような隣接リストを受け取る.
+始点 `s` から各頂点までの最小コストの列を返す.
 
-- 入力;
-    - `using Cost = long long`
-    - 始点 `s: int`
-    - コスト付き隣接リスト `vector<vector<pair<int, Cost>>> &neigh`
-- 出力
-    - 各点までの最短コストの列 `vector<Cost> d`
-
-@[cpp](graph.dij.cc)
+@[rust](procon-rs/src/graph/shortest/dijkstra.rs)

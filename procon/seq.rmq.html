@@ -20,182 +20,59 @@
         <section class="main-content columns is-fullheight">
 
           <div class="article column is-8 is-10-mobile">
-            <h1 id="seq.rmq">seq.rmq</h1>
-<p>セグメント木による Range Maximum/Minimum Query (RMQ) の実装を与える.</p>
-<h2 id="seq.rmq.rs"><a href="seq.rmq.rs" class="uri">seq.rmq.rs</a></h2>
-<ul>
-<li>使い方
-<ul>
-<li><code>let mut rmq = RMQ::new(v)</code>
-<ul>
-<li>where <span class="math inline">\(v = \left[ v_0, v_1, \ldots, v_{n-1} \right]\)</span></li>
-</ul></li>
-<li>クエリ
-<ul>
-<li><code>rmq.max(i..j)</code>
-<ul>
-<li><span class="math inline">\(\max \{ v_k \mid i \leq k &lt; j \}\)</span></li>
-</ul></li>
-<li><code>rmq.min(i..j)</code>
-<ul>
-<li><span class="math inline">\(\min \{ v_k \mid i \leq k &lt; j \}\)</span></li>
-</ul></li>
-</ul></li>
-<li>更新
-<ul>
-<li>代入 <code>rmq.update(k, x)</code>
-<ul>
-<li><span class="math inline">\(v_k \leftarrow x\)</span></li>
-</ul></li>
-<li>加算 <code>rmq.add(k, x)</code>
-<ul>
-<li><span class="math inline">\(v_k \leftarrow v_k + x\)</span></li>
-</ul></li>
-</ul></li>
-<li>データアクセス
-<ul>
-<li>インデックス <code>rmq[k]</code></li>
-<li>リストに戻す <code>rmq.to_vec()</code></li>
-</ul></li>
-</ul></li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Sequence - Range Maximum/Minimum Query (RMQ)</span>
-<span class="co">// @algebra.hyper.rs</span>
-<span class="kw">struct</span> RMQ&lt;X&gt; <span class="op">{</span>
-    size: <span class="dt">usize</span>, len: <span class="dt">usize</span>,
-    heap_max: <span class="dt">Vec</span>&lt;X&gt;,
-    heap_min: <span class="dt">Vec</span>&lt;X&gt;,
-    lefts: <span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt;, rights: <span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt;
-<span class="op">}</span>
+            <h1 id="数列---range-maximumminimum-query-rmq">数列 - Range Maximum/Minimum Query (RMQ)</h1>
+<h2 id="概要">概要</h2>
+<p>Max/Min を二項演算とするモノイドをセグメントツリーに載せることで実装する.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Sequence - Range Maximum/Minimum Query</span>
+<span class="kw">use</span> <span class="kw">crate</span>::algebra::monoid_minmax::*;
+<span class="kw">use</span> <span class="kw">crate</span>::sequence::tree::segment_tree::*;
 
-<span class="kw">impl</span>&lt;X: Ring + <span class="bu">Ord</span>&gt; RMQ&lt;X&gt; <span class="op">{</span>
-    <span class="kw">fn</span> new(v: &amp;<span class="dt">Vec</span>&lt;X&gt;) -&gt; RMQ&lt;X&gt; <span class="op">{</span>
-        <span class="kw">let</span> n = v.len();
-        <span class="kw">let</span> size = RMQ::&lt;X&gt;::alignment(n);
-        <span class="kw">let</span> lefts = (<span class="dv">0.</span>.size).map(|i| RMQ::&lt;X&gt;::of_left(i, size/<span class="dv">2</span>)).collect();
-        <span class="kw">let</span> rights = (<span class="dv">0.</span>.size).map(|i| RMQ::&lt;X&gt;::of_right(i, size/<span class="dv">2</span>)).collect();
-        <span class="kw">let</span> <span class="kw">mut</span> heap_max = <span class="pp">vec!</span><span class="op">[</span>X::zero(); size<span class="op">]</span>;
-        <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.n <span class="op">{</span> heap_max<span class="op">[</span>i + size/<span class="dv">2</span><span class="op">]</span> = v<span class="op">[</span>i<span class="op">]</span>; <span class="op">}</span>
-        <span class="kw">for</span> i <span class="kw">in</span> (<span class="dv">0.</span>.size/<span class="dv">2</span>).rev() <span class="op">{</span> heap_max<span class="op">[</span>i<span class="op">]</span> = std::cmp::max(heap_max<span class="op">[</span>i*<span class="dv">2</span>+<span class="dv">1</span><span class="op">]</span>, heap_max<span class="op">[</span>i*<span class="dv">2</span>+<span class="dv">2</span><span class="op">]</span>); <span class="op">}</span>
-        <span class="kw">let</span> <span class="kw">mut</span> heap_min = <span class="pp">vec!</span><span class="op">[</span>X::zero(); size<span class="op">]</span>;
-        <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.n <span class="op">{</span> heap_min<span class="op">[</span>i + size/<span class="dv">2</span><span class="op">]</span> = v<span class="op">[</span>i<span class="op">]</span>; <span class="op">}</span>
-        <span class="kw">for</span> i <span class="kw">in</span> (<span class="dv">0.</span>.size/<span class="dv">2</span>).rev() <span class="op">{</span> heap_min<span class="op">[</span>i<span class="op">]</span> = std::cmp::min(heap_min<span class="op">[</span>i*<span class="dv">2</span>+<span class="dv">1</span><span class="op">]</span>, heap_min<span class="op">[</span>i*<span class="dv">2</span>+<span class="dv">2</span><span class="op">]</span>); <span class="op">}</span>
-        RMQ <span class="op">{</span>size: size, len: n, heap_max: heap_max, heap_min: heap_min, lefts: lefts, rights: rights<span class="op">}</span>
-    <span class="op">}</span>
-    <span class="kw">fn</span> len(&amp;<span class="kw">self</span>) -&gt; <span class="dt">usize</span> <span class="op">{</span>
-        <span class="kw">self</span>.len
-    <span class="op">}</span>
-    <span class="kw">fn</span> alignment(n: <span class="dt">usize</span>) -&gt; <span class="dt">usize</span> <span class="op">{</span>
-        <span class="kw">let</span> <span class="kw">mut</span> m = <span class="dv">1</span>;
-        <span class="kw">while</span> n &gt; m <span class="op">{</span> m &lt;&lt;= <span class="dv">1</span>; <span class="op">}</span>
-        m * <span class="dv">2</span> - <span class="dv">1</span>
-    <span class="op">}</span>
-    <span class="kw">fn</span> of_left(idx: <span class="dt">usize</span>, base: <span class="dt">usize</span>) -&gt; <span class="dt">usize</span> <span class="op">{</span>
-        <span class="kw">let</span> <span class="kw">mut</span> i = idx; <span class="kw">while</span> i &lt; base <span class="op">{</span> i = i * <span class="dv">2</span> + <span class="dv">1</span>; <span class="op">}</span>
-        i - base
-    <span class="op">}</span>
-    <span class="kw">fn</span> of_right(idx: <span class="dt">usize</span>, base: <span class="dt">usize</span>) -&gt; <span class="dt">usize</span> <span class="op">{</span>
-        <span class="kw">let</span> <span class="kw">mut</span> i = idx; <span class="kw">while</span> i &lt; base <span class="op">{</span> i = i * <span class="dv">2</span> + <span class="dv">2</span>; <span class="op">}</span>
-        i - base + <span class="dv">1</span>
-    <span class="op">}</span>
-    <span class="kw">fn</span> max(&amp;<span class="kw">self</span>, range: std::ops::Range&lt;<span class="dt">usize</span>&gt;) -&gt; Hyper&lt;X&gt; <span class="op">{</span>
-        <span class="kw">if</span> range.end == <span class="dv">0</span> || range.start + <span class="dv">1</span> &gt; range.end <span class="op">{</span>
-            <span class="kw">return</span> NegInf
-        <span class="op">}</span>
-        <span class="kw">if</span> range.start + <span class="dv">1</span> == range.end <span class="op">{</span>
-            <span class="kw">return</span> Real(<span class="kw">self</span>.heap_max<span class="op">[</span><span class="kw">self</span>.size / <span class="dv">2</span> + range.start<span class="op">]</span>)
-        <span class="op">}</span>
-        <span class="kw">let</span> left = range.start;
-        <span class="kw">let</span> right = range.end;
-        <span class="kw">let</span> <span class="kw">mut</span> i = <span class="kw">self</span>.size / <span class="dv">2</span> + left;
-        <span class="kw">while</span> i &gt; <span class="dv">0</span> <span class="op">{</span>
-            <span class="kw">let</span> p = (i - <span class="dv">1</span>) / <span class="dv">2</span>;
-            <span class="kw">if</span> <span class="kw">self</span>.lefts<span class="op">[</span>p<span class="op">]</span> == range.start &amp;&amp; <span class="kw">self</span>.rights<span class="op">[</span>p<span class="op">]</span> &lt;= range.end <span class="op">{</span>
-                i = p;
-            <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
-                <span class="kw">break</span>
-            <span class="op">}</span>
-        <span class="op">}</span>
-        std::cmp::max(Real(<span class="kw">self</span>.heap_max<span class="op">[</span>i<span class="op">]</span>), <span class="kw">self</span>.max(<span class="kw">self</span>.rights<span class="op">[</span>i<span class="op">]</span>..right))
-    <span class="op">}</span>
-    <span class="kw">fn</span> min(&amp;<span class="kw">self</span>, range: std::ops::Range&lt;<span class="dt">usize</span>&gt;) -&gt; Hyper&lt;X&gt; <span class="op">{</span>
-        <span class="kw">if</span> range.end == <span class="dv">0</span> || range.start + <span class="dv">1</span> &gt; range.end <span class="op">{</span>
-            <span class="kw">return</span> Inf
-        <span class="op">}</span>
-        <span class="kw">if</span> range.start + <span class="dv">1</span> == range.end <span class="op">{</span>
-            <span class="kw">return</span> Real(<span class="kw">self</span>.heap_min<span class="op">[</span><span class="kw">self</span>.size / <span class="dv">2</span> + range.start<span class="op">]</span>)
-        <span class="op">}</span>
-        <span class="kw">let</span> left = range.start;
-        <span class="kw">let</span> right = range.end;
-        <span class="kw">let</span> <span class="kw">mut</span> i = <span class="kw">self</span>.size / <span class="dv">2</span> + left;
-        <span class="kw">while</span> i &gt; <span class="dv">0</span> <span class="op">{</span>
-            <span class="kw">let</span> p = (i - <span class="dv">1</span>) / <span class="dv">2</span>;
-            <span class="kw">if</span> <span class="kw">self</span>.lefts<span class="op">[</span>p<span class="op">]</span> == range.start &amp;&amp; <span class="kw">self</span>.rights<span class="op">[</span>p<span class="op">]</span> &lt;= range.end <span class="op">{</span>
-                i = p;
-            <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
-                <span class="kw">break</span>
-            <span class="op">}</span>
-        <span class="op">}</span>
-        std::cmp::min(Real(<span class="kw">self</span>.heap_min<span class="op">[</span>i<span class="op">]</span>), <span class="kw">self</span>.min(<span class="kw">self</span>.rights<span class="op">[</span>i<span class="op">]</span>..right))
-    <span class="op">}</span>
-    <span class="co">// [idx] &lt;- x</span>
-    <span class="kw">fn</span> update(&amp;<span class="kw">mut</span> <span class="kw">self</span>, idx: <span class="dt">usize</span>, x: X) <span class="op">{</span>
-        <span class="kw">let</span> <span class="kw">mut</span> i = idx + <span class="kw">self</span>.size/<span class="dv">2</span>;
-        <span class="kw">self</span>.heap_max<span class="op">[</span>i<span class="op">]</span> = x;
-        <span class="kw">self</span>.heap_min<span class="op">[</span>i<span class="op">]</span> = x;
-        <span class="kw">loop</span> <span class="op">{</span>
-            i = (i - <span class="dv">1</span>) / <span class="dv">2</span>;
-            <span class="kw">if</span> i == <span class="dv">0</span> <span class="op">{</span> <span class="kw">break</span> <span class="op">}</span>
-            <span class="kw">self</span>.heap_max<span class="op">[</span>i<span class="op">]</span> = std::cmp::max(<span class="kw">self</span>.heap_max<span class="op">[</span>i*<span class="dv">2</span>+<span class="dv">1</span><span class="op">]</span>, <span class="kw">self</span>.heap_max<span class="op">[</span>i*<span class="dv">2</span>+<span class="dv">2</span><span class="op">]</span>);
-            <span class="kw">self</span>.heap_min<span class="op">[</span>i<span class="op">]</span> = std::cmp::min(<span class="kw">self</span>.heap_min<span class="op">[</span>i*<span class="dv">2</span>+<span class="dv">1</span><span class="op">]</span>, <span class="kw">self</span>.heap_min<span class="op">[</span>i*<span class="dv">2</span>+<span class="dv">2</span><span class="op">]</span>);
-        <span class="op">}</span>
-    <span class="op">}</span>
-    <span class="co">// [idx] &lt;- [idx] + x</span>
-    <span class="kw">fn</span> add(&amp;<span class="kw">mut</span> <span class="kw">self</span>, idx: <span class="dt">usize</span>, x: X) <span class="op">{</span>
-        <span class="kw">self</span>.update(idx, <span class="kw">self</span><span class="op">[</span>idx<span class="op">]</span> + x);
-    <span class="op">}</span>
-    <span class="kw">fn</span> to_vec(&amp;<span class="kw">self</span>) -&gt; <span class="dt">Vec</span>&lt;X&gt; <span class="op">{</span>
-        (<span class="dv">0.</span>.<span class="kw">self</span>.len()).map(|i| <span class="kw">self</span><span class="op">[</span>i<span class="op">]</span>).collect()
-    <span class="op">}</span>
-<span class="op">}</span>
+<span class="kw">pub</span> <span class="kw">type</span> RMaxQ&lt;X&gt; = SegmentTree&lt;MaxInt&lt;X&gt;&gt;;
+<span class="kw">pub</span> <span class="kw">type</span> RMinQ&lt;X&gt; = SegmentTree&lt;MinInt&lt;X&gt;&gt;;
 
-<span class="kw">impl</span>&lt;X&gt; std::ops::Index&lt;<span class="dt">usize</span>&gt; <span class="kw">for</span> RMQ&lt;X&gt; <span class="op">{</span>
-    <span class="kw">type</span> Output = X;
-    <span class="kw">fn</span> index(&amp;<span class="kw">self</span>, i: <span class="dt">usize</span>) -&gt; &amp;X <span class="op">{</span>
-        &amp;<span class="kw">self</span>.heap_max<span class="op">[</span>i + <span class="kw">self</span>.size / <span class="dv">2</span><span class="op">]</span>
+<span class="at">#[</span>cfg<span class="at">(</span>test<span class="at">)]</span>
+<span class="kw">mod</span> test_rmq <span class="op">{</span>
+    <span class="kw">use</span> <span class="kw">crate</span>::sequence::tree::rmq::*;
+
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> from_new() <span class="op">{</span>
+        <span class="kw">let</span> <span class="kw">mut</span> x = RMaxQ::&lt;<span class="dt">i64</span>&gt;::new(<span class="dv">10</span>);
+        <span class="kw">let</span> <span class="kw">mut</span> y = RMinQ::&lt;<span class="dt">i64</span>&gt;::new(<span class="dv">10</span>);
+
+        x.update(<span class="dv">1</span>, MaxInt::Val(<span class="dv">1</span>));
+        y.update(<span class="dv">1</span>, MinInt::Val(<span class="dv">1</span>));
+
+        <span class="pp">assert_eq!</span>(x.product(<span class="dv">0.</span>.<span class="dv">1</span>), MaxInt::Minimal);
+        <span class="pp">assert_eq!</span>(y.product(<span class="dv">0.</span>.<span class="dv">1</span>), MinInt::Maximal);
+        <span class="pp">assert_eq!</span>(x.product(<span class="dv">0.</span>.<span class="dv">2</span>), MaxInt::Val(<span class="dv">1</span>));
+        <span class="pp">assert_eq!</span>(y.product(<span class="dv">0.</span>.<span class="dv">2</span>), MinInt::Val(<span class="dv">1</span>));
+        <span class="pp">assert_eq!</span>(x.product(<span class="dv">0.</span>.<span class="dv">3</span>), MaxInt::Val(<span class="dv">1</span>));
+        <span class="pp">assert_eq!</span>(y.product(<span class="dv">0.</span>.<span class="dv">3</span>), MinInt::Val(<span class="dv">1</span>));
+
+        x.update(<span class="dv">2</span>, MaxInt::Val(<span class="dv">2</span>));
+        y.update(<span class="dv">2</span>, MinInt::Val(<span class="dv">2</span>));
+
+        <span class="pp">assert_eq!</span>(x.product(<span class="dv">0.</span>.<span class="dv">1</span>), MaxInt::Minimal);
+        <span class="pp">assert_eq!</span>(y.product(<span class="dv">0.</span>.<span class="dv">1</span>), MinInt::Maximal);
+        <span class="pp">assert_eq!</span>(x.product(<span class="dv">0.</span>.<span class="dv">2</span>), MaxInt::Val(<span class="dv">1</span>));
+        <span class="pp">assert_eq!</span>(y.product(<span class="dv">0.</span>.<span class="dv">2</span>), MinInt::Val(<span class="dv">1</span>));
+        <span class="pp">assert_eq!</span>(x.product(<span class="dv">0.</span>.<span class="dv">3</span>), MaxInt::Val(<span class="dv">2</span>));
+        <span class="pp">assert_eq!</span>(y.product(<span class="dv">0.</span>.<span class="dv">3</span>), MinInt::Val(<span class="dv">1</span>));
+    <span class="op">}</span>
+
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> from_an_array() <span class="op">{</span>
+        <span class="kw">let</span> v: <span class="dt">Vec</span>&lt;<span class="dt">i64</span>&gt; = <span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span><span class="op">]</span>;
+        <span class="kw">let</span> x = RMaxQ::from(v.iter().map(|&amp;x| MaxInt::Val(x)).collect());
+        <span class="pp">assert_eq!</span>(x.product(<span class="dv">1.</span>.<span class="dv">4</span>), MaxInt::Val(<span class="dv">4</span>));
+        <span class="pp">assert_eq!</span>(x.product(<span class="dv">2.</span>.<span class="dv">4</span>), MaxInt::Val(<span class="dv">4</span>));
+        <span class="pp">assert_eq!</span>(x.product(<span class="dv">2.</span>.<span class="dv">3</span>), MaxInt::Val(<span class="dv">3</span>));
+        <span class="pp">assert_eq!</span>(x<span class="op">[</span><span class="dv">0</span><span class="op">]</span>, MaxInt::Val(<span class="dv">1</span>));
+        <span class="pp">assert_eq!</span>(x<span class="op">[</span><span class="dv">1</span><span class="op">]</span>, MaxInt::Val(<span class="dv">2</span>));
+        <span class="pp">assert_eq!</span>(x<span class="op">[</span><span class="dv">2</span><span class="op">]</span>, MaxInt::Val(<span class="dv">3</span>));
+        <span class="pp">assert_eq!</span>(x<span class="op">[</span><span class="dv">3</span><span class="op">]</span>, MaxInt::Val(<span class="dv">4</span>));
     <span class="op">}</span>
 <span class="op">}</span></code></pre></div>
-<h2 id="seq.rmq.cc"><a href="seq.rmq.cc" class="uri">seq.rmq.cc</a></h2>
-<p>最大値クエリのみ対応</p>
-<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="kw">template</span> &lt;<span class="kw">typename</span> T = <span class="dt">int</span>&gt;
-<span class="kw">struct</span> RMQ {
-  vector&lt;vector&lt;T&gt;&gt; seg;
-  vector&lt;<span class="dt">int</span>&gt; sizes;
-  <span class="dt">int</span> N, K;
-  RMQ(<span class="at">const</span> vector&lt;T&gt;&amp; v) {
-    N = v.size();
-    K = <span class="kw">static_cast</span>&lt;<span class="dt">int</span>&gt;(log2(N));
-    seg.resize(K + <span class="dv">1</span>);
-    sizes.resize(K + <span class="dv">1</span>);
-    seg[<span class="dv">0</span>] = v;
-    sizes[<span class="dv">0</span>] = <span class="dv">1</span>;
-    <span class="dt">unsigned</span> <span class="dt">int</span> s = <span class="dv">1</span>;
-    <span class="cf">for</span> (<span class="dt">int</span> k = <span class="dv">1</span>; k &lt;= K; ++k) {
-      seg[k].resize(N - s - s + <span class="dv">1</span>);
-      <span class="cf">for</span> (<span class="dt">int</span> x = <span class="dv">0</span>; x + s + s &lt;= N; ++x) {
-        seg[k][x] = <span class="bu">std::</span>max&lt;T&gt;(seg[k<span class="dv">-1</span>][x], seg[k<span class="dv">-1</span>][x + s]);
-      }
-      s &lt;&lt;= <span class="dv">1</span>;
-      sizes[k] = s;
-    }
-  }
-
-  T max(<span class="dt">int</span> i, <span class="dt">int</span> j) { <span class="co">// [ i .. j ]</span>
-    <span class="cf">if</span> (i &gt;= j) <span class="cf">return</span> seg[<span class="dv">0</span>][i];
-    <span class="at">const</span> <span class="dt">int</span> m = <span class="kw">static_cast</span>&lt;<span class="dt">int</span>&gt;(log2(j - i + <span class="dv">1</span>));
-    <span class="cf">return</span> <span class="bu">std::</span>max&lt;T&gt;(seg[m][i], seg[m][j - sizes[m] + <span class="dv">1</span>]);
-  }
-};</code></pre></div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
@@ -204,19 +81,19 @@
 <ul>
 <li><a href="algebra.group.html">群</a></li>
 <li><a href="algebra.ring.html">環</a></li>
+<li><a href="algebra.ratio.html">有理数</a></li>
+<li><a href="algebra.complex.html">虚数</a></li>
+<li><a href="algebra.matrix.html">行列</a></li>
 <li><a href="algebra.hyper.html">超数</a></li>
 <li><a href="algebra.total.html">全順序化</a></li>
-<li><a href="algebra.complex.html">虚数</a></li>
 <li><a href="algebra.modint.html">ModInt</a></li>
-<li><a href="algebra.matrix.html">行列</a></li>
 <li><a href="algebra.monoid.html">モノイド</a>
 <ul>
-<li><a href="algebra.monoid.rmq">RMQモノイド</a></li>
+<li><a href="algebra.monoid.minmax.html">Min/Max モノイド</a></li>
 </ul></li>
-<li><a href="algebra.ratio.html">有理数</a></li>
-<li><a href="algebra.act">作用</a>
+<li><a href="algebra.act.html">作用</a>
 <ul>
-<li><a href="algebra.act.rmq">RMQ作用</a></li>
+<li><a href="algebra.act.assign.html">代入作用</a></li>
 </ul></li>
 </ul>
 </details>
@@ -225,9 +102,9 @@
 <summary class=menu>グラフ</summary>
 <h2 id="最短路">最短路</h2>
 <ul>
-<li><a href="graph.dij.html">Dijkstra</a></li>
-<li><a href="graph.wall.html">Warshall-Floyd</a></li>
-<li><a href="graph.bellmanford.html">Bellman-Ford</a></li>
+<li><a href="graph.dij.html">ダイクストラ法</a></li>
+<li><a href="graph.wall.html">ワーシャル-フロイド法</a></li>
+<li><a href="graph.bellmanford.html">ベルマンフォード法</a></li>
 </ul>
 <h2 id="無向グラフ">無向グラフ</h2>
 <ul>
@@ -236,8 +113,8 @@
 </ul>
 <h2 id="最小全域木">最小全域木</h2>
 <ul>
-<li><a href="graph.prim.html">Prim</a></li>
-<li><a href="graph.kruskal.html">Kruskal</a></li>
+<li><a href="graph.prim.html">プリム法</a></li>
+<li><a href="graph.kruskal.html">クラスカル法</a></li>
 </ul>
 <h2 id="木">木</h2>
 <ul>
@@ -245,31 +122,37 @@
 <li><a href="graph.tree.diameter.html">直径</a></li>
 <li><a href="graph.tree.lca.html">最小共通祖先</a></li>
 </ul>
-<h2 id="最大流量"><a href="graph.maxflow.html">最大流量</a></h2>
-<h2 id="トポロジカルソート"><a href="graph.topological.html">トポロジカルソート</a></h2>
-<h2 id="強連結成分分解"><a href="graph.scc.html">強連結成分分解</a></h2>
+<h2 id="有向グラフ">有向グラフ</h2>
+<ul>
+<li><a href="graph.maxflow.html">最大流量</a></li>
+<li><a href="graph.topological.html">トポロジカルソート</a></li>
+<li><a href="graph.scc.html">強連結成分分解</a></li>
+</ul>
 </details>
 
 <details class=menu open>
 <summary class=menu>数列</summary>
 <ul>
-<li><a href="seq.lsi.html">最長増加部分列 (LSI)</a></li>
-<li><a href="seq.nth.html">std::nth_element</a></li>
-<li><a href="seq.median.html">中央値</a></li>
+<li><a href="seq.lis.html">最長増加部分列</a></li>
+<li><a href="seq.median.html">中央値ヒープ</a></li>
 </ul>
 <h2 id="累積処理">累積処理</h2>
 <ul>
-<li><a href="seq.cumsum.html">一次元累積和</a></li>
+<li><a href="seq.cumsum1d.html">一次元累積和</a></li>
 <li><a href="seq.cumsum2d.html">二次元累積和</a></li>
 </ul>
 <h2 id="区間木">区間木</h2>
 <ul>
 <li><a href="seq.bit.html">BIT</a></li>
+<li><a href="seq.segment_tree.html">セグメントツリー</a>
+<ul>
 <li><a href="seq.rmq.html">RMQ</a></li>
+</ul></li>
+<li><a href="seq.lazy_segment_tree.html">遅延セグメントツリー</a>
+<ul>
+<li><a href="seq.ranged_rmq.html">区間更新 RMQ</a></li>
+</ul></li>
 <li><a href="seq.starry.html">Starry Sky Tree</a></li>
-<li><a href="seq.segment_tree">セグメントツリー</a></li>
-<li><a href="seq.lazy_segment_tree">遅延セグメントツリー</a></li>
-<li><a href="seq.search.html">SeqSearch</a></li>
 </ul>
 </details>
 
@@ -277,26 +160,25 @@
 <summary class=menu>二次元ユークリッド幾何</summary>
 <h2 id="図形の定義">図形の定義</h2>
 <ul>
-<li><a href="geo.2d.point">点</a></li>
-<li><a href="geo.2d.line">直線, 線分</a></li>
-<li><a href="geo.2d.polygon">多角形</a></li>
-<li><a href="geo.2d.circle">円</a></li>
+<li><a href="geo.2d.point.html">点</a></li>
+<li><a href="geo.2d.line.html">直線, 線分</a></li>
+<li><a href="geo.2d.polygon.html">多角形</a></li>
+<li><a href="geo.2d.circle.html">円</a></li>
 </ul>
 <h2 id="線分">線分</h2>
 <ul>
-<li><a href="geo.2d.ccw">線分と点の接触関係</a></li>
+<li><a href="geo.2d.ccw.html">線分と点の接触判定</a></li>
 <li><a href="geo.2d.intersection.html">線分と線分の交差判定</a></li>
 </ul>
 <h2 id="多角形">多角形</h2>
 <ul>
 <li><a href="geo.2d.circum.html">三角形の外接円</a></li>
 <li><a href="geo.2d.isin_poly.html">多角形の内外判定</a></li>
-<li><a href="http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=0079">多角形の面積</a></li>
 <li><a href="geo.2d.convex_hull.html">凸包</a></li>
 </ul>
 <h2 id="円">円</h2>
 <ul>
-<li><a href="geo.2d.circle.intersection.html">円と円の接触関係</a></li>
+<li><a href="geo.2d.circle.intersection.html">円と円との接触関係</a></li>
 </ul>
 <h2 id="最近点対">最近点対</h2>
 <ul>
@@ -311,46 +193,44 @@
 <details class=menu>
 <summary class=menu>集合</summary>
 <ul>
-<li><a href="set.union_find.html">Union-Find</a></li>
+<li><a href="set.union_find.html">UnionFind</a></li>
 </ul>
 </details>
 
 <details class=menu>
-<summary class=menu>動的計画法</summary>
+<summary class=menu>アルゴリズム</summary>
+<h2 id="動的計画法">動的計画法</h2>
 <ul>
 <li><a href="dp.knapsack.01.html">01-ナップザック</a></li>
 </ul>
-</details>
-
-<details class=menu>
-<summary class=menu>二分探索</summary>
+<h2 id="二分探索">二分探索</h2>
 <ul>
 <li><a href="bin.search.html">二分探索</a></li>
 </ul>
+<h2 id="フーリエ変換">フーリエ変換</h2>
+<ul>
+<li><a href="fft.convolution.html">畳み込み</a></li>
+</ul>
 </details>
 
 <details class=menu>
-<summary class=menu>整数</summary>
+<summary class=menu>自然数/整数</summary>
+<h2 id="関数">関数</h2>
 <ul>
-<li><a href="int_max_and_min.html">整数の最大値、最小値 (gcc)</a></li>
-<li><a href="int.gcd.html">GCD</a></li>
-<li><a href="int.exgcd.html">拡張GCD</a></li>
-<li><a href="misc.pascal_triangle.html">パスカルの三角形</a></li>
-<li><a href="int.binom.pascal.html">二項係数 (パスカルの三角形)</a></li>
-<li><a href="int.binom.html">二項係数 (ModInt)</a></li>
-<li><a href="int.dislog.html">離散対数</a></li>
-<li><a href="int.derangement.html">完全順列</a></li>
-<li><a href="int.euler_phi.html">オイラーの関数</a></li>
-</ul>
-<h2 id="モジュラ演算">モジュラ演算</h2>
-<ul>
-<li><a href="int.mod.inv.html">逆数</a></li>
-<li><a href="int.mod.pow.html">べき乗</a></li>
+<li><a href="num.gcd.html">GCD</a></li>
+<li><a href="num.exgcd.html">拡張GCD</a></li>
+<li><a href="num.binom.pascal.html">二項係数 (パスカルの三角形)</a></li>
+<li><a href="num.binom.modint.html">二項係数 (ModInt)</a></li>
+<li><a href="num.dislog.html">離散対数</a></li>
+<li><a href="num.derangement.html">完全順列</a></li>
+<li><a href="num.euler_phi.html">オイラーの関数</a></li>
+<li><a href="num.moebius.html">メビウス関数</a></li>
+<li><a href="num.n_vs_nn.html">自然数の対 ↔ 自然数 の変換</a></li>
+<li><a href="num.mex.html">最小自由数 (最小除外数)</a></li>
 </ul>
 <h2 id="素数">素数</h2>
 <ul>
 <li><a href="prime.sieve.html">エラトステネスの篩</a></li>
-<li><a href="prime.predicate.html">素朴な判定</a></li>
 <li><a href="prime.MillerRabin.html">ミラー・ラビン素数判定</a></li>
 <li><a href="prime.fermat.little.html">フェルマーの小定理</a></li>
 <li><a href="prime.factorize.html">素因数分解</a></li>
@@ -359,32 +239,16 @@
 <ul>
 <li><a href="bigint.html">ビッグエンディアンベクタ</a></li>
 </ul>
-<h2 id="自然数">自然数</h2>
+<h2 id="組み合わせのイテレーター">組み合わせのイテレーター</h2>
 <ul>
-<li><a href="nat.moebius.html">メビウス関数</a></li>
-<li><a href="nat.n_vs_nn.html">自然数の対 ↔ 自然数 の変換</a></li>
-<li><a href="nat.mex.html">最小自由数 (最小除外数)</a></li>
+<li><a href="num.iter.perm.html">階乗 - <span class="math inline"><em>n</em>!</span></a></li>
+<li><a href="num.iter.powperm.html">冪乗 - <span class="math inline"><em>n</em><sup><em>m</em></sup></span></a></li>
+<li><a href="num.iter.comb.html">二項係数 - <span class="math inline"><sub><em>n</em></sub><em>C</em><sub><em>m</em></sub></span></a></li>
 </ul>
-<h2 id="組み合わせ">組み合わせ</h2>
-<ul>
-<li><a href="nat.perm.html">permutation - <span class="math inline"><em>n</em>!</span></a></li>
-<li><a href="nat.powperm.html">permutation - <span class="math inline"><em>n</em><sup><em>m</em></sup></span></a></li>
-<li><a href="nat.comb.html">combination - <span class="math inline"><sub><em>n</em></sub><em>C</em><sub><em>m</em></sub></span></a></li>
-</ul>
-</details>
-
-<details class=menu>
-<summary class=menu>乱数</summary>
+<h2 id="乱数">乱数</h2>
 <ul>
 <li><a href="rand.lcg.html">線形合同法</a></li>
-<li><a href="rand.xorshift.html">xor-shift</a></li>
-</ul>
-</details>
-
-<details class=menu>
-<summary class=menu>フーリエ変換</summary>
-<ul>
-<li><a href="fft.convolution.html">畳み込み</a></li>
+<li><a href="rand.xorshift.html">Xor-Shift 法</a></li>
 </ul>
 </details>
 
@@ -427,33 +291,20 @@
 <details class=menu>
 <summary class=menu>collections</summary>
 <ul>
-<li><a href="collections.defaultmap.html">defaultmap</a></li>
+<li><a href="collections.defaultdict.html">defaultmap</a></li>
 <li><a href="collections.list_comprehension_macro.html">リスト内包表記マクロ</a></li>
-</ul>
-</details>
-
-<details class=menu>
-<summary class=menu>STL</summary>
-<h2 id="コンテナ">コンテナ</h2>
-<ul>
-<li><a href="container.bound.html">std::upper/lower_bound</a></li>
-<li><a href="container.rotate.html">std::rotate</a></li>
-<li><a href="container.unique.html">std::unique</a></li>
-<li><a href="container.priority_queue.html">std::priority_queue</a></li>
 </ul>
 </details>
 
 <details class=menu>
 <summary class=menu>misc</summary>
 <ul>
-<li><a href="bit.count.html">bit count</a></li>
 <li><a href="misc.kmeans.html">k-means</a></li>
 <li><a href="15puzzle.html">一般化15パズル</a></li>
 <li><a href="misc.sort-n.html">numeric sort</a></li>
 <li><a href="misc.3sat.html">乱択3-SAT</a></li>
 <li><a href="misc.stirling.html">スターリングの近似式</a></li>
 <li><a href="dice.html">サイコロ</a></li>
-<li><a href="misc.pi.html">円周率</a></li>
 <li><a href="misc.neighbor.html">近傍</a></li>
 </ul>
 </details>

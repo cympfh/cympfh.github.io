@@ -1,5 +1,5 @@
 # 代数 - 超数
 
-int や float に $\{ \pm \infty \}$ を付加する.
+全順序付き群（整数など）に $\pm \infty$ を付加した数.
 
-@[rust](algebra.hyper.rs)
+@[rust](procon-rs/src/algebra/hyper.rs)

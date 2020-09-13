@@ -1,6 +1,6 @@
-# 二分探索
+# アルゴリズム - 整数上の二分探索
 
-## 問題概要
+## 概要
 
 整数（のようなデータ）について Yes/No を返す述語 $P$ があるとする:
 $$P \colon \mathbb Z \to \mathrm{Bool}.$$
@@ -30,13 +30,9 @@ $$P \colon \mathbb Z \to \mathrm{Bool}.$$
 逆に言えばこの二つさえあれば整数そのものに限らなくて良い.
 例えば十分小さい値 `eps` を定めて `close(l, r) = (r - l < eps)` とすることで浮動小数点数であっても, 精度 `eps` で `m` が求まる.
 
-## コード
-
-@[rust](bin.search.rs)
-
-### 応用
+## 応用
 
 整数として配列のインデックス (`usize`) を選び, `prop` を上手く作ることで,
 昇順ソート済みの配列 `xs` 中に `x` がいくつあるか, `x` 以上/以下 がいくつあるか, などを対数時間で計算できる.
 
-@[rust](bin.count.rs)
+@[rust](procon-rs/src/algorithm/binary_search.rs)

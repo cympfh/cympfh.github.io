@@ -1,5 +1,10 @@
-# graph.tree.lca - 最小共通祖先
+# グラフ ー 木 - 最小共通祖先 (LCA)
 
+## 概要
 根付き木についてダブリングによってLCAを求める.
 
-@[rust](graph.tree.lca.rs)
+## 入出力
+親ノードから子ノードの方向に辺を生やした有向グラフとして木を表現し,
+これを隣接リストとして与える.
+
+@[rust](procon-rs/src/graph/tree/lca.rs)

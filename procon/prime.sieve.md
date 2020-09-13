@@ -1,7 +1,8 @@
-# prime.sieve
+# 素数 - エラトステネスの篩
 
-## [Rust](prime.sieve.rs)
-@[rust](prime.sieve.rs)
+## 概要
 
-## [C++](prime.sieve.cc)
-@[cpp](prime.sieve.cc)
+与えられた自然数 $N$ について, $N$ 以下の値について篩を行う.
+計算量は $O(N \log N)$ で, 実際はこれより小さいらしい.
+
+@[rust](procon-rs/src/num/prime/sieve.rs)

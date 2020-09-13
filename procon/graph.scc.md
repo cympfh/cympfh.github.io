@@ -1,16 +1,12 @@
-# graph.scc
+# 有向グラフ - 強連結成分分解 (SCC)
 
-有向グラフの強連結成分分解を行い、DAG を作る.
-大まかにすることは、
-元のグラフの頂点番号と、生成されたDAGの頂点番号を対応付けるベクトル `cmp` を見つけること.
-DAG は元のグラフの隣接関係と `cmp` を見て構成できる.
+## 概要
+有向グラフの強連結成分分解を行い, DAG を作る.
 
-## [graph.scc.rs](graph.scc.rs)
-Rust 実装. グラフを隣接リストとして表現し、有向グラフを与えると `cmp` と DAG の組みを返す.
-@[rust](graph.scc.rs)
+## 入出力
+出力は2つ組 `(cmp, dag)`.
+`cmp` は元のグラフから新たに作ったDAGへの頂点の対応付けで,
+元のグラフの頂点 `i` を `cmp[i]` に写す.
+`dag` はDAGの隣接リスト表現.
 
-## [graph.scc.cc](graph.scc.cc)
-C++ 実装. class として定義してあり、コンストラクタで `cmp` のみ構成する.
-`.dag()` メソッドで DAG を返す.
-グラフは全て隣接リスト.
-@[cpp](graph.scc.cc)
+@[rust](procon-rs/src/graph/directed/scc.rs)

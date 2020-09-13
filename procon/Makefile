@@ -5,7 +5,7 @@ all: index pages
 index: index.html
 
 index.html: menu.html
-	bash resources/template.sh > $@
+	bash resources/template.sh index.md > $@
 
 menu.html: README.md
 	bash resources/menu.sh < $^ >$@

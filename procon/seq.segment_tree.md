@@ -1,6 +1,5 @@
-# セグメントツリー
+# 数列 - セグメントツリー
 
-[モノイド](algebra.monoid.html) の上に定義したセグメントツリー.
-これと [RMQモノイド](algebra.monoid.rmq) を組み合わせれば RMQ がすぐ使える.
+[モノイド](algebra.monoid) 上に定義したセグメントツリー.
 
-@[rust](seq.segment_tree.rs)
+@[rust](procon-rs/src/sequence/tree/segment_tree.rs)

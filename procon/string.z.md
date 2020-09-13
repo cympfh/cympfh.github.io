@@ -23,4 +23,4 @@ $T@S$
 という文字列を Z アルゴリズムに渡して配列 $Z$ を構成し,
 その $S$ に当たる後半に $\mathrm{len}(T)$ が登場する場所を見ればよい.
 
-@[rust](string.z.rs)
+@[rust](procon-rs/src/string/z.rs)

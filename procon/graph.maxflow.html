@@ -20,50 +20,64 @@
         <section class="main-content columns is-fullheight">
 
           <div class="article column is-8 is-10-mobile">
-            <h1 id="graph.maxflow">graph.maxflow</h1>
-<h2 id="graph.maxflow.rs"><a href="graph.maxflow.rs" class="uri">graph.maxflow.rs</a></h2>
-<p>Dinic 法の実装</p>
+            <h1 id="有向グラフ---最大流量">有向グラフ - 最大流量</h1>
+<h2 id="概要">概要</h2>
+<p>Dinic 法を実装する</p>
+<h2 id="入出力">入出力</h2>
+<p>重み付きの隣接リストを入力とする. すなわち, 頂点 <span class="math inline">\(u\)</span> から <span class="math inline">\(v\)</span> へ容量 <span class="math inline">\(c\)</span> の辺があるとき, <code>neigh[u] = [(v, w)]</code> とするようなリスト <code>neigh</code>.</p>
+<h2 id="関連問題">関連問題</h2>
 <ul>
-<li>入力;
-<ul>
-<li>重み付き隣接リスト <code>g</code>
-<ul>
-<li>辺 <span class="math inline">\(u \longrightarrow^w v\)</span> を <code>g[u] = [(v, w)]</code> とする</li>
-</ul></li>
-<li>始点 <code>s</code></li>
-<li>終点 <code>t</code></li>
-</ul></li>
-<li>出力;
-<ul>
-<li><code>Dinic::flow(g, s, t)</code></li>
-</ul></li>
+<li><a href="https://beta.atcoder.jp/contests/arc092/tasks/arc092_a">ABC091/C - 2D Plane 2N Points</a></li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Graph - MaxFlow - Dinic Algorithm</span>
-<span class="kw">mod</span> dinic <span class="op">{</span>
-    <span class="kw">use</span> std::collections::VecDeque;
-    <span class="kw">use</span> std::cmp::min;
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Graph - Directed - Dinic&#39;s MaxFlow</span>
+<span class="kw">use</span> <span class="kw">crate</span>::algebra::group::*;
+<span class="kw">use</span> <span class="kw">crate</span>::algebra::hyper::*;
 
-    <span class="kw">pub</span> <span class="kw">type</span> Weight = <span class="dt">i32</span>;
-    <span class="kw">pub</span> <span class="kw">type</span> WeightedGraph = <span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;(<span class="dt">usize</span>, Weight)&gt;&gt;; <span class="co">// [u][] = (v, w)</span>
-    <span class="kw">pub</span> <span class="kw">type</span> Edge = (<span class="dt">usize</span>, <span class="dt">usize</span>, Weight);
-
-    <span class="kw">pub</span> <span class="kw">fn</span> new(n: <span class="dt">usize</span>, es: &amp;<span class="dt">Vec</span>&lt;Edge&gt;) -&gt; WeightedGraph <span class="op">{</span>
-        <span class="kw">let</span> <span class="kw">mut</span> g: WeightedGraph = <span class="pp">vec!</span><span class="op">[</span><span class="pp">vec!</span><span class="op">[]</span>; n<span class="op">]</span>;
-        <span class="kw">for</span> &amp;(u, v, w) <span class="kw">in</span> es.iter() <span class="op">{</span>
-            g<span class="op">[</span>u<span class="op">]</span>.push((v, w));
-            g<span class="op">[</span>v<span class="op">]</span>.push((u, <span class="dv">0</span>));
+<span class="kw">pub</span> <span class="kw">struct</span> Dinic;
+<span class="kw">impl</span> Dinic <span class="op">{</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> flow&lt;X: <span class="bu">Copy</span> + <span class="bu">Eq</span> + <span class="bu">Ord</span> + Group&gt;(
+        s: <span class="dt">usize</span>,
+        t: <span class="dt">usize</span>,
+        neigh: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;(<span class="dt">usize</span>, X)&gt;&gt;,
+    ) -&gt; Hyper&lt;X&gt; <span class="op">{</span>
+        <span class="kw">use</span> Hyper::*;
+        <span class="kw">let</span> n = neigh.len();
+        <span class="kw">let</span> <span class="kw">mut</span> cap = <span class="pp">vec!</span><span class="op">[</span><span class="pp">vec!</span><span class="op">[</span>Real(X::zero()); n<span class="op">]</span>; n<span class="op">]</span>;
+        <span class="kw">let</span> <span class="kw">mut</span> flw = <span class="pp">vec!</span><span class="op">[</span><span class="pp">vec!</span><span class="op">[</span>Real(X::zero()); n<span class="op">]</span>; n<span class="op">]</span>;
+        <span class="kw">for</span> u <span class="kw">in</span> <span class="dv">0.</span>.n <span class="op">{</span>
+            <span class="kw">for</span> &amp;(v, cost) <span class="kw">in</span> neigh<span class="op">[</span>u<span class="op">]</span>.iter() <span class="op">{</span>
+                cap<span class="op">[</span>u<span class="op">][</span>v<span class="op">]</span> = Real(cost);
+            <span class="op">}</span>
         <span class="op">}</span>
-        g
+        <span class="kw">let</span> <span class="kw">mut</span> sum = Real(X::zero());
+        <span class="kw">loop</span> <span class="op">{</span>
+            <span class="kw">let</span> level = Dinic::levelize(&amp;neigh, s, t, &amp;cap, &amp;flw);
+            <span class="kw">if</span> level<span class="op">[</span>t<span class="op">]</span> == -<span class="dv">1</span> <span class="op">{</span>
+                <span class="kw">break</span>;
+            <span class="op">}</span>
+            <span class="kw">let</span> <span class="kw">mut</span> used = <span class="pp">vec!</span><span class="op">[</span><span class="cn">false</span>; n<span class="op">]</span>;
+            sum = sum + Dinic::augment(Inf, &amp;level, &amp;<span class="kw">mut</span> used, &amp;neigh, s, t, &amp;cap, &amp;<span class="kw">mut</span> flw);
+        <span class="op">}</span>
+        sum
     <span class="op">}</span>
-
-    <span class="kw">fn</span> levelize(g: &amp;WeightedGraph, s: <span class="dt">usize</span>, t: <span class="dt">usize</span>, cap: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;Weight&gt;&gt;, flw: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;Weight&gt;&gt;) -&gt; <span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt; <span class="op">{</span>
-        <span class="kw">let</span> n = g.len();
+    <span class="kw">fn</span> levelize&lt;X: <span class="bu">Copy</span> + <span class="bu">Eq</span> + Group&gt;(
+        neigh: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;(<span class="dt">usize</span>, X)&gt;&gt;,
+        s: <span class="dt">usize</span>,
+        t: <span class="dt">usize</span>,
+        cap: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;Hyper&lt;X&gt;&gt;&gt;,
+        flw: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;Hyper&lt;X&gt;&gt;&gt;,
+    ) -&gt; <span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt; <span class="op">{</span>
+        <span class="kw">use</span> Hyper::*;
+        <span class="kw">let</span> n = neigh.len();
         <span class="kw">let</span> <span class="kw">mut</span> level = <span class="pp">vec!</span><span class="op">[</span>-<span class="dv">1</span>; n<span class="op">]</span>;
-        <span class="kw">let</span> <span class="kw">mut</span> q = VecDeque::new(); q.push_back(s);
+        <span class="kw">let</span> <span class="kw">mut</span> q = std::collections::VecDeque::new();
+        q.push_back(s);
         <span class="kw">while</span> <span class="kw">let</span> <span class="cn">Some</span>(u) = q.pop_front() <span class="op">{</span>
-            <span class="kw">if</span> u == t <span class="op">{</span> <span class="kw">break</span> <span class="op">}</span>
-            <span class="kw">for</span> &amp;(v, _) <span class="kw">in</span> g<span class="op">[</span>u<span class="op">]</span>.iter() <span class="op">{</span>
-                <span class="kw">if</span> level<span class="op">[</span>v<span class="op">]</span> == -<span class="dv">1</span> &amp;&amp; cap<span class="op">[</span>u<span class="op">][</span>v<span class="op">]</span> - flw<span class="op">[</span>u<span class="op">][</span>v<span class="op">]</span> != <span class="dv">0</span> <span class="op">{</span>
+            <span class="kw">if</span> u == t <span class="op">{</span>
+                <span class="kw">break</span>;
+            <span class="op">}</span>
+            <span class="kw">for</span> &amp;(v, _) <span class="kw">in</span> neigh<span class="op">[</span>u<span class="op">]</span>.iter() <span class="op">{</span>
+                <span class="kw">if</span> level<span class="op">[</span>v<span class="op">]</span> == -<span class="dv">1</span> &amp;&amp; cap<span class="op">[</span>u<span class="op">][</span>v<span class="op">]</span> - flw<span class="op">[</span>u<span class="op">][</span>v<span class="op">]</span> != Real(X::zero()) <span class="op">{</span>
                     level<span class="op">[</span>v<span class="op">]</span> = level<span class="op">[</span>u<span class="op">]</span> + <span class="dv">1</span>;
                     q.push_back(v);
                 <span class="op">}</span>
@@ -71,233 +85,92 @@
         <span class="op">}</span>
         level
     <span class="op">}</span>
-
-    <span class="kw">fn</span> augment(limit: Weight,
-               level: &amp;<span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt;, <span class="kw">mut</span> used: &amp;<span class="kw">mut</span> <span class="dt">Vec</span>&lt;<span class="dt">bool</span>&gt;,
-               g: &amp;WeightedGraph, u: <span class="dt">usize</span>, t: <span class="dt">usize</span>,
-               cap: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;Weight&gt;&gt;, <span class="kw">mut</span> flw: &amp;<span class="kw">mut</span> <span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;Weight&gt;&gt;) -&gt; Weight <span class="op">{</span>
+    <span class="kw">fn</span> augment&lt;X: <span class="bu">Copy</span> + <span class="bu">Eq</span> + <span class="bu">Ord</span> + Group&gt;(
+        limit: Hyper&lt;X&gt;,
+        level: &amp;<span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt;,
+        <span class="kw">mut</span> used: &amp;<span class="kw">mut</span> <span class="dt">Vec</span>&lt;<span class="dt">bool</span>&gt;,
+        neigh: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;(<span class="dt">usize</span>, X)&gt;&gt;,
+        u: <span class="dt">usize</span>,
+        t: <span class="dt">usize</span>,
+        cap: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;Hyper&lt;X&gt;&gt;&gt;,
+        <span class="kw">mut</span> flw: &amp;<span class="kw">mut</span> <span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;Hyper&lt;X&gt;&gt;&gt;,
+    ) -&gt; Hyper&lt;X&gt; <span class="op">{</span>
+        <span class="kw">use</span> Hyper::*;
         <span class="kw">if</span> u == t <span class="op">{</span>
             limit
-        <span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> used<span class="op">[</span>u<span class="op">]</span> || limit == <span class="dv">0</span> <span class="op">{</span>
-            <span class="dv">0</span>
+        <span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> used<span class="op">[</span>u<span class="op">]</span> || limit == Real(X::zero()) <span class="op">{</span>
+            Real(X::zero())
         <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
             used<span class="op">[</span>u<span class="op">]</span> = <span class="cn">true</span>;
-            <span class="kw">for</span> &amp;(v, _) <span class="kw">in</span> g<span class="op">[</span>u<span class="op">]</span>.iter() <span class="op">{</span>
+            <span class="kw">for</span> &amp;(v, _) <span class="kw">in</span> neigh<span class="op">[</span>u<span class="op">]</span>.iter() <span class="op">{</span>
                 <span class="kw">if</span> level<span class="op">[</span>v<span class="op">]</span> &gt; level<span class="op">[</span>u<span class="op">]</span> <span class="op">{</span>
-                    <span class="kw">let</span> limit2 = min(limit, cap<span class="op">[</span>u<span class="op">][</span>v<span class="op">]</span> - flw<span class="op">[</span>u<span class="op">][</span>v<span class="op">]</span>);
-                    <span class="kw">let</span> f = augment(limit2, &amp;level, &amp;<span class="kw">mut</span> used, &amp;g, v, t, &amp;cap, &amp;<span class="kw">mut</span> flw);
-                    <span class="kw">if</span> f &gt; <span class="dv">0</span> <span class="op">{</span>
-                        flw<span class="op">[</span>u<span class="op">][</span>v<span class="op">]</span> += f; flw<span class="op">[</span>v<span class="op">][</span>u<span class="op">]</span> -= f;
+                    <span class="kw">let</span> limit2 = std::cmp::min(limit, cap<span class="op">[</span>u<span class="op">][</span>v<span class="op">]</span> - flw<span class="op">[</span>u<span class="op">][</span>v<span class="op">]</span>);
+                    <span class="kw">let</span> f = Dinic::augment(limit2, &amp;level, &amp;<span class="kw">mut</span> used, &amp;neigh, v, t, &amp;cap, &amp;<span class="kw">mut</span> flw);
+                    <span class="kw">if</span> f &gt; Real(X::zero()) <span class="op">{</span>
+                        flw<span class="op">[</span>u<span class="op">][</span>v<span class="op">]</span> = flw<span class="op">[</span>u<span class="op">][</span>v<span class="op">]</span> + f;
+                        flw<span class="op">[</span>v<span class="op">][</span>u<span class="op">]</span> = flw<span class="op">[</span>v<span class="op">][</span>u<span class="op">]</span> - f;
                         used<span class="op">[</span>u<span class="op">]</span> = <span class="cn">false</span>;
                         <span class="kw">return</span> f;
                     <span class="op">}</span>
                 <span class="op">}</span>
             <span class="op">}</span>
-            <span class="dv">0</span>
+            Real(X::zero())
         <span class="op">}</span>
-    <span class="op">}</span>
-
-    <span class="kw">pub</span> <span class="kw">fn</span> flow(g: &amp;WeightedGraph, s: <span class="dt">usize</span>, t: <span class="dt">usize</span>) -&gt; Weight <span class="op">{</span>
-
-        <span class="kw">let</span> n = g.len();
-
-        <span class="kw">let</span> <span class="kw">mut</span> cap = <span class="pp">vec!</span><span class="op">[</span><span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>; n<span class="op">]</span>; n<span class="op">]</span>;
-        <span class="kw">let</span> <span class="kw">mut</span> flw = <span class="pp">vec!</span><span class="op">[</span><span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>; n<span class="op">]</span>; n<span class="op">]</span>;
-        <span class="kw">for</span> u <span class="kw">in</span> <span class="dv">0.</span>.n <span class="op">{</span> <span class="kw">for</span> &amp;(v, w) <span class="kw">in</span> g<span class="op">[</span>u<span class="op">]</span>.iter() <span class="op">{</span> cap<span class="op">[</span>u<span class="op">][</span>v<span class="op">]</span> = w; <span class="op">}</span> <span class="op">}</span>
-
-        <span class="kw">let</span> inf = Weight::max_value() / <span class="dv">8</span>;
-        <span class="kw">let</span> <span class="kw">mut</span> sum = <span class="dv">0</span>;
-        <span class="kw">loop</span> <span class="op">{</span>
-            <span class="kw">let</span> level = levelize(&amp;g, s, t, &amp;cap, &amp;flw);
-            <span class="kw">if</span> level<span class="op">[</span>t<span class="op">]</span> == -<span class="dv">1</span> <span class="op">{</span> <span class="kw">break</span> <span class="op">}</span>
-            <span class="kw">let</span> <span class="kw">mut</span> used = <span class="pp">vec!</span><span class="op">[</span><span class="cn">false</span>; n<span class="op">]</span>;
-            sum += augment(inf, &amp;level, &amp;<span class="kw">mut</span> used, &amp;g, s, t, &amp;cap, &amp;<span class="kw">mut</span> flw);
-        <span class="op">}</span>
-        sum
     <span class="op">}</span>
 <span class="op">}</span>
 
-<span class="kw">fn</span> main() <span class="op">{</span>
-    <span class="kw">let</span> <span class="kw">mut</span> sc = Scanner::new();
-    <span class="kw">let</span> n: <span class="dt">usize</span> = sc.cin();
-    <span class="kw">let</span> m: <span class="dt">usize</span> = sc.cin();
+<span class="at">#[</span>cfg<span class="at">(</span>test<span class="at">)]</span>
+<span class="kw">mod</span> test_dinic <span class="op">{</span>
+    <span class="kw">use</span> <span class="kw">crate</span>::graph::directed::dinic::*;
 
-    <span class="kw">let</span> <span class="kw">mut</span> edges = <span class="pp">vec!</span><span class="op">[]</span>;
-    <span class="kw">for</span> _ <span class="kw">in</span> <span class="dv">0.</span>.m <span class="op">{</span>
-        <span class="kw">let</span> u = sc.cin::&lt;<span class="dt">usize</span>&gt;() - <span class="dv">1</span>;
-        <span class="kw">let</span> v = sc.cin::&lt;<span class="dt">usize</span>&gt;() - <span class="dv">1</span>;
-        <span class="kw">let</span> w: dinic::Weight = sc.cin();
-        edges.push((u, v, w));
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> test_a() <span class="op">{</span>
+        <span class="kw">let</span> neigh = <span class="pp">vec!</span><span class="op">[</span>
+            <span class="pp">vec!</span><span class="op">[</span>(<span class="dv">1</span>, <span class="dv">1</span>), (<span class="dv">3</span>, <span class="dv">1</span>), (<span class="dv">5</span>, <span class="dv">1</span>)<span class="op">]</span>,
+            <span class="pp">vec!</span><span class="op">[</span>(<span class="dv">2</span>, <span class="dv">1</span>), (<span class="dv">4</span>, <span class="dv">1</span>)<span class="op">]</span>,
+            <span class="pp">vec!</span><span class="op">[</span>(<span class="dv">6</span>, <span class="dv">1</span>)<span class="op">]</span>,
+            <span class="pp">vec!</span><span class="op">[</span>(<span class="dv">2</span>, <span class="dv">1</span>)<span class="op">]</span>,
+            <span class="pp">vec!</span><span class="op">[</span>(<span class="dv">6</span>, <span class="dv">1</span>)<span class="op">]</span>,
+            <span class="pp">vec!</span><span class="op">[</span>(<span class="dv">2</span>, <span class="dv">1</span>), (<span class="dv">4</span>, <span class="dv">1</span>)<span class="op">]</span>,
+            <span class="pp">vec!</span><span class="op">[]</span>,
+        <span class="op">]</span>;
+        <span class="pp">assert_eq!</span>(Dinic::flow(<span class="dv">0</span>, <span class="dv">6</span>, &amp;neigh).unwrap(), <span class="dv">2</span>);
     <span class="op">}</span>
 
-    <span class="kw">let</span> g = dinic::new(n, &amp;edges);
-    <span class="kw">let</span> max_flow = dinic::flow(&amp;g, <span class="dv">0</span>, n - <span class="dv">1</span>);
-    <span class="pp">put!</span>(max_flow);
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> test_b() <span class="op">{</span>
+        <span class="kw">let</span> neigh = <span class="pp">vec!</span><span class="op">[</span>
+            <span class="pp">vec!</span><span class="op">[</span>(<span class="dv">1</span>, <span class="dv">3</span>), (<span class="dv">2</span>, <span class="dv">3</span>)<span class="op">]</span>,
+            <span class="pp">vec!</span><span class="op">[</span>(<span class="dv">2</span>, <span class="dv">2</span>), (<span class="dv">3</span>, <span class="dv">3</span>)<span class="op">]</span>,
+            <span class="pp">vec!</span><span class="op">[</span>(<span class="dv">4</span>, <span class="dv">2</span>)<span class="op">]</span>,
+            <span class="pp">vec!</span><span class="op">[</span>(<span class="dv">4</span>, <span class="dv">3</span>), (<span class="dv">5</span>, <span class="dv">2</span>)<span class="op">]</span>,
+            <span class="pp">vec!</span><span class="op">[</span>(<span class="dv">5</span>, <span class="dv">3</span>)<span class="op">]</span>,
+            <span class="pp">vec!</span><span class="op">[]</span>,
+        <span class="op">]</span>;
+        <span class="pp">assert_eq!</span>(Dinic::flow(<span class="dv">0</span>, <span class="dv">5</span>, &amp;neigh).unwrap(), <span class="dv">5</span>);
+    <span class="op">}</span>
 <span class="op">}</span></code></pre></div>
-<h2 id="graph.maxflow.cc"><a href="graph.maxflow.cc" class="uri">graph.maxflow.cc</a></h2>
-<p>Ford-Fulkerson 法の実装</p>
-<ul>
-<li>入力;
-<ul>
-<li>隣接リスト <code>d</code></li>
-<li>コストテーブル <code>c</code></li>
-<li>始点 <code>s</code></li>
-<li>終点 <code>t</code></li>
-</ul></li>
-<li>出力;
-<ul>
-<li><code>this.flow</code></li>
-</ul></li>
-</ul>
-<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="kw">struct</span> MaxFlow {
-  <span class="dt">int</span> n;
-  vvi d, c;
-  vector&lt;<span class="dt">int</span>&gt; level, iter;
-  <span class="dt">int</span> flow;
-
-  MaxFlow(vvi&amp; _d, vvi&amp; _c, <span class="dt">int</span> s, <span class="dt">int</span> t) {
-    d = _d; c = _c;
-    n = _d.size();
-    level.resize(n);
-    iter.resize(n);
-    <span class="dt">int</span> cur_flow = <span class="dv">0</span>;
-    loop {
-      bfs(s);
-      <span class="cf">if</span> (level[t] &lt; <span class="dv">0</span>) { flow = cur_flow; <span class="cf">return</span>; }
-      rep (i, n) iter[i] = <span class="dv">0</span>;
-      <span class="cf">for</span> (<span class="dt">int</span> f = <span class="dv">0</span>;;) {
-        f = dfs(s, t, inf);
-        <span class="cf">if</span> (f &lt;= <span class="dv">0</span>) <span class="cf">break</span>;
-        cur_flow += f;
-      }
-    }
-  }
-
-  <span class="dt">int</span> dfs(<span class="dt">int</span> v, <span class="dt">int</span> t, <span class="dt">int</span> f) {
-    <span class="cf">if</span> (v == t) <span class="cf">return</span> f;
-    <span class="cf">for</span> (<span class="dt">int</span> i = iter[v]; i &lt; d[v].size(); ++i) {
-      <span class="dt">int</span> u = d[v][i]; <span class="co">// v -&gt; u</span>
-      <span class="cf">if</span> (c[v][u] &gt; <span class="dv">0</span> <span class="kw">and</span> level[v] &lt; level[u]) {
-        <span class="dt">int</span> d = dfs(u, t, min(f, c[v][u]));
-        <span class="cf">if</span> (d &gt; <span class="dv">0</span>) {
-          c[v][u] -= d;
-          c[u][v] += d;
-          <span class="cf">return</span> d;
-        }
-      }
-    }
-    <span class="cf">return</span> <span class="dv">0</span>;
-  }
-
-  <span class="dt">void</span> bfs(<span class="dt">int</span> s) {
-    rep (i, n) level[i] = i == s ? <span class="dv">0</span> : <span class="dv">-1</span>;
-    queue&lt;<span class="dt">int</span>&gt; q; q.push(s);
-    <span class="cf">while</span> (<span class="kw">not</span> q.empty()) {
-      <span class="dt">int</span> u = q.front(); q.pop();
-      <span class="cf">for</span> (<span class="kw">auto</span>&amp;v: d[u]) { <span class="co">// u -&gt; v</span>
-        <span class="cf">if</span> (c[u][v] &gt; <span class="dv">0</span> <span class="kw">and</span> level[v] &lt; <span class="dv">0</span>) {
-          level[v] = level[u] + <span class="dv">1</span>;
-          q.push(v);
-        }
-      }
-    }
-  }
-};
-</code></pre></div>
-<h2 id="example">Example</h2>
-<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="dt">int</span> main() {
-  cin.tie(<span class="dv">0</span>);
-  ios::sync_with_stdio(<span class="dv">0</span>);
-  cout.setf(ios::fixed);
-  cout.precision(<span class="dv">10</span>);
-
-  stringstream input(
-<span class="st">&quot;  7&quot;</span>
-<span class="st">&quot;  0 6&quot;</span>
-<span class="st">&quot;  1 2&quot;</span>
-<span class="st">&quot;  1 4&quot;</span>
-<span class="st">&quot;  3 2&quot;</span>
-<span class="st">&quot;  5 2&quot;</span>
-<span class="st">&quot;  5 4&quot;</span>
-<span class="st">&quot;  0 1&quot;</span>
-<span class="st">&quot;  0 3&quot;</span>
-<span class="st">&quot;  0 5&quot;</span>
-<span class="st">&quot;  2 6&quot;</span>
-<span class="st">&quot;  4 6&quot;</span>);
-  <span class="dt">int</span> answer = <span class="dv">2</span>;
-
-  {
-    <span class="dt">int</span> n; input &gt;&gt; n;
-    <span class="dt">int</span> s, t; input &gt;&gt; s &gt;&gt; t;
-    vvi d(n, vi(n));
-    vvi c(n, vi(n, <span class="dv">0</span>));
-    loop {
-      <span class="dt">int</span> a, b; input &gt;&gt; a &gt;&gt; b;
-      <span class="cf">if</span> (<span class="kw">not</span> input) <span class="cf">break</span>;
-      d[a].push_back(b);
-      c[a][b] = <span class="dv">1</span>;
-    }
-    MaxFlow mf(d, c, s, t);
-    cout &lt;&lt; mf.flow &lt;&lt; endl;
-    assert(mf.flow == answer);
-  }
-
-  stringstream input2(
-<span class="st">&quot;  6&quot;</span>
-<span class="st">&quot;  0 5&quot;</span>
-<span class="st">&quot;  0 1 3&quot;</span>
-<span class="st">&quot;  0 2 3&quot;</span>
-<span class="st">&quot;  1 2 2&quot;</span>
-<span class="st">&quot;  1 3 3&quot;</span>
-<span class="st">&quot;  2 4 2&quot;</span>
-<span class="st">&quot;  3 4 4&quot;</span>
-<span class="st">&quot;  3 5 2&quot;</span>
-<span class="st">&quot;  4 5 3&quot;</span>);
-  <span class="dt">int</span> answer2 = <span class="dv">5</span>;
-  {
-    <span class="dt">int</span> n; input2 &gt;&gt; n;
-    <span class="dt">int</span> s, t; input2 &gt;&gt; s &gt;&gt; t;
-    vvi neighbor_list(n, vi(n));
-    vvi capacity_table(n, vi(n, <span class="dv">0</span>));
-    loop {
-      <span class="dt">int</span> a, b, c; input2 &gt;&gt; a &gt;&gt; b &gt;&gt; c;
-      <span class="cf">if</span> (<span class="kw">not</span> input2) <span class="cf">break</span>;
-      neighbor_list[a].push_back(b);
-      capacity_table[a][b] = c;
-    }
-    MaxFlow mf(neighbor_list, capacity_table, s, t);
-    cout &lt;&lt; mf.flow &lt;&lt; endl;
-    assert(mf.flow == answer2);
-  }
-      
-
-  <span class="cf">return</span> <span class="dv">0</span>;
-}</code></pre></div>
-<h2 id="関連問題">関連問題</h2>
-<ul>
-<li><a href="https://beta.atcoder.jp/contests/arc092/tasks/arc092_a">ABC091/ARC092; C - 2D Plane 2N Points</a></li>
-</ul>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
 <details class=menu>
 <summary class=menu>代数</summary>
 <ul>
-<li><a href="algebra.group.html">群</a></li>
-<li><a href="algebra.ring.html">環</a></li>
-<li><a href="algebra.hyper.html">超数</a></li>
-<li><a href="algebra.total.html">全順序化</a></li>
-<li><a href="algebra.complex.html">虚数</a></li>
-<li><a href="algebra.modint.html">ModInt</a></li>
-<li><a href="algebra.matrix.html">行列</a></li>
-<li><a href="algebra.monoid.html">モノイド</a>
+<li><a href="algebra.group">群</a></li>
+<li><a href="algebra.ring">環</a></li>
+<li><a href="algebra.ratio">有理数</a></li>
+<li><a href="algebra.complex">虚数</a></li>
+<li><a href="algebra.matrix">行列</a></li>
+<li><a href="algebra.hyper">超数</a></li>
+<li><a href="algebra.total">全順序化</a></li>
+<li><a href="algebra.modint">ModInt</a></li>
+<li><a href="algebra.monoid">モノイド</a>
 <ul>
-<li><a href="algebra.monoid.rmq">RMQモノイド</a></li>
+<li><a href="algebra.monoid.minmax">Min/Max モノイド</a></li>
 </ul></li>
-<li><a href="algebra.ratio.html">有理数</a></li>
 <li><a href="algebra.act">作用</a>
 <ul>
-<li><a href="algebra.act.rmq">RMQ作用</a></li>
+<li><a href="algebra.act.assign">代入作用</a></li>
 </ul></li>
 </ul>
 </details>
@@ -306,51 +179,57 @@
 <summary class=menu>グラフ</summary>
 <h2 id="最短路">最短路</h2>
 <ul>
-<li><a href="graph.dij.html">Dijkstra</a></li>
-<li><a href="graph.wall.html">Warshall-Floyd</a></li>
-<li><a href="graph.bellmanford.html">Bellman-Ford</a></li>
+<li><a href="graph.dij">ダイクストラ法</a></li>
+<li><a href="graph.wall">ワーシャル-フロイド法</a></li>
+<li><a href="graph.bellmanford">ベルマンフォード法</a></li>
 </ul>
 <h2 id="無向グラフ">無向グラフ</h2>
 <ul>
-<li><a href="graph.undirected.bipartite.html">二部グラフ判定</a></li>
-<li><a href="graph.undirected.diameter.html">直径</a></li>
+<li><a href="graph.undirected.bipartite">二部グラフ判定</a></li>
+<li><a href="graph.undirected.diameter">直径</a></li>
 </ul>
 <h2 id="最小全域木">最小全域木</h2>
 <ul>
-<li><a href="graph.prim.html">Prim</a></li>
-<li><a href="graph.kruskal.html">Kruskal</a></li>
+<li><a href="graph.prim">プリム法</a></li>
+<li><a href="graph.kruskal">クラスカル法</a></li>
 </ul>
 <h2 id="木">木</h2>
 <ul>
-<li><a href="graph.tree.height.html">高さ</a></li>
-<li><a href="graph.tree.diameter.html">直径</a></li>
-<li><a href="graph.tree.lca.html">最小共通祖先</a></li>
+<li><a href="graph.tree.height">高さ</a></li>
+<li><a href="graph.tree.diameter">直径</a></li>
+<li><a href="graph.tree.lca">最小共通祖先</a></li>
 </ul>
-<h2 id="最大流量"><a href="graph.maxflow.html">最大流量</a></h2>
-<h2 id="トポロジカルソート"><a href="graph.topological.html">トポロジカルソート</a></h2>
-<h2 id="強連結成分分解"><a href="graph.scc.html">強連結成分分解</a></h2>
+<h2 id="有向グラフ">有向グラフ</h2>
+<ul>
+<li><a href="graph.maxflow">最大流量</a></li>
+<li><a href="graph.topological">トポロジカルソート</a></li>
+<li><a href="graph.scc">強連結成分分解</a></li>
+</ul>
 </details>
 
 <details class=menu>
 <summary class=menu>数列</summary>
 <ul>
-<li><a href="seq.lsi.html">最長増加部分列 (LSI)</a></li>
-<li><a href="seq.nth.html">std::nth_element</a></li>
-<li><a href="seq.median.html">中央値</a></li>
+<li><a href="seq.lis">最長増加部分列</a></li>
+<li><a href="seq.median">中央値ヒープ</a></li>
 </ul>
 <h2 id="累積処理">累積処理</h2>
 <ul>
-<li><a href="seq.cumsum.html">一次元累積和</a></li>
-<li><a href="seq.cumsum2d.html">二次元累積和</a></li>
+<li><a href="seq.cumsum1d">一次元累積和</a></li>
+<li><a href="seq.cumsum2d">二次元累積和</a></li>
 </ul>
 <h2 id="区間木">区間木</h2>
 <ul>
-<li><a href="seq.bit.html">BIT</a></li>
-<li><a href="seq.rmq.html">RMQ</a></li>
-<li><a href="seq.starry.html">Starry Sky Tree</a></li>
-<li><a href="seq.segment_tree">セグメントツリー</a></li>
-<li><a href="seq.lazy_segment_tree">遅延セグメントツリー</a></li>
-<li><a href="seq.search.html">SeqSearch</a></li>
+<li><a href="seq.bit">BIT</a></li>
+<li><a href="seq.segment_tree">セグメントツリー</a>
+<ul>
+<li><a href="seq.rmq">RMQ</a></li>
+</ul></li>
+<li><a href="seq.lazy_segment_tree">遅延セグメントツリー</a>
+<ul>
+<li><a href="seq.ranged_rmq">区間更新 RMQ</a></li>
+</ul></li>
+<li><a href="seq.starry">Starry Sky Tree</a></li>
 </ul>
 </details>
 
@@ -365,107 +244,88 @@
 </ul>
 <h2 id="線分">線分</h2>
 <ul>
-<li><a href="geo.2d.ccw">線分と点の接触関係</a></li>
-<li><a href="geo.2d.intersection.html">線分と線分の交差判定</a></li>
+<li><a href="geo.2d.ccw">線分と点の接触判定</a></li>
+<li><a href="geo.2d.intersection">線分と線分の交差判定</a></li>
 </ul>
 <h2 id="多角形">多角形</h2>
 <ul>
-<li><a href="geo.2d.circum.html">三角形の外接円</a></li>
-<li><a href="geo.2d.isin_poly.html">多角形の内外判定</a></li>
-<li><a href="http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=0079">多角形の面積</a></li>
-<li><a href="geo.2d.convex_hull.html">凸包</a></li>
+<li><a href="geo.2d.circum">三角形の外接円</a></li>
+<li><a href="geo.2d.isin_poly">多角形の内外判定</a></li>
+<li><a href="geo.2d.convex_hull">凸包</a></li>
 </ul>
 <h2 id="円">円</h2>
 <ul>
-<li><a href="geo.2d.circle.intersection.html">円と円の接触関係</a></li>
+<li><a href="geo.2d.circle.intersection">円と円との接触関係</a></li>
 </ul>
 <h2 id="最近点対">最近点対</h2>
 <ul>
-<li><a href="geo.closest_pair.html">平面上の分割統治法</a></li>
+<li><a href="geo.closest_pair">平面上の分割統治法</a></li>
 </ul>
 <h2 id="その他">その他</h2>
 <ul>
-<li><a href="geo.polar.html">極座標</a></li>
+<li><a href="geo.polar">極座標</a></li>
 </ul>
 </details>
 
 <details class=menu>
 <summary class=menu>集合</summary>
 <ul>
-<li><a href="set.union_find.html">Union-Find</a></li>
+<li><a href="set.union_find">UnionFind</a></li>
 </ul>
 </details>
 
 <details class=menu>
-<summary class=menu>動的計画法</summary>
+<summary class=menu>アルゴリズム</summary>
+<h2 id="動的計画法">動的計画法</h2>
 <ul>
-<li><a href="dp.knapsack.01.html">01-ナップザック</a></li>
+<li><a href="dp.knapsack.01">01-ナップザック</a></li>
+</ul>
+<h2 id="二分探索">二分探索</h2>
+<ul>
+<li><a href="bin.search">二分探索</a></li>
+</ul>
+<h2 id="フーリエ変換">フーリエ変換</h2>
+<ul>
+<li><a href="fft.convolution">畳み込み</a></li>
 </ul>
 </details>
 
 <details class=menu>
-<summary class=menu>二分探索</summary>
+<summary class=menu>自然数/整数</summary>
+<h2 id="関数">関数</h2>
 <ul>
-<li><a href="bin.search.html">二分探索</a></li>
-</ul>
-</details>
-
-<details class=menu>
-<summary class=menu>整数</summary>
-<ul>
-<li><a href="int_max_and_min.html">整数の最大値、最小値 (gcc)</a></li>
-<li><a href="int.gcd.html">GCD</a></li>
-<li><a href="int.exgcd.html">拡張GCD</a></li>
-<li><a href="misc.pascal_triangle.html">パスカルの三角形</a></li>
-<li><a href="int.binom.pascal.html">二項係数 (パスカルの三角形)</a></li>
-<li><a href="int.binom.html">二項係数 (ModInt)</a></li>
-<li><a href="int.dislog.html">離散対数</a></li>
-<li><a href="int.derangement.html">完全順列</a></li>
-<li><a href="int.euler_phi.html">オイラーの関数</a></li>
-</ul>
-<h2 id="モジュラ演算">モジュラ演算</h2>
-<ul>
-<li><a href="int.mod.inv.html">逆数</a></li>
-<li><a href="int.mod.pow.html">べき乗</a></li>
+<li><a href="num.gcd">GCD</a></li>
+<li><a href="num.exgcd">拡張GCD</a></li>
+<li><a href="num.binom.pascal">二項係数 (パスカルの三角形)</a></li>
+<li><a href="num.binom.modint">二項係数 (ModInt)</a></li>
+<li><a href="num.dislog">離散対数</a></li>
+<li><a href="num.derangement">完全順列</a></li>
+<li><a href="num.euler_phi">オイラーの関数</a></li>
+<li><a href="num.moebius">メビウス関数</a></li>
+<li><a href="num.n_vs_nn">自然数の対 ↔ 自然数 の変換</a></li>
+<li><a href="num.mex">最小自由数 (最小除外数)</a></li>
 </ul>
 <h2 id="素数">素数</h2>
 <ul>
-<li><a href="prime.sieve.html">エラトステネスの篩</a></li>
-<li><a href="prime.predicate.html">素朴な判定</a></li>
-<li><a href="prime.MillerRabin.html">ミラー・ラビン素数判定</a></li>
-<li><a href="prime.fermat.little.html">フェルマーの小定理</a></li>
-<li><a href="prime.factorize.html">素因数分解</a></li>
+<li><a href="prime.sieve">エラトステネスの篩</a></li>
+<li><a href="prime.MillerRabin">ミラー・ラビン素数判定</a></li>
+<li><a href="prime.fermat.little">フェルマーの小定理</a></li>
+<li><a href="prime.factorize">素因数分解</a></li>
 </ul>
 <h2 id="多倍長">多倍長</h2>
 <ul>
-<li><a href="bigint.html">ビッグエンディアンベクタ</a></li>
+<li><a href="bigint">ビッグエンディアンベクタ</a></li>
 </ul>
-<h2 id="自然数">自然数</h2>
+<h2 id="組み合わせのイテレーター">組み合わせのイテレーター</h2>
 <ul>
-<li><a href="nat.moebius.html">メビウス関数</a></li>
-<li><a href="nat.n_vs_nn.html">自然数の対 ↔ 自然数 の変換</a></li>
-<li><a href="nat.mex.html">最小自由数 (最小除外数)</a></li>
+<li><a href="num.iter.perm">階乗 - <span class="math inline"><em>n</em>!</span></a></li>
+<li><a href="num.iter.powperm">冪乗 - <span class="math inline"><em>n</em><sup><em>m</em></sup></span></a></li>
+<li><a href="num.iter.comb">二項係数 - <span class="math inline"><sub><em>n</em></sub><em>C</em><sub><em>m</em></sub></span></a></li>
 </ul>
-<h2 id="組み合わせ">組み合わせ</h2>
+<h2 id="乱数">乱数</h2>
 <ul>
-<li><a href="nat.perm.html">permutation - <span class="math inline"><em>n</em>!</span></a></li>
-<li><a href="nat.powperm.html">permutation - <span class="math inline"><em>n</em><sup><em>m</em></sup></span></a></li>
-<li><a href="nat.comb.html">combination - <span class="math inline"><sub><em>n</em></sub><em>C</em><sub><em>m</em></sub></span></a></li>
-</ul>
-</details>
-
-<details class=menu>
-<summary class=menu>乱数</summary>
-<ul>
-<li><a href="rand.lcg.html">線形合同法</a></li>
-<li><a href="rand.xorshift.html">xor-shift</a></li>
-</ul>
-</details>
-
-<details class=menu>
-<summary class=menu>フーリエ変換</summary>
-<ul>
-<li><a href="fft.convolution.html">畳み込み</a></li>
+<li><a href="rand.lcg">線形合同法</a></li>
+<li><a href="rand.xorshift">Xor-Shift 法</a></li>
 </ul>
 </details>
 
@@ -473,69 +333,56 @@
 <summary class=menu>文字列 (Vector)</summary>
 <h2 id="文字列検索">文字列検索</h2>
 <ul>
-<li><a href="string.shift-and.html">Shift-And</a></li>
-<li><a href="string.z.html">Z-alogirhtm</a></li>
+<li><a href="string.shift-and">Shift-And</a></li>
+<li><a href="string.z">Z-alogirhtm</a></li>
 </ul>
 <h2 id="回文">回文</h2>
 <ul>
-<li><a href="string.manacher.html">manacher</a></li>
+<li><a href="string.manacher">manacher</a></li>
 </ul>
 <h2 id="圧縮">圧縮</h2>
 <ul>
-<li><a href="string.runlength.html">Run-length</a></li>
+<li><a href="string.runlength">Run-length</a></li>
 </ul>
 </details>
 
 <details class=menu>
 <summary class=menu>時間/時刻</summary>
 <ul>
-<li><a href="time.while.html">制限時間付きループ</a></li>
+<li><a href="time.while">制限時間付きループ</a></li>
 </ul>
 <h2 id="暦">暦</h2>
 <ul>
-<li><a href="cal.zeller.html">ツェラーの公式</a></li>
-<li><a href="cal.uruu.html">閏年判定</a></li>
+<li><a href="cal.zeller">ツェラーの公式</a></li>
+<li><a href="cal.uruu">閏年判定</a></li>
 </ul>
 </details>
 
 <details class=menu>
 <summary class=menu>ハッシュ</summary>
 <ul>
-<li><a href="hash.zobrist.html">Zobrist Hash</a></li>
+<li><a href="hash.zobrist">Zobrist Hash</a></li>
 </ul>
 </details>
 
 <details class=menu>
 <summary class=menu>collections</summary>
 <ul>
-<li><a href="collections.defaultmap.html">defaultmap</a></li>
-<li><a href="collections.list_comprehension_macro.html">リスト内包表記マクロ</a></li>
-</ul>
-</details>
-
-<details class=menu>
-<summary class=menu>STL</summary>
-<h2 id="コンテナ">コンテナ</h2>
-<ul>
-<li><a href="container.bound.html">std::upper/lower_bound</a></li>
-<li><a href="container.rotate.html">std::rotate</a></li>
-<li><a href="container.unique.html">std::unique</a></li>
-<li><a href="container.priority_queue.html">std::priority_queue</a></li>
+<li><a href="collections.defaultdict">defaultmap</a></li>
+<li><a href="collections.list_comprehension_macro">リスト内包表記マクロ</a></li>
 </ul>
 </details>
 
 <details class=menu>
 <summary class=menu>misc</summary>
 <ul>
-<li><a href="bit.count.html">bit count</a></li>
-<li><a href="misc.kmeans.html">k-means</a></li>
-<li><a href="15puzzle.html">一般化15パズル</a></li>
-<li><a href="misc.sort-n.html">numeric sort</a></li>
-<li><a href="misc.3sat.html">乱択3-SAT</a></li>
-<li><a href="misc.stirling.html">スターリングの近似式</a></li>
-<li><a href="dice.html">サイコロ</a></li>
-<li><a href="misc.pi.html">円周率</a></li>
-<li><a href="misc.neighbor.html">近傍</a></li>
+<li><a href="misc.kmeans">k-means</a></li>
+<li><a href="15puzzle">一般化15パズル</a></li>
+<li><a href="misc.sort-n">numeric sort</a></li>
+<li><a href="misc.3sat">乱択3-SAT</a></li>
+<li><a href="misc.stirling">スターリングの近似式</a></li>
+<li><a href="dice">サイコロ</a></li>
+<li><a href="misc.neighbor">近傍</a></li>
 </ul>
 </details>
           </aside>

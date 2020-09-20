@@ -20,58 +20,105 @@
         <section class="main-content columns is-fullheight">
 
           <div class="article column is-8 is-10-mobile">
-            <h1 id="幾何---極座標系">幾何 - 極座標系</h1>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Geometry - Polar Coordinates System</span>
-<span class="kw">use</span> <span class="kw">crate</span>::geometry2d::point::*;
-
-<span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">,</span> <span class="bu">Clone</span><span class="at">,</span> <span class="bu">Copy</span><span class="at">)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> Polar <span class="op">{</span>
-    theta: <span class="dt">f64</span>,
-    r: <span class="dt">f64</span>,
-<span class="op">}</span>
-<span class="kw">impl</span> Polar <span class="op">{</span>
-    <span class="kw">pub</span> <span class="kw">const</span> PI: <span class="dt">f64</span> = std::<span class="dt">f64</span>::consts::PI;
-    <span class="kw">pub</span> <span class="kw">fn</span> new(theta: <span class="dt">f64</span>, r: <span class="dt">f64</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span>
-        <span class="kw">let</span> <span class="kw">mut</span> t = theta;
-        <span class="kw">let</span> r = <span class="kw">if</span> r &gt;= <span class="dv">0.0</span> <span class="op">{</span>
-            r
-        <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
-            t += <span class="kw">Self</span>::PI;
-            -r
-        <span class="op">}</span>;
-        t %= <span class="kw">Self</span>::PI * <span class="dv">2.0</span>;
-        <span class="kw">if</span> t &lt; <span class="dv">0.0</span> <span class="op">{</span>
-            t += <span class="kw">Self</span>::PI * <span class="dv">2.0</span>;
+            <h1 id="アルゴリズム---循環検出---フロイドのrhoアルゴリズム">アルゴリズム - 循環検出 - フロイドの<span class="math inline">\(\rho\)</span>アルゴリズム</h1>
+<h2 id="問題概要">問題概要</h2>
+<p>適当な有限集合 <span class="math inline">\(X\)</span> について, <span class="math inline">\(x_0 \in X\)</span> と <span class="math inline">\(f \colon X \to X\)</span> によって数列 <span class="math display">\[\{ x_0, x_i \mid x_{i+1} = f(x_i), i=1,2,\ldots \}\]</span> を構成する.</p>
+<p>ここで <span class="math inline">\(X\)</span> を有限集合としたので, <span class="math inline">\(i \leq |X|\)</span> の範囲で同じ値が重複することが必ずある（鳩の巣原理）. 一度 <span class="math inline">\(x_i = x_j (i \ne j)\)</span> であるとき, それ以降 <span class="math inline">\(x_{i+m} = x_{j+m}\)</span> であるので数列はループする.</p>
+<center>
+<img src="https://i.imgur.com/FTtBfEd.jpg" style="max-width: 50vw; max-height: 9rem;" />
+</center>
+<p>このことは次のように言い直せる. ループに入るまでの長さを <span class="math inline">\(\lambda\)</span>, ループの周期長を <span class="math inline">\(\mu\)</span> として <span class="math display">\[\forall n, k \in \mathbb N, x_{\lambda + n} = x_{\lambda + n + k\mu} ~~\cdots\cdots(\ast)\]</span></p>
+<p><span class="math inline">\(x_0, f\)</span> が与えられるときに, この <span class="math inline">\(\lambda, \mu\)</span> を探すのがフロイドの<span class="math inline">\(\rho\)</span>アルゴリズムである.</p>
+<h2 id="アルゴリズム詳細">アルゴリズム詳細</h2>
+<p>適当な <span class="math inline">\(i\)</span> を始点に各ステップで <span class="math inline">\(i\)</span> を <span class="math inline">\(1\)</span> または <span class="math inline">\(2\)</span> ずつ進めるようなイテレータを2つ並行して動かしていくようなことを考える.</p>
+<h3 id="フェーズ-1">フェーズ 1</h3>
+<p>初めに <span class="math inline">\(i=0\)</span> を始点に各ステップで <span class="math inline">\(1\)</span> 及び <span class="math inline">\(2\)</span> 進めるイテレータを2つ用意する. これをちょうど <span class="math inline">\(m_1\)</span> ステップ進めたときに初めて同じ数を指しているとする. すなわち <span class="math display">\[x_{m_1} = x_{2m_1}\]</span> になったとする. このことからある <span class="math inline">\(n,k\)</span> で</p>
+<ul>
+<li><span class="math inline">\(m_1 = \lambda + n\)</span></li>
+<li><span class="math inline">\(2m_1 = \lambda + n + k \mu\)</span></li>
+</ul>
+<p>を満たす. このことからは <span class="math display">\[m_1 = k \mu\]</span> を得る.</p>
+<h3 id="フェーズ-2">フェーズ 2</h3>
+<p>次に, <span class="math inline">\(i=0\)</span> から <span class="math inline">\(1\)</span> ずつ進めるイテレータと, <span class="math inline">\(i=m_1\)</span> から <span class="math inline">\(1\)</span> ずつ進めるイテレータの2つを用意する. （後者は先程のものを使いまわせばよい.） そしてやはり <span class="math inline">\(m_2\)</span> ステップ進めたときに初めて同じ数を指していると <span class="math display">\[x_{m_2} = x_{m_1 + m_2}\]</span> が成り立つ. ここで <span class="math inline">\(m_1 = k\mu\)</span> であった: <span class="math display">\[x_{m_2} = x_{m_2 + k\mu}\]</span> 従って, <span class="math inline">\(m_2 \geq \lambda\)</span> であればこの等式は常に成り立つ. <span class="math inline">\(m_2\)</span> が「初めて同じ数を指す」ときのステップ数であるとしたことから <span class="math display">\[m_2 = \lambda\]</span> を得る.</p>
+<h3 id="フェーズ-3">フェーズ 3</h3>
+<p>最後に, <span class="math inline">\(i=\lambda\)</span> から <span class="math inline">\(1\)</span> ずつ進めるイテレータと <span class="math inline">\(i=\lambda\)</span> から <span class="math inline">\(2\)</span> ずつ進めるイテレータの2つを並行して進める. そして今度は <span class="math inline">\(m_3\)</span> ステップ後に初めて同じ数を指したとする. <span class="math display">\[x_{\lambda + m_3} = x_{\lambda + 2 m_3}\]</span> さて <span class="math inline">\(m_3 = \mu\)</span> とすればこれが成立するのは明らかである. <span class="math inline">\(m_3 &lt; \mu\)</span> では成り立たないこともすぐに確認できる. そこからやはり <span class="math display">\[m_3 = \mu\]</span> を得る.</p>
+<h2 id="計算量">計算量</h2>
+<p>時間は <span class="math inline">\(O(\lambda + \mu)\)</span>, 空間は <span class="math inline">\(O(1)\)</span>.</p>
+<h2 id="実装例">実装例</h2>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Returns (lambda, mu), Steps before Loop, Length of Loop</span>
+<span class="kw">pub</span> <span class="kw">fn</span> rho&lt;X: <span class="bu">Eq</span> + <span class="bu">Copy</span> + std::fmt::<span class="bu">Debug</span>, F: <span class="bu">Fn</span>(X) -&gt; X&gt;(initial_state: X, step: F) -&gt; (<span class="dt">u64</span>, <span class="dt">u64</span>) <span class="op">{</span>
+    <span class="kw">let</span> <span class="kw">mut</span> x1 = initial_state;
+    <span class="kw">let</span> <span class="kw">mut</span> x2 = initial_state;
+    <span class="kw">loop</span> <span class="op">{</span>
+        x1 = step(x1);
+        x2 = step(x2);
+        x2 = step(x2);
+        <span class="kw">if</span> x1 == x2 <span class="op">{</span>
+            <span class="kw">break</span>;
         <span class="op">}</span>
-        Polar <span class="op">{</span> theta: t, r <span class="op">}</span>
     <span class="op">}</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> distance(&amp;<span class="kw">self</span>, other: &amp;<span class="kw">Self</span>) -&gt; <span class="dt">f64</span> <span class="op">{</span>
-        (<span class="kw">self</span>.r.powi(<span class="dv">2</span>) + other.r.powi(<span class="dv">2</span>)
-            - <span class="dv">2.0</span> * <span class="kw">self</span>.r * other.r * (<span class="kw">self</span>.theta - other.theta).abs().cos())
-        .sqrt()
+    <span class="kw">let</span> <span class="kw">mut</span> lambda = <span class="dv">0</span>;
+    <span class="kw">let</span> <span class="kw">mut</span> x2 = initial_state;
+    <span class="kw">while</span> x1 != x2 <span class="op">{</span>
+        lambda += <span class="dv">1</span>;
+        x1 = step(x1);
+        x2 = step(x2);
     <span class="op">}</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> to_xy(&amp;<span class="kw">self</span>) -&gt; Point <span class="op">{</span>
-        Point(<span class="kw">self</span>.r * <span class="kw">self</span>.theta.cos(), <span class="kw">self</span>.r * <span class="kw">self</span>.theta.sin())
+    <span class="kw">let</span> <span class="kw">mut</span> mu = <span class="dv">0</span>;
+    <span class="kw">while</span> mu == <span class="dv">0</span> || x1 != x2 <span class="op">{</span>
+        mu += <span class="dv">1</span>;
+        x1 = step(x1);
+        x2 = step(x2);
+        x2 = step(x2);
     <span class="op">}</span>
+    (lambda, mu)
 <span class="op">}</span>
 
 <span class="at">#[</span>cfg<span class="at">(</span>test<span class="at">)]</span>
-<span class="kw">mod</span> test_line <span class="op">{</span>
-    <span class="kw">use</span> <span class="kw">crate</span>::geometry2d::polar::*;
+<span class="kw">mod</span> test_rho <span class="op">{</span>
+
+    <span class="kw">use</span> <span class="kw">crate</span>::algorithm::rho::*;
 
     <span class="at">#[</span>test<span class="at">]</span>
-    <span class="kw">fn</span> distance() <span class="op">{</span>
-        <span class="pp">assert_eq!</span>(
-            Polar::new(<span class="dv">0.0</span>, <span class="dv">1.0</span>).distance(&amp;Polar::new(Polar::PI, <span class="dv">2.0</span>)),
-            <span class="dv">3.0</span>
-        );
+    <span class="kw">fn</span> test1() <span class="op">{</span>
+        <span class="co">// 2 -&gt; 4 -&gt; 6 -&gt; 6 -&gt; ...</span>
+        <span class="kw">let</span> (lambda, mu) = rho(<span class="dv">2</span>, |x| (x * x) % <span class="dv">10</span>);
+        <span class="pp">assert_eq!</span>((lambda, mu), (<span class="dv">2</span>, <span class="dv">1</span>));
     <span class="op">}</span>
 
     <span class="at">#[</span>test<span class="at">]</span>
-    <span class="kw">fn</span> to_xy() <span class="op">{</span>
-        <span class="pp">assert_eq!</span>(Polar::new(<span class="dv">0.0</span>, <span class="dv">1.0</span>).to_xy(), Point(<span class="dv">1.0</span>, <span class="dv">0.0</span>));
-        <span class="pp">assert_eq!</span>(Polar::new(Polar::PI / <span class="dv">2.0</span>, <span class="dv">1.0</span>).to_xy(), Point(<span class="dv">0.0</span>, <span class="dv">1.0</span>));
-        <span class="pp">assert_eq!</span>(Polar::new(Polar::PI, <span class="dv">1.0</span>).to_xy(), Point(-<span class="dv">1.0</span>, <span class="dv">0.0</span>));
+    <span class="kw">fn</span> test_const() <span class="op">{</span>
+        <span class="co">// 1 -&gt; 1 -&gt; ...</span>
+        <span class="kw">let</span> (lambda, mu) = rho(<span class="dv">1</span>, |x| x);
+        <span class="pp">assert_eq!</span>((lambda, mu), (<span class="dv">0</span>, <span class="dv">1</span>));
+    <span class="op">}</span>
+
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> test2() <span class="op">{</span>
+        <span class="co">// 1 -&gt; 0 -&gt; 0 -&gt; ...</span>
+        <span class="kw">let</span> (lambda, mu) = rho(<span class="dv">1</span>, |x| x % <span class="dv">1</span>);
+        <span class="pp">assert_eq!</span>((lambda, mu), (<span class="dv">1</span>, <span class="dv">1</span>));
+    <span class="op">}</span>
+
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> test3() <span class="op">{</span>
+        <span class="co">// 0 -&gt; 1 -&gt; 2 -&gt; 0 -&gt; 1 -&gt; 2 -&gt; 0 -&gt; ...</span>
+        <span class="kw">let</span> (lambda, mu) = rho(<span class="dv">0</span>, |x| (x + <span class="dv">1</span>) % <span class="dv">3</span>);
+        <span class="pp">assert_eq!</span>((lambda, mu), (<span class="dv">0</span>, <span class="dv">3</span>));
+    <span class="op">}</span>
+
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> test4() <span class="op">{</span>
+        <span class="co">// 3 -&gt; 1 -&gt; 2 -&gt; 0 -&gt; 1 -&gt; 2 -&gt; 0 -&gt; ...</span>
+        <span class="kw">let</span> (lambda, mu) = rho(<span class="dv">3</span>, |x| (x + <span class="dv">1</span>) % <span class="dv">3</span>);
+        <span class="pp">assert_eq!</span>((lambda, mu), (<span class="dv">1</span>, <span class="dv">3</span>));
+    <span class="op">}</span>
+
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> test5() <span class="op">{</span>
+        <span class="co">// 0 -&gt; 1 -&gt; 0 -&gt; 1</span>
+        <span class="kw">let</span> (lambda, mu) = rho(<span class="dv">2</span>, |x| <span class="dv">1</span> - x);
+        <span class="pp">assert_eq!</span>((lambda, mu), (<span class="dv">0</span>, <span class="dv">2</span>));
     <span class="op">}</span>
 <span class="op">}</span></code></pre></div>
           </div>
@@ -157,7 +204,7 @@
 </ul>
 </details>
 
-<details class=menu open>
+<details class=menu>
 <summary class=menu>二次元ユークリッド幾何</summary>
 <h2 id="図形の定義">図形の定義</h2>
 <ul>
@@ -198,7 +245,7 @@
 </ul>
 </details>
 
-<details class=menu>
+<details class=menu open>
 <summary class=menu>アルゴリズム</summary>
 <h2 id="動的計画法">動的計画法</h2>
 <ul>

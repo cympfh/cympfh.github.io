@@ -99,6 +99,9 @@
 ## フーリエ変換
 - [畳み込み](fft.convolution.md)
 
+## 循環検出
+- [フロイドの$\rho$アルゴリズム](algorithm.rho.md)
+
 # 自然数/整数
 
 ## 関数

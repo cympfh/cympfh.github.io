@@ -1,17 +1,20 @@
 #!/bin/bash
 
 upload() {
-    imgur up --title "$1" -A neta "$1"
+    echo imgur up -A neta "$1" >&2
+    imgur up -A neta "$1"
 }
+
+url=$(upload "$1")
 
 TMPFILE=/tmp/description
 cat <<EOM >$TMPFILE
 
-# $1
+# Original: $1
+# Uploaded: $url
 EOM
 vim $TMPFILE
 description="$(sed 's/^#.*$//g' $TMPFILE | tr '[A-Z]\n' '[a-z] ' | sed 's/  */ /g; s/ *$//g; s/^ *//g')"
-url=$(upload "$1")
 
-echo "{\"url\": \"${url}\", \"description\": \"${description}\"}" |
-tee -a db.jsonl
+# echo "{\"url\": \"${url}\", \"description\": \"${description}\"}" |
+qj -e .url="$url" .description="$description" | tee -a db.jsonl

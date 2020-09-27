@@ -140,9 +140,12 @@
 
 # 文字列 (Vector)
 
+- [接尾辞配列](string.suffix-array.md)
+
 ## 文字列検索
 - [Shift-And](string.shift-and.md)
 - [Z-alogirhtm](string.z.md)
+- [接尾辞配列による文字列検索](string.sa-search.md)
 
 ## 回文
 - [manacher](string.manacher.md)

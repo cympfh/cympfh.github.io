@@ -20,68 +20,73 @@
         <section class="main-content columns is-fullheight">
 
           <div class="article column is-8 is-10-mobile">
-            <h1 id="素数---ミラーラビン素数判定">素数 - ミラーラビン素数判定</h1>
-<p>フェルマーの小定理を用いた確率的なテストを行う. このテストは合成数については必ず正しく判定が出来, 適当な回数実行することでいい感じの確率で判定できる.</p>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Prime Numbers - Miller Rabin Test</span>
-<span class="kw">use</span> <span class="kw">crate</span>::num::random::xorshift::*;
-
-<span class="kw">pub</span> <span class="kw">fn</span> mrtest(n: <span class="dt">u64</span>) -&gt; <span class="dt">bool</span> <span class="op">{</span>
-    <span class="kw">fn</span> powmod(a: <span class="dt">u64</span>, b: <span class="dt">u64</span>, m: <span class="dt">u64</span>) -&gt; <span class="dt">u64</span> <span class="op">{</span>
-        <span class="kw">if</span> b == <span class="dv">0</span> <span class="op">{</span>
-            <span class="dv">1</span>
-        <span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> b == <span class="dv">1</span> <span class="op">{</span>
-            a % m
-        <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
-            <span class="kw">let</span> r = powmod((a * a) % m, b / <span class="dv">2</span>, m);
-            <span class="kw">if</span> b % <span class="dv">2</span> == <span class="dv">0</span> <span class="op">{</span>
-                r
-            <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
-                (r * a) % m
-            <span class="op">}</span>
+            <h1 id="文字列---接尾辞配列-suffixarray-の構築">文字列 - 接尾辞配列 (SuffixArray) の構築</h1>
+<h2 id="概要">概要</h2>
+<p>文字列 <span class="math inline">\(S\)</span> の <span class="math inline">\(i\)</span> 文字目以降の接尾辞を <span class="math inline">\(S[i..]\)</span> と書く. ここで <span class="math inline">\(N = |S|\)</span> に対して <span class="math inline">\(i=0,1,\ldots,N-1\)</span>. このとき空文字列は <strong>含めていない</strong> ことに注意. 接尾辞 <span class="math inline">\(S[i..]\)</span> は添字 <span class="math inline">\(i\)</span> に対応付くが, このことを <span class="math inline">\(\phi(S[i..]) = i\)</span> と書くことにする.</p>
+<p>全ての接尾辞 <span class="math display">\[S[0..], S[1..], \ldots, S[N-1..]\]</span> を辞書順で整列して <span class="math display">\[s_0, s_1, \ldots, s_{N-1}\]</span> を得たとき, その対応する添字の列 <span class="math display">\[\phi(s_0), \phi(s_1), \ldots, \phi(s_{N-1})\]</span> を <strong>接尾辞配列</strong> と呼ぶ.</p>
+<p>以下の実装は文字列 <span class="math inline">\(S\)</span> から接尾辞配列を構築する.</p>
+<h2 id="実装と計算量">実装と計算量</h2>
+<p>ここにあるのは Manber-Myers の方法で, 時間計算量に <span class="math inline">\(O(N \log^2(N))\)</span> 掛かる.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// String - Suffix Array (O(n log n log n))</span>
+<span class="kw">pub</span> <span class="kw">fn</span> suffix_array&lt;T: <span class="bu">Eq</span> + <span class="bu">Ord</span>&gt;(s: &amp;<span class="op">[</span>T<span class="op">]</span>) -&gt; <span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt; <span class="op">{</span>
+    <span class="kw">let</span> n = s.len();
+    <span class="kw">if</span> n &lt;= <span class="dv">1</span> <span class="op">{</span>
+        <span class="kw">return</span> (<span class="dv">0.</span>.n).collect();
+    <span class="op">}</span>
+    <span class="kw">let</span> <span class="kw">mut</span> sa: <span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt; = (<span class="dv">0.</span>.n).collect();
+    <span class="kw">let</span> <span class="kw">mut</span> rank: <span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt; = (<span class="dv">0.</span>.n).collect();
+    <span class="op">{</span>
+        <span class="kw">let</span> <span class="kw">mut</span> ts: <span class="dt">Vec</span>&lt;(<span class="dt">usize</span>, &amp;T)&gt; = s.iter().enumerate().collect();
+        ts.sort_by_key(|&amp;item| item.<span class="dv">1</span>);
+        rank<span class="op">[</span>ts<span class="op">[</span><span class="dv">0</span><span class="op">]</span>.<span class="dv">0</span><span class="op">]</span> = <span class="dv">0</span>;
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">1.</span>.n <span class="op">{</span>
+            rank<span class="op">[</span>ts<span class="op">[</span>i<span class="op">]</span>.<span class="dv">0</span><span class="op">]</span> = rank<span class="op">[</span>ts<span class="op">[</span>i - <span class="dv">1</span><span class="op">]</span>.<span class="dv">0</span><span class="op">]</span> + <span class="kw">if</span> ts<span class="op">[</span>i - <span class="dv">1</span><span class="op">]</span>.<span class="dv">1</span> == ts<span class="op">[</span>i<span class="op">]</span>.<span class="dv">1</span> <span class="op">{</span> <span class="dv">0</span> <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span> <span class="dv">1</span> <span class="op">}</span>;
         <span class="op">}</span>
     <span class="op">}</span>
-    <span class="kw">if</span> n &lt; <span class="dv">2</span> <span class="op">{</span>
-        <span class="cn">false</span>
-    <span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> n &lt; <span class="dv">4</span> <span class="op">{</span>
-        <span class="cn">true</span>
-    <span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> n % <span class="dv">2</span> == <span class="dv">0</span> <span class="op">{</span>
-        <span class="cn">false</span>
-    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
-        <span class="kw">let</span> <span class="kw">mut</span> rand = XorShift::new();
-        <span class="kw">let</span> <span class="kw">mut</span> d = n - <span class="dv">1</span>;
-        <span class="kw">while</span> d % <span class="dv">2</span> == <span class="dv">0</span> <span class="op">{</span>
-            d /= <span class="dv">2</span>
+    <span class="kw">use</span> std::cmp::Ordering;
+    <span class="kw">fn</span> compare(i: <span class="dt">usize</span>, j: <span class="dt">usize</span>, k: <span class="dt">usize</span>, rank: &amp;<span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt;) -&gt; Ordering <span class="op">{</span>
+        <span class="kw">match</span> (rank<span class="op">[</span>i<span class="op">]</span>, rank<span class="op">[</span>j<span class="op">]</span>, rank.get(i + k), rank.get(j + k)) <span class="op">{</span>
+            (x, y, _, _) <span class="kw">if</span> x &lt; y =&gt; Ordering::Less,
+            (x, y, _, _) <span class="kw">if</span> x &gt; y =&gt; Ordering::Greater,
+            (_, _, x, y) <span class="kw">if</span> x &lt; y =&gt; Ordering::Less,
+            (_, _, x, y) <span class="kw">if</span> x &gt; y =&gt; Ordering::Greater,
+            _ =&gt; Ordering::Equal,
         <span class="op">}</span>
-        <span class="kw">for</span> _ <span class="kw">in</span> <span class="dv">0.</span>.<span class="dv">100</span> <span class="op">{</span>
-            <span class="kw">let</span> a = rand.gen::&lt;<span class="dt">u64</span>&gt;() % (n - <span class="dv">1</span>) + <span class="dv">1</span>;
-            <span class="kw">let</span> <span class="kw">mut</span> y = powmod(a, d, n);
-            <span class="kw">let</span> <span class="kw">mut</span> t = d;
-            <span class="kw">while</span> t != n - <span class="dv">1</span> &amp;&amp; y != <span class="dv">1</span> &amp;&amp; y != n - <span class="dv">1</span> <span class="op">{</span>
-                y = (y * y) % n;
-                t &lt;&lt;= <span class="dv">1</span>;
-            <span class="op">}</span>
-            <span class="kw">if</span> y != n - <span class="dv">1</span> &amp;&amp; t % <span class="dv">2</span> == <span class="dv">0</span> <span class="op">{</span>
-                <span class="kw">return</span> <span class="cn">false</span>;
-            <span class="op">}</span>
-        <span class="op">}</span>
-        <span class="cn">true</span>
     <span class="op">}</span>
+    <span class="kw">let</span> <span class="kw">mut</span> k = <span class="dv">1</span>;
+    <span class="kw">let</span> <span class="kw">mut</span> swap_rank: <span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt; = (<span class="dv">0.</span>.n).collect();
+    <span class="kw">while</span> k &lt; n <span class="op">{</span>
+        sa.sort_by(|&amp;i, &amp;j| compare(i, j, k, &amp;rank));
+        swap_rank<span class="op">[</span>sa<span class="op">[</span><span class="dv">0</span><span class="op">]]</span> = <span class="dv">0</span>;
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">1.</span>.n <span class="op">{</span>
+            swap_rank<span class="op">[</span>sa<span class="op">[</span>i<span class="op">]]</span> = swap_rank<span class="op">[</span>sa<span class="op">[</span>i - <span class="dv">1</span><span class="op">]]</span>
+                + <span class="kw">if</span> compare(sa<span class="op">[</span>i<span class="op">]</span>, sa<span class="op">[</span>i - <span class="dv">1</span><span class="op">]</span>, k, &amp;rank) == Ordering::Equal <span class="op">{</span>
+                    <span class="dv">0</span>
+                <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
+                    <span class="dv">1</span>
+                <span class="op">}</span>;
+        <span class="op">}</span>
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.n <span class="op">{</span>
+            rank<span class="op">[</span>i<span class="op">]</span> = swap_rank<span class="op">[</span>i<span class="op">]</span>;
+        <span class="op">}</span>
+        k *= <span class="dv">2</span>;
+    <span class="op">}</span>
+    sa
 <span class="op">}</span>
 
 <span class="at">#[</span>cfg<span class="at">(</span>test<span class="at">)]</span>
-<span class="kw">mod</span> test_mrtest <span class="op">{</span>
-    <span class="kw">use</span> <span class="kw">crate</span>::num::prime::mrtest::*;
+<span class="kw">mod</span> test_suffix_array <span class="op">{</span>
+    <span class="kw">use</span> <span class="kw">crate</span>::string::suffix_array::*;
 
     <span class="at">#[</span>test<span class="at">]</span>
     <span class="kw">fn</span> it_works() <span class="op">{</span>
-        <span class="kw">let</span> primes = <span class="pp">vec!</span><span class="op">[</span><span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">7</span>, <span class="dv">11</span>, <span class="dv">13</span>, <span class="dv">17</span>, <span class="dv">19</span>, <span class="dv">23</span>, <span class="dv">29</span>, <span class="dv">31</span>, <span class="dv">37</span>, <span class="dv">41</span>, <span class="dv">43</span><span class="op">]</span>;
-        <span class="kw">let</span> not_primes = <span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">8</span>, <span class="dv">9</span>, <span class="dv">12</span>, <span class="dv">15</span>, <span class="dv">21</span>, <span class="dv">25</span>, <span class="dv">27</span>, <span class="dv">33</span>, <span class="dv">35</span><span class="op">]</span>;
-        <span class="kw">for</span> p <span class="kw">in</span> primes <span class="op">{</span>
-            <span class="pp">assert!</span>(mrtest(p));
-        <span class="op">}</span>
-        <span class="kw">for</span> q <span class="kw">in</span> not_primes <span class="op">{</span>
-            <span class="pp">assert!</span>(!mrtest(q));
-        <span class="op">}</span>
+        <span class="pp">assert_eq!</span>(suffix_array(&amp;<span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span><span class="op">]</span>), <span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span><span class="op">]</span>);
+        <span class="pp">assert_eq!</span>(suffix_array(&amp;<span class="pp">vec!</span><span class="op">[</span><span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">1</span><span class="op">]</span>), <span class="pp">vec!</span><span class="op">[</span><span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">0</span><span class="op">]</span>);
+        <span class="pp">assert_eq!</span>(suffix_array(&amp;<span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">1</span><span class="op">]</span>), <span class="pp">vec!</span><span class="op">[</span><span class="dv">3</span>, <span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">1</span><span class="op">]</span>);
+        <span class="pp">assert_eq!</span>(
+            suffix_array(&amp;<span class="st">&quot;abracadabra&quot;</span>.chars().collect::&lt;<span class="dt">Vec</span>&lt;_&gt;&gt;()),
+            <span class="pp">vec!</span><span class="op">[</span><span class="dv">10</span>, <span class="dv">7</span>, <span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">8</span>, <span class="dv">1</span>, <span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">9</span>, <span class="dv">2</span><span class="op">]</span>
+        );
     <span class="op">}</span>
 <span class="op">}</span></code></pre></div>
           </div>
@@ -228,7 +233,7 @@
 </ul>
 </details>
 
-<details class=menu open>
+<details class=menu>
 <summary class=menu>自然数/整数</summary>
 <h2 id="関数">関数</h2>
 <ul>
@@ -267,7 +272,7 @@
 </ul>
 </details>
 
-<details class=menu>
+<details class=menu open>
 <summary class=menu>文字列 (Vector)</summary>
 <ul>
 <li><a href="string.suffix-array.html">接尾辞配列</a></li>

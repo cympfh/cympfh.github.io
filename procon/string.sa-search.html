@@ -20,68 +20,109 @@
         <section class="main-content columns is-fullheight">
 
           <div class="article column is-8 is-10-mobile">
-            <h1 id="素数---ミラーラビン素数判定">素数 - ミラーラビン素数判定</h1>
-<p>フェルマーの小定理を用いた確率的なテストを行う. このテストは合成数については必ず正しく判定が出来, 適当な回数実行することでいい感じの確率で判定できる.</p>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Prime Numbers - Miller Rabin Test</span>
-<span class="kw">use</span> <span class="kw">crate</span>::num::random::xorshift::*;
+            <h1 id="接尾辞配列による検索">接尾辞配列による検索</h1>
+<h2 id="概要">概要</h2>
+<p>文字列 <span class="math inline">\(S\)</span> の中に文字列 <span class="math inline">\(T\)</span> を部分文字列として含むかを判定する. <span class="math inline">\(S\)</span> の接尾辞配列を構築し, さらにそれらの長さ <span class="math inline">\(|T|\)</span> の接頭辞を取ったときに, <span class="math inline">\(T\)</span> がその中にあるかどうかを判定すればよく, それらは辞書順で整列しているので, 二分探索で効率よく判定が出来る.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// String - Search via SuffixArray</span>
+<span class="kw">use</span> <span class="kw">crate</span>::string::suffix_array::*;
 
-<span class="kw">pub</span> <span class="kw">fn</span> mrtest(n: <span class="dt">u64</span>) -&gt; <span class="dt">bool</span> <span class="op">{</span>
-    <span class="kw">fn</span> powmod(a: <span class="dt">u64</span>, b: <span class="dt">u64</span>, m: <span class="dt">u64</span>) -&gt; <span class="dt">u64</span> <span class="op">{</span>
-        <span class="kw">if</span> b == <span class="dv">0</span> <span class="op">{</span>
-            <span class="dv">1</span>
-        <span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> b == <span class="dv">1</span> <span class="op">{</span>
-            a % m
+<span class="kw">pub</span> <span class="kw">fn</span> sa_search&lt;T: <span class="bu">Eq</span> + <span class="bu">Ord</span>&gt;(text: &amp;<span class="op">[</span>T<span class="op">]</span>, pattern: &amp;<span class="op">[</span>T<span class="op">]</span>) -&gt; <span class="dt">Option</span>&lt;<span class="dt">usize</span>&gt; <span class="op">{</span>
+    <span class="kw">let</span> n = text.len();
+    <span class="kw">let</span> m = pattern.len();
+    <span class="kw">if</span> n &lt; m <span class="op">{</span>
+        <span class="kw">return</span> <span class="cn">None</span>;
+    <span class="op">}</span>
+    <span class="kw">fn</span> substr&lt;T&gt;(range: std::ops::Range&lt;<span class="dt">usize</span>&gt;, text: &amp;<span class="op">[</span>T<span class="op">]</span>) -&gt; &amp;<span class="op">[</span>T<span class="op">]</span> <span class="op">{</span>
+        <span class="kw">if</span> range.start &gt;= text.len() <span class="op">{</span>
+            &amp;text<span class="op">[</span><span class="dv">0.</span>.<span class="dv">0</span><span class="op">]</span>
+        <span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> range.end &lt; text.len() <span class="op">{</span>
+            &amp;text<span class="op">[</span>range<span class="op">]</span>
         <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
-            <span class="kw">let</span> r = powmod((a * a) % m, b / <span class="dv">2</span>, m);
-            <span class="kw">if</span> b % <span class="dv">2</span> == <span class="dv">0</span> <span class="op">{</span>
-                r
-            <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
-                (r * a) % m
-            <span class="op">}</span>
+            &amp;text<span class="op">[</span>range.start..<span class="op">]</span>
         <span class="op">}</span>
     <span class="op">}</span>
-    <span class="kw">if</span> n &lt; <span class="dv">2</span> <span class="op">{</span>
-        <span class="cn">false</span>
-    <span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> n &lt; <span class="dv">4</span> <span class="op">{</span>
-        <span class="cn">true</span>
-    <span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> n % <span class="dv">2</span> == <span class="dv">0</span> <span class="op">{</span>
-        <span class="cn">false</span>
+    <span class="kw">let</span> sa = suffix_array(&amp;text);
+    <span class="kw">if</span> substr(sa<span class="op">[</span><span class="dv">0</span><span class="op">]</span>..sa<span class="op">[</span><span class="dv">0</span><span class="op">]</span> + m, &amp;text) == pattern <span class="op">{</span>
+        <span class="kw">return</span> <span class="cn">Some</span>(<span class="dv">0</span>);
+    <span class="op">}</span>
+    <span class="kw">let</span> <span class="kw">mut</span> left = <span class="dv">0</span>; <span class="co">// text[left..left+m] &lt;= pattern</span>
+    <span class="kw">let</span> <span class="kw">mut</span> right = n; <span class="co">// &gt;= pattern</span>
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="dv">0.</span>.<span class="dv">100</span> <span class="op">{</span>
+        <span class="kw">let</span> mid = (left + right) / <span class="dv">2</span>;
+        <span class="kw">if</span> substr(sa<span class="op">[</span>mid<span class="op">]</span>..sa<span class="op">[</span>mid<span class="op">]</span> + m, &amp;text) &lt;= pattern <span class="op">{</span>
+            left = mid;
+        <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
+            right = mid;
+        <span class="op">}</span>
+    <span class="op">}</span>
+    <span class="kw">if</span> substr(sa<span class="op">[</span>left<span class="op">]</span>..sa<span class="op">[</span>left<span class="op">]</span> + m, &amp;text) == pattern <span class="op">{</span>
+        <span class="cn">Some</span>(sa<span class="op">[</span>left<span class="op">]</span>)
     <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
-        <span class="kw">let</span> <span class="kw">mut</span> rand = XorShift::new();
-        <span class="kw">let</span> <span class="kw">mut</span> d = n - <span class="dv">1</span>;
-        <span class="kw">while</span> d % <span class="dv">2</span> == <span class="dv">0</span> <span class="op">{</span>
-            d /= <span class="dv">2</span>
-        <span class="op">}</span>
-        <span class="kw">for</span> _ <span class="kw">in</span> <span class="dv">0.</span>.<span class="dv">100</span> <span class="op">{</span>
-            <span class="kw">let</span> a = rand.gen::&lt;<span class="dt">u64</span>&gt;() % (n - <span class="dv">1</span>) + <span class="dv">1</span>;
-            <span class="kw">let</span> <span class="kw">mut</span> y = powmod(a, d, n);
-            <span class="kw">let</span> <span class="kw">mut</span> t = d;
-            <span class="kw">while</span> t != n - <span class="dv">1</span> &amp;&amp; y != <span class="dv">1</span> &amp;&amp; y != n - <span class="dv">1</span> <span class="op">{</span>
-                y = (y * y) % n;
-                t &lt;&lt;= <span class="dv">1</span>;
-            <span class="op">}</span>
-            <span class="kw">if</span> y != n - <span class="dv">1</span> &amp;&amp; t % <span class="dv">2</span> == <span class="dv">0</span> <span class="op">{</span>
-                <span class="kw">return</span> <span class="cn">false</span>;
-            <span class="op">}</span>
-        <span class="op">}</span>
-        <span class="cn">true</span>
+        <span class="cn">None</span>
     <span class="op">}</span>
 <span class="op">}</span>
 
 <span class="at">#[</span>cfg<span class="at">(</span>test<span class="at">)]</span>
-<span class="kw">mod</span> test_mrtest <span class="op">{</span>
-    <span class="kw">use</span> <span class="kw">crate</span>::num::prime::mrtest::*;
+<span class="kw">mod</span> test_suffix_array_search <span class="op">{</span>
+    <span class="kw">use</span> <span class="kw">crate</span>::string::suffix_array_search::*;
 
     <span class="at">#[</span>test<span class="at">]</span>
-    <span class="kw">fn</span> it_works() <span class="op">{</span>
-        <span class="kw">let</span> primes = <span class="pp">vec!</span><span class="op">[</span><span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">7</span>, <span class="dv">11</span>, <span class="dv">13</span>, <span class="dv">17</span>, <span class="dv">19</span>, <span class="dv">23</span>, <span class="dv">29</span>, <span class="dv">31</span>, <span class="dv">37</span>, <span class="dv">41</span>, <span class="dv">43</span><span class="op">]</span>;
-        <span class="kw">let</span> not_primes = <span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">8</span>, <span class="dv">9</span>, <span class="dv">12</span>, <span class="dv">15</span>, <span class="dv">21</span>, <span class="dv">25</span>, <span class="dv">27</span>, <span class="dv">33</span>, <span class="dv">35</span><span class="op">]</span>;
-        <span class="kw">for</span> p <span class="kw">in</span> primes <span class="op">{</span>
-            <span class="pp">assert!</span>(mrtest(p));
-        <span class="op">}</span>
-        <span class="kw">for</span> q <span class="kw">in</span> not_primes <span class="op">{</span>
-            <span class="pp">assert!</span>(!mrtest(q));
-        <span class="op">}</span>
+    <span class="kw">fn</span> search_uniq() <span class="op">{</span>
+        <span class="pp">assert_eq!</span>(
+            sa_search(
+                &amp;<span class="st">&quot;abracadabra&quot;</span>.chars().collect::&lt;<span class="dt">Vec</span>&lt;_&gt;&gt;(),
+                &amp;<span class="st">&quot;abrac&quot;</span>.chars().collect::&lt;<span class="dt">Vec</span>&lt;_&gt;&gt;()
+            ),
+            <span class="cn">Some</span>(<span class="dv">0</span>)
+        );
+        <span class="pp">assert_eq!</span>(
+            sa_search(
+                &amp;<span class="st">&quot;abracadabra&quot;</span>.chars().collect::&lt;<span class="dt">Vec</span>&lt;_&gt;&gt;(),
+                &amp;<span class="st">&quot;raca&quot;</span>.chars().collect::&lt;<span class="dt">Vec</span>&lt;_&gt;&gt;()
+            ),
+            <span class="cn">Some</span>(<span class="dv">2</span>)
+        );
+        <span class="pp">assert_eq!</span>(
+            sa_search(
+                &amp;<span class="st">&quot;abracadabra&quot;</span>.chars().collect::&lt;<span class="dt">Vec</span>&lt;_&gt;&gt;(),
+                &amp;<span class="st">&quot;d&quot;</span>.chars().collect::&lt;<span class="dt">Vec</span>&lt;_&gt;&gt;()
+            ),
+            <span class="cn">Some</span>(<span class="dv">6</span>)
+        );
+    <span class="op">}</span>
+
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> search_none() <span class="op">{</span>
+        <span class="pp">assert_eq!</span>(
+            sa_search(
+                &amp;<span class="st">&quot;abracadabra&quot;</span>.chars().collect::&lt;<span class="dt">Vec</span>&lt;_&gt;&gt;(),
+                &amp;<span class="st">&quot;abrax&quot;</span>.chars().collect::&lt;<span class="dt">Vec</span>&lt;_&gt;&gt;()
+            ),
+            <span class="cn">None</span>
+        );
+        <span class="pp">assert_eq!</span>(
+            sa_search(
+                &amp;<span class="st">&quot;abracadabra&quot;</span>.chars().collect::&lt;<span class="dt">Vec</span>&lt;_&gt;&gt;(),
+                &amp;<span class="st">&quot;xy&quot;</span>.chars().collect::&lt;<span class="dt">Vec</span>&lt;_&gt;&gt;()
+            ),
+            <span class="cn">None</span>
+        );
+        <span class="pp">assert_eq!</span>(
+            sa_search(
+                &amp;<span class="st">&quot;abracadabra&quot;</span>.chars().collect::&lt;<span class="dt">Vec</span>&lt;_&gt;&gt;(),
+                &amp;<span class="st">&quot;x&quot;</span>.chars().collect::&lt;<span class="dt">Vec</span>&lt;_&gt;&gt;()
+            ),
+            <span class="cn">None</span>
+        );
+    <span class="op">}</span>
+
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> search_multiple() <span class="op">{</span>
+        <span class="kw">let</span> res = sa_search(
+            &amp;<span class="st">&quot;abracadabra&quot;</span>.chars().collect::&lt;<span class="dt">Vec</span>&lt;_&gt;&gt;(),
+            &amp;<span class="st">&quot;abra&quot;</span>.chars().collect::&lt;<span class="dt">Vec</span>&lt;_&gt;&gt;(),
+        );
+        <span class="pp">assert!</span>(res == <span class="cn">Some</span>(<span class="dv">0</span>) || res == <span class="cn">Some</span>(<span class="dv">7</span>));
     <span class="op">}</span>
 <span class="op">}</span></code></pre></div>
           </div>
@@ -228,7 +269,7 @@
 </ul>
 </details>
 
-<details class=menu open>
+<details class=menu>
 <summary class=menu>自然数/整数</summary>
 <h2 id="関数">関数</h2>
 <ul>
@@ -267,7 +308,7 @@
 </ul>
 </details>
 
-<details class=menu>
+<details class=menu open>
 <summary class=menu>文字列 (Vector)</summary>
 <ul>
 <li><a href="string.suffix-array.html">接尾辞配列</a></li>

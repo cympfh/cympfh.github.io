@@ -34,9 +34,11 @@
 </ul></li>
 </ul>
 <div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Algebra - ModInt (Zp)</span>
-
 <span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">,</span> <span class="bu">PartialEq</span><span class="at">,</span> <span class="bu">Eq</span><span class="at">,</span> <span class="bu">Clone</span><span class="at">,</span> <span class="bu">Copy</span><span class="at">)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> ModInt(<span class="kw">pub</span> <span class="dt">i64</span>, <span class="kw">pub</span> <span class="dt">i64</span>); <span class="co">// (residual, modulo)</span>
+
+<span class="kw">pub</span> <span class="kw">const</span> MOD_1000000007: <span class="dt">i64</span> = <span class="dv">1_000_000_007</span>;
+<span class="kw">pub</span> <span class="kw">const</span> MOD_998244353: <span class="dt">i64</span> = <span class="dv">998_244_353</span>;
 
 <span class="kw">impl</span> ModInt <span class="op">{</span>
     <span class="kw">pub</span> <span class="kw">fn</span> new(residual: <span class="dt">i64</span>, modulo: <span class="dt">i64</span>) -&gt; ModInt <span class="op">{</span>
@@ -188,7 +190,7 @@
 <span class="kw">impl</span> std::ops::Div&lt;<span class="dt">i64</span>&gt; <span class="kw">for</span> ModInt <span class="op">{</span>
     <span class="kw">type</span> Output = <span class="kw">Self</span>;
     <span class="kw">fn</span> div(<span class="kw">self</span>, other: <span class="dt">i64</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span>
-        <span class="kw">self</span> / ModInt(other, <span class="kw">self</span>.<span class="dv">1</span>)
+        <span class="kw">self</span> / ModInt::new(other, <span class="kw">self</span>.<span class="dv">1</span>)
     <span class="op">}</span>
 <span class="op">}</span>
 <span class="kw">impl</span> std::ops::Div&lt;ModInt&gt; <span class="kw">for</span> <span class="dt">i64</span> <span class="op">{</span>
@@ -208,30 +210,55 @@
     <span class="op">}</span>
 <span class="op">}</span>
 
+<span class="at">#[</span>macro_export<span class="at">]</span>
+<span class="pp">macro_rules!</span> mint <span class="op">{</span>
+    ($x:expr) =&gt; <span class="op">{</span>
+        ModInt::new($x, MOD_1000000007)
+    <span class="op">}</span>;
+<span class="op">}</span>
+
 <span class="at">#[</span>cfg<span class="at">(</span>test<span class="at">)]</span>
 <span class="kw">mod</span> test_modint <span class="op">{</span>
     <span class="kw">use</span> <span class="kw">crate</span>::algebra::modint::*;
 
-    <span class="kw">const</span> MOD: <span class="dt">i64</span> = <span class="dv">10007</span>;
-
     <span class="at">#[</span>test<span class="at">]</span>
     <span class="kw">fn</span> it_works() <span class="op">{</span>
-        <span class="pp">assert_eq!</span>(ModInt(<span class="dv">1</span>, MOD) + ModInt(<span class="dv">1</span>, MOD), ModInt(<span class="dv">2</span>, MOD));
-        <span class="pp">assert_eq!</span>(ModInt(<span class="dv">1</span>, MOD) - ModInt(<span class="dv">1</span>, MOD), ModInt(<span class="dv">0</span>, MOD));
-        <span class="pp">assert_eq!</span>((-ModInt(<span class="dv">1</span>, MOD)) + ModInt(<span class="dv">1</span>, MOD), ModInt(<span class="dv">0</span>, MOD));
-        <span class="pp">assert_eq!</span>(
-            (ModInt(<span class="dv">1</span>, MOD) / ModInt(<span class="dv">2</span>, MOD)) * ModInt(<span class="dv">2</span>, MOD),
-            ModInt(<span class="dv">1</span>, MOD)
-        );
-        <span class="op">{</span>
-            <span class="kw">let</span> <span class="kw">mut</span> m = ModInt(<span class="dv">0</span>, MOD);
-            m -= <span class="dv">1</span>;
-            <span class="pp">assert_eq!</span>(m.unwrap(), MOD - <span class="dv">1</span>);
-            m = m * <span class="dv">2</span> + <span class="dv">2</span>;
-            <span class="pp">assert_eq!</span>(m.unwrap(), <span class="dv">0</span>);
-            m /= <span class="dv">2</span>;
-            <span class="pp">assert_eq!</span>(m.unwrap(), <span class="dv">0</span>);
-        <span class="op">}</span>
+        <span class="pp">assert_eq!</span>(<span class="pp">mint!</span>(<span class="dv">1</span>) + <span class="pp">mint!</span>(<span class="dv">1</span>), <span class="pp">mint!</span>(<span class="dv">2</span>));
+        <span class="pp">assert_eq!</span>(<span class="pp">mint!</span>(<span class="dv">1</span>) + <span class="pp">mint!</span>(-<span class="dv">1</span>), <span class="pp">mint!</span>(<span class="dv">0</span>));
+        <span class="pp">assert_eq!</span>(<span class="pp">mint!</span>(<span class="dv">1</span>) - <span class="dv">1</span>, <span class="pp">mint!</span>(<span class="dv">0</span>));
+        <span class="pp">assert_eq!</span>(<span class="pp">mint!</span>(<span class="dv">1</span>) + <span class="pp">mint!</span>(-<span class="dv">3</span>), <span class="pp">mint!</span>(-<span class="dv">2</span>));
+        <span class="pp">assert_eq!</span>(<span class="pp">mint!</span>(<span class="dv">1</span>) - <span class="pp">mint!</span>(-<span class="dv">3</span>), <span class="pp">mint!</span>(<span class="dv">4</span>));
+        <span class="pp">assert_eq!</span>(<span class="pp">mint!</span>(-<span class="dv">3</span>) + <span class="dv">1</span>, <span class="pp">mint!</span>(-<span class="dv">2</span>));
+        <span class="pp">assert_eq!</span>(-<span class="pp">mint!</span>(<span class="dv">1</span>), <span class="pp">mint!</span>(-<span class="dv">1</span>));
+        <span class="pp">assert_eq!</span>(<span class="pp">mint!</span>(-<span class="dv">1</span>) * <span class="dv">2</span>, <span class="pp">mint!</span>(-<span class="dv">2</span>));
+        <span class="pp">assert_eq!</span>((<span class="pp">mint!</span>(<span class="dv">1</span>) / -<span class="dv">3</span>) * <span class="dv">6</span>, <span class="pp">mint!</span>(-<span class="dv">2</span>));
+    <span class="op">}</span>
+
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> test_pow() <span class="op">{</span>
+        <span class="pp">assert_eq!</span>(<span class="pp">mint!</span>(<span class="dv">2</span>).pow(<span class="dv">10</span>), <span class="pp">mint!</span>(<span class="dv">1024</span>));
+        <span class="pp">assert_eq!</span>(<span class="pp">mint!</span>(-<span class="dv">2</span>).pow(<span class="dv">10</span>), <span class="pp">mint!</span>(<span class="dv">1024</span>));
+        <span class="pp">assert_eq!</span>(<span class="pp">mint!</span>(-<span class="dv">2</span>).pow(<span class="dv">11</span>), <span class="pp">mint!</span>(-<span class="dv">2048</span>));
+    <span class="op">}</span>
+
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> test_mut() <span class="op">{</span>
+        <span class="kw">let</span> <span class="kw">mut</span> m = <span class="pp">mint!</span>(<span class="dv">0</span>);
+
+        m -= <span class="dv">1</span>;
+        <span class="pp">assert_eq!</span>(m, <span class="pp">mint!</span>(-<span class="dv">1</span>));
+        <span class="pp">assert_eq!</span>(m.unwrap(), MOD_1000000007 - <span class="dv">1</span>);
+
+        m *= <span class="dv">2</span>;
+        <span class="pp">assert_eq!</span>(m, <span class="pp">mint!</span>(-<span class="dv">2</span>));
+
+        m += <span class="dv">2</span>;
+        <span class="pp">assert_eq!</span>(m, <span class="pp">mint!</span>(<span class="dv">0</span>));
+        <span class="pp">assert_eq!</span>(m.unwrap(), <span class="dv">0</span>);
+
+        m += <span class="dv">1</span>;
+        m /= <span class="dv">3</span>; <span class="co">// m = 1/3</span>
+        <span class="pp">assert_eq!</span>(m + m + m, <span class="pp">mint!</span>(<span class="dv">1</span>));
     <span class="op">}</span>
 <span class="op">}</span></code></pre></div>
           </div>

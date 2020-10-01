@@ -8,7 +8,7 @@ title() {
 
 summary() {
     grep '^## ' "$1" | sed 's/^## //' |
-      sed 's,^, <i class="fa fa-caret-right"></i> ,'
+      sed 's,^.*,<span class="subtitles"><i class="far fa-square"></i>&</span>,'
 }
 
 write-item() {
@@ -36,7 +36,7 @@ cat <<EOM
   <meta name="viewport" content="width=device-width, initial-scale=0.9">
   <title>taglibro/</title>
   <link rel="stylesheet" href="../resources/css/bulma/bulma.css" />
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" />
   <style>
     .card-header:hover {
       background-color: #fafafa;
@@ -47,6 +47,12 @@ cat <<EOM
     }
     .card-content:hover {
       background-color: #fafafa;
+    }
+    i.fas, i.far {
+      padding-right: 0.2rem;
+    }
+    span.subtitles {
+      padding-right: 0.6rem;
     }
   </style>
 </head>

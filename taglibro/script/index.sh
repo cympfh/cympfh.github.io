@@ -20,7 +20,7 @@ write-item() {
             <a class="card-header-title" href="$HTML">$(title "$MD")</a>
         </header>
         <div class="card-content">
-            $(summary "$MD")
+            <a href="$HTML">$(summary "$MD")</a>
         </div>
     </div>
 EOM
@@ -37,6 +37,18 @@ cat <<EOM
   <title>taglibro/</title>
   <link rel="stylesheet" href="../resources/css/bulma/bulma.css" />
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <style>
+    .card-header:hover {
+      background-color: #fafafa;
+    }
+    .card-content > a {
+      cursor: pointer;
+      color: black;
+    }
+    .card-content:hover {
+      background-color: #fafafa;
+    }
+  </style>
 </head>
 <body class="with-bg">
 

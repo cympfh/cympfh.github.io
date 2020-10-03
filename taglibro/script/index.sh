@@ -8,7 +8,7 @@ title() {
 
 summary() {
     grep '^## ' "$1" | sed 's/^## //' |
-      sed 's,^.*,<span class="subtitles"><i class="far fa-square"></i>&</span>,'
+      sed 's,^.*,<span class="subtitles"><i class="fas fa-check"></i>&</span>,'
 }
 
 write-item() {

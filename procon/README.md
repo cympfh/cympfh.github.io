@@ -87,6 +87,7 @@
 
 # 集合
 - [UnionFind](set.union_find.md)
+- [BitSet](set.bitset.md)
 
 # アルゴリズム
 

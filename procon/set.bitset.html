@@ -20,59 +20,85 @@
         <section class="main-content columns is-fullheight">
 
           <div class="article column is-8 is-10-mobile">
-            <h1 id="制限時間付きループ">制限時間付きループ</h1>
-<h2 id="概要">概要</h2>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">loop</span> <span class="op">{</span>
-   ...
-<span class="op">}</span></code></pre></div>
-<p>の代わりに,</p>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">let</span> milli_seconds = <span class="dv">1000</span>
-<span class="pp">loop_timeout_ms!</span>(milli_seconds, <span class="op">{</span>
-    ...
-<span class="op">}</span></code></pre></div>
-<p>と使う</p>
-<h2 id="例">例</h2>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">// Example</span>
-<span class="kw">fn</span> slow_yes() <span class="op">{</span>
-    <span class="kw">use</span> std::time::Duration;
-    <span class="kw">use</span> std::thread::sleep;
-    <span class="pp">println!</span>(<span class="st">&quot;yes&quot;</span>);
-    sleep(Duration::new(<span class="dv">0</span>, <span class="dv">100000000</span>));
+            <h1 id="集合---bitset">集合 - BitSet</h1>
+<p><span class="math inline">\(\{0,1,2,\ldots,127\}\)</span> の部分集合を unsigned 128bit int で表現する.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">,</span> <span class="bu">Clone</span><span class="at">,</span> <span class="bu">Copy</span><span class="at">,</span> <span class="bu">PartialEq</span><span class="at">,</span> <span class="bu">Eq</span><span class="at">)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> BitSet(<span class="kw">pub</span> u128);
+
+<span class="kw">impl</span> BitSet <span class="op">{</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> new() -&gt; <span class="kw">Self</span> <span class="op">{</span>
+        BitSet(<span class="dv">0</span>)
+    <span class="op">}</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> from(data: u128) -&gt; <span class="kw">Self</span> <span class="op">{</span>
+        BitSet(data)
+    <span class="op">}</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> contains(&amp;<span class="kw">self</span>, i: <span class="dt">usize</span>) -&gt; <span class="dt">bool</span> <span class="op">{</span>
+        (<span class="kw">self</span>.<span class="dv">0</span> &amp; (<span class="dv">1</span> &lt;&lt; i)) != <span class="dv">0</span>
+    <span class="op">}</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> insert(&amp;<span class="kw">mut</span> <span class="kw">self</span>, i: <span class="dt">usize</span>) <span class="op">{</span>
+        <span class="kw">self</span>.<span class="dv">0</span> |= <span class="dv">1</span> &lt;&lt; i;
+    <span class="op">}</span>
 <span class="op">}</span>
 
-<span class="kw">fn</span> main() <span class="op">{</span>
-    <span class="pp">loop_timeout_ms!</span>(<span class="dv">3000</span>; <span class="op">{</span>
-        slow_yes();
-    <span class="op">}</span>);
-<span class="op">}</span></code></pre></div>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Time Limited Loop</span>
-<span class="at">#[</span>macro_export<span class="at">]</span>
-<span class="pp">macro_rules!</span> loop_timeout_ms <span class="op">{</span>
-    ( $milli_seconds:expr; $body:expr ) =&gt; <span class="op">{</span>
-        <span class="kw">let</span> now = std::time::SystemTime::now();
-        <span class="kw">loop</span> <span class="op">{</span>
-            <span class="kw">match</span> now.elapsed() <span class="op">{</span>
-                <span class="cn">Ok</span>(elapsed) =&gt; <span class="op">{</span>
-                    <span class="kw">if</span> elapsed.as_millis() &gt; $milli_seconds <span class="op">{</span>
-                        <span class="kw">break</span>;
-                    <span class="op">}</span>
-                    $body
-                <span class="op">}</span>
-                <span class="cn">Err</span>(e) =&gt; <span class="op">{</span>
-                    <span class="pp">eprintln!</span>(<span class="st">&quot;Err, {:?}&quot;</span>, e);
-                <span class="op">}</span>
-            <span class="op">}</span>
-        <span class="op">}</span>
-    <span class="op">}</span>;
+<span class="kw">impl</span> std::ops::BitAnd&lt;<span class="dt">usize</span>&gt; <span class="kw">for</span> BitSet <span class="op">{</span>
+    <span class="kw">type</span> Output = <span class="dt">bool</span>;
+    <span class="kw">fn</span> bitand(<span class="kw">self</span>, i: <span class="dt">usize</span>) -&gt; <span class="dt">bool</span> <span class="op">{</span>
+        <span class="kw">self</span>.contains(i)
+    <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="kw">impl</span> std::ops::BitOr&lt;<span class="dt">usize</span>&gt; <span class="kw">for</span> BitSet <span class="op">{</span>
+    <span class="kw">type</span> Output = <span class="kw">Self</span>;
+    <span class="kw">fn</span> bitor(<span class="kw">self</span>, i: <span class="dt">usize</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span>
+        BitSet(<span class="kw">self</span>.<span class="dv">0</span> | (<span class="dv">1</span> &lt;&lt; i))
+    <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="kw">impl</span> std::ops::BitOrAssign&lt;<span class="dt">usize</span>&gt; <span class="kw">for</span> BitSet <span class="op">{</span>
+    <span class="kw">fn</span> bitor_assign(&amp;<span class="kw">mut</span> <span class="kw">self</span>, i: <span class="dt">usize</span>) <span class="op">{</span>
+        <span class="kw">self</span>.insert(i);
+    <span class="op">}</span>
 <span class="op">}</span>
 
 <span class="at">#[</span>cfg<span class="at">(</span>test<span class="at">)]</span>
-<span class="kw">mod</span> test_timed_loop <span class="op">{</span>
+<span class="kw">mod</span> test_bitset <span class="op">{</span>
+    <span class="kw">use</span> <span class="kw">crate</span>::set::bitset::*;
+
     <span class="at">#[</span>test<span class="at">]</span>
-    <span class="kw">fn</span> test_timed_loop() <span class="op">{</span>
-        <span class="pp">loop_timeout_ms!</span>(<span class="dv">10</span>; <span class="op">{</span>
-            <span class="pp">eprintln!</span>(<span class="st">&quot;y&quot;</span>);
-        <span class="op">}</span>);
+    <span class="kw">fn</span> test() <span class="op">{</span>
+        <span class="kw">let</span> <span class="kw">mut</span> bs = BitSet::new();
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.<span class="dv">128</span> <span class="op">{</span>
+            <span class="pp">assert!</span>(!bs.contains(i));
+        <span class="op">}</span>
+        bs.insert(<span class="dv">5</span>);
+        <span class="pp">assert!</span>(bs.contains(<span class="dv">5</span>));
+        bs.insert(<span class="dv">7</span>);
+        <span class="pp">assert!</span>(bs.contains(<span class="dv">5</span>));
+        <span class="pp">assert!</span>(bs.contains(<span class="dv">7</span>));
+    <span class="op">}</span>
+
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> test_ops() <span class="op">{</span>
+        <span class="kw">let</span> <span class="kw">mut</span> bs = BitSet::from(<span class="dv">3</span>);
+        <span class="pp">assert!</span>(bs &amp; <span class="dv">0</span>);
+        <span class="pp">assert!</span>(bs &amp; <span class="dv">1</span>);
+        <span class="pp">assert!</span>(!(bs &amp; <span class="dv">2</span>));
+        bs |= <span class="dv">2</span>;
+        <span class="pp">assert!</span>(bs &amp; <span class="dv">2</span>);
+    <span class="op">}</span>
+
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> test_immutable() <span class="op">{</span>
+        <span class="kw">let</span> bs = BitSet::new();
+        <span class="kw">let</span> cs = bs | <span class="dv">0</span> | <span class="dv">2</span> | <span class="dv">4</span> | <span class="dv">6</span>;
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.<span class="dv">6</span> <span class="op">{</span>
+            <span class="pp">assert!</span>(!bs.contains(i));
+            <span class="kw">if</span> i % <span class="dv">2</span> == <span class="dv">0</span> <span class="op">{</span>
+                <span class="pp">assert!</span>(cs.contains(i));
+            <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
+                <span class="pp">assert!</span>(!cs.contains(i));
+            <span class="op">}</span>
+        <span class="op">}</span>
     <span class="op">}</span>
 <span class="op">}</span></code></pre></div>
           </div>
@@ -192,7 +218,7 @@
 </ul>
 </details>
 
-<details class=menu>
+<details class=menu open>
 <summary class=menu>集合</summary>
 <ul>
 <li><a href="set.union_find.html">UnionFind</a></li>
@@ -280,7 +306,7 @@
 </ul>
 </details>
 
-<details class=menu open>
+<details class=menu>
 <summary class=menu>時間/時刻</summary>
 <ul>
 <li><a href="time.while.html">制限時間付きループ</a></li>

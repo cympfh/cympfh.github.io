@@ -17,7 +17,7 @@ index:
 		-A ../resources/js/toc.html \
 		--mathjax=https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML \
 		--css ../../../resources/css/c.css \
-		--css https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css \
+		--css https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css \
 		-o $@
 
 edit:

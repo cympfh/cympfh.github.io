@@ -117,7 +117,7 @@ while read tag; do
     cat <<EOM
   <section class="section" id="$tag">
     <div class="container">
-        <h3 class="title">$tag</h3>
+      <h2 class="title">$tag</h2>
 EOM
 
     < "$TABLE" awk '$1 == "'"$tag"'"{print $2}' |
@@ -137,6 +137,7 @@ done < "$TAGLIST"
 cat <<EOM
   <section class="section">
     <div class="container">
+      <h2 class="title">all items</h2>
 EOM
 < "$POSTLIST" awk '{A[NR]=$0} END{for(i=NR;i>=1;--i) print(A[i])}' |  # tac
 while read id; do

@@ -2,10 +2,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
   <meta charset="utf-8" />
-  <meta name="description" content="文鳥が片目をよくつむる, ラーメンを食べた, cumin" />
+  <meta name="description" content="文鳥が片目をよくつむる, ラーメンを食べた, cumin, 追記" />
   <meta property="og:url" content="http://cympfh.cc/taglibro">
   <meta property="og:title" content="Sat Nov 07 2020" />
-  <meta property="og:description" content="文鳥が片目をよくつむる, ラーメンを食べた, cumin" />
+  <meta property="og:description" content="文鳥が片目をよくつむる, ラーメンを食べた, cumin, 追記" />
   <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@cympfh" />
@@ -165,6 +165,25 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="kw">let</span> y = x.map(|val| val + <span class="dv">10</span>);
 x + y</code></pre></div>
 <p>と書ける. こうやって見ると, こっちのほうが簡潔じゃないかと思いもする.</p>
+<h2 id="追記">追記</h2>
+<p>ていうか、</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">let</span> x = <span class="op">{</span>
+    <span class="kw">let</span> x = <span class="dv">2</span>;
+    x + <span class="dv">1</span>
+<span class="op">}</span>;</code></pre></div>
+<p>この <code>{}</code> の中は <code>3</code> というデータを表していて, <code>{&quot;x&quot;:2}</code> というデータではない. 一方で全体は <code>{&quot;x&quot;: 3}</code> を表すということになっていて, キレイな再帰的データ構造になっていなくて気持ち悪い.</p>
+<p>これを採用するならそのjsonnet方式を採用した方がずっといい.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">let</span> x = <span class="op">[</span><span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span><span class="op">]</span>;
+<span class="kw">let</span> y = x.map(|val| val + <span class="dv">10</span>);
+x + y</code></pre></div>
+<p>でもって <code>[1,2,3,11,12,13]</code> というデータを表す.</p>
+<p>或いはもっと別な文法にする. 例えば</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust">x + y
+    <span class="kw">where</span> <span class="op">{</span>
+        <span class="kw">let</span> x = <span class="op">[</span><span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span><span class="op">]</span>;
+        <span class="kw">let</span> y = x.map(|val| val + <span class="dv">10</span>);
+    <span class="op">}</span></code></pre></div>
+<p>うーん, これはちょっとな...</p>
 <footer>
     <p class="is-pulled-right">
     @cympfh / cympfh@gmail.com

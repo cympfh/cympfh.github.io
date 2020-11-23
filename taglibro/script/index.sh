@@ -38,8 +38,12 @@ cat <<EOM
   <link rel="stylesheet" href="../resources/css/bulma/bulma.css" />
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" />
   <style>
-    .card-header:hover {
+    .card-header {
       background-color: #fafafa;
+      transition: all 0.2s ease-in-out;
+    }
+    .card-header:hover {
+      background-color: #f0f0f0;
     }
     .card-content > a {
       cursor: pointer;

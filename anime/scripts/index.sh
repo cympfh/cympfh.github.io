@@ -88,7 +88,7 @@ cat <<TEMPLATE
   <link rel="stylesheet" href="../resources/css/bulma/bulma.css" />
   <link rel="stylesheet" href="./resources/css/base.css" />
   <link rel="stylesheet" href="./resources/css/menu.css" />
-  <link rel="stylesheet" href="./resources/css/youtube.css" />
+  <link rel="stylesheet" href="../resources/css/youtube.css" />
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
   </head>
 <body>
@@ -134,7 +134,7 @@ cat <<TEMPLATE
   </section>
 
   <script src="./resources/js/base.js"></script>
-  <script src="./resources/js/youtube.js"></script>
+  <script src="../resources/js/youtube.js"></script>
 
 </body></html>
 TEMPLATE

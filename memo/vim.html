@@ -59,22 +59,51 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="is-pulled-right">
 <p><a class='tag is-green' href=index.html#linux>linux</a></p>
 </div>
-<h2 id="build">Build</h2>
-<h3 id="default-build">default build</h3>
-<p>特に追加のプラグインを指定しないデフォルトのビルド.</p>
+<h2 id="ビルド">ビルド</h2>
+<h3 id="ソースコード">ソースコード</h3>
+<p>github から適当に新しいのを手に入れる</p>
+<ul>
+<li><a href="https://github.com/vim/vim/releases">/github.com/vim/vim/releases</a></li>
+</ul>
+<h3 id="ビルドコマンド">ビルドコマンド</h3>
+<p>追加のプラグインを指定しない場合は次のように</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sudo</span> apt install libncursesw5-dev
-
 <span class="ex">./configure</span>
-
 <span class="fu">make</span></code></pre></div>
-<h3 id="huge-build">huge Build</h3>
-<p>プラグインてんこもりバージョン</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sudo</span> apt-get install libncurses5-dev libgnome2-dev libgnomeui-dev libgtk2.0-dev libatk1.0-dev libbonoboui2-dev libcairo2-dev libx11-dev libxpm-dev libxt-dev
-
-<span class="ex">./configure</span> --with-features=huge --enable-rubyinterp=yes --enable-pythoninterp=yes --with-python-config-dir=/usr/lib/python2.7/config-x86_64-linux-gnu_d --enable-python3interp=yes --with-python3-config-dir=/usr/lib/python3.4/config-3.4m-x86_64-linux-gnu --enable-luainterp=yes --with-luajit --enable-fontset --enable-fail-if-missing
-
+<p>ただし, 最近の vim プラグインの多くは python3 の埋め込み機能を利用して出来ており, これらを使うには vim に python3 をリンクさせておく必要がある. そのためには configure にオプションを与える.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">./configure</span> --enable-python3interp=yes
 <span class="fu">make</span></code></pre></div>
-<p>デフォルトだと, オプションで指定してても必要なパッケージが見つからなかったら勝手に無視して進めてしまう. <code>--enable-fail-if-missing</code> はそのような場合に失敗して落ちるようにする. しかしながら、<code>huge</code> の中については、依存が足りないものは無視してすすめる.</p>
+<p>これが大変で, リンクがうまく行かずに起動したら SEGV で落ちたり, Import Error を吐いてプラグインが使えなかったりなどの問題がある. 考えられる原因は色々あって,</p>
+<ul>
+<li>バージョンが合わない不運
+<ul>
+<li>vim と python のバージョンの組み合わせを試す</li>
+</ul></li>
+<li>リンクのさせかたが駄目
+<ul>
+<li><code>yes</code> の代わりに <code>dynamic</code> にしてダイナミックリンクにするとか</li>
+</ul></li>
+<li>そもそも Python の shared object が無い
+<ul>
+<li>python ビルドからやり直し</li>
+</ul></li>
+</ul>
+<h3 id="おすすめセット-20201126-動作版">おすすめセット (2020/11/26 動作版)</h3>
+<h4 id="python3.8.5"><a href="https://www.python.org/downloads/release/python-385/">Python3.8.5</a></h4>
+<p>pyenv は使わないのが本当に無難. ソースコードから直接システムに置いておく. 普段遣いしたい Python が別途あるなら, これは Vim 専用と割り切ってもいいくらい. ただし Vim 用に <code>pip install</code> したいときは, もちろんこの pip を使わないと行けないのだけ注意.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sudo</span> apt install libffi-dev
+<span class="ex">./configure</span> --enable-optimizations --enable-shared
+<span class="fu">make</span>
+<span class="fu">sudo</span> make install</code></pre></div>
+<p>make の後, ビルドに失敗したモジュールがあると,</p>
+<pre><code>Failed to build these modules:
+_ctypes</code></pre>
+<p>みたいなのがさらっと出るので注意. 特に <code>_ctypes</code> が失敗してたら <code>libffi-dev</code> 或いはそれ相当のものを入れてから再度ビルドする.</p>
+<h4 id="vim-8.2.1484"><a href="https://github.com/vim/vim/releases/tag/v8.2.1484">vim 8.2.1484</a></h4>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">./configure</span> --enable-python3interp=yes --with-python3-command=python3.8
+<span class="fu">make</span>
+<span class="fu">sudo</span> make install</code></pre></div>
+<p>最後のインストールをしてしまう前に動作確認をしておくとよい. <code>./src/vim</code> に実行可能バイナリがあるので, これを <code>--version</code> で実行して <code>+python3</code> とあるのを確認したり, 確かに起動できることを見たりするとよい.</p>
 
 <!--
 

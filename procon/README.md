@@ -85,6 +85,11 @@
 
 - [極座標](geo.polar.md)
 
+## 格子点上の幾何
+
+- [点](geo.2d.int.point.md)
+- [直線](geo.2d.int.line.md)
+
 # 集合
 - [UnionFind](set.union_find.md)
 - [BitSet](set.bitset.md)

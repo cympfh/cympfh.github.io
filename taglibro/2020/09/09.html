@@ -2,10 +2,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
   <meta charset="utf-8" />
-  <meta name="description" content="Range Maximum (Minimum) Query 区間への加算 [AtCoder Library Practice Contest/ K - Range Affine Range Sum](https://atcoder.jp/contests/practice2/tasks/practice2_k) [AtCoder Library Practice Contest/ L - Range Affine Range Sum](https://atcoder.jp/contests/practice2/tasks/practice2_l)" />
+  <meta name="description" content="遅延セグメントツリーを学んだ, Range Maximum (Minimum) Query, 区間への加算, 例題" />
   <meta property="og:url" content="http://cympfh.cc/taglibro">
   <meta property="og:title" content="Wed Sep 09 2020" />
-  <meta property="og:description" content="Range Maximum (Minimum) Query 区間への加算 [AtCoder Library Practice Contest/ K - Range Affine Range Sum](https://atcoder.jp/contests/practice2/tasks/practice2_k) [AtCoder Library Practice Contest/ L - Range Affine Range Sum](https://atcoder.jp/contests/practice2/tasks/practice2_l)" />
+  <meta property="og:description" content="遅延セグメントツリーを学んだ, Range Maximum (Minimum) Query, 区間への加算, 例題" />
   <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@cympfh" />
@@ -19,16 +19,18 @@
       div.column{display: inline-block; vertical-align: top; width: 50%;}
   </style>
   <link rel="stylesheet" href="../../../resources/css/c.css" />
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="../../../resources/css/youtube.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
 </head>
 <body>
 <header class="page-header">
-    <a href='../../index.html'><i class="fa fa-save" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='../../index.html'><i class="fas fa-fast-backward"></i></a>
 </header>
 <header>
 <h1 class="title">Wed Sep 09 2020</h1>
 </header>
+<h2 id="遅延セグメントツリーを学んだ">遅延セグメントツリーを学んだ</h2>
 <p>2020 年になってようやく遅延（伝播）セグメントツリーを知ったので解ける問題が増えて今嬉しい.</p>
 <p>遅延セグメントツリーは一言で言えばこのようなもの. モノイド <span class="math inline">\(X\)</span> と, それに対するモノイド作用 <span class="math inline">\(M\)</span> があるときにこんなことが出来る. <span class="math inline">\(X\)</span> の要素からなる長さ <span class="math inline">\(N\)</span>の数列 <span class="math inline">\(x\)</span> について,</p>
 <ol type="1">
@@ -133,7 +135,8 @@
 </ul></li>
 </ul>
 <p>長さ <span class="math inline">\(\ell\)</span> の区間があって今そこの和が <span class="math inline">\(x\)</span> のとき, この各値に <span class="math inline">\(m\)</span> を足すと, 和は <span class="math inline">\(x + m \ell\)</span>. 当たり前ですね.</p>
-<h2 id="atcoder-library-practice-contest-k---range-affine-range-sum"><a href="https://atcoder.jp/contests/practice2/tasks/practice2_k">AtCoder Library Practice Contest/ K - Range Affine Range Sum</a></h2>
+<h2 id="例題">例題</h2>
+<h3 id="atcoder-library-practice-contest-k---range-affine-range-sum"><a href="https://atcoder.jp/contests/practice2/tasks/practice2_k">AtCoder Library Practice Contest/ K - Range Affine Range Sum</a></h3>
 <ul>
 <li>区間取得: <span class="math inline">\(\sum_{i \in I} x_i\)</span></li>
 <li>区間更新: <span class="math inline">\(x_i \leftarrow b x_i + c\)</span></li>
@@ -144,7 +147,7 @@
 <li><span class="math inline">\(m(x, \ell) = bx + c\)</span></li>
 </ul>
 <p>というのが実際の作用だし, <span class="math inline">\(M\)</span> の積はこれを満たすように適切に定めるだけ.</p>
-<h2 id="atcoder-library-practice-contest-l---range-affine-range-sum"><a href="https://atcoder.jp/contests/practice2/tasks/practice2_l">AtCoder Library Practice Contest/ L - Range Affine Range Sum</a></h2>
+<h3 id="atcoder-library-practice-contest-l---range-affine-range-sum"><a href="https://atcoder.jp/contests/practice2/tasks/practice2_l">AtCoder Library Practice Contest/ L - Range Affine Range Sum</a></h3>
 <p>どんな情報があれば転倒数がマージできるか考えればおのずと <span class="math inline">\(X\)</span> が決まる.</p>
 <p>区間 <span class="math inline">\(I_1\)</span> を左に, <span class="math inline">\(I_2\)</span> を右にしてマージするとき, 出来上がった区間の転倒数は, それぞれの転倒数はそのまま足して, 新たに出来る転倒というのは <span class="math inline">\(I_1\)</span> に含まれる <span class="math inline">\(1\)</span> の数と <span class="math inline">\(0\)</span> の数との積, これを加える. 従って, まず <span class="math inline">\(0,1\)</span> それぞれの個数と, 転倒数を情報として持っておけば良さそう.</p>
 <p>さてこの問題における区間に対する更新というのが 0/1 のフリップ操作. フリップしたときに出来る転倒数は今述べた3つの情報だけからは分から無さそう. しかし, 「フリップしたら転倒する」数というのも転倒数と同じ計算量で計算できるに決まってるので, これも持っておけばいい. つまり, <span class="math inline">\(X\)</span> はその区間における</p>
@@ -276,5 +279,6 @@
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+  <script src="../../../resources/js/youtube.js"></script>
 </body>
 </html>

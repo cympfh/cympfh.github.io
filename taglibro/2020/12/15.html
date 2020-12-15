@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="description" content="教訓：IoTに命を任すな, cumin に合併型だかなんだかを入れておきたい" />
+  <meta property="og:url" content="http://cympfh.cc/taglibro">
+  <meta property="og:title" content="Tue Dec 15 2020" />
+  <meta property="og:description" content="教訓：IoTに命を任すな, cumin に合併型だかなんだかを入れておきたい" />
+  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@cympfh" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Tue Dec 15 2020</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css" />
+  <link rel="stylesheet" href="../../../resources/css/youtube.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+</head>
+<body>
+<header class="page-header">
+    <a href='../../index.html'><i class="fas fa-fast-backward"></i></a>
+</header>
+<header>
+<h1 class="title">Tue Dec 15 2020</h1>
+</header>
+<h2 id="教訓iotに命を任すな">教訓：IoTに命を任すな</h2>
+<h2 id="cumin-に合併型だかなんだかを入れておきたい">cumin に合併型だかなんだかを入れておきたい</h2>
+<p>cumin というのは設定ファイル言語である. 最終的に得たいものが何でもありな, ふるゆわデータである以上, 例えば</p>
+<div class="sourceCode"><pre class="sourceCode json"><code class="sourceCode json"><span class="ot">[</span>
+    <span class="fu">{</span><span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;A&quot;</span><span class="fu">,</span> <span class="dt">&quot;name_of_a&quot;</span><span class="fu">:</span> <span class="st">&quot;hoge&quot;</span><span class="fu">}</span><span class="ot">,</span>
+    <span class="fu">{</span><span class="dt">&quot;type:&quot;</span> <span class="dt">&quot;B&quot;</span><span class="fu">,</span> <span class="dt">&quot;id_of_b&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">}</span>
+<span class="ot">]</span></code></pre></div>
+<p>みたいなものを作れなきゃ困る場面は絶対ある. 今の所, 配列の中身は型を揃えなきゃいけないのでこれが出来ない.</p>
+<p>解決策として次の4つが思いついてる</p>
+<ol type="1">
+<li>合併型を用意する</li>
+<li>代数的データ構造を用意する</li>
+<li>型クラスを導入する</li>
+<li>部分型を導入する</li>
+</ol>
+<h3 id="合併型バージョン">合併型バージョン</h3>
+<p>和集合をただとるだけ. 今採用してる意味論（JSON への変換）を考えるとこれが実装は簡単.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">struct</span> A <span class="op">{</span>
+    name_of_a: <span class="dt">String</span>
+<span class="op">}</span>
+<span class="kw">struct</span> B <span class="op">{</span>
+    id_of_b: Nat
+<span class="op">}</span>
+
+data T = A | B;
+
+<span class="kw">let</span> data: <span class="dt">Vec</span>&lt;T&gt; = <span class="op">[</span>
+    A(<span class="st">&quot;hoge&quot;</span>),
+    B(<span class="dv">1</span>),
+<span class="op">]</span>
+
+data</code></pre></div>
+<p><code>A()</code> や <code>B()</code> がどう JSON へ変換されるかは決まっていて, <code>T</code> は型をまとめあげる以上のことはしないくてJSON への変換方法を何も変えない.</p>
+<h3 id="代数的データ構造">代数的データ構造</h3>
+<p>直和を取る方法. 合併型で例えば <code>Int | Int</code> と書いた時にそれが厳密に <code>Int</code> と同値な一方で, 直和は左右どちらの <code>Int</code> なのかを区別する.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">enum</span> T <span class="op">{</span>
+    A <span class="op">{</span> name_of_a: <span class="dt">String</span> <span class="op">}</span>,
+    B <span class="op">{</span> id_of_b: Nat <span class="op">}</span>,
+<span class="op">}</span>
+<span class="kw">let</span> data: <span class="dt">Vec</span>&lt;T&gt; = <span class="op">[</span>
+    A(<span class="st">&quot;hoge&quot;</span>),
+    B(<span class="dv">1</span>),
+<span class="op">]</span>;
+data</code></pre></div>
+<p>あると便利だろうけど, JSON への変換方法が自明じゃない. 合併型と違って何かタグを付けて区別する必要があるからだ.</p>
+<ul>
+<li>合併型では, 使う時に合併させて作ればいいので追加が楽
+<ul>
+<li>例えば将来的に, 外部モジュールに定義されたものに自分で作ったものを追加するとかできる</li>
+<li>ただし定義があちこちに散らばる</li>
+</ul></li>
+<li>代数的データ構造では, 全部そこに集約してるので読むのは楽</li>
+</ul>
+<h3 id="型クラス">型クラス</h3>
+<p>型のひとつ上のレイヤーに型クラスという概念を定義する. 各型クラス <span class="math inline">\(C\)</span> には型の集合 <span class="math inline">\(\overline{C}\)</span> が割り当てられている.</p>
+<p>型アノテーションの場面では <span class="math inline">\(C\)</span> も型と同じように使うことが出来る.</p>
+<p>Rustの derive マクロによる型トレイトの宣言を真似るとこんな感じ</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="at">#[</span>derive<span class="at">(</span>T<span class="at">)]</span>
+<span class="kw">struct</span> A <span class="op">{</span>
+    name_of_a: <span class="dt">String</span>
+<span class="op">}</span>
+
+<span class="at">#[</span>derive<span class="at">(</span>T<span class="at">)]</span>
+<span class="kw">struct</span> B <span class="op">{</span>
+    id_of_b: Nat
+<span class="op">}</span>
+
+<span class="kw">let</span> data: <span class="dt">Vec</span>&lt;T&gt; = <span class="op">[</span>
+    A(<span class="st">&quot;hoge&quot;</span>),
+    B(<span class="dv">1</span>),
+<span class="op">]</span>;
+data</code></pre></div>
+<p><code>T</code> という名前の型クラスがあることをどこにも宣言してないけど, どうせ名前だけで実態のないものだし, そのために文法用意したくないな…</p>
+<h3 id="部分型">部分型</h3>
+<p>型クラスとか言ってるけどこれは結局部分型でしかない. そしてそういえば, 数に関しては <code>Nat &lt;: Int &lt;: Float</code> という部分型構造をプリミティブに定義していて, 暗黙的にキャストしちゃってる. この機能をユーザーに解放すればいい. 要するにクラスの継承関係を自由に定義できるようになるということなんだけど.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="at">#[</span>A <span class="at">&lt;:</span> T<span class="at">]</span>
+<span class="kw">struct</span> A <span class="op">{</span>
+    name_of_a: <span class="dt">String</span>
+<span class="op">}</span>
+
+<span class="at">#[</span>B <span class="at">&lt;:</span> T<span class="at">]</span>
+<span class="kw">struct</span> B <span class="op">{</span>
+    id_of_b: Nat
+<span class="op">}</span>
+
+<span class="kw">let</span> data: <span class="dt">Vec</span>&lt;T&gt; = <span class="op">[</span>
+    A(<span class="st">&quot;hoge&quot;</span>),
+    B(<span class="dv">1</span>),
+<span class="op">]</span>;
+data</code></pre></div>
+<p>文法上で型クラスとの違いは全くない. 型クラスは利用がかなり制限された継承関係である一方でこちらは勝手なことが出来そう. 上の例で <code>B &lt;: A</code> にするとか.</p>
+<p>以上書き出してみると, 合併型が平和な気がしている.</p>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+  <script src="../../../resources/js/youtube.js"></script>
+</body>
+</html>

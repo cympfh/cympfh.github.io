@@ -159,6 +159,11 @@ data</code></pre></div>
 data</code></pre></div>
 <p>文法上で型クラスとの違いは全くない. 型クラスは利用がかなり制限された継承関係である一方でこちらは勝手なことが出来そう. 上の例で <code>B &lt;: A</code> にするとか.</p>
 <p>以上書き出してみると, 合併型が平和な気がしている.</p>
+<p>そういえばタイプエイリアスの機能も欲しいとは思ってた.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">type</span> T = <span class="dt">Vec</span>&lt;<span class="dt">Option</span>&lt;<span class="dt">Vec</span>&lt;Int&gt;&gt;&gt;;  <span class="co">// alias</span>
+<span class="kw">type</span> S = T | <span class="dt">Vec</span>&lt;<span class="dt">String</span>&gt;;  <span class="co">// union</span></code></pre></div>
+<p>またパーサがややこしくなるけど, <code>S | T | ... | U</code> もちゃんと1つの型だとしてパースするようにしよう. 次のように入れ子になってても問題がないことにする (Future Work).</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">type</span> T = <span class="dt">Vec</span>&lt;<span class="dt">Option</span>&lt;<span class="dt">Vec</span>&lt;Int | <span class="dt">String</span>&gt;&gt; | <span class="dt">String</span>&gt;</code></pre></div>
 <footer>
     <p class="is-pulled-right">
     @cympfh / cympfh@gmail.com

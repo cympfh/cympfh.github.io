@@ -68,10 +68,19 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h1 class="title">Thu Dec 17 2020</h1>
 </header>
 <h2 id="cumin-v0.9.8">cumin v0.9.8</h2>
+<ul>
+<li><a href="https://github.com/cympfh/cumin/releases/tag/0.9.8">cympfh/cumin/releases/tag/0.9.8</a></li>
+</ul>
+<h3 id="合併型を入れた">合併型を入れた</h3>
 <p><a href="https://cympfh.cc/taglibro/2020/12/15">前回</a> の一番最後にラスト草案として書いたものを採用して実装した.</p>
 <div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">type</span> T = A | B | C;</code></pre></div>
-<p>はおよそ <span class="math display">\[T = A \cup B \cup C\]</span> を表している. そしてまた, <span class="math inline">\(T\)</span> は恒等射 <span class="math inline">\(T \to T\)</span> を表す. これは型の射としては <code>A | B | C -&gt; T</code> になっているつもり.</p>
+<p>はおよそ <span class="math display">\[T = A \cup B \cup C\]</span> を表している. そしてまた, <span class="math inline">\(T\)</span> は恒等射 <span class="math inline">\(T \to T\)</span> を表す. あるいは, もっと実際的には <span class="math inline">\(A \to T\)</span> と <span class="math inline">\(B \to T\)</span> と <span class="math inline">\(C \to T\)</span> の3つの包含写像を1つにマージしてしまったような関数.</p>
+<p>これは暗黙的なキャストとしては <strong>実行されない</strong>.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">type</span> T = Nat | <span class="dt">String</span>;
+<span class="kw">let</span> t: T = <span class="dv">1</span>;  <span class="co">// ERROR!</span>
+<span class="kw">let</span> t = T(<span class="dv">1</span>);  <span class="co">// OK</span></code></pre></div>
 <p>有用性という意味では <span class="math inline">\(A,B,C\)</span> は排反であって <span class="math inline">\(T\)</span> がちょうど直和になってるくらいがいいけど, 実際はただの和集合であって何も気にしない. 特に cumin は意味を JSON で与える. 型 <code>A</code> がついた値 <span class="math inline">\(a\)</span> の意味が <span class="math inline">\(\overline{a}\)</span> のとき, <span class="math inline">\(T(a)\)</span> の意味は尚も <span class="math inline">\(\overline{a}\)</span> である.</p>
+<h3 id="nom-に切り替えた">nom に切り替えた</h3>
 <p>パーサーコンビネータライブラリとして combine 4.4.0 を使ってたけど nom 6 に変更した. 使い心地としては combine の方が気の利いたAPIが細やかに用意されていて気に入っていた. 例えば <code>1 + 2 + 3</code> みたい数式のパースには <a href="https://docs.rs/combine/4.3.2/combine/fn.chainl1.html">chainl1</a> がちょうど便利だ. nom でコレに一番近いのが <a href="https://docs.rs/nom/6.0.1/nom/multi/fn.fold_many1.html">fold_many1</a> だけど, そのものじゃないし, コレ何が便利なの？ ていうかそういう問題じゃなくて, combine を使ったパーサーのコンパイルは平気で三分程度掛かる. 再帰をするパーサー関数は <code>parser!{}</code> マクロに包まないと行けないのでその中では rustfmt が効かない. といった実用上の不便が大きかった. nom に置き換えてコンパイルは10秒で終わるし（ライブラリのコンパイルを全部含めても50秒あれば終わるし） マクロを一切使わずにコード量は削減した.</p>
 <p>そろそろさすがに満を持して何でもやれるという気持ちになってきた. これからどうしよう.</p>
 <footer>

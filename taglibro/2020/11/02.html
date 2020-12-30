@@ -2,10 +2,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
   <meta charset="utf-8" />
-  <meta name="description" content="自然言語 意味空間 word2vec への適用 圏化" />
+  <meta name="description" content="自然言語, 意味空間, word2vec への適用, 圏化" />
   <meta property="og:url" content="http://cympfh.cc/taglibro">
   <meta property="og:title" content="Mon Nov 02 2020" />
-  <meta property="og:description" content="自然言語 意味空間 word2vec への適用 圏化" />
+  <meta property="og:description" content="自然言語, 意味空間, word2vec への適用, 圏化" />
   <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@cympfh" />
@@ -19,6 +19,7 @@
       div.column{display: inline-block; vertical-align: top; width: 50%;}
   </style>
   <link rel="stylesheet" href="../../../resources/css/c.css" />
+  <link rel="stylesheet" href="../../../resources/css/youtube.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
 </head>
@@ -34,15 +35,25 @@
 <p>文として書き下すことが出来る自然言語を, 次のような数学的対象に簡易的にモデル化する.</p>
 <p>自然言語 <span class="math inline">\(\L\)</span> は次の構造からなる.</p>
 <ul>
-<li>単語集合 <span class="math inline">\(V\)</span></li>
+<li>単語集合 <span class="math inline">\(V\)</span>
+<ul>
+<li>この集合の元のことを <strong>単語</strong> という</li>
+<li><span class="math inline">\(V\)</span> のことは <strong>語彙</strong> ともいう</li>
+</ul></li>
 <li>有限長の <span class="math inline">\(V\)</span> の列集合 <span class="math inline">\([V]\)</span>
 <ul>
 <li><span class="math inline">\([V] = \bigcup_{i=0}^\infty V^i\)</span>
 <ul>
-<li><span class="math inline">\(u \in V^i\)</span> は <span class="math inline">\(V\)</span> の要素をちょうど <span class="math inline">\(i\)</span> 個並べた列のこと</li>
+<li><span class="math inline">\(u \in V^i\)</span> とは単語を <span class="math inline">\(i\)</span> 個並べた列のこと</li>
 </ul></li>
-<li>この単語の列のことを <strong>文</strong> と呼ぶ</li>
-<li>特に長さ <span class="math inline">\(0\)</span> の列を <span class="math inline">\(\epsilon\)</span> と書いて <strong>空文</strong> と呼ぶことにする</li>
+<li><span class="math inline">\([V]\)</span> の元のことを <strong>文</strong> と呼ぶ
+<ul>
+<li><span class="math inline">\(u \in V^i\)</span> のとき <span class="math inline">\(u\)</span> の長さは <span class="math inline">\(i\)</span> であると定める</li>
+</ul></li>
+<li>特に長さ <span class="math inline">\(0\)</span> の列がちょうど一つだけ存在する
+<ul>
+<li>これを <span class="math inline">\(\epsilon\)</span> と書いて <strong>空文</strong> と呼ぶことにする</li>
+</ul></li>
 </ul></li>
 <li>意味空間 <span class="math inline">\(\Omega\)</span>
 <ul>
@@ -54,8 +65,11 @@
 <li><span class="math inline">\(\bot\)</span> は <span class="math inline">\(\bot \not\in \Omega\)</span> なる特別な記号</li>
 <li>文 <span class="math inline">\(s \in [V]\)</span> について <span class="math inline">\(\sigma(s) = \bot\)</span> のとき, <span class="math inline">\(s\)</span> を <strong>非文</strong> と呼ぶ
 <ul>
-<li>非文ではない文を <strong>正文</strong> と呼ぶことにする（今私が考えた）</li>
-<li>単に「文」という場合は正文も非文も含む</li>
+<li>非文ではない文を <strong>正文</strong> と呼ぶ</li>
+<li>単に「文」という場合は正文も非文も含む
+<ul>
+<li>文が正文であることを「意味がある」といい, 非文であることを「デタラメである」という</li>
+</ul></li>
 </ul></li>
 </ul></li>
 <li>非文ではない文だけを集めた集合を <span class="math inline">\(L\)</span> とする
@@ -65,7 +79,7 @@
 </ul>
 <p>以上の構造を持った <span class="math inline">\(\L(V, L, \Omega, \sigma)\)</span> を自然言語と呼ぶ.</p>
 <h2 id="意味空間">意味空間</h2>
-<p>自然言語 <span class="math inline">\(\L\)</span> には何とも定まってない意味空間 <span class="math inline">\(\Omega\)</span> がある. ここに数理的な演算が出来るような拡張をほどこした空間 <span class="math inline">\(X\)</span> を代わりに構成することを考える.</p>
+<p>上で定義した自然言語 <span class="math inline">\(\L\)</span> には何とも定まってない意味空間 <span class="math inline">\(\Omega\)</span> がある. ここに数理的な演算が出来るような拡張をほどこした空間 <span class="math inline">\(X\)</span> を代わりに構成することを考える.</p>
 <p><span class="math inline">\(\Omega\)</span> に出来なくて <span class="math inline">\(X\)</span> に出来るような違いとして次がある:</p>
 <ul>
 <li>非文の意味が取れる
@@ -259,5 +273,6 @@
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+  <script src="../../../resources/js/youtube.js"></script>
 </body>
 </html>

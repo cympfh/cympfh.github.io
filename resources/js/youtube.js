@@ -9,7 +9,10 @@ function youtube_init() {
   var nodes = document.getElementsByClassName('youtube');
   for (var node of nodes) {
     var src_id = node.getAttribute('src-id');
-    if (!src_id) continue;
+    if (!src_id) {
+      src_id = node.getAttribute('data-src-id');
+      if (!src_id) continue;
+    }
 
     var img = document.createElement('img');
     img.src = `https://img.youtube.com/vi/${src_id}/hqdefault.jpg`;

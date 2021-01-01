@@ -1,37 +1,19 @@
-# graph.maxflow
+# 有向グラフ - 最大流量
 
-## [graph.maxflow.rs](graph.maxflow.rs)
+## 概要
 
-Dinic 法の実装
+Dinic 法を実装する
 
-- 入力;
-    - 重み付き隣接リスト `g`
-        - 辺 $u \longrightarrow^w v$ を `g[u] = [(v, w)]` とする
-    - 始点 `s`
-    - 終点 `t`
-- 出力;
-    - `Dinic::flow(g, s, t)`
+## 入出力
 
-@[rust](graph.maxflow.rs)
-
-## [graph.maxflow.cc](graph.maxflow.cc)
-
-Ford-Fulkerson 法の実装
-
-- 入力;
-    - 隣接リスト `d`
-    - コストテーブル `c`
-    - 始点 `s`
-    - 終点 `t`
-- 出力;
-    - `this.flow`
-
-@[cpp](graph.maxflow.cc)
-
-## Example
-
-@[cpp](graph.maxflow.ex.cc)
+重み付きの隣接リストを入力とする.
+すなわち,
+頂点 $u$ から $v$ へ容量 $c$ の辺があるとき,
+`neigh[u] = [(v, w)]`
+とするようなリスト `neigh`.
 
 ## 関連問題
 
-- [ABC091/ARC092; C - 2D Plane 2N Points](https://beta.atcoder.jp/contests/arc092/tasks/arc092_a)
+- [ABC091/C - 2D Plane 2N Points](https://beta.atcoder.jp/contests/arc092/tasks/arc092_a)
+
+@[rust](procon-rs/src/graph/directed/dinic.rs)

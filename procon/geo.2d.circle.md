@@ -1,5 +1,3 @@
-# geo.2d.circle
+# 二次元ユークリッド幾何 - 円の定義
 
-## [geo.2d.circle.cc](geo.2d.circle.cc)
-
-@[cpp](geo.2d.circle.cc)
+@[rust](procon-rs/src/geometry2d/circle.rs)

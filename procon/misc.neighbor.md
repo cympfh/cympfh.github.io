@@ -2,4 +2,4 @@
 
 点を与えるとその近傍を返すようなデータ構造
 
-@[rust](misc.neighbor.rs)
+@[rust](procon-rs/src/misc/neighbor.rs)

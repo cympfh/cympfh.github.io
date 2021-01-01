@@ -1,11 +1,6 @@
-# prime.MillerRabin
+# 素数 - ミラーラビン素数判定
 
-## [prime.MillerRabin.rs](prime.MillerRabin.rs)
+フェルマーの小定理を用いた確率的なテストを行う.
+このテストは合成数については必ず正しく判定が出来, 適当な回数実行することでいい感じの確率で判定できる.
 
-@[rs](prime.MillerRabin.rs)
-
-## [prime.MillerRabin.cc](prime.MillerRabin.cc)
-
-@[cpp](prime.MillerRabin.cc)
-
-@[cpp](prime.MillerRabin.test.cc)
+@[rust](procon-rs/src/num/prime/mrtest.rs)

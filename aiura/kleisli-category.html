@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="クライスリ圏/随伴への分解/" />
+  <meta property="og:url" content="http://cympfh.cc/taglibro">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="クライスリ圏, モナドから導く随伴" />
+  <meta property="og:description" content="クライスリ圏/随伴への分解/" />
+  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@cympfh" />
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>クライスリ圏, モナドから導く随伴</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-stumbleupon"></i></a>
+</header>
+<header>
+<h1 class="title">クライスリ圏, モナドから導く随伴</h1>
+</header>
+<p class="date" style="text-align: right">
+2020-08-26 (Wed.)
+</p>
+<div class="is-pulled-right">
+<p><a class='tag is-red' href=index.html#圏論>圏論</a></p>
+</div>
+<p>クライスリ圏及びこれを用いたモナドを随伴に分解する方法を紹介する.</p>
+<p><span class="math inline">\(\require{AMScd}\)</span> <span class="math inline">\(\def\KL#1{\mathcal{Kl}(#1)}\def\Set{\mathrm{Set}}\def\Hom{\mathrm{Hom}}\)</span></p>
+<h2 id="クライスリ圏">クライスリ圏</h2>
+<p>圏 <span class="math inline">\(C\)</span> 及びこれの上のモナド <span class="math inline">\((T, \mu, \eta)\)</span> があるとする. このときに <span class="math inline">\(\KL T\)</span> とは次のような圏:</p>
+<ul>
+<li>対象は <span class="math inline">\(C\)</span> の対象そのまま:
+<ul>
+<li><span class="math inline">\(X \in C\)</span> に対して <span class="math inline">\(X \in \KL T\)</span></li>
+</ul></li>
+<li>射
+<ul>
+<li><span class="math inline">\(f \colon X \to Y \in C\)</span> に対して <span class="math inline">\(f \colon X \to TY \in \KL T\)</span></li>
+</ul></li>
+</ul>
+<h3 id="例.-冪集合モナド">例. 冪集合モナド</h3>
+<p>冪集合を取る Set の上の自己関手 <span class="math display">\[P \colon X \mapsto \{ U \mid U \subset X \}\]</span> は <a href="power-monad">モナド</a> である. これによるクライスリ圏 <span class="math inline">\(\KL P\)</span> を考える. <span class="math display">\[f \colon X \to Y \in \KL P\]</span> が何かは Set に戻してみると分かって, <span class="math display">\[f \colon X \to PY \in \Set\]</span> つまり, Set の射が <span class="math inline">\(X\)</span> の点を <span class="math inline">\(Y\)</span> の点に写すのに対して, <span class="math inline">\(\KL T\)</span> の射は, <span class="math inline">\(X\)</span> の点を <span class="math inline">\(Y\)</span> の <strong>部分集合</strong> に写す.</p>
+<p><span class="math display">\[f \colon x \in X \mapsto y \in Y ~;~ \Set\]</span> <span class="math display">\[f \colon x \in X \mapsto \upsilon \color{red}{\subset} Y ~;~ \KL P\]</span></p>
+<h2 id="随伴への分解">随伴への分解</h2>
+<p>圏 <span class="math inline">\(C\)</span> 及びこの上のモナド <span class="math inline">\((T, \mu, \eta)\)</span> があるときに, 二つの関手を構成する:</p>
+<ul>
+<li><span class="math inline">\(F \colon C \to \KL T\)</span>
+<ul>
+<li><span class="math inline">\(FX = X\)</span></li>
+<li><span class="math inline">\(f \colon X \to Y \in C\)</span> について
+<ul>
+<li><span class="math inline">\(Ff = \eta_Y f\)</span></li>
+</ul></li>
+</ul></li>
+<li><span class="math inline">\(G \colon \KL T \to C\)</span>
+<ul>
+<li><span class="math inline">\(GX = TX\)</span></li>
+<li><span class="math inline">\(f \colon X \to TY \in C\)</span> について
+<ul>
+<li><span class="math inline">\(Gf = \mu_Y Tf\)</span></li>
+</ul></li>
+</ul></li>
+</ul>
+<p>この二つの関手は, 関手 <span class="math inline">\(T\)</span> の分解になっている. すなわち <span class="math display">\[T = GF\]</span> が成り立っている.</p>
+<p>このこと自体は簡単に確認できる. 対象 <span class="math inline">\(X\)</span> について <span class="math inline">\(GFX = G(FX)=GX=TX\)</span>. 射 <span class="math inline">\(f \colon X \to Y \in C\)</span> について <span class="math inline">\(GFf = G(Ff) = \mu_Y T(\eta_Y f) = \mu_Y T\eta_Y Tf = 1_{TY} Tf=Tf\)</span>. 特に最後の <span class="math inline">\(\mu_Y T(\eta_Y) = 1_{TY}\)</span> はモナド則から.</p>
+<h3 id="定理">定理</h3>
+<p><span class="math inline">\(F\)</span> は <span class="math inline">\(G\)</span> の左随伴になっている. <span class="math display">\[F \dashv G\]</span></p>
+<h4 id="証明">証明</h4>
+<p>これもほぼクライスリ圏の構成から自明.</p>
+<p>随伴の定義は, <span class="math inline">\(X \in C, Y \in \KL T\)</span> について, <span class="math display">\[\Hom_{\KL{T}}(FX,Y) \simeq \Hom_{C}(X, GY)\]</span> という <strong>自然な</strong> 同型があること.</p>
+<p>自然であることを一旦気にしないで対象についてだけ言えば, <span class="math inline">\(FX=X, GY=TY\)</span> を入れて, <span class="math display">\[\Hom_{\KL{T}}(X,Y) \simeq \Hom_{C}(X, TY)\]</span> であり, これはまさにクライスリ圏の射 <span class="math inline">\(X \to Y\)</span> （左辺）が <span class="math inline">\(C\)</span> の射 <span class="math inline">\(X \to TY\)</span> （右辺）に対応するという定義そのままを言っている.</p>
+<p>これが自然であることは射の写し方についてまで見る必要があって, 任意の</p>
+<ul>
+<li><span class="math inline">\(g \colon X&#39; \to X \in C\)</span></li>
+<li><span class="math inline">\(h \colon Y \to Y&#39; \in \KL{T}\)</span></li>
+</ul>
+<p>について</p>
+<p><span class="math display">\[\begin{CD}
+\Hom_{\KL{T}}(FX, Y) @&gt;\simeq &gt;&gt; \Hom_C(X, GY) \\
+@VVV @VVV \\
+\Hom_{\KL{T}}(FX&#39;,Y&#39;) @&gt;\simeq &gt;&gt; \Hom_C(X&#39;, GY&#39;) \\
+\end{CD}\]</span></p>
+<p>横方向の射: <span class="math inline">\(f \in \KL{T}\)</span> を同型に <span class="math inline">\(f \in C\)</span> に写す操作は（同じ記号を使いつつも明示するために） <span class="math inline">\(\Phi(f) \in C\)</span> と書くことにする. 縦方向の射は <span class="math inline">\(\Hom\)</span> 関手によるもので, 具体的に言うと次の通り. 自由に <span class="math inline">\(f \colon FX \to Y \in \KL{T}\)</span> を取ってきたときに,</p>
+<p><span class="math display">\[\begin{CD}
+f \in \KL{T} @&gt;&gt;&gt; \Phi(f) \in C \\
+@VVV @VVV \\
+hf Fg \in \KL{T} @&gt;&gt;&gt; \Phi(hf~Fg) = Gh~\Phi f~g \in C \\
+\end{CD}\]</span></p>
+<p>この可換性は右下のイコール <span class="math inline">\(\Phi(hf~Fg) = Gh~\Phi f~g\)</span> を示せばよくて, 次の通り. <span class="math display">\[\begin{align*}
+\Phi(hfFg)
+&amp; = \mu_{Y&#39;} T(\Phi h) \mu_Y T(\Phi f) \Phi(Fg) \\
+&amp; = \mu_{Y&#39;} T(\Phi h) \mu_Y T(\Phi f) \eta_X~g \\
+&amp; = Gh~\Phi(f \Phi^{-1}(\eta_X))~g \\
+&amp; = Gh~\Phi(f 1_X)~g \\
+&amp; = Gh~\Phi(f)~g \\
+\end{align*}\]</span></p>
+<p>以上から <span class="math inline">\(F \dashv G\)</span> がわかった.</p>
+<h3 id="例.-冪集合モナド-1">例. 冪集合モナド</h3>
+<p>冪集合モナド <span class="math inline">\(P \colon \Set \to \Set\)</span> の場合にクライスリ圏からどんな随伴が導かれるか見る.</p>
+<ul>
+<li><span class="math inline">\(f \colon X \to Y \in \Set\)</span>
+<ul>
+<li><span class="math inline">\(Ff \colon X \to PY\)</span></li>
+<li><span class="math inline">\(Ff \colon x \mapsto \{ f(x) \} \subset Y\)</span></li>
+</ul></li>
+<li><span class="math inline">\(g \colon X \to PY \in \Set\)</span>
+<ul>
+<li><span class="math inline">\(Gg \colon PX \to PY\)</span></li>
+<li><span class="math inline">\(Gg \colon \alpha \mapsto \bigcup{x \in \alpha} g(x)\)</span></li>
+</ul></li>
+</ul>
+<p>これらが随伴になる.</p>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

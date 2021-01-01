@@ -1,6 +1,6 @@
 % Field-aware Factorization Machines for CTR Prediction
 % http://www.csie.ntu.edu.tw/~cjlin/papers/ffm.pdf
-% 分類器 機械学習
+% 分類器 機械学習 推薦システム
 
 ## 概要
 

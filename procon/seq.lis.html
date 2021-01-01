@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>procon/</title>
+
+    <link rel="stylesheet" href="./resources/c.css">
+    <link rel="stylesheet" href="./resources/highlight.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+
+  </head>
+  <body>
+    <section class="section">
+      <div class="container">
+        <section class="main-content columns is-fullheight">
+
+          <div class="article column is-8 is-10-mobile">
+            <h1 id="数列---最長増加部分列-longest-increasing-sequence-lis">数列 - 最長増加部分列 (Longest Increasing Sequence; LIS)</h1>
+<h2 id="概要">概要</h2>
+<p>Young Tableaux アルゴリズムを実装する.</p>
+<h2 id="入出力">入出力</h2>
+<p>与えられた数列のうち <strong>狭義</strong> 最長増加部分列を返す.</p>
+<h2 id="メモ">メモ</h2>
+<p><strong>広義</strong> 増加列に変更するのは単純じゃないので注意.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Sequence - Longest (Strictly) Increasing Sequence (LIS; Young Tableu Method)</span>
+<span class="kw">use</span> <span class="kw">crate</span>::algorithm::binary_search::*;
+
+<span class="kw">pub</span> <span class="kw">fn</span> lis&lt;X: <span class="bu">Copy</span> + <span class="bu">Ord</span> + std::fmt::<span class="bu">Debug</span>&gt;(xs: &amp;<span class="dt">Vec</span>&lt;X&gt;) -&gt; <span class="dt">Vec</span>&lt;X&gt; <span class="op">{</span>
+    <span class="kw">if</span> xs.len() &lt;= <span class="dv">1</span> <span class="op">{</span>
+        <span class="kw">return</span> xs.clone();
+    <span class="op">}</span>
+    <span class="kw">let</span> <span class="kw">mut</span> bins: <span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;X&gt;&gt; = <span class="pp">vec!</span><span class="op">[]</span>;
+    <span class="kw">let</span> <span class="kw">mut</span> bots: <span class="dt">Vec</span>&lt;X&gt; = <span class="pp">vec!</span><span class="op">[]</span>;
+    <span class="kw">for</span> &amp;x <span class="kw">in</span> xs.iter() <span class="op">{</span>
+        <span class="kw">let</span> i = <span class="kw">if</span> bots.is_empty() <span class="op">{</span>
+            <span class="dv">0</span>
+        <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
+            binsearch(<span class="dv">0.</span>.bots.len(), &amp;|i| bots<span class="op">[</span>i<span class="op">]</span> &gt;= x)
+        <span class="op">}</span>;
+        <span class="kw">if</span> i == bots.len() <span class="op">{</span>
+            bins.push(<span class="pp">vec!</span><span class="op">[</span>x<span class="op">]</span>);
+            bots.push(x);
+        <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
+            bins<span class="op">[</span>i<span class="op">]</span>.push(x);
+            bots<span class="op">[</span>i<span class="op">]</span> = x;
+        <span class="op">}</span>
+    <span class="op">}</span>
+    <span class="kw">let</span> m = bins.len();
+    <span class="kw">let</span> <span class="kw">mut</span> last = bins<span class="op">[</span>m - <span class="dv">1</span><span class="op">][</span><span class="dv">0</span><span class="op">]</span>;
+    <span class="kw">let</span> <span class="kw">mut</span> result = <span class="pp">vec!</span><span class="op">[</span>last<span class="op">]</span>;
+    <span class="kw">for</span> i <span class="kw">in</span> (<span class="dv">0.</span>.m - <span class="dv">1</span>).rev() <span class="op">{</span>
+        <span class="kw">let</span> j = binsearch(<span class="dv">0.</span>.bins<span class="op">[</span>i<span class="op">]</span>.len(), &amp;|j| bins<span class="op">[</span>i<span class="op">][</span>j<span class="op">]</span> &lt; last);
+        last = bins<span class="op">[</span>i<span class="op">][</span>j<span class="op">]</span>;
+        result.push(last);
+    <span class="op">}</span>
+    result.iter().rev().cloned().collect()
+<span class="op">}</span>
+
+<span class="at">#[</span>cfg<span class="at">(</span>test<span class="at">)]</span>
+<span class="kw">mod</span> test_lis <span class="op">{</span>
+    <span class="kw">use</span> <span class="kw">crate</span>::sequence::lis::*;
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> test() <span class="op">{</span>
+        <span class="pp">assert_eq!</span>(lis(&amp;<span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span><span class="op">]</span>), <span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span><span class="op">]</span>);
+        <span class="pp">assert_eq!</span>(lis(&amp;<span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span><span class="op">]</span>), <span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span><span class="op">]</span>);
+        <span class="pp">assert_eq!</span>(lis(&amp;<span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span><span class="op">]</span>), <span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span><span class="op">]</span>);
+        <span class="pp">assert_eq!</span>(lis(&amp;<span class="pp">vec!</span><span class="op">[</span><span class="dv">4</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">5</span><span class="op">]</span>), <span class="pp">vec!</span><span class="op">[</span><span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">5</span><span class="op">]</span>);
+        <span class="pp">assert_eq!</span>(lis(&amp;<span class="pp">vec!</span><span class="op">[</span><span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">2</span><span class="op">]</span>), <span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>, <span class="dv">2</span><span class="op">]</span>);
+        <span class="pp">assert_eq!</span>(lis(&amp;<span class="pp">vec!</span><span class="op">[</span><span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">3</span><span class="op">]</span>), <span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>, <span class="dv">3</span><span class="op">]</span>);
+        <span class="pp">assert_eq!</span>(lis(&amp;<span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">3</span><span class="op">]</span>), <span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span><span class="op">]</span>);
+    <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
+          </div>
+
+          <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
+<details class=menu>
+<summary class=menu>代数</summary>
+<ul>
+<li><a href="algebra.group.html">群</a></li>
+<li><a href="algebra.ring.html">環</a></li>
+<li><a href="algebra.ratio.html">有理数</a></li>
+<li><a href="algebra.complex.html">虚数</a></li>
+<li><a href="algebra.matrix.html">行列</a></li>
+<li><a href="algebra.hyper.html">超数</a></li>
+<li><a href="algebra.total.html">全順序化</a></li>
+<li><a href="algebra.modint.html">ModInt</a></li>
+<li><a href="algebra.monoid.html">モノイド</a>
+<ul>
+<li><a href="algebra.monoid.minmax.html">Min/Max モノイド</a></li>
+</ul></li>
+<li><a href="algebra.act.html">作用</a>
+<ul>
+<li><a href="algebra.act.assign.html">代入作用</a></li>
+</ul></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>グラフ</summary>
+<h2 id="最短路">最短路</h2>
+<ul>
+<li><a href="graph.dij.html">ダイクストラ法</a></li>
+<li><a href="graph.wall.html">ワーシャル-フロイド法</a></li>
+<li><a href="graph.bellmanford.html">ベルマンフォード法</a></li>
+</ul>
+<h2 id="無向グラフ">無向グラフ</h2>
+<ul>
+<li><a href="graph.undirected.bipartite.html">二部グラフ判定</a></li>
+<li><a href="graph.undirected.diameter.html">直径</a></li>
+</ul>
+<h2 id="最小全域木">最小全域木</h2>
+<ul>
+<li><a href="graph.prim.html">プリム法</a></li>
+<li><a href="graph.kruskal.html">クラスカル法</a></li>
+</ul>
+<h2 id="木">木</h2>
+<ul>
+<li><a href="graph.tree.height.html">高さ</a></li>
+<li><a href="graph.tree.diameter.html">直径</a></li>
+<li><a href="graph.tree.lca.html">最小共通祖先</a></li>
+</ul>
+<h2 id="有向グラフ">有向グラフ</h2>
+<ul>
+<li><a href="graph.maxflow.html">最大流量</a></li>
+<li><a href="graph.topological.html">トポロジカルソート</a></li>
+<li><a href="graph.scc.html">強連結成分分解</a></li>
+</ul>
+</details>
+
+<details class=menu open>
+<summary class=menu>数列</summary>
+<ul>
+<li><a href="seq.lis.html">最長増加部分列</a></li>
+<li><a href="seq.median.html">中央値ヒープ</a></li>
+</ul>
+<h2 id="累積処理">累積処理</h2>
+<ul>
+<li><a href="seq.cumsum1d.html">一次元累積和</a></li>
+<li><a href="seq.cumsum2d.html">二次元累積和</a></li>
+</ul>
+<h2 id="区間木">区間木</h2>
+<ul>
+<li><a href="seq.bit.html">BIT</a></li>
+<li><a href="seq.segment_tree.html">セグメントツリー</a>
+<ul>
+<li><a href="seq.rmq.html">RMQ</a></li>
+</ul></li>
+<li><a href="seq.lazy_segment_tree.html">遅延セグメントツリー</a>
+<ul>
+<li><a href="seq.ranged_rmq.html">区間更新 RMQ</a></li>
+</ul></li>
+<li><a href="seq.starry.html">Starry Sky Tree</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>二次元ユークリッド幾何</summary>
+<h2 id="図形の定義">図形の定義</h2>
+<ul>
+<li><a href="geo.2d.point.html">点</a></li>
+<li><a href="geo.2d.line.html">直線, 線分</a></li>
+<li><a href="geo.2d.polygon.html">多角形</a></li>
+<li><a href="geo.2d.circle.html">円</a></li>
+</ul>
+<h2 id="線分">線分</h2>
+<ul>
+<li><a href="geo.2d.ccw.html">線分と点の接触判定</a></li>
+<li><a href="geo.2d.intersection.html">線分と線分の交差判定</a></li>
+</ul>
+<h2 id="多角形">多角形</h2>
+<ul>
+<li><a href="geo.2d.circum.html">三角形の外接円</a></li>
+<li><a href="geo.2d.isin_poly.html">多角形の内外判定</a></li>
+<li><a href="geo.2d.convex_hull.html">凸包</a></li>
+</ul>
+<h2 id="円">円</h2>
+<ul>
+<li><a href="geo.2d.circle.intersection.html">円と円との接触関係</a></li>
+</ul>
+<h2 id="最近点対">最近点対</h2>
+<ul>
+<li><a href="geo.closest_pair.html">平面上の分割統治法</a></li>
+</ul>
+<h2 id="その他">その他</h2>
+<ul>
+<li><a href="geo.polar.html">極座標</a></li>
+</ul>
+<h2 id="格子点上の幾何">格子点上の幾何</h2>
+<ul>
+<li><a href="geo.2d.int.point.html">点</a></li>
+<li><a href="geo.2d.int.line.html">直線</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>集合</summary>
+<ul>
+<li><a href="set.union_find.html">UnionFind</a></li>
+<li><a href="set.bitset.html">BitSet</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>アルゴリズム</summary>
+<h2 id="動的計画法">動的計画法</h2>
+<ul>
+<li><a href="dp.knapsack.01.html">01-ナップザック</a></li>
+</ul>
+<h2 id="二分探索">二分探索</h2>
+<ul>
+<li><a href="bin.search.html">二分探索</a></li>
+</ul>
+<h2 id="フーリエ変換">フーリエ変換</h2>
+<ul>
+<li><a href="fft.convolution.html">畳み込み</a></li>
+</ul>
+<h2 id="循環検出">循環検出</h2>
+<ul>
+<li><a href="algorithm.rho.html">フロイドの<span class="math inline"><em>ρ</em></span>アルゴリズム</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>自然数/整数</summary>
+<h2 id="関数">関数</h2>
+<ul>
+<li><a href="num.gcd.html">GCD</a></li>
+<li><a href="num.exgcd.html">拡張GCD</a></li>
+<li><a href="num.binom.pascal.html">二項係数 (パスカルの三角形)</a></li>
+<li><a href="num.binom.modint.html">二項係数 (ModInt)</a></li>
+<li><a href="num.dislog.html">離散対数</a></li>
+<li><a href="num.derangement.html">完全順列</a></li>
+<li><a href="num.euler_phi.html">オイラーの関数</a></li>
+<li><a href="num.moebius.html">メビウス関数</a></li>
+<li><a href="num.n_vs_nn.html">自然数の対 ↔ 自然数 の変換</a></li>
+<li><a href="num.mex.html">最小自由数 (最小除外数)</a></li>
+</ul>
+<h2 id="素数">素数</h2>
+<ul>
+<li><a href="prime.sieve.html">エラトステネスの篩</a></li>
+<li><a href="prime.MillerRabin.html">ミラー・ラビン素数判定</a></li>
+<li><a href="prime.fermat.little.html">フェルマーの小定理</a></li>
+<li><a href="prime.factorize.html">素因数分解</a></li>
+</ul>
+<h2 id="多倍長">多倍長</h2>
+<ul>
+<li><a href="bigint.html">ビッグエンディアンベクタ</a></li>
+</ul>
+<h2 id="組み合わせのイテレーター">組み合わせのイテレーター</h2>
+<ul>
+<li><a href="num.iter.perm.html">階乗 - <span class="math inline"><em>n</em>!</span></a></li>
+<li><a href="num.iter.powperm.html">冪乗 - <span class="math inline"><em>n</em><sup><em>m</em></sup></span></a></li>
+<li><a href="num.iter.comb.html">二項係数 - <span class="math inline"><sub><em>n</em></sub><em>C</em><sub><em>m</em></sub></span></a></li>
+</ul>
+<h2 id="乱数">乱数</h2>
+<ul>
+<li><a href="rand.lcg.html">線形合同法</a></li>
+<li><a href="rand.xorshift.html">Xor-Shift 法</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>文字列 (Vector)</summary>
+<ul>
+<li><a href="string.suffix-array.html">接尾辞配列</a></li>
+</ul>
+<h2 id="文字列検索">文字列検索</h2>
+<ul>
+<li><a href="string.shift-and.html">Shift-And</a></li>
+<li><a href="string.z.html">Z-alogirhtm</a></li>
+<li><a href="string.sa-search.html">接尾辞配列による文字列検索</a></li>
+</ul>
+<h2 id="回文">回文</h2>
+<ul>
+<li><a href="string.manacher.html">manacher</a></li>
+</ul>
+<h2 id="圧縮">圧縮</h2>
+<ul>
+<li><a href="string.runlength.html">Run-length</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>時間/時刻</summary>
+<ul>
+<li><a href="time.while.html">制限時間付きループ</a></li>
+</ul>
+<h2 id="暦">暦</h2>
+<ul>
+<li><a href="cal.zeller.html">ツェラーの公式</a></li>
+<li><a href="cal.uruu.html">閏年判定</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>ハッシュ</summary>
+<ul>
+<li><a href="hash.zobrist.html">Zobrist Hash</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>collections</summary>
+<ul>
+<li><a href="collections.defaultdict.html">defaultmap</a></li>
+<li><a href="collections.list_comprehension_macro.html">リスト内包表記マクロ</a></li>
+</ul>
+</details>
+
+<details class=menu>
+<summary class=menu>misc</summary>
+<ul>
+<li><a href="misc.kmeans.html">k-means</a></li>
+<li><a href="15puzzle.html">一般化15パズル</a></li>
+<li><a href="misc.sort-n.html">numeric sort</a></li>
+<li><a href="misc.3sat.html">乱択3-SAT</a></li>
+<li><a href="misc.stirling.html">スターリングの近似式</a></li>
+<li><a href="dice.html">サイコロ</a></li>
+<li><a href="misc.neighbor.html">近傍</a></li>
+</ul>
+</details>
+          </aside>
+
+        </section>
+    </div>
+  </section>
+  </body>
+</html>

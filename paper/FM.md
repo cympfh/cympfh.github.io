@@ -1,6 +1,6 @@
 % Factorization Machines (FMs)
 % http://www.csie.ntu.edu.tw/~b97053/paper/Rendle2010FM.pdf
-% 分類器 機械学習
+% 分類器 機械学習 推薦システム
 
 ## FM とは何か
 

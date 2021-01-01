@@ -1,6 +1,6 @@
 % BPR: Bayesian Personalized Ranking from Implicit Feedback
 % https://arxiv.org/ftp/arxiv/papers/1205/1205.2618.pdf
-% 推薦システム
+% 推薦システム 行列分解
 
 ## Implicit Feedback
 

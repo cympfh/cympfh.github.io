@@ -1,3 +1,3 @@
 # 幾何 - 極座標系
 
-@[rust](geo.polar.rs)
+@[rust](procon-rs/src/geometry2d/polar.rs)

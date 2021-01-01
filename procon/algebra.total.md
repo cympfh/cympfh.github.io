@@ -8,4 +8,4 @@
 にあるものを拝借した.
 作者の `@hatoo` に感謝します.
 
-@[rust](algebra.total.rs)
+@[rust](procon-rs/src/algebra/total.rs)

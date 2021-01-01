@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="description" content="自然言語, 意味空間, word2vec への適用, 圏化" />
+  <meta property="og:url" content="http://cympfh.cc/taglibro">
+  <meta property="og:title" content="Mon Nov 02 2020" />
+  <meta property="og:description" content="自然言語, 意味空間, word2vec への適用, 圏化" />
+  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@cympfh" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Mon Nov 02 2020</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css" />
+  <link rel="stylesheet" href="../../../resources/css/youtube.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+</head>
+<body>
+<header class="page-header">
+    <a href='../../index.html'><i class="fas fa-fast-backward"></i></a>
+</header>
+<header>
+<h1 class="title">Mon Nov 02 2020</h1>
+</header>
+<p><span class="math inline">\(\def\L{\mathcal L}\def\bar#1{\overline{#1}}\)</span></p>
+<h2 id="自然言語">自然言語</h2>
+<p>文として書き下すことが出来る自然言語を, 次のような数学的対象に簡易的にモデル化する.</p>
+<p>自然言語 <span class="math inline">\(\L\)</span> は次の構造からなる.</p>
+<ul>
+<li>単語集合 <span class="math inline">\(V\)</span>
+<ul>
+<li>この集合の元のことを <strong>単語</strong> という</li>
+<li><span class="math inline">\(V\)</span> のことは <strong>語彙</strong> ともいう</li>
+</ul></li>
+<li>有限長の <span class="math inline">\(V\)</span> の列集合 <span class="math inline">\([V]\)</span>
+<ul>
+<li><span class="math inline">\([V] = \bigcup_{i=0}^\infty V^i\)</span>
+<ul>
+<li><span class="math inline">\(u \in V^i\)</span> とは単語を <span class="math inline">\(i\)</span> 個並べた列のこと</li>
+</ul></li>
+<li><span class="math inline">\([V]\)</span> の元のことを <strong>文</strong> と呼ぶ
+<ul>
+<li><span class="math inline">\(u \in V^i\)</span> のとき <span class="math inline">\(u\)</span> の長さは <span class="math inline">\(i\)</span> であると定める</li>
+</ul></li>
+<li>特に長さ <span class="math inline">\(0\)</span> の列がちょうど一つだけ存在する
+<ul>
+<li>これを <span class="math inline">\(\epsilon\)</span> と書いて <strong>空文</strong> と呼ぶことにする</li>
+</ul></li>
+</ul></li>
+<li>意味空間 <span class="math inline">\(\Omega\)</span>
+<ul>
+<li>今は単に集合であるとだけ定める</li>
+</ul></li>
+<li>解釈関数 <span class="math inline">\(\sigma \colon [V] \to \Omega + \{ \bot \}\)</span>
+<ul>
+<li>ここで <span class="math inline">\(+\)</span> は直和</li>
+<li><span class="math inline">\(\bot\)</span> は <span class="math inline">\(\bot \not\in \Omega\)</span> なる特別な記号</li>
+<li>文 <span class="math inline">\(s \in [V]\)</span> について <span class="math inline">\(\sigma(s) = \bot\)</span> のとき, <span class="math inline">\(s\)</span> を <strong>非文</strong> と呼ぶ
+<ul>
+<li>非文ではない文を <strong>正文</strong> と呼ぶ</li>
+<li>単に「文」という場合は正文も非文も含む
+<ul>
+<li>文が正文であることを「意味がある」といい, 非文であることを「デタラメである」という</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>非文ではない文だけを集めた集合を <span class="math inline">\(L\)</span> とする
+<ul>
+<li>解釈関数は定義域を <span class="math inline">\(L\)</span> に制限することで自然に <span class="math inline">\(\sigma \colon L \to \Omega\)</span> に出来る</li>
+</ul></li>
+</ul>
+<p>以上の構造を持った <span class="math inline">\(\L(V, L, \Omega, \sigma)\)</span> を自然言語と呼ぶ.</p>
+<h2 id="意味空間">意味空間</h2>
+<p>上で定義した自然言語 <span class="math inline">\(\L\)</span> には何とも定まってない意味空間 <span class="math inline">\(\Omega\)</span> がある. ここに数理的な演算が出来るような拡張をほどこした空間 <span class="math inline">\(X\)</span> を代わりに構成することを考える.</p>
+<p><span class="math inline">\(\Omega\)</span> に出来なくて <span class="math inline">\(X\)</span> に出来るような違いとして次がある:</p>
+<ul>
+<li>非文の意味が取れる
+<ul>
+<li><span class="math inline">\(\Omega\)</span> への割当 <span class="math inline">\(\sigma\)</span> は非文の意味が取れない</li>
+<li>特に1単語の意味を <span class="math inline">\(\Omega\)</span> では考慮することができない
+<ul>
+<li>ある人がただ「猫」と発言したものをどう解釈すればよいだろうか？</li>
+</ul></li>
+</ul></li>
+<li>意味の合成が出来る
+<ul>
+<li><span class="math inline">\(X\)</span> に合成演算をもたせる</li>
+<li>文は結局, 単語や文の断片を結合させた列である
+<ul>
+<li>単語や文の断片（それらは非文）に割り当てた意味の合成にそれを対応させたい</li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="意味の割当">意味の割当</h3>
+<p>非文も含めた全ての文 <span class="math inline">\([V]\)</span> から <span class="math inline">\(X\)</span> への写像を意味割当と呼ぶ. 割当関数を上付き線で表すことにする. <span class="math display">\[[V] \to X\]</span> <span class="math display">\[u \mapsto \bar{u}\]</span></p>
+<p>特に <span class="math inline">\(V \simeq V^1 \subset [V]\)</span> に割り当てる意味を <strong>単語の意味</strong> と呼ぶことにする. <span class="math display">\[a \in V \mapsto \bar{a} \in X\]</span></p>
+<h3 id="意味合成">意味合成</h3>
+<p>合成演算 <span class="math inline">\(\circ\)</span> は <span class="math inline">\(X \times X \to X\)</span> なる二項演算子で, 意味の合成を表す. つまり, 2つの文 <span class="math inline">\(u_1, u_2 \in [V]\)</span> について, これらを列結合した文 <span class="math inline">\(u = u_1 + u_2\)</span> の意味は次を満たす. <span class="math display">\[\bar{u} = \bar{u_1} \circ \bar{u_2}\]</span></p>
+<p>以降で曖昧性のない限り, この <span class="math inline">\(\circ\)</span> は略して単に <span class="math inline">\(\bar{u} = \bar{u_1} \bar{u_2}\)</span> のように書く. ちょうど実数の掛け算を表記するのにいちいち <span class="math inline">\(2 \cdot x\)</span> とか <span class="math inline">\(2 \times x\)</span> とか書く代わりに <span class="math inline">\(2x\)</span> と書くのと同様に.</p>
+<h4 id="意味合成の単位元">意味合成の単位元</h4>
+<p>空文 <span class="math inline">\(\epsilon\)</span> の意味 <span class="math inline">\(\bar{\epsilon}\)</span> のことを <span class="math inline">\(1 \in X\)</span> という記号で表すことにする.</p>
+<p>これは意味合成に関する単位元になっていてるべきだ. なぜなら, <span class="math inline">\(u + \epsilon = u = \epsilon + u\)</span> であるから. というわけで <span class="math inline">\(1\)</span> は <span class="math display">\[\forall x \in X, x \circ 1 = x = 1 \circ x\]</span> を満たす.</p>
+<p>以上から <span class="math inline">\(X\)</span> は意味合成に関してモノイド構造を持つ.</p>
+<h3 id="意味の一貫性">意味の一貫性</h3>
+<p>文 <span class="math inline">\(u\)</span> が非文でないとき, <span class="math inline">\(\sigma(u) \in \Omega\)</span> という意味と, <span class="math inline">\(\bar{u} \in X\)</span> という意味とがある. このときは同じ意味だとしてしまったほうが良さそう. <span class="math display">\[u \in L \implies \sigma(u) = \bar{u}\]</span> もっとも, <span class="math inline">\(\Omega, \sigma\)</span> の中身がどんなものか何も言っていないので, この主張は何も言っていないのと同じだ.</p>
+<h3 id="距離位相">距離位相</h3>
+<p>直感的な説明として, 文 <span class="math inline">\(u\)</span> と <span class="math inline">\(v\)</span> の意味には近い遠いがある. そこで <span class="math inline">\(X\)</span> に距離 <span class="math inline">\(d\)</span> を入れて, 近さを表現する. <span class="math display">\[d \colon X \times X \to \mathbb R_{\geq 0}\]</span></p>
+<p>2つの文 <span class="math inline">\(u,v\)</span> について <span class="math inline">\(d(u,v)=0\)</span> のとき, 2つは全く同じ意味を持つという.</p>
+<p>ただし現実の自然言語を考えると, 字面が違うのに全く同じ意味を持つことなんてそうそうないだろうから, 意味は同じか異なるかではなくて, 近い遠いという分類で考えることのほうが重要だ.</p>
+<h3 id="破綻した非文">破綻した非文</h3>
+<p>非文にも意味を与えたい理由は, そこにさらに単語をいくつか付け加えれば文として意味が通るようにできるからだ. しかし, あまりにもデタラメな単語を並べすぎると, それ以上単語を付け加えても文になりようがない. そのような非文を <strong>破綻文</strong> と呼ぶことにしよう. 字面がまるで違っても破綻文はもはや解釈不能であるという点で同じ意味としてしまおう. やはり特別な記号 <span class="math inline">\(\bot \in X\)</span> をその意味ということにする. ここに任意の意味を合成しても尚破綻したままなので, <span class="math display">\[\forall x \in X, x \circ \bot = \bot = \bot \circ x\]</span> が成り立つ.</p>
+<h2 id="word2vec-への適用">word2vec への適用</h2>
+<p>現実の実装はここに書いた限りではないどころか全然違うだろうが, 強引に当てはめれば次のように言えるかもしれない.</p>
+<h3 id="意味空間-1">意味空間</h3>
+<p>意味空間 <span class="math inline">\(X\)</span> として, 実ベクトル空間 <span class="math inline">\(\mathbb R^m\)</span> を用いる. <span class="math display">\[u \in L \mapsto \bar{u} \in \mathbb R^m\]</span> 実際には合成があるので, 文の意味は単語の意味の合成によって求まるので単語の意味割当だけ決めれば十分. その割り当て方については論文を読んでくれ.</p>
+<h3 id="意味合成-1">意味合成</h3>
+<p>必ずしも決まっていないが, ただの加算を用いることが多い. <span class="math display">\[\bar{u} \circ \bar{v} := \bar{u} + \bar{v}\]</span> これの単位元はもちろんゼロベクトルになる. <span class="math display">\[\bar{\epsilon} = 0\]</span></p>
+<p>また, 距離のとり方にもよるが, 単語数で割った単純平均を使う場合もあるようだ.</p>
+<blockquote>
+<p>細かいことを言うと, 平均の場合は平均値だけから二項演算として定義することは出来ない. 例えば実数の平均だと <span class="math inline">\(1 \circ 2 \circ 3 = 2\)</span> （3つの値の単純平均）になるが, これは結合則を満たさない（例えば <span class="math inline">\((1 \circ 2) \circ 3 = 1.5 \circ 3 = 2.25\)</span>）. いくつの平均かという情報が失われてるのが問題だから, 平均値の代わりに, 何個の単語であるかと, 合計値を持つことにすればいい. 空間を <span class="math inline">\(X = \mathbb N \times \mathbb R^m\)</span> に修正して, <span class="math display">\[(m, x) \circ (n, y) := (m+n, x+y)\]</span> とすればいい. 単位元は <span class="math inline">\((0, 0)\)</span> になる. 距離を計算するときには <span class="math inline">\((m,x)\)</span> から平均値 <span class="math inline">\(x / m\)</span> を計算して使えばよい.</p>
+</blockquote>
+<p>どちらにせよ, 文中の単語の順序は一切考慮されないことになる.</p>
+<p>ただしNLPの常套テクニックとして, 文の始まりを表す特別なトークン <code>BOS</code> 及び終わりを表すトークン <code>EOS</code> を用意して, それらにはゼロでないベクトルを割り当てるのが普通だ. これに対しては特に修正は必要なく, 普通に単語集合 <span class="math inline">\(V\)</span> にこの2つを加えて, <code>BOS</code> で始まって <code>EOS</code> で終わる文を正文であることの条件に加えれば良い.</p>
+<h3 id="意味の距離">意味の距離</h3>
+<p>ベクトルなどと言っているが, 結局ユークリッド空間上の点に過ぎない. cos 距離 <span class="math inline">\(1 - \cos(u,v)\)</span> とか, L2 距離 <span class="math inline">\(\| u-v \|_2\)</span> などが使われる.</p>
+<p>ただし, cos 類似度を計算する場合はゼロベクトルだと何も計算が出来ないので, <span class="math inline">\(d(u,0) = \infty (u \ne 0)\)</span> などとしておく.</p>
+<p>cos 距離だと <code>dog</code> という文と <code>dog dog</code> という文は同じ意味になる. 合成を平均でやる場合は当然だが, 加算であっても, これは定数 <span class="math inline">\(k&gt;0\)</span> に関して <span class="math inline">\(\cos(u,kv) = \cos(u,v)\)</span> が成り立つため, やはり同じ意味になる.</p>
+<h3 id="ゼロベクトルの扱い">ゼロベクトルの扱い</h3>
+<p>現実の実装では <span class="math inline">\(X = \mathbb R^m \setminus \{0\}\)</span> としてしまうことが多い. 非文に意味を考えないといけないケースがまず無いからである. その場合に合成の結果ゼロベクトルが作られないことが要求されるが, そんな保証は無いことが普通である.</p>
+<p>ところで Skip-gram でゼロベクトルを入れるとどうなるだろうか. このモデルのパラメータは行列 <span class="math inline">\(W\)</span> とバイアスベクトル <span class="math inline">\(b\)</span> であって, 単語に意味 <span class="math inline">\(x \in \mathbb R^m\)</span> が割り当てられるとき, <span class="math display">\[p = \mathrm{softmax}(Wx+b)\]</span> がその単語の周辺に出現する確率分布を表している（逆に言えばこれが成り立つように <span class="math inline">\(W,b\)</span> 及び <span class="math inline">\(x\)</span> を獲得している）. <span class="math inline">\(x=0\)</span> を代入すれば, <span class="math display">\[p_0 = \mathrm{softmax}(b)\]</span> を手に入れる.</p>
+<p>さて, ゼロベクトルは空文の意味ベクトルであった. 空文の周辺にどんな単語が出現するかは, 自由な箇所に単語が出現する確率なので, 言語全体で単語が出現する確率に過ぎない. データセット上で単語をカウントすることで <span class="math inline">\(p_0\)</span> は尤度推定される. これによって <span class="math inline">\(b\)</span> は決定される.</p>
+<h3 id="非文の扱い">非文の扱い</h3>
+<p>非文は入力しないということで全くサポートされない.</p>
+<h2 id="圏化">圏化</h2>
+<p>色々妄想を書いたが, 結局ほとんどモノイド構造に毛を生やしただけのものだと言っているに過ぎない. 次のように至極単純に書き下す事ができる.</p>
+<h3 id="言語の圏">言語の圏</h3>
+<p>自然言語 <span class="math inline">\(X\)</span> の圏とは次のようなもの.</p>
+<ul>
+<li>対象は唯一の <span class="math inline">\(X\)</span></li>
+<li>この言語から生成される文とは射 <span class="math inline">\(X \to X\)</span> のこと
+<ul>
+<li>文の結合が射の合成に対応する</li>
+<li>特に恒等射 <span class="math inline">\(1\)</span> は空の文に対応する</li>
+<li>また破綻文に対応する特別な射 <span class="math inline">\(\bot \colon X \to X\)</span> があって,
+<ul>
+<li><span class="math inline">\(\forall x, x \circ \bot = \bot \circ x = \bot\)</span></li>
+</ul></li>
+</ul></li>
+</ul>
+<p><strong>疑問</strong>: 距離は？ 実数への圏（とは？）への関手を考えるとよい？ 位相群の圏化とか調べたらそれがそのまま使えそう.</p>
+<h3 id="翻訳関手">翻訳関手</h3>
+<p>自然言語 <span class="math inline">\(X\)</span> の圏から <span class="math inline">\(Y\)</span> への翻訳とは, 関手 <span class="math inline">\(F \colon X \to Y\)</span> のことだと言える. ここで準同型として特に</p>
+<ul>
+<li><span class="math inline">\(F1 = 1\)</span></li>
+<li><span class="math inline">\(F \bot = \bot\)</span></li>
+</ul>
+<p>を要請する.</p>
+<p><strong>疑問</strong>: <span class="math inline">\(X\)</span> の正文については <span class="math inline">\(F\)</span> は正しくマッピングされることが期待されるけれど, どんな非文でもマッピングすることまで出来るだろうか？</p>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+  <script src="../../../resources/js/youtube.js"></script>
+</body>
+</html>

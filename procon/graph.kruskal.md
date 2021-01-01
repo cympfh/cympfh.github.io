@@ -1,7 +1,8 @@
-# graph.kruskal
+# グラフ - 最小全域木 - クラスカル法
 
-## [graph.kruskal.rs](graph.kruskal.rs)
-@[rust](graph.kruskal.rs)
+## 概要
 
-## [graph.kruskal.cc](graph.kruskal.cc)
-@[cpp](graph.kruskal.cc)
+辺ベースに最小の辺を足してくアルゴリズム.
+計算量は $O(E \log E)$.
+
+@[rust](procon-rs/src/graph/minimal_span_tree/kruskal.rs)

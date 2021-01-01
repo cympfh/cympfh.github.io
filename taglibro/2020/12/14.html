@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="description" content="cumin v0.9.7, 2020年買ってよかったもの, 2020年読んで良かった本, 2020年観て良かった映画・アニメ" />
+  <meta property="og:url" content="http://cympfh.cc/taglibro">
+  <meta property="og:title" content="Mon Dec 14 2020" />
+  <meta property="og:description" content="cumin v0.9.7, 2020年買ってよかったもの, 2020年読んで良かった本, 2020年観て良かった映画・アニメ" />
+  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@cympfh" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Mon Dec 14 2020</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css" />
+  <link rel="stylesheet" href="../../../resources/css/youtube.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+</head>
+<body>
+<header class="page-header">
+    <a href='../../index.html'><i class="fas fa-fast-backward"></i></a>
+</header>
+<header>
+<h1 class="title">Mon Dec 14 2020</h1>
+</header>
+<h2 id="cumin-v0.9.7">cumin v0.9.7</h2>
+<h3 id="前回までのあらすじ">前回までのあらすじ</h3>
+<ul>
+<li><a href="https://cympfh.cc/taglibro/2020/11/11">cumin v0.9.0</a></li>
+<li><a href="https://zenn.dev/cympfh/articles/advent-2020-12-08">設定ファイル言語 cumin を自作している</a></li>
+</ul>
+<h3 id="前回からの差分">前回からの差分</h3>
+<ul>
+<li>構造体の各フィールドにデフォルト値を与えられる</li>
+<li><code>as</code> による強い型変換</li>
+<li>浮動小数, ありそうな算術演算の追加</li>
+<li>Array, Option の追加</li>
+<li>Bool とその演算の追加</li>
+<li>数と Bool に関する比較の追加</li>
+<li>型検査</li>
+</ul>
+<h3 id="型システム">型システム</h3>
+<p>強い型変換と自然な（弱い）型変換とを区別している. 前者は例えば文字列の <code>&quot;123&quot;</code> を整数の <code>123</code> に変換するといった, 一般に失敗しえるような変換をサポートしていて, 構文上では <code>as</code> キーワードで明示的に宣言する必要がある.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">let</span> s = <span class="st">&quot;123&quot;</span>;
+<span class="kw">let</span> x = s <span class="kw">as</span> Int;  <span class="co">// String -&gt; Int</span></code></pre></div>
+<p>一方で, 自然な型変換は変換が絶対に失敗しない範囲内のことしかせず, これは暗黙的に行われる.</p>
+<pre><code>Nat -&gt; Int -&gt; Float,
+s -&gt; Any</code></pre>
+<p>これはおよそ,</p>
+<p><span class="math display">\[\mathbb N \subset \mathbb Z \subset \mathbb R\]</span> <span class="math display">\[\forall S, S \subset U\]</span></p>
+<p>みたいなことに対応する.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">let</span> x: Nat = <span class="dv">1</span>;
+<span class="kw">let</span> z: Int = x;  <span class="co">// Nat -&gt; Int</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">struct</span> S <span class="op">{</span>
+    data: Any,
+<span class="op">}</span>
+
+S <span class="op">{</span> data = <span class="dv">1</span> <span class="op">}</span>  <span class="co">// Nat(1) -&gt; Any</span></code></pre></div>
+<p><code>Any</code> に変換するといっても, 値にはそれとは別に型がついていて情報が失われることはない. つまり, 型 <code>S</code> がついた値を型 <code>T</code> に自然変換する場合には単に <code>T</code> の型に付け替えるのではなくて, <code>S</code> と <code>T</code> の交わり（積集合みたいな）に付け替える. その交わりのことを <code>S &amp; T</code> と書くことにする. 交差型と言っていいのかな.</p>
+<p>そして交差型は次の通りで定義される.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust">s &amp; s = s,
+s &amp; t = t &amp; s.
+
+Any &amp; t = t.
+
+Nat &amp; Int = Int,
+Nat &amp; Float = Float,
+Int &amp; Float = Float.
+
+Array&lt;s&gt; &amp; Array&lt;t&gt; = Array&lt;s &amp; t&gt;,
+<span class="dt">Option</span>&lt;s&gt; &amp; <span class="dt">Option</span>&lt;t&gt; = <span class="dt">Option</span>&lt;s &amp; t&gt;.</code></pre></div>
+<p>これで以上. ただしこれで定められないようなもの（例えば <code>String &amp; Int</code>）は交差型を持たない.</p>
+<h4 id="配列の型">配列の型</h4>
+<p><span class="math inline">\(n\)</span> 個の値を要素にする配列を与えられた時にその型を推論する実装を述べる. 各要素の型が <span class="math inline">\(t_1, t_2, \ldots, t_n\)</span> のとき,</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust">(((Any &amp; t1) &amp; t2) &amp; ...) &amp; t_n</code></pre></div>
+<p>を計算する. この交差型が存在しなかったとき, 配列に型はつかない. 存在して <span class="math inline">\(t\)</span> と分かったとき, 配列の型は <code>Array&lt;t&gt;</code> だと計算される. 例えば空配列は <code>Array&lt;Any&gt;</code> になる.</p>
+<p>こちらはもっと簡単だが <code>Option&lt;t&gt;</code> についても全く同様.</p>
+<p>以上から, 例えば</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="op">[</span><span class="cn">None</span>, <span class="cn">Some</span>(<span class="dv">1</span>), <span class="cn">Some</span>(-<span class="dv">1</span>)<span class="op">]</span></code></pre></div>
+<p>は <code>Array&lt;Option&lt;Int&gt;&gt;</code> だと型付けされる.</p>
+<h2 id="年買ってよかったもの">2020年買ってよかったもの</h2>
+<h3 id="文鳥">文鳥</h3>
+<p>推定誕生日は9月の中旬頃なので, 今丁度生後三ヶ月くらい.</p>
+<p>最近鰹節をそのまま与えて食べるようになった. 鰹節を与えること自体はタンパク質の補給源として獣医に勧めされた. 初めは食べ物として認識してもらえず, 試しに出汁をとったあとの柔らかい状態で与えると食べてくれたのだが, やがて食べなくなり, 今は逆に茹でずにそのまま与えると食べるようになってくれた.</p>
+<p>手乗り文鳥という言葉があるのが不思議なくらいに, 手の上に必ず乗ってくる. つまり手乗りが当たり前のものに手乗りと冠するのが不思議なのだ.</p>
+<p>シードからペレットへの切り替えもやはり勧められた. この切り替えは難儀してる. 混ぜて与えるとシードだけ食べて, ペレットは避けて捨ててしまう. 別皿でペレットだけ盛ったものを与えるほうがまだたまに食べてくれる.</p>
+<h3 id="タイガークラウン-へらスパチュラ">タイガークラウン へら・スパチュラ</h3>
+<ul>
+<li><a href="https://www.amazon.co.jp/gp/product/B001NAVWUI/">www.amazon.co.jp/gp/product/B001NAVWUI</a></li>
+</ul>
+<p>結局ゴムベラが便利だね</p>
+<h3 id="山善yamazen-スライド本棚-幅120cm-スライド3列">山善(YAMAZEN) スライド本棚 幅120cm スライド3列</h3>
+<ul>
+<li><a href="https://www.amazon.co.jp/gp/product/B00QHS1940">www.amazon.co.jp/gp/product/B00QHS1940</a></li>
+</ul>
+<p>とりあえず良い. 良いところはスライドなところ, 悪いのもスライドなところ. スライド自体が妙に引っかかったるとか（スライドにコツがいる）, 奥の棚であって, ちょうど手前のスライドの境目の位置にある本はどう手前を動かしても取り出しにくいだとか.</p>
+<p>何にしても部屋が少し片付いた.</p>
+<h3 id="新富士バーナー-パワートーチ-ガスバーナー">新富士バーナー パワートーチ ガスバーナー</h3>
+<ul>
+<li><a href="https://www.amazon.co.jp/gp/product/B006LTD506">www.amazon.co.jp/gp/product/B006LTD506</a></li>
+</ul>
+<p>なんでも, 炙れば美味い. チーズ乗っけて炙るとか, スーパーのお寿司とか.</p>
+<h3 id="revue-ml">REVUE ML</h3>
+<p>中古一万円で買ったフィルムカメラ. 良いように言えばフィルムがもったいないから大事にシャッターを切ることになる. 悪いように言えば滅多に使わなくなって勿体ない.</p>
+<h3 id="ipad">iPad</h3>
+<p>買って数ヶ月してちょうど新しい2020年モデルが出てしまった. これは2018年モデル.</p>
+<p>カメラは間違いなく駄目. 10年前の写メールみたいな画質. タブレットで写真撮ろうなんて思わないからいいんだけど.</p>
+<p>Kindleとお絵かきのために使ってる. 満足してる. SSHクライアントのアプリとBluetoothキーボード繋げば割とパソコンになる. 出掛け先にノートパソコン持ってくくらいなら, これでいい.</p>
+<h2 id="年読んで良かった本">2020年読んで良かった本</h2>
+<p>2019年以前に読んでた漫画の続刊は除く.</p>
+<h3 id="漂流教室">漂流教室</h3>
+<p>95点</p>
+<h3 id="めぞん一刻">めぞん一刻</h3>
+<p>この頃の高橋留美子大好き</p>
+<h3 id="ご飯は私を裏切らない">ご飯は私を裏切らない</h3>
+<p>一巻で終わっちゃったのが残念</p>
+<h3 id="リレーショナルデータベース入門データモデルsql管理システム">リレーショナルデータベース入門―データモデル・SQL・管理システム</h3>
+<p>関係代数から初めてRDBに入門できる。 いきなり MySQL のコマンドを書き並べただけの入門書じゃなくて中身の理論からやってくれるので, 本当の意味のRDBへの入門書.</p>
+<h3 id="ショートショートショートさん">ショートショートショートさん</h3>
+<p>全力の変顔が賛否両論</p>
+<h3 id="極めてかもしだ">極めてかもしだ</h3>
+<p>100点</p>
+<h3 id="やさしいセカイのつくりかた">やさしいセカイのつくりかた</h3>
+<p>80点</p>
+<h3 id="マイナス山崎紗也夏">マイナス（山崎紗也夏）</h3>
+<p>80点</p>
+<h3 id="上伊那ぼたん酔へる姿は百合の花">上伊那ぼたん、酔へる姿は百合の花　</h3>
+<p>おっさんの百合。80点</p>
+<h3 id="元カノに幻想を抱くなバーカ">元カノに幻想を抱くなバーカ</h3>
+<p>勢いの百合。90点</p>
+<h3 id="月とすっぴん">月とすっぴん</h3>
+<p>平和な百合。80点</p>
+<h3 id="ルベーグ積分から確率論">ルベーグ積分から確率論</h3>
+<p>結局厳密に確率論やるには測度論から入るのが今確立されてる中では一番まともで, ルベーグ積分からやり直すしかない. この本一冊でとりあえず一通りがやり直せる.</p>
+<h2 id="年観て良かった映画アニメ">2020年観て良かった映画・アニメ</h2>
+<p>今年初めて見たものに限る</p>
+<h3 id="ラブポップ">ラブ＆ポップ</h3>
+<p>庵野秀明の初実写映画。85点</p>
+<h3 id="いつだってやめられる">いつだってやめられる</h3>
+<p>三部作。映画というよりはドラマくらいのクオリティ（見下げた言い方だが）</p>
+<h3 id="映画-賭ケグルイ">映画 賭ケグルイ</h3>
+<p>私が単にこの監督が好き。一般的には絶対好評なわけがないタイプの映画。75点</p>
+<h3 id="映像研には手を出すな">映像研には手を出すな</h3>
+<p>賭ケグルイと同じ監督の映画。この人はちゃんと原作を研究した上で拡張を目指すから好きだ。70点</p>
+<h3 id="ファイトクラブ">ファイトクラブ</h3>
+<p>基礎教養</p>
+<h3 id="原子怪獣現わる">原子怪獣現わる</h3>
+<p>これも基礎教養。公平に点数を付けるなら20点くらいだけど、そういう問題じゃない</p>
+<h3 id="花とアリス殺人事件">花とアリス殺人事件</h3>
+<p>苦しみ度合い30％くらいの程よい百合。 絵については慣れろ。そういうところで文句を言うな</p>
+<h3 id="ヒプノシスマイク">ヒプノシスマイク</h3>
+<p>今一番面白い。単純に世界観が面白い。キャラクターだけで売ってるわけじゃないのが、私でも楽しめる理由だと思う</p>
+<h3 id="魔女見習いをさがして">魔女見習いをさがして</h3>
+<p>映画単体としては少しどうかな、楽しめないかなと思ってしまうけど、そういう問題ではない。 これは東映からおジャ魔女ファンへのメッセージなので。</p>
+<h3 id="老人z">老人Z</h3>
+<p>面白くないわけがない。 アニメーションがいいしキャラクターがいい。ロボットアニメへのエスプリになってるのも面白い</p>
+<h3 id="ふしぎの海のナディア">ふしぎの海のナディア</h3>
+<p>前半と後半とで全然違うので驚いた。見れば見るほどにラピュタ</p>
+<h3 id="かくしごと">かくしごと</h3>
+<p>久米田康治！100点</p>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+  <script src="../../../resources/js/youtube.js"></script>
+</body>
+</html>

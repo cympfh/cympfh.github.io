@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="description" content="cumin 開発日記" />
+  <meta property="og:url" content="http://cympfh.cc/taglibro">
+  <meta property="og:title" content="Tue Nov 10 2020" />
+  <meta property="og:description" content="cumin 開発日記" />
+  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@cympfh" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Tue Nov 10 2020</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
+</head>
+<body>
+<header class="page-header">
+    <a href='../../index.html'><i class="fas fa-fast-backward"></i></a>
+</header>
+<header>
+<h1 class="title">Tue Nov 10 2020</h1>
+</header>
+<h2 id="cumin-開発日記">cumin 開発日記</h2>
+<p>だいぶやれるようになってきた. 前回色々言ったけど, 結局 jsonnet のように, まずデータ型や細かいデータの定義をつらつらと書いて, 一番最後に, 1つだけエクスポートするようなデータをまるでテンプレートを書くかのように書く, というスタイルになった. こちらのほうが単純に文法がキレイというのが1つ, 変数名が衝突するような場合のチェックが面倒（衝突する場合は variable hiding させたい）というのが1つ.</p>
+<p><a href="https://github.com/cympfh/cumin/commit/d4015caf79e86acf45f4ce842218fb768ebc375a">cumin/commit/d4015caf79e86acf45f4ce842218fb768ebc375a</a></p>
+<p>こんなのが動く.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">struct</span> Point <span class="op">{</span>
+    x: Int,
+    y: Int,
+<span class="op">}</span>
+
+<span class="kw">let</span> p = Point(<span class="dv">2</span>, <span class="dv">3</span>);
+
+<span class="kw">enum</span> Z <span class="op">{</span>
+    Z1,  <span class="co">// Z is this,</span>
+    Z2,  <span class="co">// xor this.</span>
+<span class="op">}</span>
+
+<span class="kw">let</span> x = <span class="st">&quot;hoge&quot;</span>;
+<span class="kw">let</span> y = <span class="st">&quot;fuga&quot;</span>;
+
+<span class="kw">let</span> z: Nat = <span class="dv">0</span>;
+
+<span class="co">// 上書き!</span>
+<span class="kw">let</span> z = Z::Z2;
+
+<span class="kw">struct</span> AllData <span class="op">{</span>
+    p: Point,
+    z: Z,
+    <span class="dt">str</span>: <span class="dt">String</span>,
+<span class="op">}</span>
+
+<span class="co">// Exporting this</span>
+AllData(p, z, x + y)</code></pre></div>
+<p>これについて <code>cuminc</code> は次を吐く.</p>
+<div class="sourceCode"><pre class="sourceCode json"><code class="sourceCode json"><span class="fu">{</span>
+  <span class="dt">&quot;p&quot;</span><span class="fu">:</span> <span class="fu">{</span>
+    <span class="dt">&quot;x&quot;</span><span class="fu">:</span> <span class="dv">2</span><span class="fu">,</span>
+    <span class="dt">&quot;y&quot;</span><span class="fu">:</span> <span class="dv">3</span>
+  <span class="fu">},</span>
+  <span class="dt">&quot;z&quot;</span><span class="fu">:</span> <span class="st">&quot;Z2&quot;</span><span class="fu">,</span>
+  <span class="dt">&quot;str&quot;</span><span class="fu">:</span> <span class="st">&quot;hogefuga&quot;</span>
+<span class="fu">}</span></code></pre></div>
+<p>struct は辞書に変換されるし, <code>+</code> は数値の加算または文字列結合として計算される. enum の扱いややや困るが当然 JSON にはプリミティブな型しかないので, 列挙子の名前そのママを文字列として吐くことにした.</p>
+<h3 id="ロードマップ">ロードマップ</h3>
+<p>まだまだ色んなものが足りてない</p>
+<ul>
+<li>無名 struct （何でもありの辞書）
+<ul>
+<li><code>{{ x=1, y=&quot;hoge&quot; }}</code> という文法を用意する</li>
+</ul></li>
+<li>ENV</li>
+<li>配列
+<ul>
+<li>map 関数</li>
+</ul></li>
+<li>ブロック</li>
+<li><code>X { field=val }</code> 形式のコンストラクタ</li>
+<li>演算を各種用意する
+<ul>
+<li>今はなんと <code>+</code> しかない</li>
+</ul></li>
+<li>型チェック</li>
+</ul>
+<p>次はやるか未定</p>
+<ul>
+<li>enum を ADT にする?
+<ul>
+<li>今はC言語的な enum でしかない</li>
+<li>作るのはいいけど JSON での表現方法はどうしようか</li>
+</ul></li>
+<li>マクロ機構
+<ul>
+<li>欲しくなったら作る</li>
+</ul></li>
+</ul>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

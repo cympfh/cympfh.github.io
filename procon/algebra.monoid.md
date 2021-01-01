@@ -1,11 +1,8 @@
 # 代数 - モノイド
 
-モノイド
-$(X, e, \times)$
-を
-`unit()`, `std::ops::Mul`
-として定義したもの.
+モノイド $(X, \times, 1)$ を `std::ops::Mul, unit()` で定義したもの.
+`Sum, Prod` は整数型の上の和及び積を二項演算としたモノイド構造.
 
-[群](algebra.group.html) の定義とは別にしてるので注意.
+特に二項演算子が [群](algebra.group) とは違うので注意.
 
-@[rust](algebra.monoid.rs)
+@[rust](procon-rs/src/algebra/monoid.rs)

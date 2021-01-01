@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="description" content="非対称行列分解, cumin v0.9.0" />
+  <meta property="og:url" content="http://cympfh.cc/taglibro">
+  <meta property="og:title" content="Wed Nov 11 2020" />
+  <meta property="og:description" content="非対称行列分解, cumin v0.9.0" />
+  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@cympfh" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Wed Nov 11 2020</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+</head>
+<body>
+<header class="page-header">
+    <a href='../../index.html'><i class="fas fa-fast-backward"></i></a>
+</header>
+<header>
+<h1 class="title">Wed Nov 11 2020</h1>
+</header>
+<h2 id="非対称行列分解">非対称行列分解</h2>
+<p>情報幾何では距離ではなくダイバージェンスが要になることがよくある. というかめちゃくちゃ基礎にそれがある.</p>
+<p>大雑把に言えばダイバージェンスというのは, 距離から対称律 <span class="math inline">\(d(x,y) = d(y,x)\)</span> を <strong>除いた</strong> ものである. 例えば KL ダイバージェンスが有名だが, これは「点 <span class="math inline">\(x\)</span> から点 <span class="math inline">\(y\)</span> へのダイバージェンス」というように, 行き先と元を明確にする必要がある. 点 <span class="math inline">\(y\)</span> から点 <span class="math inline">\(x\)</span> へのダイバージェンスとは一致しないからである.</p>
+<p>なんだかこれが本質のような気がしてならない. ダイバージェンスは局所的には対称律が成り立っていて距離として振る舞う. 勝手に距離のように思っているものは実はダイバージェンスで, それを近似的に距離だと扱ってきたのかもしれない.</p>
+<p>点を適当なベクトル表示したときに, 距離をL2距離（内積）で決めてしまうことがとてもよくある. これは距離である. 典型例は行列分解である. 内積とは行列積のことに他ならない. アイテムどうしの距離を内積によって決めてしまう. ここから対称律を取り除くと, それだけで表現力が豊かになる. 損なわれるのではない. できることが多くなるのである. 例えば時系列の情報が込められる. コレの後にはコレが来やすいというのをダイバージェンスで表せる. 因果関係なんかもそうだと思う.</p>
+<h2 id="cumin-v0.9.0">cumin v0.9.0</h2>
+<p>表現力としては当初欲しかったものが十分手に入ったと思ってる. 機能はまだまだだし, 仮にこれを人が使いだしたら止めるレベルではあるけれど, これをそのまま拡大すればいいだけだと思えるくらいには一通り揃った. というわけでリリースタグを打った. <code>v0.9.0</code> からこの3つ目の数字をひたすら増やしていって, これ以上できることが無いと思えるようになったら <code>v1.0.0</code> にするつもり.</p>
+<p>設定ファイルという静的なデータを表現するだけの言語のその処理系とはなにか. 私はそれを JSON への変換器ということにした. cumin compiler なので <code>cuminc</code> というコマンド名にした.</p>
+<p>基本的な文法については散々書いた. そこからの進捗を語るなら, まずは無名 struct, そして環境変数とブロックを追加した.</p>
+<p>無名 struct は要するに中身に何の制約もないただの辞書である.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="op">{{</span>
+    x = <span class="dv">1</span>,
+    y = <span class="op">{{</span>
+        z = <span class="dv">2</span>
+    <span class="op">}}</span>
+<span class="op">}}</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">cuminc</span> test.cumin
+<span class="dt">{&quot;x&quot;:1,&quot;y&quot;:{&quot;z&quot;:2}}</span></code></pre></div>
+<p>環境変数は常に文字列で, <code>$X</code> とか <code>${X}</code> で参照できる.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="op">{{</span>
+    env = <span class="op">{{</span>
+        shell = $SHELL
+    <span class="op">}}</span>
+<span class="op">}}</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">cuminc</span> test.cumin
+<span class="dt">{&quot;env&quot;:{&quot;shell&quot;:&quot;zsh&quot;}}</span></code></pre></div>
+<p>これはシェルスクリプトを意識した書式にしている. 環境変数はその場でセットして <code>cuminc</code> することで, 即席のテンプレートとしても役立つ.</p>
+<p>またデフォルト値が使えると便利だと思う. これもシェルスクリプトそのままの書式を流用して <code>${X:-HOGE}</code> と書けるようにした.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="op">{{</span>
+    hoge = $<span class="op">{</span>HOGE:-default<span class="op">}</span>
+<span class="op">}}</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">cuminc</span> test.cumin
+<span class="dt">{&quot;hoge&quot;:&quot;default&quot;}</span>
+
+$ <span class="va">HOGE=</span>hello <span class="ex">cuminc</span> test.cumin
+<span class="dt">{&quot;hoge&quot;:&quot;hello&quot;}</span></code></pre></div>
+<p>最後はブロック. これは Rust そのものを知っていれば, あるいは ML から類推してもらえれば特に不自然なことはないと思うけれど,</p>
+<p><code>{}</code> で括って,</p>
+<pre><code>{
+    文;
+    文;
+    文;
+    式
+}</code></pre>
+<p>と書いて, この <code>{...}</code> を評価すると何を計算するか. 中の文を順に実行して最後に式を評価する. そしてその値を <code>{...}</code> 全体の評価結果にする. ここで <code>;</code> は単に文と文, または文と式の区切り文字でしかないことに注意. 文末につける終端文字というわけではない.</p>
+<p>cumin で言う文というのは三種類しかなくて,</p>
+<ol type="1">
+<li>構造体 (struct) の定義,</li>
+<li>列挙子 (enum) の定義,</li>
+<li>let 束縛</li>
+</ol>
+<p>のいずれかである. 構造体, 列挙子, let 束縛で作られる変数はその <code>{}</code> の中だけで参照できて有効である.</p>
+<p>例えば,</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">let</span> x = <span class="op">{</span>
+    <span class="kw">let</span> a = <span class="dv">1</span>;
+    <span class="kw">let</span> b = <span class="dv">2</span>;
+    a + b  <span class="co">// ここでは a, b が見える</span>
+<span class="op">}</span>;  <span class="co">// x には a+b の結果が入る</span>
+
+<span class="co">// ここでは a, b は見えない</span>
+
+<span class="op">{{</span>
+    three = x
+<span class="op">}}</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">cuminc</span> test.cumin
+<span class="dt">{&quot;three&quot;:3}</span></code></pre></div>
+<p>プライベートな変数を作るのに便利だし, それよりも, このデータはこのデータを構築するために必要だという, 意図表示に役立つ.</p>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

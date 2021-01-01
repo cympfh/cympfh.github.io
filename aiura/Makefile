@@ -21,7 +21,7 @@ posts:
 	for f in *.md; do make $${f%md}html; done
 
 %.html: %.md
-	$(eval DESCRIPTION := $(shell cat $^ | grep '^## ' | sed 's/^#* //g' | tr '\n' ' ' | sed 's/ *$$//g'))
+	$(eval DESCRIPTION := $(shell cat $^ | grep '^## ' | sed 's/^#* //g' | tr '\n' '/' | sed 's/ *$$//g'))
 	mdc <$^ | awk -f script/post.awk | \
 		pandoc -s -t html5 \
 		--template ./templates/post.body.html \

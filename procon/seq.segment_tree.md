@@ -1,7 +1,5 @@
-# 一般セグメントツリー
+# 数列 - セグメントツリー
 
-[モノイド](algebra.monoid.html) の上に定義したセグメントツリー.
+[モノイド](algebra.monoid) 上に定義したセグメントツリー.
 
-以下はモノイド `MaxInt` `MinInt` を定義して Range Maximum/Minimum Query をすぐ使えるようにしたもの.
-
-@[rust](seq.segment_tree.rs)
+@[rust](procon-rs/src/sequence/tree/segment_tree.rs)

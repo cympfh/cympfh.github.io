@@ -8,6 +8,12 @@ card() {
     aid="$2"
     title=$(head -1 $src | sed 's/^# *//g')
 
+    cachehtml=cache/html/$aid
+    if [ -f $cachehtml ]; then
+      cat $cachehtml
+      return
+    fi
+
     ANIMETA="$(anidb $aid)"
 
     date_span=$(echo $ANIMETA | jq -r '.date | "\(.start) - \(.end)"')
@@ -21,7 +27,7 @@ card() {
         pic=""
     fi
 
-    cat <<EOM
+    cat <<EOM | tee $cachehtml
 
     <div class="column is-half">
 

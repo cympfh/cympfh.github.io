@@ -29,12 +29,26 @@
 <span class="op">}</span>
 <span class="kw">impl</span> Permutation <span class="op">{</span>
     <span class="kw">pub</span> <span class="kw">fn</span> new(n: <span class="dt">usize</span>) -&gt; Permutation <span class="op">{</span>
-        Permutation <span class="op">{</span> n: n, idx: <span class="dv">0</span> <span class="op">}</span>
+        Permutation <span class="op">{</span> n, idx: <span class="dv">0</span> <span class="op">}</span>
     <span class="op">}</span>
-<span class="op">}</span>
-<span class="kw">impl</span> <span class="bu">Iterator</span> <span class="kw">for</span> Permutation <span class="op">{</span>
-    <span class="kw">type</span> Item = <span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt;;
-    <span class="kw">fn</span> next(&amp;<span class="kw">mut</span> <span class="kw">self</span>) -&gt; <span class="dt">Option</span>&lt;<span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt;&gt; <span class="op">{</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> from(<span class="kw">mut</span> perm: <span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt;) -&gt; Permutation <span class="op">{</span>
+        <span class="kw">let</span> n = perm.len();
+        <span class="kw">let</span> <span class="kw">mut</span> idx = <span class="dv">0</span>;
+        <span class="kw">let</span> <span class="kw">mut</span> fact: <span class="dt">usize</span> = (<span class="dv">1.</span>.n).product();
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.n <span class="op">{</span>
+            <span class="kw">if</span> i &gt; <span class="dv">0</span> <span class="op">{</span>
+                fact /= n - i;
+            <span class="op">}</span>
+            idx += perm<span class="op">[</span>i<span class="op">]</span> * fact;
+            <span class="kw">for</span> j <span class="kw">in</span> i + <span class="dv">1.</span>.n <span class="op">{</span>
+                <span class="kw">if</span> perm<span class="op">[</span>j<span class="op">]</span> &gt; perm<span class="op">[</span>i<span class="op">]</span> <span class="op">{</span>
+                    perm<span class="op">[</span>j<span class="op">]</span> -= <span class="dv">1</span>;
+                <span class="op">}</span>
+            <span class="op">}</span>
+        <span class="op">}</span>
+        Permutation <span class="op">{</span> n, idx <span class="op">}</span>
+    <span class="op">}</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> to_vec(&amp;<span class="kw">self</span>) -&gt; <span class="dt">Option</span>&lt;<span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt;&gt; <span class="op">{</span>
         <span class="kw">let</span> <span class="kw">mut</span> r = <span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>; <span class="kw">self</span>.n<span class="op">]</span>;
         <span class="kw">let</span> <span class="kw">mut</span> idx = <span class="kw">self</span>.idx;
         <span class="kw">for</span> k <span class="kw">in</span> <span class="dv">1.</span>.<span class="kw">self</span>.n <span class="op">{</span>
@@ -60,8 +74,15 @@
                 <span class="op">}</span>
             <span class="op">}</span>
         <span class="op">}</span>
+        <span class="cn">Some</span>(r)
+    <span class="op">}</span>
+<span class="op">}</span>
+<span class="kw">impl</span> <span class="bu">Iterator</span> <span class="kw">for</span> Permutation <span class="op">{</span>
+    <span class="kw">type</span> Item = <span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt;;
+    <span class="kw">fn</span> next(&amp;<span class="kw">mut</span> <span class="kw">self</span>) -&gt; <span class="dt">Option</span>&lt;<span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt;&gt; <span class="op">{</span>
+        <span class="kw">let</span> r = <span class="kw">self</span>.to_vec();
         <span class="kw">self</span>.idx += <span class="dv">1</span>;
-        <span class="kw">return</span> <span class="cn">Some</span>(r);
+        r
     <span class="op">}</span>
 <span class="op">}</span>
 
@@ -208,6 +229,7 @@
 <ul>
 <li><a href="set.union_find.html">UnionFind</a></li>
 <li><a href="set.bitset.html">BitSet</a></li>
+<li><a href="set.subbitset.html">部分集合及びその部分集合の列挙</a></li>
 </ul>
 </details>
 

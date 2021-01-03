@@ -19,8 +19,6 @@ $\def\N{\mathcal N}\def\bar#1{\overline{#1}}\def\bbar#1{\overline{\overline{#1}}
 その期待値は頭に $E$ を付けて, $EX$ などと書く.
 $E$ が掛かってる部分が曖昧な場合だけカッコを補って $E(X+1)$ とか $E(2X)$ などと書く.
 
-分散も同様に $VX$ とか $V(X+1)$ とか書く.
-
 平均を $\mu$, 分散を $\sigma^2$ に持つ正規分布を
 $\N(\mu,\sigma^2)$ と書く.
 確率変数 $X$ がこれに従うことを
@@ -51,7 +49,7 @@ $$aX + bY \sim \N(a \mu_X + b \mu_Y, a^2 \sigma_X^2 + b^2 \sigma_Y^2).$$
 
 ## 標本平均
 
-ある分布 $\mathcal(\mu,\sigma^2)$ から独立にサンプリングして得た $n$ 個の点
+正規分布 $\N(\mu,\sigma^2)$ から独立にサンプリングして得た $n$ 個の点
 $$X_1, \ldots,X_n$$
 を標本と呼ぶ.
 

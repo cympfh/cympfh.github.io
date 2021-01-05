@@ -3,7 +3,7 @@ all: index
 index:
 	mdc < index.md | pandoc -s -t html5 \
 		--template ./index.template \
-		--css resources/css/a.css \
+		--css resources/css/index.css \
 		-o index.html
 
 git:

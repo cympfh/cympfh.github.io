@@ -1,6 +1,5 @@
 aiura	aiura/
 anime	anime/
-coq	coq/book/
 photos	photos/
 search	http://s.cympfh.cc/search
 gnuplot	gnuplot/

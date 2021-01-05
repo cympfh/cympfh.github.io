@@ -1,7 +1,6 @@
 aiura	aiura/
 anime	anime/
 photos	photos/
-search	http://s.cympfh.cc/search
 gnuplot	gnuplot/
 memo	memo/
 neta	neta/

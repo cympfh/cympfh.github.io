@@ -70,3 +70,4 @@ for tset in 0..1 << N {
 ## 例題
 
 - [ABC 187/F](https://atcoder.jp/contests/abc187/tasks/abc187_f)
+- [EDPC/U](https://atcoder.jp/contests/dp/tasks/dp_u)

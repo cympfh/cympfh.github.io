@@ -84,6 +84,7 @@
 ## その他
 
 - [極座標](geo.polar.md)
+- [Convex-Hull Trick (CHT)](geo.cht.md)
 
 ## 格子点上の幾何
 

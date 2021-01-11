@@ -20,61 +20,57 @@
         <section class="main-content columns is-fullheight">
 
           <div class="article column is-8 is-10-mobile">
-            <h1 id="制限時間付きループ">制限時間付きループ</h1>
-<h2 id="概要">概要</h2>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">loop</span> <span class="op">{</span>
-   ...
-<span class="op">}</span></code></pre></div>
-<p>の代わりに,</p>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">let</span> milli_seconds = <span class="dv">1000</span>
-<span class="pp">loop_timeout_ms!</span>(milli_seconds, <span class="op">{</span>
-    ...
-<span class="op">}</span></code></pre></div>
-<p>と使う</p>
-<h2 id="例">例</h2>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">// Example</span>
-<span class="kw">fn</span> slow_yes() <span class="op">{</span>
-    <span class="kw">use</span> std::time::Duration;
-    <span class="kw">use</span> std::thread::sleep;
-    <span class="pp">println!</span>(<span class="st">&quot;yes&quot;</span>);
-    sleep(Duration::new(<span class="dv">0</span>, <span class="dv">100000000</span>));
-<span class="op">}</span>
-
-<span class="kw">fn</span> main() <span class="op">{</span>
-    <span class="pp">loop_timeout_ms!</span>(<span class="dv">3000</span>; <span class="op">{</span>
-        slow_yes();
-    <span class="op">}</span>);
-<span class="op">}</span></code></pre></div>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Time Limited Loop</span>
-<span class="at">#[</span>macro_export<span class="at">]</span>
-<span class="pp">macro_rules!</span> loop_timeout_ms <span class="op">{</span>
-    ( $milli_seconds:expr; $body:expr ) =&gt; <span class="op">{</span>
-        <span class="kw">let</span> now = std::time::SystemTime::now();
-        <span class="kw">loop</span> <span class="op">{</span>
-            <span class="kw">match</span> now.elapsed() <span class="op">{</span>
-                <span class="cn">Ok</span>(elapsed) =&gt; <span class="op">{</span>
-                    <span class="kw">if</span> elapsed.as_millis() &gt; $milli_seconds <span class="op">{</span>
-                        <span class="kw">break</span>;
-                    <span class="op">}</span>
-                    $body
-                <span class="op">}</span>
-                <span class="cn">Err</span>(e) =&gt; <span class="op">{</span>
-                    <span class="pp">eprintln!</span>(<span class="st">&quot;Err, {:?}&quot;</span>, e);
-                <span class="op">}</span>
-            <span class="op">}</span>
-        <span class="op">}</span>
-    <span class="op">}</span>;
-<span class="op">}</span>
-
-<span class="at">#[</span>cfg<span class="at">(</span>test<span class="at">)]</span>
-<span class="kw">mod</span> test_timed_loop <span class="op">{</span>
-    <span class="at">#[</span>test<span class="at">]</span>
-    <span class="kw">fn</span> test_timed_loop() <span class="op">{</span>
-        <span class="pp">loop_timeout_ms!</span>(<span class="dv">10</span>; <span class="op">{</span>
-            <span class="pp">eprintln!</span>(<span class="st">&quot;y&quot;</span>);
-        <span class="op">}</span>);
-    <span class="op">}</span>
-<span class="op">}</span></code></pre></div>
+            <h1 id="convex-hull-trick-cht">Convex-Hull Trick; CHT</h1>
+<h2 id="問題概要">問題概要</h2>
+<p>状態として集合 <span class="math inline">\(S\)</span> を持って, 初めこれは空集合. 次の2種類のクエリを高速に処理する.</p>
+<ol type="1">
+<li>追加クエリ:
+<ul>
+<li>二次元平面上の直線 <span class="math inline">\(f(x) = Ax + B\)</span> を <span class="math inline">\(S\)</span> に追加する</li>
+</ul></li>
+<li>最小値クエリ
+<ul>
+<li>点 <span class="math inline">\(x\)</span> に対して <span class="math inline">\(\min_{f \in S} f(x)\)</span> を計算する</li>
+</ul></li>
+</ol>
+<h2 id="手法">手法</h2>
+<p>状態 <span class="math inline">\(S\)</span> のときの図形 <span class="math display">\[Z = \{ (x, y) \mid x \in \mathbb R, y \in \min_f f(x) \}\]</span> を管理できればいい. この図形は凸なので色々いい感じの性質がある.</p>
+<p><span class="math inline">\(Z\)</span> を管理するために, <span class="math inline">\(S\)</span> の中の直線を傾きに関して昇順に並べて列 <span class="math inline">\(\bar{S}\)</span> で持っておく. ただし <span class="math inline">\(\forall x,~ Z(x) &lt; f(x)\)</span> となるような直線はあっても最小値クエリに影響を与えないので, こういったものは省いておく.</p>
+<p><span class="math inline">\(x\)</span> に対して <span class="math inline">\(\min f(x)\)</span> を取る <span class="math inline">\(f \in S\)</span> の傾き <span class="math inline">\(A\)</span> を対応付けると, <span class="math inline">\(A\)</span> は <span class="math inline">\(x\)</span> に関して広義単調減少である. 従って, 直線を <span class="math inline">\(\bar{S}\)</span> に追加する可能性の場所は二分探索で決めることが出来る.</p>
+<h2 id="簡易バージョン">簡易バージョン</h2>
+<h3 id="追加クエリの単調性の仮定">追加クエリの単調性の仮定</h3>
+<p>追加する直線の傾きが, 単調減少（増加）であることを仮定すると, 上で言った追加する場所の特定が不要になって常に末尾（または先頭）に付け足しておけば良いことになる.</p>
+<h3 id="最小値クエリの単調性の仮定">最小値クエリの単調性の仮定</h3>
+<p>最小値クエリで飛んでくる <span class="math inline">\(x\)</span> が単調減少（増加）であることを仮定すると, 最小値を取る直線は, <span class="math inline">\(\bar{S}\)</span> の中で左から（あるいは右から）順に使われるだけなので, 尺取りの要領で見ていけば, 全体でも線形時間しか掛からない.</p>
+<h2 id="不要な直線の見つけ方">不要な直線の見つけ方</h2>
+<p>傾きに関して昇順の列 <span class="math inline">\(\bar{S}\)</span> の中で,</p>
+<ul>
+<li><span class="math inline">\(f_1(x) = a_1 x + b_1\)</span></li>
+<li><span class="math inline">\(f_2(x) = a_2 x + b_2\)</span></li>
+<li><span class="math inline">\(f_3(x) = a_3 x + b_3\)</span></li>
+</ul>
+<p>の3つが並んでるときに, <span class="math inline">\(f_2\)</span> が不要であるかどうかが次で決まる: <span class="math display">\[\mathrm{Waste} \colon \frac{a_2 - a_1}{b_2 - b_1} \geq \frac{a_3-a_2}{b_3-b_2}\]</span> この式が成立するときは <span class="math inline">\(f_2\)</span> を <span class="math inline">\(\bar{S}\)</span> から取り除いて良い.</p>
+<p>これは追加クエリによって直線 <span class="math inline">\(f_1\)</span> または <span class="math inline">\(f_3\)</span> が追加されたような場合にチェックすればよい.</p>
+<h2 id="参考文献">参考文献</h2>
+<ul>
+<li><a href="https://kyopro-friends.hatenablog.com/entry/2019/01/12/231106">EDPC解説 U～Z</a>
+<ul>
+<li>EDPC/Z問題が CHT する問題で, その解説で CHT の解説もある</li>
+</ul></li>
+<li><a href="http://satanic0258.hatenablog.com/entry/2016/08/16/181331">Convex-Hull Trick - sataniC++</a>
+<ul>
+<li>CHT の詳細な解説</li>
+</ul></li>
+<li><a href="https://tjkendev.github.io/procon-library/python/convex_hull_trick/deque.html">Convex Hull Trick (Deque) - yaketake08's 実装メモ</a>
+<ul>
+<li>追加/最小値クエリに単調性を仮定した場合の実装</li>
+</ul></li>
+<li><a href="https://kazuma8128.hatenablog.com/entry/2018/02/28/102130">傾きの単調性が要らない Convex Hull Trick - kazuma8128’s blog</a>
+<ul>
+<li>単調性を仮定しない一般バージョンの実装</li>
+<li>強そう</li>
+</ul></li>
+</ul>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
@@ -158,7 +154,7 @@
 </ul>
 </details>
 
-<details class=menu>
+<details class=menu open>
 <summary class=menu>二次元ユークリッド幾何</summary>
 <h2 id="図形の定義">図形の定義</h2>
 <ul>
@@ -287,7 +283,7 @@
 </ul>
 </details>
 
-<details class=menu open>
+<details class=menu>
 <summary class=menu>時間/時刻</summary>
 <ul>
 <li><a href="time.while.html">制限時間付きループ</a></li>

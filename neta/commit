@@ -1,0 +1,28 @@
+#!/bin/bash
+
+IM=
+MSG=
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -m | -d )
+            MSG=$2
+            shift 2
+            ;;
+        * )
+            IM=$1
+            shift
+            ;;
+    esac
+done
+
+if [ -z "$IM" ]; then
+    echo "Error: No image passed" >&2
+    exit 1
+fi
+if [ -z "$MSG" ]; then
+    echo "Error: No message passed" >&2
+    exit 1
+fi
+
+qj -e ".url=$IM" ".description=$MSG" >> db.jsonl

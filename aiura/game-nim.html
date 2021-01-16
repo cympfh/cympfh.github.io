@@ -2,11 +2,11 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <meta name="description" content="index/不偏ゲームとは何か/コンウェイによるゲームの抽象化/グランディ数 (ニム数, Grundy value, Nim value, Nimber, Energy などとも)/ゲーム和 (直和) とそのグランディ数 (ニム和)/" />
+  <meta name="description" content="index/不偏ゲームとは何か/コンウェイによる抽象化/グランディ数/ゲーム和 (直和) とそのグランディ数 (ニム和)/" />
   <meta property="og:url" content="http://cympfh.cc/taglibro">
   <meta property="og:type" content="article">
   <meta property="og:title" content="不偏ゲームのグランディ数 (ニム数)" />
-  <meta property="og:description" content="index/不偏ゲームとは何か/コンウェイによるゲームの抽象化/グランディ数 (ニム数, Grundy value, Nim value, Nimber, Energy などとも)/ゲーム和 (直和) とそのグランディ数 (ニム和)/" />
+  <meta property="og:description" content="index/不偏ゲームとは何か/コンウェイによる抽象化/グランディ数/ゲーム和 (直和) とそのグランディ数 (ニム和)/" />
   <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@cympfh" />
@@ -35,73 +35,108 @@
 <p><a class='tag is-red' href=index.html#ゲーム理論>ゲーム理論</a></p>
 </div>
 <h2 id="index">index</h2>
+<span class="math inline">\(\def\I{\mathcal I}\def\P{\mathcal P}\def\G{\mathcal G}\def\mex{\mathrm{mex}}\def\bar#1{\overline{#1}}\)</span>
 <div id="toc">
 
 </div>
 <h2 id="不偏ゲームとは何か">不偏ゲームとは何か</h2>
-<p>二人が交互に手を打つ (一つの局番に関する操作) 完全情報ゲームであって、 二人ともが打てる手が同じものを不偏ゲームという. ただし、千日手が無く、どのような手を打ってもいつかは最終局面に移ることが保証されているものとする.</p>
-<p>例えばオセロやチェスは置ける/動かせるコマが色によって区別されて打てる手が違う (黒のコマを置く操作は一方しか行えない) ため、不偏ゲームではない.</p>
-<p>不偏ゲームとして有名なゲームの例は <a href="https://ja.wikipedia.org/wiki/ニム">Nim (石取りゲーム)</a> である.</p>
-<h2 id="コンウェイによるゲームの抽象化">コンウェイによるゲームの抽象化</h2>
-<p>直感的にはゲームとは、局面の初期状態 <span class="math inline">\(I_0\)</span> と、局面に対して打つ手を定めるルール <span class="math inline">\(R\)</span> の2つ組 <span class="math inline">\((I_0, R)\)</span> のことである.</p>
-<p>手を打つとは、局面に操作を加える操作である. 局面が初期状態 <span class="math inline">\(I_0\)</span> から <span class="math inline">\(I\)</span> に変更したとき、 これを、ゲーム <span class="math inline">\((I_0, R)\)</span> からゲーム <span class="math inline">\((I, R)\)</span> への変更だと見做す. 即ち、手を打つという操作は、ゲームを別なゲームに変更する操作である.</p>
-<p>ルールとは局面それぞれに対して (もし非不偏ゲームであればプレイヤーにも依存して) 打てる手を定めるものである. 打てる手全てを集めた集合が局面に対して与えられていればルールが与えられたと見なせる.</p>
-<p>以上の考察から、次のような形式化が思いつく.</p>
-<div class="thm">
-<p>ゲームとは、一回の打てる手によって写せる先のゲーム全てからなる集合のこと.</p>
-</div>
-<p>例えば「最終局面」とはそれ以上打てる手がないゲームのことであるが、 最終局面は全て空集合 <span class="math inline">\(\{\}\)</span> によって表現される. 或いは、打てる手が 1 つ以上あるが、どれを打っても全て最終局面になるのならば、 そのような局面は空集合からなる <span class="math inline">\(\{\{\}\}\)</span> として表現される.</p>
-<p>このように「ゲーム」とは局面及びその局面に対して打てる手を情報として持たせたものとして定められるが、 単に「局面」と呼んで同一視することがある. これは「ゲームをゲームに写す」よりは「局面を局面に写す」と言った方が一般的だから. あるいは局面と言った時に、暗黙的に、ルールを既に一つ定めて仮定しているから.</p>
-<h2 id="グランディ数-ニム数-grundy-value-nim-value-nimber-energy-などとも">グランディ数 (ニム数, Grundy value, Nim value, Nimber, Energy などとも)</h2>
-<p>グランディ数とは不偏ゲーム <span class="math inline">\(G\)</span> を (<span class="math inline">\(0\)</span> を含む) 自然数に写す写像であって、</p>
-<p><span class="math display">\[g: \mathcal{G} \to \mathbb{N}\]</span> <span class="math display">\[g(G) = \text{mex } \{ g(G&#39;) : G&#39; \in G \}\]</span></p>
-<p>ここで mex とは、最小除外数 (minimum exclusion) などと呼ばれるもので、 <span class="math inline">\(\text{mex }T\)</span> (<span class="math inline">\(T\)</span> は自然数の部分集合) とは、<span class="math inline">\(T\)</span> に含まれない自然数の中で最小の数のことである. すなわち <span class="math inline">\(\text{mex } T = \text{min }(\mathbb{N} \setminus T)\)</span> である.</p>
+<p>二人が交互に手を打つ (一つの局番に関する操作) 完全情報ゲームであって, 二人ともが打てる手が同じものを不偏ゲームという. ただし, 千日手が無く, どのような手を打っていても有限回でゲームが終了することが保証されているものだけを扱う.</p>
+<p>典型的な, 不偏ゲームの例に <a href="https://ja.wikipedia.org/wiki/ニム">Nim (石取りゲーム)</a> である. 端的に言ってしまうなら, あらゆる不偏ゲームは Nim（石取りゲーム）をちょっと拡張した程度のものに帰着することができる.</p>
+<p>一方で, 例えばオセロやチェスは動かせるコマが色によって区別されており, 二人のプレイヤーで打てる手が違うので, 不偏ゲームの定義からは外れる.</p>
+<p>以降では不偏ゲームを指して「ゲーム」という.</p>
+<h2 id="コンウェイによる抽象化">コンウェイによる抽象化</h2>
+<p>まず直感的にゲームを形式化する. ゲームとは, 局面の初期状態 <span class="math inline">\(I_0\)</span> と, 局面に対して打つ手を定めるルール <span class="math inline">\(R\)</span> の2つ組 <span class="math inline">\((I_0, R)\)</span> のことである. 局面の状態空間を <span class="math inline">\(\I\)</span> とすると,</p>
+<ul>
+<li>初期状態 <span class="math inline">\(I_0 \in \I\)</span></li>
+<li>ルール <span class="math inline">\(R \colon \I \to \P(\I)\)</span></li>
+</ul>
+<p>だと言える. ここで <span class="math inline">\(\P(\I)\)</span> は <span class="math inline">\(\I\)</span> の冪集合のこと. ある局面 <span class="math inline">\(\I\)</span> に対してルール <span class="math inline">\(R\)</span> はいくつか（０個以上）の手を用意していて, それらによって <span class="math inline">\(\{I_1, \ldots, I_N\} \subset \I\)</span> に写ることを <span class="math display">\[R(I) = \{I_1, \ldots, I_N\}\]</span> と定めることができる.</p>
+<p>さて「ゲーム」の定義に初期状態 <span class="math inline">\(I_0\)</span> を入れておいたがこれは必要だろうか. 特に次のような状況を考える. もし <span class="math inline">\(R(I_0) = R(I_1)\)</span> のとき, この２つの局面 <span class="math inline">\(I_0, I_1\)</span> を区別する必要があるだろうか. もし単に勝ち負けの決定に興味があるのなら, この区別は必要なく, 必要なのは今の状態 <span class="math inline">\(I_0\)</span> ではなくて <span class="math inline">\(R(I_0)\)</span> だけである.</p>
+<p>というわけで, 次の形式化を思いつく:</p>
+<ul>
+<li>ゲーム集合 <span class="math inline">\(\G\)</span>
+<ul>
+<li><span class="math inline">\(g \in \G\)</span> をゲーム（あるいは局面）という</li>
+<li><span class="math inline">\(g\)</span> は <span class="math inline">\(\G\)</span> の部分集合</li>
+</ul></li>
+</ul>
+<p>この <span class="math inline">\(g\)</span> は先程までの局面 <span class="math inline">\(I \in \I\)</span> に対応しているが具体的には集合 <span class="math inline">\(R(I)\)</span> の形を持っている. <span class="math inline">\(R(I)\)</span> がまた <span class="math inline">\(\I\)</span> の部分集合だったのと同様に <span class="math inline">\(g\)</span> は <span class="math inline">\(\G\)</span> の部分集合である.</p>
+<p>今ゲーム <span class="math inline">\(g\)</span> があるときに先手は <span class="math display">\[g&#39; \in g\]</span> という手を選んで打つことが出来る. つまり <span class="math inline">\(|g| = n\)</span> なら, <span class="math inline">\(n\)</span> 個の選択肢があることになる. そして <span class="math inline">\(g&#39;\)</span> を選んでこれを後手の人に渡す.</p>
+<p>ところで, ここでは「ゲーム」という言葉と普段我々が使う「局面」という言葉を区別しない. 日常的な感覚ではゲームは最初の定義のような形であって局面はその中の一つの状態のことだろう. だが, 局面が変化したある状態を切り取ってきて, これを初期状態とするゲームを考えることが出来る. 最初の定義で言えばゲームとは <span class="math inline">\((I_0, R)\)</span> のことだったが, これは局面 <span class="math inline">\(I_0\)</span> のことを指してると思ってもいいし, 局面 <span class="math inline">\(I_1\)</span> のことをゲーム <span class="math inline">\((I_1, R)\)</span> のことと思っても良い.</p>
+<h3 id="例">例</h3>
+<p>簡単のために, つまらない石取りゲームを考える. 局面の状態として石が <span class="math inline">\(N\)</span> 個山積みにしてある. 二人のプレイヤーはここからちょうど <span class="math inline">\(1\)</span> 個ずつ取り除いていく. 石が取れなくなった人の負け.</p>
+<p>石が <span class="math inline">\(N\)</span> 個ある状態というのを, 今の集合の形式で書き直したものを <span class="math inline">\(\bar{N}\)</span> と書くことにしよう. するとゲーム集合というのは <span class="math display">\[\G = \{ \bar{0}, \bar{1}, \ldots, \bar{N} \}\]</span> である. <span class="math inline">\(N\)</span> より大きな局面はここでは考える必要がない.</p>
+<p>さてまず自明なのは <span class="math inline">\(\bar{0}\)</span> で, これは石がゼロ個の状態であって何もできない. これを空集合で表す. <span class="math display">\[\bar 0 = \{\}\]</span> 次に <span class="math inline">\(\bar 1\)</span> を考える. このゲームでは選択肢は特に無く, 一個取り除いて <span class="math inline">\(\bar{0}\)</span> にすることしかできない. <span class="math display">\[\bar 1 = \{ \bar 0 \} = \{\{\}\}\]</span> 他も同様で, <span class="math display">\[\bar 2 = \{ \bar 1 \} = \{\{\{\}\}\}\]</span> といった具合.</p>
+<h3 id="性質">性質</h3>
+<p>不偏ゲームの定義から次が言える.</p>
+<ul>
+<li><span class="math inline">\(\{\} \in \G\)</span></li>
+<li><span class="math inline">\(g \in G\)</span> は有限集合</li>
+</ul>
+<p>これは不偏ゲームが有限ステップで終了することを言っている. 特に <span class="math inline">\(\{\}\)</span> はこれ以上打てる手が無いような局面のことを言っているので <strong>最終局面</strong> と呼ぶことにする. これを初期状態にするゲームは当然初めから何もできないので, 先手は何も出来ずに負け, 後手必勝のゲームだと言える.</p>
+<h2 id="グランディ数">グランディ数</h2>
+<p>不偏ゲームは先手/後手のどちらが必勝かが予め決まっている. これを調べるにあたって <strong>グランディ数</strong> という道具が大変便利である. これはニム数, Grundy value, Nim value, Nimber, Energy など様々な呼ばれ方をすることもある.</p>
+<p>グランディ数とは不偏ゲーム <span class="math inline">\(g\)</span> を自然数（<span class="math inline">\(0\)</span> 以上の整数）に写す写像, またはその写した先の値のことを言う.</p>
+<p><span class="math display">\[g: \mathcal{G} \to \mathbb{N}\]</span> <span class="math display">\[g(G) = \mex \{ g(G&#39;) : G&#39; \in G \}\]</span></p>
+<p>ここで <span class="math inline">\(\mex\)</span> とは, 最小除外数 (minimum exclusion) などと呼ばれるもので, <span class="math inline">\(\mex T\)</span> (<span class="math inline">\(T\)</span> は自然数の部分集合) とは, <span class="math inline">\(T\)</span> に含まれない自然数の中で最小の数のことである. <span class="math inline">\(\mex T = \min(\mathbb{N} \setminus T)\)</span> と言ってもいい.</p>
 <p>例えば</p>
-<p>定義から、<span class="math inline">\(G\)</span> が最終局面ならば、<span class="math inline">\(g(G) = \text{mex }\{\} = 0\)</span> である.</p>
-<h3 id="例.-制限付き-nim-石取りゲーム">例. 制限付き Nim (石取りゲーム)</h3>
+<ul>
+<li><span class="math inline">\(\mex \{\} = 0\)</span></li>
+<li><span class="math inline">\(\mex \{0\} = 1\)</span></li>
+<li><span class="math inline">\(\mex \{0, 1, 3\} = 2\)</span></li>
+</ul>
+<p>定義から, <span class="math inline">\(G\)</span> が最終局面ならば, <span class="math inline">\(g(G) = \text{mex }\{\} = 0\)</span> である.</p>
+<h3 id="例.-自明石取りゲーム">例. 自明石取りゲーム</h3>
+<p>先程のちょうど一個の石を取り除くだけのゲームでは次のようになる.</p>
+<ul>
+<li><span class="math inline">\(\mex \bar 0 = 0\)</span></li>
+<li><span class="math inline">\(\mex \bar 1 = 1\)</span></li>
+<li><span class="math inline">\(\mex \bar 2 = 0\)</span></li>
+<li><span class="math inline">\(\mex \bar 3 = 1\)</span></li>
+<li><span class="math inline">\(\mex \bar 4 = \vdots\)</span></li>
+</ul>
+<h3 id="例.-制限付き石取りゲーム">例. 制限付き石取りゲーム</h3>
 <h4 id="ルール">ルール</h4>
 <p>取れる石の数に制限を設けた Nim を考える.</p>
-<p>山に <span class="math inline">\(N\)</span> 個の石がある. プレイヤーが行える操作は 1 個以上 3 個以下の石を取ることである. これを交互に行い、先に手が打てなくなった方の負け (つまり最後の一個を取れば勝ち).</p>
-<h4 id="グランディ数">グランディ数</h4>
-<p>このゲームのグランディ数を考える.</p>
-<p>局面を考えるには、単に石がいくつ残っているかを考えれば良い. 先述したゲームの形式的表現を用いる.</p>
-<p>石が <span class="math inline">\(n\)</span> 個あるゲームを <span class="math inline">\(\overline{n}\)</span> とすると、</p>
+<p>山に <span class="math inline">\(N\)</span> 個の石がある. プレイヤーが行える操作は <span class="math inline">\(1\)</span> 個以上 <span class="math inline">\(3\)</span> 個以下の石を取ることである. これを交互に行い, 先に手が打てなくなった方の負け (つまり最後の一個を取れば勝ち).</p>
+<h4 id="グランディ数-1">グランディ数</h4>
+<p>石が <span class="math inline">\(N\)</span> 個あるゲームを <span class="math inline">\(\bar{N}\)</span> とすると,</p>
 <ul>
-<li><span class="math inline">\(\overline{0} = \{\}\)</span></li>
-<li><span class="math inline">\(\overline{1} = \{ \overline{0} \}\)</span> (<span class="math inline">\(= \{\{\}\}\)</span>)</li>
-<li><span class="math inline">\(\overline{2} = \{ \overline{0} , \overline{1} \}\)</span></li>
-<li><span class="math inline">\(\overline{3} = \{ \overline{0} , \overline{1} ,\overline{2} \}\)</span></li>
-<li><span class="math inline">\(\overline{k} = \{ \overline{k-3} , \overline{k-2} , \overline{k-1} \}\)</span> (<span class="math inline">\(k &gt; 3\)</span>)</li>
+<li><span class="math inline">\(\bar{0} = \{\}\)</span></li>
+<li><span class="math inline">\(\bar{1} = \{ \bar{0} \}\)</span> (<span class="math inline">\(= \{\{\}\}\)</span>)</li>
+<li><span class="math inline">\(\bar{2} = \{ \bar{0} , \bar{1} \}\)</span></li>
+<li><span class="math inline">\(\bar{3} = \{ \bar{0} , \bar{1} ,\bar{2} \}\)</span></li>
+<li><span class="math inline">\(\bar{k} = \{ \bar{k-3} , \bar{k-2} , \bar{k-1} \}\)</span> (<span class="math inline">\(k &gt; 3\)</span>)</li>
 </ul>
-<p>これらに対して、グランディ数 <span class="math inline">\(g\)</span> を計算すると次のようになる.</p>
+<p>これらに対して, グランディ数 <span class="math inline">\(g\)</span> を計算すると次のようになる.</p>
 <ul>
-<li><span class="math inline">\(g(\overline{0}) = \text{mex }\{\} = 0\)</span>,</li>
-<li><span class="math inline">\(g(\overline{1}) = \text{mex }\{0\} = 1\)</span>,</li>
-<li><span class="math inline">\(g(\overline{2}) = \text{mex }\{0,1\}=2\)</span>,</li>
-<li><span class="math inline">\(g(\overline{3}) = \text{mex }\{0,1,2\}=3\)</span>,</li>
-<li><span class="math inline">\(g(\overline{4}) = \text{mex }\{1,2,3\}=0\)</span>.</li>
+<li><span class="math inline">\(g(\bar{0}) = \text{mex }\{\} = 0\)</span>,</li>
+<li><span class="math inline">\(g(\bar{1}) = \text{mex }\{0\} = 1\)</span>,</li>
+<li><span class="math inline">\(g(\bar{2}) = \text{mex }\{0,1\}=2\)</span>,</li>
+<li><span class="math inline">\(g(\bar{3}) = \text{mex }\{0,1,2\}=3\)</span>,</li>
+<li><span class="math inline">\(g(\bar{4}) = \text{mex }\{1,2,3\}=0\)</span>.</li>
 </ul>
 <p>簡単に次のような事実に気附く:</p>
-<p><span class="math display">\[g(\overline{n}) = n \bmod 4\]</span></p>
-<p>更に石の数の制限を 1 個以上 <span class="math inline">\(k\)</span> 個以下とするとき、</p>
-<p><span class="math display">\[g(\overline{n}) = n \bmod (k+1)\]</span></p>
-<p>と出来そう. 制限なし (いくつでも取っていい) なら、<span class="math inline">\(k=\infty\)</span> とすることで、</p>
-<p><span class="math display">\[g(\overline{n}) = n\]</span></p>
+<p><span class="math display">\[g(\bar{n}) = n \bmod 4\]</span></p>
+<p>更に石の数の制限を 1 個以上 <span class="math inline">\(k\)</span> 個以下とするとき,</p>
+<p><span class="math display">\[g(\bar{n}) = n \bmod (k+1)\]</span></p>
+<p>と出来そう. 制限なし (いくつでも取っていい) なら, <span class="math inline">\(k=\infty\)</span> とすることで,</p>
+<p><span class="math display">\[g(\bar{n}) = n\]</span></p>
 <p>を得る.</p>
 <h3 id="定理">定理</h3>
 <div class="thm">
-<p>不偏ゲーム <span class="math inline">\(G\)</span> のグランディ数 <span class="math inline">\(g\)</span> が <span class="math inline">\(g(G)=0\)</span> のとき、またそのときに限り、 ゲーム <span class="math inline">\(G\)</span> は後手必勝である.</p>
+<p>不偏ゲーム <span class="math inline">\(G\)</span> のグランディ数 <span class="math inline">\(g\)</span> が <span class="math inline">\(g(G)=0\)</span> のとき, またそのときに限り, ゲーム <span class="math inline">\(G\)</span> は後手必勝である.</p>
 </div>
 <p>ゲームのグランディ数が <span class="math inline">\(0\)</span> である状態を考える.</p>
 <ol type="1">
-<li><span class="math inline">\(G=\{\}\)</span> のとき、これは最終局面であるので後手必勝であるし <span class="math inline">\(g(G)=0\)</span> である.</li>
-<li><span class="math inline">\(G \ne \{\}\)</span> のとき、先手には打てる手があるので、先手は <span class="math inline">\(G&#39; \in G\)</span> に写したとする. <span class="math inline">\(g(G)=0\)</span> より <span class="math inline">\(g(G&#39;)&gt;0\)</span>. <span class="math inline">\(g(G&#39;)&gt;0\)</span> より <span class="math inline">\(G&#39; \ne \{\}\)</span> であることと、 <span class="math inline">\(\exists G&#39;&#39; \in G&#39;, g(G&#39;&#39;)=0\)</span> が分かる. 即ち、先手がどのような手を打っても、後手はゲームのグランディ数を再び <span class="math inline">\(0\)</span> にできる.</li>
+<li><span class="math inline">\(G=\{\}\)</span> のとき, これは最終局面であるので後手必勝であるし <span class="math inline">\(g(G)=0\)</span> である.</li>
+<li><span class="math inline">\(G \ne \{\}\)</span> のとき, 先手には打てる手があるので, 先手は <span class="math inline">\(G&#39; \in G\)</span> に写したとする. <span class="math inline">\(g(G)=0\)</span> より <span class="math inline">\(g(G&#39;)&gt;0\)</span>. <span class="math inline">\(g(G&#39;)&gt;0\)</span> より <span class="math inline">\(G&#39; \ne \{\}\)</span> であることと, <span class="math inline">\(\exists G&#39;&#39; \in G&#39;, g(G&#39;&#39;)=0\)</span> が分かる. 即ち, 先手がどのような手を打っても, 後手はゲームのグランディ数を再び <span class="math inline">\(0\)</span> にできる.</li>
 </ol>
-<p>後手はゲームのグランディ数を常に <span class="math inline">\(0\)</span> になるような手を打ち続けることで、いつかは <span class="math inline">\(G=\{\}\)</span> にでき勝てる (千日手は無いと仮定している).</p>
+<p>後手はゲームのグランディ数を常に <span class="math inline">\(0\)</span> になるような手を打ち続けることで, いつかは <span class="math inline">\(G=\{\}\)</span> にでき勝てる (千日手は無いと仮定している).</p>
 <h2 id="ゲーム和-直和-とそのグランディ数-ニム和">ゲーム和 (直和) とそのグランディ数 (ニム和)</h2>
-<p>しばしばゲームはより簡単なゲームに分解でき、それらの和とすることで簡単に考えることが出来る. 典型的な例は複数山の Nim である. 一山からなる Nim の直和だと見做すことが出来る.</p>
+<p>しばしばゲームはより簡単なゲームに分解でき, それらの和とすることで簡単に考えることが出来る. 典型的な例は複数山の Nim である. 一山からなる Nim の直和だと見做すことが出来る.</p>
 <h3 id="ゲーム和の定義">ゲーム和の定義</h3>
-<p>ゲーム <span class="math inline">\(G\)</span> と <span class="math inline">\(H\)</span> の和 <span class="math inline">\(G + H\)</span> とは、 その2つを並べて、プレイヤーは <span class="math inline">\(G, H\)</span> の内一つを自由に選んで手を打つようなゲームのことである. どちらともに最終局面の場合に限って、和も最終局面だとする.</p>
+<p>ゲーム <span class="math inline">\(G\)</span> と <span class="math inline">\(H\)</span> の和 <span class="math inline">\(G + H\)</span> とは, その2つを並べて, プレイヤーは <span class="math inline">\(G, H\)</span> の内一つを自由に選んで手を打つようなゲームのことである. どちらともに最終局面の場合に限って, 和も最終局面だとする.</p>
 <p>形式的には次のように再帰的に定義する.</p>
 <ul>
 <li><span class="math inline">\(G+\{\} = G\)</span></li>
@@ -111,17 +146,17 @@
 <p>特にこの三式目が再帰的定義となっているので註意.</p>
 <p>この二項演算子を用いることで <span class="math inline">\(G_1 + G_2 + \cdots + G_n\)</span> が定義出来る.</p>
 <h3 id="ニム和">ニム和</h3>
-<p>グランディ数 <span class="math inline">\(g(G), g(H)\)</span> が明らかな時 <span class="math inline">\(g(G+H)\)</span> を容易に計算することが出来、</p>
+<p>グランディ数 <span class="math inline">\(g(G), g(H)\)</span> が明らかな時 <span class="math inline">\(g(G+H)\)</span> を容易に計算することが出来,</p>
 <p><span class="math display">\[g(G+H) = g(G) \oplus g(H)\]</span></p>
 <p>と書ける. この <span class="math inline">\(\oplus\)</span> をニム和という.</p>
-<p>ニム和の具体的な計算であるが、これは実はグランディ数 (自然数) を bit 表現したときの <a href="https://ja.wikipedia.org/wiki/排他的論理和#.E3.83.93.E3.83.83.E3.83.88.E3.81.94.E3.81.A8.E3.81.AE.E6.8E.92.E4.BB.96.E7.9A.84.E8.AB.96.E7.90.86.E5.92.8C">排他的論理和</a> となっている.</p>
-<p><span class="math inline">\(n\)</span> 個のゲーム和のグランディ数も、同じ <span class="math inline">\(\oplus\)</span> を用いて <span class="math display">\[g(G_1,G_2,..,G_n) = g(G_1) \oplus g(G_2) \oplus \ldots \oplus g(G_n)\]</span> で与えられる.</p>
+<p>ニム和の具体的な計算であるが, これは実はグランディ数 (自然数) を bit 表現したときの <a href="https://ja.wikipedia.org/wiki/排他的論理和#.E3.83.93.E3.83.83.E3.83.88.E3.81.94.E3.81.A8.E3.81.AE.E6.8E.92.E4.BB.96.E7.9A.84.E8.AB.96.E7.90.86.E5.92.8C">排他的論理和</a> となっている.</p>
+<p><span class="math inline">\(n\)</span> 個のゲーム和のグランディ数も, 同じ <span class="math inline">\(\oplus\)</span> を用いて <span class="math display">\[g(G_1,G_2,..,G_n) = g(G_1) \oplus g(G_2) \oplus \ldots \oplus g(G_n)\]</span> で与えられる.</p>
 <h3 id="つ山の制限付き-nim-石取りゲーム">2つ山の制限付き Nim (石取りゲーム)</h3>
-<p>2つの山があって、それぞれ <span class="math inline">\(n\)</span> 個、<span class="math inline">\(m\)</span> 個の石からなる. プレイヤーは交互に、1つの山を選んで石を取る. 先ほどと同様に、取る石の数は1個以上3個以下と制限する. 手が打てなくなったら負け (最後の最後の一個を取ったら勝ち).</p>
-<p>局面の状態は <span class="math inline">\((n,m)\)</span> で表せるので先ほどと同様に <span class="math inline">\(\overline{(n,m)}\)</span> と書くことにする. 終盤局面は <span class="math inline">\(\overline{(0,0)}\)</span> である.</p>
-<p>愚直にグランディ数を計算するには先ほどと同様に、 <span class="math inline">\(\overline{(0,0)}\)</span> から <span class="math inline">\(\overline{(4,4)}\)</span> くらいまでのグランディ数を愚直に計算すれば良い.</p>
-<p>二次元のテーブルの上でグランディ数を具体的に書きだしてみると、 周期性が見えて、やはりなんとなく分かるが、 先ほどのニム和の性質が満たされていることも確認できる. すなわち、</p>
-<p><span class="math display">\[g \overline{(n,m)} = g(\overline{n}) \oplus g(\overline{m})
+<p>2つの山があって, それぞれ <span class="math inline">\(n\)</span> 個, <span class="math inline">\(m\)</span> 個の石からなる. プレイヤーは交互に, 1つの山を選んで石を取る. 先ほどと同様に, 取る石の数は1個以上3個以下と制限する. 手が打てなくなったら負け (最後の最後の一個を取ったら勝ち).</p>
+<p>局面の状態は <span class="math inline">\((n,m)\)</span> で表せるので先ほどと同様に <span class="math inline">\(\bar{(n,m)}\)</span> と書くことにする. 終盤局面は <span class="math inline">\(\bar{(0,0)}\)</span> である.</p>
+<p>愚直にグランディ数を計算するには先ほどと同様に, <span class="math inline">\(\bar{(0,0)}\)</span> から <span class="math inline">\(\bar{(4,4)}\)</span> くらいまでのグランディ数を愚直に計算すれば良い.</p>
+<p>二次元のテーブルの上でグランディ数を具体的に書きだしてみると, 周期性が見えて, やはりなんとなく分かるが, 先ほどのニム和の性質が満たされていることも確認できる. すなわち,</p>
+<p><span class="math display">\[g \bar{(n,m)} = g(\bar{n}) \oplus g(\bar{m})
 = (n \bmod 4) \oplus (m \bmod 4)\]</span></p>
 <p>である.</p>
 <!--

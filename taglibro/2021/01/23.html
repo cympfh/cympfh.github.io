@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="description" content="web-grep を crates に登録した, web-grep の使い方" />
+  <meta property="og:url" content="http://cympfh.cc/taglibro">
+  <meta property="og:title" content="Sat Jan 23 2021" />
+  <meta property="og:description" content="web-grep を crates に登録した, web-grep の使い方" />
+  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@cympfh" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Sat Jan 23 2021</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css" />
+  <link rel="stylesheet" href="../../../resources/css/youtube.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
+</head>
+<body>
+<header class="page-header">
+    <a href='../../index.html'><i class="fas fa-fast-backward"></i></a>
+</header>
+<header>
+<h1 class="title">Sat Jan 23 2021</h1>
+</header>
+<h2 id="web-grep-を-crates-に登録した">web-grep を crates に登録した</h2>
+<p>少し前に。やった。</p>
+<p>これで <code>cargo</code> が使える環境であれば</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">cargo</span> install web-grep</code></pre></div>
+<p>すれば、たぶん <code>~/.cargo/bin/</code> 下に <code>web-grep</code> という実行ファイルが出来るから、 ここにパスだけ通してくれれば <code>web-grep</code> が使えるようになる。</p>
+<h2 id="web-grep-の使い方">web-grep の使い方</h2>
+<h3 id="概要">概要</h3>
+<p>ドキュメントはかろうじて <a href="https://github.com/cympfh/web-grep">github.com/cympfh/web-grep</a> の README がドキュメントとしてあるかなくらいなんだけど、 全然詳細じゃないし、一度日本語で書いとこうと思う。</p>
+<p>予め言っておくと、このコマンドは実態としては tanakh さんによるライブラリである <a href="https://github.com/tanakh/easy-scraper">github.com/tanakh/easy-scraper</a> のインターフェイスでしかないので、 使い方の説明をちゃんとすると、このライブラリの使い方を説明するようなことになってしまう。</p>
+<p>web-grep は名前の通り grep を意識しているが、多くのUNIX系コマンドがそうであるように大まかには次のように使える。</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">curl</span> -sL http://example.com/index.html <span class="kw">|</span> <span class="ex">web-grep</span> <span class="op">&lt;</span>QUERY<span class="op">&gt;</span>
+
+$ <span class="ex">web-grep</span> <span class="op">&lt;</span>QUERY<span class="op">&gt;</span> ./index.html</code></pre></div>
+<p>つまり入力は、標準入力として渡すか、第2引数にファイルパスを指定することで与える。 この入力は HTML または XML であることが期待される。 ちなみに現実の web ページの HTML はしばしば XML として正しくなく閉じてるべきタグが閉じていないなどがあるが、 ある程度はいい感じに解釈してパースし、そんなことで実行時エラーは怒らない。</p>
+<p><code>QUERY</code> には <strong>HTMLパターン</strong> を記述する。 この説明が web-grep の説明の主となるだろう。</p>
+<h3 id="html-パターン">HTML パターン</h3>
+<p>HTMLパターンは妥当な HTML （またはXML）文字列であって、いくつかの属性または innerText がプレースホルダーに置き換えられたようなもののこと。 プレースホルダーには3種類あり、無名プレースホルダー、番号プレースホルダー、名前付きプレースホルダーを用意している。 最も単純なのは無名プレースホルダー。</p>
+<h4 id="無名プレースホルダー">無名プレースホルダー</h4>
+<p>パターンにちょうど一つしかプレースホルダーを含めなくて良い場合はこれを使う。 <code>{}</code> と記述する。 例えば <code>&lt;a&gt;</code> タグの innerText にこれを使うならHTMLパターンは</p>
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;a&gt;</span>{}<span class="kw">&lt;/a&gt;</span></code></pre></div>
+<p>と書く。</p>
+<p><code>&lt;a&gt;</code> タグの href 属性にこれを使うなら</p>
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">{}</span><span class="kw">&gt;&lt;/a&gt;</span></code></pre></div>
+<p>と書く。web-grep は入力からこれらにマッチする innerText もしくは href 属性を全て列挙する。 前者の場合は <code>&lt;a&gt;</code> タグ全てを見つけてきて、その innerText 全てを行単位で列挙する。 後者の場合は <code>&lt;a&gt;</code> タグであって href 属性を持つようなものにマッチして、その href 属性の中身を列挙する。</p>
+<p>パターンにはプレースホルダーとは関係なしに属性を付与することで、マッチする条件を追加できる。</p>
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;a</span><span class="ot"> class=</span><span class="st">&quot;title&quot;</span><span class="ot"> href=</span><span class="st">{}</span><span class="kw">&gt;&lt;/a&gt;</span></code></pre></div>
+<p>これは href 属性を持ち、<code>title</code> クラスを持つ <code>&lt;a&gt;</code> のその href 属性を列挙する。 例えば</p>
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;a</span><span class="ot"> class=</span><span class="st">&quot;title hoge&quot;</span><span class="ot"> href=</span><span class="st">&quot;fuga&quot;</span><span class="kw">&gt;</span>piyo<span class="kw">&lt;/a&gt;</span></code></pre></div>
+<p>にマッチして <code>fuga</code> を出力する。</p>
+<h4 id="番号プレースホルダー">番号プレースホルダー</h4>
+<p>パターンに複数のプレースホルダーを使いたい場合に使う。 しかも出力をタブ区切りにしたいときは番号プレースホルダーにすれば、その番号の順番で出力する。</p>
+<p>番号付きのプレースホルダーは <code>{1}</code>, <code>{2}</code>, <code>{3}</code> などと書く。1 から始まることに注意。 0 スタートでもよかったけど、awk とかでもフィールド番号は <code>$1</code> から始まって <code>$0</code> には特別な意味をもたせてるしな。</p>
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">&quot;{1}&quot;</span><span class="kw">&gt;</span>{2}<span class="kw">&lt;/a&gt;</span></code></pre></div>
+<p>これは href 属性を持つ <code>&lt;a&gt;</code> タグにマッチする。 そして href 属性と innerText をタブ区切りで出力する。 区切り文字は <code>-F</code> オプションで変更もできる。</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="bu">echo</span> <span class="st">&#39;&lt;a href=HOGE&gt;hoge&lt;/a&gt;&lt;a href=FUGA&gt;fuga&lt;/a&gt;&#39;</span> <span class="kw">|</span> <span class="ex">web-grep</span> <span class="st">&#39;&lt;a href={1}&gt;{2}&lt;/a&gt;&#39;</span>
+<span class="ex">HOGE</span>    hoge
+<span class="ex">FUGA</span>    fuga
+
+$ <span class="bu">echo</span> <span class="st">&#39;&lt;a href=HOGE&gt;hoge&lt;/a&gt;&lt;a href=FUGA&gt;fuga&lt;/a&gt;&#39;</span> <span class="kw">|</span> <span class="ex">web-grep</span> <span class="st">&#39;&lt;a href={2}&gt;{1}&lt;/a&gt;&#39;</span>
+<span class="ex">hoge</span>    HOGE
+<span class="ex">fuga</span>    FUGA</code></pre></div>
+<h4 id="名前付きプレースホルダー">名前付きプレースホルダー</h4>
+<p>自由に名前を付けて <code>{text}</code> とか <code>{href}</code> といったプレースホルダーを使う事ができる。</p>
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;a</span><span class="ot"> href=</span><span class="st">{href}</span><span class="kw">&gt;</span>{text}<span class="kw">&lt;/a&gt;</span></code></pre></div>
+<p>ただし単にこれをクエリに web-grep しても出力は今までのようにタブ区切りで出力する。 その順番は名前の辞書順なので、固定ではあるのだが、使う側としては何番目がどのプレースホルダーへのマッチなのか分かりにくいと思う。 そこで <code>--json</code> フラグを付けてもらうと、出力を JSON の辞書にする。</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="bu">echo</span> <span class="st">&#39;&lt;a href=&quot;aaa&quot;&gt;bbb&lt;/a&gt;&#39;</span> <span class="kw">|</span> <span class="ex">web-grep</span> <span class="st">&#39;&lt;a href={href}&gt;{text}&lt;/a&gt;&#39;</span>
+<span class="ex">aaa</span>     bbb
+
+$ <span class="bu">echo</span> <span class="st">&#39;&lt;a href=&quot;aaa&quot;&gt;bbb&lt;/a&gt;&#39;</span> <span class="kw">|</span> <span class="ex">web-grep</span> <span class="st">&#39;&lt;a href={href}&gt;{text}&lt;/a&gt;&#39;</span> --json
+<span class="dt">{&quot;href&quot;:&quot;aaa&quot;,&quot;text&quot;:&quot;bbb&quot;}</span></code></pre></div>
+<p><code>jq</code> のおかげでコマンドライン上でJSONを扱うのはそう難しくなくなった。 実は今までの方法では問題があって、マッチしたテキスト全てを列挙するため、元々改行が含まれているテキストなのか、複数がマッチしたのかの区別がつかなかった。</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="bu">echo</span> <span class="st">&#39;&lt;a&gt;hoge</span>
+<span class="st">quote&gt; fuga&lt;/a&gt;&#39;</span> <span class="kw">|</span> <span class="ex">web-grep</span> <span class="st">&#39;&lt;a&gt;{}&lt;/a&gt;&#39;</span>
+<span class="ex">hoge</span>
+<span class="ex">fuga</span>
+
+$ <span class="bu">echo</span> <span class="st">&#39;&lt;a&gt;hoge&lt;/a&gt;&lt;a&gt;fuga&lt;/a&gt;&#39;</span> <span class="kw">|</span> <span class="ex">web-grep</span> <span class="st">&#39;&lt;a&gt;{}&lt;/a&gt;&#39;</span>
+<span class="ex">hoge</span>
+<span class="ex">fuga</span></code></pre></div>
+<p><code>--json</code> の場合は改行も含めて正確にシリアライズしたものを出力するのでこれらを区別できる。</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="bu">echo</span> <span class="st">&#39;&lt;a&gt;hoge</span>
+<span class="st">fuga&lt;/a&gt;&#39;</span> <span class="kw">|</span> <span class="ex">web-grep</span> <span class="st">&#39;&lt;a&gt;{text}&lt;/a&gt;&#39;</span> --json
+<span class="dt">{&quot;text&quot;:&quot;hoge\nfuga&quot;}</span>
+
+$ <span class="bu">echo</span> <span class="st">&#39;&lt;a&gt;hoge&lt;/a&gt;&lt;a&gt;fuga&lt;/a&gt;&#39;</span> <span class="kw">|</span> <span class="ex">web-grep</span> <span class="st">&#39;&lt;a&gt;{text}&lt;/a&gt;&#39;</span> --json
+<span class="dt">{&quot;text&quot;:&quot;hoge&quot;}</span>
+<span class="dt">{&quot;text&quot;:&quot;fuga&quot;}</span></code></pre></div>
+<h3 id="マッチング">マッチング</h3>
+<p>ここらへん形式的に書くの大変そうだけど、パターンはもっと入り組んだものを書いてもいい。 まず、よく出てきた</p>
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;a&gt;</span>{}<span class="kw">&lt;/a&gt;</span></code></pre></div>
+<p>というパターンだが、これは <code>&lt;a&gt;</code> タグ直下の innerText という意味 <strong>ではなく</strong>、 <code>&lt;a&gt;</code> タグより下にある innerText という意味。</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="bu">echo</span> <span class="st">&#39;&lt;a&gt;AAA&lt;div&gt;BBB&lt;/div&gt;&lt;/a&gt;&#39;</span> <span class="kw">|</span> <span class="ex">web-grep</span> <span class="st">&#39;&lt;a&gt;{}&lt;/a&gt;&#39;</span>
+<span class="ex">AAA</span>
+<span class="ex">BBB</span>
+
+$ <span class="bu">echo</span> <span class="st">&#39;&lt;a&gt;AAA&lt;div&gt;BBB&lt;/div&gt;&lt;/a&gt;&#39;</span> <span class="kw">|</span> <span class="ex">web-grep</span> <span class="st">&#39;&lt;a&gt;&lt;div&gt;{}&lt;/div&gt;&lt;/a&gt;&#39;</span>
+<span class="ex">BBB</span>
+
+$ <span class="bu">echo</span> <span class="st">&#39;&lt;a&gt;AAA&lt;div&gt;BBB&lt;/div&gt;&lt;/a&gt;&#39;</span> <span class="kw">|</span> <span class="ex">web-grep</span> <span class="st">&#39;&lt;a&gt;{}&lt;div&gt;&lt;/div&gt;&lt;/a&gt;&#39;</span>
+<span class="ex">AAA</span>
+
+$ <span class="bu">echo</span> <span class="st">&#39;&lt;a&gt;AAA&lt;div&gt;BBB&lt;/div&gt;&lt;/a&gt;&#39;</span> <span class="kw">|</span> <span class="ex">web-grep</span> <span class="st">&#39;&lt;a&gt;&lt;div&gt;&lt;/div&gt;{}&lt;/a&gt;&#39;</span></code></pre></div>
+<p>最後のケースはマッチするものが無いので何も出力しない。</p>
+<p>パターンに具体的に innerText を書いてもいい。完全に一致する場合にマッチする。</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="bu">echo</span> <span class="st">&#39;&lt;a&gt;AAA&lt;div&gt;BBB&lt;/div&gt;&lt;/a&gt;&#39;</span> <span class="kw">|</span> <span class="ex">web-grep</span> <span class="st">&#39;&lt;a&gt;{}&lt;div&gt;BBB&lt;/div&gt;&lt;/a&gt;&#39;</span>
+<span class="ex">AAA</span>
+
+$ <span class="bu">echo</span> <span class="st">&#39;&lt;a&gt;AAA&lt;div&gt;BBB&lt;/div&gt;&lt;/a&gt;&#39;</span> <span class="kw">|</span> <span class="ex">web-grep</span> <span class="st">&#39;&lt;a&gt;{}&lt;div&gt;B&lt;/div&gt;&lt;/a&gt;&#39;</span></code></pre></div>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+  <script src="../../../resources/js/youtube.js"></script>
+</body>
+</html>

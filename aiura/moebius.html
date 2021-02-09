@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="INDEX/仮定する知識/局所有限な半順序集合/メビウス関数/リーマン関数（ゼータ関数）/反転公式/例. 整除関係のメビウス関数/直積/直積順序/" />
+  <meta property="og:url" content="http://cympfh.cc/taglibro">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="メビウス関数の反転公式" />
+  <meta property="og:description" content="INDEX/仮定する知識/局所有限な半順序集合/メビウス関数/リーマン関数（ゼータ関数）/反転公式/例. 整除関係のメビウス関数/直積/直積順序/" />
+  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@cympfh" />
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>メビウス関数の反転公式</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-stumbleupon"></i></a>
+</header>
+<header>
+<h1 class="title">メビウス関数の反転公式</h1>
+</header>
+<p class="date" style="text-align: right">
+2021-02-09 (Tue.)
+</p>
+<div class="is-pulled-right">
+<p><a class='tag is-red' href=index.html#組合せ数学>組合せ数学</a></p>
+</div>
+<h2 id="index">INDEX</h2>
+<div id="toc">
+
+</div>
+<h2 id="仮定する知識">仮定する知識</h2>
+<p>半順序集合, 束</p>
+<h2 id="局所有限な半順序集合">局所有限な半順序集合</h2>
+<p>半順序集合 <span class="math inline">\((E, \preceq)\)</span> について <strong>区間</strong> とは, <span class="math inline">\(x \preceq y\)</span> に対して, <span class="math display">\[[x,y] = \{ z \in E \mid x \preceq z \preceq y \}\]</span> のこと.</p>
+<p>すべての区間が有限集合であることを <strong>局所有限</strong> だという.</p>
+<p>元の <span class="math inline">\(\preceq\)</span> を使って <span class="math inline">\([x,y]\)</span> は尚, 半順序集合であるし, しかも <span class="math inline">\(x,y\)</span> をそれぞれ最小元と最大元とする束である. <span class="math inline">\(E\)</span> が局所有限なら <span class="math inline">\([x,y]\)</span> は有限の束である.</p>
+<h2 id="メビウス関数">メビウス関数</h2>
+<p>局所有限な半順序集合 <span class="math inline">\(E\)</span> の上にメビウス関数 <span class="math display">\[\mu \colon E \times E \to \mathbb Z\]</span> を定める. メビウス関数は次を満たすものとして定義される. <span class="math display">\[\sum_{z \in [x,y]} \mu(x, z) = \delta(x, y)\]</span></p>
+<p>ここで右辺の <span class="math inline">\(\delta\)</span> はクロネッカーのデルタなどと呼ばれるものであって, <span class="math display">\[\delta(x, y) = \begin{cases}
+1 &amp; \text{ if } x = y\\
+0 &amp; \text{ else }
+\end{cases}\]</span> という関数.</p>
+<p>さて上に書いた <span class="math inline">\(\mu\)</span> がメビウス関数だが, 陽な定義にはなっていなくて, 次のように書き直した方が帰納的定義として計算しやすい.</p>
+<p><span class="math display">\[\mu(x, y) = \begin{cases}
+1 &amp; \text{ if } x = y \\
+- \sum_{x \preceq z \prec y} \mu(x,z) &amp; \text{ if } x \preceq y \\
+0 &amp; \text{ else } \\
+\end{cases}\]</span></p>
+<p>ところで <span class="math inline">\(x \not\preceq y\)</span> な <span class="math inline">\(\mu(x,y)\)</span> は <span class="math inline">\(0\)</span> だとしておく.</p>
+<h3 id="性質">性質</h3>
+<p><span class="math display">\[\sum_{z \in [x,y]} \mu(z, y) = \delta(x, y)\]</span></p>
+<h4 id="証明">証明</h4>
+<p>元の定義 <span class="math display">\[\sum_{z \in [x,y]} \mu(x, z) = \delta(x, y)\]</span> を書き換えていくことで与えられた式の左辺を作ることを考える.</p>
+<p><span class="math display">\[\begin{align*}
+&amp; \sum_{z \in [x,y]} \mu(x, z) = \delta(x, y) &amp; \text{ 定義}\\
+\iff &amp; \sum_{z \in [z&#39;,y]} \mu(z&#39;, z) = \delta(z&#39;, y) &amp; \text{ 変数の置き換え} \\
+\iff &amp; \sum_{x \preceq z&#39; \preceq y} \sum_{z \in [z&#39;,y]} \mu(z&#39;, z) = \sum_{z&#39;} \delta(z&#39;, y) &amp; \text{ $z&#39;$ を動かす} \\
+\iff &amp; \sum_{x \preceq z&#39; \preceq y} \sum_{z \in [z&#39;,y]} \mu(z&#39;, z) = 1 &amp; \text{ 右辺は簡単に計算できる} \\
+\iff &amp; \sum_{x \preceq z \preceq y} \sum_{x \preceq z&#39; \preceq z} \mu(z&#39;, z) = 1 &amp; \text{ 気をつけて2つの Sum を交換する} \\
+\iff &amp; \sum_{x \preceq z \preceq y} k(x,z) = 1 &amp; \text{ $k(x,z) = \sum_{x \preceq z&#39; \preceq z} \mu(z&#39;, z)$ と置いた} \\
+\end{align*}\]</span></p>
+<p>証明したいのはこの最後の <span class="math inline">\(k\)</span> について <span class="math inline">\(k(x,z) = \delta(x,z)\)</span> が成り立つということだった. <span class="math inline">\(x=z\)</span> のときには明らか.</p>
+<p><span class="math display">\[\begin{align*}
+&amp; \sum_{x \preceq z \preceq y} k(x,z) = 1 &amp; \text{ さっきの最後の式 } \\
+\iff &amp; k(x,x) + \sum_{x \prec z \preceq y} k(x,z) = 1 \\
+\iff &amp; 1 + \sum_{x \prec z \preceq y} k(x,z) = 1 \\
+\iff &amp; \sum_{x \prec z \preceq y} k(x,z) = 0 \\
+\end{align*}\]</span></p>
+<p>これが一般に成り立つので, <span class="math inline">\([x, y]\)</span> に対して, <span class="math display">\[\forall y&#39; \in [x,y] ,~ y&#39; \ne x \implies \sum_{z \in [x,y&#39;]} k(x,z) = 0\]</span> が言える.</p>
+<p>この <span class="math inline">\([x,y]\)</span> は有限の束なので <span class="math inline">\(y&#39;\)</span> を小さいものから順に舐めていくことで <span class="math display">\[k(x,z) = 0\]</span> が言える.</p>
+<p>以上から <span class="math inline">\(k=\delta\)</span>.</p>
+<h2 id="リーマン関数ゼータ関数">リーマン関数（ゼータ関数）</h2>
+<p>局所有限半順序集合 <span class="math inline">\(E\)</span> に対して, <span class="math display">\[\zeta(x, y) = \begin{cases}
+1 &amp; \text{ if } x \preceq y \\
+0 &amp; \text{ else }
+\end{cases}\]</span></p>
+<h2 id="反転公式">反転公式</h2>
+<p>メビウス関数とリーマン関数は次のような関係にある. 2つの関数 <span class="math inline">\(f,g \colon E \to \mathbb R\)</span> について,</p>
+<p><span class="math display">\[\begin{align*}
+&amp; g(x) = \sum_{y \in E} \zeta(y,x) f(y) \\
+\iff &amp; f(x) = \sum_{y \in E} \mu(y,x) g(y) \\
+\end{align*}\]</span></p>
+<h3 id="証明-implies">証明 (<span class="math inline">\(\implies\)</span>)</h3>
+<p><span class="math inline">\(g(x)=\)</span> を仮定したときに2つ目にこれを代入することで等式を確認する.</p>
+<p><span class="math display">\[\begin{align*}
+\sum_y \mu(y,x) g(y)
+&amp; = \sum_y \mu(y,x) \sum_z \zeta(z, y) f(z) &amp; \text{ 仮定を代入した } \\
+&amp; = \sum_{y \preceq x} \mu(y,x) \sum_{z \preceq y} f(z) &amp; \text{ $\mu$ が値を持つ範囲に限定した }\\
+&amp; = \sum_{z \preceq x} f(z) \sum_{y \in [z,x]} \mu(y, x) &amp; \text{ Sum を交換した }\\
+&amp; = \sum_{z \preceq x} f(z) \delta(y, x) &amp; \text{ 上で述べた「性質」}\\
+&amp; = f(x) \\
+\end{align*}\]</span></p>
+<h3 id="証明-impliedby">証明 (<span class="math inline">\(\impliedby\)</span>)</h3>
+<p>全く同様に代入して確かめる.</p>
+<p><span class="math display">\[\begin{align*}
+\sum_y \zeta(y, x) f(y)
+&amp; = \sum_y \zeta(y,x) \sum_z \mu(z, y) g(z) &amp; \text{ 仮定を代入した } \\
+&amp; = \sum_{y \preceq x} \sum_{z \preceq y} \mu(z, y) g(z) &amp; \text{ それぞれ値が持つ範囲 }\\
+&amp; = \sum_{z \preceq x} g(z) \sum_{y \in [z,x]} \mu(z, y) &amp; \text{ Sum の交換 }\\
+&amp; = \sum_{z \preceq x} g(z) \delta(z, y) &amp; \text{ これは $\mu$ の定義 }\\
+&amp; = g(x) \\
+\end{align*}\]</span></p>
+<h2 id="例.-整除関係のメビウス関数">例. 整除関係のメビウス関数</h2>
+<p><span class="math inline">\(1\)</span> 以上の正整数 <span class="math inline">\(\mathbb Z_{+}\)</span> の上に <span class="math display">\[x \preceq y \iff x \text{ は } y \text{ を割り切る}\]</span> という半順序を入れる事ができる.</p>
+<p>整数論の文脈で単にメビウス関数と言った場合はこの半順序の上のメビウス関数のこと. ただし <span class="math display">\[\mu(x) = \mu(1, x)\]</span> と書く.</p>
+<h3 id="性質-1">性質</h3>
+<p>これまでに述べてきたことにそのまま適用することで次が言える.</p>
+<ul>
+<li><span class="math inline">\(\sum_{d \preceq n} \mu(d) = \delta(1, d)\)</span></li>
+<li><span class="math inline">\(g(n) = \sum_{d \preceq n} f(d) \iff f(n) = \mu(d, n) g(d).\)</span></li>
+</ul>
+<p>さて <span class="math inline">\(d \preceq n\)</span> のときに, <span class="math inline">\([d, n]\)</span> は <span class="math inline">\([1, n/d]\)</span> と同型なので <span class="math inline">\(\mu(d,n) = \mu(1,n/d)=\mu(n/d)\)</span> である. というわけで反転公式は</p>
+<ul>
+<li><span class="math inline">\(g(n) = \sum_{d \preceq n} f(d) \iff f(n) = \mu(n/d) g(d)\)</span></li>
+</ul>
+<p>と少しだけ簡単になる.</p>
+<h3 id="定理">定理</h3>
+<p><span class="math inline">\(1\)</span> 以上の自然数 <span class="math inline">\(n\)</span> が相異なる <span class="math inline">\(p\)</span> 個の素数の積で表される時 <span class="math display">\[\mu(n) = (-1)^p\]</span> であって, さもなくば <span class="math display">\[\mu(n) = 0.\]</span></p>
+<p>特に <span class="math inline">\(n=1\)</span> は相異なるゼロ個の合成数だとみなす. 例えば</p>
+<ul>
+<li><span class="math inline">\(\mu(1)= 1\)</span></li>
+<li><span class="math inline">\(\mu(2)= -1\)</span></li>
+<li><span class="math inline">\(\mu(4)= 0\)</span></li>
+<li><span class="math inline">\(\mu(5)= -1\)</span></li>
+<li><span class="math inline">\(\mu(6)= 1\)</span></li>
+</ul>
+<p>これが成り立つことは次の直積を考えると楽なので後述する.</p>
+<h2 id="直積">直積</h2>
+<h2 id="直積順序">直積順序</h2>
+<p>2つの半順序集合 <span class="math inline">\(E_1, E_2\)</span> について, <span class="math display">\[(x_1, y_1) \preceq (x_2, y_2) \iff x_1 \preceq x_2 \land y_1 \preceq y_2\]</span> と定めることで, 直積 <span class="math display">\[E_1 \times E_2 := \{ (x, y) \mid x \in E_1, y \in E_2 \}\]</span> が定義される.</p>
+<h3 id="直積のメビウス関数">直積のメビウス関数</h3>
+<p><span class="math inline">\(E_1, E_2\)</span> 及び <span class="math inline">\(E_1 \times E_2\)</span> の上に定まるメビウス関数をそれぞれ <span class="math inline">\(\mu_1, \mu_2, \mu_{1,2}\)</span> としておくと次が成り立つ. <span class="math display">\[\mu_{1,2} = \mu_1 \times \mu_2,\]</span> すなわち <span class="math display">\[\mu_{1,2}((x_1, y_1), (x_2, y_2)) = \mu_1(x_1, x_2) \times \mu_2(y_1, y_2).\]</span></p>
+<h3 id="例.-有限集合の包含関係">例. 有限集合の包含関係</h3>
+<p>有限集合 <span class="math inline">\(E\)</span> の部分集合とその <span class="math inline">\(\subseteq\)</span> は半順序の関係にあるのでメビウス関数を定める事ができる. この包含関係は各要素についてそれを含むかどうかという順序の直積になっている. 例えば <span class="math inline">\(e \in E\)</span> について, <span class="math inline">\(e\)</span> を含まないことを <span class="math inline">\(0\)</span>, 含むことを <span class="math inline">\(1\)</span> で表せば <span class="math display">\[(\{0,1\}, 0 \preceq 1)\]</span> という半順序で <span class="math inline">\(e\)</span> に関する包含関係が表される. これを <span class="math inline">\(|E|\)</span> 個だけ並べて直積を取ったのが <span class="math inline">\(\subseteq\)</span> だと言える.</p>
+<p>各要素 <span class="math inline">\(e \in E\)</span> に関するメビウス関数は <span class="math display">\[\mu(x, x) = 1,\]</span> <span class="math display">\[\mu(0, 1) = -1,\]</span> <span class="math display">\[\mu(1, 0) = 0.\]</span></p>
+<p>直積のメビウス関数はこれの積なので, <span class="math display">\[\mu(X, Y) = \begin{cases}
+(-1)^{|Y \setminus X|} &amp; \text{ if } A \subseteq B \\
+0 &amp; \text{ else. }\\
+\end{cases}\]</span></p>
+<h3 id="例.-整除関係">例. 整除関係</h3>
+<p><span class="math inline">\(1\)</span> 以上の自然数は素因数分解をすることで, 素数の多重集合だと思うことが出来る. 例えば,</p>
+<ul>
+<li><span class="math inline">\(1 = \{\}\)</span></li>
+<li><span class="math inline">\(2 = \{ 2\}\)</span></li>
+<li><span class="math inline">\(3 = \{ 3\}\)</span></li>
+<li><span class="math inline">\(4 = \{ 2,2\}\)</span></li>
+</ul>
+<p>仮に一つの素数 <span class="math inline">\(p\)</span> による合成数 <span class="math inline">\(1,p,p^2,\ldots\)</span> の上の整除関係を考える場合, <span class="math inline">\(n=p^a\)</span> が <span class="math inline">\(m=p^b\)</span> を割り切るとは, <span class="math display">\[n \preceq m \iff a \preceq b\]</span> というただの自然数の大小関係で言い換えることが出来る.</p>
+<p>自然数の上の大小関係のメビウス関数は,</p>
+<p><span class="math display">\[\mu \colon \mathbb N \times \mathbb N \to \mathbb Z\]</span> <span class="math display">\[\mu(a,b) = \begin{cases}
+1 &amp; \text{ if } a = b \\
+-1 &amp; \text{ if } a + 1 = b \\
+0 &amp; \text{ else } \\
+\end{cases}\]</span></p>
+<p>で表される.</p>
+<p>一般の自然数に今の話を拡張するには, 自然数を並べて直積を取ればよく, 結局 各素数の指数を見て, それが <span class="math inline">\(a+1=b\)</span> であるようなものの個数だけ <span class="math inline">\((-1)\)</span> の累乗を取ったものになる.</p>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

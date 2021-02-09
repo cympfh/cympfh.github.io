@@ -28,9 +28,13 @@ $E$ が局所有限なら $[x,y]$ は有限の束である.
 $$\mu \colon E \times E \to \mathbb Z$$
 を定める.
 メビウス関数は次を満たすものとして定義される.
-$$\sum_{z \in [x,y]} \mu(x, z) = \delta(x, y)$$
 
-ここで右辺の $\delta$ はクロネッカーのデルタなどと呼ばれるものであって,
+$x \preceq y$ のとき,
+$$\sum_{z \in [x,y]} \mu(x, z) = \delta(x, y),$$
+$x \not\preceq y$ のとき,
+$$\mu(x,y) = 0.$$
+
+ここで $\delta$ はクロネッカーのデルタなどと呼ばれるものであって,
 $$\delta(x, y) = \begin{cases}
 1 & \text{ if } x = y\\
 0 & \text{ else }
@@ -46,10 +50,9 @@ $$\mu(x, y) = \begin{cases}
 0 & \text{ else } \\
 \end{cases}$$
 
-ところで $x \not\preceq y$ な $\mu(x,y)$ は $0$ だとしておく.
-
 ### 性質
 
+$x \preceq y$ のとき,
 $$\sum_{z \in [x,y]} \mu(z, y) = \delta(x, y)$$
 
 #### 証明

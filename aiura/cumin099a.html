@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="INDEX/初めに/cumin/言語仕様/cuminc/" />
+  <meta property="og:url" content="http://cympfh.cc/taglibro">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="cumin v0.9.9a" />
+  <meta property="og:description" content="INDEX/初めに/cumin/言語仕様/cuminc/" />
+  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@cympfh" />
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>cumin v0.9.9a</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-stumbleupon"></i></a>
+</header>
+<header>
+<h1 class="title">cumin v0.9.9a</h1>
+</header>
+<p class="date" style="text-align: right">
+2021-02-12 (Fri.)
+</p>
+<div class="is-pulled-right">
+<p><a class='tag is-red' href=index.html#cumin>cumin</a></p>
+</div>
+<h2 id="index">INDEX</h2>
+<div id="toc">
+
+</div>
+<h2 id="初めに">初めに</h2>
+<p>まだ一度も日本語で cumin のドキュメントをまともに書いてないこと気づいたので, 一度区切りを付ける意味で書いてみる. 執筆現在の最新バージョンは <a href="https://github.com/cympfh/cumin/releases/tag/0.9.9a">v0.9.9a</a> である.</p>
+<p>cumin という言語を開発した. これは設定ファイル用言語である. プログラマならば JSON や YAML を触ったことがあるはずだろう. 非プログラマであっても ini ファイルくらいなら触ったことがあるかもしれない. そういった言語をここでは設定ファイル用言語と呼んでいる. 設定ファイル用言語とはなにか. プログラミング言語がデータとその加工方法を記述する言語であるのに対して, 設定ファイルは静的なデータを記述することに特化した言語である. 例えばプログラミング言語は任意のデータに対する加工方法を記述する必要があるから, 複雑な計算が出来る必要がある一方で, 設定ファイルではそのままの値がそのまま記述されるだけのことが多い. そこで JSON や YAML といった言語はどんなデータでもありのままを記述できることだけに注力している一方で, データの妥当性の保証を何もしてくれない.</p>
+<p>例として, 複数あるサーバの接続先を記述するYAMLを書いてみよう.</p>
+<div class="sourceCode"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span class="ot">---</span>
+<span class="fu">servers:</span>
+  <span class="kw">-</span> <span class="fu">host:</span><span class="at"> 192.168.0.1</span>
+    <span class="fu">port:</span><span class="at"> 8080</span>
+  <span class="kw">-</span> <span class="fu">host:</span><span class="at"> 192.168.0.2</span>
+    <span class="fu">port:</span><span class="at"> 8080</span></code></pre></div>
+<p>よくある例だ. 一方で別の設定ファイルを開くと次のように書いてあった.</p>
+<div class="sourceCode"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span class="ot">---</span>
+<span class="fu">servers:</span>
+  <span class="kw">-</span> <span class="fu">host:</span><span class="at"> 192.168.0.1</span>
+  <span class="kw">-</span> <span class="fu">host:</span><span class="at"> 192.168.0.2</span>
+    <span class="fu">port:</span><span class="at"> 8080</span></code></pre></div>
+<p><code>host: 192.168.0.1</code> に対する <code>port</code> が抜けている. これが単純に記述側のミスなのか, これも妥当なデータであるのかどうかは, このYAMLだけからは分からない. YAML として文法が誤っているわけではないので間違いなく妥当であって, 後はこのデータを使う側の責任だからだ. もしかしたら <code>port</code> フィールドが無いと実行時エラーを起こすかもしれないし, ない場合はデフォルト値が使われるように設計されているかもしれない.</p>
+<p>ここで言える YAML（JSON であっても ini であっても全く同様だが）の問題点はこうだ. 結局の所, データはデータを使って加工するプログラムと密な関係であって, プログラムの中を読まない限りデータに意味を与えることが出来ない. したがってそれが正しいのかどうかをデータを見ただけでは何も分からない.</p>
+<p>一方でここに緩やかな意味付けを与える技術があり, 型システムと呼ばれている. ここでは, 「<code>servers</code> はリストであって, その各養素は <code>host</code> と <code>port</code> を持つ. しかも <code>port</code> は整数である」という程度の意味をもたせる事ができる. もちろん <code>port</code> が整数だからといってそれが何を表す整数なのかまでは何も言う事ができない. （だから, ポート番号としては意味のないような数を与えることは出来てしまう.） その意味で緩やかな意味づけだと述べた.</p>
+<h2 id="cumin">cumin</h2>
+<p>そこで cumin を開発した. cumin は次のような特徴がある.</p>
+<ol type="1">
+<li>漸進的型システムを備えている</li>
+<li>構造体や列挙体による構造的記述をサポートする</li>
+<li>関数定義による記述量の削減</li>
+<li>データを JSON/YAML に出力するコンパイラの存在</li>
+<li>少しだけプログラム記述が可能である</li>
+</ol>
+<p>特に最後の「少しだけ」であるが, 逆に言えば, 普通のプログラミング言語のようなプログラム記述は出来ない. 例えば if 文がないしループ文がない. 関数はあるけれど再帰呼び出しすらできない. cumin はあくまで設定ファイル用言語であって, 静的なデータを記述することだけを目的としているからである.</p>
+<p>Jsonnet, Dhall といったよく似た目的の言語がある. これらは cumin から見れば, かなりプログラマブルで表現力豊かな高級言語である. cumin を開発するにあたってこれらの言語の存在は知らなかったわけではなく, 表現力が豊かであることをむしろ良しとしていなかったことこそが開発動機になっている なぜなら, 静的なデータを人間が読むときに, 誰もフィボナッチ数の定義など見たくないからだ. リストへの map 操作を見て正しい挙動であることのチェックをしたいわけではないからだ. そういったことは寧ろ, データを使う側の責任であり, 設定ファイルの上で行うことではないと, 私は考えている.</p>
+<p>本当は関数を入れるかも悩んだくらいだ. しかし今の所, 関数のボディに記述できることは限られているし, マクロ程度にしか使えないはずなので, 記述量の削減という目的が果たせると思い, 導入してある.</p>
+<p>では先程の YAML による <code>servers</code> を cumin で記述してみよう.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">struct</span> Server <span class="op">{</span>
+    host: <span class="dt">String</span>,
+    port: Nat,
+<span class="op">}</span>
+
+<span class="op">{{</span>
+    servers = <span class="op">[</span>
+        Server(<span class="st">&quot;192.168.0.1&quot;</span>, <span class="dv">8080</span>),
+        Server(<span class="st">&quot;192.168.0.2&quot;</span>, <span class="dv">8080</span>),
+    <span class="op">]</span>
+<span class="op">}}</span></code></pre></div>
+<p>大きく2つの部位からなっている. 一つは <code>Server</code> という構造体の定義である. これは文字列 <code>host</code> と自然数 <code>port</code> を有する辞書だと言っている. そして次に <code>{{ }}</code> で辞書を表現している. この辞書は <code>servers</code> というフィールドを持っていて, その値は配列である. 配列の中には <code>Server</code> データが2つある.</p>
+<p>YAML と比較して, 全体として記述量は増えたし冗長にはなった. これはもちろんわざわざ構造に名前を与え, 中身のスキーマに型という制約を与えたからだ. しかしこのおかげで <code>servers</code> は <code>Server</code> の配列だというチェックが走るようになる. もし違う値が混ざっていたらエラーを起こすので設定ファイルを読む時点で気づく事ができる.</p>
+<p>例えば,</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="op">{{</span>
+    servers = <span class="op">[</span>
+        Server(<span class="st">&quot;192.168.0.1&quot;</span>, <span class="dv">8080</span>),
+        <span class="dv">0</span>,
+        Server(<span class="st">&quot;192.168.0.2&quot;</span>, <span class="st">&quot;8080&quot;</span>),
+    <span class="op">]</span>
+<span class="op">}}</span></code></pre></div>
+<p>これはダメだ. なぜならまず他は <code>Server</code> データなのに <code>0</code> というただの自然数のデータが混ざっているのから. それから最後の <code>Server</code> データは <code>port</code> に文字列 <code>&quot;8080&quot;</code> を渡そうとしている. <code>Server</code> の定義を見ると <code>port</code> は自然数でないといけないからこれもエラーになる.</p>
+<p>このように構造に名前を与え, いちいち型をアノテーションするという冗長な記述が人間に優しい, という思想で cumin は設計されている.</p>
+<h2 id="言語仕様">言語仕様</h2>
+<p>ここからは言語仕様をやや非形式的に説明していく.</p>
+<h3 id="文と式">文と式</h3>
+<p>文として次がある</p>
+<ol type="1">
+<li>構造体宣言</li>
+<li>列挙体の宣言</li>
+<li>合併型宣言</li>
+<li>変数の let 束縛</li>
+<li>関数宣言</li>
+<li>外部モジュールのインポート</li>
+</ol>
+<p>これらはデータそのものの表現ではなくて, データを表現するための準備に使う. 一方で, 式はデータそのものを表す</p>
+<ol type="1">
+<li>自然数, 整数, 文字列, 配列, 辞書データ, Option データ</li>
+<li>宣言済みの構造体にデータを入れたもの</li>
+<li>宣言済みの列挙体の列挙子</li>
+<li>宣言済みの型に型変換したデータ</li>
+<li>宣言済みの変数</li>
+<li>宣言済みの関数に関数適用したデータ</li>
+<li>以上のデータを組合せて計算させたもの</li>
+</ol>
+<p>この「宣言済みの」というのが初めに文で宣言したものという意味である. データは複雑であればあるほど, そこに構造を見出す事ができる. その構造に名前を与えて整理するというのが文の役割であって, データはそこに具体的な値を入れて並べただけのものになっている.</p>
+<p>したがって cumin の記述は全体として次のようになっているはずである.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust">(文<span class="dv">1</span>)
+(文<span class="dv">2</span>)
+:
+(文N)
+(式)</code></pre></div>
+<p>データが単純であれば文は必ずしも必要ではなくて 0 個かもしれない.</p>
+<h3 id="型">型</h3>
+<p>cumin に登場するデータには何かしらの型がついている. 型は次のように記述される.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust">Nat
+    自然数, これは <span class="dv">0</span> 以上の整数を表す
+
+Int
+    整数
+
+Float
+    浮動小数点
+
+<span class="dt">String</span>
+    文字列
+
+Bool
+    真偽値
+
+Any
+    任意のデータに割り当てることが出来る型
+    トップ型などとも呼ばれる
+
+Array&lt;_&gt;
+    配列型
+    _ の部分には要素の型を入れる
+    例えば自然数の配列なら Array&lt;Nat&gt;
+    整数の配列の配列なら Array&lt;Array&lt;Int&gt;&gt;
+
+<span class="dt">Option</span>&lt;_&gt;
+    Null (<span class="cn">Nil</span>, <span class="cn">None</span>) でありえるデータ
+    _ には Null でない場合に入るデータの型を入れる
+    例えば Null を許容する文字列型は <span class="dt">Option</span>&lt;<span class="dt">String</span>&gt;</code></pre></div>
+<h3 id="構造体">構造体</h3>
+<p>いくつかのデータをグルーピングしたものを構造的という. 集合意味論で言えば直積にあたる.</p>
+<h4 id="宣言">宣言</h4>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">struct</span> &lt;NAME&gt; <span class="op">{</span>
+    &lt;VAR&gt; : &lt;TYPE&gt; ,
+<span class="op">}</span></code></pre></div>
+<p><code>NAME</code> は構造体の名前, <code>VAR</code> はフィールド名, <code>TYPE</code> は型名.</p>
+<h4 id="例">例</h4>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">struct</span> S <span class="op">{</span>
+    x: Int,
+    y: Nat,
+    s: Array&lt;<span class="dt">String</span>&gt;,
+<span class="op">}</span></code></pre></div>
+<p>これは「整数 <code>x</code>, 自然数 <code>y</code>, 文字列の配列 <code>s</code>」というデータ3つ組に <code>S</code> という名前を与えている.</p>
+<p>これを宣言した後では自由にこの <code>S</code> を使ってデータを記述することが出来る.</p>
+<h4 id="デフォルト値付きの構造体">デフォルト値付きの構造体</h4>
+<p>構造体の各フィールドはデフォルト値を持つ事ができる.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">struct</span> &lt;NAME&gt; <span class="op">{</span>
+    &lt;VAR&gt; : &lt;TYPE&gt; = &lt;EXPR&gt; ,
+<span class="op">}</span></code></pre></div>
+<h4 id="例-1">例</h4>
+<p>例えば上の <code>S</code> で <code>s</code> だけにデフォルト値を持たせて</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">struct</span> S <span class="op">{</span>
+    x: Int,
+    y: Nat,
+    s: Array&lt;<span class="dt">String</span>&gt; = <span class="op">[]</span>,
+<span class="op">}</span></code></pre></div>
+<p>とすることが出来る. 構造体を適用する際に, デフォルト値を持ったフィールドは省略することが出来る.</p>
+<h4 id="適用">適用</h4>
+<p>構造体に値を適用することで, データを作ることが出来る. 上の例の <code>S</code> では <code>x</code>, <code>y</code>, <code>s</code> という3つを適用することで, <code>S</code> という型を持ったデータを実体化できる.</p>
+<p>適用は関数適用の用に丸括弧の中に渡す値をカンマ区切りで並べる.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust">&lt;NAME&gt; ( &lt;EXPR&gt; , ... )</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust">S(x, y, s)</code></pre></div>
+<p>丸括弧の中に並べた引数は, 構造体で定義された順にフィールドに代入され, その際に型のチェックが走る. また定義のフィールドの数に足りない場合は定義時のデフォルト値を使おうとする. 引数の数が足りなく, デフォルト値も宣言されてない場合はエラーとなる.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">struct</span> S <span class="op">{</span>
+    x: Int,
+    y: Nat,
+    s: Array&lt;<span class="dt">String</span>&gt; = <span class="op">[]</span>,
+<span class="op">}</span>
+
+S(<span class="dv">1</span>, <span class="dv">2</span>)  <span class="co">// =&gt; S { x = 1, y = 2, s = [] }</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">struct</span> S <span class="op">{</span>
+    x: Int,
+    y: Nat = <span class="dv">0</span>,
+    s: Array&lt;<span class="dt">String</span>&gt;,
+<span class="op">}</span>
+
+S(<span class="dv">1</span>, <span class="dv">2</span>)  <span class="co">// ERROR!! s はデフォルト値を持たない</span></code></pre></div>
+<p>もう一つの適用方法があり, こちらは丸括弧の代わりに波括弧を使い, そして各引数はどのフィールドに与えるかをキーワードで指定する.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust">&lt;NAME&gt; <span class="op">{</span> &lt;IDENTIFIER&gt; = &lt;EXPR&gt; , ... <span class="op">}</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust">S <span class="op">{</span> x = x, y = y, s = s <span class="op">}</span></code></pre></div>
+<p>こちらは引数の順序は任意で良く, また与えられなかった引数はデフォルト値があれば使おうとする.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">struct</span> S <span class="op">{</span>
+    x: Int,
+    y: Nat = <span class="dv">0</span>,
+    s: Array&lt;<span class="dt">String</span>&gt;,
+<span class="op">}</span>
+
+S <span class="op">{</span> x = <span class="dv">1</span>, s = <span class="op">[]</span> <span class="op">}</span>  <span class="co">// =&gt; S { x = 1, y = 0, s = [] }</span></code></pre></div>
+<h3 id="列挙体">列挙体</h3>
+<p>有限通りの内のいずれかちょうど一つを取るようなデータを列挙体という. 集合意味論でちょうど有限集合に相当する.</p>
+<h4 id="宣言-1">宣言</h4>
+<p>列挙体の名前及び列挙子（集合の要素）に名前を与えて宣言する.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">enum</span> &lt;NAME&gt; <span class="op">{</span> &lt;VARIANT&gt; , ... <span class="op">}</span></code></pre></div>
+<h4 id="例-2">例</h4>
+<p>例えば次は4点からなる列挙体である.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">enum</span> BloodType <span class="op">{</span>
+    A,
+    B,
+    AB,
+    O,
+<span class="op">}</span></code></pre></div>
+<h4 id="列挙子">列挙子</h4>
+<p>列挙体の名前と列挙子の名前を <code>::</code> でつなげて列挙子を表すデータになる.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust">&lt;NAME&gt;::&lt;VARIANT&gt;</code></pre></div>
+<h4 id="例-3">例</h4>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust">BloodType::A</code></pre></div>
+<h3 id="合併型">合併型</h3>
+<p>構造体及び列挙体として宣言した複数の型を関連付けるのに合併型を使う. これは和集合に相当する.</p>
+<h4 id="宣言-2">宣言</h4>
+<p>組み込みまたは宣言済みの型を複数並べて,</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">type</span> &lt;NAME&gt; = &lt;TYPE&gt; | &lt;TYPE&gt; ... ;</code></pre></div>
+<p>と記述する. あまり意味はないが右辺に並べる個数は1個でも良い.</p>
+<h4 id="例-4">例</h4>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">struct</span> Triangle <span class="op">{</span> ... <span class="op">}</span>
+<span class="kw">struct</span> Square <span class="op">{</span> ... <span class="op">}</span>
+
+<span class="kw">type</span> Shape = Triangle | Square;</code></pre></div>
+<p>ここで <code>Triangle</code> 型または <code>Square</code> 型を持つデータは <code>Shape</code> 型でもあるということを宣言した. この関係のことを <code>&lt;:</code> という記号を使って次のように書く.</p>
+<pre><code>Triangle &lt;: Shape,
+Square &lt;: Shape.</code></pre>
+<h4 id="型キャスト">型キャスト</h4>
+<p>ただしデータに紐付いた型が自動的に合併型にキャストされることはなく, すべてユーザーが明示する必要がある. 合併型の名前そのものがそれへの型キャストを行う関数として機能する.</p>
+<p>合併型 <code>T</code> があって, <code>S &lt;: T</code> のときに <code>S</code> 型を持つデータ <code>x</code> があるなら</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust">T(x)</code></pre></div>
+<p>これは <code>T</code> 型を持ったデータを表す. <code>x</code> とは型が違う以外は何も変わらない.</p>
+<h3 id="変数の-let-束縛">変数の let 束縛</h3>
+<p>データに名前を付けることが出来る. これを普通のプログラミングのように変数と呼ぶ.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">let</span> &lt;NAME&gt; = &lt;EXPR&gt; ;</code></pre></div>
+<p>または型アノテーションを与えて</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">let</span> &lt;NAME&gt; : &lt;TYPE&gt; = &lt;EXPR&gt; ;</code></pre></div>
+<p>と書く.</p>
+<h4 id="例-5">例</h4>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">let</span> x = <span class="dv">1</span> + <span class="dv">2</span>;
+<span class="kw">let</span> z: Int = x + <span class="dv">1</span>;</code></pre></div>
+<p>この宣言以降で <code>x</code> 及び <code>z</code> という名前でデータを参照することが出来る. ただしいわゆる手続き型言語の変数と違う点として, cumin の変数は中の値が変更不可能な点である. したがってこの変数のスコープの中では <code>x</code> 及び <code>z</code> が指すデータは定数で変わらない.</p>
+<h4 id="変数のシャドーイング">変数のシャドーイング</h4>
+<p>やや奇妙に見えるかもしれないが, 同じ名前の変数を宣言することが出来てしまう. 例えば,</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">let</span> x = <span class="dv">3</span>; <span class="co">// 自然数データ</span>
+<span class="kw">let</span> x = <span class="st">&quot;three&quot;</span>;  <span class="co">// 文字列データ</span></code></pre></div>
+<p>どちらも <code>x</code> という名前だが中に入ってるデータは全く異なる. cumin ではこのような書き方は合法である. これは変数 <code>x</code> に（型まで無視して）代入をしているように見えるかもしれないが違う. 2つの変数 <code>x</code> は全く別物であり, 異なる変数スコープを有してるに過ぎない.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">let</span> x = <span class="dv">3</span>;
+<span class="co">// (x を使った処理 1)</span>
+<span class="kw">let</span> x = <span class="st">&quot;three&quot;</span>;
+<span class="co">// (x を使った処理 2)</span></code></pre></div>
+<p>こう書いたときに, 処理1 で参照される <code>x</code> は <code>3</code>で, 処理2で参照される <code>x</code> は <code>&quot;three&quot;</code> となる. 逆に言えば1つ目の <code>x</code> という変数のスコープは次の <code>x</code> が宣言されるまでの間だけということになる. 細かい点として, 2つ目の <code>x</code> の右辺を評価する時点までは1つ目の <code>x</code> の範疇となっている. したがって,</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">let</span> x = <span class="dv">1</span>;
+<span class="co">// ...</span>
+<span class="kw">let</span> x = x + <span class="dv">1</span>;  <span class="co">// この右辺まではまだ `x=1` が通用している</span>
+<span class="co">// ここからは新しい x=2 だけが参照される</span></code></pre></div>
+<p>という書き方が許される.</p>
+<p>このような機能を変数のシャドーイング (shadowing) という. 凝った名前を付けるほどでないデータであってスコープが限定的な場合くらいに大変便利であるが, 気をつけなければ混乱するコードにもなりかねない. 特に最後の例のような「一見再代入でもしてるか」のようなコードは避けるべきである.</p>
+<h3 id="関数">関数</h3>
+<h4 id="宣言-3">宣言</h4>
+<p>関数は次の形式で宣言する.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> &lt;NAME&gt; ( &lt;IDENTIFIER&gt; : &lt;TYPE&gt; , ... ) = &lt;EXPR&gt; ;</code></pre></div>
+<p>または頭のキーワードを変数の宣言と同じく</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">let</span> &lt;NAME&gt; ( &lt;IDENTIFIER&gt; : &lt;TYPE&gt; , ... ) = &lt;EXPR&gt; ;</code></pre></div>
+<p>としてもよい.</p>
+<p>引数部は構造体と同様にデフォルト値を与えることも出来る.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> &lt;NAME&gt; ( &lt;IDENTIFIER&gt; : &lt;TYPE&gt; = &lt;EXPR&gt; , ... ) = &lt;EXPR&gt; ;
+<span class="kw">let</span> &lt;NAME&gt; ( &lt;IDENTIFIER&gt; : &lt;TYPE&gt; = &lt;EXPR&gt; , ... ) = &lt;EXPR&gt; ;</code></pre></div>
+<p>関数は変数と同様に宣言した以降でしか使えずそのスコープは変数と全く同様である.</p>
+<h4 id="適用-1">適用</h4>
+<p>構造体への適用と同じく, <code>()</code> の中に引数を書く方法と <code>{}</code> の中にキーワード付きで引数を与える方法がある.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> add(x: Int, y: Int = <span class="dv">1</span>) = x + y;
+
+add(<span class="dv">1</span>, <span class="dv">2</span>)  <span class="co">// 3</span>
+add(<span class="dv">1</span>)     <span class="co">// 2</span>
+add<span class="op">{</span>x=<span class="dv">1</span><span class="op">}</span>   <span class="co">// 2</span>
+add<span class="op">{</span>y=<span class="dv">2</span><span class="op">}</span>   <span class="co">// ERROR!!</span></code></pre></div>
+<h4 id="クロージャ">クロージャ</h4>
+<p>関数は宣言時点の環境を記憶しており, その時点の関数外の変数を参照出来る.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">let</span> z = <span class="dv">42</span>;
+<span class="kw">fn</span> f(x: Int) = x + z; <span class="co">// x + 42</span>
+
+f(<span class="dv">1</span>) <span class="co">// 43</span></code></pre></div>
+<p>宣言時点の環境であることに注意.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">let</span> z = <span class="dv">42</span>;
+<span class="kw">fn</span> f(x: Int) = x + z; <span class="co">// x + 42</span>
+
+<span class="kw">let</span> z = <span class="dv">1</span>;
+<span class="kw">fn</span> g(x: Int) = x + z; <span class="co">// x + 1</span>
+
+f(<span class="dv">1</span>) <span class="co">// 43</span>
+g(<span class="dv">1</span>) <span class="co">// 2</span></code></pre></div>
+<p><code>f</code> からは1つ目の <code>z</code> だけが見えているため <code>+42</code> される. 一方で <code>g</code> からはシャドーイングされて新しい <code>z=1</code> だけが見えている.</p>
+<h3 id="外部モジュールのインポート">外部モジュールのインポート</h3>
+<p>文だけを記述した外部ファイルを次のようにして読み込める.</p>
+<pre><code>use &quot;&lt;FILE_PATH&gt;&quot; ;</code></pre>
+<h4 id="例-6">例</h4>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">// mod.cumin</span>
+<span class="kw">struct</span> S<span class="op">{}</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">use</span> <span class="st">&quot;./mod.cumin&quot;</span>;
+<span class="co">// 構造体 S が使える</span>
+S()</code></pre></div>
+<h3 id="式">式</h3>
+<h4 id="自然数-整数-浮動小数点">自然数, 整数, 浮動小数点</h4>
+<p>cumin では数として自然数, 整数, 浮動小数点の3つを用意している. これらそれぞれに相当する型は <code>Nat</code> <code>Int</code> <code>Float</code> である. 特に自然数は 0 以上の整数に限ったものをそう呼んでいる.</p>
+<p>それぞれ10進数で表記して値を書ける. 注意点として, 0 以上の整数として解釈できるならいつも <code>Nat</code> になり, 小数点 <code>.</code> を含むなら <code>Float</code> として解釈される.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">let</span> x = <span class="dv">1</span>;  <span class="co">// Nat</span>
+<span class="kw">let</span> y = -<span class="dv">1</span>;  <span class="co">// Int</span>
+<span class="kw">let</span> z = <span class="dv">1.0</span>;  <span class="co">// Float</span></code></pre></div>
+<p>また桁区切りを与えるのに <code>_</code> を自由に補ってよい.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">let</span> x = <span class="dv">1_000_000_000</span>;</code></pre></div>
+<h5 id="四則演算べき乗">四則演算・べき乗</h5>
+<p>数同士の計算として四則演算及びべき乗を用意している.</p>
+<table>
+<thead>
+<tr class="header">
+<th>演算</th>
+<th>記号</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(+\)</span></td>
+<td><code>+</code></td>
+<td>加算</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(-\)</span></td>
+<td><code>-</code></td>
+<td>減算, 単項マイナス</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\times\)</span></td>
+<td><code>*</code></td>
+<td>乗算</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\div\)</span></td>
+<td><code>/</code></td>
+<td>除算</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(x^y\)</span></td>
+<td><code>**</code></td>
+<td>べき乗</td>
+</tr>
+</tbody>
+</table>
+<h4 id="自然な型キャスト">自然な型キャスト</h4>
+<p>cumin では基本的に型は明示しない限りキャストされないが, 唯一の例外として, 数は <code>Nat &lt;: Int &lt;: Float</code> の関係で暗黙的にキャストが行われる. これは let 束縛や関数適用, そして演算時に行われる. 例えば自然数同士の引き算の結果に負の値が得られた時, これは整数にキャストされる.</p>
+<pre class="cumin"><code>let f(x: Int) = x;
+let x: Nat = 1;
+f(x)</code></pre>
+<p>適用される前の <code>x</code> は自然数であるが, 適用の際に <code>f</code> は <code>Int</code> を要求しているので, cumin は暗黙的に <code>x</code> を整数と見なしている.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">let</span> x: Nat = <span class="dv">1</span>;
+<span class="kw">let</span> z: Float = <span class="dv">1.0</span>;
+x + z</code></pre></div>
+<p>自然数と浮動小数点の足し算は浮動小数点の範囲にすれば自然に出来るので, cumin は暗黙的に <code>x</code> を自然数から浮動小数点にキャストする.</p>
+<p>ただし逆の方向は出来ない. つまり, 一般的に <code>Float</code> の値は <code>Int</code> にできないし（<code>1.5</code> など）, <code>Int</code> の値を <code>Nat</code> にできない（負数）. というわけでそちらのキャストは勝手には行わない.</p>
+<h3 id="文字列">文字列</h3>
+<p>ダブルクオーテーション <code>&quot;&quot;</code> で括って文字列データを表現する.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">let</span> s = <span class="st">&quot;Hello, World&quot;</span>;</code></pre></div>
+<p>改行を含む複数行の文字列を表現するにはそのまま改行すればよい. また <code>&quot;</code> という文字を含めたい場合は <code>\&quot;</code> というエスケープをする.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">let</span> s = <span class="st">&quot;</span><span class="sc">\&quot;</span><span class="st">Hello,</span>
+<span class="st">World</span><span class="sc">\&quot;</span><span class="st">&quot;</span>;
+
+s <span class="co">// &quot;\&quot;Hello,\nWorld\&quot;&quot;</span></code></pre></div>
+<h4 id="文字列結合">文字列結合</h4>
+<p><code>+</code> という演算で文字列同士を結合する.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">let</span> name = <span class="st">&quot;cympfh&quot;</span>;
+<span class="kw">let</span> s = <span class="st">&quot;Hello, &quot;</span> + name;</code></pre></div>
+<h3 id="真偽値">真偽値</h3>
+<p><code>true</code> 及び <code>false</code> という値があり, <code>Bool</code> という型がついている. <code>Bool</code> に対応する値はこの2つしかない.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">let</span> x: Bool = <span class="cn">true</span>;
+<span class="kw">let</span> y: Bool = <span class="cn">false</span>;</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th>演算</th>
+<th>記号</th>
+<th>意味</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(\land\)</span></td>
+<td>and</td>
+<td>論理積</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\lor\)</span></td>
+<td>or</td>
+<td>論理和</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(\oplus\)</span></td>
+<td>xor</td>
+<td>排他的論理和</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(\lnot\)</span></td>
+<td>not</td>
+<td>単項NOT</td>
+</tr>
+</tbody>
+</table>
+<h3 id="配列">配列</h3>
+<p>配列は同じ型のデータを0個以上, 特に個数が限定されてないようなものを順序付けて並べて持つデータである. 要素の型が <code>T</code> のとき, この配列の型を <code>Array&lt;T&gt;</code> で表す.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="op">[</span> &lt;EXPR&gt; , ... <span class="op">]</span></code></pre></div>
+<h4 id="例-7">例</h4>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="op">[</span><span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span> + <span class="dv">4</span><span class="op">]</span>  <span class="co">// Array&lt;Nat&gt;</span></code></pre></div>
+<h4 id="演算">演算</h4>
+<p>組み込み関数によって次のことが出来る.</p>
+<table>
+<thead>
+<tr class="header">
+<th>関数</th>
+<th>意味</th>
+<th>使用例</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>concat</td>
+<td>結合</td>
+<td>concat([1], [], [2, 3])</td>
+</tr>
+<tr class="even">
+<td>reverse</td>
+<td>逆転</td>
+<td>reverse([3, 2, 1])</td>
+</tr>
+</tbody>
+</table>
+<h3 id="辞書無名構造体">辞書（無名構造体）</h3>
+<p>構造体を定義することなしに構造体データを作ることが出来る.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="op">{{</span>
+  &lt;IDENTIFIER&gt; = &lt;EXPR&gt; ,
+  &lt;IDENTIFIER&gt; : &lt;TYPE&gt; = &lt;EXPR&gt; ,
+  ...
+<span class="op">}}</span></code></pre></div>
+<h4 id="例-8">例</h4>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="op">{{</span>
+  name = <span class="st">&quot;cympfh&quot;</span>,
+  age = <span class="dv">17</span>,
+<span class="op">}}</span></code></pre></div>
+<p>これは次と同じ</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">struct</span> S <span class="op">{</span>
+  name: <span class="dt">String</span>,
+  age: Nat,
+<span class="op">}</span>
+S(<span class="st">&quot;cympfh&quot;</span>, age)</code></pre></div>
+<p>ただしこちらではデータに <code>S</code> という型がついている一方で, 辞書データには何も型がついていない. 型が付けられない場合に「どんなデータでも表し得る型」として <code>Any</code> がついている.</p>
+<p>次は <code>Any</code> の配列であって正しい cumin データである.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="op">[</span>
+    <span class="op">{{</span>x=<span class="dv">1</span><span class="op">}}</span>,
+    <span class="op">{{</span>y=<span class="dv">1</span><span class="op">}}</span>,
+    <span class="op">{{</span>z=<span class="st">&quot;Hello&quot;</span><span class="op">}}</span>,
+<span class="op">]</span></code></pre></div>
+<p>構造体を与えられる箇所には出来るだけ与えることを推奨する.</p>
+<h3 id="ブロック式">ブロック式</h3>
+<p>cumin データは次の形式をしていると以前に述べた.</p>
+<pre><code>(文1)
+(文2)
+:
+(文N)
+(式)</code></pre>
+<p>これら全体を <code>{}</code> で括ることで, 一つの式にすることが出来る.</p>
+<pre><code>{
+  (文1)
+  (文2)
+  :
+  (文N)
+  (式)
+}</code></pre>
+<p>式なので, <code>let</code> (<code>fn</code>) の右辺値や, 構造体のデフォルト値等に置く事ができる.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">let</span> x = <span class="op">{</span>
+    <span class="kw">let</span> a = <span class="dv">1</span>;
+    <span class="kw">let</span> b = <span class="dv">2</span>;
+    a + b
+<span class="op">}</span>; <span class="co">// =&gt; 3</span>
+
+<span class="kw">fn</span> f(z: Int) = <span class="op">{</span>  <span class="co">// z = 3</span>
+    <span class="kw">struct</span> S<span class="op">{</span>
+        x: Int = <span class="op">{</span>
+            <span class="kw">fn</span> g(x: Int) = x + z; <span class="co">// 10 + 3 =&gt; 13</span>
+            g(<span class="dv">10</span>)
+        <span class="op">}</span>,
+    <span class="op">}</span>
+    S()
+<span class="op">}</span>;
+
+f(x) <span class="co">// =&gt; S{x=13}</span></code></pre></div>
+<p>この例で <code>let x</code> の右辺で定義した変数 <code>a</code> <code>b</code> は <code>{}</code> の中で定義したので, ここでは使えるが, <code>{}</code> の外では参照できない. このように, スコープを限定させるのにブロックは便利である.</p>
+<h2 id="cuminc">cuminc</h2>
+<p><code>cuminc</code> は cumin のためのコンパイラであり, cumin データを他のフォーマットに出力する. 今は JSON と YAML に対応している.</p>
+<h3 id="インストール方法">インストール方法</h3>
+<p><code>cargo</code> が必要なのでこちらをまずインストールしてもらう. <a href="https://rustup.rs/">rustup</a> という管理ツールを経由するのが圧倒的に楽で推奨.</p>
+<p><code>cargo</code> が入ったら,</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">cargo</span> install cumin</code></pre></div>
+<p>とすれば <code>cuminc</code> コマンドがインストールされる.</p>
+<p><a href="https://github.com/cympfh/cumin">Githubレポジトリ</a> から最新版を持ってきて自分でビルドしてくれても良い.</p>
+<h3 id="使い方">使い方</h3>
+<p>cumin データのファイルを指定するか, 標準入力に食わせるとデフォルトでJSONを出力する.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="fu">cat</span> test.cumin
+[<span class="ex">1</span>, 2, 1 + 2]
+$ <span class="fu">cat</span> test.cumin <span class="kw">|</span> <span class="ex">cuminc</span>
+[<span class="ex">1</span>,2,3]
+$ <span class="ex">cuminc</span> test.cumin
+[<span class="ex">1</span>,2,3]</code></pre></div>
+<p><code>-T</code> オプションで出力フォーマットを指定する.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">cuminc</span> -T yaml test.cumin
+<span class="ex">---</span>
+<span class="ex">-</span> 1
+<span class="ex">-</span> 2
+<span class="ex">-</span> 3</code></pre></div>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

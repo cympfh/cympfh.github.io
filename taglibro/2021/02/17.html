@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="description" content="最近やってたこと, cumin のアップデート, Emacs/org-mode 入門, journal.vim, streamlit 入門" />
+  <meta property="og:url" content="http://cympfh.cc/taglibro">
+  <meta property="og:title" content="Wed Feb 17 2021" />
+  <meta property="og:description" content="最近やってたこと, cumin のアップデート, Emacs/org-mode 入門, journal.vim, streamlit 入門" />
+  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@cympfh" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Wed Feb 17 2021</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css" />
+  <link rel="stylesheet" href="../../../resources/css/youtube.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
+</head>
+<body>
+<header class="page-header">
+    <a href='../../index.html'><i class="fas fa-fast-backward"></i></a>
+</header>
+<header>
+<h1 class="title">Wed Feb 17 2021</h1>
+</header>
+<h2 id="最近やってたこと">最近やってたこと</h2>
+<ul>
+<li>cumin のアップデート</li>
+<li>Emacs/org-mode 入門</li>
+<li>journal.vim</li>
+<li>streamlit 入門</li>
+</ul>
+<h2 id="cumin-のアップデート">cumin のアップデート</h2>
+<p>なんと関数を追加した. ただし条件分岐もないしループもない. 関数はかなり素朴な変数宣言と同じなので再帰しない（宣言時点の環境を捕捉して使うため）. というわけでかなり単純なマクロ程度にしか使えないと思っている.</p>
+<p>関数は変数と全く同様に <code>let</code> キーワードで宣言する. （<code>fn</code> キーワードでも良いように何故かなっている）.</p>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">let</span> f(x: Int, name: <span class="dt">String</span>) = <span class="op">{{</span>
+    value = x + <span class="dv">1</span>,
+    name = <span class="st">&quot;Hello, &quot;</span> + name,
+<span class="op">}}</span>;
+f(<span class="dv">0</span>, <span class="st">&quot;world&quot;</span>)</code></pre></div>
+<h2 id="emacsorg-mode-入門">Emacs/org-mode 入門</h2>
+<p>org-mode を使いたいがために Emacs の練習をしていた. 結果使いこなすには程遠いのだが, org-mode の片鱗を見た. すごい. 何でもかんでもここに詰まっている.</p>
+<p>Source Block はメモ帳を瞬時に Jupyter-notebook に変異させる. しかも複数種類のプログラミング言語を自由に混ぜて使える. 計算結果を gnuplot に繋いで画像を生成して, 画像をそのまま埋め込むことが出来る. Emacs はなんといっても GUI プログラムなので画像を表示出来るのが強い. TODO リストは一番素朴な機能を提供してるだけに見えて org-agenda のおかげでかなり立派なTODOアプリとして使える. テーブル機能はデータをプログラムに渡す事もできるし, なんと org の中で表計算機能自体が組み込まれている.</p>
+<p>しかし, 結局 Emacs らしいキーバインドを一つ一つ覚えていくのが辛くて挫折した.</p>
+<h2 id="journal.vim">journal.vim</h2>
+<p>org-mode の中でも org-journal は普段遣いしてもいいなと思いつつ挫折した. キーバインドもそうだが, 結局 org ファイルという摩訶不思議なフォーマットが嫌だったのもある. org-journal は scrapbox と TODO リストの合いの子といった感じ.</p>
+<ul>
+<li>今日の日付に紐付いたファイルが作られる</li>
+<li>エディタの中にいる時ならいつでも素早くメモを取る体制に入れる
+<ul>
+<li>コマンド一発で今日のファイルが開く
+<ul>
+<li>時刻が記録される</li>
+</ul></li>
+</ul></li>
+<li>TODO 的なリストを書けばそれがそこがTODOアプリになる
+<ul>
+<li>時刻が記録される</li>
+</ul></li>
+<li>タグ等を付けて後から全文検索可能</li>
+</ul>
+<p>自分が思う org-journal の機能とは何か？ の説明が以上である. もっとも org-mode は本当に巨大なので, こんなのは機能のごく一部だと言われたところで, 何も驚かないが.</p>
+<p>作った: <a href="https://github.com/cympfh/journal.vim">journal.vim</a></p>
+<ul>
+<li><code>&lt;C-c&gt;&lt;C-j&gt;</code> で今日のメモがいつでも開く
+<ul>
+<li>開くたびに時刻が挿入される</li>
+</ul></li>
+<li><code>&lt;C-c&gt;&lt;C-n&gt;</code>, <code>&lt;C-c&gt;&lt;C-p&gt;</code> で昨日以前のメモを行き来できる</li>
+<li><code>&lt;C-c&gt;&lt;C-g&gt;</code> で全文検索 (ripgrep, grep)</li>
+<li>ハイフンから始まるリストのブロックはTODOリスト</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode markdown"><code class="sourceCode markdown">- <span class="fl">朝ごはん</span>
+<span class="fl">    - [ ] お湯を沸かす</span>
+<span class="fl">    - [ ] お湯を注ぐ</span></code></pre></div>
+<p>特に <code>- [ ]</code> とあるとそこはチェックボックス. チェックボックスが無いのは見出し.</p>
+<ul>
+<li><code>&lt;C-c&gt;&lt;C-c&gt;</code> でTODOの状態を遷移する
+<ul>
+<li>見出しの行では頭に <code>TODO</code> が付くか, <code>TODO</code> が <code>DONE</code> になる
+<ul>
+<li><code>DONE</code> になるときに行末にその時刻が記録される</li>
+</ul></li>
+<li>チェックボックスの行では <code>[ ]</code> が <code>[x]</code> になるか <code>[x]</code> が <code>[ ]</code> になる
+<ul>
+<li><code>[x]</code> になるときに行末にその時刻が記録される</li>
+</ul></li>
+</ul></li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode markdown"><code class="sourceCode markdown">- <span class="fl">TODO 朝ごはん</span>
+<span class="fl">    - [ ] お湯を沸かす</span>
+<span class="fl">    - [ ] お湯を注ぐ</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode markdown"><code class="sourceCode markdown">- <span class="fl">TODO 朝ごはん</span>
+<span class="fl">    - [x] お湯を沸かす [2021/02/17 (Wed) 02:38]</span>
+<span class="fl">    - [ ] お湯を注ぐ</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode markdown"><code class="sourceCode markdown">- <span class="fl">TODO 朝ごはん</span>
+<span class="fl">    - [x] お湯を沸かす [2021/02/17 (Wed) 02:38]</span>
+<span class="fl">    - [x] お湯を注ぐ [2021/02/17 (Wed) 02:38]</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode markdown"><code class="sourceCode markdown">- <span class="fl">DONE 朝ごはん [2021/02/17 (Wed) 02:38]</span>
+<span class="fl">    - [x] お湯を沸かす [2021/02/17 (Wed) 02:38]</span>
+<span class="fl">    - [x] お湯を注ぐ [2021/02/17 (Wed) 02:38]</span></code></pre></div>
+<p>時刻情報はうるさく見えるだろうが, Vim 上では背景に溶け込むような色にシンタックスハイライトしている.</p>
+<h2 id="streamlit-入門">streamlit 入門</h2>
+<p><a href="https://www.streamlit.io/">streamlit</a> のチュートリアルをやって, ドキュメントを一通り読んだ. これが何かというと Python のライブラリであって, インタラクティブな関数, 例えばユーザーからテキストの入力を受け取って返す関数とか, 画像を出力（表示）する関数とか, そういった便利な関数がひたすら生えていて, あたかも sync な関数として使える. 実際にコードを動かすときは直接動かさずに <code>streamlit run</code> というコマンドを経由して起動する. すると web サーバとして立ち上がって, 入力は web ページ上で行うし, 画像が web ページの上に表示される. コード上では同期する関数だったが, これらがいい感じに上から実行される.</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">name <span class="op">=</span> streamlit.text_input(<span class="st">&quot;Fill Your Name&quot;</span>)
+<span class="cf">if</span> <span class="kw">not</span> name:  <span class="co"># 入力が空</span>
+    streamlit.warning(<span class="st">&quot;Please Fille Your Name&quot;</span>)
+<span class="cf">else</span>:
+    streamlit.success(<span class="ss">f&quot;Hello, </span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">!&quot;</span>)</code></pre></div>
+<p>この <code>text_input()</code> が標準関数の <code>input()</code> のように働いてると解釈してくれてよいが, web ページ上ではこれらが全部インタラクティブに働く. テキストを変えればもちろんそのたびにそれより後ろのコードが勝手に走り直される. Vue.js や React のような世界だと思って良いと思う.</p>
+<p>何に使えるかというと, フロントエンドの技術にはならない. なぜなら出来上がりの見た目はいつも同じで, 基本的には上から一列に結果を並べるだけのものだから. Streamlit は Jupyter Notebook に対して選択肢を一つ増やしてくれる存在だと思う. Jupyter Notebook は一つの web ページの上でコードの断片とその結果を交互に混ぜて表示するが, これはコードはコード（しかも好きなエディタで書けばよろしい）, web ページ上はその結果だけを表示してくれる（しかもかなりキレイに）. もちろんコードを書き換えたら勝手に結果はアップデートされるといった機能は当然ある. またインタラクティブ要素が本当に充実している（スライダーで数値を指定するとか, いい感じのUIから時刻の範囲を指定するとか） ので, キレイに仕上げればこれがそのままデモとして人に見せる事ができる.</p>
+<p>一方で, Jupyter Notebook はコードを共有したり, 結果込みの静的なファイルの共有といった使い方も出来るが, 逆にそれは Streamlit では出来ない. 自分一人でデータを眺めたり実験するのにこれは使えるが, Jupyter Notebook のすべての用途をこれで食えるわけではない.</p>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+  <script src="../../../resources/js/youtube.js"></script>
+</body>
+</html>

@@ -31,17 +31,20 @@ cat index.html |
     while read json; do
         title=$(jsonvalue .title "$json")
         link=$(jsonvalue .link "$json")
+        if ! ( echo "$link" | grep "20[0-9]*/[0-9][0-9]*/[0-9][0-9]*" >/dev/null ); then
+            continue
+        fi
         description="$(jsonvalue .description "$json" | html-encode)"
         pubDate=$(date2822 --date "$link")
         cat <<EOM
       <item>
         <title>${title}</title>
-        <link>https://cympfh.cc/${link}</link>
+        <link>https://cympfh.cc/taglibro/${link}</link>
         <description>
           ${description}
         </description>
         <pubDate>${pubDate}</pubDate>
-        <guid isPermaLink="true">https://cympfh.cc/${link}</guid>
+        <guid isPermaLink="true">https://cympfh.cc/taglibro/${link}</guid>
       </item>
 EOM
     done

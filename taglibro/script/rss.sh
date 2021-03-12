@@ -28,6 +28,7 @@ cat index.html |
             {description}
         </div>
     </div>' |
+    head -n 300 |
     while read json; do
         title=$(jsonvalue .title "$json")
         link=$(jsonvalue .link "$json")

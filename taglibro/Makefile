@@ -10,10 +10,10 @@ index:
 	$(eval DESCRIPTION := $(shell cat $^ | grep '^## ' | sed 's/^#* //g' | sed ':a;N;$$!ba;s/\n/, /g'))
 	mdc $^ | \
 		pandoc -s -t html5 \
-		--template templates/post.body.html \
+		--template resouces/templates/post.body.html \
 		-V "description=$(DESCRIPTION)" \
-		-B templates/post.header.html \
-		-A templates/post.footer.html \
+		-B resouces/templates/post.header.html \
+		-A resouces/templates/post.footer.html \
 		-A ../resources/js/toc.html \
 		--mathjax=https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML \
 		--css ../../../resources/css/c.css \
@@ -30,7 +30,10 @@ today:
 new:
 	bash script/edit.sh --query new
 
-git: index
+rss.xml: index.html
+	bash script/rss.sh > rss.xml
+
+git: index rss.xml
 	git add .
 	git commit -a -m "taglibro/ `LANG=en date`"
 	git push

@@ -14,8 +14,9 @@ summary() {
 write-item() {
     MD=$1
     HTML=${MD%.md}
+    Y=$(echo "$HTML" | grep -o '20[0-9][0-9]')
     cat <<EOM
-    <div class="card">
+    <div class="card card-$Y">
         <header class="card-header">
             <a class="card-header-title" href="$HTML">$(title "$MD")</a>
         </header>
@@ -24,6 +25,10 @@ write-item() {
         </div>
     </div>
 EOM
+}
+
+years() {
+    find . -maxdepth 1 -type d | grep -o '20[0-9]*' | sort -nr
 }
 
 ## entry
@@ -37,6 +42,7 @@ cat <<EOM
   <title>taglibro/</title>
   <link rel="stylesheet" href="../resources/css/bulma/bulma.css" />
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" />
+  <script type="text/javascript" src="resouces/js/years.js"></script>
   <style>
     .card-header {
       background-color: #fafafa;
@@ -58,14 +64,48 @@ cat <<EOM
     span.subtitles {
       padding-right: 0.6rem;
     }
+    div.hidden {
+      display: none;
+    }
   </style>
 </head>
 <body class="with-bg">
 
+  <!-- navbar -->
   <section class="section">
     <div class="container">
-      <h1 class="title"><i class="fa fa-save"></i> taglibro/</h1>
+      <nav class="navbar" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+          <a class="navbar-item">
+            <p class="subtitle is-3"><i class="fa fa-save"></i> taglibro/</i></p>
+          </a>
+        </div>
+        <div class="navbar-menu">
+          <div class="navbar-end">
+            <div class="navbar-item">
+              <div class="buttons">
+                <div class="navbar-item has-dropdown is-hoverable">
+                  <a class="navbar-link button" id="y-midashi">All</a>
+                  <div class="navbar-dropdown">
+                    <a class=navbar-item href=#>All</a>
+                    $(
+                        for y in $(years); do
+                            echo "<a class=navbar-item href=#$y>$y</a>"
+                        done
+                    )
+                  </div>
+                </div>
+                <a class="button is-light" href="rss.xml"><i class="fa fa-rss"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
     </div>
+  </section>
+
+  <!-- articles by years -->
+  <section class="section">
 
     <div class="container">
 EOM

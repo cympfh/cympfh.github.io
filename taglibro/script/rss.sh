@@ -4,8 +4,32 @@ date2822() {
     date --rfc-2822 $@
 }
 
-jsonvalue() {
-    echo "$2" | jq -r "$1"
+title() {
+    head -1 "$1" | sed 's/^[#%] *//g'
+}
+
+summary() {
+    grep '^## ' "$1" | sed 's/^## //' |
+        awk '{printf "%s; ", $0}'
+}
+
+write-item() {
+    MD=$1
+    TITLE="$(title "$MD")"
+    SUMMARY="$(summary "$MD")"
+    LINKDATE=$(echo "$MD" | grep -o '20[0-9]*/[0-9]*/[0-9]*')
+    PUBDATE=$(date2822 --date "$LINKDATE")
+    cat <<EOM
+  <item>
+    <title>${TITLE}</title>
+    <link>https://cympfh.cc/taglibro/${LINKDATE}</link>
+    <description>
+      ${SUMMARY}
+    </description>
+    <pubDate>${PUBDATE}</pubDate>
+    <guid isPermaLink="true">https://cympfh.cc/taglibro/${LINKDATE}</guid>
+  </item>
+EOM
 }
 
 cat <<EOM
@@ -18,36 +42,10 @@ cat <<EOM
     <description>@cympfh/taglibro</description>
 EOM
 
-cat index.html |
-    web-grep --json '
-    <div class="card">
-        <header class="card-header">
-            <a class="card-header-title" href="./{link}">{title}</a>
-        </header>
-        <div class="card-content">
-            {description}
-        </div>
-    </div>' |
-    head -n 300 |
-    while read json; do
-        title=$(jsonvalue .title "$json")
-        link=$(jsonvalue .link "$json")
-        if ! ( echo "$link" | grep "20[0-9]*/[0-9][0-9]*/[0-9][0-9]*" >/dev/null ); then
-            continue
-        fi
-        description="$(jsonvalue .description "$json" | html-encode)"
-        pubDate=$(date2822 --date "$link")
-        cat <<EOM
-      <item>
-        <title>${title}</title>
-        <link>https://cympfh.cc/taglibro/${link}</link>
-        <description>
-          ${description}
-        </description>
-        <pubDate>${pubDate}</pubDate>
-        <guid isPermaLink="true">https://cympfh.cc/taglibro/${link}</guid>
-      </item>
-EOM
+find . -type f -name '*.md' | sort -r |
+    head -n 100 |
+    while read f; do
+        write-item "$f"
     done
 
 cat <<EOM

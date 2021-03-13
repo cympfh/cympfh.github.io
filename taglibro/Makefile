@@ -1,4 +1,4 @@
-.PHONY: all index git
+.PHONY: all index git rss
 
 all:
 	cat Makefile
@@ -30,10 +30,9 @@ today:
 new:
 	bash script/edit.sh --query new
 
-rss.xml: index.html
+rss:
 	bash script/rss.sh > rss.xml
 
-git: index rss.xml
+git: index rss
 	git add .
 	git commit -a -m "taglibro/ `LANG=en date`"
-	git push

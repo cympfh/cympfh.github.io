@@ -5,12 +5,14 @@ date2822() {
 }
 
 title() {
-    head -1 "$1" | sed 's/^[#%] *//g'
+    head -1 "$1" | sed 's/^[#%] *//g' |
+        html-encode
 }
 
 summary() {
     grep '^## ' "$1" | sed 's/^## //' |
-        awk '{printf "%s; ", $0}'
+        awk '{printf "%s; ", $0}' |
+        html-encode
 }
 
 write-item() {

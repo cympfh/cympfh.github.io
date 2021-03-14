@@ -12,11 +12,16 @@ summary() {
     grep '^## ' "$1" | sed 's/^## //' |
         awk '{printf "%s; ", $0}'
 }
+description() {
+    echo "&lt;pre&gt;&lt;code&gt;"
+    cat "$1" | awk c++ | awk 'NR > 1 || $0 != ""' | html-encode
+    echo "&lt;/code&gt;&lt;/pre&gt;"
+}
 
 write-item() {
     MD=$1
     TITLE="$(title "$MD")"
-    SUMMARY="$(summary "$MD")"
+    DESCRIPTION="$(description "$MD")"
     LINKDATE=$(echo "$MD" | grep -o '20[0-9]*/[0-9]*/[0-9]*')
     PUBDATE=$(date2822 --date "$LINKDATE")
     cat <<EOM
@@ -24,7 +29,7 @@ write-item() {
     <title>${TITLE}</title>
     <link>https://cympfh.cc/taglibro/${LINKDATE}</link>
     <description>
-      ${SUMMARY}
+      ${DESCRIPTION}
     </description>
     <pubDate>${PUBDATE}</pubDate>
     <guid isPermaLink="true">https://cympfh.cc/taglibro/${LINKDATE}</guid>

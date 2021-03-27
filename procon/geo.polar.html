@@ -53,6 +53,11 @@
     <span class="kw">pub</span> <span class="kw">fn</span> to_xy(&amp;<span class="kw">self</span>) -&gt; Point <span class="op">{</span>
         Point(<span class="kw">self</span>.r * <span class="kw">self</span>.theta.cos(), <span class="kw">self</span>.r * <span class="kw">self</span>.theta.sin())
     <span class="op">}</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> from_xy(x: &amp;Point) -&gt; <span class="kw">Self</span> <span class="op">{</span>
+        <span class="kw">let</span> r = x.norm();
+        <span class="kw">let</span> theta = x.arg();
+        <span class="kw">Self</span> <span class="op">{</span> theta, r <span class="op">}</span>
+    <span class="op">}</span>
 <span class="op">}</span>
 
 <span class="at">#[</span>cfg<span class="at">(</span>test<span class="at">)]</span>
@@ -72,6 +77,12 @@
         <span class="pp">assert_eq!</span>(Polar::new(<span class="dv">0.0</span>, <span class="dv">1.0</span>).to_xy(), Point(<span class="dv">1.0</span>, <span class="dv">0.0</span>));
         <span class="pp">assert_eq!</span>(Polar::new(Polar::PI / <span class="dv">2.0</span>, <span class="dv">1.0</span>).to_xy(), Point(<span class="dv">0.0</span>, <span class="dv">1.0</span>));
         <span class="pp">assert_eq!</span>(Polar::new(Polar::PI, <span class="dv">1.0</span>).to_xy(), Point(-<span class="dv">1.0</span>, <span class="dv">0.0</span>));
+    <span class="op">}</span>
+
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> from_xy() <span class="op">{</span>
+        <span class="pp">assert_eq!</span>(Polar::from_xy(&amp;Point(<span class="dv">1.0</span>, <span class="dv">0.0</span>)).to_xy(), Point(<span class="dv">1.0</span>, <span class="dv">0.0</span>));
+        <span class="pp">assert_eq!</span>(Polar::from_xy(&amp;Point(<span class="dv">1.0</span>, -<span class="dv">2.0</span>)).to_xy(), Point(<span class="dv">1.0</span>, -<span class="dv">2.0</span>));
     <span class="op">}</span>
 <span class="op">}</span></code></pre></div>
           </div>

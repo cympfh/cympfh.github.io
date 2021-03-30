@@ -47,7 +47,7 @@
 <h3 id="逆変換">逆変換</h3>
 <p><span class="math display">\[H_n H_n = I_n\]</span> が成り立つので, <span class="math inline">\(H_n\)</span> 自身が逆行列になっている.</p>
 <h3 id="定数倍のテクニック">定数倍のテクニック</h3>
-<p>変換するベクトルが整数の場合であっても, 上の行列は <span class="math inline">\(\sqrt{2}\)</span> のせいで実数に写してしまう. 計算機なんかで誤差のない計算をしたい場合にはせっかくなので整数の上で計算を閉じさせたい.</p>
+<p>変換するベクトルが整数の場合であっても, 上の行列は <span class="math inline">\(\sqrt{2}\)</span> のせいで実数に写してしまう. 計算機なんかで誤差のない計算をしたい場合にはせっかくなので整数の上で計算を閉じさせたい. そこで,</p>
 <ul>
 <li>アダマール変換
 <ul>
@@ -63,7 +63,7 @@
 <p>愚直に行列演算としてアダマール変換を計算するとその計算時間は <span class="math inline">\(O(n^2)\)</span> 掛かる. 一方でアダマール行列の再帰的な定義に沿って計算をすると <span class="math inline">\(O(n \log n) = O(nk)\)</span> に節約される. その方法は <a href="https://en.wikipedia.org/wiki/Fast_Walsh%E2%80%93Hadamard_transform">wikipedia/Fast_Walsh-Hadamard_transform</a> の図が詳しい. また Python による実装例そのものもそこにある.</p>
 <p>簡単に説明すれば, まず行列を 2x2 ブロックに区切って <span class="math inline">\(H_1\)</span> だと思って適用する. 次に 2x2 をひとかたまりだと思ってさらにその 2x2 ブロックを作って（全体としては 4x4）にやはり <span class="math inline">\(H_1\)</span> を適用する. ここまでで <span class="math inline">\(H_2\)</span> を適用したことになる. というのを最後まで繰り返していくだけ.</p>
 <h2 id="xor-畳み込み">xor-畳み込み</h2>
-<p>2つの, 長さ <span class="math inline">\(n=2^k\)</span> のベクトル <span class="math inline">\(u,v\)</span> について, <span class="math display">\[X(u,v) = H_n (H_n u \ast H_n v)\]</span> とする. または <span class="math display">\[X(u,v) = H_n^{\leftarrow} (H_n^{\rightarrow} u \ast H_n^{\rightarrow} v)\]</span> でも同じである. ただしここで <span class="math inline">\(\ast\)</span> はベクトルの要素ごとの積のこととする (<span class="math inline">\(a \ast b = \sum_i a_i \times b_i \ket{i}\)</span>).</p>
+<p>2つの, 長さ <span class="math inline">\(n=2^k\)</span> のベクトル（または数列） <span class="math inline">\(u,v \in \mathbb K^n\)</span> があるとする. ここで <span class="math inline">\(\mathbb K\)</span> は実数などの体. この二つのベクトルに関して次を定める: <span class="math display">\[X(u,v) = H_n (H_n u \ast H_n v).\]</span> 或いは <span class="math display">\[X(u,v) = H_n^{\leftarrow} (H_n^{\rightarrow} u \ast H_n^{\rightarrow} v)\]</span> としても同じである. ただしここで <span class="math inline">\(\ast\)</span> はベクトルの要素ごとの積のこととする <span class="math display">\[a \ast b = \sum_i a_i \times b_i \ket{i}.\]</span></p>
 <p>このとき, 次が成り立つ: <span class="math display">\[X(u,v) = \sum_{i,j} u_i \times v_j \ket{i \oplus j}\]</span> ここで <span class="math inline">\(\oplus\)</span> は2進数の桁ごとの xor のこと. また添字の <span class="math inline">\(i,j\)</span> は <span class="math inline">\(0\)</span> から始まって <span class="math inline">\(n\)</span> 未満までの自然数.</p>
 <p><span class="math inline">\(n=1,2\)</span> の場合だけ例を見る.</p>
 <h3 id="n1"><span class="math inline">\(n=1\)</span></h3>

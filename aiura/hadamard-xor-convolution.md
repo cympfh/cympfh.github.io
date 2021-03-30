@@ -28,6 +28,7 @@ $$H_n H_n = I_n$$
 変換するベクトルが整数の場合であっても,
 上の行列は $\sqrt{2}$ のせいで実数に写してしまう.
 計算機なんかで誤差のない計算をしたい場合にはせっかくなので整数の上で計算を閉じさせたい.
+そこで,
 
 - アダマール変換
     - $H_n^{\rightarrow} = \sqrt{2^{n+1}} H_n$
@@ -53,13 +54,15 @@ $$H_n H_n = I_n$$
 
 ## xor-畳み込み
 
-2つの, 長さ $n=2^k$ のベクトル $u,v$ について,
-$$X(u,v) = H_n (H_n u \ast H_n v)$$
-とする. または
+2つの, 長さ $n=2^k$ のベクトル（または数列） $u,v \in \mathbb K^n$ があるとする.
+ここで $\mathbb K$ は実数などの体.
+この二つのベクトルに関して次を定める:
+$$X(u,v) = H_n (H_n u \ast H_n v).$$
+或いは
 $$X(u,v) = H_n^{\leftarrow} (H_n^{\rightarrow} u \ast H_n^{\rightarrow} v)$$
-でも同じである.
+としても同じである.
 ただしここで $\ast$ はベクトルの要素ごとの積のこととする
-($a \ast b = \sum_i a_i \times b_i \ket{i}$).
+$$a \ast b = \sum_i a_i \times b_i \ket{i}.$$
 
 このとき, 次が成り立つ:
 $$X(u,v) = \sum_{i,j} u_i \times v_j \ket{i \oplus j}$$

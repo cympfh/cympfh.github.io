@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>FISSA: Fusing Item Similarity Models</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
+</header>
+<header>
+<h1 class="title">FISSA: Fusing Item Similarity Models</h1>
+</header>
+<ul>
+<li>
+original paper: <a href=http://csse.szu.edu.cn/staff/panwk/publications/Conference-RecSys-20-FISSA.pdf>http://csse.szu.edu.cn/staff/panwk/publications/Conference-RecSys-20-FISSA.pdf</a>
+</li>
+</ul>
+<div class="is-pulled-right">
+<p><a class='tag is-blue' href=index.html#推薦システム>推薦システム</a></p>
+</div>
+<h2 id="タスク">タスク</h2>
+<p>系列予測としてレコメンドモデルを構築する. すなわちユーザーの行動履歴（例えばアイテムIDの列） <span class="math display">\[A_1, A_2, \ldots, A_n\]</span> に対して <span class="math inline">\(A_{n+1}\)</span> を予測する.</p>
+<h2 id="やりたいこと">やりたいこと</h2>
+<ul>
+<li>基本的には直前の行動に影響が強く受けているはず</li>
+<li>とは言え系列の情報も残したい</li>
+</ul>
+<h2 id="手法概要">手法概要</h2>
+<ul>
+<li>ローカル表現
+<ul>
+<li>各アイテム、特に系列最後 <span class="math inline">\(A_n\)</span> のベクトル表現 <span class="math inline">\(x\)</span></li>
+</ul></li>
+<li>グローバル表現
+<ul>
+<li>系列全体のベクトル表現 <span class="math inline">\(y\)</span></li>
+</ul></li>
+<li>この二つの線形和
+<ul>
+<li><span class="math inline">\(z = x \ast g + y \ast (1-g)\)</span> を最終的に系列のベクトル表現にする</li>
+<li>ここで <span class="math inline">\(g\)</span> はゲートと呼ぶ <span class="math inline">\(0 &lt; g &lt; 1\)</span> なる値で, self-attention の要領で, コレ自体も予測する
+<ul>
+<li><span class="math inline">\(x, y\)</span> 及び推薦候補の集合から予測する</li>
+</ul></li>
+</ul></li>
+</ul>
+<p>各アイテム <span class="math inline">\(A_i\)</span> に対するローカル表現 <span class="math inline">\(x_i\)</span> のスコアを <span class="math display">\[z \ast x_i\]</span> で得る.</p>
+<h2 id="その他">その他</h2>
+<p>実用を考えると <span class="math inline">\(g\)</span> の計算は大変. 定数にしてしまった実験もやっていて, 性能は落ちるが悪くはない.</p>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

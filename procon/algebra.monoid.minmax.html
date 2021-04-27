@@ -31,26 +31,21 @@
 <span class="op">}</span>
 <span class="kw">impl</span>&lt;X&gt; MaxInt&lt;X&gt; <span class="op">{</span>
     <span class="kw">pub</span> <span class="kw">fn</span> unwrap(<span class="kw">self</span>) -&gt; X <span class="op">{</span>
-        <span class="kw">if</span> <span class="kw">let</span> <span class="kw">Self</span>::Val(x) = <span class="kw">self</span> <span class="op">{</span>
-            x
-        <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
-            <span class="pp">panic!</span>()
+        <span class="kw">match</span> <span class="kw">self</span> <span class="op">{</span>
+            <span class="kw">Self</span>::Val(x) =&gt; x,
+            _ =&gt; <span class="pp">panic!</span>(),
         <span class="op">}</span>
     <span class="op">}</span>
 <span class="op">}</span>
-<span class="kw">impl</span>&lt;X: <span class="bu">Ord</span>&gt; std::ops::Mul <span class="kw">for</span> MaxInt&lt;X&gt; <span class="op">{</span>
-    <span class="kw">type</span> Output = <span class="kw">Self</span>;
-    <span class="kw">fn</span> mul(<span class="kw">self</span>, other: <span class="kw">Self</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span>
+<span class="pp">monoid!</span> <span class="op">{</span>
+    <span class="op">[</span>X:<span class="bu">Ord</span><span class="op">]</span> <span class="kw">for</span> MaxInt&lt;X&gt;;
+    unit = MaxInt::Minimal;
+    mul(<span class="kw">self</span>, other) = <span class="op">{</span>
         <span class="kw">if</span> <span class="kw">self</span> &gt; other <span class="op">{</span>
             <span class="kw">self</span>
         <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
             other
         <span class="op">}</span>
-    <span class="op">}</span>
-<span class="op">}</span>
-<span class="kw">impl</span>&lt;X: <span class="bu">Ord</span> + <span class="bu">Copy</span>&gt; Monoid <span class="kw">for</span> MaxInt&lt;X&gt; <span class="op">{</span>
-    <span class="kw">fn</span> unit() -&gt; <span class="kw">Self</span> <span class="op">{</span>
-        MaxInt::Minimal
     <span class="op">}</span>
 <span class="op">}</span>
 
@@ -61,26 +56,21 @@
 <span class="op">}</span>
 <span class="kw">impl</span>&lt;X&gt; MinInt&lt;X&gt; <span class="op">{</span>
     <span class="kw">pub</span> <span class="kw">fn</span> unwrap(<span class="kw">self</span>) -&gt; X <span class="op">{</span>
-        <span class="kw">if</span> <span class="kw">let</span> <span class="kw">Self</span>::Val(x) = <span class="kw">self</span> <span class="op">{</span>
-            x
-        <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
-            <span class="pp">panic!</span>();
+        <span class="kw">match</span> <span class="kw">self</span> <span class="op">{</span>
+            <span class="kw">Self</span>::Val(x) =&gt; x,
+            _ =&gt; <span class="pp">panic!</span>(),
         <span class="op">}</span>
     <span class="op">}</span>
 <span class="op">}</span>
-<span class="kw">impl</span>&lt;X: <span class="bu">Ord</span>&gt; std::ops::Mul <span class="kw">for</span> MinInt&lt;X&gt; <span class="op">{</span>
-    <span class="kw">type</span> Output = <span class="kw">Self</span>;
-    <span class="kw">fn</span> mul(<span class="kw">self</span>, other: <span class="kw">Self</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span>
+<span class="pp">monoid!</span> <span class="op">{</span>
+    <span class="op">[</span>X:<span class="bu">Ord</span><span class="op">]</span> <span class="kw">for</span> MinInt&lt;X&gt;;
+    unit = MinInt::Maximal;
+    mul(<span class="kw">self</span>, other) = <span class="op">{</span>
         <span class="kw">if</span> <span class="kw">self</span> &lt; other <span class="op">{</span>
             <span class="kw">self</span>
         <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
             other
         <span class="op">}</span>
-    <span class="op">}</span>
-<span class="op">}</span>
-<span class="kw">impl</span>&lt;X: <span class="bu">Ord</span> + <span class="bu">Copy</span>&gt; Monoid <span class="kw">for</span> MinInt&lt;X&gt; <span class="op">{</span>
-    <span class="kw">fn</span> unit() -&gt; <span class="kw">Self</span> <span class="op">{</span>
-        MinInt::Maximal
     <span class="op">}</span>
 <span class="op">}</span>
 
@@ -90,6 +80,7 @@
     <span class="at">#[</span>test<span class="at">]</span>
     <span class="kw">fn</span> test_max() <span class="op">{</span>
         <span class="pp">assert_eq!</span>(MaxInt::Val(<span class="dv">2</span>).unwrap(), <span class="dv">2</span>);
+        <span class="pp">assert_eq!</span>(MaxInt::Val(<span class="dv">1</span>) * MaxInt::Val(<span class="dv">2</span>), MaxInt::Val(<span class="dv">2</span>));
         <span class="pp">assert_eq!</span>(MaxInt::Val(<span class="dv">2</span>) * MaxInt::Val(<span class="dv">1</span>), MaxInt::Val(<span class="dv">2</span>));
         <span class="pp">assert_eq!</span>(MaxInt::Val(<span class="dv">2</span>) * MaxInt::Minimal, MaxInt::Val(<span class="dv">2</span>));
         <span class="pp">assert_eq!</span>(MaxInt::Minimal * MaxInt::Val(<span class="dv">1</span>), MaxInt::Val(<span class="dv">1</span>));
@@ -97,6 +88,7 @@
     <span class="at">#[</span>test<span class="at">]</span>
     <span class="kw">fn</span> test_min() <span class="op">{</span>
         <span class="pp">assert_eq!</span>(MinInt::Val(<span class="dv">2</span>).unwrap(), <span class="dv">2</span>);
+        <span class="pp">assert_eq!</span>(MinInt::Val(<span class="dv">1</span>) * MinInt::Val(<span class="dv">2</span>), MinInt::Val(<span class="dv">1</span>));
         <span class="pp">assert_eq!</span>(MinInt::Val(<span class="dv">2</span>) * MinInt::Val(<span class="dv">1</span>), MinInt::Val(<span class="dv">1</span>));
         <span class="pp">assert_eq!</span>(MinInt::Val(<span class="dv">2</span>) * MinInt::Maximal, MinInt::Val(<span class="dv">2</span>));
         <span class="pp">assert_eq!</span>(MinInt::Maximal * MinInt::Val(<span class="dv">1</span>), MinInt::Val(<span class="dv">1</span>));
@@ -282,6 +274,10 @@
 <li><a href="prime.MillerRabin.html">ミラー・ラビン素数判定</a></li>
 <li><a href="prime.fermat.little.html">フェルマーの小定理</a></li>
 <li><a href="prime.factorize.html">素因数分解</a></li>
+</ul>
+<h2 id="その他定理">その他定理</h2>
+<ul>
+<li><a href="num.chinese.html">中国人剰余定理</a></li>
 </ul>
 <h2 id="多倍長">多倍長</h2>
 <ul>

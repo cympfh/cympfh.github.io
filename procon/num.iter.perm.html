@@ -26,10 +26,15 @@
 <span class="kw">pub</span> <span class="kw">struct</span> Permutation <span class="op">{</span>
     n: <span class="dt">usize</span>,
     idx: <span class="dt">usize</span>,
+    done: <span class="dt">bool</span>,
 <span class="op">}</span>
 <span class="kw">impl</span> Permutation <span class="op">{</span>
     <span class="kw">pub</span> <span class="kw">fn</span> new(n: <span class="dt">usize</span>) -&gt; Permutation <span class="op">{</span>
-        Permutation <span class="op">{</span> n, idx: <span class="dv">0</span> <span class="op">}</span>
+        Permutation <span class="op">{</span>
+            n,
+            idx: <span class="dv">0</span>,
+            done: <span class="cn">false</span>,
+        <span class="op">}</span>
     <span class="op">}</span>
     <span class="kw">pub</span> <span class="kw">fn</span> from(<span class="kw">mut</span> perm: <span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt;) -&gt; Permutation <span class="op">{</span>
         <span class="kw">let</span> n = perm.len();
@@ -46,9 +51,20 @@
                 <span class="op">}</span>
             <span class="op">}</span>
         <span class="op">}</span>
-        Permutation <span class="op">{</span> n, idx <span class="op">}</span>
+        Permutation <span class="op">{</span>
+            n,
+            idx,
+            done: <span class="cn">false</span>,
+        <span class="op">}</span>
     <span class="op">}</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> to_vec(&amp;<span class="kw">self</span>) -&gt; <span class="dt">Option</span>&lt;<span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt;&gt; <span class="op">{</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> to_vec(&amp;<span class="kw">mut</span> <span class="kw">self</span>) -&gt; <span class="dt">Option</span>&lt;<span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt;&gt; <span class="op">{</span>
+        <span class="kw">if</span> <span class="kw">self</span>.done <span class="op">{</span>
+            <span class="kw">return</span> <span class="cn">None</span>;
+        <span class="op">}</span>
+        <span class="kw">if</span> <span class="kw">self</span>.n == <span class="dv">0</span> <span class="op">{</span>
+            <span class="kw">self</span>.done = <span class="cn">true</span>;
+            <span class="kw">return</span> <span class="cn">Some</span>(<span class="pp">vec!</span><span class="op">[]</span>);
+        <span class="op">}</span>
         <span class="kw">let</span> <span class="kw">mut</span> r = <span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>; <span class="kw">self</span>.n<span class="op">]</span>;
         <span class="kw">let</span> <span class="kw">mut</span> idx = <span class="kw">self</span>.idx;
         <span class="kw">for</span> k <span class="kw">in</span> <span class="dv">1.</span>.<span class="kw">self</span>.n <span class="op">{</span>
@@ -56,6 +72,7 @@
             idx /= k + <span class="dv">1</span>;
         <span class="op">}</span>
         <span class="kw">if</span> idx &gt; <span class="dv">0</span> <span class="op">{</span>
+            <span class="kw">self</span>.done = <span class="cn">true</span>;
             <span class="kw">return</span> <span class="cn">None</span>;
         <span class="op">}</span>
         r.reverse();
@@ -99,6 +116,20 @@
         <span class="pp">assert_eq!</span>(perm.next(), <span class="cn">Some</span>(<span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">0</span><span class="op">]</span>));
         <span class="pp">assert_eq!</span>(perm.next(), <span class="cn">Some</span>(<span class="pp">vec!</span><span class="op">[</span><span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">1</span><span class="op">]</span>));
         <span class="pp">assert_eq!</span>(perm.next(), <span class="cn">Some</span>(<span class="pp">vec!</span><span class="op">[</span><span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">0</span><span class="op">]</span>));
+        <span class="pp">assert_eq!</span>(perm.next(), <span class="cn">None</span>);
+    <span class="op">}</span>
+
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> perm_of_one() <span class="op">{</span>
+        <span class="kw">let</span> <span class="kw">mut</span> perm = Permutation::new(<span class="dv">1</span>);
+        <span class="pp">assert_eq!</span>(perm.next(), <span class="cn">Some</span>(<span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span><span class="op">]</span>));
+        <span class="pp">assert_eq!</span>(perm.next(), <span class="cn">None</span>);
+    <span class="op">}</span>
+
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> perm_of_zero() <span class="op">{</span>
+        <span class="kw">let</span> <span class="kw">mut</span> perm = Permutation::new(<span class="dv">0</span>);
+        <span class="pp">assert_eq!</span>(perm.next(), <span class="cn">Some</span>(<span class="pp">vec!</span><span class="op">[]</span>));
         <span class="pp">assert_eq!</span>(perm.next(), <span class="cn">None</span>);
     <span class="op">}</span>
 <span class="op">}</span></code></pre></div>
@@ -282,6 +313,10 @@
 <li><a href="prime.MillerRabin.html">ミラー・ラビン素数判定</a></li>
 <li><a href="prime.fermat.little.html">フェルマーの小定理</a></li>
 <li><a href="prime.factorize.html">素因数分解</a></li>
+</ul>
+<h2 id="その他定理">その他定理</h2>
+<ul>
+<li><a href="num.chinese.html">中国人剰余定理</a></li>
 </ul>
 <h2 id="多倍長">多倍長</h2>
 <ul>

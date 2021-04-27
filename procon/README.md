@@ -136,6 +136,9 @@
 - [フェルマーの小定理](prime.fermat.little.md)
 - [素因数分解](prime.factorize.md)
 
+## その他定理
+- [中国人剰余定理](num.chinese.md)
+
 ## 多倍長
 - [ビッグエンディアンベクタ](bigint.md)
 

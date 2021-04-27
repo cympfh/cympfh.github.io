@@ -23,7 +23,7 @@
             <h1 id="代数---モノイド">代数 - モノイド</h1>
 <p>モノイド <span class="math inline">\((X, \times, 1)\)</span> を <code>std::ops::Mul, unit()</code> で定義したもの. <code>Sum, Prod</code> は整数型の上の和及び積を二項演算としたモノイド構造.</p>
 <p>特に二項演算子が <a href="algebra.group">群</a> とは違うので注意.</p>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Algebra - Monoid (*, 1)</span>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Algebra - Def of Monoid (*, 1)</span>
 <span class="kw">pub</span> <span class="kw">trait</span> Monoid: std::ops::Mul&lt;Output = <span class="kw">Self</span>&gt;
 <span class="kw">where</span>
     <span class="kw">Self</span>: std::marker::<span class="bu">Sized</span>,
@@ -31,51 +31,31 @@
     <span class="kw">fn</span> unit() -&gt; <span class="kw">Self</span>;
 <span class="op">}</span>
 
-<span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">,</span> <span class="bu">Clone</span><span class="at">,</span> <span class="bu">Copy</span><span class="at">,</span> <span class="bu">PartialEq</span><span class="at">,</span> <span class="bu">Eq</span><span class="at">,</span> <span class="bu">PartialOrd</span><span class="at">,</span> <span class="bu">Ord</span><span class="at">)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> Sum(<span class="kw">pub</span> <span class="dt">i64</span>);
-<span class="kw">impl</span> std::ops::Mul <span class="kw">for</span> Sum <span class="op">{</span>
-    <span class="kw">type</span> Output = <span class="kw">Self</span>;
-    <span class="kw">fn</span> mul(<span class="kw">self</span>, other: <span class="kw">Self</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span>
-        <span class="kw">Self</span>(<span class="kw">self</span>.<span class="dv">0</span> + other.<span class="dv">0</span>)
-    <span class="op">}</span>
-<span class="op">}</span>
-<span class="kw">impl</span> Monoid <span class="kw">for</span> Sum <span class="op">{</span>
-    <span class="kw">fn</span> unit() -&gt; <span class="kw">Self</span> <span class="op">{</span>
-        <span class="kw">Self</span>(<span class="dv">0</span>)
-    <span class="op">}</span>
-<span class="op">}</span>
-
-<span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">,</span> <span class="bu">Clone</span><span class="at">,</span> <span class="bu">Copy</span><span class="at">,</span> <span class="bu">PartialEq</span><span class="at">,</span> <span class="bu">Eq</span><span class="at">,</span> <span class="bu">PartialOrd</span><span class="at">,</span> <span class="bu">Ord</span><span class="at">)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> Prod(<span class="kw">pub</span> <span class="dt">i64</span>);
-<span class="kw">impl</span> std::ops::Mul <span class="kw">for</span> Prod <span class="op">{</span>
-    <span class="kw">type</span> Output = <span class="kw">Self</span>;
-    <span class="kw">fn</span> mul(<span class="kw">self</span>, other: <span class="kw">Self</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span>
-        <span class="kw">Self</span>(<span class="kw">self</span>.<span class="dv">0</span> * other.<span class="dv">0</span>)
-    <span class="op">}</span>
-<span class="op">}</span>
-<span class="kw">impl</span> Monoid <span class="kw">for</span> Prod <span class="op">{</span>
-    <span class="kw">fn</span> unit() -&gt; <span class="kw">Self</span> <span class="op">{</span>
-        <span class="kw">Self</span>(<span class="dv">1</span>)
-    <span class="op">}</span>
-<span class="op">}</span>
-
-<span class="at">#[</span>cfg<span class="at">(</span>test<span class="at">)]</span>
-<span class="kw">mod</span> test_monoid <span class="op">{</span>
-    <span class="kw">use</span> <span class="kw">crate</span>::algebra::monoid::*;
-
-    <span class="at">#[</span>test<span class="at">]</span>
-    <span class="kw">fn</span> sum() <span class="op">{</span>
-        <span class="pp">assert_eq!</span>(Sum(<span class="dv">0</span>) * Sum(<span class="dv">3</span>), Sum(<span class="dv">3</span>));
-        <span class="pp">assert_eq!</span>(Sum(<span class="dv">3</span>) * Sum(<span class="dv">0</span>), Sum(<span class="dv">3</span>));
-        <span class="pp">assert_eq!</span>(Sum(<span class="dv">1</span>) * Sum(<span class="dv">2</span>) * Sum(<span class="dv">4</span>), Sum(<span class="dv">7</span>));
-    <span class="op">}</span>
-
-    <span class="at">#[</span>test<span class="at">]</span>
-    <span class="kw">fn</span> prod() <span class="op">{</span>
-        <span class="pp">assert_eq!</span>(Prod(<span class="dv">1</span>) * Prod(<span class="dv">3</span>), Prod(<span class="dv">3</span>));
-        <span class="pp">assert_eq!</span>(Prod(<span class="dv">3</span>) * Prod(<span class="dv">1</span>), Prod(<span class="dv">3</span>));
-        <span class="pp">assert_eq!</span>(Prod(<span class="dv">2</span>) * Prod(<span class="dv">3</span>) * Prod(<span class="dv">5</span>), Prod(<span class="dv">30</span>));
-    <span class="op">}</span>
+<span class="at">#[</span>macro_export<span class="at">]</span>
+<span class="pp">macro_rules!</span> monoid <span class="op">{</span>
+    (
+        <span class="op">[</span> $( $params:tt )* <span class="op">]</span>
+        <span class="kw">for</span> $type:ty;
+        unit = $unit:expr;
+        mul($self:ident, $y:ident) = $code:block
+        $(;)*
+    ) =&gt; <span class="op">{</span>
+        <span class="kw">impl</span>&lt;$($params)*&gt; std::ops::Mul <span class="kw">for</span> $type <span class="op">{</span>
+            <span class="kw">type</span> Output = <span class="kw">Self</span>;
+            <span class="kw">fn</span> mul($self, $y: <span class="kw">Self</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span> $code <span class="op">}</span>
+        <span class="op">}</span>
+        <span class="kw">impl</span>&lt;$($params)*&gt; Monoid <span class="kw">for</span> $type <span class="op">{</span>
+            <span class="kw">fn</span> unit() -&gt; <span class="kw">Self</span> <span class="op">{</span> $unit <span class="op">}</span>
+        <span class="op">}</span>
+    <span class="op">}</span>;
+    (
+        <span class="kw">for</span> $type:ty;
+        unit = $unit:expr;
+        mul($self:ident, $y:ident) = $code:block
+        $(;)*
+    ) =&gt; <span class="op">{</span>
+        <span class="pp">monoid!</span> <span class="op">{</span> <span class="op">[]</span> <span class="kw">for</span> $type; unit = $unit; mul($self, $y) = $code; <span class="op">}</span>
+    <span class="op">}</span>;
 <span class="op">}</span></code></pre></div>
           </div>
 
@@ -257,6 +237,10 @@
 <li><a href="prime.MillerRabin.html">ミラー・ラビン素数判定</a></li>
 <li><a href="prime.fermat.little.html">フェルマーの小定理</a></li>
 <li><a href="prime.factorize.html">素因数分解</a></li>
+</ul>
+<h2 id="その他定理">その他定理</h2>
+<ul>
+<li><a href="num.chinese.html">中国人剰余定理</a></li>
 </ul>
 <h2 id="多倍長">多倍長</h2>
 <ul>

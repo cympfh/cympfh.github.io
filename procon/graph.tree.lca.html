@@ -32,7 +32,7 @@
 <span class="op">}</span>
 <span class="kw">impl</span> LCA <span class="op">{</span>
     <span class="co">/// Directed(Parent -&gt; Child)</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> new(tree: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt;&gt;, root: <span class="dt">usize</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> new(tree: &amp;<span class="op">[</span><span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt;<span class="op">]</span>, root: <span class="dt">usize</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span>
         <span class="kw">let</span> n = tree.len();
         <span class="kw">let</span> log2n = (<span class="dv">0.</span>.n).map(|i| n &gt;&gt; i).take_while(|&amp;x| x &gt; <span class="dv">0</span>).count();
         <span class="kw">let</span> <span class="kw">mut</span> parent = <span class="pp">vec!</span><span class="op">[</span><span class="pp">vec!</span><span class="op">[</span><span class="cn">None</span>; log2n<span class="op">]</span>; n<span class="op">]</span>;
@@ -61,33 +61,41 @@
                 <span class="op">}</span>
             <span class="op">}</span>
         <span class="op">}</span>
-        LCA <span class="op">{</span>
-            depth: depth,
-            parent: parent,
+        LCA <span class="op">{</span> depth, parent <span class="op">}</span>
+    <span class="op">}</span>
+    <span class="co">/// 頂点 u を深さ depth まで持ち上げたときの頂点を返す</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> liftup(&amp;<span class="kw">self</span>, u: <span class="dt">usize</span>, depth: <span class="dt">usize</span>) -&gt; <span class="dt">usize</span> <span class="op">{</span>
+        <span class="kw">if</span> <span class="kw">self</span>.depth<span class="op">[</span>u<span class="op">]</span> &lt;= depth <span class="op">{</span>
+            u
+        <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
+            <span class="kw">let</span> <span class="kw">mut</span> mhb = <span class="dv">0</span>;
+            <span class="kw">let</span> log2n = <span class="kw">self</span>.parent<span class="op">[</span><span class="dv">0</span><span class="op">]</span>.len();
+            <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.log2n <span class="op">{</span>
+                <span class="kw">if</span> (<span class="kw">self</span>.depth<span class="op">[</span>u<span class="op">]</span> - depth) &gt;&gt; i &gt; <span class="dv">0</span> <span class="op">{</span>
+                    mhb = i;
+                <span class="op">}</span>
+            <span class="op">}</span>
+            <span class="kw">let</span> v = <span class="kw">self</span>.parent<span class="op">[</span>u<span class="op">][</span>mhb<span class="op">]</span>.unwrap();
+            <span class="kw">self</span>.liftup(v, depth)
         <span class="op">}</span>
     <span class="op">}</span>
+    <span class="co">/// 共通祖先</span>
     <span class="kw">pub</span> <span class="kw">fn</span> get(&amp;<span class="kw">self</span>, u: <span class="dt">usize</span>, v: <span class="dt">usize</span>) -&gt; <span class="dt">usize</span> <span class="op">{</span>
         <span class="kw">if</span> <span class="kw">self</span>.depth<span class="op">[</span>u<span class="op">]</span> &gt; <span class="kw">self</span>.depth<span class="op">[</span>v<span class="op">]</span> <span class="op">{</span>
             <span class="kw">return</span> <span class="kw">self</span>.get(v, u);
         <span class="op">}</span>
         <span class="kw">let</span> <span class="kw">mut</span> u = u;
-        <span class="kw">let</span> <span class="kw">mut</span> v = v;
-        <span class="kw">while</span> <span class="kw">self</span>.depth<span class="op">[</span>u<span class="op">]</span> &lt; <span class="kw">self</span>.depth<span class="op">[</span>v<span class="op">]</span> <span class="op">{</span>
-            v = <span class="kw">self</span>.parent<span class="op">[</span>v<span class="op">][</span><span class="dv">0</span><span class="op">]</span>.unwrap();
-        <span class="op">}</span>
+        <span class="kw">let</span> <span class="kw">mut</span> v = <span class="kw">self</span>.liftup(v, <span class="kw">self</span>.depth<span class="op">[</span>u<span class="op">]</span>);
         <span class="kw">if</span> u == v <span class="op">{</span>
             <span class="kw">return</span> u;
         <span class="op">}</span>
         <span class="kw">let</span> log2n = <span class="kw">self</span>.parent<span class="op">[</span><span class="dv">0</span><span class="op">]</span>.len();
         <span class="kw">for</span> k <span class="kw">in</span> (<span class="dv">0.</span>.log2n).rev() <span class="op">{</span>
-            <span class="kw">match</span> (<span class="kw">self</span>.parent<span class="op">[</span>u<span class="op">][</span>k<span class="op">]</span>, <span class="kw">self</span>.parent<span class="op">[</span>v<span class="op">][</span>k<span class="op">]</span>) <span class="op">{</span>
-                (<span class="cn">Some</span>(s), <span class="cn">Some</span>(t)) =&gt; <span class="op">{</span>
-                    <span class="kw">if</span> s != t <span class="op">{</span>
-                        u = s;
-                        v = t;
-                    <span class="op">}</span>
+            <span class="kw">if</span> <span class="kw">let</span> (<span class="cn">Some</span>(s), <span class="cn">Some</span>(t)) = (<span class="kw">self</span>.parent<span class="op">[</span>u<span class="op">][</span>k<span class="op">]</span>, <span class="kw">self</span>.parent<span class="op">[</span>v<span class="op">][</span>k<span class="op">]</span>) <span class="op">{</span>
+                <span class="kw">if</span> s != t <span class="op">{</span>
+                    u = s;
+                    v = t;
                 <span class="op">}</span>
-                _ =&gt; <span class="op">{}</span>
             <span class="op">}</span>
         <span class="op">}</span>
         <span class="kw">self</span>.parent<span class="op">[</span>u<span class="op">][</span><span class="dv">0</span><span class="op">]</span>.unwrap()

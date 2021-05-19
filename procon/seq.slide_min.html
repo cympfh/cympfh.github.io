@@ -20,73 +20,58 @@
         <section class="main-content columns is-fullheight">
 
           <div class="article column is-8 is-10-mobile">
-            <h1 id="グラフ---最小全域木---プリム法">グラフ - 最小全域木 - プリム法</h1>
+            <h1 id="数列---スライド最小値">数列 - スライド最小値</h1>
 <h2 id="概要">概要</h2>
-<p>点対ベースに最小の辺を足してくアルゴリズム. 計算量は <span class="math inline">\(O(E \log E)\)</span>.</p>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Graph - Minimal Span Tree - Prim</span>
-<span class="kw">use</span> <span class="kw">crate</span>::algebra::group::*;
-
-<span class="kw">pub</span> <span class="kw">fn</span> prim&lt;Cost: <span class="bu">Copy</span> + Group + <span class="bu">Ord</span>&gt;(neigh: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;(<span class="dt">usize</span>, Cost)&gt;&gt;) -&gt; Cost <span class="op">{</span>
-    <span class="kw">use</span> std::cmp::Reverse;
-    <span class="kw">use</span> std::collections::BinaryHeap;
-    <span class="kw">let</span> n = neigh.len();
-    <span class="kw">let</span> <span class="kw">mut</span> total = Cost::zero();
-    <span class="kw">let</span> <span class="kw">mut</span> used = <span class="pp">vec!</span><span class="op">[</span><span class="cn">false</span>; n<span class="op">]</span>;
-    <span class="kw">let</span> <span class="kw">mut</span> q = BinaryHeap::new();
-    used<span class="op">[</span><span class="dv">0</span><span class="op">]</span> = <span class="cn">true</span>;
-    <span class="kw">for</span> &amp;(v, cost) <span class="kw">in</span> neigh<span class="op">[</span><span class="dv">0</span><span class="op">]</span>.iter() <span class="op">{</span>
-        q.push((Reverse(cost), <span class="dv">0</span>, v));
+<p>全順序集合の上の数列 <span class="math display">\[x_1, x_2, \ldots, x_N\]</span> について, ウィンドウサイズ <span class="math inline">\(k\)</span> のウィンドウ列とは長さ <span class="math inline">\(N-k+1\)</span> の列であって, <span class="math display">\[(x_1, x_2, \ldots, x_k), (x_2, x_3, \ldots, x_{k+1}), \ldots, (x_{N-k+1}, \ldots, x_N)\]</span> というもの. この各 <span class="math display">\[(x_j, x_{j+1}, \ldots, x_{j+k-1})\]</span> の最小値のその添字の列 <span class="math display">\[i_1, i_2, \ldots, i_{N-k+1}\]</span> <span class="math display">\[\text{s.t. } ~~ x_{i_j} = \min \{ x_j, x_{j+1}, \ldots, x_{j+k-1} \}\]</span> を <span class="math inline">\(O(N)\)</span> で計算する.</p>
+<h2 id="実装">実装</h2>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Sliding Window Minimum, O(n)</span>
+<span class="co">/// Args:</span>
+<span class="co">///     Vec&lt;T: Ord&gt;</span>
+<span class="co">///     window_size</span>
+<span class="co">/// Returns:</span>
+<span class="co">///     Vec&lt;usize&gt;, indices of minimum for each windows</span>
+<span class="kw">pub</span> <span class="kw">fn</span> slide_min&lt;T: <span class="bu">Ord</span>&gt;(xs: &amp;<span class="op">[</span>T<span class="op">]</span>, window_size: <span class="dt">usize</span>) -&gt; <span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt; <span class="op">{</span>
+    <span class="kw">use</span> std::collections::VecDeque;
+    <span class="kw">if</span> xs.len() &lt; window_size <span class="op">{</span>
+        <span class="kw">return</span> <span class="pp">vec!</span><span class="op">[]</span>;
     <span class="op">}</span>
-    <span class="kw">while</span> <span class="kw">let</span> <span class="cn">Some</span>((Reverse(cost), u, v)) = q.pop() <span class="op">{</span>
-        <span class="kw">if</span> used<span class="op">[</span>u<span class="op">]</span> &amp;&amp; used<span class="op">[</span>v<span class="op">]</span> <span class="op">{</span>
-            <span class="kw">continue</span>;
-        <span class="op">}</span>
-        total = total + cost;
-        <span class="kw">if</span> !used<span class="op">[</span>u<span class="op">]</span> <span class="op">{</span>
-            used<span class="op">[</span>u<span class="op">]</span> = <span class="cn">true</span>;
-            <span class="kw">for</span> &amp;(w, cost) <span class="kw">in</span> neigh<span class="op">[</span>u<span class="op">]</span>.iter() <span class="op">{</span>
-                q.push((Reverse(cost), u, w));
-            <span class="op">}</span>
-        <span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> !used<span class="op">[</span>v<span class="op">]</span> <span class="op">{</span>
-            used<span class="op">[</span>v<span class="op">]</span> = <span class="cn">true</span>;
-            <span class="kw">for</span> &amp;(w, cost) <span class="kw">in</span> neigh<span class="op">[</span>v<span class="op">]</span>.iter() <span class="op">{</span>
-                q.push((Reverse(cost), v, w));
+    <span class="kw">fn</span> push&lt;T: <span class="bu">Ord</span>&gt;(deq: &amp;<span class="kw">mut</span> VecDeque&lt;<span class="dt">usize</span>&gt;, idx: <span class="dt">usize</span>, xs: &amp;<span class="op">[</span>T<span class="op">]</span>) <span class="op">{</span>
+        <span class="kw">while</span> <span class="kw">let</span> <span class="cn">Some</span>(&amp;i) = deq.back() <span class="op">{</span>
+            <span class="kw">if</span> xs<span class="op">[</span>i<span class="op">]</span> &gt;= xs<span class="op">[</span>idx<span class="op">]</span> <span class="op">{</span>
+                <span class="kw">let</span> _ = deq.pop_back();
+            <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
+                <span class="kw">break</span>;
             <span class="op">}</span>
         <span class="op">}</span>
+        deq.push_back(idx);
     <span class="op">}</span>
-    total
+    <span class="kw">let</span> <span class="kw">mut</span> deq = VecDeque::new();
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.window_size - <span class="dv">1</span> <span class="op">{</span>
+        push(&amp;<span class="kw">mut</span> deq, i, &amp;xs);
+    <span class="op">}</span>
+    <span class="kw">let</span> <span class="kw">mut</span> ret = <span class="pp">vec!</span><span class="op">[]</span>;
+    <span class="kw">for</span> i <span class="kw">in</span> window_size - <span class="dv">1.</span>.xs.len() <span class="op">{</span>
+        <span class="pp">eprintln!</span>(<span class="st">&quot;{}, {:?}&quot;</span>, i, &amp;deq);
+        push(&amp;<span class="kw">mut</span> deq, i, &amp;xs);
+        <span class="kw">let</span> j = *deq.front().unwrap();
+        ret.push(j);
+        <span class="kw">if</span> j + window_size == i + <span class="dv">1</span> <span class="op">{</span>
+            <span class="kw">let</span> _ = deq.pop_front();
+        <span class="op">}</span>
+        <span class="pp">eprintln!</span>(<span class="st">&quot;=&gt; {:?}; {:?}&quot;</span>, &amp;deq, &amp;ret);
+    <span class="op">}</span>
+    ret
 <span class="op">}</span>
 
 <span class="at">#[</span>cfg<span class="at">(</span>test<span class="at">)]</span>
-<span class="kw">mod</span> test_prim <span class="op">{</span>
-    <span class="kw">use</span> <span class="kw">crate</span>::graph::minimal_span_tree::prim::*;
-
-    <span class="kw">fn</span> undirectize&lt;Cost: <span class="bu">Copy</span>&gt;(g: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;(<span class="dt">usize</span>, Cost)&gt;&gt;) -&gt; <span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;(<span class="dt">usize</span>, Cost)&gt;&gt; <span class="op">{</span>
-        <span class="kw">let</span> n = g.len();
-        <span class="kw">let</span> <span class="kw">mut</span> h = <span class="pp">vec!</span><span class="op">[</span><span class="pp">vec!</span><span class="op">[]</span>; n<span class="op">]</span>;
-        <span class="kw">for</span> u <span class="kw">in</span> <span class="dv">0.</span>.n <span class="op">{</span>
-            <span class="kw">for</span> &amp;(v, cost) <span class="kw">in</span> g<span class="op">[</span>u<span class="op">]</span>.iter() <span class="op">{</span>
-                h<span class="op">[</span>u<span class="op">]</span>.push((v, cost));
-                h<span class="op">[</span>v<span class="op">]</span>.push((u, cost));
-            <span class="op">}</span>
-        <span class="op">}</span>
-        h
-    <span class="op">}</span>
-
+<span class="kw">mod</span> test_total <span class="op">{</span>
+    <span class="kw">use</span> <span class="kw">crate</span>::sequence::slide_min::*;
     <span class="at">#[</span>test<span class="at">]</span>
     <span class="kw">fn</span> it_works() <span class="op">{</span>
-        <span class="pp">assert_eq!</span>(
-            prim(&amp;undirectize(&amp;<span class="pp">vec!</span><span class="op">[</span>
-                <span class="pp">vec!</span><span class="op">[</span>(<span class="dv">1</span>, <span class="dv">7</span>), (<span class="dv">3</span>, <span class="dv">5</span>)<span class="op">]</span>,
-                <span class="pp">vec!</span><span class="op">[</span>(<span class="dv">2</span>, <span class="dv">8</span>), (<span class="dv">3</span>, <span class="dv">9</span>), (<span class="dv">4</span>, <span class="dv">7</span>)<span class="op">]</span>,
-                <span class="pp">vec!</span><span class="op">[</span>(<span class="dv">4</span>, <span class="dv">5</span>)<span class="op">]</span>,
-                <span class="pp">vec!</span><span class="op">[</span>(<span class="dv">4</span>, <span class="dv">15</span>), (<span class="dv">5</span>, <span class="dv">6</span>)<span class="op">]</span>,
-                <span class="pp">vec!</span><span class="op">[</span>(<span class="dv">5</span>, <span class="dv">8</span>), (<span class="dv">6</span>, <span class="dv">9</span>)<span class="op">]</span>,
-                <span class="pp">vec!</span><span class="op">[</span>(<span class="dv">6</span>, <span class="dv">11</span>)<span class="op">]</span>,
-                <span class="pp">vec!</span><span class="op">[]</span>,
-            <span class="op">]</span>)),
-            <span class="dv">39</span>
-        );
+        <span class="pp">assert_eq!</span>(slide_min(&amp;<span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span><span class="op">]</span>, <span class="dv">3</span>), <span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span><span class="op">]</span>);
+        <span class="pp">assert_eq!</span>(slide_min(&amp;<span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span><span class="op">]</span>, <span class="dv">3</span>), <span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">3</span><span class="op">]</span>);
+        <span class="pp">assert_eq!</span>(slide_min(&amp;<span class="pp">vec!</span><span class="op">[</span><span class="dv">5</span>, <span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">1</span><span class="op">]</span>, <span class="dv">2</span>), <span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span><span class="op">]</span>);
+        <span class="pp">assert_eq!</span>(slide_min(&amp;<span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">1</span><span class="op">]</span>, <span class="dv">2</span>), <span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">4</span><span class="op">]</span>);
     <span class="op">}</span>
 <span class="op">}</span></code></pre></div>
           </div>
@@ -114,7 +99,7 @@
 </ul>
 </details>
 
-<details class=menu open>
+<details class=menu>
 <summary class=menu>グラフ</summary>
 <h2 id="最短路">最短路</h2>
 <ul>
@@ -146,7 +131,7 @@
 </ul>
 </details>
 
-<details class=menu>
+<details class=menu open>
 <summary class=menu>数列</summary>
 <ul>
 <li><a href="seq.lis.html">最長増加部分列</a></li>

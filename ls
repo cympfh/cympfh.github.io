@@ -1,9 +1,11 @@
 aiura	aiura/
 anime	anime/
 photos	photos/
-gnuplot	gnuplot/
+gnuplot	gnuplot-book/
 memo	memo/
 neta	neta/
 paper	paper/
 procon	procon/
 taglibro	taglibro/
+bareru	bareru/
+coq	coq-book/

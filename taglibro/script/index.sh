@@ -43,6 +43,7 @@ cat <<EOM
   <link rel="stylesheet" href="../resources/css/bulma/bulma.css" />
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" />
   <script type="text/javascript" src="resouces/js/years.js"></script>
+  <script type="text/javascript" src="resouces/js/localhost.js"></script>
   <style>
     .card-header {
       background-color: #fafafa;

@@ -8,7 +8,8 @@ index:
 
 %.html: %.md
 	$(eval DESCRIPTION := $(shell cat $^ | grep '^## ' | sed 's/^#* //g' | sed ':a;N;$$!ba;s/\n/, /g'))
-	mdc $^ | \
+	cat $^ | \
+		./script/emb | \
 		pandoc -s -t html5 \
 		--template resouces/templates/post.body.html \
 		-V "description=$(DESCRIPTION)" \
@@ -18,6 +19,7 @@ index:
 		--mathjax=https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML \
 		--css ../../../resources/css/c.css \
 		--css ../../../resources/css/youtube.css \
+		--css ../../../resources/css/web_emb.css \
 		--css https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css \
 		-o $@
 

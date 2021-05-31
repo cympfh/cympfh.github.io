@@ -1,0 +1,58 @@
+#!/usr/bin/env ruby
+
+require 'json'
+
+def youtube_id(url)
+  url.match('v=([^&]*)')[1]
+end
+
+def block(url)
+  case url
+  when /youtube/
+    yid = youtube_id(url)
+    return <<EOS
+<div class="youtube" src-id="#{yid}"></div>
+EOS
+  when /twitter/
+    return <<EOS
+<blockquote class="twitter-tweet"><p lang="ja" dir="ltr"></p><a href="#{url}"></a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+EOS
+  else
+    data = JSON.parse(`og #{url}`)
+    title = data['og']['title']
+    image = data['og']['image']
+    description = data['og']['description']
+    if not title
+      title = `html-title #{url}`
+    end
+    return <<EOS
+<div class="web-emb" meta-title="#{title}" meta-image="#{image}" meta-description="#{description}" meta-url="#{url}">
+<a href="#{url}">#{title}</a>
+</div>
+EOS
+  end
+end
+
+def inline(url)
+  title = `html-title #{url}`
+  return "[#{title}](#{url})"
+end
+
+readlines.each {|line|
+  line = line.chomp
+  if line =~ /^\[\[http.*\]\]$/
+    url = line.match('\[\[(http.*)\]\]')[1]
+    puts block(url)
+  elsif line =~ /\[\[http.*\]\]/
+    while line =~ /\[\[http.*\]\]/
+      res = line.match('\[\[(http.*)\]\]')
+      url = res[1]
+      html = inline(url)
+      line = line.sub(res[0], html)
+    end
+    puts line
+  else
+    puts line
+  end
+}

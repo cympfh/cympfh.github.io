@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="参考文献/概要/最適輸送問題/Sinkhorn-Knopp アルゴリズム, Sinkhorn 距離/ソートへの応用/" />
+  <meta property="og:url" content="http://cympfh.cc/taglibro">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="最適輸送問題, Sinkhorn 距離, ソート" />
+  <meta property="og:description" content="参考文献/概要/最適輸送問題/Sinkhorn-Knopp アルゴリズム, Sinkhorn 距離/ソートへの応用/" />
+  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@cympfh" />
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>最適輸送問題, Sinkhorn 距離, ソート</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-stumbleupon"></i></a>
+</header>
+<header>
+<h1 class="title">最適輸送問題, Sinkhorn 距離, ソート</h1>
+</header>
+<p class="date" style="text-align: right">
+2021-06-03 (Thu.)
+</p>
+<div class="is-pulled-right">
+<p><a class='tag is-red' href=index.html#最適化>最適化</a></p>
+</div>
+<h2 id="参考文献">参考文献</h2>
+<p>この記事の内容は全て次のいずれかに書かれています.</p>
+<ol type="1">
+<li><a href="https://theory-and-me.hatenablog.com/entry/2021/05/09/181435">輸送問題を近似的に行列計算で解く（機械学習への応用つき） - 私と理論</a></li>
+<li><a href="https://qiita.com/itok_msi/items/f3cff1e586df00a05355">輸送問題の解を微分する - Qiita</a></li>
+<li><a href="https://qiita.com/itok_msi/items/7e14c1b6572f32bc0f87">ソートの微分とソートの一般化 - Qiita</a></li>
+</ol>
+<h2 id="概要">概要</h2>
+<p>最適輸送問題と呼ばれる最適化問題は Sinkhorn-Knopp アルゴリズムによって近似的に計算することが出来る. このアルゴリズムは全て線形変換で表現されるので微分可能であり, 勾配法で学習するような機械学習への応用が考えられる. この問題の応用例として数列のソートを紹介する.</p>
+<p>私が理解できてない都合上, なぜ上手くいくのかといった理論部分には触れない.</p>
+<h2 id="最適輸送問題">最適輸送問題</h2>
+<p>ある製品の需要と供給について考える. <span class="math inline">\(N\)</span> 箇所の工場があり, <span class="math inline">\(i\)</span> 番目の工場はその製品を <span class="math inline">\(a_i\)</span> だけ作る. 一方で <span class="math inline">\(M\)</span> 箇所の小売店があり, <span class="math inline">\(j\)</span> 番目の小売店は製品を <span class="math inline">\(b_i\)</span> だけ要求する. <span class="math display">\[\sum_i a_i = \sum_j b_j\]</span> であるとき, 製品を各工場から各小売店に直接輸送することで供給を満たしたい. すなわち, <span class="math inline">\(i\)</span> 番目の工場から <span class="math inline">\(j\)</span> 番目の小売店には製品を <span class="math inline">\(x_{ij}\)</span> だけ運ぶとすれば,</p>
+<ul>
+<li><span class="math inline">\(\sum_j x_{ij} = a_i ~~ \forall i\)</span></li>
+<li><span class="math inline">\(\sum_i x_{ij} = b_j ~~ \forall j\)</span></li>
+</ul>
+<p>と表現できる. ただしここで各輸送方法にはコストが設定されており, <span class="math inline">\(i\)</span> 番目の工場から <span class="math inline">\(j\)</span> 番目の小売店への輸送には量当たり <span class="math inline">\(C_{ij}\)</span> のコストが掛かる. したがって輸送方法 <span class="math inline">\(x\)</span> に対して全体として <span class="math display">\[\sum_i \sum_j C_{ij} x_{ij}\]</span> のコストが掛かる. これを最小化しようというのが <strong>最適輸送問題</strong> である.</p>
+<p>ただし、本記事では <span class="math inline">\(N = M = n\)</span> であるとする.</p>
+<h3 id="形式的表現">形式的表現</h3>
+<p>文章で問題を表現したが列ベクトルと行列表示すれば最適輸送問題は次で表現される. ただしここで <span class="math inline">\(\mathbb R_+\)</span> は非負整数全体とする.</p>
+<ul>
+<li>次が与えられる
+<ul>
+<li><span class="math inline">\(a, b \in \mathbb R_+^n\)</span>
+<ul>
+<li>ただし <span class="math inline">\(\sum_i a_i = \sum_i b_i\)</span></li>
+</ul></li>
+<li><span class="math inline">\(C \in \mathbb R_+^{n \times n}\)</span></li>
+</ul></li>
+<li>次の目的関数を最小化する
+<ul>
+<li><span class="math inline">\(L(x) = \sum_i \sum_j C_{ij} x_{ij}\)</span></li>
+</ul></li>
+<li>ただし次を制約とする
+<ul>
+<li><span class="math inline">\(\sum_j x_{ij} = a_i ~~ \forall i\)</span></li>
+<li><span class="math inline">\(\sum_i x_{ij} = b_j ~~ \forall j\)</span></li>
+</ul></li>
+</ul>
+<p>ちなみに制約の表現だが, 全ての成分が <span class="math inline">\(1\)</span> の列ベクトル <span class="math inline">\(1_n \in \{1\}^n\)</span> を用いると次のように書き直せる:</p>
+<ul>
+<li><span class="math inline">\(x 1_n = a\)</span></li>
+<li><span class="math inline">\(x^\top 1_n = b\)</span></li>
+</ul>
+<h3 id="最適輸送距離">最適輸送距離</h3>
+<p>2つのベクトル <span class="math inline">\(a, b \in \mathbb R_+^n\)</span> と暗に与えられるコスト行列 <span class="math inline">\(C\)</span> に対して最適輸送問題を解いた結果の <span class="math display">\[\min_x L(x)\]</span> を <span class="math inline">\(a\)</span> と <span class="math inline">\(b\)</span> の距離 <span class="math display">\[d(a, b; C) = \min_x L(x)\]</span> と定義することができる. これを <strong>最適輸送距離</strong> と呼ぶ. これはいわゆる距離の公理を満たす.</p>
+<blockquote>
+<p>この記事では特に <span class="math inline">\(a,b\)</span> の次元を同じに揃えているが本来この2つは異なっていてもよくて, 問題なく定義される.</p>
+</blockquote>
+<p>特にベクトル <span class="math inline">\(a, b\)</span> を離散確率分布だとしたとき, この距離は <strong>Wasserstein 距離</strong> と呼ばれ, 確率分布どうしの距離として定められる. また <strong>Earth-Mover (EM) 距離</strong> と呼ばれる値もこれから定義される.</p>
+<h2 id="sinkhorn-knopp-アルゴリズム-sinkhorn-距離">Sinkhorn-Knopp アルゴリズム, Sinkhorn 距離</h2>
+<p>最適輸送問題における目的関数を次のように変更する.</p>
+<p><span class="math display">\[L(x) = \sum_i \sum_j \left[ C_{ij} x_{ij} + \frac{1}{\lambda} x_{ij} \log x_{ij} \right]\]</span></p>
+<p>これはもとの目的関数から <span class="math inline">\(x\)</span> に関するエントロピーを <strong>減算</strong> した形になっていて, <strong>エントロピー正則化</strong> などとも呼ばれる. 最適化問題の文脈で言えば <strong>緩和</strong> だとも言える. この <span class="math inline">\(L(x)\)</span> の最小値のことを <strong>Sinkhorn 距離</strong> と呼ぶ.</p>
+<p>ここで <span class="math inline">\(\lambda\)</span> は正の定数だとする. <span class="math inline">\(\lambda \to +\infty\)</span> のときに最適輸送問題と一致する. 十分大きな <span class="math inline">\(\lambda\)</span> を与えることで Sinkhorn 距離で最適輸送距離を近似することができる.</p>
+<p>さてエントロピー正則化された方の最適化問題は次に示す Sinkhorn-Knopp アルゴリズムで解くことができる.</p>
+<h3 id="sinkhorn-knopp-アルゴリズム">Sinkhorn-Knopp アルゴリズム</h3>
+<ol type="1">
+<li>行列 <span class="math inline">\(K\)</span> を次で定める
+<ul>
+<li><span class="math inline">\(K_{ij} = \exp(- \lambda C_{ij})\)</span></li>
+</ul></li>
+<li><span class="math inline">\(u \in \mathbb R^n\)</span> をランダムに決める</li>
+<li>収束するまで次を順次繰り返す
+<ol type="1">
+<li><span class="math inline">\(v \leftarrow b ~/~ (K^\top u)\)</span></li>
+<li><span class="math inline">\(u \leftarrow b ~/~ (K v)\)</span>
+<ul>
+<li>ここで要素同士の除算を <span class="math inline">\(/\)</span> と書いた</li>
+</ul></li>
+</ol></li>
+<li><span class="math inline">\(u, v\)</span> それぞれを対角に置いた <span class="math inline">\(n\times n\)</span> の対角行列を <span class="math inline">\(U,V\)</span> と置く
+<ul>
+<li><span class="math inline">\(U \leftarrow \mathrm{diag}(u)\)</span></li>
+<li><span class="math inline">\(V \leftarrow \mathrm{diag}(v)\)</span></li>
+</ul></li>
+<li>次の <span class="math inline">\(x\)</span> が最適な輸送方法
+<ul>
+<li><span class="math inline">\(x \leftarrow UKV\)</span></li>
+</ul></li>
+</ol>
+<h2 id="ソートへの応用">ソートへの応用</h2>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

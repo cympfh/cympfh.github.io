@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>[2010.01412] Sharpness-Aware Minimization for Efficiently Improving Generalization</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
+</header>
+<header>
+<h1 class="title">[2010.01412] Sharpness-Aware Minimization for Efficiently Improving Generalization</h1>
+</header>
+<ul>
+<li>
+original paper: <a href=https://arxiv.org/abs/2010.01412>https://arxiv.org/abs/2010.01412</a>
+</li>
+</ul>
+<div class="is-pulled-right">
+<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#最適化>最適化</a></p>
+</div>
+<h2 id="概要">概要</h2>
+<p>損失関数をいい感じにいじってより学習に易しい損失関数を作る.</p>
+<h2 id="復習">復習</h2>
+<p>損失関数に基づく機械学習というのは次のようなものである.</p>
+<ul>
+<li>モデルのパラメータ <span class="math inline">\(w \in W\)</span></li>
+<li>入力信号 <span class="math inline">\(x \in X\)</span></li>
+<li>出力信号 <span class="math inline">\(y \in Y\)</span></li>
+<li>損失関数 <span class="math inline">\(\ell \colon W \times X \times Y \to \mathbb R_+\)</span></li>
+</ul>
+<p>真のデータ分布 <span class="math inline">\(D\)</span> の上で観測される <span class="math inline">\((X,Y)\)</span> の分布について <span class="math inline">\(L\)</span> の期待値 <span class="math display">\[L_D(w) := \mathbb E \left[ \ell(w,x,y) \right]\]</span> を最小化するような <span class="math inline">\(w\)</span> を探索することを学習と呼ぶ.</p>
+<p>さて真のデータ分布 <span class="math inline">\(D\)</span> は分からないので実際にはサンプリング <span class="math display">\[S = \{ (x_i, y_i) \}_{i=1,\ldots,N}\]</span> の上で推定した <span class="math display">\[L_S(w) := \frac{1}{N} \sum_S \ell(w,x,y)\]</span> を変わりの近似値として使う.</p>
+<p>ここで最急降下法によって最適な <span class="math inline">\(w\)</span> を得る場合には勾配が重要になる. 特に最適解付近では勾配が緩やかな方が良いとされている. SAM は損失関数自体を少しいじることで, そんな良い勾配を持った関数にすることを目指す.</p>
+<h2 id="theorem-1">Theorem 1</h2>
+<p>任意の正数 <span class="math inline">\(\rho &gt; 0\)</span> に対して, ある狭義単調増加関数 <span class="math inline">\(h \colon \mathbb R_+ \to \mathbb R_+\)</span> によって次が成り立つ (with highly probability): <span class="math display">\[L_D(w) \leq \max_{\|\epsilon\|_2 \leq \rho} L_S(w + \epsilon) + h(\|w\|_2^2 / \rho^2).\]</span></p>
+<h2 id="sam">SAM</h2>
+<p>Theorem 1 の右辺の <span class="math inline">\(L_D\)</span> に対する上限を参考に, 損失関数とする. <span class="math display">\[L_S^{\mathrm{SAM}}(w) := \max_{\| \epsilon \| \leq \rho} L(w + \epsilon) + \lambda \|w\|_2^2\]</span></p>
+<p>さてこの max を効率的に近似的に計算する. <span class="math inline">\(L(w + \epsilon)\)</span> を <span class="math inline">\(\epsilon \sim 0\)</span> の周辺で一次までテイラー展開して <span class="math display">\[L(w) + \epsilon^\top \nabla_w L(w) + \lambda \|w\|_2^2\]</span> を代わりに考えることにすると, <span class="math inline">\(\epsilon\)</span> に関わる <span class="math display">\[\max_\epsilon ~~ \epsilon^\top \nabla_w L(w)\]</span> だけすればいいことになる.</p>
+<p>で、謎の理屈を使うと, 次の値を <span class="math inline">\(\epsilon\)</span> として使えば良い.</p>
+<p><span class="math display">\[\hat{\epsilon} = \rho ~
+\mathrm{sign}(\nabla_w L_S(w))
+\frac{
+\left| \nabla_w L_S(w) \right|
+}{
+\sqrt{ \| \nabla_w L_S(w) \|_2^2 }
+}\]</span></p>
+<p>ここで分子にある <span class="math inline">\(\left| a \right|\)</span> は要素ごとに絶対値をとったもの.</p>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

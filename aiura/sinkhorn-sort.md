@@ -25,16 +25,16 @@ $N$ 箇所の工場があり, $i$ 番目の工場はその製品を $a_i$ だけ
 一方で $M$ 箇所の小売店があり, $j$ 番目の小売店は製品を $b_i$ だけ要求する.
 $$\sum_i a_i = \sum_j b_j$$
 であるとき, 製品を各工場から各小売店に直接輸送することで供給を満たしたい.
-すなわち, $i$ 番目の工場から $j$ 番目の小売店には製品を $x_{ij}$ だけ運ぶとすれば,
+すなわち, $i$ 番目の工場から $j$ 番目の小売店には製品を $P_{ij}$ だけ運ぶとすれば,
 
-- $\sum_j x_{ij} = a_i ~~ \forall i$
-- $\sum_i x_{ij} = b_j ~~ \forall j$
+- $\sum_j P_{ij} = a_i ~~ \forall i$
+- $\sum_i P_{ij} = b_j ~~ \forall j$
 
 と表現できる.
 ただしここで各輸送方法にはコストが設定されており, $i$ 番目の工場から $j$ 番目の小売店への輸送には量当たり
 $C_{ij}$ のコストが掛かる.
-したがって輸送方法 $x$ に対して全体として
-$$\sum_i \sum_j C_{ij} x_{ij}$$
+したがって輸送方法 $P$ に対して全体として
+$$\sum_i \sum_j C_{ij} P_{ij}$$
 のコストが掛かる.
 これを最小化しようというのが **最適輸送問題** である.
 
@@ -50,22 +50,22 @@ $$\sum_i \sum_j C_{ij} x_{ij}$$
         - ただし $\sum_i a_i = \sum_i b_i$
     - $C \in \mathbb R_+^{n \times n}$
 - 次の目的関数を最小化する
-    - $L(x) = \sum_i \sum_j C_{ij} x_{ij}$
+    - $L(P) = \sum_i \sum_j C_{ij} P_{ij}$
 - ただし次を制約とする
-    - $\sum_j x_{ij} = a_i ~~ \forall i$
-    - $\sum_i x_{ij} = b_j ~~ \forall j$
+    - $\sum_j P_{ij} = a_i ~~ \forall i$
+    - $\sum_i P_{ij} = b_j ~~ \forall j$
 
 ちなみに制約の表現だが, 全ての成分が $1$ の列ベクトル $1_n \in \{1\}^n$ を用いると次のように書き直せる:
 
-- $x 1_n = a$
-- $x^\top 1_n = b$
+- $P 1_n = a$
+- $P^\top 1_n = b$
 
 ### 最適輸送距離
 
 2つのベクトル $a, b \in \mathbb R_+^n$ と暗に与えられるコスト行列 $C$ に対して最適輸送問題を解いた結果の
-$$\min_x L(x)$$
+$$\min_P L(P)$$
 を $a$ と $b$ の距離
-$$d(a, b; C) = \min_x L(x)$$
+$$d(a, b; C) = \min_P L(P)$$
 と定義することができる.
 これを **最適輸送距離** と呼ぶ.
 これはいわゆる距離の公理を満たす.
@@ -79,11 +79,11 @@ $$d(a, b; C) = \min_x L(x)$$
 
 最適輸送問題における目的関数を次のように変更する.
 
-$$L(x) = \sum_i \sum_j \left[ C_{ij} x_{ij} + \frac{1}{\lambda} x_{ij} \log x_{ij} \right]$$
+$$L(P) = \sum_i \sum_j \left[ C_{ij} P_{ij} + \frac{1}{\lambda} P_{ij} \log P_{ij} \right]$$
 
-これはもとの目的関数から $x$ に関するエントロピーを **減算** した形になっていて, **エントロピー正則化** などとも呼ばれる.
+これはもとの目的関数から $P$ に関するエントロピーを **減算** した形になっていて, **エントロピー正則化** などとも呼ばれる.
 最適化問題の文脈で言えば **緩和** だとも言える.
-この $L(x)$ の最小値のことを **Sinkhorn 距離** と呼ぶ.
+この $L(P)$ の最小値のことを **Sinkhorn 距離** と呼ぶ.
 
 ここで $\lambda$ は正の定数だとする. $\lambda \to +\infty$ のときに最適輸送問題と一致する.
 十分大きな $\lambda$ を与えることで Sinkhorn 距離で最適輸送距離を近似することができる.
@@ -102,9 +102,68 @@ $$L(x) = \sum_i \sum_j \left[ C_{ij} x_{ij} + \frac{1}{\lambda} x_{ij} \log x_{i
 1. $u, v$ それぞれを対角に置いた $n\times n$ の対角行列を $U,V$ と置く
     - $U \leftarrow \mathrm{diag}(u)$
     - $V \leftarrow \mathrm{diag}(v)$
-1. 次の $x$ が最適な輸送方法
-    - $x \leftarrow UKV$
+1. 次の $P$ が最適な輸送方法
+    - $P \leftarrow UKV$
+
+計算コストが重たいのは 3.1, 3.2 における行列とベクトルの乗算, 5 の対角行列と行列の乗算であって,
+これらは計算量 $O(n^2)$ で計算できる.
 
 ## ソートへの応用
 
+数列のソート（整列）は最適輸送問題で解くことができる.
 
+### ソートへの帰着
+
+ソートしたい長さ $n$ の数列 $x \in \mathbb R^n$ が与えられたとする.
+ただしここで, 数列 $x$ と列ベクトル $x$ とは自然に同一視する.
+$( \left( x_1, x_2, \ldots, x_n \right) \iff \left[ x_1, x_2, \ldots, x_n \right]^\top )$
+
+これに対して, 以下の $(y, a, b, C)$ を用意する.
+
+- ソート済みの数列 $y \in \mathbb R^n$
+    - $i < j \iff y_i < y_j$
+    - 例えば $y = \left[ 0, 1, \ldots, n-1 \right]^\top$ としてよい
+- $a, b \in \mathbb R^n$
+    - $a_i = b_i = 1$ $(i=1,2,\ldots,n)$
+- コスト行列 $C \in \mathbb R^{n \times n}$
+    - $C_{ij} = h(x_i - y_j)$
+        - ここで $h(z)$ は $z=0$ で最小を取るような狭義凸関数
+            - 例えば $h(z) = z^2$ としてよい
+
+ここで $(a,b,C)$ で定められる最適輸送問題を解いて, 最適な輸送方法が
+$P \in \mathbb R^{n \times n}$
+であったとする.
+このとき
+
+- $S(x) := P^\top x$
+- $R(x) := P r$
+    - ただし $r = \left[ 1, 2, \ldots, n \right]^\top$
+
+とすると, $S(x)$ は $x$ をソートした数列になっており,
+$R(x)$ は $x$ のランクを表した数列になっている.
+つまり $S(x)$ の第 $i$ 成分は $x$ で $i$ 番目に小さい数であって,
+$R(x)$ の第 $i$ 成分は $x_i$ が $x$ で何番目に小さい数であるかの整数値になっている.
+
+> $R(x)$ の表す **ランク** は 1-start の整数になっているが, これは $r$ の並び替えをしてるに過ぎないので,
+> $r$ を変えれば 0-start の数字にする等できる.
+
+### 例
+
+数列 $x = (4, 6, 2)$ について次を与える $(n=3)$.
+
+- $y = (0, 1, 2)$
+- $a = b = (1, 1, 1)$
+- $C = \left[ \begin{array}{ccc}16 & 9 & 4 \\36 & 25 & 16 \\ 4 & 1 & 0\end{array} \right]$
+    - ここで $h(z) = z^2$ とした
+
+このとき最適輸送は
+
+- $P = \left[ \begin{array}{ccc}0 & 1 & 0 \\0 & 0 & 1 \\ 1 & 0 & 0\end{array} \right]$
+
+であると求まる.
+これによって $S(x), R(x)$ は次の通り計算される.
+
+- $S(x) = P^\top x = \left[ \begin{array}{ccc}0 & 0 & 1 \\1 & 0 & 0 \\ 0 & 1 & 0\end{array} \right] \left[ \begin{array}{c}4 \\ 6 \\ 2\end{array} \right] = \left[ \begin{array}{c}2 \\ 4 \\ 6\end{array} \right]$
+- $R(x) = P \left[ \begin{array}{c}1 \\ 2 \\ 3\end{array} \right] = \left[ \begin{array}{ccc}0 & 1 & 0 \\0 & 0 & 1 \\ 1 & 0 & 0\end{array} \right] \left[ \begin{array}{c}1 \\ 2 \\ 3\end{array} \right] = \left[ \begin{array}{c}2 \\ 3 \\ 1\end{array} \right]$
+
+見ての通り $P^\top$ 及び $P$ はちょうど swap をするだけの行列操作になっている.

@@ -28,6 +28,7 @@ select-edit() {
     if [ "$aid" = "new" ]; then
         new
     elif [ -n "$aid" ]; then
+        rm -f cache/html/$aid
         edit "$aid"
     fi
 }

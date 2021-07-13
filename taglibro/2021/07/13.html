@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="description" content="ICFPC2021 に参加した, 問題概要, エディタできた" />
+  <meta property="og:url" content="http://cympfh.cc/taglibro">
+  <meta property="og:title" content="Tue Jul 13 2021" />
+  <meta property="og:description" content="ICFPC2021 に参加した, 問題概要, エディタできた" />
+  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@cympfh" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Tue Jul 13 2021</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="../../../resources/css/c.css" />
+  <link rel="stylesheet" href="../../../resources/css/youtube.css" />
+  <link rel="stylesheet" href="../../../resources/css/web_emb.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+</head>
+<body>
+<header class="page-header">
+    <a href='../../index.html'><i class="fas fa-fast-backward"></i></a>
+</header>
+<header>
+<h1 class="title">Tue Jul 13 2021</h1>
+</header>
+<h2 id="icfpc2021-に参加した">ICFPC2021 に参加した</h2>
+<p>negainoido というチームで参加し, 凍結直前の最終スコアボードでは 12 位だった.</p>
+<p>今のチーム構成で参加するのは4,5年目くらいなので大体誰が何を担当するかが決まってる. なにせ三日間あるコンテストなので, 初日からゲーム AI (solver) を書き始めるのは二人程度いたら良くて, 二日目以降に人のをフォークして自分の AI を書くというスタイルでやってる. ICFPC は自分たちでビジュアライザを作ったり, 解を管理するといったインフラの整備も同様に大切. プログラムではなくて解を提出するというスタイルなので, 各問題に対する解を全部データベースに貯蔵しておいて, 裏で動いてるバッチがその中から最良のものを数分おきに提出させる仕組みが必要だった. また, 解ければ何でも良いので, 手で解いてしまうのもバカにはできない手段だ. 今回の問題も根気（と, よく出来たツール）さえあれば手で解けてしまうような問題が含まれていた.</p>
+<p>というわけで私は初めから, ビジュアライザ兼エディタを初日から作り始めることにした. 結局私は最後まで AI は書かずにずっとエディタの機能追加と手で解くことを交互にやっていた.</p>
+<h2 id="問題概要">問題概要</h2>
+<p>連結単純グラフが与えられる. 平面上にこれを配置せよ.</p>
+<ul>
+<li>制約:
+<ul>
+<li>多角形で表現される hole と呼ばれる領域内に収める</li>
+<li>各頂点の座標は格子点上にある</li>
+<li>各辺には長さが定められていて, 問題ごとにどれだけ元の長さから伸び縮みして良いかが決められている
+<ul>
+<li>その辺の元の長さを <span class="math inline">\(d_0\)</span>, 問題で与えられる定数 <span class="math inline">\(\epsilon\)</span> とするとき,</li>
+<li>辺の長さ <span class="math inline">\(d\)</span> は <span class="math inline">\((1 - \epsilon) d_0 \leq d \leq (1 + \epsilon) d_0\)</span> を満たす</li>
+</ul></li>
+</ul></li>
+</ul>
+<p><span class="math inline">\(\epsilon\)</span> は大抵十分小さいので, 隣接点から円を描いてその重なる点に置くしか無い. しかもそれは整数座標である必要がある. そして次で表される dislikes という値を最小化したい.</p>
+<ul>
+<li>dislikes
+<ul>
+<li>hole を表現する多角形について, その頂点からグラフへの距離の和</li>
+<li>頂点からグラフへの距離とは, グラフの各頂点への距離の最小値</li>
+<li><span class="math inline">\(\mathrm{dislikes} = \sum_{v \in \mathrm{hole}} \min_{u \in \mathrm{graph}} d(u,v)\)</span></li>
+</ul></li>
+</ul>
+<p>雰囲気を伝えるためだけにわざと大雑把な説明に済ましたが, 実際には全て整数だけで計算可能なように, <span class="math inline">\(\epsilon\)</span> は 1e6 倍でスケールされていたり, 距離は平方ユークリッド距離（平方根をとらない）だったりする.</p>
+<h2 id="エディタできた">エディタできた</h2>
+<p>ここ最近色々フロントエンドフレームワークを触っていて, Svelte というのが良さそうと教えてもらった. 今回のエディタも Svelte を使って web アプリとして作成した. 見た目は使い慣れてる Bulma という css フレームワークで作ったので適当にやってもまあまあ良さげになる.</p>
+<figure>
+<img src="https://i.imgur.com/clABGHk.gif" />
+</figure>
+<figure>
+<img src="https://i.imgur.com/asfn8TV.gif" />
+</figure>
+<ul>
+<li>素朴な機能として
+<ul>
+<li>ビジュアライザ
+<ul>
+<li>問題を選んで眺めることが出来る</li>
+<li>作った解を重ねて表示できる</li>
+<li>辺の長さが制約に対して伸び過ぎ/縮みすぎていることを色で表現する</li>
+</ul></li>
+<li>点を一つ選んで ドラッグ&amp;ドロップ で移動</li>
+<li>全体/複数選択した点を平行移動/回転</li>
+</ul></li>
+</ul>
+<figure>
+<img src="https://i.imgur.com/UFEzrlM.gif" />
+</figure>
+<ul>
+<li>少し高級な機能として
+<ul>
+<li>辺の伸び縮に合わせて勝手に伸び縮させる</li>
+<li>裏のインフラとつなぐ
+<ul>
+<li>現在の（自分たちのデータベース上の）最適解を読み込む</li>
+<li>提出する</li>
+</ul></li>
+<li>裏のソルバーとつなぐ（Web API として提供されている）
+<ul>
+<li>複数選択した点を投げてそこだけ勝手に最適化してくれる</li>
+</ul></li>
+</ul></li>
+</ul>
+<p>いくつかの問題は</p>
+<ul>
+<li>正しく配置すれば dislikes がゼロにできる</li>
+<li>出来上がりは（およそ）キレイな平面グラフになる</li>
+</ul>
+<p>といった性質があり, 人間の直感と美的センスをうまく使って解くことができた.</p>
+<h3 id="元問題-68">元問題 (#68)</h3>
+<figure>
+<img src="https://i.imgur.com/DWS4Ama.png" />
+</figure>
+<h3 id="エディタによって得られた解">エディタによって得られた解</h3>
+<figure>
+<img src="https://i.imgur.com/3SsnCLc.png" />
+</figure>
+<p>とくに周囲から置いてくのが大事.</p>
+<p>上の例のように初めに与えられるグラフはぐちゃぐちゃに折りたたまれているので, これを上手に「ほぐす」必要があった. 初めは, 頂点同士にいい感じに斥力を与えたり, エッジをバネのようにしたりなど物理シミュレーションをエディタに実装し, それをなんとか使っていたのだが, 三日目にしてチームメンバーの autotaker さんが graphviz を使うことを思いつき dotsolver が生まれた. graphviz は, 最強. Svelte も最強.</p>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+  <script src="../../../resources/js/youtube.js"></script>
+  <script src="../../../resources/js/web_emb.js"></script>
+</body>
+</html>

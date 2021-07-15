@@ -28,7 +28,8 @@ make
 make
 ```
 
-これが大変で, リンクがうまく行かずに起動したら SEGV で落ちたり,
+これで上手くいけばいいが,
+リンクがうまく行かずに起動したら SEGV で落ちたり,
 Import Error を吐いてプラグインが使えなかったりなどの問題がある.
 考えられる原因は色々あって,
 
@@ -39,14 +40,31 @@ Import Error を吐いてプラグインが使えなかったりなどの問題�
 - そもそも Python の shared object が無い
     - python ビルドからやり直し
 
-### おすすめセット (2020/11/26 動作版)
+次の章で解決するかもしれない.
 
-#### [Python3.8.5](https://www.python.org/downloads/release/python-385/)
+## Vim+Python3 のビルド
 
-pyenv は使わないのが本当に無難.
-ソースコードから直接システムに置いておく.
-普段遣いしたい Python が別途あるなら, これは Vim 専用と割り切ってもいいくらい.
-ただし Vim 用に `pip install` したいときは, もちろんこの pip を使わないと行けないのだけ注意.
+### 諸注意
+
+おすすめのバージョンの組み合わせやフルのビルドコマンドは後述する.
+予め注意すべき点をここで述べる.
+
+- Python3
+    - `--enable-shared` によって `.so` ファイルを出力させる設定を有効にしておく
+    - pyenv 等は使わずにシステムの Python を置き換えてしまうのが無難
+        - 必要であれば, 普段使いは pyenv で Vim 用はシステムの Python を使う, といった工夫をする
+        - Vim 用に Python モジュールを後から pip インストールする場合にはシステムに入れるように注意
+    - いくつかのモジュールはコンパイルに失敗しても, さらっと警告して見逃しがち
+        - `Failed to build these modules: ...` といったメッセージを見逃さないこと
+        - 特に `_ctypes` が失敗してたら `libffi-dev` 相当を `apt install` なりしてから再度ビルドする
+- Vim
+    - ビルドしたあとは, 必ず動作確認をしてから `make install` を叩くこと
+        - `./src/vim` にバイナリファイルがあるのでこれを直接動かしてみる
+        - `./src/vim --version` の中に `+python3` があることをチェックする
+
+### おすすめセット (2021/07/15 動作版)
+
+#### [Python 3.9.6](https://www.python.org/downloads/release/python-396/)
 
 ```bash
 sudo apt install libffi-dev
@@ -55,16 +73,24 @@ make
 sudo make install
 ```
 
-make の後,
-ビルドに失敗したモジュールがあると,
+#### [vim 8.2.3161](https://github.com/vim/vim/releases/tag/v8.2.3161)
 
-```
-Failed to build these modules:
-_ctypes
+```bash
+./configure --enable-python3interp=yes --with-python3-command=python3.9
+make
+sudo make install
 ```
 
-みたいなのがさらっと出るので注意.
-特に `_ctypes` が失敗してたら `libffi-dev` 或いはそれ相当のものを入れてから再度ビルドする.
+### おすすめセット (2020/11/26 動作版)
+
+#### [Python3.8.5](https://www.python.org/downloads/release/python-385/)
+
+```bash
+sudo apt install libffi-dev
+./configure --enable-optimizations --enable-shared
+make
+sudo make install
+```
 
 #### [vim 8.2.1484](https://github.com/vim/vim/releases/tag/v8.2.1484)
 
@@ -73,9 +99,4 @@ _ctypes
 make
 sudo make install
 ```
-
-最後のインストールをしてしまう前に動作確認をしておくとよい.
-`./src/vim` に実行可能バイナリがあるので,
-これを `--version` で実行して `+python3` とあるのを確認したり,
-確かに起動できることを見たりするとよい.
 

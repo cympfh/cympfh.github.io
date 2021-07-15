@@ -28,3 +28,6 @@ posts:
 		--css ../resources/css/c.css \
 		--css https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css \
 		-o $@
+
+dev:
+	python ./script/dev.py

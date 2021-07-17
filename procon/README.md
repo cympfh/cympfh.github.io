@@ -96,6 +96,7 @@
 - [UnionFind](set.union_find.md)
 - [BitSet](set.bitset.md)
 - [部分集合及びその部分集合の列挙](set.subbitset.md)
+- [多重集合](collections.multiset.md)
 
 # アルゴリズム
 

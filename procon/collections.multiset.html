@@ -20,13 +20,78 @@
         <section class="main-content columns is-fullheight">
 
           <div class="article column is-8 is-10-mobile">
-            <h1 id="int.mod.pow">int.mod.pow</h1>
-<p>整数 <span class="math inline">\(a, n\)</span> と <span class="math inline">\(m\)</span> について <span class="math display">\[a^n \bmod m\]</span> を <span class="math inline">\(O(\log n)\)</span> で求める.</p>
-<blockquote>
-<p><strong>NOTE</strong> 特に <span class="math inline">\(m\)</span> が素数の時, <span class="math inline">\(a^{m-2}\)</span> が <span class="math inline">\(a^{-1}\)</span> になる (フェルマーの小定理).</p>
-</blockquote>
-<h2 id="int.mod.pow.rs"><a href="int.mod.pow.rs" class="uri">int.mod.pow.rs</a></h2>
-<p>```rust</p>
+            <h1 id="collections---多重集合-multiset">collections - 多重集合 (MultiSet)</h1>
+<h2 id="概要">概要</h2>
+<p>重複を許すような集合を定義する. 実装は要素の個数を <code>HashMap</code> で管理している. 個数が <code>0</code> になったらキーを削除している.</p>
+<h2 id="実装">実装</h2>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// collections - multiset</span>
+<span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">,</span> <span class="bu">Clone</span><span class="at">)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> MultiSet&lt;K&gt;
+<span class="kw">where</span>
+    K: <span class="bu">Eq</span> + std::hash::<span class="bu">Hash</span>,
+<span class="op">{</span>
+    data: std::collections::HashMap&lt;K, <span class="dt">usize</span>&gt;,
+    size: <span class="dt">usize</span>,
+<span class="op">}</span>
+<span class="kw">impl</span>&lt;K: <span class="bu">Eq</span> + std::hash::<span class="bu">Hash</span>&gt; MultiSet&lt;K&gt; <span class="op">{</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> new() -&gt; <span class="kw">Self</span> <span class="op">{</span>
+        <span class="kw">Self</span> <span class="op">{</span>
+            data: std::collections::HashMap::new(),
+            size: <span class="dv">0</span>,
+        <span class="op">}</span>
+    <span class="op">}</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> keys(&amp;<span class="kw">self</span>) -&gt; std::collections::hash_map::Keys&lt;K, <span class="dt">usize</span>&gt; <span class="op">{</span>
+        <span class="kw">self</span>.data.keys()
+    <span class="op">}</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> add(&amp;<span class="kw">mut</span> <span class="kw">self</span>, item: K) <span class="op">{</span>
+        <span class="kw">match</span> <span class="kw">self</span>.data.get(&amp;item) <span class="op">{</span>
+            <span class="cn">None</span> =&gt; <span class="kw">self</span>.data.insert(item, <span class="dv">1</span>),
+            <span class="cn">Some</span>(&amp;c) =&gt; <span class="kw">self</span>.data.insert(item, c + <span class="dv">1</span>),
+        <span class="op">}</span>;
+        <span class="kw">self</span>.size += <span class="dv">1</span>;
+    <span class="op">}</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> remove(&amp;<span class="kw">mut</span> <span class="kw">self</span>, item: K) <span class="op">{</span>
+        <span class="kw">match</span> <span class="kw">self</span>.data.get(&amp;item) <span class="op">{</span>
+            <span class="cn">None</span> | <span class="cn">Some</span>(<span class="dv">0</span>) =&gt; <span class="pp">panic!</span>(<span class="st">&quot;multiset remove&quot;</span>),
+            <span class="cn">Some</span>(<span class="dv">1</span>) =&gt; <span class="kw">self</span>.data.remove(&amp;item),
+            <span class="cn">Some</span>(&amp;c) =&gt; <span class="kw">self</span>.data.insert(item, c - <span class="dv">1</span>),
+        <span class="op">}</span>;
+        <span class="kw">self</span>.size -= <span class="dv">1</span>;
+    <span class="op">}</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> uniq_size(&amp;<span class="kw">self</span>) -&gt; <span class="dt">usize</span> <span class="op">{</span>
+        <span class="kw">self</span>.data.len()
+    <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="at">#[</span>cfg<span class="at">(</span>test<span class="at">)]</span>
+<span class="kw">mod</span> test_multiset <span class="op">{</span>
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> test_multiset() <span class="op">{</span>
+        <span class="at">#[</span>derive<span class="at">(</span><span class="bu">PartialEq</span><span class="at">,</span> <span class="bu">Eq</span><span class="at">)]</span>
+        <span class="kw">enum</span> E <span class="op">{</span>
+            A,
+            B,
+            C,
+        <span class="op">}</span>
+        <span class="kw">use</span> E::*;
+        <span class="kw">let</span> c = MultiSet::new();
+        c.add(A);
+        assert(c.size == <span class="dv">1</span>);
+        assert(c.uniq_size() == <span class="dv">1</span>);
+        c.add(A);
+        assert(c.size == <span class="dv">2</span>);
+        assert(c.uniq_size() == <span class="dv">1</span>);
+        c.add(B);
+        assert(c.size == <span class="dv">3</span>);
+        assert(c.uniq_size() == <span class="dv">2</span>);
+        c.remove(A);
+        assert(c.size == <span class="dv">2</span>);
+        assert(c.uniq_size() == <span class="dv">2</span>);
+        c.remove(A);
+        assert(c.size == <span class="dv">1</span>);
+        assert(c.uniq_size() == <span class="dv">1</span>);
+    <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
@@ -151,7 +216,7 @@
 </ul>
 </details>
 
-<details class=menu>
+<details class=menu open>
 <summary class=menu>集合</summary>
 <ul>
 <li><a href="set.union_find.html">UnionFind</a></li>

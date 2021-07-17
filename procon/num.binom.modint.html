@@ -25,18 +25,78 @@
 <p>二項係数の剰余を取った値 <span class="math inline">\(\left(\begin{array}{c}n\\k\end{array}\right) \bmod M\)</span> を計算量 <span class="math inline">\(O(n \log n)\)</span> で計算する.</p>
 <div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Number - Binomial Coefficient on ModInt</span>
 <span class="kw">use</span> <span class="kw">crate</span>::algebra::modint::*;
-<span class="kw">pub</span> <span class="kw">fn</span> binom(n: ModInt, k: ModInt) -&gt; ModInt <span class="op">{</span>
-    <span class="kw">if</span> k.<span class="dv">0</span> == <span class="dv">0</span> <span class="op">{</span>
-        ModInt(<span class="dv">1</span>, n.<span class="dv">1</span>)
-    <span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> n.<span class="dv">0</span> &lt; k.<span class="dv">0</span> * <span class="dv">2</span> <span class="op">{</span>
-        binom(n, n - k)
-    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
-        <span class="kw">let</span> <span class="kw">mut</span> c = ModInt(<span class="dv">1</span>, n.<span class="dv">1</span>);
-        <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.k.<span class="dv">0</span> <span class="op">{</span>
-            c *= n - i;
-            c /= k - i;
+<span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">,</span> <span class="bu">Clone</span><span class="at">,</span> <span class="bu">Copy</span><span class="at">,</span> <span class="bu">PartialEq</span><span class="at">,</span> <span class="bu">Eq</span><span class="at">)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> Binom <span class="op">{</span>
+    n: <span class="dt">u64</span>,
+    k: <span class="dt">u64</span>,
+    coeff: ModInt,
+<span class="op">}</span>
+
+<span class="kw">impl</span> Binom <span class="op">{</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> unwrap(&amp;<span class="kw">self</span>) -&gt; ModInt <span class="op">{</span>
+        <span class="kw">self</span>.coeff
+    <span class="op">}</span>
+
+    <span class="co">/// Calc Binom-Coeff with O(k)</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> new(n: <span class="dt">u64</span>, k: <span class="dt">u64</span>, modulo: <span class="dt">i64</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span>
+        <span class="kw">if</span> k == <span class="dv">0</span> <span class="op">{</span>
+            <span class="kw">let</span> coeff = ModInt(<span class="dv">1</span>, modulo);
+            <span class="kw">Self</span> <span class="op">{</span> n, k, coeff <span class="op">}</span>
+        <span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> n &lt; k || n == <span class="dv">0</span> <span class="op">{</span>
+            <span class="kw">let</span> coeff = ModInt(<span class="dv">0</span>, modulo);
+            <span class="kw">Self</span> <span class="op">{</span> n, k, coeff <span class="op">}</span>
+        <span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> n &lt; k * <span class="dv">2</span> <span class="op">{</span>
+            <span class="kw">let</span> <span class="kw">mut</span> m = <span class="kw">Self</span>::new(n, n - k, modulo);
+            m.k = k;
+            m
+        <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
+            <span class="kw">let</span> <span class="kw">mut</span> c = ModInt(<span class="dv">1</span>, modulo);
+            <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.k <span class="op">{</span>
+                c *= (n - i) <span class="kw">as</span> <span class="dt">i64</span>;
+                c /= (k - i) <span class="kw">as</span> <span class="dt">i64</span>;
+            <span class="op">}</span>
+            <span class="kw">Self</span> <span class="op">{</span> n, k, coeff: c <span class="op">}</span>
         <span class="op">}</span>
-        c
+    <span class="op">}</span>
+
+    <span class="co">/// Calc `binom(n, k)` with a Hint</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> new_with_hint(n: <span class="dt">u64</span>, k: <span class="dt">u64</span>, hint: &amp;Binom) -&gt; <span class="kw">Self</span> <span class="op">{</span>
+        <span class="kw">if</span> k == <span class="dv">0</span> <span class="op">{</span>
+            <span class="kw">let</span> coeff = ModInt(<span class="dv">1</span>, hint.unwrap().<span class="dv">1</span>);
+            <span class="kw">return</span> <span class="kw">Self</span> <span class="op">{</span> n, k, coeff <span class="op">}</span>;
+        <span class="op">}</span>
+        <span class="kw">if</span> n &lt; k || n == <span class="dv">0</span> <span class="op">{</span>
+            <span class="kw">let</span> coeff = ModInt(<span class="dv">0</span>, hint.unwrap().<span class="dv">1</span>);
+            <span class="kw">return</span> <span class="kw">Self</span> <span class="op">{</span> n, k, coeff <span class="op">}</span>;
+        <span class="op">}</span>
+        <span class="kw">if</span> n == hint.n &amp;&amp; k == hint.k <span class="op">{</span>
+            <span class="kw">return</span> *hint;
+        <span class="op">}</span>
+        <span class="kw">let</span> (n_next, k_next, c_next) = <span class="kw">if</span> n &lt; hint.n &amp;&amp; k &lt; hint.k <span class="op">{</span>
+            <span class="kw">let</span> c = hint.unwrap() * hint.k <span class="kw">as</span> <span class="dt">i64</span> / hint.n <span class="kw">as</span> <span class="dt">i64</span>;
+            (hint.n - <span class="dv">1</span>, hint.k - <span class="dv">1</span>, c)
+        <span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> n &gt; hint.n &amp;&amp; k &gt; hint.k <span class="op">{</span>
+            <span class="kw">let</span> c = hint.unwrap() * (hint.n + <span class="dv">1</span>) <span class="kw">as</span> <span class="dt">i64</span> / (hint.k + <span class="dv">1</span>) <span class="kw">as</span> <span class="dt">i64</span>;
+            (hint.n + <span class="dv">1</span>, hint.k + <span class="dv">1</span>, c)
+        <span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> n &gt; hint.n <span class="op">{</span>
+            <span class="kw">let</span> c = hint.unwrap() * (hint.n + <span class="dv">1</span>) <span class="kw">as</span> <span class="dt">i64</span> / (hint.n - hint.k + <span class="dv">1</span>) <span class="kw">as</span> <span class="dt">i64</span>;
+            (hint.n + <span class="dv">1</span>, hint.k, c)
+        <span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> n &lt; hint.n <span class="op">{</span>
+            <span class="kw">let</span> c = hint.unwrap() * (hint.n - hint.k) <span class="kw">as</span> <span class="dt">i64</span> / hint.n <span class="kw">as</span> <span class="dt">i64</span>;
+            (hint.n - <span class="dv">1</span>, hint.k, c)
+        <span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> k &gt; hint.k <span class="op">{</span>
+            <span class="kw">let</span> c = hint.unwrap() * (hint.n - hint.k) <span class="kw">as</span> <span class="dt">i64</span> / (hint.k + <span class="dv">1</span>) <span class="kw">as</span> <span class="dt">i64</span>;
+            (hint.n, hint.k + <span class="dv">1</span>, c)
+        <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
+            <span class="kw">let</span> c = hint.unwrap() * hint.k <span class="kw">as</span> <span class="dt">i64</span> / (hint.n - hint.k + <span class="dv">1</span>) <span class="kw">as</span> <span class="dt">i64</span>;
+            (hint.n, hint.k - <span class="dv">1</span>, c)
+        <span class="op">}</span>;
+        <span class="kw">let</span> nexthint = Binom <span class="op">{</span>
+            n: n_next,
+            k: k_next,
+            coeff: c_next,
+        <span class="op">}</span>;
+        <span class="kw">Self</span>::new_with_hint(n, k, &amp;nexthint)
     <span class="op">}</span>
 <span class="op">}</span>
 
@@ -47,18 +107,67 @@
     <span class="at">#[</span>test<span class="at">]</span>
     <span class="kw">fn</span> it_works() <span class="op">{</span>
         <span class="kw">const</span> MOD: <span class="dt">i64</span> = <span class="dv">1000000007</span>;
-        <span class="pp">assert_eq!</span>(binom(ModInt(<span class="dv">5</span>, MOD), ModInt(<span class="dv">0</span>, MOD)).unwrap(), <span class="dv">1</span>);
-        <span class="pp">assert_eq!</span>(binom(ModInt(<span class="dv">5</span>, MOD), ModInt(<span class="dv">1</span>, MOD)).unwrap(), <span class="dv">5</span>);
-        <span class="pp">assert_eq!</span>(binom(ModInt(<span class="dv">5</span>, MOD), ModInt(<span class="dv">2</span>, MOD)).unwrap(), <span class="dv">10</span>);
-        <span class="pp">assert_eq!</span>(binom(ModInt(<span class="dv">5</span>, MOD), ModInt(<span class="dv">3</span>, MOD)).unwrap(), <span class="dv">10</span>);
-        <span class="pp">assert_eq!</span>(binom(ModInt(<span class="dv">5</span>, MOD), ModInt(<span class="dv">4</span>, MOD)).unwrap(), <span class="dv">5</span>);
-        <span class="pp">assert_eq!</span>(binom(ModInt(<span class="dv">5</span>, MOD), ModInt(<span class="dv">5</span>, MOD)).unwrap(), <span class="dv">1</span>);
+        <span class="pp">assert_eq!</span>(Binom::new(<span class="dv">5</span>, <span class="dv">0</span>, MOD).unwrap().unwrap(), <span class="dv">1</span>);
+        <span class="pp">assert_eq!</span>(Binom::new(<span class="dv">5</span>, <span class="dv">1</span>, MOD).unwrap().unwrap(), <span class="dv">5</span>);
+        <span class="pp">assert_eq!</span>(Binom::new(<span class="dv">5</span>, <span class="dv">2</span>, MOD).unwrap().unwrap(), <span class="dv">10</span>);
+        <span class="pp">assert_eq!</span>(Binom::new(<span class="dv">5</span>, <span class="dv">3</span>, MOD).unwrap().unwrap(), <span class="dv">10</span>);
+        <span class="pp">assert_eq!</span>(Binom::new(<span class="dv">5</span>, <span class="dv">4</span>, MOD).unwrap().unwrap(), <span class="dv">5</span>);
+        <span class="pp">assert_eq!</span>(Binom::new(<span class="dv">5</span>, <span class="dv">5</span>, MOD).unwrap().unwrap(), <span class="dv">1</span>);
     <span class="op">}</span>
 
     <span class="at">#[</span>test<span class="at">]</span>
     <span class="kw">fn</span> large_numbers() <span class="op">{</span>
         <span class="kw">const</span> MOD: <span class="dt">i64</span> = <span class="dv">107</span>;
-        <span class="pp">assert_eq!</span>(binom(ModInt(<span class="dv">100</span>, MOD), ModInt(<span class="dv">50</span>, MOD)).unwrap(), <span class="dv">35</span>);
+        <span class="pp">assert_eq!</span>(Binom::new(<span class="dv">100</span>, <span class="dv">50</span>, MOD).unwrap().unwrap(), <span class="dv">35</span>);
+    <span class="op">}</span>
+
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> test_with_hint() <span class="op">{</span>
+        <span class="kw">const</span> MOD: <span class="dt">i64</span> = <span class="dv">107</span>;
+        <span class="kw">let</span> c = Binom::new(<span class="dv">5</span>, <span class="dv">2</span>, MOD);
+        <span class="pp">assert_eq!</span>(Binom::new_with_hint(<span class="dv">4</span>, <span class="dv">2</span>, &amp;c), Binom::new(<span class="dv">4</span>, <span class="dv">2</span>, MOD));
+        <span class="kw">for</span> n <span class="kw">in</span> <span class="dv">3.</span>.<span class="dv">8</span> <span class="op">{</span>
+            <span class="kw">for</span> k <span class="kw">in</span> <span class="dv">0.</span>.=n <span class="op">{</span>
+                <span class="pp">assert_eq!</span>(Binom::new_with_hint(n, k, &amp;c), Binom::new(n, k, MOD));
+            <span class="op">}</span>
+        <span class="op">}</span>
+    <span class="op">}</span>
+
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> test_erroneous() <span class="op">{</span>
+        <span class="kw">const</span> MOD: <span class="dt">i64</span> = <span class="dv">107</span>;
+        <span class="pp">assert_eq!</span>(
+            Binom::new(<span class="dv">0</span>, <span class="dv">0</span>, MOD),
+            Binom <span class="op">{</span>
+                n: <span class="dv">0</span>,
+                k: <span class="dv">0</span>,
+                coeff: ModInt(<span class="dv">1</span>, MOD)
+            <span class="op">}</span>
+        );
+        <span class="pp">assert_eq!</span>(
+            Binom::new(<span class="dv">0</span>, <span class="dv">1</span>, MOD),
+            Binom <span class="op">{</span>
+                n: <span class="dv">0</span>,
+                k: <span class="dv">1</span>,
+                coeff: ModInt(<span class="dv">0</span>, MOD)
+            <span class="op">}</span>
+        );
+        <span class="pp">assert_eq!</span>(
+            Binom::new(<span class="dv">1</span>, <span class="dv">2</span>, MOD),
+            Binom <span class="op">{</span>
+                n: <span class="dv">1</span>,
+                k: <span class="dv">2</span>,
+                coeff: ModInt(<span class="dv">0</span>, MOD)
+            <span class="op">}</span>
+        );
+        <span class="pp">assert_eq!</span>(
+            Binom::new_with_hint(<span class="dv">1</span>, <span class="dv">2</span>, &amp;Binom::new(<span class="dv">1</span>, <span class="dv">1</span>, MOD)),
+            Binom <span class="op">{</span>
+                n: <span class="dv">1</span>,
+                k: <span class="dv">2</span>,
+                coeff: ModInt(<span class="dv">0</span>, MOD)
+            <span class="op">}</span>
+        );
     <span class="op">}</span>
 <span class="op">}</span></code></pre></div>
           </div>
@@ -191,6 +300,7 @@
 <li><a href="set.union_find.html">UnionFind</a></li>
 <li><a href="set.bitset.html">BitSet</a></li>
 <li><a href="set.subbitset.html">部分集合及びその部分集合の列挙</a></li>
+<li><a href="collections.multiset.html">多重集合</a></li>
 </ul>
 </details>
 

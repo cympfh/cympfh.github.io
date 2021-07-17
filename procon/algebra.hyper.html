@@ -51,10 +51,20 @@
         <span class="op">}</span>
     <span class="op">}</span>
 <span class="op">}</span>
+<span class="kw">impl</span>&lt;X: <span class="bu">Clone</span> + Group&gt; std::ops::AddAssign <span class="kw">for</span> Hyper&lt;X&gt; <span class="op">{</span>
+    <span class="kw">fn</span> add_assign(&amp;<span class="kw">mut</span> <span class="kw">self</span>, rhs: Hyper&lt;X&gt;) <span class="op">{</span>
+        *<span class="kw">self</span> = (*<span class="kw">self</span>).clone() + rhs;
+    <span class="op">}</span>
+<span class="op">}</span>
 <span class="kw">impl</span>&lt;X: Group&gt; std::ops::Sub <span class="kw">for</span> Hyper&lt;X&gt; <span class="op">{</span>
     <span class="kw">type</span> Output = <span class="kw">Self</span>;
     <span class="kw">fn</span> sub(<span class="kw">self</span>, rhs: Hyper&lt;X&gt;) -&gt; Hyper&lt;X&gt; <span class="op">{</span>
         <span class="kw">self</span> + (-rhs)
+    <span class="op">}</span>
+<span class="op">}</span>
+<span class="kw">impl</span>&lt;X: <span class="bu">Clone</span> + Group&gt; std::ops::SubAssign <span class="kw">for</span> Hyper&lt;X&gt; <span class="op">{</span>
+    <span class="kw">fn</span> sub_assign(&amp;<span class="kw">mut</span> <span class="kw">self</span>, rhs: Hyper&lt;X&gt;) <span class="op">{</span>
+        *<span class="kw">self</span> = (*<span class="kw">self</span>).clone() - rhs;
     <span class="op">}</span>
 <span class="op">}</span>
 <span class="kw">impl</span>&lt;X: Group&gt; std::ops::Neg <span class="kw">for</span> Hyper&lt;X&gt; <span class="op">{</span>
@@ -100,6 +110,20 @@
         <span class="pp">assert!</span>(Hyper::Real(<span class="dv">0</span>) &lt; Hyper::Inf);
         <span class="pp">assert!</span>(Hyper::&lt;<span class="dt">i32</span>&gt;::NegInf &lt; Hyper::Inf);
         <span class="pp">assert_eq!</span>(Hyper::Real(<span class="dv">1</span>) + <span class="dv">3</span>, Hyper::Real(<span class="dv">4</span>));
+    <span class="op">}</span>
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> assign_op() <span class="op">{</span>
+        <span class="op">{</span>
+            <span class="kw">let</span> <span class="kw">mut</span> a = Hyper::Real(<span class="dv">0_i32</span>);
+            a += Hyper::Real(<span class="dv">3</span>);
+            <span class="pp">assert_eq!</span>(a, Hyper::Real(<span class="dv">3</span>));
+            a -= Hyper::Real(<span class="dv">6</span>);
+            <span class="pp">assert_eq!</span>(a, Hyper::Real(-<span class="dv">3</span>));
+            a += Hyper::Inf;
+            <span class="pp">assert_eq!</span>(a, Hyper::Inf);
+            a -= Hyper::Inf;
+            <span class="pp">assert_eq!</span>(a, Hyper::Inf);
+        <span class="op">}</span>
     <span class="op">}</span>
 <span class="op">}</span></code></pre></div>
           </div>
@@ -232,6 +256,7 @@
 <li><a href="set.union_find.html">UnionFind</a></li>
 <li><a href="set.bitset.html">BitSet</a></li>
 <li><a href="set.subbitset.html">部分集合及びその部分集合の列挙</a></li>
+<li><a href="collections.multiset.html">多重集合</a></li>
 </ul>
 </details>
 

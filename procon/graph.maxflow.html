@@ -29,7 +29,7 @@
 <ul>
 <li><a href="https://beta.atcoder.jp/contests/arc092/tasks/arc092_a">ABC091/C - 2D Plane 2N Points</a></li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Graph - Directed - Dinic&#39;s MaxFlow</span>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Graph - Directed - Dinic&#39;s MaxFlow - O(V^2 E)</span>
 <span class="kw">use</span> <span class="kw">crate</span>::algebra::group::*;
 <span class="kw">use</span> <span class="kw">crate</span>::algebra::hyper::*;
 
@@ -40,7 +40,7 @@
     g: <span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;(<span class="dt">usize</span>, Hyper&lt;X&gt;)&gt;&gt;,
 <span class="op">}</span>
 <span class="kw">impl</span>&lt;X: std::fmt::<span class="bu">Debug</span> + <span class="bu">Copy</span> + <span class="bu">Eq</span> + <span class="bu">Ord</span> + Group&gt; Dinic&lt;X&gt; <span class="op">{</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> new(s: <span class="dt">usize</span>, t: <span class="dt">usize</span>, neigh: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;(<span class="dt">usize</span>, Hyper&lt;X&gt;)&gt;&gt;) -&gt; <span class="kw">Self</span> <span class="op">{</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> new(s: <span class="dt">usize</span>, t: <span class="dt">usize</span>, neigh: &amp;<span class="op">[</span><span class="dt">Vec</span>&lt;(<span class="dt">usize</span>, Hyper&lt;X&gt;)&gt;<span class="op">]</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span>
         <span class="kw">let</span> size = neigh.len();
         <span class="kw">let</span> <span class="kw">mut</span> g = <span class="pp">vec!</span><span class="op">[</span><span class="pp">vec!</span><span class="op">[]</span>; size<span class="op">]</span>;
         <span class="kw">for</span> u <span class="kw">in</span> <span class="dv">0.</span>.size <span class="op">{</span>
@@ -56,26 +56,27 @@
         <span class="kw">let</span> <span class="kw">mut</span> flw = <span class="pp">vec!</span><span class="op">[</span><span class="pp">vec!</span><span class="op">[</span>Hyper::zero(); <span class="kw">self</span>.size<span class="op">]</span>; <span class="kw">self</span>.size<span class="op">]</span>;
         <span class="kw">loop</span> <span class="op">{</span>
             <span class="kw">let</span> level = <span class="kw">self</span>.levelize(&amp;flw);
-            <span class="kw">if</span> level<span class="op">[</span><span class="kw">self</span>.t<span class="op">]</span>.is_none() <span class="op">{</span>
+            <span class="kw">if</span> level<span class="op">[</span><span class="kw">self</span>.t<span class="op">]</span> &gt;= <span class="kw">self</span>.size <span class="op">{</span>
                 <span class="kw">break</span>;
             <span class="op">}</span>
-            sum = sum + <span class="kw">self</span>.augment(Hyper::Inf, &amp;<span class="kw">mut</span> flw, &amp;level, <span class="kw">self</span>.s);
+            sum += <span class="kw">self</span>.augment(Hyper::Inf, &amp;<span class="kw">mut</span> flw, &amp;level, <span class="kw">self</span>.s);
         <span class="op">}</span>
         sum
     <span class="op">}</span>
-    <span class="kw">fn</span> levelize(&amp;<span class="kw">self</span>, flw: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;Hyper&lt;X&gt;&gt;&gt;) -&gt; <span class="dt">Vec</span>&lt;<span class="dt">Option</span>&lt;<span class="dt">usize</span>&gt;&gt; <span class="op">{</span>
-        <span class="kw">let</span> <span class="kw">mut</span> level = <span class="pp">vec!</span><span class="op">[</span><span class="cn">None</span>; <span class="kw">self</span>.size<span class="op">]</span>;
-        <span class="kw">let</span> <span class="kw">mut</span> q = std::collections::VecDeque::new();
-        q.push_back(<span class="kw">self</span>.s);
-        level<span class="op">[</span><span class="kw">self</span>.s<span class="op">]</span> = <span class="cn">Some</span>(<span class="dv">0</span>);
-        <span class="kw">while</span> <span class="kw">let</span> <span class="cn">Some</span>(u) = q.pop_front() <span class="op">{</span>
-            <span class="kw">if</span> level<span class="op">[</span>u<span class="op">]</span>.is_none() || u == <span class="kw">self</span>.t <span class="op">{</span>
+    <span class="kw">fn</span> levelize(&amp;<span class="kw">self</span>, flw: &amp;<span class="op">[</span><span class="dt">Vec</span>&lt;Hyper&lt;X&gt;&gt;<span class="op">]</span>) -&gt; <span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt; <span class="op">{</span>
+        <span class="kw">use</span> std::<span class="op">{</span>cmp::Reverse, collections::BinaryHeap<span class="op">}</span>;
+        <span class="kw">let</span> <span class="kw">mut</span> level = <span class="pp">vec!</span><span class="op">[</span><span class="kw">self</span>.size; <span class="kw">self</span>.size<span class="op">]</span>;
+        <span class="kw">let</span> <span class="kw">mut</span> q = BinaryHeap::new();
+        q.push((Reverse(<span class="dv">0</span>), <span class="kw">self</span>.s));
+        level<span class="op">[</span><span class="kw">self</span>.s<span class="op">]</span> = <span class="dv">0</span>;
+        <span class="kw">while</span> <span class="kw">let</span> <span class="cn">Some</span>((_, u)) = q.pop() <span class="op">{</span>
+            <span class="kw">if</span> u == <span class="kw">self</span>.t <span class="op">{</span>
                 <span class="kw">break</span>;
             <span class="op">}</span>
             <span class="kw">for</span> &amp;(v, cap) <span class="kw">in</span> <span class="kw">self</span>.g<span class="op">[</span>u<span class="op">]</span>.iter() <span class="op">{</span>
-                <span class="kw">if</span> level<span class="op">[</span>v<span class="op">]</span>.is_none() &amp;&amp; cap &gt; flw<span class="op">[</span>u<span class="op">][</span>v<span class="op">]</span> <span class="op">{</span>
-                    level<span class="op">[</span>v<span class="op">]</span> = level<span class="op">[</span>u<span class="op">]</span>.map(|x| x + <span class="dv">1</span>);
-                    q.push_back(v);
+                <span class="kw">if</span> level<span class="op">[</span>v<span class="op">]</span> == <span class="kw">self</span>.size &amp;&amp; cap &gt; flw<span class="op">[</span>u<span class="op">][</span>v<span class="op">]</span> <span class="op">{</span>
+                    level<span class="op">[</span>v<span class="op">]</span> = level<span class="op">[</span>u<span class="op">]</span> + <span class="dv">1</span>;
+                    q.push((Reverse(level<span class="op">[</span>v<span class="op">]</span>), v));
                 <span class="op">}</span>
             <span class="op">}</span>
         <span class="op">}</span>
@@ -85,25 +86,24 @@
         &amp;<span class="kw">self</span>,
         limit: Hyper&lt;X&gt;,
         <span class="kw">mut</span> flw: &amp;<span class="kw">mut</span> <span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;Hyper&lt;X&gt;&gt;&gt;,
-        level: &amp;<span class="dt">Vec</span>&lt;<span class="dt">Option</span>&lt;<span class="dt">usize</span>&gt;&gt;,
+        level: &amp;<span class="op">[</span><span class="dt">usize</span><span class="op">]</span>,
         u: <span class="dt">usize</span>,
     ) -&gt; Hyper&lt;X&gt; <span class="op">{</span>
         <span class="kw">if</span> u == <span class="kw">self</span>.t <span class="op">{</span>
-            limit
-        <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
-            <span class="kw">for</span> &amp;(v, cap) <span class="kw">in</span> <span class="kw">self</span>.g<span class="op">[</span>u<span class="op">]</span>.iter() <span class="op">{</span>
-                <span class="kw">if</span> level<span class="op">[</span>v<span class="op">]</span> &gt; level<span class="op">[</span>u<span class="op">]</span> <span class="op">{</span>
-                    <span class="kw">let</span> limit = std::cmp::min(limit, cap - flw<span class="op">[</span>u<span class="op">][</span>v<span class="op">]</span>);
-                    <span class="kw">let</span> f = <span class="kw">self</span>.augment(limit, &amp;<span class="kw">mut</span> flw, &amp;level, v);
-                    <span class="kw">if</span> f &gt; Hyper::zero() <span class="op">{</span>
-                        flw<span class="op">[</span>u<span class="op">][</span>v<span class="op">]</span> = flw<span class="op">[</span>u<span class="op">][</span>v<span class="op">]</span> + f;
-                        flw<span class="op">[</span>v<span class="op">][</span>u<span class="op">]</span> = flw<span class="op">[</span>v<span class="op">][</span>u<span class="op">]</span> - f;
-                        <span class="kw">return</span> f;
-                    <span class="op">}</span>
+            <span class="kw">return</span> limit;
+        <span class="op">}</span>
+        <span class="kw">for</span> &amp;(v, cap) <span class="kw">in</span> <span class="kw">self</span>.g<span class="op">[</span>u<span class="op">]</span>.iter() <span class="op">{</span>
+            <span class="kw">if</span> level<span class="op">[</span>v<span class="op">]</span> &gt; level<span class="op">[</span>u<span class="op">]</span> <span class="op">{</span>
+                <span class="kw">let</span> limit = std::cmp::min(limit, cap - flw<span class="op">[</span>u<span class="op">][</span>v<span class="op">]</span>);
+                <span class="kw">let</span> f = <span class="kw">self</span>.augment(limit, &amp;<span class="kw">mut</span> flw, &amp;level, v);
+                <span class="kw">if</span> f &gt; Hyper::zero() <span class="op">{</span>
+                    flw<span class="op">[</span>u<span class="op">][</span>v<span class="op">]</span> += f;
+                    flw<span class="op">[</span>v<span class="op">][</span>u<span class="op">]</span> -= f;
+                    <span class="kw">return</span> f;
                 <span class="op">}</span>
             <span class="op">}</span>
-            Hyper::zero()
         <span class="op">}</span>
+        Hyper::zero()
     <span class="op">}</span>
 <span class="op">}</span>
 
@@ -269,6 +269,7 @@
 <li><a href="set.union_find.html">UnionFind</a></li>
 <li><a href="set.bitset.html">BitSet</a></li>
 <li><a href="set.subbitset.html">部分集合及びその部分集合の列挙</a></li>
+<li><a href="collections.multiset.html">多重集合</a></li>
 </ul>
 </details>
 

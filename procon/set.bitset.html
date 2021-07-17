@@ -32,6 +32,12 @@
     <span class="kw">pub</span> <span class="kw">fn</span> from(data: u128) -&gt; <span class="kw">Self</span> <span class="op">{</span>
         BitSet(data)
     <span class="op">}</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> id(&amp;<span class="kw">self</span>) -&gt; <span class="dt">usize</span> <span class="op">{</span>
+        <span class="kw">self</span>.<span class="dv">0</span> <span class="kw">as</span> <span class="dt">usize</span>
+    <span class="op">}</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> is_empty(&amp;<span class="kw">self</span>) -&gt; <span class="dt">bool</span> <span class="op">{</span>
+        <span class="kw">self</span>.<span class="dv">0</span> == <span class="dv">0</span>
+    <span class="op">}</span>
     <span class="kw">pub</span> <span class="kw">fn</span> contains(&amp;<span class="kw">self</span>, i: <span class="dt">usize</span>) -&gt; <span class="dt">bool</span> <span class="op">{</span>
         (<span class="kw">self</span>.<span class="dv">0</span> &amp; (<span class="dv">1</span> &lt;&lt; i)) != <span class="dv">0</span>
     <span class="op">}</span>
@@ -277,6 +283,18 @@
             <span class="op">]</span>
         );
     <span class="op">}</span>
+
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> test_is_empty() <span class="op">{</span>
+        <span class="pp">assert!</span>(BitSet::from(<span class="dv">0</span>).is_empty());
+        <span class="pp">assert!</span>(!BitSet::from(<span class="dv">1</span>).is_empty());
+    <span class="op">}</span>
+
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> test_id() <span class="op">{</span>
+        <span class="pp">assert_eq!</span>(BitSet::from(<span class="dv">0_u128</span>).id(), <span class="dv">0_u</span>size);
+        <span class="pp">assert_eq!</span>(BitSet::from(<span class="dv">31_u128</span>).id(), <span class="dv">31_u</span>size);
+    <span class="op">}</span>
 <span class="op">}</span></code></pre></div>
           </div>
 
@@ -408,6 +426,7 @@
 <li><a href="set.union_find.html">UnionFind</a></li>
 <li><a href="set.bitset.html">BitSet</a></li>
 <li><a href="set.subbitset.html">部分集合及びその部分集合の列挙</a></li>
+<li><a href="collections.multiset.html">多重集合</a></li>
 </ul>
 </details>
 

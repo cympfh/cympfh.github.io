@@ -195,4 +195,4 @@
 - [スターリングの近似式](misc.stirling.md)
 - [サイコロ](dice.md)
 - [近傍](misc.neighbor.md)
-
+- [2-SAT](misc.two_sat.md)

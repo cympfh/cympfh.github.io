@@ -44,6 +44,17 @@
 </ul></li>
 </ul>
 <h2 id="実装">実装</h2>
+<h3 id="使い方">使い方</h3>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">let</span> <span class="kw">mut</span> sat = TwoSAT::new(n); <span class="co">// 2CNF 上の変数 [0, 1, ..., n-1]</span>
+sat += <span class="pp">and!</span>(<span class="dv">0</span> or <span class="dv">1</span>);          <span class="co">// AND 条件の追加: ... and (0 or 1)</span>
+sat += <span class="pp">and!</span>(not <span class="dv">1</span> or <span class="dv">2</span>);      <span class="co">// AND 条件の追加: ... and (not 1 or 2)</span>
+sat += <span class="pp">and!</span>(<span class="dv">2</span> =&gt; not <span class="dv">1</span>);      <span class="co">// AND 条件の追加: ... and (2 =&gt; not 1)</span>
+<span class="kw">let</span> res = sat.solve();        <span class="co">// 充足可能かどうか</span>
+
+<span class="co">// and! に書けるもの</span>
+<span class="pp">and!</span>(<span class="op">[</span>not<span class="op">]</span> x or <span class="op">[</span>not<span class="op">]</span> y)
+<span class="pp">and!</span>(<span class="op">[</span>not<span class="op">]</span> x =&gt; <span class="op">[</span>not<span class="op">]</span> y)
+<span class="pp">and!</span>(<span class="op">[</span>not<span class="op">]</span> x)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">use</span> <span class="kw">crate</span>::graph::directed::scc::*;
 
 <span class="kw">pub</span> <span class="kw">struct</span> TwoSAT <span class="op">{</span>
@@ -123,6 +134,12 @@
     ($i:tt =&gt; $j:tt) =&gt; <span class="op">{</span>
         TwoSATLogic::Implies(TwoSATTerm($i, <span class="cn">true</span>), TwoSATTerm($j, <span class="cn">true</span>))
     <span class="op">}</span>;
+    (not $i:tt) =&gt; <span class="op">{</span>
+        TwoSATLogic::Or(TwoSATTerm($i, <span class="cn">false</span>), TwoSATTerm($i, <span class="cn">false</span>))
+    <span class="op">}</span>;
+    ($i:tt) =&gt; <span class="op">{</span>
+        TwoSATLogic::Or(TwoSATTerm($i, <span class="cn">true</span>), TwoSATTerm($i, <span class="cn">true</span>))
+    <span class="op">}</span>;
 <span class="op">}</span>
 
 <span class="at">#[</span>cfg<span class="at">(</span>test<span class="at">)]</span>
@@ -161,6 +178,20 @@
         sat += <span class="pp">and!</span>(<span class="dv">1</span> =&gt; <span class="dv">0</span>);
         sat += <span class="pp">and!</span>(<span class="dv">0</span> or <span class="dv">1</span>);
         sat += <span class="pp">and!</span>(not <span class="dv">0</span> or not <span class="dv">1</span>);
+        <span class="pp">assert!</span>(!sat.solve());
+    <span class="op">}</span>
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> test_two_sat_5() <span class="op">{</span>
+        <span class="kw">let</span> <span class="kw">mut</span> sat = TwoSAT::new(<span class="dv">2</span>);
+        sat += <span class="pp">and!</span>(<span class="dv">0</span>);
+        sat += <span class="pp">and!</span>(<span class="dv">1</span>);
+        <span class="pp">assert!</span>(sat.solve());
+    <span class="op">}</span>
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> test_two_sat_6() <span class="op">{</span>
+        <span class="kw">let</span> <span class="kw">mut</span> sat = TwoSAT::new(<span class="dv">2</span>);
+        sat += <span class="pp">and!</span>(<span class="dv">0</span>);
+        sat += <span class="pp">and!</span>(not <span class="dv">0</span>);
         <span class="pp">assert!</span>(!sat.solve());
     <span class="op">}</span>
 <span class="op">}</span></code></pre></div>

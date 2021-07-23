@@ -20,9 +20,23 @@
         <section class="main-content columns is-fullheight">
 
           <div class="article column is-8 is-10-mobile">
-            <h1 id="二次元ユークリッド幾何---多角形の定義">二次元ユークリッド幾何 - 多角形の定義</h1>
-<p>頂点を反時計回りに並べる.</p>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Geometry2D - Definition of Polygon</span>
+            <h1 id="二次元ユークリッド幾何---多角形">二次元ユークリッド幾何 - 多角形</h1>
+<h2 id="概要">概要</h2>
+<ul>
+<li>多角形の定義
+<ul>
+<li>頂点を反時計回りに並べて持つ</li>
+</ul></li>
+<li>面積 <code>::area</code></li>
+<li>点の包含関係 <code>::contains</code>
+<ul>
+<li>点を内部に持つかどうかの判定</li>
+</ul></li>
+</ul>
+<h2 id="実装">実装</h2>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">use</span> <span class="kw">crate</span>::geometry2d::ccw::*;
+<span class="kw">use</span> <span class="kw">crate</span>::geometry2d::line::*;
+<span class="co">/// Geometry2D - Definition of Polygon</span>
 <span class="kw">use</span> <span class="kw">crate</span>::geometry2d::point::*;
 
 <span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">,</span> <span class="bu">Clone</span><span class="at">)]</span>
@@ -31,6 +45,28 @@
 <span class="kw">impl</span> Polygon <span class="op">{</span>
     <span class="kw">pub</span> <span class="kw">fn</span> len(&amp;<span class="kw">self</span>) -&gt; <span class="dt">usize</span> <span class="op">{</span>
         <span class="kw">self</span>.<span class="dv">0.</span>len()
+    <span class="op">}</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> is_empty(&amp;<span class="kw">self</span>) -&gt; <span class="dt">bool</span> <span class="op">{</span>
+        <span class="kw">self</span>.<span class="dv">0.</span>is_empty()
+    <span class="op">}</span>
+    <span class="co">/// self must be counter-clockwised.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> contains(&amp;<span class="kw">self</span>, p: &amp;Point, is_strict: <span class="dt">bool</span>) -&gt; <span class="dt">bool</span> <span class="op">{</span>
+        <span class="kw">let</span> n = <span class="kw">self</span>.len();
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.n <span class="op">{</span>
+            <span class="kw">let</span> u = <span class="kw">self</span>.<span class="dv">0</span><span class="op">[</span>i<span class="op">]</span>;
+            <span class="kw">let</span> v = <span class="kw">self</span>.<span class="dv">0</span><span class="op">[</span>(i + <span class="dv">1</span>) % n<span class="op">]</span>;
+            <span class="kw">let</span> edge = LineSegment(u, v);
+            <span class="kw">match</span> ccw(edge, *p) <span class="op">{</span>
+                CCW::On =&gt; <span class="op">{</span>
+                    <span class="kw">if</span> is_strict <span class="op">{</span>
+                        <span class="kw">return</span> <span class="cn">false</span>;
+                    <span class="op">}</span>
+                <span class="op">}</span>
+                CCW::Left =&gt; <span class="kw">continue</span>,
+                _ =&gt; <span class="kw">return</span> <span class="cn">false</span>,
+            <span class="op">}</span>
+        <span class="op">}</span>
+        <span class="cn">true</span>
     <span class="op">}</span>
 <span class="op">}</span>
 
@@ -78,6 +114,19 @@
             Point(<span class="dv">0.0</span>, <span class="dv">1.0</span>),
         <span class="op">]</span>;
         <span class="pp">assert_eq!</span>(sq.area(), <span class="dv">1.0</span>);
+    <span class="op">}</span>
+
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> contains() <span class="op">{</span>
+        <span class="kw">let</span> tri = <span class="pp">poly!</span><span class="op">[</span>Point(<span class="dv">0.0</span>, <span class="dv">0.0</span>), Point(<span class="dv">1.0</span>, <span class="dv">0.0</span>), Point(<span class="dv">1.0</span>, <span class="dv">1.0</span>)<span class="op">]</span>;
+        <span class="pp">assert!</span>(tri.contains(&amp;Point(<span class="dv">1.0</span>, <span class="dv">0.0</span>), <span class="cn">false</span>));
+        <span class="pp">assert!</span>(!tri.contains(&amp;Point(<span class="dv">1.0</span>, <span class="dv">0.0</span>), <span class="cn">true</span>));
+        <span class="pp">assert!</span>(tri.contains(&amp;Point(<span class="dv">0.5</span>, <span class="dv">0.0</span>), <span class="cn">false</span>));
+        <span class="pp">assert!</span>(!tri.contains(&amp;Point(<span class="dv">0.5</span>, <span class="dv">0.0</span>), <span class="cn">true</span>));
+        <span class="pp">assert!</span>(tri.contains(&amp;Point(<span class="dv">0.5</span>, <span class="dv">0.1</span>), <span class="cn">false</span>));
+        <span class="pp">assert!</span>(tri.contains(&amp;Point(<span class="dv">0.5</span>, <span class="dv">0.1</span>), <span class="cn">true</span>));
+        <span class="pp">assert!</span>(!tri.contains(&amp;Point(<span class="dv">0.5</span>, <span class="dv">0.6</span>), <span class="cn">false</span>));
+        <span class="pp">assert!</span>(!tri.contains(&amp;Point(<span class="dv">0.5</span>, <span class="dv">0.6</span>), <span class="cn">true</span>));
     <span class="op">}</span>
 <span class="op">}</span></code></pre></div>
           </div>

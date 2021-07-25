@@ -9,7 +9,7 @@ index:
 %.html: %.md
 	$(eval DESCRIPTION := $(shell cat $^ | grep '^## ' | sed 's/^#* //g' | sed ':a;N;$$!ba;s/\n/, /g'))
 	cat $^ | \
-		./script/emb | \
+		mdc | \
 		pandoc -s -t html5 \
 		--template resouces/templates/post.body.html \
 		-V "description=$(DESCRIPTION)" \

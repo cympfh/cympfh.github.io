@@ -20,7 +20,6 @@ index:
 		--css ../../../resources/css/c.css \
 		--css ../../../resources/css/youtube.css \
 		--css ../../../resources/css/web_emb.css \
-		--css ../../resouces/css/c.css \
 		--css https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css \
 		-o $@
 

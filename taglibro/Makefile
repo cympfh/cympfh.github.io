@@ -11,10 +11,10 @@ index:
 	cat $^ | \
 		mdc | \
 		pandoc -s -t html5 \
-		--template resouces/templates/post.body.html \
+		--template resources/templates/post.body.html \
 		-V "description=$(DESCRIPTION)" \
-		-B resouces/templates/post.header.html \
-		-A resouces/templates/post.footer.html \
+		-B resources/templates/post.header.html \
+		-A resources/templates/post.footer.html \
 		-A ../resources/js/toc.html \
 		--mathjax=https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML \
 		--css ../../../resources/css/c.css \

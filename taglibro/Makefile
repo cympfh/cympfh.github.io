@@ -17,6 +17,7 @@ index:
 		-A resources/templates/post.footer.html \
 		-A ../resources/js/toc.html \
 		--mathjax=https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML \
+		--css ../../resources/css/c.css \
 		--css ../../../resources/css/c.css \
 		--css ../../../resources/css/youtube.css \
 		--css ../../../resources/css/web_emb.css \

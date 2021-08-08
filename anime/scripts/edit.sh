@@ -38,6 +38,11 @@ create() {
     year=$(anidb $aid | jq -r .date.start | sed 's/-.*//g')
     mkdir -p src/$year/
 
+    if [ -f src/$year/$aid.md ]; then
+        echo "Already exists" >&2
+        exit 2
+    fi
+
     title=$(anidb $aid | jq -r .title)
 
     pic=$(anidb $aid | jq -r '.picture[0]')

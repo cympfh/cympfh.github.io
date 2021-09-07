@@ -7,5 +7,5 @@ neta	neta/
 paper	paper/
 procon	procon/
 taglibro	taglibro/
-bareru	bareru/
 coq	coq-book/
+rakonto	rakonto/

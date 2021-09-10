@@ -15,6 +15,11 @@ $X$ 上の数列 $v$ について,
 すなわち数列に対する更新操作をモノイド作用だということにしている.
 計算量はこの2つの操作がともに $O(\log N)$.
 
+## 関連リンク
+
+- モノイド作用と実装の詳細: [/aiura/monoidic-act-and-lazy-segment-tree](https://cympfh.cc/aiura/monoidic-act-and-lazy-segment-tree)
+- 各問題への適用例: [/taglibro/2020/09/09](https://cympfh.cc/taglibro/2020/09/09)
+
 ## 例題
 
 - [ABC177/F](https://atcoder.jp/contests/abc177/submissions/16522911)

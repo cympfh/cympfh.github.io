@@ -128,3 +128,23 @@ function fuck-ssh() {
   echo $SSH_AUTH_SOCK > ~/.ssh/auth.sock
 }
 ```
+
+## 罫線が崩れる
+
+![](https://i.imgur.com/jeD57jX.png)
+
+これが参考になった: [■GNU Screen 4.2.0にしたら罫線表示がぶっ壊れた](https://anond.hatelabo.jp/20140512183601).
+4.2.0 にしたらとあるが, 4.8.0 でもこの現象を確認した.
+上のキャプチャ画像がそれ.
+なる環境もあればならない環境もある.
+
+次を `.screenrc` に追加する.
+
+```bash
+cjkwidth off
+```
+
+![](https://i.imgur.com/sA8JlRh.png)
+
+治った.
+

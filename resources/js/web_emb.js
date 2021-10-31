@@ -1,3 +1,7 @@
+function attr(node, name) {
+  return node.getAttribute(name) || node.getAttribute('data-' + name);
+}
+
 function web_emb_init() {
   /*
    *   <div class="web-emb"
@@ -9,10 +13,10 @@ function web_emb_init() {
    */
   var nodes = document.getElementsByClassName('web-emb');
   for (var node of nodes) {
-    var title = node.getAttribute('meta-title');
-    var image = node.getAttribute('meta-image');
-    var description = node.getAttribute('meta-description');
-    var url = node.getAttribute('meta-url');
+    var title = attr(node, 'meta-title');
+    var image = attr(node, 'meta-image');
+    var description = attr(node, 'meta-description');
+    var url = attr(node, 'meta-url');
 
     var card = document.createElement('div');
     card.className = 'web-emb-card';

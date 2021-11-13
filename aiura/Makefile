@@ -5,6 +5,9 @@ all: index posts
 index:
 	bash script/index.sh >index.html
 
+dev:
+	bash script/hotcompile.sh
+
 new:
 	bash script/edit.sh "*new"
 

@@ -19,7 +19,7 @@ $\def\bar#1{\overline{#1}}$
     - ここで $I$ は単集合 $\{ \ast \}$
     - $e$ は値 $e(\ast) \in G$ だけを持ち, この値を $1$ と書く
         - $1 = e(\ast) \in G$
-    - この $1$ のことを（あるいは $e$ のことを） *単位元* と呼ぶ
+    - この $1$ のことを（あるいは $e$ のことを） **単位元** と呼ぶ
 - $\mu \colon G \times G \to G$
     - $\mu(x,y)$ のことを $x \times y$ とか $xy$ と書く
 - $\nu \colon G \to G$
@@ -33,24 +33,24 @@ $\def\bar#1{\overline{#1}}$
 - g3) $\forall x \in G,~  x^{-1} \times x = x \times x^{-1} = 1$
 
 圏論っぽく書くと次の通り.
-ただしここで登場する対象はすべて対象で射は写像.
+ただしここで登場する対象はすべて集合で射は写像.
 
 圏の構造とは, つぎの3つの射のこと.
 
-![](https://uc81450633ca547061fd53097749.previews.dropboxusercontent.com/p/thumb/ABXzEwrB2eA9KxksKyyJMyMSfJ0042pwUeixJB2LZbSOPh1mlqbpzNj5IIkKLnEI-pBbpB8s_NYzYDX6ByzICHyqbbkYzIApLOr4dTJbktmYqoXa3ievRhUucfhHEDZYO_oH5UL4q1QXApkFda7GxjiOIaggI9YwTkgekJOaPCjAIzzgqCV8QFkvKJkz1XJUpdLAFMXERsptNQgRPIdpmJzAptx4UImNu40b7bwLKr87undlLkUsEF-LOLd37qbGpyD25ktxkRngws8L2JuyjL-MFAcMJXqqKwR-9jA_kQhcHD0nn8p5JkV2Y09dz0pogXhgR5ZMdntda61aDgGueSfN8aXWuoViceyvD9mNB1Tym4iXqWVh_feZIfjalhWaTsU/p.jpeg)
+![](https://i.imgur.com/0skm8O8.jpg)
 
 ここで満たすべき性質は次の図式が可換であること.
 
-![](https://uc8b7c825e61f3ea94a4338879ce.previews.dropboxusercontent.com/p/thumb/ABWw3WhBmb9vH2NDBExFD_t4C0CCqylBNOQ1U3DoM0UhCrYtSK-k2SpMYdAkF9t2mIYD6mHm8_1t12fL7TF7APOJ14YqZ8BpXAuY8rU0PtJii1v7KKi6gy8hBmQs4_3ljTUHcndUaxEsSZKLslXMXz7kSFt7P4d3ImjFhpnTC0DXf1ZdHGHnRST3HN7RmjhxdMHWKCed2zCnXCDrbxaF7wVIaPuAmFZ8Dh49Zm7IVxsjCBYgvcpex2wsQ-tO1iKxd4kC6ga0o9FR3Jn5yaZlw48tEsJw7oJ_2-i-HO2sMWq_Aw8lGEESKU9oZEKklxRgKlH_mbdyQd431wVCyjLW1aOPRhEUIu02CDatL3lnhm_xp_bLBmeYcHqEF6sOlFjNm1o/p.jpeg)
+![](https://i.imgur.com/jpQs9nu.jpg)
 
-![](https://uca2ae819ab5d22ef1c61803ec2f.previews.dropboxusercontent.com/p/thumb/ABW5zlL5gyW3tMNc5lsjQXA2e2yWRtzApxjYvOcUl_yBDVeMvdLEnJx0dWmeVzslJ0GSZcDBfFK7ngOr411Ng8dlmeszY9hLSKgdhLbM0ydq2lfpF9IEW054K9zr4mUvJj0dhQW2x-hb9vbGsWUSmsXkr_1xrr73dDdlNBe7cCIBLzMmNW3CM_ycq0HCpV3vlYYbCvEr1Tk89l9ZWcvvtzaNQpoOIgxQFWwmFZeq3PZ_hEtSIuBY_ROmED4vskLvRrFAIGZxuoPRQdKG2MgvExdrFmI5OR3RUiItuMNiO32q0cO4zMDnlvxMsXjCIHOYncGRSqsWeerUiMU_hsfQbYw7Ks_HZGxN9VAZg3qel9uIUqc9QfASZ7koc6LpY1GlUjM/p.jpeg)
+![](https://i.imgur.com/N8htvdz.jpg)
 
-![](https://uc100b466de412af28071148e9eb.previews.dropboxusercontent.com/p/thumb/ABV2HZAJkE_yKB_XBWZtS97yj-NKKLMJdZbPxsIqPUuUPo_P0YJGaEqgZJ4uPODx8WtHWINNDO9ItWWBqzT9sFT12khoTdrLZXnqAcCamVpNyt_FqjIGNDIt5Y_Qi0PxLifq8dgpVqyLqcEhIm7JSyey_4JUyeR4E-tDWBk-1oD8JoWxIwD9C9bDSv0WgWQlhRXMMCViWnuSNmX85izsTlOtKZA29DrKfw1N5xKJDQpc9pM3RICDxuUNrwVNwkJUhb3eRBR_o2s6iIc43lVy2lZH8Jlrjt7jEDliVXXja09VQK01n9Va5HPAZYL9g1l1J11v-Q2f-rpOsMN7iuMSgbEdNULynrZ7ZOxMtCAOJSemLiu2nEgPMxkIU33ybJDcbOE/p.jpeg)
+![](https://i.imgur.com/f4Op9Kt.jpg)
 
 同じことだがストリング図で書くと次の通り（見やすい！）.
 ただし下三角は単位元.
 
-![](https://ucfd310b2c0654af61f8a57c23aa.previews.dropboxusercontent.com/p/thumb/ABXHoChqiWDMxf9-dG0CE3FXWa_PeGUs8qHWIT84AfcAvIqJ5lkreXDGng3t1CPVmM2NRU92MDSbp40o8Ey4Mg2Z_OIDdVI-ZVWZFDnWiu2DmhEgeJN79Y8IjblPJeuO5jemwLgHifPC_nCCxpOiEE2U0jZYeBBQciFYCOdFD5MvDqe61WwzlCy7zUhfvBx9bcryxF_X_XU-qiNzUdo3Ejg50WXrzh7ezflUoawP3naQ7BujW24xNaq-WC7IuffYXr6OypgHHhXJHprge2klB3gnPPK8tnW0ME5gyju_B3YsiVLF9sQ4PP5oTjB9AOPIs4PB_UjfdYn_M5sRFdT4nCScBvOvmojJHIAOGfbll2af-txpjR1zsZS5Q0p1IWbGtKc/p.jpeg)
+![](https://i.imgur.com/EdhnDr7.jpg)
 
 ### 群の準同型
 
@@ -65,11 +65,13 @@ $$f \colon G \to H$$
     - $1 \in G$ を $1 \in H$ に写す
 - homo2) $f(xy) = f(x) f(y)$
     - 掛け算してから $f$ するのと, $f$ してから掛け算するのは等しい
+- homo3) $f(x^{-1}) = (f(x))^{-1}$
+    - 逆元を写したものは, 写してから逆元を取ったものに等しい
 
 同じことであるが,
 せっかく先程群の構造を圏論っぽく書いたので, それに揃えたバージョンも書くと次の図式が可換であることと言い換えられる.
 
-![](https://ucebd461f8d3bbde4e36aaf20f5f.previews.dropboxusercontent.com/p/thumb/ABVAYrN5ZhwT4bVjcu16jM86PY75DmbS7OzijiH_P275GAVaEonBIZaV_mw0apLpnbuU_sGgzT_oLXDPPwjo9xBoYclSX8oM0SUkX12MbmL6y2SzM_JECca585eWQCG7TB_R7MLzZpJmb2zfKMWPzv7MaXfVNGXgNI4t92uXWz2jeKZ-MMDI0Eh7a0pgzSz3DruGexHGR9JGtM8-h-8pHYNaz0aVOE20Ny_6UXaoKkD4OCd_rXMov1Gq97iEMby9GTBiAW2of2wGl_w_asUhz-FqlPJNovnBiIDfzUtAa3npFLH0adNRQ813xZidBAp3boO-uba2MEqO4XU3jyIsJxb3RKY-kulEYLD3_LR4aTy95FuFaAykj32-_IXk1a6CFas/p.jpeg)
+![](https://i.imgur.com/Kd0DQ5l.jpg)
 
 ### 部分群
 
@@ -83,6 +85,8 @@ $$f \colon G \to H$$
 - $\forall x,y \in H ,~ \mu(x,y) \in H$
     - ここで $\mu$ は $G$ の演算
     - 「演算について閉じている」と表現する
+- $\forall x \in H ,~ \nu(x) \in H$
+    - ここで $\nu$ は $G$ の逆元
 
 ### 準同型の核と像
 
@@ -99,15 +103,24 @@ $$\im{f} := \{ f(g) \mid g \in G \}$$
 は集合としては自明だが, 実は群としても部分群になっている.
 準同型という性質から実はほとんど自明だが, 群だけは丁寧にやろう.
 
+核について,
+
 - $1 \in \ker f$
     - $f$ が準同型なので $f(1) = 1$ であることと $\ker f$ の定義から
 - $x,y \in \ker f \implies xy \ker f$
     - $f(xy) = f(x) f(y) = 1 \times 1 = 1$
+- $x \in \ker f \implies x^{-1} \in \ker f$
+    - $f(x) = 1 \implies f(x^{-1}) = (f(x))^{-1} = (1)^{-1} = 1$
+
+像について,
+
 - $1 \in \im f$
     - やはり $f(1)=1$ なので
 - $x',y' \in \im f \implies x'y' \in \im f$
     - $f$ の像にあるということは, ある $x,y \in G$ があって $x=f(x), y'=f(x)$
     - $x'y' = f(x)f(y)=f(xy)$ より $x'y' \in \im f$
+- $x' \in \im f \implies x'^{-1} \in \im f$
+    - $\exists x \in G, f(x)=x' \implies f(x^{-1}) = x'^{-1}$
 
 ### 商群
 
@@ -197,7 +210,7 @@ $$G / \ker f \simeq \im f$$
 $G$ から商群 $G/\ker f$ への自然な射影を $\pi$ と書くと,
 準同型定理とは次を言っている.
 
-![](https://uc9f701c3635937a393fabc6f72a.previews.dropboxusercontent.com/p/thumb/ABVluSDcl0DHVA98r8stp3mqiwreDLB1cqKxM9DkSlvN0rCEDIlH9ELzUQ4Nyo1_VkQG2lMrgXx5TptSISR_pn0-C4eTEVXhFD59pIZQwsIhU1ejAZ0CrYb_crQkqbVGtOLy2lPewawEq1-UIiO0zgREvZWV5vmZmOa-0TVh4sFQaWJqOXAA1jN3Z5wK3HMX2ncqxMDXNsUzsvbj9jVKVgMYpfylZoEWKOHVlcI1lT_OwD9inmNR3_3I8J7Pw3ick0zxEGD7YpivNA_LWCU2qq0FOqD7clhRooSsigAifpAXNuD6FRsYK5QOBLJPxY_l7E-WO8WLWFJXgo4xfkBNTuumQJd2PDQvHiz5KuJct2KeN6TO3VjbQ0T84I3aOFQMKb8/p.jpeg)
+![](https://i.imgur.com/knrgNDR.jpg)
 
 ### 準同型の単射性
 
@@ -252,16 +265,16 @@ $$f(g) = f(g') \iff gg'^{-1} \in \ker f$$
 
 というわけで, $R$ に加法群 $(R,+,0)$ という構造と, $(R,\times,1)$ というモノイドの構造を併せて入れた.
 
-![](https://uce312d37aac3e3c2902c01625df.previews.dropboxusercontent.com/p/thumb/ABXbuSWUTTOsaJPNgNRjcs6979oHNQaAz-j98YEiqdeXWY4NhAg0oDThBcSmnBKb3pju0JQj80KYNkW7sfwMm5Ie7EFCM1EIw8Y6sf8C7fXhqIplDWjcaW4IvS5jC_RLyW9wnwf3roe9Uh6TQzzfBhLcF2hIDtNZAagQ978YRy3ICes70CkltW3zP23TwKn_gHXZPjAtMdgptyEWEfBUGrno3wkHnlAQ3R3jSCNVZQrS8PkkeihAK28phMbFK-LPCIFcv5g0DjMD2QoO8GvttCNh2T4KxTfLH1ux9Y1LNNYF8LuLl0cfQ17Eea6rE4hvLJJCt2bFvvL4BUtND_RqqmQtYUASHmG9ZUizHTr1Ff-t2J_ZWxzEO7dTW1oQSjXV5fA/p.jpeg)
+![](https://i.imgur.com/7Dlrukb.jpg)
 
 ここにさらに $(+,\times)$ の分配則を要請する.
 
 - $(x+y) \times z = xz + yz$
 - $x \times (y+z) = xy + xz$
 
-以上を満たす $(R,+,\times)$ を **環** という.
+![](https://i.imgur.com/5WzeuqP.jpg)
 
-![](https://uc99d893d2cfa436766cf55be18f.previews.dropboxusercontent.com/p/thumb/ABXdZmybTUFhVZgKEcxlq9kSiOOH5Jraecdq1z_e_cvHud2LqfBXnnIz7yI63mdbOnLqbtkwFmaIu4OapOQD6LrQdlLsBFSSQp1mFgY_CtkrLXyp6rcsb8yyUmDfC565edSA1jmdp7F_CiRN0OrvJSCje0iOopUFU09yHSPPwbiSqT50_JJoqes9JUskjUngOjls6WgC4btynybDu5sMrK140lINwTBK24z3054tprvi2jJ1g8N4Q-Vik99KR9a4u_Jvvv2yQOOjF-_vWtTmkCap0iPFkLXAgfrmEagv4ysQoPMzgQFwOIMEqmiR3CBZpLxaGejhjInvXv4x7yf8mMeYockBWo4zRqt4Xmkvtobf24kkqtvxSzM72h554lBKpSI/p.jpeg)
+以上を満たす $(R,+,\times)$ を **環** という.
 
 ### 0倍について
 
@@ -286,7 +299,7 @@ $$x \times 0 = 0 \times x = 0$$
 2つの環 $R,S$ の間の写像 $\varphi \colon R \to S$ が準同型であるとは,
 やはりすべての構造が保たれること.
 
-![](https://ucbf1db9752215c96683e9f7c555.previews.dropboxusercontent.com/p/thumb/ABWlG8TAfQdTBYq6myxt4beUgccPjYRKdlwAUDd0B-H_NPxyAA5Wn1XXwbNh4kZLESFk9Kf1V5KGFLSe0U9_5UYCZDNv-rH7DlyocHeivy6dGZdC2LiOreht4mH6O5VSZ6mjbtz8Hq0GoMKJN3E2__kq1liAb8I8cu-QAtvEWpXpGMi6NyM5VnGPQvtiKUg7kfW8yjszfKlS51E2Dyk7Ore5uRxeECrWGnblRLzzE7ak19TTUAKOWlddmV7cY53g62uEiTS1o-eLnTM3ZLO742AkGBX5lodMsLRNCZ_leuG7RUJ44ULpH0AFENfW_ZCyZmZ_4NJ1KKVSnC-OWNoxpGv-pM89GW4iN81GzQB7U8R0OhUWq0nKWwwFElNF4RKF6gk/p.jpeg)
+![](https://i.imgur.com/z6Al47F.jpg)
 
 目新しさはない.
 
@@ -404,7 +417,7 @@ $$(x,v) \mapsto xv$$
 これに加えて作用も保っていないといけない.
 次が可換であればよい.
 
-![](https://uc2b1a57de40887ee1e156b25409.previews.dropboxusercontent.com/p/thumb/ABVc2Hc0qbLn6PqzNDvBszztiA7RgECAy4831XcbFLC9f8vqk3Qf_7xohPffM1ijOigsmdpcMzchV3PIQ6ix-DVj0TodUamXb2IGM6rWYpBgFGb8oh0tHkJOdfRKBTnSnK_pVBmWbmlIQAaNM5zrs4MUSfaCzX4aU7Vp7v1_ECnzZw2noEBhUIZkd0i8mEEByGoHTNcxXYAtR4XbnPHyrtMoe5Am_8OHk_KEq7-Ckob6-UaaRKWjj6OY17g_VCdezlhjSWU7r4Hsa1sHxJsLQwDOTgHPzq8ABPhUwawu6x-IXIIbgp-U6f9unYpNJRrzlyJLPEH2WQRpZXMJRiZCTBN_wzBImGWyfGGMYzAMcpoROU9wcEqSJ9R8ppfEPBXrPJU/p.jpeg)
+![](https://i.imgur.com/ms3AJsj.jpg)
 
 ### 部分加群
 

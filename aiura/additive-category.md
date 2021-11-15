@@ -3,7 +3,9 @@
 % 圏 代数
 
 清水勇二による「圏と加群」の p.146 あたりの話.
-初版第一刷を読んでるが, 記号の誤りが激しい（後述するように直積と直和が実は同値な圏の話ではあるのだが, 記号は一貫してほしいものだ）.
+初版第一刷を読んでるが, 記号の誤りが激しく読解しづらい.
+後述するように実は直積と直和が同値な圏の話をしているのでその辺でごっちゃになっているのだろうが,
+記号が突然変わるのはやめて頂きたい.
 
 また nLab の次のページでカバーされている.
 
@@ -25,7 +27,7 @@
 同様に直和は入射を伴ってこれを $\iota_1, \iota_2$ と書く.
 また, それぞれは射 $f,g$ から自然に $f \times g$, $f \sqcup g$ を導くが, これらは次のことを言う.
 
-![](https://uc8d450052deb9479734c4161562.previews.dropboxusercontent.com/p/thumb/ABVU3kEOVP799PWQQVcMCBXHjkuK3_YHAcX0QH4MwXCRrvVuvlrFll4J7O90Sl_9JGC9uU6B273TScJgMPx1fhx4uwsagbQCx7WetKoRIDRBg60KS8JJaweNZaCMntzUsVOQepwL1WJ8LGn8dGh2UhcmMr9Cwrzk4iV6CDGL2fBD9G2bWA26Ph7paSyvEUpVaciGza5cmifYRSSPm9PpdIWzOa26zWJ1vjGqeq4F0mj7qOKsC_rQa_j4ZWdtf67qPIXWqQrjhDEpkayK_sB1aBJ-Vwrporz-ZXSuoOlOkBM3Y2Hyy3BRnz5n2JUV6ZULOKX6g4tRj5Z762pyebuT-xr0gMGboIy0wNcwqAveJFk84-nmEXNH1H_nxtSz5stdehY/p.jpeg)
+![](https://i.imgur.com/NGeQgll.jpg)
 
 ここで登場する群はすべて加法に関する群で, 演算を $+$, 単位元を $0$ とする.
 射の合成は普通に $f \circ g$ などとも書くが,
@@ -40,7 +42,7 @@ $\def\C{\mathcal C}$
 直積及び直和が存在する圏において,
 $X = X = X$ という図式を $X \times X$ 及び $X \sqcup X$ の普遍性に当てはめるだけで次のような2つの射が作れる.
 
-![](https://uc8f3e4e523307de852a0b1e5bfd.previews.dropboxusercontent.com/p/thumb/ABUmtl413VT3cHDCj3K661T4MFbQ-mdJ6jMus6zUJ20CjUtfaguroN-B-RmHa5kCAFrExCL_0374ME6Hkl2S59j2dZnLKBk98qrdlyPDWppf7iWpCu1Fw5hMTcmgWEWjGhe4n1whDCaYDo-5GyT-FM_vWTPyQfQbOy-bKlXxU8F_dKfF34JZpb7ylBWk2epg6BMq1ZwJgD62G6sw6opLsw809ABy32iuInIqQc8kMqW_6E9vOHoPmNab_l5xl_xgHWLKJ25bUWbAY4zdD9X-c0FWCy29c0yuVWQHZsORZidIQzF1RF_xn1JGj7Xy1C1BOQEIS2D71e0EH-_RvkA7jKbAgcPlq7uormiMMBqrNiErp4-uJtgbvNJurOKbTHpUeNg/p.jpeg)
+![](https://i.imgur.com/iMMMjek.jpg)
 
 各対象 $X$ について, 次の射が存在する:
 
@@ -61,8 +63,8 @@ $X = X = X$ という図式を $X \times X$ 及び $X \sqcup X$ の普遍性に�
 が成り立っている.
 次は自然に導かれる.
 
-- $f0=0$
-- $0f=0$
+- $f \circ 0 = 0$
+- $0 \circ f = 0$
 
 以上が成り立つとき, $\C$ を **前加法圏** という.
 
@@ -90,19 +92,19 @@ $X = X = X$ という図式を $X \times X$ 及び $X \sqcup X$ の普遍性に�
 - 終対象 $1$
 - 直積 $X \times Y$
 
-を持つときに, $1$ がゼロ対象であり, $X \times Y \simeq X \sqcup Y$ が成り立つことで加法圏の要件を満たす.
+を持つとき $\C$ は加法圏である.
 
 ### 証明
 
 #### 概略
 
-$X \times Y \simeq X \sqcup Y$ だけ示せば良い.
-これには適切な入射 $\iota$ を以て $X \times Y$ が確かに直和であることを確認すればよい.
+$X \times Y \simeq X \sqcup Y$ が成り立つことを示す.
+すなわち, 適切な入射 $\iota$ を以て $X \times Y$ が確かに直和であることを確認する.
 
-これがすでに示されたとき,
-終対象 $1$ について
+このことが既に示されたとき,
+終対象 $1$ については
 $1 \simeq 1 \times 1 \simeq 1 \sqcup 1 \simeq 0$
-となって始対象であることは簡単に分かる.
+となってこれが始対象であり, ゼロ対象である.
 
 #### 入射 $\iota$ の構成
 
@@ -119,7 +121,7 @@ $1 \simeq 1 \times 1 \simeq 1 \sqcup 1 \simeq 0$
 ここで $\iota_1$ の右辺に登場する $1$ は $X_1 \to X_1$ なる恒等射のことで,
 $0$ は群 $\C(X_1, X_2)$ の単位元であることに注意.
 
-![](https://ucfb0f4f8df90507aa3030e2a55a.previews.dropboxusercontent.com/p/thumb/ABV8uOu1zhn8PvkTgaBnFNKELj4_MH-HZjD6e3asN8CLD6TP7f-xwtywq1FOxvb_qN-QoV1r1euQKxqXInypApp0qBEQ3YesBu7NDWazK4o4XvqvOJjSAurAMhbDhDSdNX2tJ1xB8kOlk1Bvc0qiuGTnfQ3H_neS2no14AH6GjrNaEvseFIulw9aOh1Pegej_vquc0thSfBUnxzHDd3icyJSCywEz4xOPvHQNkHznmDR1EPCw4K6cjBHwp9XPUC8R77fLi__tO5dRn7mwMmu1ClPnHuaQ3fClL2ztSoZilVnBmk4Mxg6jmGu4wgHRXYn0ANzXOEkBhKacC5UOZtcr3FzizzADfA3a0cv4cjalO9_hZAkMFOILj4k7rZbkocA6sk/p.jpeg)
+![](https://i.imgur.com/R9lZaRb.jpg)
 
 #### 射影と入射が満たす性質
 
@@ -132,7 +134,6 @@ $\pi_1, \pi_2$ 及び上記で作った $\iota_1, \iota_2$ について確認し
 - $\iota_1 \pi_1 + \iota_2 \pi_2 = 1$
 
 最初の4つについては, クロネッカーのデルタを使って,
-従って $1$ がゼロ対象となる.
 $$\pi_i \iota_j = \delta_{i,j}$$
 なんて書くこともできる.
 さて $\iota_j$ の定義を入れれば,
@@ -143,7 +144,7 @@ $$\pi_1 (f \times g) = f \pi_1$$
 が得られる.
 これを代入して,
 $$\pi_1 (f \times g) \Delta = f \pi_1 \Delta = f 1 = f$$
-$\pi_1 \Delta=1$ も「対角射と余対角射」の章に書いた.
+$\pi_1 \Delta=1$ も「対角射と余対角射」の章に書いたように $\Delta$ の定義から明らか.
 
 5つ目については左辺から $\pi_1, \pi_2$ を掛けると,
 
@@ -157,11 +158,11 @@ $\pi_1 \Delta=1$ も「対角射と余対角射」の章に書いた.
 これで実は $(X_1 \times X_2, \iota_1, \iota_2)$ が $X_1, X_2$ の直和になっていることを見ていく.
 直和の定義は下を可換にするような射 $!$ が存在して, そしてそれが唯一であることだった.
 
-![](https://uc80a2fd225a99447bba47c23827.previews.dropboxusercontent.com/p/thumb/ABWn5WMHT-If6RZJiqqmSR6FusyGDlSYQhO-Nb8zhbj26OHYBZuCHuIyucuR1fA-IhljSRl-KBnugGAMTXc-MFZyl8fVOMX2JFGop25SdCmDhLVh-ahJWNhumfMnzd_2SI_YK2HdpaaAzdaaL_93NrjSQeX-AhKC4smkVdJcrujZLp4ftlaBmBf56KuoDhK_mlUpotbbrTEdyl8hBS0yFk-JYL_PUxbWZMrm0hIbmAeti3gZncOVqoVGJtPamuSbsQQYbV7L5S0va68xxgcq_T3HHNFQXPAfPjhJD44Ers2Gw7QrUGZFek__DR3JKoSEudlSBkVrbaTzSq0kT1DbnClOrf4F94TR_N05xZ9ApZ7SxjDyvUm7gAfZzZyNaX7gqTM/p.jpeg)
+![](https://i.imgur.com/0W787eR.jpg)
 
-$\iota_1 \pi_1 + \iota_2 \pi_2 = 1$ という等式があったが, これの $\iota$ を $u$ に取り替えれば
+$\iota_1 \pi_1 + \iota_2 \pi_2 = 1$ という等式があったが, これの $\iota$ を $u$ に取り替えて得られる射
 $$! = u_1 \pi_1 + u_2 \pi_2$$
-これでよい.
+これがそのような唯一射になる.
 
 - 可換であること
     - $! \iota_1 = u_1 \pi_1 \iota_1 + u_2 \pi_2 \iota_1 = u_1 \circ 1 + u_2 \circ 0 = u_1$

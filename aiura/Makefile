@@ -14,6 +14,8 @@ new:
 edit:
 	bash script/edit.sh
 
+e: edit
+
 git: index
 	git add ./
 	git commit -a -m "aiura/ `date`"

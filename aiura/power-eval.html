@@ -2,11 +2,11 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <meta name="description" content="概要/関連/諸定義/関手 ^A冪と eval の普遍性/例 (Sets)/" />
+  <meta name="description" content="INDEX/概要/関連/諸定義/関手 ^A冪と eval の普遍性/例. 集合の圏/" />
   <meta property="og:url" content="http://cympfh.cc/taglibro">
   <meta property="og:type" content="article">
   <meta property="og:title" content="対象の冪と eval 射" />
-  <meta property="og:description" content="概要/関連/諸定義/関手 ^A冪と eval の普遍性/例 (Sets)/" />
+  <meta property="og:description" content="INDEX/概要/関連/諸定義/関手 ^A冪と eval の普遍性/例. 集合の圏/" />
   <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@cympfh" />
@@ -34,66 +34,67 @@
 <div class="is-pulled-right">
 <p><a class='tag is-red' href=index.html#圏論>圏論</a></p>
 </div>
+<p><span class="math inline">\(\def\C{\mathscr{C}}\)</span> <span class="math inline">\(\def\transpose#1{\overline{#1}}\)</span> <span class="math inline">\(\def\Sets\{\mathcal{Set}}\)</span></p>
+<h2 id="index">INDEX</h2>
+<div id="toc">
+
+</div>
 <h2 id="概要">概要</h2>
-<p>対象の冪を定義し eval 射との関係を見る.</p>
+<p>対象の冪（冪対象）を定義し eval 射との関係を見る.</p>
 <h2 id="関連">関連</h2>
-<p>昔に層の場合の冪や eval 射をやった: <a href="sheaf-eval.html">sheaf-eval</a>.</p>
+<ul>
+<li>層における冪と eval 射の例: <a href="sheaf-eval" class="uri">sheaf-eval</a>.</li>
+</ul>
 <h2 id="諸定義">諸定義</h2>
 <h3 id="対象の冪">対象の冪</h3>
-<p>随伴を使って冪を定義をする.</p>
-<p>圏 <span class="math inline">\(\mathcal C\)</span> とその対象 <span class="math inline">\(A \in \mathcal C\)</span> について, <span class="math inline">\(- \times A\)</span> なる関手 <span class="math inline">\(\mathcal C \to \mathcal C\)</span> を左随伴にするような関手 <span class="math display">\[P^A \colon \mathcal C \to \mathcal C\]</span> があるとする. このとき <span class="math inline">\(B \in A\)</span> について <span class="math inline">\(P^A(B)\)</span> を <span class="math inline">\(B^A\)</span> と書いて, これを <strong>冪</strong> (冪対象) と呼ぶ.</p>
-<blockquote>
-<p>このように <span class="math inline">\(-\)</span> を引数のためのプレースホルダーとして用いて無名関数を表現している. つまり <span class="math inline">\(- \times A\)</span> というのは引数を1つ取って <span class="math inline">\(-\)</span> のところに入れるという関数である. Scala で言うアンダースコア ( <code>_</code> ). だから例えば上で出てきた <span class="math inline">\((- \times A)\)</span> というのは, <span class="math inline">\(B\)</span> を受け取って <span class="math inline">\(B \times A\)</span> を返すモノである. ただし射については註意が必要で射 <span class="math inline">\(f\)</span> を <span class="math inline">\(f \times 1_A\)</span> に写す.</p>
-</blockquote>
-<p>関手 <span class="math inline">\(P^A\)</span> のことはこれ以降 <span class="math inline">\((-)^A\)</span> と書く. <span class="math display">\[- \times A \dashv (-)^A\]</span></p>
-<p>以上が冪の定義.</p>
-<h4 id="transpose">transpose</h4>
-<p>ところで随伴 <span class="math inline">\((\dashv)\)</span> というのは, 任意の <span class="math inline">\(X,Y \in \mathcal C\)</span> について次のような同型が自然に成り立つことだった. <span class="math display">\[\mathcal C(X \times A, Y) \simeq \mathcal C(X, Y^A)\]</span></p>
-<p>この対応を <span class="math inline">\(\hat{ }\)</span> で表すことにする. 即ち左辺から取った射 <span class="math inline">\(f\)</span> に右辺で対応するものを <span class="math inline">\(\hat{f}\)</span> と書くし, 右辺で取った <span class="math inline">\(g\)</span> に左辺で対応するものを <span class="math inline">\(\hat{g}\)</span> と書く. 特に <span class="math inline">\(\hat{\hat{f}} = f\)</span> であることに註意 (一対一対応なので).</p>
-<p>この <span class="math inline">\(\hat{f}\)</span> のことを <span class="math inline">\(f\)</span> の <strong>transpose</strong> と呼ぶそう.</p>
+<p>随伴を使って冪の定義をする.</p>
+<p>圏 <span class="math inline">\(\C\)</span> とその対象 <span class="math inline">\(A \in \C\)</span> があるとき, <span class="math display">\[T \colon \C \to \C\]</span> <span class="math display">\[T(X) = X \times A\]</span> なる関手を左随伴にするような関手 <span class="math inline">\(P^A\)</span> があるとする. <span class="math display">\[\C(X \times A, Y) \simeq \C(X, P^A(Y))\]</span></p>
+<p>ところで関手 <span class="math inline">\(T\)</span> について引数部分をプレースホルダー (&quot;<span class="math inline">\(-\)</span>&quot;) で置き換えることで, 単に <span class="math inline">\((- \times A)\)</span> と書いたりする. また <span class="math inline">\(P^A(Y)\)</span> のことを <span class="math inline">\(Y^A\)</span> と書くことにすれば, 関手 <span class="math inline">\(P^A\)</span> は <span class="math inline">\(Y \mapsto Y^A\)</span> という形を取るから, <span class="math inline">\((-)^A\)</span> と書いても良さそう. <span class="math display">\[(- \times A) \dashv (-)^A\]</span></p>
+<p>以上のとき, <span class="math inline">\(P^A(B) = B^A\)</span> のことを <strong>冪対象</strong> という.</p>
+<h3 id="transpose">transpose</h3>
+<p>今, 冪 <span class="math inline">\((-)^A\)</span> があるとする. すなわち次の自然同型がある. <span class="math display">\[\C(X \times A, Y) \simeq \C(X, Y^A)\]</span> これはつまり, 左右は射の集合なわけだが, この2つには一対一の対応があることを言っている. その対応を上付き線で表すことにする. 例えば左から取ってきた射 <span class="math inline">\(f\)</span> に対応する右での射を <span class="math inline">\(\transpose{f}\)</span> と書く. 右から取ってきた射 <span class="math inline">\(g\)</span> に対応する左での射を <span class="math inline">\(\transpose{g}\)</span> と書く. 一対一対応であることから <span class="math inline">\(\transpose{\transpose{f}} = f\)</span> である. <span class="math inline">\(\transpose{f}\)</span> のことを <span class="math inline">\(f\)</span> の <strong>transpose</strong> と呼ぶ.</p>
 <h3 id="eval-射">eval 射</h3>
-<p>随伴性より <span class="math display">\[\mathcal C(Y^A \times A, Y) \simeq \mathcal C(Y^A, Y^A)\]</span> である. 右辺には <span class="math inline">\(1_{Y^A}\)</span> があるのでこれの左辺で対応する射を <span class="math display">\[\def\eval{\mathrm{eval}}\eval \colon Y^A \times A \to Y\]</span> <span class="math display">\[\eval = \hat{1}\]</span> と定義する.</p>
-<blockquote>
-<p>Sets とかで言えば, 要は eval とは関数適用 (apply) のことに他ならない. 冪対象 <span class="math inline">\(B^A\)</span> というのは <span class="math inline">\(A\)</span> から <span class="math inline">\(B\)</span> への射全体のこと.</p>
-</blockquote>
+<p>今までの <span class="math inline">\(X\)</span> に <span class="math inline">\(Y^A\)</span> を代入することで, <span class="math display">\[\C(Y^A \times A, Y) \simeq \C(Y^A, Y^A)\]</span> を得る. このとき, 右辺は自分自身への射集合なので, 恒等射 <span class="math inline">\(1\)</span> を含む. この対応を取って, <span class="math display">\[\def\eval{\mathrm{eval}}\eval \colon Y^A \times A \to Y\]</span> <span class="math display">\[\eval = \transpose{1}\]</span> と定義する.</p>
 <h2 id="関手--a">関手 <span class="math inline">\((-)^A\)</span></h2>
-<p>ところで <span class="math inline">\((-)^A\)</span> がどのような関手であるかを見ておく. つまり射をどのように写すかをまだ見ていないがこれは随伴性から自然に導かれる.</p>
-<p><span class="math inline">\(g \colon Y \to Z\)</span> について, <span class="math inline">\(g^A \colon Y^A \to Z^A\)</span> がどのようなものであるかは次の可換図からわかる.</p>
+<p>ところで <span class="math inline">\((-)^A\)</span> がどのような関手であるかを見ておく. というのも射の写し方をまだ見ていなかったが, これは随伴性から自然に導かれる.</p>
+<p><span class="math inline">\(g \colon Y \to Z\)</span> を写して得られる射 <span class="math inline">\(g^A \colon Y^A \to Z^A\)</span> がどのようなもの（であるべき）かは次の可換図式からわかる.</p>
 <p><span class="math inline">\(\require{AMScd}\)</span> <span class="math display">\[\begin{CD}
-\mathcal C(Y^A \times A, Y) \ni \eval @&gt;{\hat{ }}&gt;&gt; \mathcal C(Y^A, Y^A) \ni 1 \\
-@VVV @VVV \\
-\mathcal C(Y^A \times A, Z) @&gt;{\hat{ }}&gt;&gt; \mathcal C(Y^A, Z^A)
-\end{CD}\]</span> すなわち <span class="math display">\[g^A = \widehat{g \circ \eval}\]</span> と写すことが導かれる.</p>
+\C(Y^A \times A, Y) @&gt;{\mathrm{transpose}}&gt;&gt; \C(Y^A, Y^A) \\
+@V(g \circ -)VV @VV(g^A \circ -)V \\
+\C(Y^A \times A, Z) @&gt;{\mathrm{transpose}}&gt;&gt; \C(Y^A, Z^A)
+\end{CD}\]</span></p>
+<p>ここで左上から <span class="math inline">\(\eval \in \C(Y^A \times A, Y)\)</span> を選んで, 右下への写し方を見ると, <span class="math display">\[g^A \circ \transpose{\eval} = \transpose{g \circ \eval}\]</span> <span class="math inline">\(\transpose{\eval}\)</span> は <span class="math inline">\(1\)</span> だったから結局, <span class="math display">\[g^A = \transpose{g \circ \eval}\]</span> と写すことが導かれる.</p>
 <h2 id="冪と-eval-の普遍性">冪と eval の普遍性</h2>
-<p><span class="math display">\[\eval \colon Y^A \times A \to Y\]</span> は次のような普遍性を持っている. すなわち, <span class="math display">\[\forall f \colon X \times A \to Y,
+<p><span class="math inline">\(\eval \colon Y^A \times A \to Y\)</span> は次のような普遍性を持っている. すなわち, <span class="math display">\[\forall f \colon X \times A \to Y ,~
 \exists ! f&#39; \colon X \to Y^A,\]</span> <span class="math display">\[\begin{CD}
 X \times A @= X \times A \\
 @Vf&#39; \times 1VV @VfVV \\
 Y^A \times A @&gt;\eval&gt;&gt; Y
 \end{CD}\]</span></p>
-<p>もちろん, この <span class="math inline">\(f&#39;\)</span> は <span class="math inline">\(\hat{f}\)</span> のことである.</p>
+<p>もちろん, この <span class="math inline">\(f&#39;\)</span> は <span class="math inline">\(\transpose{f}\)</span> のことである.</p>
 <h4 id="証明">証明</h4>
-<p><span class="math inline">\(f\)</span> について随伴性より次の可換図が成り立つ: <span class="math display">\[\begin{CD}
-\mathcal C(Y^A, Y^A) @&gt;&gt;&gt; \mathcal C(Y^A \times A, Y) \\
-@V\hat{f} \circ -VV @V(\hat{f} \times 1) \circ -VV \\
-\mathcal C(X, Y^A) @&gt;&gt;&gt; \mathcal C(X \times A, Y)
-\end{CD}\]</span> 左上の <span class="math inline">\(1_{Y^A}\)</span> から可換を回せば <span class="math inline">\(\widehat{\hat{f} \circ 1} = (\hat{f} \times 1) \circ \eval\)</span> すなわち <span class="math inline">\(f = (\hat{f} \times 1) \circ \eval\)</span> を得る. ここで二重の transpose は打ち消すことに註意.</p>
-<p>というわけで <span class="math inline">\(f&#39; = \hat{f}\)</span> とすれば先の普遍性の図式は可換になることがわかる. またこのような射が一意であることも随伴性から明らかである. 念の為に書くと, 他の <span class="math inline">\(f&#39;\)</span> についても成立すると仮定したときに <span class="math inline">\(\hat{f&#39;}\)</span> について今の証明と同じ随伴性を確かめると, <span class="math inline">\(f = (f&#39; \times 1) \eval = \hat{f&#39;}\)</span> が出てきて, <span class="math inline">\(\hat{f} = f&#39;\)</span> となる.</p>
-<p>ところで, 逆に, この普遍性を eval と冪の定義としてもよい. (実際, 層の冪なんかはそうやって定義された.) ただし射の対応を与えて適切に <span class="math inline">\((-)^A\)</span> を関手にしないと随伴性は成り立たない. 適切に与えた場合に随伴になるのは自明なので省略. 図式だけ書くと, <span class="math inline">\(g \colon Y \to Z\)</span> について次が可換になれば良い. <span class="math display">\[\begin{CD}
+<p><span class="math inline">\(f \colon X \times A \to Y\)</span> と <span class="math inline">\(\transpose{f} \colon X \to Y^A\)</span> について随伴性より次の可換図が成り立つ: <span class="math display">\[\begin{CD}
+\C(Y^A, Y^A) @&gt;{\mathrm{transpose}}&gt;&gt; \C(Y^A \times A, Y) \\
+@V(- \circ \transpose{f})VV @V(- \circ (\transpose{f} \times 1))VV \\
+\C(X, Y^A) @&gt;{\mathrm{transpose}}&gt;&gt; \C(X \times A, Y)
+\end{CD}\]</span> この図式の左上から恒等射 <span class="math inline">\(1\)</span> を取ってきて, これで可換を回すと, <span class="math display">\[\transpose{\transpose{f}} = \eval \circ (\transpose{f} \times 1)\]</span> を得る. ここで左辺の二重の transpose は打ち消し可能なので, <span class="math display">\[f = \eval \circ (\transpose{f} \times 1)\]</span> となる.</p>
+<p>というわけで <span class="math inline">\(f&#39; = \transpose{f}\)</span> とすれば最初の普遍性の図式が可換になることがわかる. またこのような射が一意であることも随伴性から明らかである. 念の為に書くと, 他の <span class="math inline">\(f&#39;\)</span> についても成立すると仮定したときに <span class="math inline">\(\transpose{f&#39;}\)</span> について今の証明と同じ随伴性を確かめると, <span class="math inline">\(f = (f&#39; \times 1) \eval = \transpose{f&#39;}\)</span> が出てきて, <span class="math inline">\(\transpose{f} = f&#39;\)</span> となる.</p>
+<p>ところで, 逆に, この普遍性を eval と冪の定義としてもよい. (実際, <a href="sheaf-eval">層の冪</a> ではそうやって定義された.) ただし射の対応を与えて適切に <span class="math inline">\((-)^A\)</span> を関手にしないと随伴性は成り立たない. 適切に与えた場合に随伴になるのは自明なので省略. 図式だけ書くと, <span class="math inline">\(g \colon Y \to Z\)</span> について次が可換になれば良い. <span class="math display">\[\begin{CD}
 X \times A @= X \times A \\
-@V\hat{f} \times 1VV @VfVV \\
+@V\transpose{f} \times 1VV @VfVV \\
 Y^A \times A @&gt;\eval&gt;&gt; Y \\
 @Vg^A \times 1VV @VgVV \\
 Z^A \times A @&gt;\eval&gt;&gt; Z
 \end{CD}\]</span></p>
-<p>左の縦の射 <span class="math inline">\((g^A \circ \hat{f}) \times 1 = (g^A \times 1) (\hat{f} \times 1) \colon X \times A \to Z^A \times A\)</span> は, 右の縦の射 <span class="math inline">\(g \circ f \colon X \times A \to Z\)</span> の transpose によって, <span class="math inline">\((g^A \circ \hat{f}) \times 1 = \widehat{gf} \times 1\)</span> と書ける. すなわち <span class="math display">\[g^A \circ \hat{f} = \widehat{gf}.\]</span></p>
+<p>左の縦の射 <span class="math inline">\((g^A \circ \transpose{f}) \times 1 = (g^A \times 1) (\transpose{f} \times 1) \colon X \times A \to Z^A \times A\)</span> は, 右の縦の射 <span class="math inline">\(g \circ f \colon X \times A \to Z\)</span> の transpose によって, <span class="math inline">\((g^A \circ \transpose{f}) \times 1 = \transpose{gf} \times 1\)</span> と書ける. すなわち <span class="math display">\[g^A \circ \transpose{f} = \transpose{gf}.\]</span></p>
 <p>この <span class="math inline">\(f\)</span> に <span class="math inline">\(\eval\)</span> を入れるとさっきのが出てくる</p>
-<h2 id="例-sets">例 (Sets)</h2>
-<p>集合と関数からなる圏 Sets での例を考える. この圏での直積 <span class="math inline">\(\times\)</span> は普通の集合の直積のこと. <span class="math display">\[\def\Sets{\mathrm{Sets}}\Sets(X \times A, Y) \simeq \Sets(X, Y^A)\]</span> この対応はいわゆるカリー化 (左辺から右辺) のこと. すなわち関数 <span class="math inline">\(f \colon X \times A \to Y\)</span> は各 <span class="math inline">\(x \in X\)</span> について, <span class="math display">\[f_x \colon A \to Y\]</span> を定めることができる <span class="math inline">\((f(x,a) = f_x(a))\)</span>. 従って, <span class="math inline">\(Y^A\)</span> というのを <span class="math inline">\(\{ g \mid g : A \to Y \}\)</span> (<span class="math inline">\(A\)</span> から <span class="math inline">\(Y\)</span> への関数全体) と定めれば, <span class="math inline">\(f\)</span> は <span class="math display">\[f_{-} \colon X \to Y^A\]</span> <span class="math display">\[f_{-} \colon x \mapsto f_x\]</span> なる関数と同一視できる.</p>
-<p>これが Sets での冪対象. 次に eval 射を見る.</p>
-<p>まず <span class="math inline">\(1 \in \Sets(Y^A, Y^A)\)</span> という恒等関数を考える. これは <span class="math inline">\(f \colon A \to Y\)</span> なる関数を受け取ったら <span class="math inline">\(f\)</span> を返す. これに対応する関数 <span class="math inline">\(\hat{1} \colon Y^A \times A \to Y\)</span> はさっき定めたことから, <span class="math display">\[\hat{1}(f, a) = \hat{1}_f(a) = f(a)\]</span> <span class="math inline">\(\hat{1}_f = f\)</span> に註意. というわけで <span class="math inline">\(\hat{1}\)</span> というのは関数 <span class="math inline">\(f\)</span> と引数 <span class="math inline">\(a\)</span> を受け取って <span class="math inline">\(f(a)\)</span> を返す関数に過ぎない. これを関数適用 (apply) という.</p>
+<h2 id="例.-集合の圏">例. 集合の圏</h2>
+<p>集合と関数からなる圏 <span class="math inline">\(\Sets\)</span> での例を考える. この圏での直積 <span class="math inline">\(\times\)</span> は普通の集合の直積（デカルト積）のこと. <span class="math display">\[\Sets(X \times A, Y) \simeq \Sets(X, Y^A)\]</span> この対応は <strong>カリー化</strong> (左辺から右辺への対応) として知られている. すなわち関数 <span class="math inline">\(f \colon X \times A \to Y\)</span> は各 <span class="math inline">\(x \in X\)</span> について, <span class="math display">\[f_x \colon A \to Y\]</span> <span class="math display">\[f_x(a) = f(x,a)\]</span> を定めることができる. さらに <span class="math inline">\(Y^A\)</span> を <span class="math inline">\(A\)</span> から <span class="math inline">\(Y\)</span> への関数全体からなる集合 <span class="math display">\[Y^A = \{ g \mid g : A \to Y \}\]</span> と定めれば, <span class="math inline">\(f\)</span> は <span class="math display">\[f_{-} \colon X \to Y^A\]</span> <span class="math display">\[f_{-} \colon x \mapsto f_x\]</span> なる関数と同一視できる. この <span class="math inline">\(f\)</span> と <span class="math inline">\(f_{-}\)</span> との関係が transpose になっている.</p>
+<p>これが <span class="math inline">\(\Sets\)</span> での冪対象. 次に eval 射を見る.</p>
+<p>まず <span class="math inline">\(1 \in \Sets(Y^A, Y^A)\)</span> という恒等関数を考える. <span class="math inline">\(\eval\)</span> はこれに対応する <span class="math inline">\(\transpose{1} \colon Y^A \times A \to Y\)</span>. <span class="math display">\[f_x(a) = f(x,a)\]</span> に, <span class="math inline">\(f_{-}=1, f=\eval\)</span> を代入すると, <span class="math display">\[1_f(a) = \eval(f,a)\]</span> を得る. ここで <span class="math inline">\(1_f = f\)</span> だから結局, <span class="math display">\[\eval(f,a) = f(a)\]</span> となる.</p>
+<p>というわけで <span class="math inline">\(\eval\)</span> は関数 <span class="math inline">\(f\)</span> と引数 <span class="math inline">\(a\)</span> を受け取って <span class="math inline">\(f(a)\)</span> を返す操作を表す. これはふつう関数適用 (apply) と呼ばれる.</p>
 <hr />
-<p>なんで apply 射って呼ばないんだろう.</p>
+<p>&quot;eval 射&quot; よりも &quot;apply 射&quot; の方がしっくりくる.</p>
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.

@@ -2,93 +2,94 @@
 % 2019-02-11 (Mon.)
 % 圏論
 
+$\def\C{\mathscr{C}}$
+$\def\transpose#1{\overline{#1}}$
+$\def\Sets\{\mathcal{Set}}$
+
+## INDEX
+<div id=toc></div>
+
 ## 概要
 
-対象の冪を定義し eval 射との関係を見る.
+対象の冪（冪対象）を定義し eval 射との関係を見る.
 
 ## 関連
 
-昔に層の場合の冪や eval 射をやった: [sheaf-eval](sheaf-eval.html).
+- 層における冪と eval 射の例: [sheaf-eval](sheaf-eval).
 
 ## 諸定義
 
 ### 対象の冪
 
-随伴を使って冪を定義をする.
+随伴を使って冪の定義をする.
 
-圏 $\mathcal C$ とその対象 $A \in \mathcal C$ について,
-$- \times A$
-なる関手 $\mathcal C \to \mathcal C$ を左随伴にするような関手
-$$P^A \colon \mathcal C \to \mathcal C$$
-があるとする.
-このとき
-$B \in A$
-について
-$P^A(B)$
-を
-$B^A$ と書いて, これを **冪** (冪対象) と呼ぶ.
+圏 $\C$ とその対象 $A \in \C$ があるとき,
+$$T \colon \C \to \C$$
+$$T(X) = X \times A$$
+なる関手を左随伴にするような関手 $P^A$ があるとする.
+$$\C(X \times A, Y) \simeq \C(X, P^A(Y))$$
 
-> このように $-$ を引数のためのプレースホルダーとして用いて無名関数を表現している.
-> つまり $- \times A$ というのは引数を1つ取って $-$ のところに入れるという関数である.
-> Scala で言うアンダースコア ( `_` ).
-> だから例えば上で出てきた $(- \times A)$ というのは, $B$ を受け取って $B \times A$ を返すモノである.
-> ただし射については註意が必要で射 $f$ を $f \times 1_A$ に写す.
+ところで関手 $T$ について引数部分をプレースホルダー ("$-$") で置き換えることで,
+単に $(- \times A)$ と書いたりする.
+また $P^A(Y)$ のことを $Y^A$ と書くことにすれば,
+関手 $P^A$ は $Y \mapsto Y^A$ という形を取るから, $(-)^A$ と書いても良さそう.
+$$(- \times A) \dashv (-)^A$$
 
-関手 $P^A$ のことはこれ以降 $(-)^A$ と書く.
-$$- \times A \dashv (-)^A$$
+以上のとき, $P^A(B) = B^A$ のことを
+**冪対象**
+という.
 
-以上が冪の定義.
+### transpose
 
-#### transpose
-
-ところで随伴 $(\dashv)$ というのは,
-任意の $X,Y \in \mathcal C$ について次のような同型が自然に成り立つことだった.
-$$\mathcal C(X \times A, Y) \simeq \mathcal C(X, Y^A)$$
-
-この対応を $\hat{ }$ で表すことにする.
-即ち左辺から取った射 $f$ に右辺で対応するものを $\hat{f}$ と書くし,
-右辺で取った $g$ に左辺で対応するものを $\hat{g}$ と書く.
-特に $\hat{\hat{f}} = f$ であることに註意 (一対一対応なので).
-
-この $\hat{f}$ のことを $f$ の **transpose** と呼ぶそう.
+今, 冪 $(-)^A$ があるとする. すなわち次の自然同型がある.
+$$\C(X \times A, Y) \simeq \C(X, Y^A)$$
+これはつまり,
+左右は射の集合なわけだが, この2つには一対一の対応があることを言っている.
+その対応を上付き線で表すことにする.
+例えば左から取ってきた射 $f$ に対応する右での射を $\transpose{f}$ と書く.
+右から取ってきた射 $g$ に対応する左での射を $\transpose{g}$ と書く.
+一対一対応であることから $\transpose{\transpose{f}} = f$ である.
+$\transpose{f}$ のことを $f$ の **transpose** と呼ぶ.
 
 ### eval 射
 
-随伴性より
-$$\mathcal C(Y^A \times A, Y) \simeq \mathcal C(Y^A, Y^A)$$
-である.
-右辺には $1_{Y^A}$ があるのでこれの左辺で対応する射を
+今までの $X$ に $Y^A$ を代入することで,
+$$\C(Y^A \times A, Y) \simeq \C(Y^A, Y^A)$$
+を得る.
+このとき, 右辺は自分自身への射集合なので, 恒等射 $1$ を含む.
+この対応を取って,
 $$\def\eval{\mathrm{eval}}\eval \colon Y^A \times A \to Y$$
-$$\eval = \hat{1}$$
+$$\eval = \transpose{1}$$
 と定義する.
-
-> Sets とかで言えば, 要は eval とは関数適用 (apply) のことに他ならない.
-> 冪対象 $B^A$ というのは $A$ から $B$ への射全体のこと.
 
 ## 関手 $(-)^A$
 
 ところで $(-)^A$ がどのような関手であるかを見ておく.
-つまり射をどのように写すかをまだ見ていないがこれは随伴性から自然に導かれる.
+というのも射の写し方をまだ見ていなかったが,
+これは随伴性から自然に導かれる.
 
-$g \colon Y \to Z$ について,
-$g^A \colon Y^A \to Z^A$ がどのようなものであるかは次の可換図からわかる.
+$g \colon Y \to Z$ を写して得られる射
+$g^A \colon Y^A \to Z^A$
+がどのようなもの（であるべき）かは次の可換図式からわかる.
 
 $\require{AMScd}$
 $$\begin{CD}
-\mathcal C(Y^A \times A, Y) \ni \eval @>{\hat{ }}>> \mathcal C(Y^A, Y^A) \ni 1 \\
-@VVV @VVV \\
-\mathcal C(Y^A \times A, Z) @>{\hat{ }}>> \mathcal C(Y^A, Z^A)
+\C(Y^A \times A, Y) @>{\mathrm{transpose}}>> \C(Y^A, Y^A) \\
+@V(g \circ -)VV @VV(g^A \circ -)V \\
+\C(Y^A \times A, Z) @>{\mathrm{transpose}}>> \C(Y^A, Z^A)
 \end{CD}$$
-すなわち
-$$g^A = \widehat{g \circ \eval}$$
+
+ここで左上から $\eval \in \C(Y^A \times A, Y)$ を選んで, 右下への写し方を見ると,
+$$g^A \circ \transpose{\eval} = \transpose{g \circ \eval}$$
+$\transpose{\eval}$ は $1$ だったから結局,
+$$g^A = \transpose{g \circ \eval}$$
 と写すことが導かれる.
 
 ## 冪と eval の普遍性
 
-$$\eval \colon Y^A \times A \to Y$$
-は次のような普遍性を持っている.
+$\eval \colon Y^A \times A \to Y$ は次のような普遍性を持っている.
 すなわち,
-$$\forall f \colon X \times A \to Y,
+$$\forall f \colon X \times A \to Y ,~
 \exists ! f' \colon X \to Y^A,$$
 $$\begin{CD}
 X \times A @= X \times A \\
@@ -96,81 +97,90 @@ X \times A @= X \times A \\
 Y^A \times A @>\eval>> Y
 \end{CD}$$
 
-もちろん, この $f'$ は $\hat{f}$ のことである.
+もちろん, この $f'$ は $\transpose{f}$ のことである.
 
 #### 証明
 
-$f$ について随伴性より次の可換図が成り立つ:
+$f \colon X \times A \to Y$
+と
+$\transpose{f} \colon X \to Y^A$
+について随伴性より次の可換図が成り立つ:
 $$\begin{CD}
-\mathcal C(Y^A, Y^A) @>>> \mathcal C(Y^A \times A, Y) \\
-@V\hat{f} \circ -VV @V(\hat{f} \times 1) \circ -VV \\
-\mathcal C(X, Y^A) @>>> \mathcal C(X \times A, Y)
+\C(Y^A, Y^A) @>{\mathrm{transpose}}>> \C(Y^A \times A, Y) \\
+@V(- \circ \transpose{f})VV @V(- \circ (\transpose{f} \times 1))VV \\
+\C(X, Y^A) @>{\mathrm{transpose}}>> \C(X \times A, Y)
 \end{CD}$$
-左上の $1_{Y^A}$ から可換を回せば
-$\widehat{\hat{f} \circ 1} = (\hat{f} \times 1) \circ \eval$
-すなわち
-$f = (\hat{f} \times 1) \circ \eval$
-を得る.
-ここで二重の transpose は打ち消すことに註意.
+この図式の左上から恒等射 $1$ を取ってきて, これで可換を回すと,
+$$\transpose{\transpose{f}} = \eval \circ (\transpose{f} \times 1)$$
+を得る. ここで左辺の二重の transpose は打ち消し可能なので,
+$$f = \eval \circ (\transpose{f} \times 1)$$
+となる.
 
-というわけで $f' = \hat{f}$ とすれば先の普遍性の図式は可換になることがわかる.
+というわけで $f' = \transpose{f}$ とすれば最初の普遍性の図式が可換になることがわかる.
 またこのような射が一意であることも随伴性から明らかである.
-念の為に書くと, 他の $f'$ についても成立すると仮定したときに $\hat{f'}$ について今の証明と同じ随伴性を確かめると,
-$f = (f' \times 1) \eval = \hat{f'}$
+念の為に書くと, 他の $f'$ についても成立すると仮定したときに $\transpose{f'}$ について今の証明と同じ随伴性を確かめると,
+$f = (f' \times 1) \eval = \transpose{f'}$
 が出てきて,
-$\hat{f} = f'$
+$\transpose{f} = f'$
 となる.
 
 ところで, 逆に, この普遍性を eval と冪の定義としてもよい.
-(実際, 層の冪なんかはそうやって定義された.)
+(実際, [層の冪](sheaf-eval) ではそうやって定義された.)
 ただし射の対応を与えて適切に $(-)^A$ を関手にしないと随伴性は成り立たない.
 適切に与えた場合に随伴になるのは自明なので省略.
 図式だけ書くと, $g \colon Y \to Z$ について次が可換になれば良い.
 $$\begin{CD}
 X \times A @= X \times A \\
-@V\hat{f} \times 1VV @VfVV \\
+@V\transpose{f} \times 1VV @VfVV \\
 Y^A \times A @>\eval>> Y \\
 @Vg^A \times 1VV @VgVV \\
 Z^A \times A @>\eval>> Z
 \end{CD}$$
 
-左の縦の射 $(g^A \circ \hat{f}) \times 1 = (g^A \times 1) (\hat{f} \times 1) \colon X \times A \to Z^A \times A$ は,
+左の縦の射 $(g^A \circ \transpose{f}) \times 1 = (g^A \times 1) (\transpose{f} \times 1) \colon X \times A \to Z^A \times A$ は,
 右の縦の射 $g \circ f \colon X \times A \to Z$ の transpose によって,
-$(g^A \circ \hat{f}) \times 1 = \widehat{gf} \times 1$
+$(g^A \circ \transpose{f}) \times 1 = \transpose{gf} \times 1$
 と書ける.
 すなわち
-$$g^A \circ \hat{f} = \widehat{gf}.$$
+$$g^A \circ \transpose{f} = \transpose{gf}.$$
 
 この $f$ に $\eval$ を入れるとさっきのが出てくる
 
-## 例 (Sets)
+## 例. 集合の圏
 
-集合と関数からなる圏 Sets での例を考える.
-この圏での直積 $\times$ は普通の集合の直積のこと.
-$$\def\Sets{\mathrm{Sets}}\Sets(X \times A, Y) \simeq \Sets(X, Y^A)$$
-この対応はいわゆるカリー化 (左辺から右辺) のこと.
+集合と関数からなる圏 $\Sets$ での例を考える.
+この圏での直積 $\times$ は普通の集合の直積（デカルト積）のこと.
+$$\Sets(X \times A, Y) \simeq \Sets(X, Y^A)$$
+この対応は **カリー化** (左辺から右辺への対応) として知られている.
 すなわち関数 $f \colon X \times A \to Y$ は各 $x \in X$ について,
 $$f_x \colon A \to Y$$
-を定めることができる $(f(x,a) = f_x(a))$.
-従って, $Y^A$ というのを
-$\{ g \mid g : A \to Y \}$ ($A$ から $Y$ への関数全体) と定めれば,
-$f$ は
+$$f_x(a) = f(x,a)$$
+を定めることができる.
+さらに $Y^A$ を $A$ から $Y$ への関数全体からなる集合
+$$Y^A = \{ g \mid g : A \to Y \}$$
+と定めれば, $f$ は
 $$f_{-} \colon X \to Y^A$$
 $$f_{-} \colon x \mapsto f_x$$
 なる関数と同一視できる.
+この $f$ と $f_{-}$ との関係が transpose になっている.
 
-これが Sets での冪対象.
+これが $\Sets$ での冪対象.
 次に eval 射を見る.
 
 まず $1 \in \Sets(Y^A, Y^A)$ という恒等関数を考える.
-これは $f \colon A \to Y$ なる関数を受け取ったら $f$ を返す.
-これに対応する関数 $\hat{1} \colon Y^A \times A \to Y$ はさっき定めたことから,
-$$\hat{1}(f, a) = \hat{1}_f(a) = f(a)$$
-$\hat{1}_f = f$ に註意.
-というわけで $\hat{1}$ というのは関数 $f$ と引数 $a$ を受け取って $f(a)$ を返す関数に過ぎない.
-これを関数適用 (apply) という.
+$\eval$ はこれに対応する $\transpose{1} \colon Y^A \times A \to Y$.
+$$f_x(a) = f(x,a)$$
+に, $f_{-}=1, f=\eval$ を代入すると,
+$$1_f(a) = \eval(f,a)$$
+を得る.
+ここで $1_f = f$ だから結局,
+$$\eval(f,a) = f(a)$$
+となる.
+
+というわけで $\eval$ は関数 $f$ と引数 $a$ を受け取って $f(a)$ を返す操作を表す.
+これはふつう関数適用 (apply) と呼ばれる.
 
 ---
 
-なんで apply 射って呼ばないんだろう.
+"eval 射" よりも "apply 射" の方がしっくりくる.
 

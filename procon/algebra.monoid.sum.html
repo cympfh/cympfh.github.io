@@ -21,56 +21,47 @@
 
           <div class="article column is-8 is-10-mobile">
             <div class="content">
-              <h1 id="数列---区間更新-rmq">数列 - 区間更新 RMQ</h1>
-<h2 id="概要">概要</h2>
-<p>群 <span class="math inline">\(X\)</span> 上の数列について次の2つが高速に計算可能:</p>
-<ul>
-<li>区間取得
-<ul>
-<li>任意の区間の値の全ての積（和）を計算する</li>
-</ul></li>
-<li>区間更新（代入操作）
-<ul>
-<li>任意の区間の値をある値で上書きする</li>
-</ul></li>
-</ul>
-<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb1-1" title="1"><span class="co">/// Sequence - Lazy Segment Tree - Ranged RMQ</span></a>
-<a class="sourceLine" id="cb1-2" title="2"><span class="kw">use</span> <span class="kw">crate</span>::<span class="pp">algebra::act_assign::</span>*;</a>
-<a class="sourceLine" id="cb1-3" title="3"><span class="kw">use</span> <span class="kw">crate</span>::<span class="pp">algebra::monoid_max::</span>*;</a>
-<a class="sourceLine" id="cb1-4" title="4"><span class="kw">use</span> <span class="kw">crate</span>::<span class="pp">algebra::monoid_min::</span>*;</a>
-<a class="sourceLine" id="cb1-5" title="5"><span class="kw">use</span> <span class="kw">crate</span>::<span class="pp">sequence::tree::lazy_segment_tree::</span>*;</a>
-<a class="sourceLine" id="cb1-6" title="6"></a>
-<a class="sourceLine" id="cb1-7" title="7"><span class="kw">pub</span> <span class="kw">type</span> RangedRMaxQ&lt;X&gt; = LazySegmentTree&lt;MaxInt&lt;X&gt;, Assign&lt;MaxInt&lt;X&gt;&gt;&gt;;</a>
-<a class="sourceLine" id="cb1-8" title="8"><span class="kw">pub</span> <span class="kw">type</span> RangedRMinQ&lt;X&gt; = LazySegmentTree&lt;MinInt&lt;X&gt;, Assign&lt;MinInt&lt;X&gt;&gt;&gt;;</a>
-<a class="sourceLine" id="cb1-9" title="9"></a>
-<a class="sourceLine" id="cb1-10" title="10"><span class="at">#[</span>cfg<span class="at">(</span>test<span class="at">)]</span></a>
-<a class="sourceLine" id="cb1-11" title="11"><span class="kw">mod</span> test_ratio <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-12" title="12">    <span class="kw">use</span> <span class="kw">crate</span>::<span class="pp">sequence::tree::ranged_rmq::</span>*;</a>
+              <h1 id="代数---sum-モノイド">代数 - Sum モノイド</h1>
+<p>自然数は和 <span class="math inline">\((+, 0)\)</span> に関してもモノイドになっている. 以下の実装では <code>i64</code> を自然数と見なして, 和に関するモノイド実装を与える.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb1-1" title="1"><span class="co">/// Algebra - Def of Monoid (i64, +)</span></a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="kw">use</span> <span class="kw">crate</span>::<span class="pp">algebra::monoid::</span>*;</a>
+<a class="sourceLine" id="cb1-3" title="3"></a>
+<a class="sourceLine" id="cb1-4" title="4"><span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">,</span> <span class="bu">Clone</span><span class="at">,</span> <span class="bu">Copy</span><span class="at">,</span> <span class="bu">PartialEq</span><span class="at">,</span> <span class="bu">Eq</span><span class="at">,</span> <span class="bu">PartialOrd</span><span class="at">,</span> <span class="bu">Ord</span><span class="at">)]</span></a>
+<a class="sourceLine" id="cb1-5" title="5"><span class="kw">pub</span> <span class="kw">struct</span> Sum(<span class="kw">pub</span> <span class="dt">i64</span>);</a>
+<a class="sourceLine" id="cb1-6" title="6"><span class="pp">monoid!</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-7" title="7">    Sum;</a>
+<a class="sourceLine" id="cb1-8" title="8">    one = Sum(<span class="dv">0</span>);</a>
+<a class="sourceLine" id="cb1-9" title="9">    mul(<span class="kw">self</span>, other) = <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-10" title="10">        <span class="kw">Self</span>(<span class="kw">self</span>.<span class="dv">0</span> + other.<span class="dv">0</span>)</a>
+<a class="sourceLine" id="cb1-11" title="11">    <span class="op">}</span>;</a>
+<a class="sourceLine" id="cb1-12" title="12"><span class="op">}</span></a>
 <a class="sourceLine" id="cb1-13" title="13"></a>
-<a class="sourceLine" id="cb1-14" title="14">    <span class="at">#[</span>test<span class="at">]</span></a>
-<a class="sourceLine" id="cb1-15" title="15">    <span class="kw">fn</span> it_works() <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-16" title="16">        <span class="kw">let</span> v: <span class="dt">Vec</span>&lt;<span class="dt">i64</span>&gt; = <span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span><span class="op">]</span>;</a>
-<a class="sourceLine" id="cb1-17" title="17">        <span class="kw">let</span> <span class="kw">mut</span> rmq = <span class="pp">RangedRMaxQ::</span>from(v.iter().map(|&amp;x| <span class="pp">MaxInt::</span>Val(x)).collect());</a>
-<a class="sourceLine" id="cb1-18" title="18">        <span class="pp">assert_eq!</span>(rmq.product(<span class="dv">1</span>..<span class="dv">3</span>), <span class="pp">MaxInt::</span>Val(<span class="dv">3</span>));</a>
-<a class="sourceLine" id="cb1-19" title="19"></a>
-<a class="sourceLine" id="cb1-20" title="20">        rmq.update(<span class="dv">1</span>..<span class="dv">3</span>, <span class="pp">Assign::</span><span class="cn">Some</span>(<span class="pp">MaxInt::</span>Val(<span class="dv">1</span>))); <span class="co">// [1,1,1,4]</span></a>
-<a class="sourceLine" id="cb1-21" title="21">        <span class="pp">assert_eq!</span>(rmq.product(<span class="dv">1</span>..<span class="dv">3</span>), <span class="pp">MaxInt::</span>Val(<span class="dv">1</span>));</a>
-<a class="sourceLine" id="cb1-22" title="22">        <span class="pp">assert_eq!</span>(rmq.product(<span class="dv">2</span>..<span class="dv">4</span>), <span class="pp">MaxInt::</span>Val(<span class="dv">4</span>));</a>
-<a class="sourceLine" id="cb1-23" title="23">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-24" title="24"><span class="op">}</span></a></code></pre></div>
+<a class="sourceLine" id="cb1-14" title="14"><span class="at">#[</span>cfg<span class="at">(</span>test<span class="at">)]</span></a>
+<a class="sourceLine" id="cb1-15" title="15"><span class="kw">mod</span> test_monoid_sum <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-16" title="16">    <span class="kw">use</span> <span class="kw">crate</span>::<span class="pp">algebra::monoid_sum::</span>*;</a>
+<a class="sourceLine" id="cb1-17" title="17"></a>
+<a class="sourceLine" id="cb1-18" title="18">    <span class="at">#[</span>test<span class="at">]</span></a>
+<a class="sourceLine" id="cb1-19" title="19">    <span class="kw">fn</span> sum() <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-20" title="20">        <span class="pp">assert_eq!</span>(Sum(<span class="dv">0</span>) * Sum(<span class="dv">3</span>), Sum(<span class="dv">3</span>));</a>
+<a class="sourceLine" id="cb1-21" title="21">        <span class="pp">assert_eq!</span>(Sum(<span class="dv">3</span>) * Sum(<span class="dv">0</span>), Sum(<span class="dv">3</span>));</a>
+<a class="sourceLine" id="cb1-22" title="22">        <span class="pp">assert_eq!</span>(Sum(<span class="dv">1</span>) * Sum(<span class="dv">2</span>) * Sum(<span class="dv">4</span>), Sum(<span class="dv">7</span>));</a>
+<a class="sourceLine" id="cb1-23" title="23">        <span class="pp">assert_eq!</span>(Sum(<span class="dv">2</span>), Sum(<span class="dv">2</span>) * <span class="pp">Sum::</span>one());</a>
+<a class="sourceLine" id="cb1-24" title="24">        <span class="pp">assert_eq!</span>(Sum(<span class="dv">2</span>), <span class="pp">Sum::</span>one() * Sum(<span class="dv">2</span>));</a>
+<a class="sourceLine" id="cb1-25" title="25">    <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-26" title="26"><span class="op">}</span></a></code></pre></div>
             </div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
-<details class=menu>
+<details class=menu open>
 <summary class=menu>代数</summary>
 <ul>
 <li><a href="algebra.monoid.html">モノイド</a>
 <ul>
 <li><a href="algebra.monoid.minmax.html">Min/Max モノイド</a></li>
-<li><a href="algebra.monoid.sumprod.html">Sum/Prod モノイド</a></li>
+<li><a href="algebra.monoid.sum.html">Sum モノイド</a></li>
 </ul></li>
-<li><a href="algebra.group.html">群</a></li>
+<li><a href="algebra.group.html">(乗法)群と加法群</a></li>
 <li><a href="algebra.ring.html">環</a></li>
 <li><a href="algebra.field.html">体</a></li>
 <li><a href="algebra.module.html">加群</a></li>
@@ -120,7 +111,7 @@
 </ul>
 </details>
 
-<details class=menu open>
+<details class=menu>
 <summary class=menu>数列</summary>
 <ul>
 <li><a href="seq.lis.html">最長増加部分列</a></li>
@@ -138,12 +129,15 @@
 <li><a href="seq.segment_tree.html">セグメントツリー</a>
 <ul>
 <li><a href="seq.rmq.html">RMQ</a></li>
+<li><a href="seq.segment_tree_sum.html">加法セグメントツリー</a></li>
+<li><a href="seq.segment_tree_prod.html">乗法セグメントツリー</a></li>
 </ul></li>
 <li><a href="seq.lazy_segment_tree.html">遅延セグメントツリー</a>
 <ul>
-<li><a href="seq.ranged_rmq.html">区間更新 RMQ</a></li>
+<li><a href="seq.ranged_assign_rmq.html">区間代入 RMQ</a></li>
+<li><a href="seq.ranged_add_rmq.html">区間加算 RMQ</a></li>
+<li><a href="seq.ranged_add_segment_tree_sum.html">区間加算 加法セグメントツリー</a></li>
 </ul></li>
-<li><a href="seq.starry.html">Starry Sky Tree</a></li>
 </ul>
 </details>
 

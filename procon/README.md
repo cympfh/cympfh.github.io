@@ -2,8 +2,8 @@
 
 - [モノイド](algebra.monoid.md)
     - [Min/Max モノイド](algebra.monoid.minmax.md)
-    - [Sum/Prod モノイド](algebra.monoid.sumprod.md)
-- [群](algebra.group.md)
+    - [Sum モノイド](algebra.monoid.sum.md)
+- [(乗法)群と加法群](algebra.group.md)
 - [環](algebra.ring.md)
 - [体](algebra.field.md)
 - [加群](algebra.module.md)
@@ -58,9 +58,12 @@
 - [BIT](seq.bit.md)
 - [セグメントツリー](seq.segment_tree.md)
     - [RMQ](seq.rmq.md)
+    - [加法セグメントツリー](seq.segment_tree_sum.md)
+    - [乗法セグメントツリー](seq.segment_tree_prod.md)
 - [遅延セグメントツリー](seq.lazy_segment_tree.md)
-    - [区間更新 RMQ](seq.ranged_rmq.md)
-- [Starry Sky Tree](seq.starry.md)
+    - [区間代入 RMQ](seq.ranged_assign_rmq.md)
+    - [区間加算 RMQ](seq.ranged_add_rmq.md)
+    - [区間加算 加法セグメントツリー](seq.ranged_add_segment_tree_sum.md)
 
 # 二次元ユークリッド幾何
 

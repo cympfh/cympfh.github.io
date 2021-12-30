@@ -56,7 +56,9 @@ cat <<EOM
         <section class="main-content columns is-fullheight">
 
           <div class="article column is-8 is-10-mobile">
-            $(content)
+            <div class="content">
+              $(content)
+            </div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">

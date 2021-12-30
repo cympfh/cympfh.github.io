@@ -20,71 +20,77 @@
         <section class="main-content columns is-fullheight">
 
           <div class="article column is-8 is-10-mobile">
-            <h1 id="自然数整数---関数---オイラーの-phi-関数">自然数/整数 - 関数 - オイラーの Phi 関数</h1>
+            <div class="content">
+              <h1 id="自然数整数---関数---オイラーの-phi-関数">自然数/整数 - 関数 - オイラーの Phi 関数</h1>
 <h2 id="定義">定義</h2>
 <p><span class="math inline">\(\Phi(n)\)</span> は <span class="math inline">\(1\)</span> 以上 <span class="math inline">\(n\)</span> 以下の <span class="math inline">\(n\)</span> と互いに素な自然数の個数</p>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Number - Euler&#39;s totient function; Phi</span>
-<span class="kw">pub</span> <span class="kw">fn</span> phi(n: <span class="dt">u64</span>) -&gt; <span class="dt">u64</span> <span class="op">{</span>
-    <span class="kw">let</span> <span class="kw">mut</span> r = n;
-    <span class="kw">let</span> <span class="kw">mut</span> m = n;
-    <span class="kw">for</span> p <span class="kw">in</span> <span class="dv">2.</span>.=n <span class="op">{</span>
-        <span class="kw">if</span> m % p == <span class="dv">0</span> <span class="op">{</span>
-            <span class="kw">while</span> m % p == <span class="dv">0</span> <span class="op">{</span>
-                m /= p;
-            <span class="op">}</span>
-            r -= r / p;
-        <span class="op">}</span>
-        <span class="kw">if</span> p * p &gt; n <span class="op">{</span>
-            <span class="kw">break</span>;
-        <span class="op">}</span>
-    <span class="op">}</span>
-    <span class="kw">if</span> m &gt; <span class="dv">1</span> <span class="op">{</span>
-        r -= r / m;
-    <span class="op">}</span>
-    r
-<span class="op">}</span>
-
-<span class="at">#[</span>cfg<span class="at">(</span>test<span class="at">)]</span>
-<span class="kw">mod</span> test_euler_phi <span class="op">{</span>
-    <span class="kw">use</span> <span class="kw">crate</span>::num::euler_phi::*;
-
-    <span class="at">#[</span>test<span class="at">]</span>
-    <span class="kw">fn</span> test_euler_phi() <span class="op">{</span>
-        <span class="kw">let</span> truth = <span class="pp">vec!</span><span class="op">[</span>
-            <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">2</span>, <span class="dv">6</span>, <span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">4</span>, <span class="dv">10</span>, <span class="dv">4</span>, <span class="dv">12</span>, <span class="dv">6</span>, <span class="dv">8</span>, <span class="dv">8</span>, <span class="dv">16</span>, <span class="dv">6</span>, <span class="dv">18</span>, <span class="dv">8</span>,
-        <span class="op">]</span>;
-        <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.truth.len() <span class="op">{</span>
-            <span class="pp">assert_eq!</span>(phi((i + <span class="dv">1</span>) <span class="kw">as</span> <span class="dt">u64</span>), truth<span class="op">[</span>i<span class="op">]</span>);
-        <span class="op">}</span>
-
-        <span class="pp">assert_eq!</span>(phi(<span class="dv">5000</span>), <span class="dv">2000</span>);
-        <span class="pp">assert_eq!</span>(phi(<span class="dv">79523</span>), <span class="dv">78960</span>);
-        <span class="pp">assert_eq!</span>(phi(<span class="dv">80000</span>), <span class="dv">32000</span>);
-        <span class="pp">assert_eq!</span>(phi(<span class="dv">99999</span>), <span class="dv">64800</span>);
-        <span class="pp">assert_eq!</span>(phi(<span class="dv">100000</span>), <span class="dv">40000</span>);
-    <span class="op">}</span>
-<span class="op">}</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb1-1" title="1"><span class="co">/// Number - Euler&#39;s totient function; Phi</span></a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="kw">pub</span> <span class="kw">fn</span> phi(n: <span class="dt">u64</span>) -&gt; <span class="dt">u64</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-3" title="3">    <span class="kw">let</span> <span class="kw">mut</span> r = n;</a>
+<a class="sourceLine" id="cb1-4" title="4">    <span class="kw">let</span> <span class="kw">mut</span> m = n;</a>
+<a class="sourceLine" id="cb1-5" title="5">    <span class="kw">for</span> p <span class="kw">in</span> <span class="dv">2</span>..=n <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-6" title="6">        <span class="kw">if</span> m % p == <span class="dv">0</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-7" title="7">            <span class="kw">while</span> m % p == <span class="dv">0</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-8" title="8">                m /= p;</a>
+<a class="sourceLine" id="cb1-9" title="9">            <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-10" title="10">            r -= r / p;</a>
+<a class="sourceLine" id="cb1-11" title="11">        <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-12" title="12">        <span class="kw">if</span> p * p &gt; n <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-13" title="13">            <span class="kw">break</span>;</a>
+<a class="sourceLine" id="cb1-14" title="14">        <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-15" title="15">    <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-16" title="16">    <span class="kw">if</span> m &gt; <span class="dv">1</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-17" title="17">        r -= r / m;</a>
+<a class="sourceLine" id="cb1-18" title="18">    <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-19" title="19">    r</a>
+<a class="sourceLine" id="cb1-20" title="20"><span class="op">}</span></a>
+<a class="sourceLine" id="cb1-21" title="21"></a>
+<a class="sourceLine" id="cb1-22" title="22"><span class="at">#[</span>cfg<span class="at">(</span>test<span class="at">)]</span></a>
+<a class="sourceLine" id="cb1-23" title="23"><span class="kw">mod</span> test_euler_phi <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-24" title="24">    <span class="kw">use</span> <span class="kw">crate</span>::<span class="pp">num::euler_phi::</span>*;</a>
+<a class="sourceLine" id="cb1-25" title="25"></a>
+<a class="sourceLine" id="cb1-26" title="26">    <span class="at">#[</span>test<span class="at">]</span></a>
+<a class="sourceLine" id="cb1-27" title="27">    <span class="kw">fn</span> test_euler_phi() <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-28" title="28">        <span class="kw">let</span> truth = <span class="pp">vec!</span><span class="op">[</span></a>
+<a class="sourceLine" id="cb1-29" title="29">            <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">2</span>, <span class="dv">6</span>, <span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">4</span>, <span class="dv">10</span>, <span class="dv">4</span>, <span class="dv">12</span>, <span class="dv">6</span>, <span class="dv">8</span>, <span class="dv">8</span>, <span class="dv">16</span>, <span class="dv">6</span>, <span class="dv">18</span>, <span class="dv">8</span>,</a>
+<a class="sourceLine" id="cb1-30" title="30">        <span class="op">]</span>;</a>
+<a class="sourceLine" id="cb1-31" title="31">        <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0</span>..truth.len() <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-32" title="32">            <span class="pp">assert_eq!</span>(phi((i + <span class="dv">1</span>) <span class="kw">as</span> <span class="dt">u64</span>), truth<span class="op">[</span>i<span class="op">]</span>);</a>
+<a class="sourceLine" id="cb1-33" title="33">        <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-34" title="34"></a>
+<a class="sourceLine" id="cb1-35" title="35">        <span class="pp">assert_eq!</span>(phi(<span class="dv">5000</span>), <span class="dv">2000</span>);</a>
+<a class="sourceLine" id="cb1-36" title="36">        <span class="pp">assert_eq!</span>(phi(<span class="dv">79523</span>), <span class="dv">78960</span>);</a>
+<a class="sourceLine" id="cb1-37" title="37">        <span class="pp">assert_eq!</span>(phi(<span class="dv">80000</span>), <span class="dv">32000</span>);</a>
+<a class="sourceLine" id="cb1-38" title="38">        <span class="pp">assert_eq!</span>(phi(<span class="dv">99999</span>), <span class="dv">64800</span>);</a>
+<a class="sourceLine" id="cb1-39" title="39">        <span class="pp">assert_eq!</span>(phi(<span class="dv">100000</span>), <span class="dv">40000</span>);</a>
+<a class="sourceLine" id="cb1-40" title="40">    <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-41" title="41"><span class="op">}</span></a></code></pre></div>
+            </div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
 <details class=menu>
 <summary class=menu>代数</summary>
 <ul>
+<li><a href="algebra.monoid.html">モノイド</a>
+<ul>
+<li><a href="algebra.monoid.minmax.html">Min/Max モノイド</a></li>
+<li><a href="algebra.monoid.sumprod.html">Sum/Prod モノイド</a></li>
+</ul></li>
 <li><a href="algebra.group.html">群</a></li>
 <li><a href="algebra.ring.html">環</a></li>
+<li><a href="algebra.field.html">体</a></li>
+<li><a href="algebra.module.html">加群</a></li>
 <li><a href="algebra.ratio.html">有理数</a></li>
 <li><a href="algebra.complex.html">虚数</a></li>
 <li><a href="algebra.matrix.html">行列</a></li>
 <li><a href="algebra.hyper.html">超数</a></li>
 <li><a href="algebra.total.html">全順序化</a></li>
 <li><a href="algebra.modint.html">ModInt</a></li>
-<li><a href="algebra.monoid.html">モノイド</a>
-<ul>
-<li><a href="algebra.monoid.minmax.html">Min/Max モノイド</a></li>
-</ul></li>
 <li><a href="algebra.act.html">作用</a>
 <ul>
 <li><a href="algebra.act.assign.html">代入作用</a></li>
+<li><a href="algebra.act.add.html">加算作用</a></li>
 </ul></li>
 </ul>
 </details>

@@ -20,7 +20,8 @@
         <section class="main-content columns is-fullheight">
 
           <div class="article column is-8 is-10-mobile">
-            <h1 id="アルゴリズム---整数上の二分探索">アルゴリズム - 整数上の二分探索</h1>
+            <div class="content">
+              <h1 id="アルゴリズム---整数上の二分探索">アルゴリズム - 整数上の二分探索</h1>
 <h2 id="概要">概要</h2>
 <p>整数（のようなデータ）について Yes/No を返す述語 <span class="math inline">\(P\)</span> があるとする: <span class="math display">\[P \colon \mathbb Z \to \mathrm{Bool}.\]</span></p>
 <p>そして今, この <span class="math inline">\(P\)</span> はある整数 <span class="math inline">\(m\)</span> があって,</p>
@@ -39,98 +40,103 @@
 <p>ところで <span class="math inline">\(l,r,m\)</span> の乗ってるデータは, 中間値を取る操作 <code>middle</code> と, 区間のサイズが <span class="math inline">\(1\)</span> であることをチェックする操作 <code>close</code> を必要とする. 逆に言えばこの二つさえあれば整数そのものに限らなくて良い. 例えば十分小さい値 <code>eps</code> を定めて <code>close(l, r) = (r - l &lt; eps)</code> とすることで浮動小数点数であっても, 精度 <code>eps</code> で <code>m</code> が求まる.</p>
 <h2 id="応用">応用</h2>
 <p>整数として配列のインデックス (<code>usize</code>) を選び, <code>prop</code> を上手く作ることで, 昇順ソート済みの配列 <code>xs</code> 中に <code>x</code> がいくつあるか, <code>x</code> 以上/以下 がいくつあるか, などを対数時間で計算できる.</p>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Algorithm - Binary Search</span>
-<span class="kw">pub</span> <span class="kw">trait</span> Integer
-<span class="kw">where</span>
-    <span class="kw">Self</span>: std::marker::<span class="bu">Sized</span>,
-<span class="op">{</span>
-    <span class="kw">fn</span> close(range: std::ops::Range&lt;<span class="kw">Self</span>&gt;) -&gt; <span class="dt">bool</span>;
-    <span class="kw">fn</span> middle(range: std::ops::Range&lt;<span class="kw">Self</span>&gt;) -&gt; <span class="kw">Self</span>;
-<span class="op">}</span>
-<span class="pp">macro_rules!</span> define_integer <span class="op">{</span>
-    ($type:ty, $range:ident, $close_condition:expr, $middle_point:expr) =&gt; <span class="op">{</span>
-        <span class="kw">impl</span> Integer <span class="kw">for</span> $type <span class="op">{</span>
-            <span class="kw">fn</span> close($range: std::ops::Range&lt;<span class="kw">Self</span>&gt;) -&gt; <span class="dt">bool</span> <span class="op">{</span>
-                $close_condition
-            <span class="op">}</span>
-            <span class="kw">fn</span> middle($range: std::ops::Range&lt;<span class="kw">Self</span>&gt;) -&gt; <span class="kw">Self</span> <span class="op">{</span>
-                $middle_point
-            <span class="op">}</span>
-        <span class="op">}</span>
-    <span class="op">}</span>;
-<span class="op">}</span>
-<span class="pp">define_integer!</span>(<span class="dt">usize</span>, r, r.start + <span class="dv">1</span> &gt;= r.end, (r.start + r.end) / <span class="dv">2</span>);
-<span class="pp">define_integer!</span>(<span class="dt">u32</span>, r, r.start + <span class="dv">1</span> &gt;= r.end, (r.start + r.end) / <span class="dv">2</span>);
-<span class="pp">define_integer!</span>(<span class="dt">u64</span>, r, r.start + <span class="dv">1</span> &gt;= r.end, (r.start + r.end) / <span class="dv">2</span>);
-<span class="pp">define_integer!</span>(u128, r, r.start + <span class="dv">1</span> &gt;= r.end, (r.start + r.end) / <span class="dv">2</span>);
-<span class="pp">define_integer!</span>(<span class="dt">i32</span>, r, r.start + <span class="dv">1</span> &gt;= r.end, (r.start + r.end) / <span class="dv">2</span>);
-<span class="pp">define_integer!</span>(<span class="dt">i64</span>, r, r.start + <span class="dv">1</span> &gt;= r.end, (r.start + r.end) / <span class="dv">2</span>);
-<span class="pp">define_integer!</span>(i128, r, r.start + <span class="dv">1</span> &gt;= r.end, (r.start + r.end) / <span class="dv">2</span>);
-<span class="pp">define_integer!</span>(
-    <span class="dt">f32</span>,
-    r,
-    r.start + <span class="dv">0.00000001</span> &gt;= r.end,
-    (r.start + r.end) / <span class="dv">2.0</span>
-);
-<span class="pp">define_integer!</span>(
-    <span class="dt">f64</span>,
-    r,
-    r.start + <span class="dv">0.00000001</span> &gt;= r.end,
-    (r.start + r.end) / <span class="dv">2.0</span>
-);
-
-<span class="co">// the minimum index in range s.t. prop holds</span>
-<span class="kw">pub</span> <span class="kw">fn</span> binsearch&lt;X: Integer + <span class="bu">Copy</span>&gt;(range: std::ops::Range&lt;X&gt;, prop: &amp;dyn <span class="bu">Fn</span>(X) -&gt; <span class="dt">bool</span>) -&gt; X <span class="op">{</span>
-    <span class="kw">if</span> prop(range.start) <span class="op">{</span>
-        range.start
-    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
-        <span class="kw">let</span> <span class="kw">mut</span> left = range.start;
-        <span class="kw">let</span> <span class="kw">mut</span> right = range.end;
-        <span class="kw">while</span> !X::close(left..right) <span class="op">{</span>
-            <span class="kw">let</span> mid = X::middle(left..right);
-            <span class="kw">if</span> prop(mid) <span class="op">{</span>
-                right = mid;
-            <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
-                left = mid;
-            <span class="op">}</span>
-        <span class="op">}</span>
-        right
-    <span class="op">}</span>
-<span class="op">}</span>
-
-<span class="at">#[</span>cfg<span class="at">(</span>test<span class="at">)]</span>
-<span class="kw">mod</span> test_binary_search <span class="op">{</span>
-    <span class="kw">use</span> <span class="kw">crate</span>::algorithm::binary_search::*;
-
-    <span class="at">#[</span>test<span class="at">]</span>
-    <span class="kw">fn</span> search_bound() <span class="op">{</span>
-        <span class="kw">let</span> v: <span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt; = (<span class="dv">0.</span>.<span class="dv">100</span>).collect();
-        <span class="pp">assert_eq!</span>(binsearch(<span class="dv">0.</span>.<span class="dv">100</span>, &amp;|i| v<span class="op">[</span>i<span class="op">]</span> &gt; <span class="dv">50</span>), <span class="dv">51</span>);
-        <span class="pp">assert_eq!</span>(binsearch(<span class="dv">0.</span>.<span class="dv">100</span>, &amp;|i| v<span class="op">[</span>i<span class="op">]</span> &gt;= <span class="dv">0</span>), <span class="dv">0</span>);
-        <span class="pp">assert_eq!</span>(binsearch(<span class="dv">0.</span>.<span class="dv">100</span>, &amp;|i| v<span class="op">[</span>i<span class="op">]</span> &gt; <span class="dv">100</span>), <span class="dv">100</span>);
-    <span class="op">}</span>
-<span class="op">}</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb1-1" title="1"><span class="co">/// Algorithm - Binary Search</span></a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="kw">pub</span> <span class="kw">trait</span> Integer</a>
+<a class="sourceLine" id="cb1-3" title="3"><span class="kw">where</span></a>
+<a class="sourceLine" id="cb1-4" title="4">    <span class="kw">Self</span>: <span class="pp">std::marker::</span><span class="bu">Sized</span>,</a>
+<a class="sourceLine" id="cb1-5" title="5"><span class="op">{</span></a>
+<a class="sourceLine" id="cb1-6" title="6">    <span class="kw">fn</span> close(range: <span class="pp">std::ops::</span>Range&lt;<span class="kw">Self</span>&gt;) -&gt; <span class="dt">bool</span>;</a>
+<a class="sourceLine" id="cb1-7" title="7">    <span class="kw">fn</span> middle(range: <span class="pp">std::ops::</span>Range&lt;<span class="kw">Self</span>&gt;) -&gt; <span class="kw">Self</span>;</a>
+<a class="sourceLine" id="cb1-8" title="8"><span class="op">}</span></a>
+<a class="sourceLine" id="cb1-9" title="9"><span class="pp">macro_rules!</span> define_integer <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-10" title="10">    ($type:ty, $range:ident, $close_condition:expr, $middle_point:expr) =&gt; <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-11" title="11">        <span class="kw">impl</span> Integer <span class="kw">for</span> $type <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-12" title="12">            <span class="kw">fn</span> close($range: <span class="pp">std::ops::</span>Range&lt;<span class="kw">Self</span>&gt;) -&gt; <span class="dt">bool</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-13" title="13">                $close_condition</a>
+<a class="sourceLine" id="cb1-14" title="14">            <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-15" title="15">            <span class="kw">fn</span> middle($range: <span class="pp">std::ops::</span>Range&lt;<span class="kw">Self</span>&gt;) -&gt; <span class="kw">Self</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-16" title="16">                $middle_point</a>
+<a class="sourceLine" id="cb1-17" title="17">            <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-18" title="18">        <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-19" title="19">    <span class="op">}</span>;</a>
+<a class="sourceLine" id="cb1-20" title="20"><span class="op">}</span></a>
+<a class="sourceLine" id="cb1-21" title="21"><span class="pp">define_integer!</span>(<span class="dt">usize</span>, r, r.start + <span class="dv">1</span> &gt;= r.end, (r.start + r.end) / <span class="dv">2</span>);</a>
+<a class="sourceLine" id="cb1-22" title="22"><span class="pp">define_integer!</span>(<span class="dt">u32</span>, r, r.start + <span class="dv">1</span> &gt;= r.end, (r.start + r.end) / <span class="dv">2</span>);</a>
+<a class="sourceLine" id="cb1-23" title="23"><span class="pp">define_integer!</span>(<span class="dt">u64</span>, r, r.start + <span class="dv">1</span> &gt;= r.end, (r.start + r.end) / <span class="dv">2</span>);</a>
+<a class="sourceLine" id="cb1-24" title="24"><span class="pp">define_integer!</span>(<span class="dt">u128</span>, r, r.start + <span class="dv">1</span> &gt;= r.end, (r.start + r.end) / <span class="dv">2</span>);</a>
+<a class="sourceLine" id="cb1-25" title="25"><span class="pp">define_integer!</span>(<span class="dt">i32</span>, r, r.start + <span class="dv">1</span> &gt;= r.end, (r.start + r.end) / <span class="dv">2</span>);</a>
+<a class="sourceLine" id="cb1-26" title="26"><span class="pp">define_integer!</span>(<span class="dt">i64</span>, r, r.start + <span class="dv">1</span> &gt;= r.end, (r.start + r.end) / <span class="dv">2</span>);</a>
+<a class="sourceLine" id="cb1-27" title="27"><span class="pp">define_integer!</span>(<span class="dt">i128</span>, r, r.start + <span class="dv">1</span> &gt;= r.end, (r.start + r.end) / <span class="dv">2</span>);</a>
+<a class="sourceLine" id="cb1-28" title="28"><span class="pp">define_integer!</span>(</a>
+<a class="sourceLine" id="cb1-29" title="29">    <span class="dt">f32</span>,</a>
+<a class="sourceLine" id="cb1-30" title="30">    r,</a>
+<a class="sourceLine" id="cb1-31" title="31">    r.start + <span class="dv">0.00000001</span> &gt;= r.end,</a>
+<a class="sourceLine" id="cb1-32" title="32">    (r.start + r.end) / <span class="dv">2.0</span></a>
+<a class="sourceLine" id="cb1-33" title="33">);</a>
+<a class="sourceLine" id="cb1-34" title="34"><span class="pp">define_integer!</span>(</a>
+<a class="sourceLine" id="cb1-35" title="35">    <span class="dt">f64</span>,</a>
+<a class="sourceLine" id="cb1-36" title="36">    r,</a>
+<a class="sourceLine" id="cb1-37" title="37">    r.start + <span class="dv">0.00000001</span> &gt;= r.end,</a>
+<a class="sourceLine" id="cb1-38" title="38">    (r.start + r.end) / <span class="dv">2.0</span></a>
+<a class="sourceLine" id="cb1-39" title="39">);</a>
+<a class="sourceLine" id="cb1-40" title="40"></a>
+<a class="sourceLine" id="cb1-41" title="41"><span class="co">// the minimum index in range s.t. prop holds</span></a>
+<a class="sourceLine" id="cb1-42" title="42"><span class="kw">pub</span> <span class="kw">fn</span> binsearch&lt;X: Integer + <span class="bu">Copy</span>&gt;(range: <span class="pp">std::ops::</span>Range&lt;X&gt;, prop: &amp;dyn <span class="bu">Fn</span>(X) -&gt; <span class="dt">bool</span>) -&gt; X <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-43" title="43">    <span class="kw">if</span> prop(range.start) <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-44" title="44">        range.start</a>
+<a class="sourceLine" id="cb1-45" title="45">    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-46" title="46">        <span class="kw">let</span> <span class="kw">mut</span> left = range.start;</a>
+<a class="sourceLine" id="cb1-47" title="47">        <span class="kw">let</span> <span class="kw">mut</span> right = range.end;</a>
+<a class="sourceLine" id="cb1-48" title="48">        <span class="kw">while</span> !<span class="pp">X::</span>close(left..right) <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-49" title="49">            <span class="kw">let</span> mid = <span class="pp">X::</span>middle(left..right);</a>
+<a class="sourceLine" id="cb1-50" title="50">            <span class="kw">if</span> prop(mid) <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-51" title="51">                right = mid;</a>
+<a class="sourceLine" id="cb1-52" title="52">            <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-53" title="53">                left = mid;</a>
+<a class="sourceLine" id="cb1-54" title="54">            <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-55" title="55">        <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-56" title="56">        right</a>
+<a class="sourceLine" id="cb1-57" title="57">    <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-58" title="58"><span class="op">}</span></a>
+<a class="sourceLine" id="cb1-59" title="59"></a>
+<a class="sourceLine" id="cb1-60" title="60"><span class="at">#[</span>cfg<span class="at">(</span>test<span class="at">)]</span></a>
+<a class="sourceLine" id="cb1-61" title="61"><span class="kw">mod</span> test_binary_search <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-62" title="62">    <span class="kw">use</span> <span class="kw">crate</span>::<span class="pp">algorithm::binary_search::</span>*;</a>
+<a class="sourceLine" id="cb1-63" title="63"></a>
+<a class="sourceLine" id="cb1-64" title="64">    <span class="at">#[</span>test<span class="at">]</span></a>
+<a class="sourceLine" id="cb1-65" title="65">    <span class="kw">fn</span> search_bound() <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-66" title="66">        <span class="kw">let</span> v: <span class="dt">Vec</span>&lt;<span class="dt">i32</span>&gt; = (<span class="dv">0</span>..<span class="dv">100</span>).collect();</a>
+<a class="sourceLine" id="cb1-67" title="67">        <span class="pp">assert_eq!</span>(binsearch(<span class="dv">0</span>..<span class="dv">100</span>, &amp;|i| v<span class="op">[</span>i<span class="op">]</span> &gt; <span class="dv">50</span>), <span class="dv">51</span>);</a>
+<a class="sourceLine" id="cb1-68" title="68">        <span class="pp">assert_eq!</span>(binsearch(<span class="dv">0</span>..<span class="dv">100</span>, &amp;|i| v<span class="op">[</span>i<span class="op">]</span> &gt;= <span class="dv">0</span>), <span class="dv">0</span>);</a>
+<a class="sourceLine" id="cb1-69" title="69">        <span class="pp">assert_eq!</span>(binsearch(<span class="dv">0</span>..<span class="dv">100</span>, &amp;|i| v<span class="op">[</span>i<span class="op">]</span> &gt; <span class="dv">100</span>), <span class="dv">100</span>);</a>
+<a class="sourceLine" id="cb1-70" title="70">    <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-71" title="71"><span class="op">}</span></a></code></pre></div>
+            </div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
 <details class=menu>
 <summary class=menu>代数</summary>
 <ul>
+<li><a href="algebra.monoid.html">モノイド</a>
+<ul>
+<li><a href="algebra.monoid.minmax.html">Min/Max モノイド</a></li>
+<li><a href="algebra.monoid.sumprod.html">Sum/Prod モノイド</a></li>
+</ul></li>
 <li><a href="algebra.group.html">群</a></li>
 <li><a href="algebra.ring.html">環</a></li>
+<li><a href="algebra.field.html">体</a></li>
+<li><a href="algebra.module.html">加群</a></li>
 <li><a href="algebra.ratio.html">有理数</a></li>
 <li><a href="algebra.complex.html">虚数</a></li>
 <li><a href="algebra.matrix.html">行列</a></li>
 <li><a href="algebra.hyper.html">超数</a></li>
 <li><a href="algebra.total.html">全順序化</a></li>
 <li><a href="algebra.modint.html">ModInt</a></li>
-<li><a href="algebra.monoid.html">モノイド</a>
-<ul>
-<li><a href="algebra.monoid.minmax.html">Min/Max モノイド</a></li>
-</ul></li>
 <li><a href="algebra.act.html">作用</a>
 <ul>
 <li><a href="algebra.act.assign.html">代入作用</a></li>
+<li><a href="algebra.act.add.html">加算作用</a></li>
 </ul></li>
 </ul>
 </details>

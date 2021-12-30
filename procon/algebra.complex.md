@@ -1,5 +1,5 @@
-# 代数 - 虚数
+# 代数 - 複素数
 
-虚数の定義とその演算
+複素数の定義とその演算
 
 @[rust](procon-rs/src/algebra/complex.rs)

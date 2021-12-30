@@ -20,82 +20,88 @@
         <section class="main-content columns is-fullheight">
 
           <div class="article column is-8 is-10-mobile">
-            <h1 id="数列---最長増加部分列-longest-increasing-sequence-lis">数列 - 最長増加部分列 (Longest Increasing Sequence; LIS)</h1>
+            <div class="content">
+              <h1 id="数列---最長増加部分列-longest-increasing-sequence-lis">数列 - 最長増加部分列 (Longest Increasing Sequence; LIS)</h1>
 <h2 id="概要">概要</h2>
 <p>Young Tableaux アルゴリズムを実装する.</p>
 <h2 id="入出力">入出力</h2>
 <p>与えられた数列のうち <strong>狭義</strong> 最長増加部分列を返す.</p>
 <h2 id="メモ">メモ</h2>
 <p><strong>広義</strong> 増加列に変更するのは単純じゃないので注意.</p>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Sequence - Longest (Strictly) Increasing Sequence (LIS; Young Tableu Method)</span>
-<span class="kw">use</span> <span class="kw">crate</span>::algorithm::binary_search::*;
-
-<span class="kw">pub</span> <span class="kw">fn</span> lis&lt;X: <span class="bu">Copy</span> + <span class="bu">Ord</span> + std::fmt::<span class="bu">Debug</span>&gt;(xs: &amp;<span class="dt">Vec</span>&lt;X&gt;) -&gt; <span class="dt">Vec</span>&lt;X&gt; <span class="op">{</span>
-    <span class="kw">if</span> xs.len() &lt;= <span class="dv">1</span> <span class="op">{</span>
-        <span class="kw">return</span> xs.clone();
-    <span class="op">}</span>
-    <span class="kw">let</span> <span class="kw">mut</span> bins: <span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;X&gt;&gt; = <span class="pp">vec!</span><span class="op">[]</span>;
-    <span class="kw">let</span> <span class="kw">mut</span> bots: <span class="dt">Vec</span>&lt;X&gt; = <span class="pp">vec!</span><span class="op">[]</span>;
-    <span class="kw">for</span> &amp;x <span class="kw">in</span> xs.iter() <span class="op">{</span>
-        <span class="kw">let</span> i = <span class="kw">if</span> bots.is_empty() <span class="op">{</span>
-            <span class="dv">0</span>
-        <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
-            binsearch(<span class="dv">0.</span>.bots.len(), &amp;|i| bots<span class="op">[</span>i<span class="op">]</span> &gt;= x)
-        <span class="op">}</span>;
-        <span class="kw">if</span> i == bots.len() <span class="op">{</span>
-            bins.push(<span class="pp">vec!</span><span class="op">[</span>x<span class="op">]</span>);
-            bots.push(x);
-        <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
-            bins<span class="op">[</span>i<span class="op">]</span>.push(x);
-            bots<span class="op">[</span>i<span class="op">]</span> = x;
-        <span class="op">}</span>
-    <span class="op">}</span>
-    <span class="kw">let</span> m = bins.len();
-    <span class="kw">let</span> <span class="kw">mut</span> last = bins<span class="op">[</span>m - <span class="dv">1</span><span class="op">][</span><span class="dv">0</span><span class="op">]</span>;
-    <span class="kw">let</span> <span class="kw">mut</span> result = <span class="pp">vec!</span><span class="op">[</span>last<span class="op">]</span>;
-    <span class="kw">for</span> i <span class="kw">in</span> (<span class="dv">0.</span>.m - <span class="dv">1</span>).rev() <span class="op">{</span>
-        <span class="kw">let</span> j = binsearch(<span class="dv">0.</span>.bins<span class="op">[</span>i<span class="op">]</span>.len(), &amp;|j| bins<span class="op">[</span>i<span class="op">][</span>j<span class="op">]</span> &lt; last);
-        last = bins<span class="op">[</span>i<span class="op">][</span>j<span class="op">]</span>;
-        result.push(last);
-    <span class="op">}</span>
-    result.iter().rev().cloned().collect()
-<span class="op">}</span>
-
-<span class="at">#[</span>cfg<span class="at">(</span>test<span class="at">)]</span>
-<span class="kw">mod</span> test_lis <span class="op">{</span>
-    <span class="kw">use</span> <span class="kw">crate</span>::sequence::lis::*;
-    <span class="at">#[</span>test<span class="at">]</span>
-    <span class="kw">fn</span> test() <span class="op">{</span>
-        <span class="pp">assert_eq!</span>(lis(&amp;<span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span><span class="op">]</span>), <span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span><span class="op">]</span>);
-        <span class="pp">assert_eq!</span>(lis(&amp;<span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span><span class="op">]</span>), <span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span><span class="op">]</span>);
-        <span class="pp">assert_eq!</span>(lis(&amp;<span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span><span class="op">]</span>), <span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span><span class="op">]</span>);
-        <span class="pp">assert_eq!</span>(lis(&amp;<span class="pp">vec!</span><span class="op">[</span><span class="dv">4</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">5</span><span class="op">]</span>), <span class="pp">vec!</span><span class="op">[</span><span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">5</span><span class="op">]</span>);
-        <span class="pp">assert_eq!</span>(lis(&amp;<span class="pp">vec!</span><span class="op">[</span><span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">2</span><span class="op">]</span>), <span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>, <span class="dv">2</span><span class="op">]</span>);
-        <span class="pp">assert_eq!</span>(lis(&amp;<span class="pp">vec!</span><span class="op">[</span><span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">3</span><span class="op">]</span>), <span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>, <span class="dv">3</span><span class="op">]</span>);
-        <span class="pp">assert_eq!</span>(lis(&amp;<span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">3</span><span class="op">]</span>), <span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span><span class="op">]</span>);
-    <span class="op">}</span>
-<span class="op">}</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb1-1" title="1"><span class="co">/// Sequence - Longest (Strictly) Increasing Sequence (LIS; Young Tableu Method)</span></a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="kw">use</span> <span class="kw">crate</span>::<span class="pp">algorithm::binary_search::</span>*;</a>
+<a class="sourceLine" id="cb1-3" title="3"></a>
+<a class="sourceLine" id="cb1-4" title="4"><span class="kw">pub</span> <span class="kw">fn</span> lis&lt;X: <span class="bu">Copy</span> + <span class="bu">Ord</span> + <span class="pp">std::fmt::</span><span class="bu">Debug</span>&gt;(xs: &amp;<span class="dt">Vec</span>&lt;X&gt;) -&gt; <span class="dt">Vec</span>&lt;X&gt; <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-5" title="5">    <span class="kw">if</span> xs.len() &lt;= <span class="dv">1</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-6" title="6">        <span class="kw">return</span> xs.clone();</a>
+<a class="sourceLine" id="cb1-7" title="7">    <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-8" title="8">    <span class="kw">let</span> <span class="kw">mut</span> bins: <span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;X&gt;&gt; = <span class="pp">vec!</span><span class="op">[]</span>;</a>
+<a class="sourceLine" id="cb1-9" title="9">    <span class="kw">let</span> <span class="kw">mut</span> bots: <span class="dt">Vec</span>&lt;X&gt; = <span class="pp">vec!</span><span class="op">[]</span>;</a>
+<a class="sourceLine" id="cb1-10" title="10">    <span class="kw">for</span> &amp;x <span class="kw">in</span> xs.iter() <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-11" title="11">        <span class="kw">let</span> i = <span class="kw">if</span> bots.is_empty() <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-12" title="12">            <span class="dv">0</span></a>
+<a class="sourceLine" id="cb1-13" title="13">        <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-14" title="14">            binsearch(<span class="dv">0</span>..bots.len(), &amp;|i| bots<span class="op">[</span>i<span class="op">]</span> &gt;= x)</a>
+<a class="sourceLine" id="cb1-15" title="15">        <span class="op">}</span>;</a>
+<a class="sourceLine" id="cb1-16" title="16">        <span class="kw">if</span> i == bots.len() <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-17" title="17">            bins.push(<span class="pp">vec!</span><span class="op">[</span>x<span class="op">]</span>);</a>
+<a class="sourceLine" id="cb1-18" title="18">            bots.push(x);</a>
+<a class="sourceLine" id="cb1-19" title="19">        <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-20" title="20">            bins<span class="op">[</span>i<span class="op">]</span>.push(x);</a>
+<a class="sourceLine" id="cb1-21" title="21">            bots<span class="op">[</span>i<span class="op">]</span> = x;</a>
+<a class="sourceLine" id="cb1-22" title="22">        <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-23" title="23">    <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-24" title="24">    <span class="kw">let</span> m = bins.len();</a>
+<a class="sourceLine" id="cb1-25" title="25">    <span class="kw">let</span> <span class="kw">mut</span> last = bins<span class="op">[</span>m - <span class="dv">1</span><span class="op">][</span><span class="dv">0</span><span class="op">]</span>;</a>
+<a class="sourceLine" id="cb1-26" title="26">    <span class="kw">let</span> <span class="kw">mut</span> result = <span class="pp">vec!</span><span class="op">[</span>last<span class="op">]</span>;</a>
+<a class="sourceLine" id="cb1-27" title="27">    <span class="kw">for</span> i <span class="kw">in</span> (<span class="dv">0</span>..m - <span class="dv">1</span>).rev() <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-28" title="28">        <span class="kw">let</span> j = binsearch(<span class="dv">0</span>..bins<span class="op">[</span>i<span class="op">]</span>.len(), &amp;|j| bins<span class="op">[</span>i<span class="op">][</span>j<span class="op">]</span> &lt; last);</a>
+<a class="sourceLine" id="cb1-29" title="29">        last = bins<span class="op">[</span>i<span class="op">][</span>j<span class="op">]</span>;</a>
+<a class="sourceLine" id="cb1-30" title="30">        result.push(last);</a>
+<a class="sourceLine" id="cb1-31" title="31">    <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-32" title="32">    result.iter().rev().cloned().collect()</a>
+<a class="sourceLine" id="cb1-33" title="33"><span class="op">}</span></a>
+<a class="sourceLine" id="cb1-34" title="34"></a>
+<a class="sourceLine" id="cb1-35" title="35"><span class="at">#[</span>cfg<span class="at">(</span>test<span class="at">)]</span></a>
+<a class="sourceLine" id="cb1-36" title="36"><span class="kw">mod</span> test_lis <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-37" title="37">    <span class="kw">use</span> <span class="kw">crate</span>::<span class="pp">sequence::lis::</span>*;</a>
+<a class="sourceLine" id="cb1-38" title="38">    <span class="at">#[</span>test<span class="at">]</span></a>
+<a class="sourceLine" id="cb1-39" title="39">    <span class="kw">fn</span> test() <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-40" title="40">        <span class="pp">assert_eq!</span>(lis(&amp;<span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span><span class="op">]</span>), <span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span><span class="op">]</span>);</a>
+<a class="sourceLine" id="cb1-41" title="41">        <span class="pp">assert_eq!</span>(lis(&amp;<span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span><span class="op">]</span>), <span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span><span class="op">]</span>);</a>
+<a class="sourceLine" id="cb1-42" title="42">        <span class="pp">assert_eq!</span>(lis(&amp;<span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span><span class="op">]</span>), <span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span><span class="op">]</span>);</a>
+<a class="sourceLine" id="cb1-43" title="43">        <span class="pp">assert_eq!</span>(lis(&amp;<span class="pp">vec!</span><span class="op">[</span><span class="dv">4</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">5</span><span class="op">]</span>), <span class="pp">vec!</span><span class="op">[</span><span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">5</span><span class="op">]</span>);</a>
+<a class="sourceLine" id="cb1-44" title="44">        <span class="pp">assert_eq!</span>(lis(&amp;<span class="pp">vec!</span><span class="op">[</span><span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">2</span><span class="op">]</span>), <span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>, <span class="dv">2</span><span class="op">]</span>);</a>
+<a class="sourceLine" id="cb1-45" title="45">        <span class="pp">assert_eq!</span>(lis(&amp;<span class="pp">vec!</span><span class="op">[</span><span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">3</span><span class="op">]</span>), <span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>, <span class="dv">3</span><span class="op">]</span>);</a>
+<a class="sourceLine" id="cb1-46" title="46">        <span class="pp">assert_eq!</span>(lis(&amp;<span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">3</span><span class="op">]</span>), <span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span><span class="op">]</span>);</a>
+<a class="sourceLine" id="cb1-47" title="47">    <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-48" title="48"><span class="op">}</span></a></code></pre></div>
+            </div>
           </div>
 
           <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
 <details class=menu>
 <summary class=menu>代数</summary>
 <ul>
+<li><a href="algebra.monoid.html">モノイド</a>
+<ul>
+<li><a href="algebra.monoid.minmax.html">Min/Max モノイド</a></li>
+<li><a href="algebra.monoid.sumprod.html">Sum/Prod モノイド</a></li>
+</ul></li>
 <li><a href="algebra.group.html">群</a></li>
 <li><a href="algebra.ring.html">環</a></li>
+<li><a href="algebra.field.html">体</a></li>
+<li><a href="algebra.module.html">加群</a></li>
 <li><a href="algebra.ratio.html">有理数</a></li>
 <li><a href="algebra.complex.html">虚数</a></li>
 <li><a href="algebra.matrix.html">行列</a></li>
 <li><a href="algebra.hyper.html">超数</a></li>
 <li><a href="algebra.total.html">全順序化</a></li>
 <li><a href="algebra.modint.html">ModInt</a></li>
-<li><a href="algebra.monoid.html">モノイド</a>
-<ul>
-<li><a href="algebra.monoid.minmax.html">Min/Max モノイド</a></li>
-</ul></li>
 <li><a href="algebra.act.html">作用</a>
 <ul>
 <li><a href="algebra.act.assign.html">代入作用</a></li>
+<li><a href="algebra.act.add.html">加算作用</a></li>
 </ul></li>
 </ul>
 </details>

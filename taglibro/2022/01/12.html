@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="description" content="拡張ユークリッド, 中国剰余定理" />
+  <meta property="og:url" content="http://cympfh.cc/taglibro">
+  <meta property="og:title" content="Wed Jan 12 2022" />
+  <meta property="og:description" content="拡張ユークリッド, 中国剰余定理" />
+  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@cympfh" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Wed Jan 12 2022</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="../../resources/css/c.css" />
+  <link rel="stylesheet" href="../../../resources/css/c.css" />
+  <link rel="stylesheet" href="../../../resources/css/youtube.css" />
+  <link rel="stylesheet" href="../../../resources/css/web_emb.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+</head>
+<body>
+  <div class="taglibro">
+<header class="page-header">
+    <a href='../../index.html'><i class="fas fa-fast-backward"></i></a>
+</header>
+<header>
+<h1 class="title">Wed Jan 12 2022</h1>
+</header>
+<span class="math inline">\(\def\divisor{\mathop{\triangleleft}}\def\Z{\mathbb Z}\)</span>
+<div id="toc-level-2">
+
+</div>
+<h2 id="拡張ユークリッド-中国剰余定理">拡張ユークリッド, 中国剰余定理</h2>
+<p>そういえば去年末に勉強してたのを復習する. ここでは数としてはすべて整数を扱う.</p>
+<h3 id="約数倍数関係">約数/倍数関係</h3>
+<p>2つの数 <span class="math inline">\(n,a\)</span> について, <span class="math display">\[\exists q, n = qa\]</span> とあるとき, これを <span class="math display">\[a \divisor n\]</span> と書いて, <span class="math inline">\(a\)</span> は <span class="math inline">\(n\)</span> の <strong>約数</strong> であるだとか, <span class="math inline">\(n\)</span> は <span class="math inline">\(a\)</span> の <strong>倍数</strong> であるだとか, <span class="math inline">\(a\)</span> は <span class="math inline">\(n\)</span> を <strong>割り切る</strong> だとかいう.</p>
+<blockquote>
+<p><span class="math inline">\(a \mid n\)</span> という記法が一般的であるが, 視認性が最悪な上に, 対称でもなんでもない関係を左右対称な記号で書くのはナンセンスなので使わないことにする.</p>
+</blockquote>
+<p>例えば,</p>
+<ul>
+<li><span class="math inline">\(2 \divisor 8\)</span></li>
+<li><span class="math inline">\(3 \divisor 9\)</span></li>
+<li><span class="math inline">\(3 \divisor -9\)</span></li>
+</ul>
+<p>特に,</p>
+<ul>
+<li><span class="math inline">\(\forall a, a \divisor 0\)</span></li>
+</ul>
+<p>この関係 <span class="math inline">\(\divisor\)</span> には次のような性質がある. 簡単に確認できるので証明はしない.</p>
+<ul>
+<li>d1) <span class="math inline">\(a \divisor b \land b \divisor c \implies a \divisor c\)</span> (推移律)</li>
+<li>d2) <span class="math inline">\(a \divisor b \implies \forall c, ac \divisor bc\)</span></li>
+<li>d3) <span class="math inline">\(c \divisor a \land c \divisor b \implies \forall x,y, c \divisor ax + by\)</span> (結合性)</li>
+<li>d4) <span class="math inline">\(a \divisor b \land b \ne 0 \implies |a| \leq |b|\)</span></li>
+<li>d5) <span class="math inline">\(a \divisor b \land b \divisor a \implies |a| = |b|\)</span></li>
+</ul>
+<h3 id="除算の基本原理定理">除算の基本原理（定理）</h3>
+<p>2つの数 <span class="math inline">\(n,a\)</span> があるとき, 次を満たす <span class="math inline">\(q,r\)</span> が <strong>唯一</strong> 存在する: <span class="math display">\[\exists! q, \exists!r ,~~ 0 \leq r &lt; a ~ \land ~ n = qa + r\]</span></p>
+<p><span class="math inline">\(n,a\)</span> から上の形式を導く操作を <strong>除算</strong> という（<span class="math inline">\(n\)</span> を <span class="math inline">\(a\)</span> で除算する）. この <span class="math inline">\(q\)</span> のことを <strong>商</strong>, <span class="math inline">\(r\)</span> のことを <strong>剰余</strong> という. この剰余 <span class="math inline">\(r\)</span> のことを <span class="math inline">\(n\%a\)</span> と書く.</p>
+<p>この基本原理は定理として証明できるが省略.</p>
+<h3 id="gcd">gcd</h3>
+<p>2つの数 <span class="math inline">\(a,b\)</span> に対して <span class="math display">\[c \divisor a \land c \divisor b\]</span> とあるとき, この <span class="math inline">\(c\)</span> を <span class="math inline">\(a,b\)</span> の <strong>公約数</strong> という. 最大の公約数を <span class="math display">\[\gcd(a,b)\]</span> と書いて表す. ただし例外的に <span class="math display">\[\gcd(0,0)=0\]</span> だと定める. これ以外の値のときは性質 (d4) があるので gcd は一意に定まる.</p>
+<p>gcd の定義は簡単に一般化できて, 数 <span class="math inline">\(z_1, \ldots, z_N\)</span> に対して <span class="math inline">\(\gcd(z_1, \ldots, z_N)\)</span> が定まる. ただし <span class="math inline">\(\gcd(0, \ldots, 0)=0\)</span> であるとする.</p>
+<p><span class="math inline">\(\gcd(z_1, \ldots, z_N) = 1\)</span> のとき, <span class="math inline">\(z_1, \ldots, z_N\)</span> は <strong>互いに素</strong> であるという.</p>
+<h3 id="整数線形結合">整数線形結合</h3>
+<p>整数全体の集合を <span class="math inline">\(\Z\)</span> と書く. <span class="math display">\[\Z = \{0,\pm1, \pm2, \ldots\}\]</span> この要素をそれぞれ <span class="math inline">\(\alpha\)</span> 倍したものを <span class="math inline">\(\alpha \Z\)</span> と書く. <span class="math display">\[\alpha \Z = \{ 0, \pm \alpha, \pm 2\alpha, \ldots \}\]</span></p>
+<blockquote>
+<p>特に <span class="math inline">\(0\Z = \{0\}\)</span>.</p>
+</blockquote>
+<p>それぞれからの要素を足したものを <span class="math inline">\(\alpha \Z + \beta \Z\)</span> と書く. <span class="math display">\[\alpha \Z + \beta \Z = \{ \alpha z_1 + \beta z_2 \mid \alpha z_1 \in \alpha \Z, \beta z_2 \in \beta \Z\}\]</span> 一般に, <span class="math inline">\(\alpha_1, \ldots, \alpha_N\)</span> に対して, <span class="math display">\[\alpha_1 \Z + \cdots + \alpha_N \Z\]</span> が定まる.</p>
+<h4 id="定理">定理</h4>
+<p><span class="math inline">\(a,b\)</span> について, <span class="math display">\[a \Z + b \Z = \gcd(a,b) \Z\]</span> が成り立つ.</p>
+<p><span class="math inline">\((a,b)=(0,0)\)</span> の場合は自明（両辺とも <span class="math inline">\(\{0\}\)</span>）. <span class="math inline">\((a,b) \ne (0,0)\)</span> の場合を証明する.</p>
+<p>まずは何かしらの <span class="math inline">\(g\)</span> によって, <span class="math inline">\(a \Z + b \Z = g \Z\)</span> と表されることを見て, そして <span class="math inline">\(g=\gcd(a,b)\)</span> であることを最後に確認する.</p>
+<p><span class="math inline">\(I = a\Z + b\Z\)</span> とおく. この正の部分 <span class="math inline">\(I^+ = \{ z \in I \mid z &gt; 0 \}\)</span> を考えるとこれは非空である. なぜなら <span class="math inline">\(|a|\)</span> や <span class="math inline">\(|b|\)</span> が自明に含まれるので. そこで <span class="math display">\[g = \min I^+\]</span> を持ってくる. では任意に <span class="math inline">\(c \in I\)</span> を取ってきたときにこれを <span class="math inline">\(g\)</span> で除算してみる（除算の基本原理）. <span class="math display">\[c = qg + r ~~~(0 \leq r &lt; g)\]</span> さて <span class="math inline">\(c, g \in I\)</span> より <span class="math inline">\(r \in I\)</span> でもある. <span class="math inline">\(g\)</span> が <span class="math inline">\(I^+\)</span> の最小元であることために <span class="math inline">\(r=0\)</span> でないといけない. すなわち <span class="math display">\[\forall c \in I ,~~ g \divisor c\]</span> が得られる. というわけで <span class="math inline">\(I = g \Z\)</span> である.</p>
+<p>さて <span class="math inline">\(a,b \in I\)</span> なので <span class="math inline">\(g \divisor a \land g \divisor b\)</span> である. すなわち <span class="math inline">\(g\)</span> は <span class="math inline">\(a,b\)</span> の公約数である. 逆に <span class="math inline">\(a,b\)</span> の公約数として任意に <span class="math inline">\(d\)</span> を持ってきたとき,</p>
+<p><span class="math display">\[\begin{align*}
+d \divisor a \land d \divisor b
+&amp; \implies d \divisor xa+yb &amp; (\forall x,y) \\
+&amp; \implies d \divisor g &amp; (\exists x,y,~ g=xa+yb) \\
+&amp; \implies |d| \leq g \\
+\end{align*}\]</span></p>
+<p><span class="math inline">\(g\)</span> は公約数でしかも, 公約数はすべて <span class="math inline">\(g\)</span> 以下であることが示された. これは <span class="math inline">\(g = \gcd(a,b)\)</span> にほかならない.</p>
+<p>以上で定理が示された.</p>
+<p>この定理は次のようにも言い換える事ができる.</p>
+<h4 id="系">系</h4>
+<p>定数 <span class="math inline">\(a,b,n\)</span> と変数 <span class="math inline">\(x,y\)</span> の方程式 <span class="math display">\[ax + by = n\]</span> は, <span class="math inline">\(\gcd(a,b) \divisor n\)</span> のときに限って解を持つ.</p>
+<h4 id="系-1">系</h4>
+<p>定数 <span class="math inline">\(a,b\)</span> と変数 <span class="math inline">\(x,y\)</span> の方程式 <span class="math display">\[ax + by = \gcd(a,b)\]</span> は必ず解を持つ.</p>
+<h4 id="系-2">系</h4>
+<ul>
+<li><span class="math inline">\(\forall a,b ,~ \exists! g\)</span>
+<ul>
+<li><span class="math inline">\(g \divisor a\)</span> and <span class="math inline">\(g \divisor b\)</span></li>
+<li>and <span class="math inline">\(c \divisor a \implies c \divisor g\)</span></li>
+<li>and <span class="math inline">\(c \divisor b \implies c \divisor g\)</span></li>
+</ul></li>
+</ul>
+<h3 id="ユークリッドアルゴリズム">ユークリッドアルゴリズム</h3>
+<h4 id="定理-1">定理</h4>
+<ol type="1">
+<li><span class="math inline">\(\gcd(a,0) = |a|\)</span></li>
+<li><span class="math inline">\(\gcd(a,b) = \gcd(|b|, a\%|b|)\)</span> when <span class="math inline">\(b\ne 0\)</span></li>
+</ol>
+<p>1 は gcd の定義より明らか. 2 について見る. <span class="math inline">\(a\)</span> を <span class="math inline">\(|b|\)</span> で除算する. <span class="math display">\[a = q |b| + r\]</span></p>
+<p>そこで</p>
+<ul>
+<li><span class="math inline">\(g_1 = \gcd(a, b)\)</span></li>
+<li><span class="math inline">\(g_2 = \gcd(|b|, r)\)</span></li>
+</ul>
+<p>とおくと, <span class="math inline">\(g_1 \divisor |b|\)</span>, <span class="math inline">\(g_1 \divisor r\)</span> なので, <span class="math inline">\(g_1 \divisor g_2\)</span>. 同様に <span class="math inline">\(g_2 \divisor g_1\)</span> も導ける. これらから <span class="math inline">\(g_1 = g_2\)</span>.</p>
+<h4 id="アルゴリズム">アルゴリズム</h4>
+<p>上の定理はそのまま, <span class="math inline">\(a,b\)</span> から <span class="math inline">\(\gcd(a,b)\)</span> を求めるアルゴリズムを提示する.</p>
+<ul>
+<li>Given <span class="math inline">\(a,b\)</span></li>
+<li>While <span class="math inline">\(b \ne 0\)</span> do
+<ul>
+<li><span class="math inline">\(a,b \leftarrow |b|, a\%|b|\)</span></li>
+</ul></li>
+<li>done</li>
+<li>Return <span class="math inline">\(a\)</span> as <span class="math inline">\(\gcd(a,b)\)</span></li>
+</ul>
+<p>ループにおいて <span class="math inline">\(|b|\)</span> に注目するとこれが狭義単調減少していることから停止性が保証される.</p>
+<h3 id="拡張ユークリッドアルゴリズム">拡張ユークリッドアルゴリズム</h3>
+<p>ユークリッドアルゴリズムの <span class="math inline">\(a,b\)</span> に対して,</p>
+<ul>
+<li><span class="math inline">\(r_0 = a\)</span>, <span class="math inline">\(r_1 = b\)</span></li>
+<li><span class="math inline">\(r_{k+1} = r_{k-1} \% r_k\)</span></li>
+</ul>
+<p>とする. <span class="math inline">\(r_{k+1}=0\)</span> のとき <span class="math inline">\(r_k=\gcd(a,b)\)</span> であるというのがユークリッドアルゴリズムであった.</p>
+<p>さて <span class="math inline">\(r_{k-1}\)</span> を <span class="math inline">\(r_k\)</span> で除算する際の商を <span class="math inline">\(q_k\)</span> とする. <span class="math display">\[r_{k-1} = q_k r_k + r_{k+1}\]</span></p>
+<p>更に</p>
+<ul>
+<li><span class="math inline">\(x_0=1, x_1=0, x_{k+1} = q_k x_k + x_{k-1}\)</span></li>
+<li><span class="math inline">\(y_0=0, y_1=1, y_{k+1} = q_k y_k + y_{k-1}\)</span></li>
+</ul>
+<p>を定める. 次が成り立つ.</p>
+<h4 id="定理-2">定理</h4>
+<p><span class="math display">\[r_k = (-1)^k x_k a + (-1)^{k+1} y_k b\]</span></p>
+<p><span class="math inline">\(k=0,1\)</span> については自明. <span class="math inline">\(k&gt;1\)</span> は数学的帰納法から導かれる.</p>
+<p>特に <span class="math inline">\(r_{k+1}=0\)</span> になったとき,</p>
+<ul>
+<li><span class="math inline">\(r_k = \gcd(a,b)\)</span></li>
+<li><span class="math inline">\((-1)^k x_k a + (-1)^{k+1} y_k b = \gcd(a,b)\)</span></li>
+</ul>
+<p>を得る.</p>
+<p>この定理は <span class="math inline">\(ax+by = \gcd(a,b)\)</span> の解 <span class="math inline">\(x,y\)</span> を得るための具体的なアルゴリズムをそのまま提示している.</p>
+<h3 id="合同関係">合同関係</h3>
+<p>正の数 <span class="math inline">\(m\)</span> について, <span class="math display">\[a - b \in m \Z\]</span> とあることを, <span class="math inline">\(m\)</span> を法にする合同関係といって <span class="math display">\[a \equiv b \pmod m\]</span> と書く. <span class="math inline">\(a \equiv b \pmod m \iff \exists k, a = b + km\)</span> である.</p>
+<h3 id="中国剰余定理">中国剰余定理</h3>
+<p>互いに素な正の数 <span class="math inline">\(m_1, \ldots, m_K\)</span> と数 <span class="math inline">\(a_1, \ldots, a_K\)</span> に関する次のような連立方程式</p>
+<ul>
+<li><span class="math inline">\(x \equiv a_1 \pmod{m_1}\)</span></li>
+<li><span class="math inline">\(x \equiv \cdots\)</span></li>
+<li><span class="math inline">\(x \equiv a_K \pmod{m_K}\)</span></li>
+</ul>
+<p>を <span class="math inline">\(x\)</span> に関して解きたい.</p>
+<ul>
+<li><span class="math inline">\(m = \prod_i m_i\)</span></li>
+<li><span class="math inline">\(M_i = m / m_i\)</span></li>
+</ul>
+<p>とおく. <span class="math inline">\((m_i)\)</span> が互いに素なことから <span class="math inline">\(\gcd(m_i, M_i)=1\)</span>. 定理から <span class="math inline">\(\exists x_i, y_i\)</span> で, <span class="math display">\[x_i m_i + y_i M_i = 1\]</span> これは <span class="math inline">\(m_i\)</span> を法にすることで <span class="math display">\[\exists y_i ,~~ y_i M_i \equiv 1 \pmod{m_i}\]</span> と言い直せる.</p>
+<p>そこで <span class="math display">\[x = \left( \sum_i a_i y_i M_i \right) \% m\]</span> とするとこれが解になる.</p>
+<p><span class="math inline">\(m_j \divisor m, m_j \divisor M_i (i \ne j), m_j \not\divisor M_j\)</span> に注意すると,</p>
+<p><span class="math display">\[\begin{align*}
+x \% m_j
+&amp; = (a_j y_j M_j) \% m_j \\
+&amp; = (a_j 1) \% m_j \\
+&amp; = a_j
+\end{align*}\]</span></p>
+<p>となって確かに連立方程式を満たしている.</p>
+<footer>
+    <p class="is-pulled-right">
+    @cympfh / cympfh@gmail.com
+    </p>
+</footer>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+  </div>
+  <script src="../../../resources/js/youtube.js"></script>
+  <script src="../../../resources/js/web_emb.js"></script>
+</body>
+</html>

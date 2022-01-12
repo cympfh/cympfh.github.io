@@ -8,4 +8,3 @@ paper	paper/
 procon	procon/
 taglibro	taglibro/
 coq	coq-book/
-rakonto	rakonto/

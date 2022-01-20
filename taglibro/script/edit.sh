@@ -34,4 +34,5 @@ if [ ! -f "${TOKEN}.md" ]; then
     ( echo "% $(datetitle "$TOKEN")"; echo ) > "${TOKEN}.md"
 fi
 
-vim -c "au BufWritePost *.md :silent !make $TOKEN.html >/dev/null 2>&1" "$TOKEN.md"
+vim "$TOKEN.md"
+# vim -c "au BufWritePost *.md :silent !make $TOKEN.html >/dev/null 2>&1" "$TOKEN.md"

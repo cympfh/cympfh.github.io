@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="半環/熱帯半環/熱帯半環の行列演算/対称化/" />
+  <meta property="og:url" content="http://cympfh.cc/taglibro">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="熱帯半環, max-plus 代数" />
+  <meta property="og:description" content="半環/熱帯半環/熱帯半環の行列演算/対称化/" />
+  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@cympfh" />
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>熱帯半環, max-plus 代数</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-stumbleupon"></i></a>
+</header>
+<header>
+<h1 class="title">熱帯半環, max-plus 代数</h1>
+</header>
+<p class="date" style="text-align: right">
+2022-01-30 (Sun.)
+</p>
+<div class="is-pulled-right">
+<p><a class='tag is-red' href=index.html#代数>代数</a></p>
+</div>
+<p><span class="math inline">\(\def\R{\mathbb R}\def\Re{\mathbb{R}_{\epsilon}}\def\P{\mathbb{P}_{\epsilon}}\)</span></p>
+<h2 id="半環">半環</h2>
+<p>集合 <span class="math inline">\(X\)</span> とその上の2つの演算 <span class="math inline">\(\oplus\)</span> と <span class="math inline">\(\otimes\)</span> について,</p>
+<ul>
+<li><span class="math inline">\((X, \oplus, 0)\)</span> が可換モノイド
+<ul>
+<li>ここで <span class="math inline">\(0 \in X\)</span> が単位元</li>
+</ul></li>
+<li><span class="math inline">\((X, \otimes, 1)\)</span> がモノイド
+<ul>
+<li>ここで <span class="math inline">\(1 \in X\)</span> が単位元</li>
+</ul></li>
+<li>分配法則
+<ul>
+<li><span class="math inline">\(a \otimes (b \oplus c) = (a \otimes b) \oplus (a \otimes c) = (b \oplus c) \otimes a\)</span></li>
+</ul></li>
+<li>零化
+<ul>
+<li><span class="math inline">\(0 \otimes a = a \otimes 0 = 0\)</span></li>
+</ul></li>
+</ul>
+<p>が成り立つとき, <span class="math inline">\((X, \oplus, \otimes)\)</span> を <strong>半環 (semiring)</strong> という.</p>
+<p>加えて, <span class="math inline">\(a \oplus a = a\)</span> という冪等性が成り立つ半環を <strong>冪等半環 (dioid)</strong> という.</p>
+<p>環と同様に, <span class="math inline">\(\oplus\)</span> を加法の演算, <span class="math inline">\(\otimes\)</span> を乗法の演算と呼ぶことにする. また <span class="math inline">\(x \otimes y\)</span> のことを <span class="math inline">\(xy\)</span> と書く場合がある.</p>
+<h2 id="熱帯半環">熱帯半環</h2>
+<p>実数とそこに負の無限大 <span class="math inline">\((-\infty)\)</span> を表す数 <span class="math inline">\(\epsilon\)</span> を付加した集合 <span class="math display">\[\Re = \R \cup \{ \epsilon \}\]</span> これは <span class="math inline">\(\oplus\)</span> を <span class="math inline">\(\max\)</span>, <span class="math inline">\(\otimes\)</span> を <span class="math inline">\(+\)</span> とすることで半環になる. これを <strong>熱帯半環</strong> という. また, max と plus で構成しているので <strong>max-plus 代数</strong> という.</p>
+<p>付加する数を正の無限大として, <span class="math inline">\(\max\)</span> でなく <span class="math inline">\(\min\)</span> を使っても同じ構造が得られるわけだが, こちらは min-plus 代数と呼んで区別する.</p>
+<p>演算を確認すると次の通り.</p>
+<ul>
+<li>加法
+<ul>
+<li><span class="math inline">\(x \oplus y = \max(x,y)\)</span> if <span class="math inline">\(x,y \in \R\)</span></li>
+<li><span class="math inline">\(x \oplus \epsilon = x\)</span></li>
+<li><span class="math inline">\(\epsilon \oplus x = x\)</span></li>
+</ul></li>
+<li>乗法
+<ul>
+<li><span class="math inline">\(x \otimes y = x + y\)</span> if <span class="math inline">\(x,y \in \R\)</span></li>
+<li><span class="math inline">\(x \otimes \epsilon = \epsilon \otimes x = \epsilon\)</span></li>
+</ul></li>
+</ul>
+<p>また, 加法は冪等性 <span class="math inline">\(x \oplus x = x\)</span> を満たす. というわけで <span class="math inline">\((\Re, \max, +)\)</span> は確かに（冪等）半環.</p>
+<p><span class="math inline">\(r\)</span> を自然数として, <span class="math inline">\(r\)</span> 個の <span class="math inline">\(x \in \R\)</span> の（<span class="math inline">\(\otimes\)</span> に関する）積を次のように表す. <span class="math display">\[x^{\otimes r} = x \otimes x \otimes \cdots \otimes x\]</span> これを <span class="math inline">\(x \in \Re, r \in \R\)</span> に拡張すると次のように定まる.</p>
+<ul>
+<li><span class="math inline">\(x^{\otimes r} = rx\)</span> if <span class="math inline">\(x \in \R\)</span></li>
+<li><span class="math inline">\(x^{\otimes 0} = 0\)</span> for all <span class="math inline">\(x \in \Re\)</span></li>
+<li><span class="math inline">\(\epsilon^{\otimes r} = \epsilon\)</span> if <span class="math inline">\(r &gt; 0\)</span></li>
+</ul>
+<h2 id="熱帯半環の行列演算">熱帯半環の行列演算</h2>
+<p>普通に <span class="math inline">\(\Re\)</span> を環のつもりで行列を定義すれば, 演算も定まる. 行列同士の積だけ確認しておくと次の通り.</p>
+<p><span class="math inline">\(A \in \Re^{m \times p}\)</span>, <span class="math inline">\(B \in \Re^{p \times n}\)</span> について, <span class="math display">\[(A \otimes B)_{ij} = \bigoplus a_{ik} \otimes b_{kj} = \max \{ a_{ik} + b_{kj} \mid j = 1,2,\ldots,p \}\]</span></p>
+<p>特に単位行列は <span class="math display">\[\left[ \begin{array}{ccc}0 &amp; \epsilon &amp; \epsilon \\ \epsilon &amp; 0 &amp; \epsilon \\ \epsilon &amp; \epsilon &amp; 0 \end{array}\right]\]</span> ゼロ行列は <span class="math display">\[\left[ \begin{array}{ccc}\epsilon &amp; \epsilon &amp; \epsilon \\ \epsilon &amp; \epsilon &amp; \epsilon \\ \epsilon &amp; \epsilon &amp; \epsilon \end{array}\right]\]</span></p>
+<h2 id="対称化">対称化</h2>
+<p><span class="math display">\[\P = \Re \times \Re\]</span> として, これに次の演算を定める.</p>
+<ul>
+<li><span class="math inline">\((a,b) \oplus (c,d) = (a \oplus c, b \oplus d)\)</span></li>
+<li><span class="math inline">\((a,b) \otimes (c,d) = (ac \oplus bd, ad \oplus bc)\)</span></li>
+</ul>
+<p>とするとやはりこれは（冪等）半環になっている.</p>
+<blockquote>
+<p><span class="math inline">\(\Re \to \P\)</span>; <span class="math inline">\(x \mapsto (x, \epsilon)\)</span> は準同型の包含射.</p>
+</blockquote>
+<p>またいくつか追加で演算を導入する.</p>
+<ul>
+<li>絶対値
+<ul>
+<li><span class="math inline">\(u = (x_1, x_2)\)</span> について <span class="math inline">\(|u| = x_1 \oplus x_2\)</span></li>
+</ul></li>
+<li>マイナス
+<ul>
+<li><span class="math inline">\(u = (x_1, x_2)\)</span> について <span class="math inline">\(\ominus u = (x_2, x_1)\)</span></li>
+<li><span class="math inline">\(u \oplus (\ominus v)\)</span> のことを <span class="math inline">\(u \ominus v\)</span> と書く</li>
+</ul></li>
+<li>バランス演算
+<ul>
+<li><span class="math inline">\(u^\bullet = u \oplus (\ominus u) = (|u|, |u|)\)</span></li>
+</ul></li>
+<li>バランス関係
+<ul>
+<li><span class="math inline">\(u \triangledown v \iff u_1 \oplus v_2 = u_2 \oplus v_1\)</span></li>
+<li>これは大体同値関係みたいなものを与えるが, 推移率が成り立っていない</li>
+</ul></li>
+</ul>
+<p>そしてバランス関係を使って <span class="math inline">\(\P\)</span> の上の同値関係を次で定める.</p>
+<p><span class="math inline">\(u = (u_1,u_2), v = (v_1,v_2) \in \P\)</span> について, <span class="math display">\[u \equiv v \iff u = v \lor ( u \triangledown v \land u_1 \ne u_2 \land v_1 \ne v_2 )\]</span></p>
+<p><span class="math inline">\(\P/\equiv\)</span> を対称化 max-plus 代数という.</p>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

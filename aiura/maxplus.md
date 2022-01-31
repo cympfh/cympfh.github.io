@@ -2,7 +2,9 @@
 % 2022-01-30 (Sun.)
 % 代数
 
-$\def\R{\mathbb R}\def\Re{\mathbb{R}_{\epsilon}}\def\P{\mathbb{P}_{\epsilon}}$
+$\def\R{\mathbb R}\def\Re{\mathbb{R}_{\epsilon}}\def\S{\mathcal{S}}$
+
+<div id=toc></div>
 
 ## 半環
 
@@ -73,17 +75,22 @@ $$\left[ \begin{array}{ccc}0 & \epsilon & \epsilon \\ \epsilon & 0 & \epsilon \\
 ゼロ行列は
 $$\left[ \begin{array}{ccc}\epsilon & \epsilon & \epsilon \\ \epsilon & \epsilon & \epsilon \\ \epsilon & \epsilon & \epsilon \end{array}\right]$$
 
-## 対称化
+## max-plus 代数の対称化
 
-$$\P = \Re \times \Re$$
+半環 $\Re$ には $\oplus$ についてマイナスの概念が定義されてないのは不便なので,
+これを定めるために対称化と呼ばれる操作を行う.
+
+$$\Re^2 = \Re \times \Re$$
 として, これに次の演算を定める.
 
 - $(a,b) \oplus (c,d) = (a \oplus c, b \oplus d)$
+    - 単位元 $\epsilon = (\epsilon, \epsilon)$
 - $(a,b) \otimes (c,d) = (ac \oplus bd, ad \oplus bc)$
+    - 単位元 $0 = (0, \epsilon)$
 
 とするとやはりこれは（冪等）半環になっている.
 
-> $\Re \to \P$; $x \mapsto (x, \epsilon)$ は準同型の包含射.
+> $\Re \to \Re^2$; $x \mapsto (x, \epsilon)$ は準同型の包含射.
 
 またいくつか追加で演算を導入する.
 
@@ -98,10 +105,100 @@ $$\P = \Re \times \Re$$
     - $u \triangledown v \iff u_1 \oplus v_2 = u_2 \oplus v_1$
     - これは大体同値関係みたいなものを与えるが, 推移率が成り立っていない
 
-そしてバランス関係を使って $\P$ の上の同値関係を次で定める.
+次のような性質がある:
 
-$u = (u_1,u_2), v = (v_1,v_2) \in \P$ について,
+1. $u^\bullet = (\ominus v)^\bullet$
+1. $u^\bullet = (u^\bullet)^\bullet$
+1. $u (v^\bullet) = (uv)^\bullet$
+1. $\ominus (\ominus u) = u$
+1. $\ominus (u \oplus v) = (\ominus u) \oplus (\ominus v)$
+1. $\ominus (u \otimes v) = (\ominus u) \otimes v$
+
+そしてバランス関係を使って $\Re^2$ の上の同値関係を次で定める.
+
+$u = (u_1,u_2), v = (v_1,v_2) \in \Re^2$ について,
 $$u \equiv v \iff u = v \lor ( u \triangledown v \land u_1 \ne u_2 \land v_1 \ne v_2 )$$
 
-$\P/\equiv$ を対称化 max-plus 代数という.
+これで商集合をとった
+$$\S := \Re^2 /\!\! \equiv$$
+を対称化 max-plus 代数という.
+
+この商集合 $\S$ には大きく三種類の値しかなくて,
+
+- $[ (w, \epsilon) ] = \{ (w, x) \mid w > x \}$ for each $w \in \R$
+- $[ (\epsilon, w) ] = \{ (x, w) \mid x < w \}$ for each $w \in \R$
+- $[ (w, w) ] = \{ (w,w) \}$ for each $w \in \Re$
+
+これをそれぞれ, 正数, 負数, バランス数と呼ぶ.
+特に $[ (\epsilon, \epsilon) ]$ をゼロと呼ぶ.
+
+標準包含射 $x \mapsto (x,\epsilon)$ を用いて, $\Re$ と $\S$ の正数の部分を同一視する.
+$$\Re \simeq \{ (w,\epsilon) \mid w \in \R \}/\!\!\equiv ~~ (\subset \S)$$
+マイナス $\ominus$ を取ることで, $(\epsilon, x)$ は $\ominus x$ だと言える.
+ただし, $\epsilon = (\epsilon, \epsilon) = \ominus \epsilon$ である.
+
+整理すると, $\S$ にある値は
+
+- 正数
+    - $w$ for each $w \in \R$
+- 負数
+    - $\ominus w$ for each $w \in \R$
+- バランス数
+    - $w^\bullet$ for each $w \in \Re$
+    - この中の $\epsilon^\bullet$ をゼロと言う
+
+という3つに区分される.
+そして引き算の結果はこれと対応していて,
+
+- When $a>b$,
+    - $a \ominus b = (a,\epsilon) \oplus (\epsilon,b) = (a,b) \equiv (a, \epsilon)$
+    - したがって, $a \ominus b = a$
+- When $a<b$
+    - $a \ominus b = (a,b) \equiv (\epsilon,b)$
+    - したがって, $a \ominus b = \ominus b$
+- When $a=b$
+    - $a \ominus a = a^\bullet$
+
+### バランスの線形性
+
+バランス関係 $\triangledown$ には遷移律こそないが, 良さげな性質がある.
+
+- $u \triangledown u$
+- $u \triangledown v \iff v \triangledown u$
+- $u \triangledown v \iff (u \ominus v) \triangledown \epsilon$
+- $u \triangledown v \land w \triangledown x \implies (u \oplus w) \triangledown (v \oplus x)$
+- $u \triangledown v \implies uw \triangledown vw$
+
+### 線形バランス式
+
+- $x \in \Re^n$ に関する線形方程式
+    - $A \otimes x \oplus b = C \otimes x \oplus d$
+- $x \in \S^n$ に関する **線形バランス式**
+    - $(A \ominus C) \otimes x \oplus (b \ominus d) \triangledown \epsilon$
+        - ただし $x$ は max 正だとする
+
+この2つの方程式の解集合は一致する.
+
+## 最短経路問題
+
+ここまで $\max$ だったものを $\min$ に置き換えて min-plus 代数 $\Re$ を考える.
+$\epsilon$ の扱いは形式上は変わらない（が気持ちは負の無限大だったものを正の無限大に置き換えている）.
+
+エッジに重みのついた有向グラフとは次のようなものである.
+
+- 頂点数を $N$ としたとき, 頂点集合 $V = \{1, 2, \ldots, N\}$
+- 辺の集合 $E \subset V \times V \times \mathbb R$
+
+この2つ組 $(V,E)$ をグラフという.
+このグラフの隣接行列とは次のようなものである.
+
+- $N \times N$ 行列 $A \in \Re^{N \times N}$ であって,
+    - $(A)_{ij} = w$ if $(i,j,w) \in E$
+    - $(A)_{ij} = \epsilon$ otherwise
+
+自然数 $m$ について,
+$A^{\otimes m}$
+は $m-1$ 回, エッジを辿っていけるパスの重みの和の最小値を表す.
+$$(A^{\otimes m})_{ij} = \left( \text{ $i$ から $j$ まで $m-1$ 回エッジを辿って到達できるならその重みの和の最小値 } \right)$$
+到達できないとき, 値には $\epsilon$ が入っている.
 

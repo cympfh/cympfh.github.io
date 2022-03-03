@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>[1810.05997] Predict then Propagate: Graph Neural Networks meet Personalized PageRank</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="../resources/css/c.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
+</header>
+<header>
+<h1 class="title">[1810.05997] Predict then Propagate: Graph Neural Networks meet Personalized PageRank</h1>
+</header>
+<ul>
+<li>
+original paper: <a href=https://arxiv.org/abs/1810.05997>https://arxiv.org/abs/1810.05997</a>
+</li>
+</ul>
+<div class="is-pulled-right">
+<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#グラフ学習>グラフ学習</a></p>
+</div>
+<figure>
+<img src="https://i.imgur.com/mrT1Z10.png" />
+</figure>
+<h2 id="オリジナル-pagerank-1998">オリジナル PageRank (1998)</h2>
+<p>頂点にいる確率ベクトル <span class="math inline">\(\pi\)</span> と隣接行列（を正規化したもの） <span class="math inline">\(A\)</span> を使って, <span class="math display">\[\pi = A \pi\]</span> を解く.</p>
+<h2 id="personalized-pagerank-1998">Personalized PageRank (1998)</h2>
+<p>テレポート（リスタート）を表す teleport vector <span class="math inline">\(i\)</span> を使って, <span class="math display">\[\pi = (1-\alpha) A \pi + \alpha i\]</span> ここで <span class="math inline">\(\alpha\)</span> は <span class="math inline">\(0 &lt; \alpha \leq 1\)</span> でテレポートする確率を表す.</p>
+<p>これを陽に解くと次の式になる. <span class="math display">\[\pi = \alpha ( I_n - (1-\alpha) A )^{-1} i\]</span></p>
+<p>このモデルは次のように使われる.</p>
+<p>頂点 <span class="math inline">\(x\)</span> からスタートして頂点 <span class="math inline">\(y\)</span> のスコアを知りたい. <span class="math inline">\(x\)</span> に当たるところだけ bit を立てた one-hot vector を <span class="math inline">\(i\)</span> として使う. 上の式を解いて得た <span class="math inline">\(\pi\)</span> の <span class="math inline">\(y\)</span> に当たる成分が得たかったスコア <span class="math inline">\(I(x,y)\)</span> である.</p>
+<h2 id="personalized-propagation-of-neural-predictions-ppnp">Personalized Propagation of Neural Predictions (PPNP)</h2>
+<p>以上の手法にニューラルネットを適用する.</p>
+<p>頂点 <span class="math inline">\(i\)</span> に特徴ベクトル <span class="math inline">\(x_i \in \mathbb R^m\)</span> があるとき, パラメータを <span class="math inline">\(\theta\)</span> とするニューラルネットワーク <span class="math inline">\(f_\theta\)</span> を使って <span class="math display">\[h_i = f_\theta(x_i)\]</span> とする. ただしここでグラフの頂点数を <span class="math inline">\(n\)</span> だとして <span class="math inline">\(h_i \in \mathbb R^n\)</span> とする. というのも <span class="math inline">\(h\)</span> が先程の <span class="math inline">\(i\)</span> 相当だから.</p>
+<p><span class="math display">\[z = \mathrm{softmax}( \alpha ( I_n - (1-\alpha) A )^{-1} h_i )\]</span> これの <span class="math inline">\(j\)</span> 成分がスコア <span class="math inline">\((i,j)\)</span> になる.</p>
+<p>全ての頂点に関するスコアを求めるとしたら, <span class="math inline">\(x_i\)</span> を並べた行列 <span class="math inline">\(X\)</span> から <span class="math inline">\((i,j)\)</span> として得られる.</p>
+<p>以上を使うことでグラフに関するニューラルネットワーク計算が end-to-end に完了できる. ただしこの通りに行列演算するのはあまりに非効率である.</p>
+<blockquote>
+<p>特に逆行列なんて計算するのが無理だろう.</p>
+</blockquote>
+<h2 id="approximate-ppnp-appnp">Approximate PPNP (APPNP)</h2>
+<p>PageRank を Random walk with restart で近似的に計算するのと同じことをする.</p>
+<ul>
+<li><span class="math inline">\(z_0 = h = f_\theta(x)\)</span></li>
+<li>For each <span class="math inline">\(k=1,\ldots, K\)</span>
+<ul>
+<li><span class="math inline">\(z_k = (1-\alpha) A z_{k-1} + \alpha h\)</span></li>
+</ul></li>
+<li><span class="math inline">\(z = \mathrm{softmax}(z_K)\)</span></li>
+</ul>
+<p>とは言え行列の掛け算をするので, 頂点数 <span class="math inline">\(N\)</span>, イテレーション数 <span class="math inline">\(K\)</span> に対して <span class="math inline">\(O(K N^2)\)</span> は時間が掛かる. 彼らの実験では <span class="math inline">\(N &lt; 2e4\)</span>, <span class="math inline">\(K \leq 20\)</span> 程度.</p>
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+</body>
+</html>

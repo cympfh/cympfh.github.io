@@ -16,7 +16,6 @@ new:
 git: index posts
 	git add --all
 	git commit -a -m "paper/ `date`"
-	git push
 
 ## posts
 

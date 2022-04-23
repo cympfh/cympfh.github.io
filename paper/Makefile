@@ -23,6 +23,15 @@ posts:
 	for f in *.md; do make $${f%md}html; done
 
 %.html: %.md
+	cat <$^ | awk -f script/post.awk | \
+		unidoc -s \
+			-B templates/post.header.html \
+			-A ../resources/js/toc.html \
+			--css ../resources/css/c.css \
+			--css https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css \
+			-o $@
+
+___hoge:
 	mdc <$^ | awk -f script/post.awk | \
 		pandoc -s -t html5 \
 		-B templates/post.header.html \

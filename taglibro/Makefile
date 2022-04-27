@@ -14,20 +14,10 @@ all-html:
 
 %.html: %.md
 	$(eval DESCRIPTION := $(shell cat $^ | grep '^## ' | sed 's/^#* //g' | sed ':a;N;$$!ba;s/\n/, /g'))
-	cat $^ | \
-		mdc | \
-		pandoc -s -t html5 \
-		--template resources/templates/post.body.html \
-		-V "description=$(DESCRIPTION)" \
-		-B resources/templates/post.header.html \
-		-A resources/templates/post.footer.html \
-		-A ../resources/js/toc.html \
-		--mathjax=https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML \
-		--css ../../resources/css/c.css \
-		--css ../../../resources/css/c.css \
-		--css ../../../resources/css/youtube.css \
-		--css ../../../resources/css/web_emb.css \
-		--css https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css \
+	unidoc -s \
+		-V "description:$(DESCRIPTION)" \
+		--template resources/templates/post.hbs \
+		$^ \
 		-o $@
 
 edit:

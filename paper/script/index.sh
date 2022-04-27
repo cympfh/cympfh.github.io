@@ -69,6 +69,7 @@ cat <<TEMPLATE
   <title>paper/</title>
   <link rel="stylesheet" href="../resources/css/bulma/bulma.css" />
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <script type="text/javascript" src="../resources/js/localhost.js"></script>
   <style>
 TEMPLATE
 

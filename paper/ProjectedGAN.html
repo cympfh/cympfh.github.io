@@ -5,7 +5,7 @@
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>WSL</title>
+  <title>[2111.01007] Projected GANs Converge Faster</title>
   <style type="text/css">code{white-space: pre;}</style>
   <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
   <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
@@ -17,75 +17,56 @@
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-sticky-note"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
 
-<h1 class="title">WSL</h1>
-<p><div class='is-pulled-right'> <a class='tag is-green' href=index.html#Windows>Windows</a> <a class='tag is-green' href=index.html#linux>linux</a> </div></p>
-<h2>環境</h2>
-<p>以下を前提にしています.</p>
+<h1 class="title">[2111.01007] Projected GANs Converge Faster</h1>
+<p><ul> <li>original paper: <a href=https://arxiv.org/abs/2111.01007>https://arxiv.org/abs/2111.01007</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#GAN>GAN</a> </div></p>
+<h2>概要</h2>
+<p>GAN を上手く訓練するテクニック. みんな Discriminator さえうまく訓練できれば Generator は勝手に強くなってくれると言ってる.</p>
+<h2>参考</h2>
+<p>https://qiita.com/T-STAR/items/faefb9a25e9bcec99176</p>
+<h2>Multi-Scale Disciminators + Random Projections</h2>
+<p>生成した画像を次のような機構で射影して, これに関する判別器を育てる.</p>
 <ul>
-  <li>Windows10</li>
-  <li>WSL（WSL2 ではない）</li>
-  <li>Ubuntu 18.04, 20.04</li>
-</ul>
-<h2>Base Setup</h2>
-<ul>
-  <li><a href="https://xztaityozx.hatenablog.com/entry/2017/12/01/001544">お前らのWSLはそれじゃダメだ</a></li>
-</ul>
-<p>タイトルはともかく基本の設定はこれだけ見ておけばいい. 内容は Xサーバ (VcXsrv) を入れてやっていこうという話.</p>
-<h2>IME</h2>
-<ul>
-  <li><a href="https://qiita.com/maromaro3721/items/be8ce6e3cec4cbcdac00">WSLでMozcで日本語入力</a></li>
-</ul>
-<p>fcitx-mozc のセットアップ</p>
-<h2>クリップボード</h2>
-<p>選択肢としては２つある.</p>
-<ol>
   <li>
-    X Window System を使う
+    生成/真の画像 \(x\)
     <ul>
       <li>
-        Windows 側に X Window Server が必要
+        Pretrained Features
         <ul>
-          <li>VcXsrv などを使う</li>
+          <li>\(z_1 = L_1(x)\)</li>
+          <li>\(z_2 = L_2(z_1)\)</li>
+          <li>\(z_3 = L_3(z_2)\)</li>
+          <li>\(z_4 = L_4(z_3)\)</li>
         </ul>
       </li>
-      <li>WSL からは xsel または xclip コマンドを使う</li>
+      <li>
+        Projection
+        <ul>
+          <li>\(d_1 = \pi_1(z_1)\)</li>
+          <li>\(d_2 = \pi_2(z_2)\)</li>
+          <li>\(d_3 = \pi_3(z_3)\)</li>
+          <li>\(d_4 = \pi_4(z_4)\)</li>
+        </ul>
+      </li>
+      <li>
+        Disciminators
+        <ul>
+          <li>\(D_1(d_1) \in [0,1]\)</li>
+          <li>\(D_2(d_2) \in [0,1]\)</li>
+          <li>\(D_3(d_3) \in [0,1]\)</li>
+          <li>\(D_4(d_4) \in [0,1]\)</li>
+        </ul>
+      </li>
     </ul>
   </li>
-  <li>Windows に入ってるクリップボード操作を使う</li>
-</ol>
-<p>前者は書いてある通りなので後者について述べる</p>
-<p>Windows にはクリップボードを操作するためのコマンドとして <code>clip.exe</code> がある. これはコピーする（クリップボードにテキストを上書きする）ことだけができる. ペーストする（取り出す）専用のコマンドはたぶんないが, <code>PowerShell</code> のコマンド <code>Get-Clipboard</code> があるのでこれを使うと良い.</p>
-<p>注意点が3つあり,</p>
-<ol>
-  <li>
-    文字コード...?
-    <ul>
-      <li>適切な文字コードに変換しないと文字化けするかもしれない</li>
-      <li>まじでこれに関して挙動がよめなくて分からん</li>
-    </ul>
-  </li>
-  <li>
-    改行コードは CRLF ( <code>\r\n</code> ) にした方がよい
-    <ul>
-      <li><code>nkf -c</code> で CRLF への変換</li>
-      <li><code>nkf -d</code> で LF への変換</li>
-    </ul>
-  </li>
-  <li><code>clip.exe</code> は末尾に無駄な空行を一つ差し込んでコピーする</li>
-</ol>
-<p>3つ目はペーストするタイミングで良ければ, sed で消すなどすれば良いが, シェル以外のところでペーストすると無駄な空行が残るし, 最後に空行が残ってるのが正しい場合でも消すので, 正しい対処とは言えない.</p>
-<pre><code class="code language-bash"># コピーする
-echo ほげほげ | nkf -c | clip.exe
-
-# ペーストする
-powershell.exe &#x2F;c &quot;Get-Clipboard&quot; | nkf -d | sed &#x27;${&#x2F;^$&#x2F;d}&#x27;
-</code></pre>
-<p>これらを適当にエイリアスにしておけばよい.</p>
-<p>シェルスクリプトから標準入力があるかどうかをチェックすることで挙動を変えることは可能なので, コピーもペーストも同じコマンドとして登録することは可能（実際 <code>xsel</code> などはそうだし）. 私は <a href="https://github.com/cympfh/bin/blob/master/clip">clip コマンド</a> として使えるように置いてある.</p>
-
+</ul>
+<p>\(L_i\) はすべて CNN 層. したがって, \(x\) から \(z_4\) を作る操作は普通の四層の CNN. そしてこれにはすでに分類タスクなどで学習済みの CNN を固定して使う.</p>
+<p>\(\pi_i\) はランダムに射影する操作を表すが実装上は重みをランダムに初期化した 1x1 の CNN でこれもやはり固定して使う.</p>
+<p>\(D_i\) は独立の判別器で自由に作る. 上記では4つの入力に対して4つの判別器が独立にある. ロスはいつものやつを4つに関して合計して使う.</p>
+<h2>"Floating Heads"</h2>
+<p>Feature を取り出す層として, 分類器として訓練したものを使うと, "確かに正しく猫として分類される" ような画像が生成されるようになる. その結果として, 猫の生首だけが宙に浮いた画像なんかが生成される. これを Floating Heads という問題点として挙げている.</p>
 
 <!--
 

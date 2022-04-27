@@ -203,3 +203,4 @@
 - [サイコロ](dice.md)
 - [近傍](misc.neighbor.md)
 - [2-SAT](misc.two_sat.md)
+- [座標圧縮](misc.coodinate_compression.md)

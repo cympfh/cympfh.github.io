@@ -1,44 +1,81 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>WSL</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
     <a href='index.html'><i class="fa fa-sticky-note"></i></a>
 </header>
-<header>
+
 <h1 class="title">WSL</h1>
-</header>
-<div class="is-pulled-right">
-<p><a class='tag is-green' href=index.html#Windows>Windows</a> <a class='tag is-green' href=index.html#linux>linux</a></p>
-</div>
-<h2 id="環境">環境</h2>
+<p><div class='is-pulled-right'> <a class='tag is-green' href=index.html#Windows>Windows</a> <a class='tag is-green' href=index.html#linux>linux</a> </div></p>
+<h2>環境</h2>
 <p>以下を前提にしています.</p>
 <ul>
-<li>Windows10</li>
-<li>WSL（WSL2 ではない）</li>
-<li>Ubuntu 18.04</li>
+  <li>Windows10</li>
+  <li>WSL（WSL2 ではない）</li>
+  <li>Ubuntu 18.04, 20.04</li>
 </ul>
-<h2 id="base-setup">Base Setup</h2>
+<h2>Base Setup</h2>
 <ul>
-<li><a href="https://xztaityozx.hatenablog.com/entry/2017/12/01/001544">お前らのWSLはそれじゃダメだ</a></li>
+  <li><a href="https://xztaityozx.hatenablog.com/entry/2017/12/01/001544">お前らのWSLはそれじゃダメだ</a></li>
 </ul>
 <p>タイトルはともかく基本の設定はこれだけ見ておけばいい. 内容は Xサーバ (VcXsrv) を入れてやっていこうという話.</p>
-<h2 id="ime">IME</h2>
+<h2>IME</h2>
 <ul>
-<li><a href="https://qiita.com/maromaro3721/items/be8ce6e3cec4cbcdac00">WSLでMozcで日本語入力</a></li>
+  <li><a href="https://qiita.com/maromaro3721/items/be8ce6e3cec4cbcdac00">WSLでMozcで日本語入力</a></li>
 </ul>
 <p>fcitx-mozc のセットアップ</p>
+<h2>クリップボード</h2>
+<p>選択肢としては２つある.</p>
+<ol>
+  <li>
+    X Window System を使う
+    <ul>
+      <li>
+        Windows 側に X Window Server が必要
+        <ul>
+          <li>VcXsrv などを使う</li>
+        </ul>
+      </li>
+      <li>WSL からは xsel または xclip コマンドを使う</li>
+    </ul>
+  </li>
+  <li>Windows に入ってるクリップボード操作を使う</li>
+</ol>
+<p>前者は書いてある通りなので後者について述べる</p>
+<p>Windows にはクリップボードを操作するためのコマンドとして <code>clip.exe</code> がある. これはコピーする（クリップボードにテキストを上書きする）ことだけができる. ペーストする（取り出す）専用のコマンドはたぶんないが, <code>PowerShell</code> のコマンド <code>Get-Clipboard</code> があるのでこれを使うと良い.</p>
+<p>注意点が3つあり,</p>
+<ol>
+  <li>文字コードは <code>Shift JIS</code> にした方がよい</li>
+  <li>改行コードは CRLF ( <code>\r\n</code> ) にした方がよい</li>
+  <li><code>clip.exe</code> は末尾に無駄な空行を一つ差し込んでコピーする</li>
+</ol>
+<p>最初の2つの注意点を無視しても上手く動いてるように見えることもあるが, 動かない場合がある. この2つは <code>nkf</code> コマンドを持っていけば容易に達成できる.</p>
+<p>3つ目はペーストするタイミングで良ければ, sed で消すなどすれば良いが, シェル以外のところでペーストすると無駄な空行が残るし, 最後に空行が残ってるのが正しい場合でも消すので, 正しい対処とは言えない.</p>
+<pre><code class="code language-bash"># コピーする
+echo ほげほげ | nkf -sc | clip.exe
+cat input.txt | nkf -sc | clip.exe
+
+# ペーストする
+powershell.exe &#x2F;c &quot;Get-Clipboard&quot; | nkf -d | sed &#x27;${&#x2F;^$&#x2F;d}&#x27;
+</code></pre>
+<p>これらを適当にエイリアスにしておけばよい.</p>
+<p>シェルスクリプトから標準入力があるかどうかをチェックすることで挙動を変えることは可能なので, コピーもペーストも同じコマンドとして登録することは可能（実際 <code>xsel</code> などはそうだし）. 私は <a href="https://github.com/cympfh/bin/blob/master/clip">clip コマンド</a> として使えるように置いてある.</p>
+
 
 <!--
 
@@ -144,5 +181,9 @@
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

@@ -99,7 +99,7 @@ cat <<TEMPLATE
   </head>
 <body>
 
-  <aside class="menu">
+  <aside class="menu left">
     <ul class="menu-list">
 TEMPLATE
 
@@ -138,6 +138,17 @@ cat <<TEMPLATE
       </div>
     </div>
   </section>
+
+  <aside class="menu right">
+    <ul class="menu-list">
+TEMPLATE
+
+  cat resources/md-list | awk -F/ '$0=$2' | uniq | sort -n |
+    sed 's,.*,<li><a href="#year-&">&</a></li>,'
+
+cat <<TEMPLATE
+    </ul>
+  </aside>
 
   <script src="./resources/js/base.js"></script>
   <script src="../resources/js/youtube.js"></script>

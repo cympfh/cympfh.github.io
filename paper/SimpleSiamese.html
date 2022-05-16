@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>[2011.10566] Exploring Simple Siamese Representation Learning</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
+</header>
+
+<h1 class="title">[2011.10566] Exploring Simple Siamese Representation Learning</h1>
+<p><ul> <li>original paper: <a href=https://arxiv.org/abs/2011.10566>https://arxiv.org/abs/2011.10566</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#自己教師アリ学習>自己教師アリ学習</a> <a class='tag is-blue' href=index.html#FAIR>FAIR</a> </div></p>
+<h2>概要</h2>
+<p>Siamese ネットワークの方法は画像認識の分野では常識化した. これは正例としての2つの画像ペアが同じ（または似てる）というものと, 負例として2つの画像ペアが違うものを表しているというデータセットで学習するものだった.</p>
+<p>ここで提案する Simple Siamese (以下 SimSiam) は負例を必要としない. 正例も一つの画像に異なるオーグメントを施すことで自動的に作る. 勾配を切る操作 (detach, stop-grad) を使うが, collapsing を防ぐためにこれがめちゃくちゃ重要だった.</p>
+<h2>手法</h2>
+<p><img src="https://i.imgur.com/aSeKX0Y.png" alt="Figure 1" /></p>
+<pre><code class="code language-python">def aug(x):
+    &quot;&quot;&quot;画像 x をランダムにオーグメントする&quot;&quot;&quot;
+    return RandomlyAugument(x)
+
+def cosine(x, y):
+    &quot;&quot;&quot;コサイン類似度&quot;&quot;&quot;
+    x_normalized = x.normalize()
+    y_normalized = y.normalize()
+    return (x_normalized * y_normalized).sum()
+
+def D(p, z):
+    &quot;&quot;&quot;損失関数としての類似度のマイナス&quot;&quot;&quot;
+    z = z.detach()  # stop gradient
+    return -cosine(p, z)
+
+# 学習可能なエンコーダー層
+f = Encoder()
+
+# 学習可能な予測層
+h = Predictor()
+
+# 学習ループ
+for x in minibatches:
+    x1, x2 = aug(x), aug(x)
+    z1, z2 = f(x1), f(x2)
+    p1, p2 = h(z1), h(z2)
+    loss1 = D(p1, z2)
+    loss2 = D(p2, z1)
+    loss = (loss1 + loss2) &#x2F; 2
+    loss.backward()
+    optimizer.update()
+</code></pre>
+<p>エンコードで得た <code>z</code> と, そこに更に <code>h</code> を挟んで得た <code>p</code> とを比較する. この比較では <code>p</code> 側に使った方しかアップデートしない.</p>
+<p>上のアルゴリズムでは, 一方に <code>h</code> を適用するのを両方実行して両方のロスを使ってる.</p>
+<p>両方ともにアップデートすると, collapsing (同じ値に潰れる) 問題が起きるのでこれを少し回避できる. 加えて予測層 <code>h</code> を一方にだけ適用する. これで完全に collapsing が起きなくなる. <code>h</code> は浅い MLP 層で良い</p>
+<h2>実験</h2>
+<h3>勾配を切る (detach, stop-grad) の効果</h3>
+<p>この操作を無くすと損失はあっという間に減って, コサイン類似度が 1 になる. これは結局一つの値に潰れてることを示している.</p>
+<p>ちなみにガウス分布に独立に従う \(d\) 次元ベクトル \(z\) を標準化したベクトル \(z / \|z\|_2\) のその標準偏差は \(1/ \sqrt{d}\) になる. エンコーダ <code>z</code> による出力について, その標準偏差を考えると大体そのくらいの値になるのが正しい学習に期待される挙動だ. これも一緒に調べると, 勾配を切ることで大体この値より少し小さいくらいを推移するが, 切らないとこれもすぐにゼロになる. 分散がゼロということなのでやはり一つの値に潰れてることが確認できた.</p>
+<h3>予測層 (Predictor) の効果</h3>
+<p>学習可能な予測層を置いておくことはめちゃくちゃ大事. パラメータ固定の MLP を置いておいても意味はなく, 学習が収束しなかった（しかしこれによって collapsing が起きたわけではない）. 学習において lr decay は不要で, lr 固定でよかった.</p>
+<h3>バッチサイズについて</h3>
+<p>collapsing を防ぐ目的でバッチサイズを大きくするのがこれまでの一般的なテクだった. 今回の実験では精度への影響はややあったが, どちらにせよ collapsing は他の工夫で防げたのでバッチサイズは重要じゃなかった.</p>
+<h2>仮説: SimSiam は EM アルゴリズムになってる</h2>
+<p>勾配を止める操作がまさに交互に一方を学習してく EM アルゴリズム的になってそう.</p>
+<p>画像 \(x\) , これをランダムにオーグメンテーションした \(T(x)\) , これをエンコードして得る \(F(T(x); \theta)\) があって, \(x\) に対して適切な表現ベクトル \(\eta_x\) になるように学習する.</p>
+\[\mathcal{L}(\theta, \eta) = \mathbb E \left[ \| F(T(x); \theta) - \eta_x \|^2_2 \right]\]
+<p>注意点として \(F\) のパラメータ \(\theta\) だけでなく, 表現ベクトル \(\eta_x\) そのものも学習すべきパラメータであるところ. この2つをアップデートするのに, 一方を固定して他方をアップデートすることを交互にやる. これが EM アルゴリズム的だといっている.</p>
+<p>\(\eta_x\) を固定するのは普通に \(F(T(x); \theta)\) に関してだけアップデートすればいい.</p>
+<p>\(\theta\) を固定して \(\eta_x\) を学習することを考えるが, これは解析的には次が最適解.</p>
+\[\eta_x \leftarrow \mathbb{E} \left[ F(T(x); \theta) \right]\]
+<p>そうすればいいのだが, 期待値を計算するのが実質無理なので, 直前の \(T', \theta'\) を使って</p>
+\[\eta_x = F(T'(x); \theta)\]
+<p>としておく（ \(T\) はランダムなので \(T'\) と書いて区別しておく）.</p>
+<p>とすると,</p>
+\[\mathcal{L}(\theta, \eta) = \mathbb E \left[ \| F(T(x); \theta) - F(T'(x); \theta') \|^2_2 \right]\]
+<p>だし, パラメータ \(\theta\) の更新は</p>
+\[\theta \leftarrow \mathop{\mathrm{argmin}}_\theta ~ \mathbb E \left[ \| F(T(x); \theta) - F(T'(x); \theta') \|^2_2 \right]\]
+<p>になった. ここで \(T', \theta'\) が定数なわけだが, これがまさに勾配をストップすることに相当している.</p>
+
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>

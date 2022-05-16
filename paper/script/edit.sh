@@ -42,5 +42,5 @@ if [ ! -f "${ID}.md" ]; then
 EOM
 fi
 
-vim "${ID}.md"
+$EDITOR "${ID}.md"
 make "${ID}.html"

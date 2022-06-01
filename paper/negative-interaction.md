@@ -114,7 +114,7 @@ $Z_{u,r} = 2$ であることが, $S_r$ のすべてをそのユーザーがプ�
 最初のモデルで言うところの interaction データ $X$ に今回作った $Z$ を右にくっつける.
 パラメータ行列 $B$ の下に $C$ をくっつける.
 
-![](https://i.imgur.com/OKEUV1I.png)
+<figure><img src="https://i.imgur.com/K3aRXHM.png" /></figure>
 
 あとやることは同じ.
 

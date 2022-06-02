@@ -56,6 +56,7 @@
 ## 区間木
 
 - [BIT](seq.bit.md)
+    - [累積和に関するBIT](seq.bit_cumulative.md)
 - [セグメントツリー](seq.segment_tree.md)
     - [RMQ](seq.rmq.md)
     - [加法セグメントツリー](seq.segment_tree_sum.md)

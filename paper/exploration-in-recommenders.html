@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Values of User Exploration in Recommender Systems</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
+</header>
+
+<h1 class="title">Values of User Exploration in Recommender Systems</h1>
+<p><ul> <li>original paper: <a href=https://dl.acm.org/doi/10.1145/3460231.3474236>https://dl.acm.org/doi/10.1145/3460231.3474236</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#推薦システム>推薦システム</a> <a class='tag is-blue' href=index.html#Google>Google</a> </div></p>
+<h2>参考文献</h2>
+<ul>
+  <li><a href="https://scrapbox.io/gunosydm/Values_of_User_Exploration_in_Recommender_Systems">Values of User Exploration in Recommender Systems - gunosydm</a></li>
+  <li><a href="https://en-jp.wantedly.com/companies/wantedly/post_articles/351771">Wantedly RecSys 2021 参加レポート⑤ - 推薦システムにおける&quot;探索&quot;の価値 | Wantedly, Inc.</a></li>
+</ul>
+<h2>概要</h2>
+<ul>
+  <li>
+    強化学習しろ
+    <ul>
+      <li>強化学習は探索と活用</li>
+      <li>
+        探索に価値がある
+        <ul>
+          <li>バンディットもそう</li>
+        </ul>
+      </li>
+      <li>短期的なユーザー体験は犠牲に, 長期的な利益を見ろ</li>
+    </ul>
+  </li>
+  <li>Serendipity を上げる工夫をする</li>
+</ul>
+<h2>背景: 強化学習による推薦システム</h2>
+<p>推薦システムは強化学習でやってく. マルコフ決定過程モデルで定式化する.</p>
+<ul>
+  <li>状態空間 \(S\)</li>
+  <li>
+    アクション空間 \(A\)
+    <ul>
+      <li>推薦するアイテムの空間</li>
+    </ul>
+  </li>
+  <li>
+    遷移確率
+    <ul>
+      <li>\(P \colon S \times A \times S \to \mathbb R\)</li>
+    </ul>
+  </li>
+  <li>
+    報酬
+    <ul>
+      <li>\(R \colon S \times A \to \mathbb R\)</li>
+      <li>値を \(r(s,a)\) と書く</li>
+    </ul>
+  </li>
+  <li>初期状態 \(\rho_0\)</li>
+  <li>報酬の減衰率 \(\gamma\)</li>
+</ul>
+<p>あるユーザーの履歴として列</p>
+\[H = \{ (A_i, a_i, r_i) \mid i = 0,1,\ldots,t-1 \}\]
+<p>がある. ただしここで \(A_i\) というのは時刻 \(i\) にユーザーに提示したレコメンド結果. \(a_i\) はユーザーの反応. \(r_i\) はその反応に対する報酬. ただし反応が得られな方ときは \(r_i=0\) とする.</p>
+<p>\(a_i \in A_i\) ならレコメンドが正しかったけど, そうでないならレコメンドにとって未知のアクションになる.</p>
+<p>適当なニューラルネットでモデルを組むと次のようになる. アイテム \(a\) についての表現ベクトル \(v_a\) を作っておく. 適当な RNN で \(u_t = \mathrm{RNN}_\theta(H)\) を作って, この内積で</p>
+\[\pi_\theta(a \mid s_t) = \frac{ \exp( u_t \cdot v_a ) }{ \sum_v \exp(u_t \cdot v)}\]
+<p>とする (softmax).</p>
+<p>減衰付きの報酬累積和</p>
+\[R_t = \mathbb 1_{( r(s,a) > 0 )} \sum_i \gamma^{t-i} r(s_i, a_i)\]
+<p>この期待値を最大化する</p>
+\[\max_{\theta} J(\pi_\theta) = \mathbb E_{s,a} [R_t]\]
+<p>ように \(\theta\) を更新するのが目的.</p>
+<h2>手法</h2>
+<ol>
+  <li>
+    エントロピー正則化; Entropy Regularization
+    <ul>
+      <li>多様性を重視するような正則化</li>
+    </ul>
+  </li>
+  <li>
+    内発的動機づけ; Instrinsic Motivation and Reward Shaping
+    <ul>
+      <li>新規的なアイテムに報酬を与える</li>
+    </ul>
+  </li>
+  <li>Actionable Representation for Exploration</li>
+</ol>
+<h3>エントロピー正則化</h3>
+<p>状態 \(s\) 時点での多様性はエントロピー</p>
+\[H(\pi_\theta( \cdot \mid s))\]
+<p>で表現される. これを正則化として,</p>
+\[\max_\theta J(\pi_\theta) + \alpha H(\pi_\theta)\]
+<p>の最大化にする. \(\alpha\) はブレンド比.</p>
+<p>エントロピーは定義を展開して</p>
+\[H(\pi_\theta( \cdot \mid s)) = - \sum_a \pi_\theta(a \mid s) \log \pi_\theta(a \mid s)\]
+<p>になる. エントロピーは一様分布 \(U\) との KL ダイバージェンスとしても計算できる.</p>
+\[H(\pi_\theta( \cdot \mid s)) = - \mathrm{KL} ( \pi( \cdot \mid s) \| U )\]
+<h3>内発的動機づけ</h3>
+<p>ユーザーのアクション \(a_t\) がその時点の状態 \(s_t\) から見て未知なものなら, 報酬を \(c\) 倍 ( \(c>1\) ) する.</p>
+<p>未知かどうかはトピッククラスタリングなどしておいてアドホックに判定する？</p>
+<h3>Actionable Representation</h3>
+<p>履歴を \((A_i, a_i, r_i)\) の列で表現していた. ここにそのアクションが新規的なものであるかどうかのフラグ \(i \in {0,1}\) を付け足す. （添字の記号と被ってしまって申し訳ないが別物と見てもらって）</p>
+\[H = \{ (A_i,a_i,r_i, i_i) \}\]
+<p>と表現し直す.</p>
+<h2>評価指標</h2>
+<p>計算式はすべて省略</p>
+<ul>
+  <li>
+    Accuracy
+    <ul>
+      <li>map@50</li>
+    </ul>
+  </li>
+  <li>
+    多様性 (Diversity)
+    <ul>
+      <li>一回の推薦におけるアイテム提示の中の広がりを見る</li>
+    </ul>
+  </li>
+  <li>
+    新規性 (Novelty)
+    <ul>
+      <li>アイテムを自力で発見できない度合い</li>
+    </ul>
+  </li>
+  <li>
+    Serendipity
+    <ul>
+      <li>意外性と関連性</li>
+    </ul>
+  </li>
+</ul>
+<h2>オフライン実験評価</h2>
+<p>Accuracy は基本全部下がる. それ以外が上がったりする. エントロピー正則化は多様性と新規性を上げる. Serendipity は基本全部下がる い内発的動機づけと Actionable Representation は多様性はあんまり変わらず Serendipity があがる.</p>
+
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>

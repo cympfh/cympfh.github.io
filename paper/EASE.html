@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>[1905.03375] Embarrassingly Shallow Autoencoders for Sparse Data</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
+</header>
+
+<h1 class="title">[1905.03375] Embarrassingly Shallow Autoencoders for Sparse Data</h1>
+<p><ul> <li>original paper: <a href=https://arxiv.org/abs/1905.03375>https://arxiv.org/abs/1905.03375</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#推薦システム>推薦システム</a> </div></p>
+<p>Netflix 論文 <a href="negative-interaction">Negative Interactions for Improved Collaborative Filtering</a> の一つ前に当たるモデル. \(\def\diag{\mathrm{diag}}\)</p>
+<h2>概要</h2>
+<p>新しい線形の top-N 推薦モデルを提案する. 最適化は解析的に厳密に行い, アイテム数 \(I\) に対して \(O(I^3)\) で完了する（前処理を除く）. 元になったモデルとして SLIM (2011) があるのだが, 罰則項にあった L1 正則化を無くし, 制約も減らした. これによって最適化が高速に終わるようになった.</p>
+<h2>モデル</h2>
+<ul>
+  <li>
+    インタラクション行列
+    <ul>
+      <li>\(X \in \mathbb R^{U \times I}\)</li>
+    </ul>
+  </li>
+  <li>
+    アイテムvsアイテムの重み行列
+    <ul>
+      <li>\(B \in \mathbb R^{I \times I}\)</li>
+    </ul>
+  </li>
+  <li>
+    予測
+    <ul>
+      <li>\(S = XB\)</li>
+    </ul>
+  </li>
+</ul>
+<h3>訓練</h3>
+\[\min_B \| X - XB\|^2_F + \lambda \|B\|^2_F,\]
+\[\text{s.t. } ~ ~ \diag(B) = 0.\]
+<p>制約は行列 \(B\) の対角成分がゼロであることを言っている. これには \(B = I\) という自明解を完全に除去する意図がある.</p>
+<h3>解く</h3>
+<p>上の最小化問題はラグランジュの未定乗数法を使って解ける.</p>
+<p>列ベクトル \(\gamma = (\gamma_1, \ldots, \gamma_I) \in \mathbb R^I\) を導入して,</p>
+\[L(B,\gamma) = \| X - XB\|^2_F + \lambda \|B\|^2_F + 2 \gamma \cdot \diag(B)\]
+<p>これを最小化することを考える.</p>
+<p>これを \(B\) で注意深く微分すると,</p>
+\[\frac{\partial L}{\partial B}(B,\gamma) = -2X^t (X-XB) + 2\lambda B + 2 \diag(\gamma)\]
+<p>ここで \(\diag\) は行列の対角成分のこと, またはそのベクトルを対角成分に持つ行列のこと. 今の式では後者の意味.</p>
+<p>最小を取るときはこの微分値がゼロなので, そこから</p>
+\[B = (X^t X + \lambda I)^{-1} (X^t X - \diag(\gamma))\]
+<p>を得る.</p>
+<p>\(G = X^tX\) と定める. この行列には <strong>グラム行列 (Gram matrix)</strong> という名前がついてる.</p>
+\[B = (G + \lambda I)^{-1} (G - \diag(\gamma))
+= I - (G + \lambda I)^{-1} (\diag(\gamma) + \lambda I)\]
+<p>さて, 制約 \(\diag(B) = 0\) を思い出す. 上の式の対角成分を取り出すと,</p>
+\[0 = 1 - \hat{g}_{ii} (\gamma_i + \lambda)\]
+<p>から,</p>
+\[\gamma_i = \hat{g}_{ii}^{-1} - \lambda\]
+<p>ここで \(\hat{g}_{ii}\) は \((G + \lambda I)^{-1}\) の \((i,i)\) （対角）成分のこと.</p>
+<p>この \(\gamma\) をさっきの \(B\) の式に代入すると, 制約付きでの解が求まって,</p>
+\[B = I - (G+\lambda I)^{-1} (\hat{g}_{ii}^{-1})\]
+<p>この行列は確かに対角成分はゼロになっていて, 非対角成分は,</p>
+\[(B)_{ij} = \hat{g}_{ij} / \hat{g}_{jj}\]
+<p>で決まる.</p>
+<p>念のためにいうと \((\hat{g}_{ij})\) は行列 \((X^t X + \lambda I)^{-1}\) のこと.</p>
+<h3>グラム行列について</h3>
+<p>頻出した \(G = X^t X\) はグラム行列と呼ばれる重要な行列. \(X\) が \({0,1}\) の行列なら, \(G_{ij}\) はアイテム同士が共起したかを表している. ポアソン分布を仮定すれば \(\sqrt{G_{ij}}\) がその分散になる. さて実は, \(G\) の成分和が大きくなるほど, \(B\) によってより精度良く推定することが可能になる. 成分和を大きくする要因は2つあって, 一つは \(X\) がより密な行列になること. もう一つは単に \(X\) のユーザー方向が大きくなること. すなわち, ユーザーがよりアクティブであってくれて, ユーザー数が多くなるにつれて, 精度が良くなる.</p>
+<p>ユーザー方向に大きくあればいいので, これは \(B\) を大きくする必要はなく, 計算量的にはお得.</p>
+<h3>モデルの解釈</h3>
+<p>ベクトル \((x_k)_{k \in I}\) から \(x_i\) だけを除いたものを \(x_{-i}\) と書こう.</p>
+<p>個のモデルは \(x_{-i}\) から \(x_i\) を推定する確率になってるのは間違い. ガウス分布だとしたら, 平均は</p>
+\[\mathbb E(x_i \mid x_{-i}) = x_{-i} B_{-i, i}\]
+<p>で, 分散は \(1/\hat{g}_{ii}\) .</p>
+<h3>計算コスト</h3>
+<p>グラム行列を計算するのに \(U \times I\) 行列同士の掛け算として素直にやれば \(O(U \times I^2)\) .</p>
+<p>アルゴリズムとしては計算済みの \(G\) が与えられて \(B\) を求める. これには逆行列を計算するところが一番大変で, これは \(O(I^3)\) . ここでユーザー数やインタラクション数に依存しないのが嬉しい. なぜなら精度を上げるにはここを増やす必要があるが, 計算量はこれとは独立だからだ.</p>
+<q>じゃあグラム行列の計算が重たくなるわけだけどね.</q>
+<h2>他との比較</h2>
+<p><strong>ディープラーニング</strong> 協調レコメンダは長らく行列分解モデルによるものだったが, 最近になってディープラーニングモデルが台頭してきた. 特に AutoEncoder 系が協調レコメンダとして使える. それらと比較すると EASE はただ一層からなる浅い AutoEncoder と見ることが出来る.</p>
+<p><strong>SLIM など</strong> EASE は <a href="http://glaros.dtc.umn.edu/gkhome/node/774">SLIM, 2011</a> が元になっていて, 定式化もほとんど同じ. 違いは SLIM は, 今回でいう \(B\) に相当する行列が非負である範囲で解いてるところ. そしてそっちでは解析的に解く方法を教えてくれなかったのが一番大きな違いだ. 逆に言えば SLIM は最適化に関して自由なので, logistic loss など使う余地があるが, EASE は一貫して L2 誤差だけ使ってるのでその点で不利になる可能性もある. 非負の制約を取り除いたことは精度の向上に貢献したと考えられている. また L1 正則化を失くしたことは得られる \(B\) が密になることにも貢献したと考えられる</p>
+<p><strong>近傍探索系</strong> グラム行列 \(G\) はアイテム対アイテムの類似度行列と思えるし, これを使って近いアイテムを推薦しているとも見れる. 特にグラム行列 \(G\) 自体は共起行列なわけだが, これの逆行列が真の類似度であることを示唆している.</p>
+<h2>実験</h2>
+<p>SLIM, WMF (Weighted Matrix Factorization), CDAE (Collaborative Denoising AutoEncoder), Mult-DAE, Mult-VAE と比較. はじめの2つが線形モデルで残りが AutoEncoder 系.</p>
+<p>データセットは</p>
+<table>
+  <thead>
+    <tr class=header>
+      <th align=left>name</th>
+      <th align=left>#users</th>
+      <th align=left>#items</th>
+      <th align=left>#interactions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class=odd>
+      <td align=left>Movie Lense (ML-20M)</td>
+      <td align=left>136,677</td>
+      <td align=left>20,108</td>
+      <td align=left>10M</td>
+    </tr>
+    <tr class=even>
+      <td align=left>Netflix Prize</td>
+      <td align=left>463,435</td>
+      <td align=left>17,769</td>
+      <td align=left>57M</td>
+    </tr>
+    <tr class=odd>
+      <td align=left>Million Song Data (MSD)</td>
+      <td align=left>571,355</td>
+      <td align=left>41,140</td>
+      <td align=left>34M</td>
+    </tr>
+  </tbody>
+</table>
+<p>SLIM と比較して非負の制約を取り除いてある. そこで EASE においても非負にするとどうなるかが EASE \(\geq 0\) としてある. 結果として性能は落ちた. 落ちた結果, SLIM と同程度になったように見える.</p>
+<p>Figure 2 は Netflix データセットで学習した \(B\) の各成分をヒストグラムにしたもの. 見ると \(0\) （より少し小さい値）をピークにして正負どちらにも広がった分布になってる. およそ 60% 程度が負の重みを持っていたそう. すなわちネガティブなインタラクション関係を学習できていると言っていいだろう.</p>
+<p>パラメータ \(\lambda\) の値について. ML-20M データセットでは \(500\) 程度. Netflix データセットで \(1000\) 程度. MSD で \(200\) 程度. 行列が大きくなるに比例して \(\lambda\) もめちゃでかいことに注意.</p>
+<p>実験環境. AWS で 64GB RAM/16 vCPU なインスタンス一つ借りて動かした. 一回の学習は Netflix なら2分程度, MSD が 20 分程度. パラメータサーチは \(\lambda\) 一個についてやるだけなので容易い.</p>
+<p>Table 1. ML-20M では Mult-VAE が強いが, その他のデータセットでは EASE で十分勝ってる.</p>
+<p>近傍系との比較. EASE が一番良いという結論. 詳細省略.</p>
+
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>

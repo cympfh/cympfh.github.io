@@ -16,7 +16,7 @@ higher-order interaction はこれを大きく改善できる.
 
 ## Review: Pair-wise Model
 
-ここでは Shallow AutoEncoder ([EASE^R, Netflix](https://arxiv.org/abs/1905.03375) という名前がついてる) を紹介する.
+ここでは Shallow AutoEncoder, [EASE, Netflix](EASE) を紹介する.
 あとでこれを higher-order interaction を使うような拡張をする.
 
 訓練データセットではユーザー集合 $U$ とアイテム集合 $I$ があって,
@@ -29,18 +29,21 @@ $$\|X - XB\|^2 + \lambda \|B\|^2 ~  \text{ s.t. } ~ \mathrm{diag}(B) = 0$$
 ただしここで行列の絶対値 $\| X \|^2$ はフロベニウスノルムの自乗を表す.
 $\lambda$ は罰則項へのハイパーパラメータ.
 
-$\mathrm{diag}^{-1}(B)=0$ は対角成分がゼロという意味.
+$\mathrm{diag}(B)=0$ は対角成分がゼロという意味.
 これは $B=I$ という自明解を避ける意味がある.
 
-> $\mathrm{diag}$ は長さ $N$ のベクトルを渡したら, それを対角成分に持つ $N \times N$ 行列を作る関数.
-> この逆という意味で, $\mathrm{diag}^{-1}$ は,
-> $N \times N$ 行列を渡したらその対角成分を取ってきて長さ $N$ ベクトルを作る両方を表す関数ということにする.
-> 逆関数ではないけど, $\mathrm{diag}^{-1}(\mathrm{diag}(x)) = x$ になってる.
+> $\mathrm{diag}$ は
+> $N \times N$ 行列を渡したらその対角成分を取ってきて長さ $N$ ベクトルを作る両方を表す関数のこと.
+> 逆に,
+> 長さ $N$ のベクトルを渡したら, それを対角成分に持つ $N \times N$ 対角行列を作る関数のことも,
+> 同じ記号 $\mathrm{diag}$ で表す.
+> 参考として NumPy の [numpy.diag](https://numpy.org/doc/stable/reference/generated/numpy.diag.html)
+> 関数がある.
 
 そしてこの最小化はラグランジュの未定乗数法を使うと次の式で解けるそう.
 
 - $P = (X^t X + \lambda I)^{-1}$
-- $\hat{B} = I - P \cdot \mathrm{diag}(1 / \mathrm{diag}^{-1}(P))$
+- $\hat{B} = I - P \cdot \mathrm{diag}(1 / \mathrm{diag}(P))$
 
 ここで $/$ はベクトルの成分ごとの割り算.
 この $\hat{B}$ がさっきの式の最適解になっている.

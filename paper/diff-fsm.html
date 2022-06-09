@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Differentiable Finite State Machines</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
+</header>
+
+<h1 class="title">Differentiable Finite State Machines</h1>
+<p><ul> <li>original paper: <a href=https://google-research.github.io/self-organising-systems/2022/diff-fsm/>https://google-research.github.io/self-organising-systems/2022/diff-fsm/</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#オートマトン>オートマトン</a> </div></p>
+<p>論文ではなくてリサーチ記事.</p>
+<h2>FSM</h2>
+<p>Finite State Machine (FSM) を考える. ここで考える FSM は次のようなもの.</p>
+<ul>
+  <li>状態空間, \(S\)</li>
+  <li>初期状態, \(s_0 \in S\)</li>
+  <li>入力の列, \(I^N\)</li>
+  <li>出力の列, \(O^N\)</li>
+  <li>遷移, \(\rho \colon I \times S \to S \times O\)</li>
+</ul>
+<p>ただし全て有限の空間で考えてる.</p>
+<p>初期状態は長さ \(|S|\) の one-hot ベクトルで与える. \(\rho\) から出力 \(I \times S \to O\) を取り出したものを3次テンソル</p>
+\[R \in \mathbb{R}_{I,S}^O\]
+<p>で書いて, 状態の遷移 \(I \times S \to S\) を取り出したものを3次テンソル</p>
+\[T \in \mathbb{R}_{I,S}^S\]
+<p>で書く. これで, 入力を長さ \(I\) のベクトル \(x\) , 状態を長さ \(|S|\) のベクトル \(s\) で書くと,</p>
+<ul>
+  <li>
+    出力
+    <ul>
+      <li>\(y = x s R_{x,s}^o\)</li>
+    </ul>
+  </li>
+  <li>
+    次の遷移
+    <ul>
+      <li>\(s' = x s T_{x,s}^t\)</li>
+    </ul>
+  </li>
+</ul>
+<p>というテンソル積の計算で求まる.</p>
+<h2>可微分 FSM の学習</h2>
+<p>決定的なマシンは \(R,T\) を \({0,1}\) のテンソルとして与えることで表現される. また \(s_0\) も one-hot ベクトルとしてある. これを緩めて非負実数からなるテンソルとベクトルとすることで確率的マシンとして動作する. さらに緩めて実数全体範囲で, それらを学習するパラメータだとすることで, FSM の学習ができそう.</p>
+<h2>実験</h2>
+<p>この記事では次の小さなオートマトンを題材に実験する.</p>
+<p><img src="https://i.imgur.com/uA13WlV.png" alt="" /></p>
+<p>学習データとして与えられるのは入力列と出力列のペア. オートマトンが持つ状態数はわからないので, 実験では 8 あるとしてある. Adam (lr=0.25) で学習すると上手くロスは下がって 400 イテレーションで十分収束した. できたモデルを見ると 8 つある状態を全て使っていて真のオートマトンとはまた別なものになっていそう.</p>
+<p>そこでエントロピー罰則項を設ける. 全ステップでの状態 \(s\) のエントロピーが小さいほど良い（つまり偏っているほど良くて one-hot ベクトルになっているのが最適）とする.</p>
+\[p_i = \frac{1}{N} \sum_t s^t_i\]
+\[H = - \sum_i p_i \log(p_i)\]
+<p>ここで \(s^t_i\) は時刻 \(t\) における状態 \(s\) の第 \(i\) 成分の値. これを足した平均を \(p_i\) としている. これを \(w = 0.01\) 倍したものをロスに加えて学習させた.</p>
+\[L = L_{\mathrm{FSM}} + w H\]
+<p>すると状態 8 を使う設定で学習した結果, 2 状態だけを使うオートマトンが得られた.</p>
+<p>実験では \(w=0.01\) が最適だったが, 100 回実験を回すと 2 状態になるのは 40 回で, 残りの 60 回では 3 状態以上を使うものになった. 学習の安定性はその程度. この回数は \(w\) を大きくするに連れて増えるが, エラーも増える.</p>
+<p>パラメータは最初全て \(\epsilon \times \mathcal{N}(0,1)\) で初期化してあるが, \(T\) の対角成分だけ</p>
+\[T_{s}^s \sim 1 + \epsilon \times \mathcal{N}(0,1)\]
+<p>という風に \(1\) だけ加えて初期化すると, 学習が安定化したそう. \(w=0.01\) で 100 回回して, 100 回が状態 2 になった.</p>
+<p>他に 4 状態くらいのオートマトンを 6 種類作って試したが, 全て上手く学習できた.</p>
+
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>

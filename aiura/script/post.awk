@@ -7,9 +7,6 @@
         for (i=2; i <= NF; i++) print "<a class='tag is-red' href=index.html#"$i">"$i"</a>"
         print "</div>"
     }
-    else if (NR==4) {
-        # abst は無視する
-    }
     else {
         print $0
     }

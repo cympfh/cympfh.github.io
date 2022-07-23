@@ -1,8 +1,12 @@
 % F-代数
-% 2018-11-20 (Tue.)
+% 2018-11-20 (Tue.), 2022-07-24 (Sun.)
 % 圏論
 
-$\def\N{\mathbb N}\def\C{\mathcal C}\def\succ{\mathrm{succ}}\def\banana#1{(\!|#1|\!)}$
+$\def\N{\mathbb N}\def\C{\mathcal C}\def\succ{\mathrm{succ}}\def\banana#1{(\!|#1|\!)}\def\Sets{\mathrm{\mathbb{S}ets}}$
+
+## INDEX
+
+<div id=toc></div>
 
 ## 参考
 
@@ -17,24 +21,26 @@ $\def\N{\mathbb N}\def\C{\mathcal C}\def\succ{\mathrm{succ}}\def\banana#1{(\!|#1
 
 圏 $\mathcal C$ における $F$-代数とは, 関手 $F : \mathcal C \to \mathcal C$ を以って, ある対象 $X$ と射 $f : FX \to X$ の組
 $$(X, f)$$
-のこと.
+のことをいう.
 ここで $X$ をこの $F$-代数の台という.
 紛らわしくなければ単に $X$ を $F$-代数と呼ぶ.
 
 ## F-代数の圏
 
-圏 $\mathcal C$ の $F$-代数全体を対象として,
-2つの $F$-代数 $(X,f)$ と $(Y,g)$ について,
-ある射 $h : X \to Y$ が $\mathcal C$ にあって下が可換
-$\require{AMScd}$
+圏 $\mathcal C$ の上の $F$-代数全体を対象とする圏を考える.
+2つの $F$-代数 $(X,f)$ と $(Y,g)$ があるときに,
+$\mathcal C$ の射 $h : X \to Y$ が $\mathcal C$ にあって下が可換になるとき,
+
+$$\require{amscd}$$
 $$\begin{CD}
 X @<f<< FX \\
 @VhVV  @VFhVV \\
 Y @<g<< FY
 \end{CD}$$
-このとき
+
+このときに
 $$h : (X,f) \to (Y,g)$$
-と書いて, これを射とするとき, これを $F$-代数の圏と呼ぶ.
+と書いて, これを $F$-代数の射とする.
 
 ## F-始代数
 
@@ -42,35 +48,31 @@ $F$-代数の圏の始対象を, $F$-始代数と言う.
 
 ### 例: 自然数
 
-Sets において
-$$F : \mathrm{Sets} \to \mathrm{Sets}$$
+集合の圏 Sets の関手
+$$F : \Sets \to \Sets$$
 $$X \mapsto 1+X$$
 を考える.
-ここで $1$ とは単集合 $\{ \ast \}$ であって, また $\ast$ は $X$ に (或いは他のどの集合にも) 含まれない元とする.
-$+$ は集合の和 $(\cup)$.
+ここで $1$ は単集合 $\{ \ast \}$ で, $+$ は集合の直和とする.
 
-$F$-始代数は
-$$(\N, \nu)$$
-である.
-ここで
+$F$-始代数は自然数 $\N$ と写像
 $$\nu : 1+\N \to \N$$
-は次のような関数.
 $$\begin{align*}
 \nu ~ \ast & = 0 & \text{ when } \ast \in 1 \\
 \nu ~ m & = m + 1 & \text{ when } m \in \N
 \end{align*}$$
-全単射であることに註意.
+の組 $(\N, \nu)$ になる.
+ここで $\nu$ は全単射になっている.
 
 確かにこれが始対象であることを確認する.
+すなわち,
+自由にとってきた $F$-代数 $(X, f)$ に対して, 唯一の射 $(\N, \nu) \to (X,f)$ があることを見れば良い.
 
-任意の $F$-代数 $(X, f)$ があるときに唯一の射 $(\N, \nu) \to (X,f)$ があることを言う.
-このような射は $f$ に対して $\banana{f}$ と書く.
+ちなみに, そのような射のことを $f$ に対して $\banana{f}$ と書く.
+(この括弧は "バナナ括弧" として
+["Functional Programming with Bananas, Lenses, Envelopes and Barbed Wire"](../paper/bananas-lenses-envelopes-barbedwire.html)
+で導入されているものに倣った.)
 
-> この括弧は "バナナ括弧" として
-> ["Functional Programming with Bananas, Lenses, Envelopes and Barbed Wire"](../paper/bananas-lenses-envelopes-barbedwire.html)
-> で導入されているものに倣った.
-
-さて仮にそのような射 $\banana{f}$ があると仮定して可換性からその構成が分かる.
+$\banana{f}$ は満たすべき可換性から具体的に構成できるので存在することは分かる.
 
 $$\begin{CD}
 \N @<\nu<< 1+\N \\
@@ -82,11 +84,14 @@ X @<f<< 1+X
 $$\begin{align*}
 \banana{f} ~ 0
 & = \banana{f} \nu \ast \\
+& = f (F \banana{f}) \ast \\
 & = f(1+\banana{f}) \ast \\
+& = f 1 \ast \\
 & = f \ast \\
 \banana{f} ~ (m+1)
 & = \banana{f} \nu m \\
-& = f(1+\banana{f}) ~ m \\
+& = f (F \banana{f}) ~ m \\
+& = f (1+\banana{f}) ~ m \\
 & = f \banana{f} ~ m
 \end{align*}$$
 これが $\banana{f}$ の定義になっている.
@@ -94,29 +99,30 @@ $$\begin{align*}
 ただし
 $\banana{f}(m+1)$ の値を得るには
 $\banana{f}(m)$ の値を分かっている必要があるが,
-これはつまり自然数に関する (数学的) 帰納法から正しく定義サれていることが分かる.
+これはつまり自然数に関する (数学的) 帰納法から正しく定義出来ていることがわかる.
 
 また結局これを満たさないといけないことから $\banana{f}$ の存在も唯一.
 
 ### 例: リスト
 
-Sets (または Hask 圏) を考える.
-対象 $A$ と $X$ に対して,
-$1+AX$ とは $1 = \{\ast\}$ と $AX$ との和であって,
-$AX$ とは $A$ と $X$ との直積だとする.
+Sets (または Hask 圏) における対象 $A$ と $X$ に対して $1+AX$ を考える.
+ここで $AX$ とは $A$ と $X$ との直積のこと,
+$1+AX$ とは単集合 $1 = \{\ast\}$ と $AX$ との直和のこと.
 
 $$F : X \mapsto 1+AX$$
 
-とするとき $F$-始代数は, リストと呼ばれる構造
+とする, $F$-始代数はリストと呼ばれる構造
 $$([A], \nu)$$
-のことである.
-ただしここで
+になる.
 
+ここで
 $$[A] = 1 + A + A^2 + A^3 + \cdots$$
 $$\nu : 1+A[A] \to [A]$$
-$$\nu~\ast = \ast$$
-$$\nu~(a, \ast) = a$$
-$$\nu~(a, a') = (a, a')$$
+$$\begin{align}
+\nu~\ast & = \ast \\
+\nu~(a, \ast) & = a \\
+\nu~(a, a') & = (a, a')
+\end{align}$$
 
 ここで一番下の式は
 $(a, a') \in A \times A^m$
@@ -166,3 +172,29 @@ $$\begin{align*}
 敢えて $f(a,b) = a \oplus b$ と書くことにすれば,
 $$\banana{f}(a,b,c) = a \oplus (b \oplus (c \oplus \ast))$$
 と書ける.
+
+## Lambek の補題
+
+今まで見てきた $F$-始代数はすべて全単射であったがこれは実は定理として成り立つ.
+
+$(X, f)$ が $F$-始代数であるとき, $f$ は同型
+$$FX \simeq X$$
+を与える.
+
+始代数であることから唯一射 $i$ で以て
+$$i \colon (X,f) \to (FX,Ff)$$
+があり, また $f$ が射
+$$f \colon (FX,Ff) \to (X,f)$$
+になっている.
+このことを一つの可換図式に書くと次のようになる.
+
+$$\begin{CD}
+X      @<f<<   FX \\
+@ViVV          @VFiVV \\
+FX     @<Ff<<  F^2X \\
+@VfVV          @VFfVV \\
+X      @<f<<   FX \\
+\end{CD}$$
+
+このことは $i$ が $f$ の逆射になっていることを言っており,
+$f$ が $FX \simeq X$ であることが示された.

@@ -13,6 +13,9 @@ edit:
 new:
 	bash script/edit.sh "*new"
 
+dev:
+	bash script/hotcompile.sh
+
 git: index posts
 	git add --all
 	git commit -a -m "paper/ `date`"

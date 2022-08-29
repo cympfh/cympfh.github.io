@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>[2208.11970] Understanding Diffusion Models: A Unified Perspective</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
+</header>
+
+<h1 class="title">[2208.11970] Understanding Diffusion Models: A Unified Perspective</h1>
+<p><ul> <li>original paper: <a href=https://arxiv.org/abs/2208.11970>https://arxiv.org/abs/2208.11970</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#生成モデル>生成モデル</a> <a class='tag is-blue' href=index.html#VAE>VAE</a> <a class='tag is-blue' href=index.html#画像生成>画像生成</a> </div></p>
+<h2>生成モデル</h2>
+<p>観測可能なサンプルデータ \(x\) から, このデータが存在する確率分布 \(p(x)\) を学習することが生成モデルのゴール. 学習した分布を使うことで, 新しいサンプルを生成することが出来る.</p>
+<p>よく知られた方法として GAN があり VAE がある. GAN は判別できるということを敵対的に学習してくことで複雑な分布が得られる. 一方で VAE は最尤法ベースになってる. 似た別な方法としてエネルギーモデルがありスコアベースがある. エネルギーモデルは任意のエネルギー関数として分布を学習する. スコアベースはエネルギー関数を学習する代わりにスコアを学習する.</p>
+<p>この論文では Diffusion Model を VAE とスコアベースモデルの側面で解釈してく.</p>
+<h2>ELBO, VAE, and Hierarchical VAE</h2>
+<p>同時確率の周辺化</p>
+\[p(x) = \int dz ~ p(x,z)\]
+<p>確率のチェーンルール（ベイズの定理）</p>
+\[p(x) = \frac{p(x,z)}{p(z \mid x)}\]
+<p>観測できない潜在変数 \(z\) があり, サンプルデータ \(x\) を観測してるとする. \(p(z \mid x)\) はデータから潜在変数を導出しようとする関数なので ground truth latent encoder だと言える. 単純に観測されたデータ \(x\) について, \(p(x)\) が尤度なのでこれを大きくしたい（最尤法）. 上の2つの数式はどちらも \(p(x)\) を表現しているので, これらを直接最大化できればいいが, その方法は難しい. これを緩和する手法として <strong>Evidence Lower BOund; ELBO</strong> がある. これは \(p(x)\) の下限を与え, その下限を大きくすればそれに連れて \(p(x)\) も大きくなるというやり方だ.</p>
+<p>先に上げた2つの式を変形してく.</p>
+<p>ここで \(q_\phi(z|x)\) という自由な分布を使う.</p>
+\[\begin{align}
+\log p(x)
+&amp; = \log \int dz ~ p(x,z)  \\
+&amp; = \log \int dz ~ \frac{ p(x,z) q_\phi(z\mid x) }{q_\phi(z\mid x)} &amp; \text{分母と分子に同じものを掛けた} \\
+&amp; = \log \mathbb E_{q_\phi} \frac{ p(x,z) }{q_\phi(z\mid x)}        &amp; \text{期待値の定義} \\
+&amp; \geq \mathbb E_{q_\phi} \log \frac{ p(x,z) }{q_\phi(z\mid x)}     &amp; \text{Jensen の不等号} \\
+\end{align}\]
+<p>完全に自由な分布 \(q_\phi\) を用いて, \(p(x)\) に対する下限を与えることが出来た. この下限を与える数式を指して ELBO と呼ぶ. \(q\) のパラメータ \(\phi\) を最適化することで, ELBO を大きくし, 間接的に \(p(x)\) を大きく出来るはずという手法. 実際これは成立する.</p>
+<p>不等号ではあるが, ではその差が何なのかというと実は KL ダイバージェンスになっていて,</p>
+\[\log p(x) - \mathbb E_{q_\phi} \log \frac{p}{q_\phi} = D_{KL}(q_\phi(z \mid x); p(z \mid x))\]
+<p>が成り立つ. というわけで下限を最大化することはこの KL ダイバージェンスを最小化することになっていて, すなわち \(q_\phi\) を \(p(z \mid x)\) に近づけることになっている.</p>
+<p>では ELBO を最大化することを考える.</p>
+\[\begin{align}
+\mathbb E_{q_\phi} \log \frac{ p(x,z) }{q_\phi(z\mid x)}
+&amp; = \mathbb E_{q_\phi} \log \frac{ p(x \mid z) p(z) }{q_\phi(z\mid x)} &amp; 確率のチェーンルール \\
+&amp; = \mathbb E_{q_\phi} \log p(x \mid z) + \mathbb E_{q_\phi} \log \frac{p(z)}{q_\phi(z\mid x)} &amp; 期待値の線形性 \\
+&amp; = \mathbb E_{q_\phi} \log p(x \mid z) - D_{KL}(q_\phi(z \mid x); p(z \mid x)) &amp; \text{KL の定義}
+\end{align}\]
+<p>最後の式の \(p(x \mid z)\) を \(p_\theta(x \mid z)\) で置き換える. これは「潜在ベクトル \(z\) を入れたらサンプル \(x\) を出してくれるデコーダー」だと思う. ここで \(\theta\) がパラメータである.</p>
+<p>結局 \(\theta\) と \(\phi\) を動かすことで次の値を最大化することが目的になる.</p>
+\[\mathbb E_{q_\phi} \log p_\theta(x \mid z) - D_{KL}(q_\phi(z \mid x); p(z \mid x))\]
+<p>この第一項を reconstruction term, 第二項を prior matching term と呼ぶ. 前者は \(z\) から \(x\) を生成する確率を高めること, 後者はエンコードが事前分布 \(p(z)\) に近づけることを言っている.</p>
+<p>この最適化を <strong>Variational AutoEncoder; VAE</strong> という. エンコーダー \(q_\phi(z \mid x)\) とデコーダー \(p_\theta(x \mid z)\) を学習するのでオートエンコーダになっているものと考えられる.</p>
+<p><img src="https://i.imgur.com/7SRqEVg.png" alt="" /></p>
+<p>特に VAE は事前分布 \(p(z)\) 及び \(q_\phi(z \mid x)\) としてガウス分布を仮定することが多い.</p>
+<ul>
+  <li>\(p(z) = \mathcal{N}(z; 0,1)\)</li>
+  <li>\(q_\phi(z \mid x) = \mathcal{N}(z; \mu_\phi(x), \sigma^2_\phi(x))\)</li>
+</ul>
+<p>実用的には \(z\) の各次元は独立だとしていいから共分散 \(\sigma^2\) は対角行列だとしていい. ここまで仮定すると KL ダイバージェンスが簡単に計算できるのでいいね. 残るは reconstruction term の計算. ここは期待値はサンプリングすることで近似する.</p>
+<p>サンプリング \(z \sim q_\phi(z \mid x) = \mathcal{N}(z; \mu, \sigma^2)\) をし, この \(z\) について中身を計算する. そしてまたこのサンプリングは, 正規分布 \(\epsilon \sim \mathcal{N}(0,1)\) からのサンプリングを定数として扱って,</p>
+\[z = \mu_\phi(x) + \sigma_\phi(x) \odot \epsilon\]
+<p>とすれば欲しかったサンプリングになる (reparameterized technique とか呼ばれる).</p>
+<p>以上の VAE を階層化（というか多段に）したものとして <strong>Hierarchical VAE; HVAE</strong> がある.</p>
+<p><img src="https://i.imgur.com/HoGtGLu.png" alt="" /></p>
+\[p(x, z_{1:T}) = p(z_T) p_\theta(x | z_1) \prod p_\theta(z_{t-1} \mid z_t)\]
+\[q_\phi(z_{1:T} \mid x) = q_\phi(z_1 \mid x) \prod q_\phi(z_t \mid z_{t-1}\]
+<p>このときに ELBO は</p>
+\[\log p(x) \geq \mathbb E_{q_\phi} \log \frac{p(x, z_{1:T})}{q_\phi(z_{1:T} \mid x)}\]
+<h2>Variational Diffusion Models</h2>
+<p><img src="https://i.imgur.com/Cyqrrcz.png" alt="" /></p>
+<ul>
+  <li>\(z\) の空間をサンプルデータ \(x\) の空間と同じものとする</li>
+  <li>エンコードは学習しない. 予め定めたガウス分布で \(x_{t+1} \sim x_t + \mathcal{N}(0, \sigma^2)\) というサンプリングをするだけ</li>
+  <li>最終ステップ \(T\) で \(p(z_T)\) はほとんどただの正規分布になる</li>
+</ul>
+
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>

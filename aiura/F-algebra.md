@@ -2,7 +2,10 @@
 % 2018-11-20 (Tue.), 2022-07-24 (Sun.)
 % 圏論
 
-$\def\N{\mathbb N}\def\C{\mathcal C}\def\succ{\mathrm{succ}}\def\banana#1{(\!|#1|\!)}\def\Sets{\mathrm{\mathbb{S}ets}}$
+$\def\N{\mathbb N}\def\C{\mathcal C}$
+$\def\succ{\mathrm{succ}}$
+$\def\banana#1{(\!|#1|\!)}$
+$\def\Sets{\mathrm{\mathcal{S}ets}}$
 
 ## INDEX
 

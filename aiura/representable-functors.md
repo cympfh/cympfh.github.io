@@ -5,7 +5,7 @@
 $\def\C{\mathcal C}\def\Set{\mathrm{\mathcal{Set}}}$
 $\def\D{\mathcal D}$
 $\def\op#1{{#1}^{\mathrm{op}}}$
-$\require{AMScd}$
+$\require{amscd}$
 
 ## INDEX
 
@@ -16,7 +16,8 @@ $\require{AMScd}$
 ### （共変）表現関手 $h_Z$
 
 圏 $\C$ とその対象 $Z \in \C$ があるとき,
-関手 $$h_Z \colon \C \to \Set$$
+関手
+$$h_Z \colon \C \to \Set$$
 $$X \mapsto \C(Z, X)$$
 がある.
 ここで $\C(Z,X)$ は $\C$ における $Z$ から $X$ への射を集めた集合を表す.
@@ -186,8 +187,8 @@ $$(u_1, u_2) = (\pi_1 k, \pi_2 k)$$
 
 ## 普遍射
 
-圏 $\C$ の対象 $C \in \C$ と,
-圏 $\C$ から $\D$ への関手 $F$ があり,
+圏 $\C$ とその対象 $C \in \C$ 及び,
+圏 $\D$ から $\C$ への関手 $F \colon \D \to \C$ があるとする. このとき
 $$u \colon C \to FD$$
 なる対象 $D \in \D$ と射 $u$ のペア $(D,u)$ を考える.
 
@@ -223,7 +224,9 @@ $$h_C \circ F \simeq h_D$$
 $$\begin{CD}
 1 @>e>> E
 \end{CD}$$
-これを普通 $$e \in E$$ と書く.
+これを普通
+$$e \in E$$
+と書く.
 
 普遍射の定義に使った $C \in \C$ のところを $1 \in \Set$ にして得られる普遍射 $(D,u)$ のことを,
 **$F$ の普遍元**

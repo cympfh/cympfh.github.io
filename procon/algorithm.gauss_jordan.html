@@ -21,89 +21,87 @@
 
           <div class="article column is-8 is-10-mobile">
             <div class="content">
-              <h1 id="数列---binary-indexed-tree-bit-fenwick-tree">数列 - Binary Indexed Tree (BIT; Fenwick Tree)</h1>
-<h2 id="参考">参考</h2>
-<ul>
-<li><a href="http://en.wikipedia.org/wiki/Fenwick_tree">wikipedia/Fenwick tree</a></li>
-</ul>
+              <h1 id="アルゴリズム---連立一次方程式---gauss-jordan-の消去法">アルゴリズム - 連立一次方程式 - Gauss-Jordan の消去法</h1>
 <h2 id="概要">概要</h2>
-<p>加法群 <span class="math inline">\((X, +, 0)\)</span> 上の数列について,</p>
+<p><span class="math inline">\(N \times N\)</span> 行列 <span class="math inline">\(A\)</span>, <span class="math inline">\(N\)</span> ベクトル <span class="math inline">\(b\)</span> について <span class="math display">\[Ax=b\]</span> を解く.</p>
 <ul>
-<li>初期状態
-<ul>
-<li>長さ <span class="math inline">\(n\)</span> の数列: <span class="math inline">\(v = \{ v_0, v_1, \ldots, v_{n-1} \} = \{0,0,\ldots,0\}\)</span></li>
-</ul></li>
-<li>次の2つの操作が出来る
-<ol type="1">
-<li><span class="math inline">\(v_i \leftarrow v_i + x\)</span></li>
-<li><span class="math inline">\(v_0 + v_1 + \cdots + v_{m-1}\)</span>
-<ul>
-<li>特に2つ目から、任意区間の総和が算出できる</li>
-</ul></li>
-</ol></li>
-<li>計算量
-<ul>
-<li>時間計算量: 共に <span class="math inline">\(O(log(n))\)</span></li>
-<li>空間計算量: 数列の長さ <span class="math inline">\(n\)</span> 程度の配列.</li>
-</ul></li>
+<li><a href="https://ja.wikipedia.org/wiki/%E3%82%AC%E3%82%A6%E3%82%B9%E3%81%AE%E6%B6%88%E5%8E%BB%E6%B3%95">ガウスの消去法 - Wikipedia</a></li>
 </ul>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">use</span> <span class="kw">crate</span>::algebra::group_additive::*;
+<h2 id="実装">実装</h2>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Algorithm - Gauss-Jorndan elimination</span>
+<span class="kw">use</span> <span class="kw">crate</span>::num::<span class="dt">float</span>::*;
 
-<span class="co">/// Sequence - Binary Indexed Tree (Fenwick Tree) of Additive Group (+, 0)</span>
-<span class="kw">pub</span> <span class="kw">struct</span> BIT&lt;X&gt; <span class="op">{</span>
-    size: <span class="dt">usize</span>,
-    array: <span class="dt">Vec</span>&lt;X&gt;,
-<span class="op">}</span>
-<span class="kw">impl</span>&lt;X: <span class="bu">Copy</span> + AGroup&gt; BIT&lt;X&gt; <span class="op">{</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> new(size: <span class="dt">usize</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span>
-        BIT <span class="op">{</span>
-            size,
-            array: <span class="pp">vec!</span><span class="op">[</span>X::zero(); size + <span class="dv">1</span><span class="op">]</span>,
+<span class="co">/// Solve: a x = b</span>
+<span class="co">/// where</span>
+<span class="co">///   a is NxN matrix</span>
+<span class="co">///   b is N vector</span>
+<span class="kw">pub</span> <span class="kw">fn</span> gauss_jordan(a: <span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;Float&gt;&gt;, b: <span class="dt">Vec</span>&lt;Float&gt;) -&gt; <span class="dt">Option</span>&lt;<span class="dt">Vec</span>&lt;Float&gt;&gt; <span class="op">{</span>
+    <span class="kw">let</span> n = a.len();
+    <span class="pp">assert!</span>(b.len() == n);
+    <span class="kw">let</span> <span class="kw">mut</span> a = a.clone();
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.n <span class="op">{</span>
+        a<span class="op">[</span>i<span class="op">]</span>.push(b<span class="op">[</span>i<span class="op">]</span>);
+    <span class="op">}</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.n <span class="op">{</span>
+        <span class="kw">let</span> pivot = (i..n).max_by_key(|&amp;k| a<span class="op">[</span>k<span class="op">][</span>i<span class="op">]</span>.abs()).unwrap();
+        a.swap(i, pivot);
+        <span class="kw">if</span> a<span class="op">[</span>i<span class="op">][</span>i<span class="op">]</span>.abs() &lt;= Float(<span class="dv">1</span>e-<span class="dv">6</span>) <span class="op">{</span>
+            <span class="kw">return</span> <span class="cn">None</span>;
+        <span class="op">}</span>
+        <span class="op">{</span>
+            <span class="kw">let</span> base = a<span class="op">[</span>i<span class="op">][</span>i<span class="op">]</span>;
+            <span class="kw">for</span> j <span class="kw">in</span> i..=n <span class="op">{</span>
+                a<span class="op">[</span>i<span class="op">][</span>j<span class="op">]</span> /= base;
+            <span class="op">}</span>
+        <span class="op">}</span>
+        <span class="co">// 消去</span>
+        <span class="kw">for</span> ii <span class="kw">in</span> <span class="dv">0.</span>.n <span class="op">{</span>
+            <span class="kw">if</span> ii == i <span class="op">{</span>
+                <span class="kw">continue</span>;
+            <span class="op">}</span>
+            <span class="kw">for</span> j <span class="kw">in</span> i + <span class="dv">1.</span>.=n <span class="op">{</span>
+                <span class="kw">let</span> elim = a<span class="op">[</span>ii<span class="op">][</span>i<span class="op">]</span> * a<span class="op">[</span>i<span class="op">][</span>j<span class="op">]</span>;
+                a<span class="op">[</span>ii<span class="op">][</span>j<span class="op">]</span> -= elim;
+            <span class="op">}</span>
         <span class="op">}</span>
     <span class="op">}</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> add(&amp;<span class="kw">mut</span> <span class="kw">self</span>, idx: <span class="dt">usize</span>, w: X) <span class="op">{</span>
-        <span class="kw">let</span> <span class="kw">mut</span> x = idx + <span class="dv">1</span>;
-        <span class="kw">while</span> x &lt;= <span class="kw">self</span>.size <span class="op">{</span>
-            <span class="kw">self</span>.array<span class="op">[</span>x<span class="op">]</span> = <span class="kw">self</span>.array<span class="op">[</span>x<span class="op">]</span> + w;
-            <span class="kw">let</span> xi = x <span class="kw">as</span> <span class="dt">i32</span>;
-            x += (xi &amp; -xi) <span class="kw">as</span> <span class="dt">usize</span>;
-        <span class="op">}</span>
-    <span class="op">}</span>
-    <span class="co">/// sum of [0, idx)</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> sum_up(&amp;<span class="kw">self</span>, idx: <span class="dt">usize</span>) -&gt; X <span class="op">{</span>
-        <span class="kw">let</span> <span class="kw">mut</span> sum = X::zero();
-        <span class="kw">let</span> <span class="kw">mut</span> x = idx;
-        <span class="kw">while</span> x &gt; <span class="dv">0</span> <span class="op">{</span>
-            sum = sum + <span class="kw">self</span>.array<span class="op">[</span>x<span class="op">]</span>;
-            <span class="kw">let</span> xi = x <span class="kw">as</span> <span class="dt">i32</span>;
-            x -= (xi &amp; -xi) <span class="kw">as</span> <span class="dt">usize</span>;
-        <span class="op">}</span>
-        sum
-    <span class="op">}</span>
-    <span class="co">/// sum of [left, right)</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> sum(&amp;<span class="kw">self</span>, range: std::ops::Range&lt;<span class="dt">usize</span>&gt;) -&gt; X <span class="op">{</span>
-        <span class="kw">if</span> range.end &lt;= range.start <span class="op">{</span>
-            <span class="kw">return</span> X::zero();
-        <span class="op">}</span>
-        <span class="kw">self</span>.sum_up(range.end) - <span class="kw">self</span>.sum_up(range.start)
-    <span class="op">}</span>
+    <span class="cn">Some</span>((<span class="dv">0.</span>.n).map(|i| a<span class="op">[</span>i<span class="op">][</span>n<span class="op">]</span>).collect::&lt;<span class="dt">Vec</span>&lt;_&gt;&gt;())
 <span class="op">}</span>
 
 <span class="at">#[</span>cfg<span class="at">(</span>test<span class="at">)]</span>
-<span class="kw">mod</span> test_bit <span class="op">{</span>
-    <span class="kw">use</span> <span class="kw">crate</span>::sequence::tree::bit::*;
-
+<span class="kw">mod</span> test_gauss_jordan <span class="op">{</span>
+    <span class="kw">use</span> <span class="kw">crate</span>::algorithm::gauss_jordan::*;
     <span class="at">#[</span>test<span class="at">]</span>
-    <span class="kw">fn</span> sum() <span class="op">{</span>
-        <span class="kw">let</span> <span class="kw">mut</span> bit = BIT::new(<span class="dv">10</span>);
-        <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.<span class="dv">10</span> <span class="op">{</span>
-            bit.add(i, i <span class="kw">as</span> <span class="dt">i64</span>);
-        <span class="op">}</span>
-        <span class="kw">let</span> <span class="kw">mut</span> ac = <span class="dv">0</span>;
-        <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.<span class="dv">11</span> <span class="op">{</span>
-            <span class="pp">assert_eq!</span>(bit.sum_up(i), ac);
-            ac = ac + i <span class="kw">as</span> <span class="dt">i64</span>;
-        <span class="op">}</span>
+    <span class="kw">fn</span> test_1() <span class="op">{</span>
+        <span class="co">// x + y = 0</span>
+        <span class="co">// x + 2y = 10</span>
+        <span class="kw">let</span> a = <span class="pp">vec!</span><span class="op">[</span><span class="pp">vec!</span><span class="op">[</span>Float(<span class="dv">1.0</span>), Float(<span class="dv">1.0</span>)<span class="op">]</span>, <span class="pp">vec!</span><span class="op">[</span>Float(<span class="dv">1.0</span>), Float(<span class="dv">2.0</span>)<span class="op">]]</span>;
+        <span class="kw">let</span> b = <span class="pp">vec!</span><span class="op">[</span>Float(<span class="dv">0.0</span>), Float(<span class="dv">10.0</span>)<span class="op">]</span>;
+        <span class="pp">assert_eq!</span>(gauss_jordan(a, b), <span class="cn">Some</span>(<span class="pp">vec!</span><span class="op">[</span>Float(-<span class="dv">10.0</span>), Float(<span class="dv">10.0</span>)<span class="op">]</span>));
+    <span class="op">}</span>
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> test_2() <span class="op">{</span>
+        <span class="co">// 2 x + y = -1</span>
+        <span class="co">// -x + 3 y = 11</span>
+        <span class="kw">let</span> a = <span class="pp">vec!</span><span class="op">[</span><span class="pp">vec!</span><span class="op">[</span>Float(<span class="dv">2.0</span>), Float(<span class="dv">1.0</span>)<span class="op">]</span>, <span class="pp">vec!</span><span class="op">[</span>Float(-<span class="dv">1.0</span>), Float(<span class="dv">3.0</span>)<span class="op">]]</span>;
+        <span class="kw">let</span> b = <span class="pp">vec!</span><span class="op">[</span>Float(-<span class="dv">1.0</span>), Float(<span class="dv">11.0</span>)<span class="op">]</span>;
+        <span class="pp">assert_eq!</span>(gauss_jordan(a, b), <span class="cn">Some</span>(<span class="pp">vec!</span><span class="op">[</span>Float(-<span class="dv">2.0</span>), Float(<span class="dv">3.0</span>)<span class="op">]</span>));
+    <span class="op">}</span>
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> test_3() <span class="op">{</span>
+        <span class="co">// x + y = 0</span>
+        <span class="co">// x + y = 10</span>
+        <span class="kw">let</span> a = <span class="pp">vec!</span><span class="op">[</span><span class="pp">vec!</span><span class="op">[</span>Float(<span class="dv">1.0</span>), Float(<span class="dv">1.0</span>)<span class="op">]</span>, <span class="pp">vec!</span><span class="op">[</span>Float(<span class="dv">1.0</span>), Float(<span class="dv">1.0</span>)<span class="op">]]</span>;
+        <span class="kw">let</span> b = <span class="pp">vec!</span><span class="op">[</span>Float(<span class="dv">0.0</span>), Float(<span class="dv">10.0</span>)<span class="op">]</span>;
+        <span class="pp">assert_eq!</span>(gauss_jordan(a, b), <span class="cn">None</span>);
+    <span class="op">}</span>
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> test_4() <span class="op">{</span>
+        <span class="co">// x + y = 1</span>
+        <span class="co">// x + y = 1</span>
+        <span class="kw">let</span> a = <span class="pp">vec!</span><span class="op">[</span><span class="pp">vec!</span><span class="op">[</span>Float(<span class="dv">1.0</span>), Float(<span class="dv">1.0</span>)<span class="op">]</span>, <span class="pp">vec!</span><span class="op">[</span>Float(<span class="dv">1.0</span>), Float(<span class="dv">1.0</span>)<span class="op">]]</span>;
+        <span class="kw">let</span> b = <span class="pp">vec!</span><span class="op">[</span>Float(<span class="dv">1.0</span>), Float(<span class="dv">1.0</span>)<span class="op">]</span>;
+        <span class="pp">assert_eq!</span>(gauss_jordan(a, b), <span class="cn">None</span>);
     <span class="op">}</span>
 <span class="op">}</span></code></pre></div>
             </div>
@@ -168,7 +166,7 @@
 </ul>
 </details>
 
-<details class=menu open>
+<details class=menu>
 <summary class=menu>数列</summary>
 <ul>
 <li><a href="seq.lis.html">最長増加部分列</a></li>
@@ -251,7 +249,7 @@
 </ul>
 </details>
 
-<details class=menu>
+<details class=menu open>
 <summary class=menu>アルゴリズム</summary>
 <h2 id="動的計画法">動的計画法</h2>
 <ul>

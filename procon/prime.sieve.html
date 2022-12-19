@@ -24,41 +24,41 @@
               <h1 id="素数---エラトステネスの篩">素数 - エラトステネスの篩</h1>
 <h2 id="概要">概要</h2>
 <p>与えられた自然数 <span class="math inline">\(N\)</span> について, <span class="math inline">\(N\)</span> 以下の値について篩を行う. 計算量は <span class="math inline">\(O(N \log N)\)</span> で, 実際はこれより小さいらしい.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb1-1" title="1"><span class="co">/// Prime Numbers - Sieve of Eratosthenes</span></a>
-<a class="sourceLine" id="cb1-2" title="2"><span class="kw">pub</span> <span class="kw">fn</span> prime_sieve(n: <span class="dt">usize</span>) -&gt; <span class="dt">Vec</span>&lt;<span class="dt">bool</span>&gt; <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-3" title="3">    <span class="kw">let</span> <span class="kw">mut</span> s = <span class="pp">vec!</span><span class="op">[</span><span class="cn">true</span>; n<span class="op">]</span>;</a>
-<a class="sourceLine" id="cb1-4" title="4">    s<span class="op">[</span><span class="dv">0</span><span class="op">]</span> = <span class="cn">false</span>;</a>
-<a class="sourceLine" id="cb1-5" title="5">    s<span class="op">[</span><span class="dv">1</span><span class="op">]</span> = <span class="cn">false</span>;</a>
-<a class="sourceLine" id="cb1-6" title="6">    <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">2</span>..n <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-7" title="7">        <span class="kw">if</span> i * i &gt; n <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-8" title="8">            <span class="kw">break</span>;</a>
-<a class="sourceLine" id="cb1-9" title="9">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-10" title="10">        <span class="kw">if</span> s<span class="op">[</span>i<span class="op">]</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-11" title="11">            <span class="kw">for</span> k <span class="kw">in</span> <span class="dv">2</span>..(n + i - <span class="dv">1</span>) / i <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-12" title="12">                s<span class="op">[</span>k * i<span class="op">]</span> = <span class="cn">false</span></a>
-<a class="sourceLine" id="cb1-13" title="13">            <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-14" title="14">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-15" title="15">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-16" title="16">    s</a>
-<a class="sourceLine" id="cb1-17" title="17"><span class="op">}</span></a>
-<a class="sourceLine" id="cb1-18" title="18"></a>
-<a class="sourceLine" id="cb1-19" title="19"><span class="at">#[</span>cfg<span class="at">(</span>test<span class="at">)]</span></a>
-<a class="sourceLine" id="cb1-20" title="20"><span class="kw">mod</span> test_sieve <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-21" title="21">    <span class="kw">use</span> <span class="kw">crate</span>::<span class="pp">num::prime::sieve::</span>*;</a>
-<a class="sourceLine" id="cb1-22" title="22"></a>
-<a class="sourceLine" id="cb1-23" title="23">    <span class="at">#[</span>test<span class="at">]</span></a>
-<a class="sourceLine" id="cb1-24" title="24">    <span class="kw">fn</span> it_works() <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-25" title="25">        <span class="kw">let</span> ps = prime_sieve(<span class="dv">1000</span>);</a>
-<a class="sourceLine" id="cb1-26" title="26">        <span class="kw">let</span> primes = <span class="pp">vec!</span><span class="op">[</span><span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">7</span>, <span class="dv">11</span>, <span class="dv">13</span>, <span class="dv">17</span>, <span class="dv">19</span>, <span class="dv">23</span>, <span class="dv">29</span>, <span class="dv">31</span>, <span class="dv">37</span>, <span class="dv">41</span>, <span class="dv">43</span><span class="op">]</span>;</a>
-<a class="sourceLine" id="cb1-27" title="27">        <span class="kw">let</span> not_primes = <span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">8</span>, <span class="dv">9</span>, <span class="dv">12</span>, <span class="dv">15</span>, <span class="dv">21</span>, <span class="dv">25</span>, <span class="dv">27</span>, <span class="dv">33</span>, <span class="dv">35</span><span class="op">]</span>;</a>
-<a class="sourceLine" id="cb1-28" title="28">        <span class="kw">for</span> p <span class="kw">in</span> primes <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-29" title="29">            <span class="pp">assert!</span>(ps<span class="op">[</span>p<span class="op">]</span>);</a>
-<a class="sourceLine" id="cb1-30" title="30">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-31" title="31">        <span class="kw">for</span> q <span class="kw">in</span> not_primes <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-32" title="32">            <span class="pp">assert!</span>(!ps<span class="op">[</span>q<span class="op">]</span>);</a>
-<a class="sourceLine" id="cb1-33" title="33">        <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-34" title="34">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-35" title="35"><span class="op">}</span></a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Prime Numbers - Sieve of Eratosthenes</span>
+<span class="kw">pub</span> <span class="kw">fn</span> prime_sieve(n: <span class="dt">usize</span>) -&gt; <span class="dt">Vec</span>&lt;<span class="dt">bool</span>&gt; <span class="op">{</span>
+    <span class="kw">let</span> <span class="kw">mut</span> s = <span class="pp">vec!</span><span class="op">[</span><span class="cn">true</span>; n<span class="op">]</span>;
+    s<span class="op">[</span><span class="dv">0</span><span class="op">]</span> = <span class="cn">false</span>;
+    s<span class="op">[</span><span class="dv">1</span><span class="op">]</span> = <span class="cn">false</span>;
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">2.</span>.n <span class="op">{</span>
+        <span class="kw">if</span> i * i &gt; n <span class="op">{</span>
+            <span class="kw">break</span>;
+        <span class="op">}</span>
+        <span class="kw">if</span> s<span class="op">[</span>i<span class="op">]</span> <span class="op">{</span>
+            <span class="kw">for</span> k <span class="kw">in</span> <span class="dv">2.</span>.(n + i - <span class="dv">1</span>) / i <span class="op">{</span>
+                s<span class="op">[</span>k * i<span class="op">]</span> = <span class="cn">false</span>
+            <span class="op">}</span>
+        <span class="op">}</span>
+    <span class="op">}</span>
+    s
+<span class="op">}</span>
+
+<span class="at">#[</span>cfg<span class="at">(</span>test<span class="at">)]</span>
+<span class="kw">mod</span> test_sieve <span class="op">{</span>
+    <span class="kw">use</span> <span class="kw">crate</span>::num::prime::sieve::*;
+
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> it_works() <span class="op">{</span>
+        <span class="kw">let</span> ps = prime_sieve(<span class="dv">1000</span>);
+        <span class="kw">let</span> primes = <span class="pp">vec!</span><span class="op">[</span><span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">7</span>, <span class="dv">11</span>, <span class="dv">13</span>, <span class="dv">17</span>, <span class="dv">19</span>, <span class="dv">23</span>, <span class="dv">29</span>, <span class="dv">31</span>, <span class="dv">37</span>, <span class="dv">41</span>, <span class="dv">43</span><span class="op">]</span>;
+        <span class="kw">let</span> not_primes = <span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">8</span>, <span class="dv">9</span>, <span class="dv">12</span>, <span class="dv">15</span>, <span class="dv">21</span>, <span class="dv">25</span>, <span class="dv">27</span>, <span class="dv">33</span>, <span class="dv">35</span><span class="op">]</span>;
+        <span class="kw">for</span> p <span class="kw">in</span> primes <span class="op">{</span>
+            <span class="pp">assert!</span>(ps<span class="op">[</span>p<span class="op">]</span>);
+        <span class="op">}</span>
+        <span class="kw">for</span> q <span class="kw">in</span> not_primes <span class="op">{</span>
+            <span class="pp">assert!</span>(!ps<span class="op">[</span>q<span class="op">]</span>);
+        <span class="op">}</span>
+    <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
             </div>
           </div>
 
@@ -221,6 +221,10 @@
 <h2 id="循環検出">循環検出</h2>
 <ul>
 <li><a href="algorithm.rho.html">フロイドの<span class="math inline"><em>ρ</em></span>アルゴリズム</a></li>
+</ul>
+<h2 id="連立一次方程式">連立一次方程式</h2>
+<ul>
+<li><a href="algorithm.gauss_jordan.html">Gauss-Jordan の消去法</a></li>
 </ul>
 </details>
 

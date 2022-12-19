@@ -120,6 +120,9 @@
 ## 循環検出
 - [フロイドの$\rho$アルゴリズム](algorithm.rho.md)
 
+## 連立一次方程式
+- [Gauss-Jordan の消去法](algorithm.gauss_jordan.md)
+
 # 最適化
 
 - [燃やす埋める問題](opt.moyasu_umeru.md)

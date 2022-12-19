@@ -22,61 +22,84 @@
           <div class="article column is-8 is-10-mobile">
             <div class="content">
               <h1 id="格子点上の幾何---点の定義">格子点上の幾何 - 点の定義</h1>
-<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb1-1" title="1"><span class="co">/// Geometry2D/Int - Definition of Point</span></a>
-<a class="sourceLine" id="cb1-2" title="2"></a>
-<a class="sourceLine" id="cb1-3" title="3"><span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">,</span> <span class="bu">Clone</span><span class="at">,</span> <span class="bu">Copy</span><span class="at">,</span> <span class="bu">PartialEq</span><span class="at">,</span> <span class="bu">Eq</span><span class="at">,</span> <span class="bu">PartialOrd</span><span class="at">,</span> <span class="bu">Ord</span><span class="at">)]</span></a>
-<a class="sourceLine" id="cb1-4" title="4"><span class="kw">pub</span> <span class="kw">struct</span> IntPoint(<span class="kw">pub</span> <span class="dt">i128</span>, <span class="kw">pub</span> <span class="dt">i128</span>);</a>
-<a class="sourceLine" id="cb1-5" title="5"></a>
-<a class="sourceLine" id="cb1-6" title="6"><span class="kw">impl</span> <span class="pp">std::ops::</span>Add&lt;IntPoint&gt; <span class="kw">for</span> IntPoint <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-7" title="7">    <span class="kw">type</span> Output = <span class="kw">Self</span>;</a>
-<a class="sourceLine" id="cb1-8" title="8">    <span class="kw">fn</span> add(<span class="kw">self</span>, other: IntPoint) -&gt; <span class="kw">Self</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-9" title="9">        <span class="kw">Self</span>(<span class="kw">self</span>.<span class="dv">0</span> + other.<span class="dv">0</span>, <span class="kw">self</span>.<span class="dv">1</span> + other.<span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb1-10" title="10">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-11" title="11"><span class="op">}</span></a>
-<a class="sourceLine" id="cb1-12" title="12"><span class="kw">impl</span> <span class="pp">std::ops::</span>Sub&lt;IntPoint&gt; <span class="kw">for</span> IntPoint <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-13" title="13">    <span class="kw">type</span> Output = <span class="kw">Self</span>;</a>
-<a class="sourceLine" id="cb1-14" title="14">    <span class="kw">fn</span> sub(<span class="kw">self</span>, other: IntPoint) -&gt; <span class="kw">Self</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-15" title="15">        <span class="kw">Self</span>(<span class="kw">self</span>.<span class="dv">0</span> - other.<span class="dv">0</span>, <span class="kw">self</span>.<span class="dv">1</span> - other.<span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb1-16" title="16">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-17" title="17"><span class="op">}</span></a>
-<a class="sourceLine" id="cb1-18" title="18"><span class="kw">impl</span> <span class="pp">std::ops::</span>Mul&lt;<span class="dt">i128</span>&gt; <span class="kw">for</span> IntPoint <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-19" title="19">    <span class="kw">type</span> Output = <span class="kw">Self</span>;</a>
-<a class="sourceLine" id="cb1-20" title="20">    <span class="kw">fn</span> mul(<span class="kw">self</span>, k: <span class="dt">i128</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-21" title="21">        <span class="kw">Self</span>(<span class="kw">self</span>.<span class="dv">0</span> * k, <span class="kw">self</span>.<span class="dv">1</span> * k)</a>
-<a class="sourceLine" id="cb1-22" title="22">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-23" title="23"><span class="op">}</span></a>
-<a class="sourceLine" id="cb1-24" title="24"><span class="kw">impl</span> <span class="pp">std::ops::</span>Div&lt;<span class="dt">i128</span>&gt; <span class="kw">for</span> IntPoint <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-25" title="25">    <span class="kw">type</span> Output = <span class="kw">Self</span>;</a>
-<a class="sourceLine" id="cb1-26" title="26">    <span class="kw">fn</span> div(<span class="kw">self</span>, k: <span class="dt">i128</span>) -&gt; <span class="kw">Self</span> <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-27" title="27">        <span class="kw">Self</span>(<span class="kw">self</span>.<span class="dv">0</span> / k, <span class="kw">self</span>.<span class="dv">1</span> / k)</a>
-<a class="sourceLine" id="cb1-28" title="28">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-29" title="29"><span class="op">}</span></a>
-<a class="sourceLine" id="cb1-30" title="30"></a>
-<a class="sourceLine" id="cb1-31" title="31"><span class="at">#[</span>cfg<span class="at">(</span>test<span class="at">)]</span></a>
-<a class="sourceLine" id="cb1-32" title="32"><span class="kw">mod</span> test_int_point <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-33" title="33"></a>
-<a class="sourceLine" id="cb1-34" title="34">    <span class="kw">use</span> <span class="kw">crate</span>::<span class="pp">geometry2d::int::point::</span>*;</a>
-<a class="sourceLine" id="cb1-35" title="35"></a>
-<a class="sourceLine" id="cb1-36" title="36">    <span class="at">#[</span>test<span class="at">]</span></a>
-<a class="sourceLine" id="cb1-37" title="37">    <span class="kw">fn</span> test_add() <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-38" title="38">        <span class="pp">assert_eq!</span>(IntPoint(<span class="dv">1</span>, <span class="dv">2</span>) + IntPoint(<span class="dv">2</span>, <span class="dv">1</span>), IntPoint(<span class="dv">3</span>, <span class="dv">3</span>));</a>
-<a class="sourceLine" id="cb1-39" title="39">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-40" title="40"></a>
-<a class="sourceLine" id="cb1-41" title="41">    <span class="at">#[</span>test<span class="at">]</span></a>
-<a class="sourceLine" id="cb1-42" title="42">    <span class="kw">fn</span> test_sub() <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-43" title="43">        <span class="pp">assert_eq!</span>(IntPoint(<span class="dv">1</span>, <span class="dv">2</span>) - IntPoint(<span class="dv">2</span>, <span class="dv">1</span>), IntPoint(-<span class="dv">1</span>, <span class="dv">1</span>));</a>
-<a class="sourceLine" id="cb1-44" title="44">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-45" title="45"></a>
-<a class="sourceLine" id="cb1-46" title="46">    <span class="at">#[</span>test<span class="at">]</span></a>
-<a class="sourceLine" id="cb1-47" title="47">    <span class="kw">fn</span> test_mul() <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-48" title="48">        <span class="pp">assert_eq!</span>(IntPoint(<span class="dv">1</span>, <span class="dv">2</span>) * -<span class="dv">2</span>, IntPoint(-<span class="dv">2</span>, -<span class="dv">4</span>));</a>
-<a class="sourceLine" id="cb1-49" title="49">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-50" title="50"></a>
-<a class="sourceLine" id="cb1-51" title="51">    <span class="at">#[</span>test<span class="at">]</span></a>
-<a class="sourceLine" id="cb1-52" title="52">    <span class="kw">fn</span> test_div() <span class="op">{</span></a>
-<a class="sourceLine" id="cb1-53" title="53">        <span class="pp">assert_eq!</span>(IntPoint(<span class="dv">1</span>, <span class="dv">2</span>) / -<span class="dv">2</span>, IntPoint(<span class="dv">0</span>, -<span class="dv">1</span>));</a>
-<a class="sourceLine" id="cb1-54" title="54">    <span class="op">}</span></a>
-<a class="sourceLine" id="cb1-55" title="55"><span class="op">}</span></a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Geometry2D/Int - Definition of Point</span>
+
+<span class="at">#[</span>derive<span class="at">(</span><span class="bu">Debug</span><span class="at">,</span> <span class="bu">Clone</span><span class="at">,</span> <span class="bu">Copy</span><span class="at">,</span> <span class="bu">PartialEq</span><span class="at">,</span> <span class="bu">Eq</span><span class="at">,</span> <span class="bu">PartialOrd</span><span class="at">,</span> <span class="bu">Ord</span><span class="at">)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> IntPoint(<span class="kw">pub</span> i128, <span class="kw">pub</span> i128);
+
+<span class="kw">impl</span> IntPoint <span class="op">{</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> new(x: i128, y: i128) -&gt; <span class="kw">Self</span> <span class="op">{</span>
+        <span class="kw">Self</span>(x, y)
+    <span class="op">}</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> zero() -&gt; <span class="kw">Self</span> <span class="op">{</span>
+        <span class="kw">Self</span>(<span class="dv">0</span>, <span class="dv">0</span>)
+    <span class="op">}</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> cross(&amp;<span class="kw">self</span>, other: IntPoint) -&gt; i128 <span class="op">{</span>
+        <span class="kw">self</span>.<span class="dv">0</span> * other.<span class="dv">1</span> - <span class="kw">self</span>.<span class="dv">1</span> * other.<span class="dv">0</span>
+    <span class="op">}</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> quadrance(&amp;<span class="kw">self</span>) -&gt; i128 <span class="op">{</span>
+        <span class="kw">self</span>.<span class="dv">0.</span>pow(<span class="dv">2</span>) + <span class="kw">self</span>.<span class="dv">1.</span>pow(<span class="dv">2</span>)
+    <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="kw">impl</span> std::ops::Add&lt;IntPoint&gt; <span class="kw">for</span> IntPoint <span class="op">{</span>
+    <span class="kw">type</span> Output = <span class="kw">Self</span>;
+    <span class="kw">fn</span> add(<span class="kw">self</span>, other: IntPoint) -&gt; <span class="kw">Self</span> <span class="op">{</span>
+        <span class="kw">Self</span>(<span class="kw">self</span>.<span class="dv">0</span> + other.<span class="dv">0</span>, <span class="kw">self</span>.<span class="dv">1</span> + other.<span class="dv">1</span>)
+    <span class="op">}</span>
+<span class="op">}</span>
+<span class="kw">impl</span> std::ops::Sub&lt;IntPoint&gt; <span class="kw">for</span> IntPoint <span class="op">{</span>
+    <span class="kw">type</span> Output = <span class="kw">Self</span>;
+    <span class="kw">fn</span> sub(<span class="kw">self</span>, other: IntPoint) -&gt; <span class="kw">Self</span> <span class="op">{</span>
+        <span class="kw">Self</span>(<span class="kw">self</span>.<span class="dv">0</span> - other.<span class="dv">0</span>, <span class="kw">self</span>.<span class="dv">1</span> - other.<span class="dv">1</span>)
+    <span class="op">}</span>
+<span class="op">}</span>
+<span class="kw">impl</span> std::ops::Mul&lt;i128&gt; <span class="kw">for</span> IntPoint <span class="op">{</span>
+    <span class="kw">type</span> Output = <span class="kw">Self</span>;
+    <span class="kw">fn</span> mul(<span class="kw">self</span>, k: i128) -&gt; <span class="kw">Self</span> <span class="op">{</span>
+        <span class="kw">Self</span>(<span class="kw">self</span>.<span class="dv">0</span> * k, <span class="kw">self</span>.<span class="dv">1</span> * k)
+    <span class="op">}</span>
+<span class="op">}</span>
+<span class="kw">impl</span> std::ops::Div&lt;i128&gt; <span class="kw">for</span> IntPoint <span class="op">{</span>
+    <span class="kw">type</span> Output = <span class="kw">Self</span>;
+    <span class="kw">fn</span> div(<span class="kw">self</span>, k: i128) -&gt; <span class="kw">Self</span> <span class="op">{</span>
+        <span class="kw">Self</span>(<span class="kw">self</span>.<span class="dv">0</span> / k, <span class="kw">self</span>.<span class="dv">1</span> / k)
+    <span class="op">}</span>
+<span class="op">}</span>
+
+<span class="at">#[</span>cfg<span class="at">(</span>test<span class="at">)]</span>
+<span class="kw">mod</span> test_int_point <span class="op">{</span>
+
+    <span class="kw">use</span> <span class="kw">crate</span>::geometry2d::<span class="dt">int</span>::point::*;
+
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> test_add() <span class="op">{</span>
+        <span class="pp">assert_eq!</span>(IntPoint(<span class="dv">1</span>, <span class="dv">2</span>) + IntPoint(<span class="dv">2</span>, <span class="dv">1</span>), IntPoint(<span class="dv">3</span>, <span class="dv">3</span>));
+    <span class="op">}</span>
+
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> test_sub() <span class="op">{</span>
+        <span class="pp">assert_eq!</span>(IntPoint(<span class="dv">1</span>, <span class="dv">2</span>) - IntPoint(<span class="dv">2</span>, <span class="dv">1</span>), IntPoint(-<span class="dv">1</span>, <span class="dv">1</span>));
+    <span class="op">}</span>
+
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> test_mul() <span class="op">{</span>
+        <span class="pp">assert_eq!</span>(IntPoint(<span class="dv">1</span>, <span class="dv">2</span>) * -<span class="dv">2</span>, IntPoint(-<span class="dv">2</span>, -<span class="dv">4</span>));
+    <span class="op">}</span>
+
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> test_div() <span class="op">{</span>
+        <span class="pp">assert_eq!</span>(IntPoint(<span class="dv">1</span>, <span class="dv">2</span>) / -<span class="dv">2</span>, IntPoint(<span class="dv">0</span>, -<span class="dv">1</span>));
+    <span class="op">}</span>
+
+    <span class="at">#[</span>test<span class="at">]</span>
+    <span class="kw">fn</span> test_cross() <span class="op">{</span>
+        <span class="pp">assert_eq!</span>(IntPoint(<span class="dv">1</span>, <span class="dv">1</span>).cross(IntPoint(<span class="dv">2</span>, <span class="dv">2</span>)), <span class="dv">0</span>);
+        <span class="pp">assert_eq!</span>(IntPoint(<span class="dv">1</span>, <span class="dv">0</span>).cross(IntPoint(<span class="dv">2</span>, <span class="dv">2</span>)), <span class="dv">2</span>);
+        <span class="pp">assert_eq!</span>(IntPoint(<span class="dv">0</span>, <span class="dv">1</span>).cross(IntPoint(<span class="dv">2</span>, <span class="dv">2</span>)), -<span class="dv">2</span>);
+        <span class="pp">assert_eq!</span>(IntPoint(<span class="dv">2</span>, <span class="dv">1</span>).cross(IntPoint(-<span class="dv">1</span>, <span class="dv">2</span>)), <span class="dv">5</span>);
+    <span class="op">}</span>
+<span class="op">}</span></code></pre></div>
             </div>
           </div>
 
@@ -239,6 +262,10 @@
 <h2 id="循環検出">循環検出</h2>
 <ul>
 <li><a href="algorithm.rho.html">フロイドの<span class="math inline"><em>ρ</em></span>アルゴリズム</a></li>
+</ul>
+<h2 id="連立一次方程式">連立一次方程式</h2>
+<ul>
+<li><a href="algorithm.gauss_jordan.html">Gauss-Jordan の消去法</a></li>
 </ul>
 </details>
 

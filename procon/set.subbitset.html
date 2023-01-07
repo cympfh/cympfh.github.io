@@ -25,20 +25,20 @@
 <p>今考える集合を <span class="math inline">\(N \leq 128\)</span> として <span class="math display">\[U = \{0,1,\ldots,N-1\}\]</span> であるとする.</p>
 <h2 id="部分集合">部分集合</h2>
 <p><span class="math inline">\(U\)</span> の部分集合は <a href="set.bitset.html">BitSet</a> の方法で unsigned 128 bit int 一つで表現出来る. この対応付けを用いることで, 部分集合の列挙は <span class="math inline">\(0\)</span> 以上 <span class="math inline">\(2^N\)</span> 未満の整数を列挙すればよいことになる.</p>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">for</span> tset <span class="kw">in</span> <span class="dv">0.</span>.<span class="dv">1</span> &lt;&lt; N <span class="op">{</span>
-    <span class="co">// now `uset` is a bitset for U.</span>
-<span class="op">}</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">for</span> tset <span class="kw">in</span> <span class="dv">0</span>..<span class="dv">1</span> &lt;&lt; N <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-2" title="2">    <span class="co">// now `uset` is a bitset for U.</span></a>
+<a class="sourceLine" id="cb1-3" title="3"><span class="op">}</span></a></code></pre></div>
 <p>実際 <span class="math inline">\(T \subseteq U\)</span> なる <span class="math inline">\(T\)</span> は <span class="math inline">\(2^N\)</span> 個あるのでこれは無駄なく列挙出来ている.</p>
 <h2 id="部分集合の部分集合">部分集合の部分集合</h2>
 <p><span class="math inline">\(U\)</span> の部分集合 <span class="math inline">\(T\)</span> のその部分集合 <span class="math inline">\(S\)</span> <span class="math display">\[S \subseteq T \subseteq U\]</span> を列挙したい.</p>
 <p>単純に二重で部分集合を列挙する場合, つまり, <span class="math inline">\(S \subseteq U\)</span>, <span class="math inline">\(T \subseteq U\)</span> をそれぞれ列挙して <span class="math inline">\(S \subseteq T\)</span> であるかをチェックするような方法が一つ考えられる. この包含関係は <code>S &amp; !T == 0</code> で判定可能. 二重列挙で <span class="math inline">\(O(2^N \times 2^N = 4^N)\)</span> 掛かる.</p>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">for</span> tset <span class="kw">in</span> <span class="dv">0.</span>.<span class="dv">1</span> &lt;&lt; N <span class="op">{</span>
-    <span class="kw">for</span> sset <span class="kw">in</span> <span class="dv">0.</span>.<span class="dv">1</span> &lt;&lt; N <span class="op">{</span>
-        <span class="kw">if</span> sset &amp; !tset == <span class="dv">0</span> <span class="op">{</span>
-            <span class="co">// now sset &lt;: tset &lt;: U</span>
-        <span class="op">}</span>
-    <span class="op">}</span>
-<span class="op">}</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">for</span> tset <span class="kw">in</span> <span class="dv">0</span>..<span class="dv">1</span> &lt;&lt; N <span class="op">{</span></a>
+<a class="sourceLine" id="cb2-2" title="2">    <span class="kw">for</span> sset <span class="kw">in</span> <span class="dv">0</span>..<span class="dv">1</span> &lt;&lt; N <span class="op">{</span></a>
+<a class="sourceLine" id="cb2-3" title="3">        <span class="kw">if</span> sset &amp; !tset == <span class="dv">0</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb2-4" title="4">            <span class="co">// now sset &lt;: tset &lt;: U</span></a>
+<a class="sourceLine" id="cb2-5" title="5">        <span class="op">}</span></a>
+<a class="sourceLine" id="cb2-6" title="6">    <span class="op">}</span></a>
+<a class="sourceLine" id="cb2-7" title="7"><span class="op">}</span></a></code></pre></div>
 <p>実際のところ <span class="math inline">\(S \subseteq T \subseteq U\)</span> なる <span class="math inline">\(S\)</span> がいくつあるのかを数えると, <span class="math display">\[\begin{align*}
 \sum_{T \subseteq U} \sum_{S \subseteq T} 1
 &amp; = \sum_{T \subseteq U} 2^{|T|} \\
@@ -47,16 +47,16 @@
 &amp; = 3^N
 \end{align*}\]</span> と分かる.</p>
 <p>実は次のようにすると無駄なく <span class="math inline">\(3^N\)</span> が列挙出来る.</p>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">for</span> tset <span class="kw">in</span> <span class="dv">0.</span>.<span class="dv">1</span> &lt;&lt; N <span class="op">{</span>
-    <span class="kw">let</span> <span class="kw">mut</span> sset = tset;
-    <span class="kw">while</span> sset &gt; <span class="dv">0</span> <span class="op">{</span>
-        <span class="co">// now sset &lt;: tset &lt;: U</span>
-        sset = (sset - <span class="dv">1</span>) &amp; tset;
-    <span class="op">}</span>
-<span class="op">}</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">for</span> tset <span class="kw">in</span> <span class="dv">0</span>..<span class="dv">1</span> &lt;&lt; N <span class="op">{</span></a>
+<a class="sourceLine" id="cb3-2" title="2">    <span class="kw">let</span> <span class="kw">mut</span> sset = tset;</a>
+<a class="sourceLine" id="cb3-3" title="3">    <span class="kw">while</span> sset &gt; <span class="dv">0</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb3-4" title="4">        <span class="co">// now sset &lt;: tset &lt;: U</span></a>
+<a class="sourceLine" id="cb3-5" title="5">        sset = (sset - <span class="dv">1</span>) &amp; tset;</a>
+<a class="sourceLine" id="cb3-6" title="6">    <span class="op">}</span></a>
+<a class="sourceLine" id="cb3-7" title="7"><span class="op">}</span></a></code></pre></div>
 <h2 id="参考文献">参考文献</h2>
 <ul>
-<li><a href="https://primenumber.hatenadiary.jp/entry/2016/12/01/000000">ビット列による部分集合表現 【ビット演算テクニック Advent Calendar 2016 1日目】 - prime's diary</a></li>
+<li><a href="https://primenumber.hatenadiary.jp/entry/2016/12/01/000000">ビット列による部分集合表現 【ビット演算テクニック Advent Calendar 2016 1日目】 - prime’s diary</a></li>
 </ul>
 <h2 id="例題">例題</h2>
 <ul>
@@ -319,6 +319,7 @@
 <summary class=menu>ハッシュ</summary>
 <ul>
 <li><a href="hash.zobrist.html">Zobrist Hash</a></li>
+<li><a href="hash.rolling.html">Rolling Hash</a></li>
 </ul>
 </details>
 

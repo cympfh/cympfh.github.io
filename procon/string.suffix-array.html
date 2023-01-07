@@ -28,68 +28,68 @@
 <p>以下の実装は文字列 <span class="math inline">\(S\)</span> から接尾辞配列を構築する.</p>
 <h2 id="実装と計算量">実装と計算量</h2>
 <p>ここにあるのは Manber-Myers の方法で, 時間計算量に <span class="math inline">\(O(N \log^2(N))\)</span> 掛かる.</p>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// String - Suffix Array (O(n log n log n))</span>
-<span class="kw">pub</span> <span class="kw">fn</span> suffix_array&lt;T: <span class="bu">Eq</span> + <span class="bu">Ord</span>&gt;(s: &amp;<span class="op">[</span>T<span class="op">]</span>) -&gt; <span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt; <span class="op">{</span>
-    <span class="kw">let</span> n = s.len();
-    <span class="kw">if</span> n &lt;= <span class="dv">1</span> <span class="op">{</span>
-        <span class="kw">return</span> (<span class="dv">0.</span>.n).collect();
-    <span class="op">}</span>
-    <span class="kw">let</span> <span class="kw">mut</span> sa: <span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt; = (<span class="dv">0.</span>.n).collect();
-    <span class="kw">let</span> <span class="kw">mut</span> rank: <span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt; = (<span class="dv">0.</span>.n).collect();
-    <span class="op">{</span>
-        <span class="kw">let</span> <span class="kw">mut</span> ts: <span class="dt">Vec</span>&lt;(<span class="dt">usize</span>, &amp;T)&gt; = s.iter().enumerate().collect();
-        ts.sort_by_key(|&amp;item| item.<span class="dv">1</span>);
-        rank<span class="op">[</span>ts<span class="op">[</span><span class="dv">0</span><span class="op">]</span>.<span class="dv">0</span><span class="op">]</span> = <span class="dv">0</span>;
-        <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">1.</span>.n <span class="op">{</span>
-            rank<span class="op">[</span>ts<span class="op">[</span>i<span class="op">]</span>.<span class="dv">0</span><span class="op">]</span> = rank<span class="op">[</span>ts<span class="op">[</span>i - <span class="dv">1</span><span class="op">]</span>.<span class="dv">0</span><span class="op">]</span> + <span class="kw">if</span> ts<span class="op">[</span>i - <span class="dv">1</span><span class="op">]</span>.<span class="dv">1</span> == ts<span class="op">[</span>i<span class="op">]</span>.<span class="dv">1</span> <span class="op">{</span> <span class="dv">0</span> <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span> <span class="dv">1</span> <span class="op">}</span>;
-        <span class="op">}</span>
-    <span class="op">}</span>
-    <span class="kw">use</span> std::cmp::Ordering;
-    <span class="kw">fn</span> compare(i: <span class="dt">usize</span>, j: <span class="dt">usize</span>, k: <span class="dt">usize</span>, rank: &amp;<span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt;) -&gt; Ordering <span class="op">{</span>
-        <span class="kw">match</span> (rank<span class="op">[</span>i<span class="op">]</span>, rank<span class="op">[</span>j<span class="op">]</span>, rank.get(i + k), rank.get(j + k)) <span class="op">{</span>
-            (x, y, _, _) <span class="kw">if</span> x &lt; y =&gt; Ordering::Less,
-            (x, y, _, _) <span class="kw">if</span> x &gt; y =&gt; Ordering::Greater,
-            (_, _, x, y) <span class="kw">if</span> x &lt; y =&gt; Ordering::Less,
-            (_, _, x, y) <span class="kw">if</span> x &gt; y =&gt; Ordering::Greater,
-            _ =&gt; Ordering::Equal,
-        <span class="op">}</span>
-    <span class="op">}</span>
-    <span class="kw">let</span> <span class="kw">mut</span> k = <span class="dv">1</span>;
-    <span class="kw">let</span> <span class="kw">mut</span> swap_rank: <span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt; = (<span class="dv">0.</span>.n).collect();
-    <span class="kw">while</span> k &lt; n <span class="op">{</span>
-        sa.sort_by(|&amp;i, &amp;j| compare(i, j, k, &amp;rank));
-        swap_rank<span class="op">[</span>sa<span class="op">[</span><span class="dv">0</span><span class="op">]]</span> = <span class="dv">0</span>;
-        <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">1.</span>.n <span class="op">{</span>
-            swap_rank<span class="op">[</span>sa<span class="op">[</span>i<span class="op">]]</span> = swap_rank<span class="op">[</span>sa<span class="op">[</span>i - <span class="dv">1</span><span class="op">]]</span>
-                + <span class="kw">if</span> compare(sa<span class="op">[</span>i<span class="op">]</span>, sa<span class="op">[</span>i - <span class="dv">1</span><span class="op">]</span>, k, &amp;rank) == Ordering::Equal <span class="op">{</span>
-                    <span class="dv">0</span>
-                <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
-                    <span class="dv">1</span>
-                <span class="op">}</span>;
-        <span class="op">}</span>
-        <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.n <span class="op">{</span>
-            rank<span class="op">[</span>i<span class="op">]</span> = swap_rank<span class="op">[</span>i<span class="op">]</span>;
-        <span class="op">}</span>
-        k *= <span class="dv">2</span>;
-    <span class="op">}</span>
-    sa
-<span class="op">}</span>
-
-<span class="at">#[</span>cfg<span class="at">(</span>test<span class="at">)]</span>
-<span class="kw">mod</span> test_suffix_array <span class="op">{</span>
-    <span class="kw">use</span> <span class="kw">crate</span>::string::suffix_array::*;
-
-    <span class="at">#[</span>test<span class="at">]</span>
-    <span class="kw">fn</span> it_works() <span class="op">{</span>
-        <span class="pp">assert_eq!</span>(suffix_array(&amp;<span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span><span class="op">]</span>), <span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span><span class="op">]</span>);
-        <span class="pp">assert_eq!</span>(suffix_array(&amp;<span class="pp">vec!</span><span class="op">[</span><span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">1</span><span class="op">]</span>), <span class="pp">vec!</span><span class="op">[</span><span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">0</span><span class="op">]</span>);
-        <span class="pp">assert_eq!</span>(suffix_array(&amp;<span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">1</span><span class="op">]</span>), <span class="pp">vec!</span><span class="op">[</span><span class="dv">3</span>, <span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">1</span><span class="op">]</span>);
-        <span class="pp">assert_eq!</span>(
-            suffix_array(&amp;<span class="st">&quot;abracadabra&quot;</span>.chars().collect::&lt;<span class="dt">Vec</span>&lt;_&gt;&gt;()),
-            <span class="pp">vec!</span><span class="op">[</span><span class="dv">10</span>, <span class="dv">7</span>, <span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">8</span>, <span class="dv">1</span>, <span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">9</span>, <span class="dv">2</span><span class="op">]</span>
-        );
-    <span class="op">}</span>
-<span class="op">}</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode rust"><code class="sourceCode rust"><a class="sourceLine" id="cb1-1" title="1"><span class="co">/// String - Suffix Array (O(n log n log n))</span></a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="kw">pub</span> <span class="kw">fn</span> suffix_array&lt;T: <span class="bu">Eq</span> + <span class="bu">Ord</span>&gt;(s: &amp;<span class="op">[</span>T<span class="op">]</span>) -&gt; <span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt; <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-3" title="3">    <span class="kw">let</span> n = s.len();</a>
+<a class="sourceLine" id="cb1-4" title="4">    <span class="kw">if</span> n &lt;= <span class="dv">1</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-5" title="5">        <span class="kw">return</span> (<span class="dv">0</span>..n).collect();</a>
+<a class="sourceLine" id="cb1-6" title="6">    <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-7" title="7">    <span class="kw">let</span> <span class="kw">mut</span> sa: <span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt; = (<span class="dv">0</span>..n).collect();</a>
+<a class="sourceLine" id="cb1-8" title="8">    <span class="kw">let</span> <span class="kw">mut</span> rank: <span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt; = (<span class="dv">0</span>..n).collect();</a>
+<a class="sourceLine" id="cb1-9" title="9">    <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-10" title="10">        <span class="kw">let</span> <span class="kw">mut</span> ts: <span class="dt">Vec</span>&lt;(<span class="dt">usize</span>, &amp;T)&gt; = s.iter().enumerate().collect();</a>
+<a class="sourceLine" id="cb1-11" title="11">        ts.sort_by_key(|&amp;item| item.<span class="dv">1</span>);</a>
+<a class="sourceLine" id="cb1-12" title="12">        rank<span class="op">[</span>ts<span class="op">[</span><span class="dv">0</span><span class="op">]</span>.<span class="dv">0</span><span class="op">]</span> = <span class="dv">0</span>;</a>
+<a class="sourceLine" id="cb1-13" title="13">        <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">1</span>..n <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-14" title="14">            rank<span class="op">[</span>ts<span class="op">[</span>i<span class="op">]</span>.<span class="dv">0</span><span class="op">]</span> = rank<span class="op">[</span>ts<span class="op">[</span>i - <span class="dv">1</span><span class="op">]</span>.<span class="dv">0</span><span class="op">]</span> + <span class="kw">if</span> ts<span class="op">[</span>i - <span class="dv">1</span><span class="op">]</span>.<span class="dv">1</span> == ts<span class="op">[</span>i<span class="op">]</span>.<span class="dv">1</span> <span class="op">{</span> <span class="dv">0</span> <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span> <span class="dv">1</span> <span class="op">}</span>;</a>
+<a class="sourceLine" id="cb1-15" title="15">        <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-16" title="16">    <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-17" title="17">    <span class="kw">use</span> <span class="pp">std::cmp::</span>Ordering;</a>
+<a class="sourceLine" id="cb1-18" title="18">    <span class="kw">fn</span> compare(i: <span class="dt">usize</span>, j: <span class="dt">usize</span>, k: <span class="dt">usize</span>, rank: &amp;<span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt;) -&gt; Ordering <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-19" title="19">        <span class="kw">match</span> (rank<span class="op">[</span>i<span class="op">]</span>, rank<span class="op">[</span>j<span class="op">]</span>, rank.get(i + k), rank.get(j + k)) <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-20" title="20">            (x, y, _, _) <span class="kw">if</span> x &lt; y =&gt; <span class="pp">Ordering::</span>Less,</a>
+<a class="sourceLine" id="cb1-21" title="21">            (x, y, _, _) <span class="kw">if</span> x &gt; y =&gt; <span class="pp">Ordering::</span>Greater,</a>
+<a class="sourceLine" id="cb1-22" title="22">            (_, _, x, y) <span class="kw">if</span> x &lt; y =&gt; <span class="pp">Ordering::</span>Less,</a>
+<a class="sourceLine" id="cb1-23" title="23">            (_, _, x, y) <span class="kw">if</span> x &gt; y =&gt; <span class="pp">Ordering::</span>Greater,</a>
+<a class="sourceLine" id="cb1-24" title="24">            _ =&gt; <span class="pp">Ordering::</span>Equal,</a>
+<a class="sourceLine" id="cb1-25" title="25">        <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-26" title="26">    <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-27" title="27">    <span class="kw">let</span> <span class="kw">mut</span> k = <span class="dv">1</span>;</a>
+<a class="sourceLine" id="cb1-28" title="28">    <span class="kw">let</span> <span class="kw">mut</span> swap_rank: <span class="dt">Vec</span>&lt;<span class="dt">usize</span>&gt; = (<span class="dv">0</span>..n).collect();</a>
+<a class="sourceLine" id="cb1-29" title="29">    <span class="kw">while</span> k &lt; n <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-30" title="30">        sa.sort_by(|&amp;i, &amp;j| compare(i, j, k, &amp;rank));</a>
+<a class="sourceLine" id="cb1-31" title="31">        swap_rank<span class="op">[</span>sa<span class="op">[</span><span class="dv">0</span><span class="op">]]</span> = <span class="dv">0</span>;</a>
+<a class="sourceLine" id="cb1-32" title="32">        <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">1</span>..n <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-33" title="33">            swap_rank<span class="op">[</span>sa<span class="op">[</span>i<span class="op">]]</span> = swap_rank<span class="op">[</span>sa<span class="op">[</span>i - <span class="dv">1</span><span class="op">]]</span></a>
+<a class="sourceLine" id="cb1-34" title="34">                + <span class="kw">if</span> compare(sa<span class="op">[</span>i<span class="op">]</span>, sa<span class="op">[</span>i - <span class="dv">1</span><span class="op">]</span>, k, &amp;rank) == <span class="pp">Ordering::</span>Equal <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-35" title="35">                    <span class="dv">0</span></a>
+<a class="sourceLine" id="cb1-36" title="36">                <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-37" title="37">                    <span class="dv">1</span></a>
+<a class="sourceLine" id="cb1-38" title="38">                <span class="op">}</span>;</a>
+<a class="sourceLine" id="cb1-39" title="39">        <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-40" title="40">        <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0</span>..n <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-41" title="41">            rank<span class="op">[</span>i<span class="op">]</span> = swap_rank<span class="op">[</span>i<span class="op">]</span>;</a>
+<a class="sourceLine" id="cb1-42" title="42">        <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-43" title="43">        k *= <span class="dv">2</span>;</a>
+<a class="sourceLine" id="cb1-44" title="44">    <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-45" title="45">    sa</a>
+<a class="sourceLine" id="cb1-46" title="46"><span class="op">}</span></a>
+<a class="sourceLine" id="cb1-47" title="47"></a>
+<a class="sourceLine" id="cb1-48" title="48"><span class="at">#[</span>cfg<span class="at">(</span>test<span class="at">)]</span></a>
+<a class="sourceLine" id="cb1-49" title="49"><span class="kw">mod</span> test_suffix_array <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-50" title="50">    <span class="kw">use</span> <span class="kw">crate</span>::<span class="pp">string::suffix_array::</span>*;</a>
+<a class="sourceLine" id="cb1-51" title="51"></a>
+<a class="sourceLine" id="cb1-52" title="52">    <span class="at">#[</span>test<span class="at">]</span></a>
+<a class="sourceLine" id="cb1-53" title="53">    <span class="kw">fn</span> it_works() <span class="op">{</span></a>
+<a class="sourceLine" id="cb1-54" title="54">        <span class="pp">assert_eq!</span>(suffix_array(&amp;<span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span><span class="op">]</span>), <span class="pp">vec!</span><span class="op">[</span><span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span><span class="op">]</span>);</a>
+<a class="sourceLine" id="cb1-55" title="55">        <span class="pp">assert_eq!</span>(suffix_array(&amp;<span class="pp">vec!</span><span class="op">[</span><span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">1</span><span class="op">]</span>), <span class="pp">vec!</span><span class="op">[</span><span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">0</span><span class="op">]</span>);</a>
+<a class="sourceLine" id="cb1-56" title="56">        <span class="pp">assert_eq!</span>(suffix_array(&amp;<span class="pp">vec!</span><span class="op">[</span><span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">1</span><span class="op">]</span>), <span class="pp">vec!</span><span class="op">[</span><span class="dv">3</span>, <span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">1</span><span class="op">]</span>);</a>
+<a class="sourceLine" id="cb1-57" title="57">        <span class="pp">assert_eq!</span>(</a>
+<a class="sourceLine" id="cb1-58" title="58">            suffix_array(&amp;<span class="st">&quot;abracadabra&quot;</span>.chars().<span class="pp">collect::</span>&lt;<span class="dt">Vec</span>&lt;_&gt;&gt;()),</a>
+<a class="sourceLine" id="cb1-59" title="59">            <span class="pp">vec!</span><span class="op">[</span><span class="dv">10</span>, <span class="dv">7</span>, <span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">8</span>, <span class="dv">1</span>, <span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">9</span>, <span class="dv">2</span><span class="op">]</span></a>
+<a class="sourceLine" id="cb1-60" title="60">        );</a>
+<a class="sourceLine" id="cb1-61" title="61">    <span class="op">}</span></a>
+<a class="sourceLine" id="cb1-62" title="62"><span class="op">}</span></a></code></pre></div>
             </div>
           </div>
 
@@ -346,6 +346,7 @@
 <summary class=menu>ハッシュ</summary>
 <ul>
 <li><a href="hash.zobrist.html">Zobrist Hash</a></li>
+<li><a href="hash.rolling.html">Rolling Hash</a></li>
 </ul>
 </details>
 

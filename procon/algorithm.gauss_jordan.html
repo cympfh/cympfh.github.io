@@ -28,82 +28,7 @@
 <li><a href="https://ja.wikipedia.org/wiki/%E3%82%AC%E3%82%A6%E3%82%B9%E3%81%AE%E6%B6%88%E5%8E%BB%E6%B3%95">ガウスの消去法 - Wikipedia</a></li>
 </ul>
 <h2 id="実装">実装</h2>
-<div class="sourceCode"><pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">/// Algorithm - Gauss-Jorndan elimination</span>
-<span class="kw">use</span> <span class="kw">crate</span>::num::<span class="dt">float</span>::*;
-
-<span class="co">/// Solve: a x = b</span>
-<span class="co">/// where</span>
-<span class="co">///   a is NxN matrix</span>
-<span class="co">///   b is N vector</span>
-<span class="kw">pub</span> <span class="kw">fn</span> gauss_jordan(a: <span class="dt">Vec</span>&lt;<span class="dt">Vec</span>&lt;Float&gt;&gt;, b: <span class="dt">Vec</span>&lt;Float&gt;) -&gt; <span class="dt">Option</span>&lt;<span class="dt">Vec</span>&lt;Float&gt;&gt; <span class="op">{</span>
-    <span class="kw">let</span> n = a.len();
-    <span class="pp">assert!</span>(b.len() == n);
-    <span class="kw">let</span> <span class="kw">mut</span> a = a.clone();
-    <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.n <span class="op">{</span>
-        a<span class="op">[</span>i<span class="op">]</span>.push(b<span class="op">[</span>i<span class="op">]</span>);
-    <span class="op">}</span>
-    <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">0.</span>.n <span class="op">{</span>
-        <span class="kw">let</span> pivot = (i..n).max_by_key(|&amp;k| a<span class="op">[</span>k<span class="op">][</span>i<span class="op">]</span>.abs()).unwrap();
-        a.swap(i, pivot);
-        <span class="kw">if</span> a<span class="op">[</span>i<span class="op">][</span>i<span class="op">]</span>.abs() &lt;= Float(<span class="dv">1</span>e-<span class="dv">6</span>) <span class="op">{</span>
-            <span class="kw">return</span> <span class="cn">None</span>;
-        <span class="op">}</span>
-        <span class="op">{</span>
-            <span class="kw">let</span> base = a<span class="op">[</span>i<span class="op">][</span>i<span class="op">]</span>;
-            <span class="kw">for</span> j <span class="kw">in</span> i..=n <span class="op">{</span>
-                a<span class="op">[</span>i<span class="op">][</span>j<span class="op">]</span> /= base;
-            <span class="op">}</span>
-        <span class="op">}</span>
-        <span class="co">// 消去</span>
-        <span class="kw">for</span> ii <span class="kw">in</span> <span class="dv">0.</span>.n <span class="op">{</span>
-            <span class="kw">if</span> ii == i <span class="op">{</span>
-                <span class="kw">continue</span>;
-            <span class="op">}</span>
-            <span class="kw">for</span> j <span class="kw">in</span> i + <span class="dv">1.</span>.=n <span class="op">{</span>
-                <span class="kw">let</span> elim = a<span class="op">[</span>ii<span class="op">][</span>i<span class="op">]</span> * a<span class="op">[</span>i<span class="op">][</span>j<span class="op">]</span>;
-                a<span class="op">[</span>ii<span class="op">][</span>j<span class="op">]</span> -= elim;
-            <span class="op">}</span>
-        <span class="op">}</span>
-    <span class="op">}</span>
-    <span class="cn">Some</span>((<span class="dv">0.</span>.n).map(|i| a<span class="op">[</span>i<span class="op">][</span>n<span class="op">]</span>).collect::&lt;<span class="dt">Vec</span>&lt;_&gt;&gt;())
-<span class="op">}</span>
-
-<span class="at">#[</span>cfg<span class="at">(</span>test<span class="at">)]</span>
-<span class="kw">mod</span> test_gauss_jordan <span class="op">{</span>
-    <span class="kw">use</span> <span class="kw">crate</span>::algorithm::gauss_jordan::*;
-    <span class="at">#[</span>test<span class="at">]</span>
-    <span class="kw">fn</span> test_1() <span class="op">{</span>
-        <span class="co">// x + y = 0</span>
-        <span class="co">// x + 2y = 10</span>
-        <span class="kw">let</span> a = <span class="pp">vec!</span><span class="op">[</span><span class="pp">vec!</span><span class="op">[</span>Float(<span class="dv">1.0</span>), Float(<span class="dv">1.0</span>)<span class="op">]</span>, <span class="pp">vec!</span><span class="op">[</span>Float(<span class="dv">1.0</span>), Float(<span class="dv">2.0</span>)<span class="op">]]</span>;
-        <span class="kw">let</span> b = <span class="pp">vec!</span><span class="op">[</span>Float(<span class="dv">0.0</span>), Float(<span class="dv">10.0</span>)<span class="op">]</span>;
-        <span class="pp">assert_eq!</span>(gauss_jordan(a, b), <span class="cn">Some</span>(<span class="pp">vec!</span><span class="op">[</span>Float(-<span class="dv">10.0</span>), Float(<span class="dv">10.0</span>)<span class="op">]</span>));
-    <span class="op">}</span>
-    <span class="at">#[</span>test<span class="at">]</span>
-    <span class="kw">fn</span> test_2() <span class="op">{</span>
-        <span class="co">// 2 x + y = -1</span>
-        <span class="co">// -x + 3 y = 11</span>
-        <span class="kw">let</span> a = <span class="pp">vec!</span><span class="op">[</span><span class="pp">vec!</span><span class="op">[</span>Float(<span class="dv">2.0</span>), Float(<span class="dv">1.0</span>)<span class="op">]</span>, <span class="pp">vec!</span><span class="op">[</span>Float(-<span class="dv">1.0</span>), Float(<span class="dv">3.0</span>)<span class="op">]]</span>;
-        <span class="kw">let</span> b = <span class="pp">vec!</span><span class="op">[</span>Float(-<span class="dv">1.0</span>), Float(<span class="dv">11.0</span>)<span class="op">]</span>;
-        <span class="pp">assert_eq!</span>(gauss_jordan(a, b), <span class="cn">Some</span>(<span class="pp">vec!</span><span class="op">[</span>Float(-<span class="dv">2.0</span>), Float(<span class="dv">3.0</span>)<span class="op">]</span>));
-    <span class="op">}</span>
-    <span class="at">#[</span>test<span class="at">]</span>
-    <span class="kw">fn</span> test_3() <span class="op">{</span>
-        <span class="co">// x + y = 0</span>
-        <span class="co">// x + y = 10</span>
-        <span class="kw">let</span> a = <span class="pp">vec!</span><span class="op">[</span><span class="pp">vec!</span><span class="op">[</span>Float(<span class="dv">1.0</span>), Float(<span class="dv">1.0</span>)<span class="op">]</span>, <span class="pp">vec!</span><span class="op">[</span>Float(<span class="dv">1.0</span>), Float(<span class="dv">1.0</span>)<span class="op">]]</span>;
-        <span class="kw">let</span> b = <span class="pp">vec!</span><span class="op">[</span>Float(<span class="dv">0.0</span>), Float(<span class="dv">10.0</span>)<span class="op">]</span>;
-        <span class="pp">assert_eq!</span>(gauss_jordan(a, b), <span class="cn">None</span>);
-    <span class="op">}</span>
-    <span class="at">#[</span>test<span class="at">]</span>
-    <span class="kw">fn</span> test_4() <span class="op">{</span>
-        <span class="co">// x + y = 1</span>
-        <span class="co">// x + y = 1</span>
-        <span class="kw">let</span> a = <span class="pp">vec!</span><span class="op">[</span><span class="pp">vec!</span><span class="op">[</span>Float(<span class="dv">1.0</span>), Float(<span class="dv">1.0</span>)<span class="op">]</span>, <span class="pp">vec!</span><span class="op">[</span>Float(<span class="dv">1.0</span>), Float(<span class="dv">1.0</span>)<span class="op">]]</span>;
-        <span class="kw">let</span> b = <span class="pp">vec!</span><span class="op">[</span>Float(<span class="dv">1.0</span>), Float(<span class="dv">1.0</span>)<span class="op">]</span>;
-        <span class="pp">assert_eq!</span>(gauss_jordan(a, b), <span class="cn">None</span>);
-    <span class="op">}</span>
-<span class="op">}</span></code></pre></div>
+<p>```rust</p>
             </div>
           </div>
 
@@ -360,6 +285,7 @@
 <summary class=menu>ハッシュ</summary>
 <ul>
 <li><a href="hash.zobrist.html">Zobrist Hash</a></li>
+<li><a href="hash.rolling.html">Rolling Hash</a></li>
 </ul>
 </details>
 

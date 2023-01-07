@@ -192,6 +192,7 @@
 # ハッシュ
 
 - [Zobrist Hash](hash.zobrist.md)
+- [Rolling Hash](hash.rolling.md)
 
 # collections
 

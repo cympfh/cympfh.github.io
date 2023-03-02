@@ -1,152 +1,61 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
 <head>
   <meta charset="utf-8" />
-  <meta name="generator" content="pandoc" />
+  <meta name="description" content="考えてること" />
+  <meta property="og:url" content="http://cympfh.cc/taglibro">
+  <meta property="og:title" content="Fri Nov 01 2019" />
+  <meta property="og:description" content="考えてること" />
+  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@cympfh" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>Fri Nov 01 2019</title>
   <style type="text/css">
       code{white-space: pre-wrap;}
-      span.smallcaps{font-variant: small-caps;}
-      span.underline{text-decoration: underline;}
-      div.column{display: inline-block; vertical-align: top; width: 50%;}
   </style>
+  <link rel="stylesheet" href="../../resources/css/c.css" />
   <link rel="stylesheet" href="../../../resources/css/c.css" />
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <link rel="stylesheet" href="../../../resources/css/youtube.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
-<header class="page-header">
-    <a href='../../index.html'><i class="fa fa-save" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
-</header>
-<header>
+  <div class="taglibro">
+    <header class="page-header"><a href='../../index.html'><i class="fas fa-fast-backward"></i></a></header>
 <h1 class="title">Fri Nov 01 2019</h1>
-</header>
-<h2 id="考えてること">考えてること</h2>
+<h2>考えてること</h2>
 <p>データにラベルがあるのなら話は楽だ。出力にも入力にも使えるから。 しかしながら、ラベルというのは目的に沿って人間が付与した単純な一つのクラスタに過ぎない。 それを超えた常識みたいなのを作ることが必要。</p>
 <p>いつかの日記に、GANのmode callapse を防ぐのにラベルを使えばどうかなどと書いたが、 初めから入力にラベルを与えて conditional にすればいいだけだったことに今日気がついて、 やることを失くした。 それどころか、単にラベルの予測と Discriminator を兼ねさせるだけでも十分 mode collapse が抑えられることを自分も昔確認したのを思い出した。 <a href="https://github.com/cympfh/GAN-semisup-MNIST-Keras">cympfh/GAN-semisup-MNIST-Keras</a> この予測器及び判別器は最終層手前までは共通で、最後だけ、10クラス分類とするか、真偽の判定とするかに分岐している。 今思えば、11クラス分類（10クラス + 偽クラス）としても良いかもしれない。</p>
 <p>論理を作る。ニューラルネットで。 AND とか OR とか全てのゲートを用意して構成するのは当然出来るに決まっている。 もちろん XOR を作ることが出来るので、原理的に作ることもできる。 そんなことを考えなくても、例えば <code>A IMPLIES B</code> を <code>NOT A OR B</code> などと定めることをしなくても、個々のゲートを訓練すれば、 常識的な方法で常識的なものが出来るだろう。 もしかしたら、僅かな確率で <code>A AND NOT A</code> が成り立ったり、三段論法が成り立たないことがあったり、人間的で面白く見えるものが出来上がるかもしれない。</p>
 <p>でも所詮疑似科学だ。</p>
-<p>個人的には最近はトポスに傾倒している。 細かいことを省けば、トポスというのは subobject classifier というものが備わっているもののことで、その機能があればイコールとか AND とかが作れる。 subobject classifier というのが何か。これまた不正確で雑な説明をすると、部分集合判定器である。 すなわち <span class="math inline">\(A \subseteq B\)</span> という部分集合があったときに</p>
-<p><span class="math display">\[\begin{align*}
+<p>個人的には最近はトポスに傾倒している。 細かいことを省けば、トポスというのは subobject classifier というものが備わっているもののことで、その機能があればイコールとか AND とかが作れる。 subobject classifier というのが何か。これまた不正確で雑な説明をすると、部分集合判定器である。 すなわち \(A \subseteq B\) という部分集合があったときに</p>
+\[\begin{align*}
 cl(b) = \begin{cases}
 \mathrm{true} &amp; \text{ if } b \in A \\
 \mathrm{false}
 \end{cases}
-\end{align*}\]</span></p>
+\end{align*}\]
 <p>という関数 cl が作れる。 トポスというのは任意の部分集合についてこのような関数が構成出来ることを言う。</p>
-<p>すると例えば、集合 <span class="math inline">\(A\)</span> の上のイコールは <span class="math display">\[\{ (a, b) \mid a,b \in A, a=b \} \subset A \times A\]</span> の subobject classifier だし、AND は <span class="math display">\[\{ (\mathrm{true}, \mathrm{true}) \} \subset \Omega \times \Omega\]</span> である。 ただしここで <span class="math inline">\(\Omega = \{ \mathrm{true}, \mathrm{false} \}\)</span>。</p>
-<p>これが大してすごそうに思えないのは、部分集合というのが単純だからだ。単純というのは、属しているか、属していないかの二値だから。 これは cl の値域が true, false の二値であることに対応している。 ていうか集合論だと関係とか関数というのは結局 <span class="math inline">\(A \times A\)</span> の部分集合で定義できるから、それはそうなんだよな。 上は「部分集合を定義すると、関係とか関数が定義できます」っていうのを丁寧に言っているだけ。</p>
-<p>さてトポスは集合に上に成り立っているものではないので、一般に何にでも応用できる。 fuzzy logic とかみたいに曖昧なもの（それは例えば “true である確率” みたいに）をそのままのフレームワークで扱うことが出来る。 その場合の cl は上のように単純ではない。 <span class="math inline">\(\Omega\)</span> も二値ではなくなるし、イコールも AND ももっと興味深いものになるかもしれない。</p>
+<p>すると例えば、集合 \(A\) の上のイコールは</p>
+\[\{ (a, b) \mid a,b \in A, a=b \} \subset A \times A\]
+<p>の subobject classifier だし、AND は</p>
+\[\{ (\mathrm{true}, \mathrm{true}) \} \subset \Omega \times \Omega\]
+<p>である。 ただしここで \(\Omega = \{ \mathrm{true}, \mathrm{false} \}\) 。</p>
+<p>これが大してすごそうに思えないのは、部分集合というのが単純だからだ。単純というのは、属しているか、属していないかの二値だから。 これは cl の値域が true, false の二値であることに対応している。 ていうか集合論だと関係とか関数というのは結局 \(A \times A\) の部分集合で定義できるから、それはそうなんだよな。 上は「部分集合を定義すると、関係とか関数が定義できます」っていうのを丁寧に言っているだけ。</p>
+<p>さてトポスは集合に上に成り立っているものではないので、一般に何にでも応用できる。 fuzzy logic とかみたいに曖昧なもの（それは例えば "true である確率" みたいに）をそのままのフレームワークで扱うことが出来る。 その場合の cl は上のように単純ではない。 \(\Omega\) も二値ではなくなるし、イコールも AND ももっと興味深いものになるかもしれない。</p>
 <p>で、これをニューラルネットで実装するには？ cl の部分を構成出来ればいい？</p>
-<footer>
-    <p class="is-pulled-right">
-    @cympfh / cympfh@gmail.com
-    </p>
-</footer>
-<!--
 
-  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
-  ただし "INDEX" は除外する.
-
-    <div id=toc></div>
-
-
-  H2, H3 タグまでを列挙するには以下を埋め込む.
-
-    <div id=toc-level-2></div>
-
--->
-<script>
-(function() {
-
-  function naming(obj, name) {
-      var PREF = document.createElement('a');
-      PREF.name = name;
-      obj.appendChild(PREF);
-  }
-
-  function level1() {
-
-    var sections = document.getElementsByTagName('h2');
-    var OL = document.createElement('ol');
-    for (var i=0; i < sections.length; ++i) {
-      var LI = document.createElement('li');
-      var A = document.createElement('a');
-      A.innerHTML = sections[i].innerHTML;
-      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
-      A.href = '#' + i;
-      LI.appendChild(A);
-      OL.appendChild(LI);
-      naming(sections[i], i);
-      // var PREF = document.createElement('a');
-      // PREF.name = i;
-      // sections[i].appendChild(PREF);
-    }
-
-    return OL;
-  }
-
-  function level2() {
-
-    var sections = document.querySelectorAll('h2,h3');
-    var tree = [];
-    for (var i = 0; i < sections.length; ++i) {
-      if (sections[i].tagName == 'H2') {
-        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
-        tree.push([sections[i]]);
-      } else {
-        if (tree.length > 0) {
-          tree[tree.length-1].push(sections[i]);
-        } else {
-          tree.push([sections[i]]);
-        }
-      }
-    }
-
-    var OL = document.createElement('ol');
-    for (var i = 0; i < tree.length; ++i) {
-
-      // h2-level
-      var LI = document.createElement('li');
-      var A = document.createElement('a');
-      A.innerHTML = tree[i][0].innerHTML;
-      A.href = '#' + i;
-      naming(tree[i][0], i);
-      LI.appendChild(A);
-
-      // h3-level
-      if (tree[i].length > 1) {
-        var OL_sub = document.createElement('ol');
-        for (var j = 1; j < tree[i].length; ++j) {
-          var LI_sub = document.createElement('li');
-          var A = document.createElement('a');
-          A.innerHTML = tree[i][j].innerHTML;
-          A.href = `#${i}-${j}`;
-          naming(tree[i][j], `${i}-${j}`);
-          LI_sub.appendChild(A);
-          OL_sub.appendChild(LI_sub);
-        }
-        LI.appendChild(OL_sub);
-      }
-
-      OL.appendChild(LI);
-    }
-
-    return OL;
-  }
-
-  function append_toc() {
-    if (document.getElementById('toc')) {
-      document.getElementById('toc').appendChild(level1());
-    }
-    if (document.getElementById('toc-level-2')) {
-      document.getElementById('toc-level-2').appendChild(level2());
-    }
-  }
-
-  window.addEventListener('DOMContentLoaded', append_toc, false);
-}());
-</script>
+    <footer>
+      <p class="is-pulled-right">@cympfh / mail@cympfh.cc</p>
+    </footer>
+  </div>
+  <script src="../../../resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
+  <script src="../../../resources/js/toc.js"></script>
 </body>
 </html>

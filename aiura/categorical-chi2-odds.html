@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>カテゴリカル・データのカイ2乗検定, オッズ比検定</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-svg-full.js"></script>
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-stumbleupon"></i></a>
+</header>
+
+<h1 class="title">カテゴリカル・データのカイ2乗検定, オッズ比検定</h1>
+<p><p class=date style='text-align: right'>2023-03-17 (Fri.)</p> <div class='is-pulled-right'> <a class='tag is-red' href=index.html#統計>統計</a> </div></p>
+<h2>INDEX</h2>
+<p><div id=toc></div></p>
+<p>\(\def\Bi{\mathrm{Bi}}\def\N{\mathcal{N}}\def\inv#1{\frac{1}{#1}}\)</p>
+<h2>カテゴリカル・データの定義</h2>
+<p>一次元のカテゴリカル・データとは次のようなもの.</p>
+<ul>
+  <li>属性集合を \(I = \{0,1,\ldots, m-1\}\) ( \(m=|I|\) ) とする</li>
+  <li>
+    \(n\) 個のサンプルデータの集合 \(X\) ( \(|X| = n\) )
+    <ul>
+      <li>
+        \(X\) は属性 \(i \in I\) に対応する部分集合に排他的に分割される
+        <ul>
+          <li>\(X = X_0 \cup X_1 \cup \cdots \cup X_m\)</li>
+          <li>\(n_i = |X_i|, n = \sum_i n_i\)</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+<p>属性を2つにしたものを二次元のカテゴリカル・データと呼ぶ. 特にこれを指して <strong>クロス表</strong> ともいう.</p>
+<ul>
+  <li>2つの属性集合 \(I, J\)</li>
+  <li>
+    \(n\) 個のサンプルデータは \((i,j) \in I \times J\) に対応して分割される
+    <ul>
+      <li>\(X = \bigcup_{i,j} X_{i,j}\)</li>
+      <li>\(n_{i,j} = |X_{i,j}|, n = \sum_i \sum_j n_{i,j}\)</li>
+    </ul>
+  </li>
+</ul>
+<p>この \(n_i\) または \(n_{i,j}\) を度数という.</p>
+<h3>例</h3>
+<p>典型的なクロスデータの例をあげる.</p>
+<ul>
+  <li>
+    サンプル集合
+    <ul>
+      <li>被験者</li>
+    </ul>
+  </li>
+  <li>
+    属性
+    <ul>
+      <li>
+        \(I\) , 被験者群
+        <ul>
+          <li>\(I = \{A, B\}\)</li>
+          <li>A群:実験薬を投与, B群:それ以外（偽薬を投与されるなど）</li>
+        </ul>
+      </li>
+      <li>
+        \(J\) , 実験結果
+        <ul>
+          <li>\(J = \{ Y, N \}\)</li>
+          <li>ある症状が回復した (Yes), 回復されなかった (No)</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+<p>特にこの例では \(|I|=|J|=2\) なので <strong>2x2 のクロスデータ</strong> という.</p>
+<p>これに対して薬の効果を測りたい. そこで次のような帰無仮説を立ててこれを棄却できるかの検定をしたい.</p>
+<ul>
+  <li>帰無仮説 \(H_0\) : 薬の投与に関わらず症状の回復する確率は等しい</li>
+</ul>
+<h2>ピアソンの \(\chi^2\) 検定</h2>
+<h3>定義</h3>
+<p>次の統計量を考える.</p>
+<p>一次元の場合は</p>
+\[Z = \sum_{i \in I} \frac{(O_i - E_i)^2}{E_i}\]
+<p>ここで属性 \(i\) に対して実際に観測された値が \(O_i\) , 期待値が \(E_i\) である. カテゴリカル・データについては \(O_i\) とは度数 \(n_i\) のこと, 期待値は帰無仮説において期待されるその値のこと.</p>
+<p>二次元の場合は</p>
+\[Z = \sum_{i \in I} \sum_{j \in J} \frac{(O_{ij} - E_{ij})^2}{E_{ij}}\]
+<p>\(O_{ij}, E_{ij}\) の意味は一次元のときと全く同様.</p>
+<p>その期待値をどう求めるかは適用する帰無仮説による.</p>
+<p>実はこの \(Z\) は \(\chi^2\) 分布に従い, そしてその自由度は一次元の場合は \(|I| - 1\) , 二次元の場合は \((|I|-1) (|J|-1)\) となる.</p>
+<h3>簡単な場合</h3>
+<p>簡単に \(|I| = 2\) の場合の一次元カテゴリカル・データで考える.</p>
+<p>サンプルが \(i=0\) に属するかどうかを確率 \(p\) の二項分布に当てはめる. 期待値 \(E_0\) のとき \(p = E_0 &#x2F; n\) である. ここで \(n\) は全サンプル数.</p>
+<p>観測される \(O_0\) を確率変数 \(X\) で置く.</p>
+\[X \sim \Bi(p,n)\]
+<p>ここでサンプル数が十分なとき, 二項分布は正規分布に近似できる（一般に \(n&gt;5\) ならこの近似をしてよいとされる）.</p>
+\[X \sim \N(np, np(1-p))\]
+<p>標準化して</p>
+\[\frac{X-np}{\sqrt{np(1-p)}} \sim \N(0,1)\]
+<p>\(\chi^2\) 分布とは標準正規分布に従う確率変数の2乗（の和）が従う分布のことだった.</p>
+\[\frac{(X-np)^2}{np(1-p)} \sim \chi^2_1\]
+<p>この左辺を注意深く式展開する. ポイントは \(1&#x2F;p + 1&#x2F;(1-p) = \frac{1}{p(1-p)}\) なところ.</p>
+\[\begin{align}
+\frac{(X-np)^2}{np(1-p)}
+&amp; = \frac{1}{n} (X-np)^2 \left( \frac{1}{p} + \frac{1}{1-p} \right) \\
+&amp; = \frac{ (X-np)^2 }{ np } + \frac{ (X-np)^2 }{ n(1-p) } \\
+&amp; = \frac{ (X-np)^2 }{ np } + \frac{ ((n-X)-n(1-p))^2 }{ n(1-p) } \\
+\end{align}\]
+<p>第一項に注目すると, \(X=O_o\) , \(np=E_0\) である. 次に第二項に注目すると, \(n-X = O_1\) , \(n(1-p) = E_1\) のことである. それらを代入すると結局, 定義で導入した \(Z\) になっている.</p>
+\[Z = \frac{(O_0 - E_0)^2}{E_0} + \frac{(O_1 - E_1)^2}{E_1} \sim \chi^2_1\]
+<p>同様のことが, \(|I|\) を増やしたとき, 或いは次元を増やしたときにも同様に確認できる. ただし各属性について最後の一個の値は決定されるので自由度が属性の数よりも \(1\) だけ少ないことに注意.</p>
+<h3>薬の検定の場合</h3>
+<p>期待値の求め方について具体的なことを言及してなかったので例を挙げる. 次のような設定が典型.</p>
+<p>以下の設定で 2x2 クロスデータを作る.</p>
+<ul>
+  <li>
+    100 人の被験者を集める
+    <ul>
+      <li>\(n=100\)</li>
+    </ul>
+  </li>
+  <li>
+    3:2 の比率でランダムに A群 と B群に分割する
+    <ul>
+      <li>属性 \(I = \{ A, B \}\)</li>
+    </ul>
+  </li>
+  <li>
+    それぞれの群に対して異なる実験をし, その効果が現れたかどうかをみる
+    <ul>
+      <li>属性 \(J = \{ Y, N \}\)</li>
+    </ul>
+  </li>
+</ul>
+<p>観測値 \(O_{ij}\) は「群 \(i\) に属して, 効果が \(j\) だった被験者の人数」を表す. これはクロスデータとして与えられる.</p>
+<p>帰無仮説を「 \(I\) に係わらず効果が現れる確率が等しく \(p\) である」とする. \(p\) は分からないので 100 人全体の被験者から推定する. すなわち</p>
+\[p = \frac{ O_{AY} + O_{BY} }{ 100 }\]
+<p>また, A/B への振り分けは 3:2 でランダムだとしたので, 事前分布 \(p(A) = 2&#x2F;5, p(B)=3&#x2F;5\) としてよい.</p>
+<p>以上から期待値は決まる. 例えば A群 であって効果が Y な数は</p>
+\[E_{AY} = 100 \times p(A) \times p = 40 \times p\]
+<p>となる.</p>
+<h2>オッズ比</h2>
+<h3>定義</h3>
+<p>2x2 のクロスデータについてのみ考える. 度数をそれぞれ \(a,b,c,d\) とする.</p>
+<table>
+  <tbody>
+    <tr class=odd>
+      <td align=left>I / J</td>
+      <td align=left>0</td>
+      <td align=left>1</td>
+    </tr>
+    <tr class=even>
+      <td align=left>0</td>
+      <td align=left>\(a\)</td>
+      <td align=left>\(b\)</td>
+    </tr>
+    <tr class=odd>
+      <td align=left>1</td>
+      <td align=left>\(c\)</td>
+      <td align=left>\(d\)</td>
+    </tr>
+  </tbody>
+</table>
+<p>このとき次の OR をオッズ比 (Odds Ratio) という.</p>
+\[OR = \frac{ a&#x2F;b }{ c&#x2F;d } = \frac{ ad }{ bc }\]
+<p>\(b,c\) に関する対称式なので属性 \(I\) と \(J\) を交換しても同じ式になってることに注意.</p>
+<h3>デルタ法</h3>
+<p>ある確率変数 \(X\) と滑らかな関数 \(f\) があって \(X\) の分散が十分小さいとき, 次の2つを事実として使う.</p>
+<ol>
+  <li>\(X\) が正規分布に従うなら \(f(X)\) も正規分布に従う</li>
+  <li>
+    \(f(X)\) の平均は \(f(\mu)\) , 分散は \((f&#x27;(\mu))^2 \sigma^2\)
+    <ul>
+      <li>ただしここで \(X\) の平均を \(\mu\) , 分散を \(\sigma^2\) だとした</li>
+    </ul>
+  </li>
+</ol>
+<p>この2つ目については簡単に確認できる. \(f\) を \(X\) の平均値 \(\mu\) の周りで一次までテイラー展開する.</p>
+\[f(x) \sim f(\mu) + f&#x27;(\mu) (x - \mu)\]
+<p>これを用いると,</p>
+<ul>
+  <li>\(Ef(X) = f(\mu) + f&#x27;(\mu) E[ x - \mu ] = f(\mu)\)</li>
+  <li>\(Vf(X) = E[ ( f(x) - f(\mu) )^2 ] = E[ ( f&#x27;(\mu) (x-\mu) )^2 ] = (f&#x27;(\mu))^2 E[(x-\mu)^2] = (f&#x27;(\mu))^2 \sigma^2\)</li>
+</ul>
+<h3>オッズ比の検定</h3>
+\[OR = \frac{ a&#x2F;b }{ c&#x2F;d }\]
+<p>これの対数を取ると易しくなる.</p>
+\[\log(OR) = \log (a&#x2F;b) - \log (c&#x2F;d)\]
+<p>\(I = \{0,1\}\) についてそれぞれ（やはり）二項分布に従っているものだと考える. \(0 \in I\) の場合の二項分布を \(\Bi(p_0, n_0)\) , \(1 \in I\) の二項分布を \(\Bi(p_1, n_1)\) としてこの2つは独立だと仮定する.</p>
+<p>ここで \(n_0, n_1\) は \(I\) に対応するサンプル数で \(n_0 = a+b, n_1 = c+d\) である. この2つの数値はクロスデータが与えられた時点で定数であることに注意（確率変数ではない）.</p>
+<p>また確率 \(p_0, p_1\) は \(0 \in J\) になる確率であって推定値としては \(p_0 = a&#x2F;(a+b), p_1=c&#x2F;(c+d)\) が使える.</p>
+<p>というわけで \(a,c\) のことをそれぞれ二項分布に従う確率変数だと思える.</p>
+\[a \sim \Bi(p_0, n_0)\]
+\[c \sim \Bi(p_1, n_1)\]
+<p>二項分布はやはり正規分布に近似できて,</p>
+\[a \sim \N(n_0 p_0, n_0 p_0 (1-p_0))\]
+\[c \sim \N(n_1 p_1, n_1 p_1 (1-p_1))\]
+<p>さて今は \(\log(a&#x2F;b)\) といった確率変数について考えたいのであった.</p>
+\[\log(a&#x2F;b) = \log \frac{a}{ n_0 - a } \sim \N(?, ?)\]
+\[\log(c&#x2F;d) = \log \frac{c}{ n_1 - c } \sim \N(?, ?)\]
+<p>そこでデルタ法を用いる. ここでのサブゴールは次の通り.</p>
+<blockquote>確率変数 \(X\) は \(\N(np, np(1-p))\) に従う. では \(\log(X&#x2F;(n-X))\) が従う分布は何か?</blockquote>
+<ul>
+  <li>\(X \sim \N(np, np(1-p))\)</li>
+</ul>
+<p>簡単のために両辺 \(n\) で割る.</p>
+<ul>
+  <li>\(X&#x2F;n \sim \N(p, p(1-p)&#x2F;n)\)</li>
+</ul>
+<p>確率変数 \(\omega = \log \frac{X}{n-X} = \log \frac{ X&#x2F;n }{ 1 - X&#x2F;n }\) とおく.</p>
+<p>ここで \(f(x) = \log \frac{x}{1-x}\) という関数を定義する. これの導関数は \(f&#x27;(x) = \frac{1}{x (1-x)}\) .</p>
+<p>\(\omega = f(X&#x2F;n)\) についてデルタ法を適用すると, \(\omega\) が次の正規分布に従うことが分かる.</p>
+<ul>
+  <li>
+    \(\omega \sim \N(\mu, \sigma^2)\)
+    <ul>
+      <li>\(\mu = f(E(X&#x2F;n)) = f(p) = \log \frac{p}{1-p}\)</li>
+      <li>\(\sigma^2 = f&#x27;(p)^2 V(X&#x2F;n) = ( \frac{1}{p(1-p)})^2 ( p(1-p)&#x2F;n ) = \frac{1}{n p (1-p) }\)</li>
+    </ul>
+  </li>
+</ul>
+<p>改めて結果を書くと,</p>
+\[\log \frac{X}{n-X} \sim \N \left( \log\frac{p}{1-p} , \frac{1}{n p (1-p) } \right)\]
+<p>この結果をクロスデータに適用すると,</p>
+\[\log(a&#x2F;b) \sim \N \left( \log\frac{p_0}{1-p_0} , \frac{1}{n_0 p_0 (1-p_0) } \right)\]
+\[\log(c&#x2F;d) \sim \N \left( \log\frac{p_1}{1-p_1} , \frac{1}{n_1 p_1 (1-p_1) } \right)\]
+<p>そして \(\log(OR) = \log(a&#x2F;b) - \log(c&#x2F;d)\) であった. 正規分布の差を注意深く取ることで,</p>
+\[\log(OR) \sim \N \left( \log\frac{p_0}{1-p_0} - \log\frac{p_1}{1-p_1}, \frac{1}{n_0 p_0 (1-p_0)} + \frac{1}{n_1 p_1 (1-p_1)} \right)\]
+<p>ここから更に注意深く式展開をしてく.</p>
+\[\begin{align}
+\log\frac{p_0}{1-p_0}
+&amp; = \log\frac{n_0p_0}{n_0(1-p_0)} \\
+&amp; = \log\frac{a}{b} \\
+&amp; = \log a - \log b
+\end{align}\]
+<p>ここで \(n_0 = a+b\) 及び \(p_0 = a&#x2F;(a+b)\) という推定値を使った. 同様に \(\log\frac{p_1}{1-p_1} = \log c - \log d\) .</p>
+<p>そして,</p>
+\[\begin{align}
+\inv{n_0 p_0 (1-p_0)}
+&amp; = \inv{n_0p_0} + \inv{n_0 (1-p_0)} \\
+&amp; = \inv{a} + \inv{b} \\
+\end{align}\]
+<p>これらを代入するとかなりきれいな式が出来上がる.</p>
+\[\log(OR) \sim \N \left( \log a - \log b - \log c + \log d, \inv{a} + \inv{b} + \inv{c} + \inv{d} \right)\]
+<p>この対数オッズ比に関する 95% 信頼区間は（ただの正規分布なので）</p>
+\[\log a-\log b - \log c + \log d \pm 1.96 \sqrt{ \inv{a} + \inv{b} + \inv{c} + \inv{d} }\]
+<p>これに \(\exp\) を掛けて対数を取り除くことで, \(OR\) に関する信頼区間</p>
+\[\frac{a&#x2F;b}{c&#x2F;d} \times \exp \left[ \pm 1.96 \sqrt{ \inv{a} + \inv{b} + \inv{c} + \inv{d} } \right]\]
+<p>を得る.</p>
+
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>

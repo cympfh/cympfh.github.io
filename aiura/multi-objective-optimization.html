@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>多目的最適化, パレート最適化</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-svg-full.js"></script>
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-stumbleupon"></i></a>
+</header>
+
+<h1 class="title">多目的最適化, パレート最適化</h1>
+<p><p class=date style='text-align: right'>2023-06-26 (Mon.)</p> <div class='is-pulled-right'> <a class='tag is-red' href=index.html#最適化>最適化</a> </div></p>
+<h2>参考文献</h2>
+<ol>
+  <li><a href="https://en.wikipedia.org/wiki/Multi-objective_optimization">Multi-objective optimization - Wikipedia</a></li>
+</ol>
+<h2>INDEX</h2>
+<p><div id=toc></div></p>
+<h2>多目的最適化概要</h2>
+<p>適当な実行可能空間 (典型的には \(\mathbb R^n\) の部分空間) \(X\) に対して 目的関数</p>
+\[f \colon X \to Y\]
+<p>がある. ここで \(Y\) が目的や指標と呼ばれる値の空間で \(Y \subset \mathbb R^p\) である.</p>
+<p>\(i=1,2,\ldots,p\) について \(f\) の第 \(i\) 成分を \(f_i\) と呼ぶことにする. \(f=(f_1, f_2, \ldots, f_p)\) . 同様に \(y \in Y\) の第 \(i\) 成分を \(y_i\) と書く.</p>
+<p>最適化問題ではこの値の最小化を目指す. (または最大化であるが一般性を失わず最小化だとしておく.)</p>
+<p>\(p=1\) の場合は \(Y\) の値は全順序なので通常の最適化問題になる. しかし多目的最適化では一般に \(p \geq 1\) の場合を考える.</p>
+<p>大きく方針は２つある.</p>
+<ol>
+  <li>
+    集約関数を用いて一つのスカラー値にする
+    <ul>
+      <li>\(Y\) の値を適当に設計した関数を使って \(\mathbb R\) に押し込めてこれを最適化する</li>
+    </ul>
+  </li>
+  <li>パレートセットを集める</li>
+</ol>
+<p>1つ目については集約関数の設計次第. これには結局異なる指標 (つまり \(f_i\) と \(f_j\) ) について重みを設定してどちらを優先させるかといったことを決める必要がある. 最終的には通常の最適化問題になる. これについてはここではこれ以上書かない.</p>
+<p>2つ目は異なる指標は比較できないということにして無理に順序を付けることをしない. そこではパレート最適化を行うことになる. ここではこちらについて解説する.</p>
+<h3>順序関係</h3>
+<p>\(Y\) の値について順序を定める. ただし前述したように異なる指標（異なる成分）については比較できず, これは半順序になる. 実数の大小比較を \(\le, \leq\) と書くのと同様に \(Y\) の大小比較を \(\prec, \preceq\) と書いて表すことにする.</p>
+<p>\(y^1, y^2 \in Y\) についての比較は次のように行う</p>
+<ol>
+  <li>
+    \(y^1 = y^2\) とは
+    <ul>
+      <li>\(\forall i ,~ y^1_i = y^2_i\)</li>
+    </ul>
+  </li>
+  <li>
+    \(y^1 \prec y^2\) とは
+    <ul>
+      <li>\(\forall i ,~ y^1_i \lt y^2_i\)</li>
+    </ul>
+  </li>
+  <li>
+    \(y^1 \preceq y^2\) とは
+    <ul>
+      <li>\(\forall i ,~ y^1_i \leq y^2_i\)</li>
+    </ul>
+  </li>
+  <li>
+    \(y^1 \succ y^2, y^1 \succeq y^2\) とは
+    <ul>
+      <li>以上を左右対称にしたもの</li>
+    </ul>
+  </li>
+  <li>
+    \(y^1 \| y^2\) とは
+    <ul>
+      <li>以上のいずれも満たさないもの</li>
+      <li>これが <strong>比較不能</strong> を表す</li>
+    </ul>
+  </li>
+</ol>
+<p>特に最後の比較不能はいずれかの \(i\) で \(y^1_i \gt y^2_i\) であって, いずれかの \(j\) で \(y^1_j \lt y^2_j\) であることに. 「いくつかの指標では優れているがいくつかの指標では劣っている」ことだと言える.</p>
+<h2>パレートフロンティア</h2>
+<p>実行可能空間 \(X\) を \(f\) で写した像を \(f[X]\) と書く. これは \(Y\) の部分空間になっている.</p>
+<p>\(f[X]\) のうち, 上の半順序の意味で極小なものを集めてきた集合を <strong>パレートフロンティア</strong> という.</p>
+\[\mathcal F := \{ y \in f[X] \mid \forall y&#x27; \in f[X] \setminus \{y\}, y&#x27; \not\preceq y \}\]
+<p>そしてこれに対応する \(X\) の点を <strong>パレートセット</strong> という.</p>
+\[\mathcal S := \{ x \in X \mid f(x) \in \mathcal F \}\]
+<p>最適化の文脈によっては少し違う次のような意味で使われることもある.</p>
+<p>いくつかの有限の点で \(f\) の値が観測されているとする.</p>
+\[\Omega = \{ (x_i, y_i) \mid y_i = f(x_i) \}\]
+<p>この \(\Omega\) の中で極小なものをパレートフロンティアという.</p>
+\[\mathcal F := \{ y \in \Omega_y \mid \forall y&#x27; \in \Omega_y \setminus \{y\}, y&#x27; \not\preceq y \}\]
+<p>ここで \(\Omega_y\) は \(\{ y_i \mid \exists x, (x,y_i) \in \Omega \}\) のこと. 同様に対応する \(x\) を集めたものをパレートセットという.</p>
+<p>ここでは文脈をはっきりさせる場合には前者を \(\mathcal F(f[X])\) , 後者を \(\mathcal F(\Omega)\) と書くことにする.</p>
+<h2>パレート最適化</h2>
+<p>多目的最適化でもパレート最適化といった場合のゴールは, \(\mathcal F(f[X])\) を, 或いはその中の点を多く獲得することになる.</p>
+<p>ただし現実的には \(\mathcal F(f[X])\) の中の点そのものを得ることが可能とは限らない. そこで出来るだけパレートフロンティアに近い点を広く集めることをゴールとすることが多い. そしてその場合には超体積指標 (Hyper-volume Index) でこれを測る.</p>
+<h3>超体積指標</h3>
+<p>最小化問題の場合十分に大きい方に点 \(r \in Y\) を取る (最大化問題の場合は小さい方に点を取る). これを参照点と呼ぶ. \(Y\) を</p>
+\[Y&#x27; = \{ y \in Y \mid y \preceq r \}\]
+<p>に制限する. ここからは \(Y\) の代わりに \(Y&#x27;\) に制限して考える. ここに入らないような点 \(x\) は考慮から除外する.</p>
+<p>観測点集合 \(\Omega\) に関するパレートフロンティアを \(F = \mathcal F(\Omega)\) とする. \(F\) と \(r\) で囲まれる次のような領域を考える.</p>
+\[\mathcal A = \{ y \in Y \mid \exists f \in F ,~ f \preceq y \preceq r \}\]
+<p>適当な測度 (普通は面積, 一般に超体積) \(\mu\) でこの \(\mathcal A\) を測る. これを超体積指標 (HVI) という.</p>
+\[\mathrm{HVI}(\Omega) = \mu(\mathcal A)\]
+<p>この値は \(F = \mathcal F(f[X])\) の場合に最大になる. ということで HVI を最大化することがより良いパレートフロンティアを得ることになる.</p>
+<h2>最適化手法</h2>
+<p>パレート最適化のために提案されてる手法をいくつかメモ程度に紹介する.</p>
+<h3><a href="https://www.cs.bham.ac.uk/~jdk/parego/ParEGO-TR3.pdf">ParEGO</a></h3>
+<p>ブラックボックス最適化を行う. \(f\) の中身が分からず, また評価するためのコストが掛かるので出来るだけ少ない試行回数でパレートフロンティアの獲得を目指す.</p>
+<p>基本的には進化最適化を行う. その中では観測点集合の中で優劣を付けて良いものからいくつかの点を持っておくことが必要になる. その優劣の付け方として, 次のような関数を使う.</p>
+<p>\(y \in Y\) について,</p>
+\[d(y; \theta) = \max_i \theta_i y_i + \rho \sum_i \theta_i y_i\]
+<p>ここで \(\theta \in \mathbb R^p\) は各指標に対する重み. \(\rho\) はハイパーパラメータ. \(d\) は指標ごとに重みを付けた上でのチェビシェフ距離と線形和を \(1 : \rho\) で混ぜたものになってる.</p>
+<p>ただし \(\theta\) は毎回測るたびにランダムに取り直す. 結局パレートフロンティアに向かう法線ベクトルが毎回変わるのでパレートフロンティア全体を獲得できることが期待できる.</p>
+<h3><a href="https://dl.acm.org/doi/10.1145/3377930.3389817">MOTPE</a> , 2020</h3>
+<p>シチュエーションはやはりブラックボックス最適化. 出来るだけ少ない観測点でパレートフロンティアの獲得を目指す.</p>
+<p>ほんとにメモ程度だけ書く.</p>
+<p>HVI 自体の増加量を最大化する点を目指せば最小回数でパレートフロンティアが獲得できることが期待できる. 適当な仮定をするが増加量の期待値を最大化するには実は次のことだけで実現できる.</p>
+<p>観測点 \(\Omega\) に関するパレートフロンティア \(F\) より良いか悪いかで \(Y\) を二分割する. (ただし比較不能な点も「良い」に入れる.) カーネル密度推定をして, 良い方に入るときの確率密度 \(\ell(x \mid y)\) と悪い方に入る確率密度 \(g(x \mid y)\) を求める. コレの比 \(\ell &#x2F; g\) を最大化する \(x\) が実は HVI を最もよく増加させる.</p>
+<h3><a href="https://ieeexplore.ieee.org/document/996017">NSGA-II</a> , 2002</h3>
+<p>中身は遺伝的アルゴリズム. ParEGO と同様で観測点の中で優劣を付けて次の世代を決める必要がある.</p>
+<p>大きくは非劣ソートでランク付けをする. 観測点の中でパレートフロンティアなものを Rank1, 次に Rank1 以外の中でパレートフロンティアなものを Rank2, と順に決めてく. この順で上から取ってくのだが, Rank の中でもさらに順位付けをするために混雑度スコアを使う.</p>
+<p>混雑度スコアはある点の周辺の点の距離を見る. 距離が近いほど混雑していると見なす. そして NSGA-II では混雑してない点を良いものだとして使う. 混雑してるとは, その周辺の点を過度にサンプリングしているということだから. パレートフロンティアを獲得するために幅広い点からサンプリングする必要がある.</p>
+
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>

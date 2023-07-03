@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="description" content="Wed 07 Jun 2023, Thu 08 Jun 2023, Tue 20 Jun 2023, Thu 22 Jun 2023, Mon 26 Jun 2023, Wed 28 Jun 2023, Thu 29 Jun 2023" />
+  <meta property="og:url" content="http://cympfh.cc/taglibro">
+  <meta property="og:title" content="月報 2023&#x2F;06" />
+  <meta property="og:description" content="Wed 07 Jun 2023, Thu 08 Jun 2023, Tue 20 Jun 2023, Thu 22 Jun 2023, Mon 26 Jun 2023, Wed 28 Jun 2023, Thu 29 Jun 2023" />
+  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@cympfh" />
+  <meta name="generator" content="unidoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>月報 2023&#x2F;06</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+  </style>
+  <link rel="stylesheet" href="../../resources/css/c.css" />
+  <link rel="stylesheet" href="../../../resources/css/c.css" />
+  <link rel="stylesheet" href="../../../resources/css/youtube.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+  <div class="taglibro">
+    <header class="page-header"><a href='../../index.html'><i class="fas fa-fast-backward"></i></a></header>
+<h1 class="title">月報 2023/06</h1>
+<p>5月の月報書いてなかったし, 6月は多目的最適化についてしか考えてなかった.</p>
+<h2>Wed 07 Jun 2023</h2>
+<h3>19:19:13</h3>
+<h4>多目的最適化</h4>
+<ul>
+  <li>
+    次を読んだ:
+    <ul>
+      <li>https://qiita.com/Bell-frontier/items/0db99aeb84b00d88fc81</li>
+    </ul>
+  </li>
+</ul>
+<p>目的関数 \(f_i \colon X \to \mathbb R\) が複数 \(f_1, \ldots f_N\) あって, これらの最適化をしたい.</p>
+\[f \colon X \to \mathbb R^N\]
+\[f(x) = (f_1(x), \ldots, f_N(x))\]
+\[\min_x f(x)\]
+<p>しょうがないので \(\mathbb R^N\) の上に半順序をつける.</p>
+\[x \preceq y \iff \forall x_i \leq y_i\]
+<p>だと定義する. 例えば \((1,2) \preceq (2,3)\) であるが, \((1,2)\) と \((2,1)\) は比較できない. 比較できないとはつまり, \((1,2) \not\preceq (2,1)\) でもあるし \((1,2) \not\succeq (2,1)\) でもあるということ.</p>
+<p>点集合 \(X\) に対してパレートセットとは, 値が極小であるものの集合のこと</p>
+\[X^\ast := \{ x \in X \mid \forall x&#x27;, f(x) \not\prec f(x&#x27;) \}\]
+<p>パレートフロンティアとはこの集合が取る値のこと</p>
+\[F^\ast := \{ f(x) \mid \forall x \in X^\ast \}\]
+<p>この集合に属する点及びその値が一種の最適解だと思う. そのような値は一般にはちょうど一つ存在するわけではないので集合として捉えている.</p>
+<p>\(F^\ast\) と適当に決めた基準点 \(p\) で包まれる次のような図形を考える.</p>
+\[F^\ast_p := \{ q \in \mathbb R^N \mid p \preceq q \preceq f (\exists f \in F^\ast) \}\]
+<p>その閉包を取って適切な測度で面積（体積）を測る. この値が大きいほど, 最適解（の候補）が多くあるということ.</p>
+<p>最後の説明間違ってるかも. モチベーションは, 極小値を取る \(x\) をたくさん見つけることで, その評価として基準点と結んでその体積の大きさを比較するという話かも.</p>
+<h2>Thu 08 Jun 2023</h2>
+<h3>14:10:40</h3>
+<h4>ParEGO</h4>
+<ul>
+  <li><a href="https://www.cs.bham.ac.uk/~jdk/parego/ParEGO-TR3.pdf">https://www.cs.bham.ac.uk/~jdk/parego/ParEGO-TR3.pdf</a></li>
+</ul>
+<p>多目的最適化. 目的関数 \(f \colon X \to \mathbb R^L\) の最小化を考えてる. いくつかの点集合 \(x_1, \ldots, x_N\) についてその値が観測されてるのでブラックボックス最適化するというシチュエーション.</p>
+<p>Tchebycheff 関数と称して次の関数を考える. おそらくはチェビシェフ距離の気持ちっぽい. ここで \(\rho\) はハイパーパラメータ. \(\theta\) はランダムにサンプリングされる(!).</p>
+\[f_\lambda(x) = \max_j ( \lambda_j f_j(x) ) + \rho \sum_j \lambda_j f_j(x)\]
+<p>これは結局 \(L\) 次元の目的変数をチェビシェフ距離で一次元に潰したものを最適化しようとしてる.</p>
+<p>ParEGO 自体はこれを使ってガウス最適化するアルゴリズム. 普通に進化最適化っぽくてそこは大した事なさそう. \(f\) を \(f_\lambda\) に潰すことと, 毎ステップでその \(\lambda\) をランダムに取り直すことがポイントっぽい.</p>
+<h4>Expected Hypervolume Improvement</h4>
+
+<div class="blogcard" style="width:auto;max-width:9999px;border:1px solid #E0E0E0;border-radius:3px;margin:10px 0;padding:15px;line-height:1.4;text-align:left;background:#FFFFFF;">
+<a href="https://arxiv.org/abs/1408.7114" target="_blank" style="display:block;text-decoration:none;">
+<span class="blogcard-image" style="float:right;width:100px;padding:0 0 0 10px;margin:0 0 5px 5px;">
+<img src="" width="100" style="width:100%;height:auto;max-height:100px;min-width:0;border:0 none;margin:0;" />
+</span><br style="display:none">
+<span class="blogcard-title" style="font-size:112.5%;font-weight:700;color:#333333;margin:0 0 5px 0;">403 Forbidden</span><br />
+<span class="blogcard-content" style="font-size:87.5%;font-weight:400;color:#666666;"></span><br />
+<span style="clear:both;display:block;overflow:hidden;height:0;">&nbsp;</span>
+</a><div style="font-size:75%;text-align:right;clear:both"><a href="https://arxiv.org/abs/1408.7114" target="_blank" rel="nofollow">arxiv.org/abs/1408.7114</a></div></div>
+    
+<p>パレート超体積の増加量の期待値を最大化する点を見つける.</p>
+<p>Hypervolume indicator を定義する. いわゆるパレート超体積のこと.</p>
+<p>有限の点集合 \(P \subset \mathbb R^m\) , 基準点 \(r\) , 適切なルベーグ測度 \(\mu\) . これらがあるときに, \(S = \{ p \in P \mid p \preceq r \} \subset P\) これと \(r\) を頂点にした図形のその測度（超体積）を言う.</p>
+<p>Hypervolume Improvement とは, \(P\) には含まれてない点 \(p\) であって \(P\) を \(P \cup \{p\}\) に置き換えると超体積が増えるようなもののこと.</p>
+<p>ガウス分布を仮定して, この Improvement の期待値を見積もってこれを最大化する.</p>
+<h3>18:07:06</h3>
+<ul>
+  <li><a href="https://www.jstage.jst.go.jp/article/ieejjournal1888/103/7/103_7_677/_pdf">https://www.jstage.jst.go.jp/article/ieejjournal1888/103/7/103_7_677/_pdf</a></li>
+</ul>
+<p>\(\mathbb R^p\) 空間に半順序をつける.</p>
+\[x \lt y \iff \forall i, x_i \lt y_i\]
+\[x \leq y \iff \forall i, x_i \leq y_i\]
+\[x = y \iff \forall i, x_i = y_i\]
+<p>関数 \(f \colon X \to \mathbb R^p\) と点 \(x^\ast \in X\) について,</p>
+\[\not\exists x \in X, f(x) \lt f(x^\ast)\]
+<p>なとき, \(x^\ast\) を <strong>弱非劣解</strong> という.</p>
+\[\not\exists x \in X, f(x) \leq f(x^\ast) \land f(x) \ne f(x^\ast)\]
+<p>なとき, \(x^\ast\) を <strong>非劣解</strong> という.</p>
+<h2>Tue 20 Jun 2023</h2>
+<h3>15:28:34</h3>
+<h4><a href="https://medium.com/eureka-engineering/spotify%E3%81%AE%E6%8E%A8%E8%96%A6%E3%82%B7%E3%82%B9%E3%83%86%E3%83%A0%E3%81%A8%E5%A4%9A%E6%A7%98%E6%80%A7%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6-a44d00955406">Spotifyの推薦システムと多様性について</a></h4>
+<p>バンディットで多目的最適化. 報酬は実数一つじゃなくて, 複数の実数を一個のベクトルとしたもの. こっからやるアプローチは大きく２つ.</p>
+<ol>
+  <li>パレートセットを集める</li>
+  <li>Scalarisation: 一つのスカラー値に集約してこれを最適化</li>
+</ol>
+<p>Spotify の "Bandit based Optimization of Multiple Objectives on a Music Streaming Platform" では後者を取ってる. うーん、つまらん.</p>
+<p>最適化したい複数の指標を取り出す. それらの相関関係を見る. いくつかは正の相関があるので, どれかを最適化すればもう一方も勝手についてきそう.</p>
+<p>文脈付きバンディット（線形バンディット）をする. 指標（報酬）が \(D\) 個あるとする. 報酬を以下でモデル化する.</p>
+\[x = J \theta + \zeta\]
+<ul>
+  <li>\(x\) : \(D\) 次元報酬</li>
+  <li>\(J\) : 文脈の特徴（なんでもいい）</li>
+  <li>\(\theta\) : \(\mathbb R^D\) への線形変換</li>
+  <li>\(\zeta\) : ノイズ</li>
+</ul>
+<h4>Generalised Gini Function (GGF)</h4>
+<p>報酬ベクトルをスカラー値に集約する.</p>
+\[G_w(x) = w^T x_\sigma\]
+<ul>
+  <li>
+    \(w\) は適当な重みベクトル
+    <ul>
+      <li>その要素は降順で正値, \(i \lt j \implies w_i \gt w_j \gt 0\)</li>
+    </ul>
+  </li>
+  <li>\(x_\sigma\) は \(x\) の要素を昇順ソートしたもの</li>
+</ul>
+<p>この \(G_w\) を最大化する値はパレートフロンティアに乗る.</p>
+<h2>Thu 22 Jun 2023</h2>
+<h3>13:39:56</h3>
+<h4>MOTPE</h4>
+<ul>
+  <li><a href="https://dl.acm.org/doi/10.1145/3377930.3389817">https://dl.acm.org/doi/10.1145/3377930.3389817</a></li>
+  <li><a href="https://qiita.com/narrowlyapplicable/items/60a777e03b484d941aa4">多目的ベイズ最適化のためのMOTPE入門 - Qiita</a></li>
+</ul>
+<p>\(X \to \mathbb Y\) ( \(Y=\mathbb R^p\) ) に関する多目的最適化をする. いくつかの観測集合 \(\Omega = \{ (x_i, y_i) \}\) の超体積を最大化するパレートフロンティアを探すことが目的.</p>
+<p>ただし予め, \(Y\) 上に適切な基準点を大きい方と小さい方に一つずつ設けておくことで \(Y\) は有界な領域に制限しておく.</p>
+<p>EHVI (Expected Hypervolume Improvement) を考える. つまり超体積の増加量を最大にするような点を探索する.</p>
+<p>新しい点 \(x&#x27;\) を観測したとき \(y&#x27; \sim p(y|x)\) が得られると予め見積もられるとき, 超体積の増加量がこれによって期待値として得られる.</p>
+\[\mathrm{EHVI}(\Omega + x&#x27;) = \int_y dy ~ I(\Omega + y) p(y|x&#x27;) - I(\Omega).\]
+<p>数式は雰囲気で書いてる. \(I\) は超体積で, それの \(y\) を追加した場合としてない場合との比較をしてる. 超体積 \(I\) は点集合が増えることで広義単調増加なので上の EHVI は必ずゼロ以上.</p>
+<p>MOTPE は TPE という手法を他目的最適化 (MO) にアレンジしたもの.</p>
+<p>最終的にやりたいことは上の \(p\) を推定すること. 結論としてはカーネル密度推定 (KDE) をやるんだけど, 空間を分割してそれぞれの密度を調べるだけで済ます.</p>
+<p>観測集合 \(\Omega = \{(x_i,y_i)\}\) の内の最も良い（他に支配されてない）点の \(y\) だけを集めたものを \(Y^\ast\) とする. これを基準にして空間 \(Y\) を上位層と下位層に分割する.</p>
+<ul>
+  <li>
+    下位層
+    <ul>
+      <li>\(Y^\ast\) のいずれかの点によって支配される点</li>
+    </ul>
+  </li>
+  <li>
+    上位層
+    <ul>
+      <li>下位層以外すべて</li>
+    </ul>
+  </li>
+</ul>
+<p>予め \(Y\) は有界としておいたので下位層と上位層はそれぞれ面積を求める事ができる. その面積の比を用いることで,</p>
+\[\gamma = p(y \in Y \mid y が上位層に含まれる)\]
+<p>という見積もりを行うことにする.</p>
+<p>そして次に KDE で \(p(x \mid y)\) を見積もるのだが, \(y\) が上位層に含まれるか下位層に含まれるかどうかだけで見積もってしまうことにする.</p>
+<ul>
+  <li>
+    \(p(x \mid y) =\)
+    <ul>
+      <li>\(y\) が上位層なら \(\ell(x)\)</li>
+      <li>\(y\) が下位層なら \(g(x)\)</li>
+    </ul>
+  </li>
+</ul>
+<p>これらを周辺化することによって \(p(x) = \gamma \ell(x) + (1-\gamma) g(x)\) を得る. またベイズの定理から \(p(y \mid x) = p(x \mid y) p(y) &#x2F; p(x)\) 特に \(y\) が上位層にあると分かってるなら, \(p(y \mid x) = \frac{ \ell(x) p(y)}{ \gamma \ell(x) + (1-\gamma) g(x) }\) となる.</p>
+<p>これを EHVI の式に代入すると,</p>
+\[\mathrm{EHVI}(\Omega + x) = \int_y dy ~ I(\Omega + y) \frac{ \ell(x) p(y)}{ \gamma \ell(x) + (1-\gamma) g(x) } - I(\Omega).\]
+<p>\(y\) に関するところは定数なので \(C\) と置けば,</p>
+\[\mathrm{EHVI}(\Omega + x) = \frac{\ell(x)}{ \gamma \ell(x) + (1-\gamma) g(x) } C\]
+<p>と置ける. これを最大化するには結局</p>
+\[\frac{\ell(x)}{\gamma(x)}\]
+<p>を最大化すればいいとわかる. これが結論.</p>
+<p>結論だけ見たら不自然じゃないし, まあ, はいという感じだが, これで EHVI 最大化になるなら便利.</p>
+<h2>Mon 26 Jun 2023</h2>
+<h3>18:16:30</h3>
+<p>男女で遊ぶには付き合わなければいけない. 本当はクラスの人みんなと遊びたいだけなのに.</p>
+<h3>"Multi-objective Bandits: Optimizing the Generalized Gini Index",</h3>
+
+<div class="blogcard" style="width:auto;max-width:9999px;border:1px solid #E0E0E0;border-radius:3px;margin:10px 0;padding:15px;line-height:1.4;text-align:left;background:#FFFFFF;">
+<a href="https://arxiv.org/abs/1706.04933" target="_blank" style="display:block;text-decoration:none;">
+<span class="blogcard-image" style="float:right;width:100px;padding:0 0 0 10px;margin:0 0 5px 5px;">
+<img src="" width="100" style="width:100%;height:auto;max-height:100px;min-width:0;border:0 none;margin:0;" />
+</span><br style="display:none">
+<span class="blogcard-title" style="font-size:112.5%;font-weight:700;color:#333333;margin:0 0 5px 0;">403 Forbidden</span><br />
+<span class="blogcard-content" style="font-size:87.5%;font-weight:400;color:#666666;"></span><br />
+<span style="clear:both;display:block;overflow:hidden;height:0;">&nbsp;</span>
+</a><div style="font-size:75%;text-align:right;clear:both"><a href="https://arxiv.org/abs/1706.04933" target="_blank" rel="nofollow">arxiv.org/abs/1706.04933</a></div></div>
+    
+<p>多目的多腕バンディットをやる. 問題を Generalized Gini Index (GGI) の最適化として定式化する. GGI は凸なので凸最適化が使える.</p>
+<p>腕が \(K\) 本, コストと報酬が \(D\) 次元ベクトル. 腕 \(i\) に対応して確率変数 \(X_i \in [0,1]^D\) が割り当てられている. それぞれの期待値として \(\mu_i = E[X_i]\) っていうのもあるとする. 観測によって得られた平均を \(\hat{\mu_i}\) とする. これは実際の観測値（ベクトル）の平均を取ったもの.</p>
+<p>パレート最適化の意味で \(\preceq\) を定める. 観測点の中で極小なものをパレートフロンティアと呼ぶ.</p>
+<p><!-- 集約関数として非現象関数 $\phi \colon \mathbb R^D \to \mathbb R$ --></p>
+<p>\(x \in \mathbb R^D\) に対して 重みベクトル \(w \in \mathbb R^D\) を決めておいて, GGI を次で定める.</p>
+\[G_w(x) = w^t x_\sigma\]
+<p>ただしここで \(w\) は成分が降順になってること. \(x_\sigma\) は \(x\) の成分を昇順にソートしたもの.</p>
+<p>これは \(D\) 次元置換群 \(\mathbb S\) で並び替えたときの最大値になってる.</p>
+\[G_w(x) = \max_{\pi \in \mathbb S} w^t x_{\pi}.\]
+<p>そしてこの関数は区分線形凸関数になってる.</p>
+<p>ちなみに \(w\) として適当な値を設定するとオリジナルの Gini Index が得られる. そういう意味で今回のこれはジニ指数の一般化だと言える.</p>
+<h2>Wed 28 Jun 2023</h2>
+<h3>15:53:01</h3>
+<p>\(d\) 次元実数ベクトル \(x\) と \(w\) がある. \(x, w\) の成分を自由に並び替えて良い. 並び替えた後の2つのベクトルの内積を考える. 一般性を失わず \(w\) はすでに昇順（単調非減少）に並んでるとして \(x\) だけを並び替えることだけ考えれば良い. 並び替えを \(\pi\) とすると内積は</p>
+\[G_\pi(x,w) = \langle \pi(x) , w \rangle\]
+<p>と書ける. これを最大化したい. \(x\) をやはり昇順（単調非減少）にソートする並び替えが最適解になる.</p>
+<p>ところで一般にベクトル \(x=(x_1,x_2,\ldots,x_d)\) について成分の累積和を並べたものを \(L(x)\) と書くことにする. (これに Lonrenz vector という名前をつけてる論文を見つけたが, 全く他に使われてる文献を見ない.)</p>
+\[L(x) = (x_1, x_1+x_2, x_1+x_2+x_3, \ldots, x+1+x_2+ \cdots +x_d)\]
+<p>逆も定義することが出来て,</p>
+\[L^{-1}(x) = (x_1, x_2-x_1, x_3-x_2, \ldots, x_d - x_{d-1})\]
+<p>あと成分の順序を逆転させるもの (reverse) を関数 \(r\) として定める.</p>
+\[r(x) = (x_d, \ldots, x_2, x_1)\]
+<p>次が成り立つ.</p>
+\[\langle x , w \rangle = \langle L(r(x)) , r(L^{-1}(w)) \rangle\]
+<p>素直に式展開すると確かめられる.</p>
+<p>\(r^{-1}=r\) なので \(L&#x27; = Lr\) とおけば</p>
+\[\langle x , w \rangle = \langle L&#x27;x , L&#x27;^{-1} w \rangle\]
+<p>といえる.</p>
+<h3>GGI の多腕バンディット</h3>
+<p>腕 \(k\) に対して観測して得られた平均 \(\mu_k\) があって, 腕選択は \(G_w(\mu_k)\) を最小化する \(k\) を選択する.</p>
+<h2>Thu 29 Jun 2023</h2>
+<h3>17:09:38</h3>
+<p>フレンドに、なんでお前たちはそんなにUnityを触ってる時間があるんだと問い詰められたが、 私は仕事をサボってるだけだし、そういうお前はVRCにログインしてる時間が長すぎるからだ.</p>
+<h3>18:44:31</h3>
+<p>"Multi-objective Bandits: Optimizing the Generalized Gini Index" の続き.</p>
+<p>腕ごとに平均報酬ベクトルを持っておいて, それぞれの GGI が最小の腕を選択する. 観測値から腕 \(k\) の平均は \(\mu_k\) だとわかる. 基本的には各腕の GGI を最小化するものを選ぶ.</p>
+\[\mathop{\mathrm{argmin}}_k ~ G_w(\mu_k)\]
+<p>ただそれをやると固定の腕を選ぶことになる. 混合戦略を使う.</p>
+\[A = \{ \alpha \in \mathbb{\Delta}^K \}\]
+<p>で戦略を定義する. ただしここで \(\Delta\) は成分の和が \(1\) で非負値なベクトル. \(\alpha_k\) は腕 \(k\) を選択する確率を表す.</p>
+<p>そして \(\alpha\) による期待値の GGI を最小化する.</p>
+\[\mathop{\mathrm{argmin}}_{\alpha} ~ G_w(\alpha \mu)\]
+<p>んでもってこの最小化が凸最適化で, しかも線形計画問題になるので \(\alpha\) の最適解が現実的に求まる.</p>
+
+    <footer>
+      <p class="is-pulled-right">@cympfh / mail@cympfh.cc</p>
+    </footer>
+  </div>
+  <script src="../../../resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
+  <script src="../../../resources/js/toc.js"></script>
+</body>
+</html>

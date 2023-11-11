@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="description" content="回転, 三角関数, 円周率" />
+  <meta name="og:url" content="http://cympfh.cc/taglibro">
+  <meta name="og:title" content="Sat Nov 11 2023" />
+  <meta name="og:description" content="回転, 三角関数, 円周率" />
+  <meta name="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
+  <meta property="og:url" content="http://cympfh.cc/taglibro">
+  <meta property="og:title" content="Sat Nov 11 2023" />
+  <meta property="og:description" content="回転, 三角関数, 円周率" />
+  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@cympfh" />
+  <meta name="generator" content="unidoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Sat Nov 11 2023</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+  </style>
+  <link rel="stylesheet" href="../../resources/css/c.css" />
+  <link rel="stylesheet" href="../../../resources/css/c.css" />
+  <link rel="stylesheet" href="../../../resources/css/youtube.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+  <div class="taglibro">
+    <header class="page-header"><a href='../../index.html'><i class="fas fa-fast-backward"></i></a></header>
+<h1 class="title">Sat Nov 11 2023</h1>
+<h2>回転, 三角関数, 円周率</h2>
+<h3>モチベーション</h3>
+<ol>
+  <li>定義が循環参照になってないこと</li>
+  <li>
+    幾何的なイメージによらないこと
+    <ul>
+      <li>ましてや図形的な証明にならないこと</li>
+    </ul>
+  </li>
+  <li>加法定理など基本的な定理が容易に導かれること</li>
+</ol>
+<p>特に三番目に配慮すると, 初めから行列を使ってしまうのがてっとり早い. というわけで考えたのが次の順序（タイトルに書いたとおりだが）.</p>
+<ol>
+  <li>
+    回転という線形変換を定義する
+    <ul>
+      <li>対称性もここに一緒に持たせる</li>
+    </ul>
+  </li>
+  <li>基底を回転した先を表すものが三角関数であると定義する</li>
+  <li>180度回転を表すものが \(\pi\) だと定義する</li>
+</ol>
+<h3>notation</h3>
+<ul>
+  <li>\(\mathbb R\) で実空間を表す</li>
+  <li>
+    \(\mathbb R^2\) で二次元実空間で表す
+    <ul>
+      <li>これの元を \((x_1, x_2)\) といった具合に書く</li>
+    </ul>
+  </li>
+  <li>写像 \(F\) の逆写像があるなら, それを \(F^{-1}\) と書く</li>
+</ul>
+<h3>回転の定義</h3>
+<p>次の2つの群を考える.</p>
+<ol>
+  <li>
+    角度空間 \(\Theta\)
+    <ul>
+      <li>加法群 \(\Theta = (\mathbb R, +, 0)\) だとする</li>
+    </ul>
+  </li>
+  <li>
+    群 \((\mathcal R, \circ)\)
+    <ul>
+      <li>
+        \(\mathcal R = \{ R_\theta \mid \theta \in \mathbb R \}\)
+        <ul>
+          <li>\(R_\theta\) は線形写像 \(\mathbb R^2 \to \mathbb R^2\)</li>
+          <li>\(R_\theta\) は後述する「単位回転に関する可換性」をすべて持っている</li>
+          <li>\(R_\theta\) は後述する「フリップが自己逆元 (self-inverse)」になっている</li>
+        </ul>
+      </li>
+      <li>\(\circ\) は写像どうしの合成演算</li>
+    </ul>
+  </li>
+</ol>
+<p>\(R\) が \(\Theta\) から \(\mathcal R\) への準同型写像になっていることを要請する. すなわち,</p>
+<ul>
+  <li>\(R_{(\theta_1 + \theta_2)} = R_{\theta_1} \circ R_{\theta_2}\)</li>
+  <li>\(R_{(-\theta)} = R_{\theta}^{-1}\)</li>
+  <li>特に \(R_0\) は恒等写像</li>
+</ul>
+<h4>単位回転</h4>
+<p>次の写像 \(r\) を <strong>単位回転</strong> と呼ぶことにする.</p>
+<ul>
+  <li>\(r \colon \mathbb R^2 \to \mathbb R^2\)</li>
+  <li>\(r \colon (x_1, x_2) \mapsto (-x_2, x_1)\)</li>
+</ul>
+<p>すべての \(R_\theta \in \mathcal R\) は単位回転に関する可換性を持つことを要請する. すなわち,</p>
+<ul>
+  <li>\(r \circ R_\theta = R_\theta \circ r\)</li>
+</ul>
+<p>が成り立つ.</p>
+<h4>フリップ</h4>
+<p>次の写像 \(f\) を <strong>フリップ</strong> と呼ぶ</p>
+<ul>
+  <li>\(f \colon \mathbb R^2 \to \mathbb R^2\)</li>
+  <li>\(f \colon (x_1, x_2) \mapsto (x_1, -x_2)\)</li>
+</ul>
+<p>すべての \(R_\theta \in \mathcal R\) について次を満たすことを要請する.</p>
+<ul>
+  <li>\(f R_\theta = (f R_\theta)^{-1}\)</li>
+</ul>
+<p>自明ではあるがここで導入した \(r, f\) はともに線形写像である.</p>
+<p>以上の要請</p>
+<ul>
+  <li>\(R\) は \(\Theta\) から \(\mathcal R\) への準同型写像</li>
+  <li>\(R_\theta\) は単位回転に関して可換</li>
+  <li>\(R_\theta\) はフリップに関して自己逆元をなす</li>
+</ul>
+<p>これらを満たす \(R\) のことを <strong>回転</strong> と呼ぶ.</p>
+<h3>三角関数の定義</h3>
+<p>\((1,0) \in \mathbb R^2\) が \(R_\theta\) で写る先を</p>
+\[\left[\begin{array}{c}\cos(\theta) \\ \sin(\theta)\end{array}\right]=R_\theta\left[\begin{array}{c}1 \\ 0\end{array}\right]\]
+<p>と定める.</p>
+<h3>回転の行列表示</h3>
+<p>回転 \(R_\theta\) は二次元空間から二次元空間への線形写像だと定めたので, \(2 \times 2\) の実行列表示が出来る. これは基底が写る先を調べることで分かる.</p>
+<p>まず先程の定義から,</p>
+\[\left[\begin{array}{c}\cos(\theta) \\ \sin(\theta)\end{array}\right]=R_\theta\left[\begin{array}{c}1 \\ 0\end{array}\right].\]
+<p>ここに単位回転に関する可換性を使うことで,</p>
+\[r R_\theta\left[\begin{array}{c}1 \\ 0\end{array}\right] = R_\theta r \left[\begin{array}{c}1 \\ 0\end{array}\right]\]
+<p>なので,</p>
+\[\left[\begin{array}{c}-\sin(\theta) \\ \cos(\theta)\end{array}\right]=R_\theta\left[\begin{array}{c}0 \\ 1\end{array}\right].\]
+<p>以上から次の行列表示を得る.</p>
+\[R_\theta = \left[\begin{array}{cc}\cos(\theta) &amp; -\sin(\theta) \\ \sin(\theta) &amp; \cos(\theta)\end{array}\right]\]
+<h3>円周率の定義</h3>
+<p>回転単位 \(r\) について, \(R_\theta = r\) を満たすような \(\theta\) の内の一つを \(\theta = \pi&#x2F;2\) だと定める.</p>
+<ul>
+  <li>
+    \(R_{\pi&#x2F;2} = r\)
+    <ul>
+      <li>\(\cos(\pi&#x2F;2) = 0, \sin(\pi&#x2F;2) = -1\)</li>
+    </ul>
+  </li>
+  <li>
+    \(R_\pi = r^2\)
+    <ul>
+      <li>\(\cos(\pi) = -1, \sin(\pi) = 0\)</li>
+    </ul>
+  </li>
+  <li>
+    \(R_{2\pi} = r^4 = 1\) (恒等写像)
+    <ul>
+      <li>\(\cos(2\pi) = 1, \sin(2\pi) = 0\)</li>
+    </ul>
+  </li>
+</ul>
+<h3>三角関数の基本的な性質</h3>
+<p>自然数 \(n\) について \(R_{2n\pi} = (R_{2\pi})^n = 1^n=1\) なのでこれは恒等写像. \(n\) を \(0\) 以下の整数に拡張してもこれは成り立つ（逆射）. ここから次を得る.</p>
+<ul>
+  <li>\(\cos(2n\pi) = 1\)</li>
+  <li>\(\sin(2n\pi) = 0\)</li>
+</ul>
+<p>フリップ \(f\) を用いて \(fR_\theta\) は \(fR_\theta = (fR_\theta)^{-1}\) を満たすのだった. したがって行列表示したときに \((fR_\theta)^2\) は単位行列になる.</p>
+\[fR_\theta = \left[\begin{array}{cc}-\cos(\theta) &amp; \sin(\theta) \\ \sin(\theta) &amp; \cos(\theta)\end{array}\right]\]
+<p>この2乗が単位行列と等しくなるために</p>
+\[\cos^2 \theta + \sin^2 \theta = 1\]
+<p>を得る.</p>
+<p>また, \((f R_\theta)^{-1} = R_\theta^{-1} f^{-1}\) であるが, \(R_\theta^{-1} = R_{-\theta}, f^{-1} = f\) なのでこれを代入することで</p>
+\[(f R_\theta)^{-1} = \left[\begin{array}{cc}-\cos(-\theta) &amp; -\sin(-\theta) \\ -\sin(-\theta) &amp; \cos(-\theta)\end{array}\right]\]
+<p>これが \((fR_\theta)\) と一致することから</p>
+<ul>
+  <li>\(\cos(\theta) = \cos(-\theta)\)</li>
+  <li>\(\sin(\theta) = -\sin(-\theta)\)</li>
+</ul>
+<p>という偶奇性を得る.</p>
+<h3>加法定理</h3>
+<p>\(R\) の準同型から</p>
+<ul>
+  <li>\(R_{(\theta_1 + \theta_2)} = R_{\theta_1} \circ R_{\theta_2}\)</li>
+</ul>
+<p>であった. 両辺を行列表示することで次の定理を得る.</p>
+<ul>
+  <li>\(\cos(\theta_1 + \theta_2) = \cos(\theta_1) \cos(\theta_2) - \sin(\theta_1) \sin(\theta_2)\)</li>
+  <li>\(\sin(\theta_1 + \theta_2) = \sin(\theta_1) \cos(\theta_2) + \cos(\theta_1) \sin(\theta_2)\)</li>
+</ul>
+
+    <footer>
+      <p class="is-pulled-right">@cympfh / mail@cympfh.cc</p>
+    </footer>
+  </div>
+  <script src="../../../resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
+  <script src="../../../resources/js/toc.js"></script>
+</body>
+</html>

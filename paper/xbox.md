@@ -138,4 +138,3 @@ MIP において, この $\|x\|$ と, もちろん $\phi$ は定数であるこ�
 - $\argmax_i ~ \bar x, \bar y_i = \argmax_i \cos(x, y_i)$
 
 を得る.
-

@@ -13,6 +13,9 @@ edit:
 new:
 	bash script/edit.sh "*new"
 
+arxiv:
+	bash script/edit.sh "*arxiv"
+
 dev:
 	bash script/hotcompile.sh
 

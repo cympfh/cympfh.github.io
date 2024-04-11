@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>[2307.01212] Of Spiky SVDs and Music Recommendation</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-svg-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
+</header>
+
+<h1 class="title">[2307.01212] Of Spiky SVDs and Music Recommendation</h1>
+<p><ul> <li>original paper: <a href=https://arxiv.org/abs/2307.01212>https://arxiv.org/abs/2307.01212</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#推薦システム>推薦システム</a> <a class='tag is-blue' href=index.html#埋め込み表現>埋め込み表現</a> </div></p>
+<ul>
+  <li><a href="https://recsys.acm.org/best-papers/">RecSys2023 best paper</a> の一つ</li>
+  <li>実装は <a href="https://github.com/deezer/spiky_svd">GitHub - deezer&#x2F;spiky_svd: Code repository of our RecSys 2023 paper &quot;Of Spiky SVDs and Music Recommendation&quot; - D. Afchar, R. Hennequin, V. Guigue (2023)</a></li>
+</ul>
+<h2>概要</h2>
+<ul>
+  <li>
+    推薦システムにおいて, Truncated SVD (Singular Value Decomposition) は類似アイテムの検索やアイテムの埋め込みに広く使用される
+    <ul>
+      <li>特に音楽推薦を考えてる</li>
+    </ul>
+  </li>
+  <li>
+    推薦データセットで自然に生じる「スパイク構造」について調査
+    <ul>
+      <li>スパイクの強さを定量化するメトリックの提案</li>
+      <li>
+        スパイクがコミュニティを表し, ノルムがコミュニティ内の相対的な重要度を表すっぽい
+        <ul>
+          <li>理論的な裏付けを与える</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>新たに発見された理論的理解を基に, データの追加に伴う音楽埋め込みのトップ \(k\) の類似アイテムの変化を推定するユースケースを提案</li>
+</ul>
+<h2>Intro: SVD とそのスパイク</h2>
+<p>SVD は推薦システムのための埋込表現を得る手段として便利に使われている. でもよく分かってないことが多い.</p>
+<ul>
+  <li>
+    \(M \approx U \Sigma V^\ast\) と分解した場合に
+    <ul>
+      <li>
+        埋め込み表現として \(U\) を使うか \(U \Sigma\) を使うか, はたまた \(U \Sigma^p\) を使うか
+        <ul>
+          <li>これの各行が \(M\) の各行に対応する</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>
+    距離/類似度として
+    <ul>
+      <li>内積を使うかコサイン類似度を使うか</li>
+    </ul>
+  </li>
+</ul>
+<p>実用上は実験してみて最も良いものを使うわけだが, そこに理論的な裏付けは見つかってない.</p>
+<p>SVD によるベクトルはスパイクと呼ばれる幾何学的構造が観測されやすい (Fig 1). これは原点を通る直線上の周りにベクトルが集まって self-organize する傾向があることを示している.</p>
+<h2>Truncated SVD の詳細</h2>
+<p>データセットを表現する行列 \(M\) を \(\hat{M} = U \Sigma V^\ast\) で近似することを考える ( \(\cdot ^\ast\) は随伴行列).</p>
+<ul>
+  <li>
+    次元数
+    <ul>
+      <li>
+        \(M \in \mathbb{R}^{n \times m}\) に対して,
+        <ul>
+          <li>\(U \in \mathbb{R}^{n \times f}\)</li>
+          <li>
+            \(V \in \mathbb{R}^{m \times f}\)
+            <ul>
+              <li>\(f\) は適当に決めた次元数</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>
+    制約
+    <ul>
+      <li>
+        \(U, V\) は直交行列
+        <ul>
+          <li>\(U^\ast U = V^\ast V = I_f\)</li>
+        </ul>
+      </li>
+      <li>\(\Sigma\) は対角行列</li>
+    </ul>
+  </li>
+</ul>
+<p>この下で \(\| M - \hat{M} \|\) を最小化する. SVD 分解した結果, 普通使うのは \(U\) または \(U \Sigma\) だけで, \(V\) は気にしない.</p>
+<ul>
+  <li>この最適化の中で特異値を大きいものから \(f\) 個だけ残すようなものを <strong>Truncated</strong> SVD という</li>
+  <li>
+    \(M \in \mathbb{R}^{n \times m}\) の代わりに, \(M M^\ast \in \mathbb{R}^{n \times n}\) を考えても同じ
+    <ul>
+      <li>
+        特異ベクトル, 特異値の代わりに固有ベクトル, 固有値を考えることになる
+        <ul>
+          <li>close-form に解いた場合は同じ \(U\) が得られる</li>
+        </ul>
+      </li>
+      <li>
+        特に \(M M^\ast\) は対称行列で都合が良いので, \(M\) の代わりに対称行列 \(M M^\ast\) に置き換えて考える.
+        <ul>
+          <li>このあと \(M\) と出てきたら暗に <strong>対称行列</strong> としてる.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+<blockquote>インタラクション行列についてのグラム行列を考えてる. 下の \(M\) が item x user 行列のときグラム行列 \(M M^\ast\) は item x item 行列になってて, これの SVD 分解をすることでアイテムの特徴量を得る. 得られる \(\Sigma\) は変わるはずだけど, そんなに本質的に変わらないから気にしない... ということかな.</blockquote>
+<h2>Spikeness</h2>
+<p>SVD 分解によってベクトルの集合 \(E\) が得られたとき, これについてのスパイクの度合いを表す指標 Spk を定義する.</p>
+<p>ざっくりいうと,</p>
+<ul>
+  <li>
+    得られたベクトル集合 \(E\) をクラスタリングする
+    <ul>
+      <li>一つのクラスタが一つのスパイク</li>
+    </ul>
+  </li>
+  <li>
+    ノルムが大きいベクトルをスパイクの代表点にする
+    <ul>
+      <li>コサイン類似度が近いベクトルを同じスパイクに属するとしてクラスタリングしてく</li>
+      <li>貪欲に取ってく</li>
+    </ul>
+  </li>
+  <li>
+    スパイクの個数の割合を Spk として定める
+    <ul>
+      <li>\(|E|\) に対して \(K\) 個のクラスタが得られたら \(\mathrm{Spk} = K&#x2F;|E|\)</li>
+    </ul>
+  </li>
+</ul>
+<p><details><summary>詳細</summary></p>
+<p>アルゴリズムを詳細に書くと次の通り</p>
+<ul>
+  <li>
+    Input:
+    <ul>
+      <li>
+        閾値 \(\theta, \rho\)
+        <ul>
+          <li>\(\theta = 0.9\)</li>
+          <li>\(\rho = 50\%\)</li>
+        </ul>
+      </li>
+      <li>ベクトルの集合 \(E\)</li>
+    </ul>
+  </li>
+  <li>
+    初期値
+    <ul>
+      <li>\(n \leftarrow |E|\) , はじめに与えられた点の個数</li>
+      <li>\(K \leftarrow 0\) , クラスタの個数</li>
+    </ul>
+  </li>
+  <li>
+    While \(|E| \gt (1 - \rho) \times n\)
+    <ul>
+      <li>
+        ノルムが最も大きいものを選ぶ
+        <ul>
+          <li>\(e^\ast \leftarrow E\)</li>
+        </ul>
+      </li>
+      <li>
+        \(C \leftarrow \{ e \mid e \in E, \cos(e^\ast, e) &gt; \cos \theta \}\)
+        <ul>
+          <li>これを一つのスパイク (クラスタ) と定める</li>
+        </ul>
+      </li>
+      <li>
+        クラスタリング済みの点を \(E\) から取り除く
+        <ul>
+          <li>\(E \leftarrow E \setminus C\)</li>
+        </ul>
+      </li>
+      <li>\(K \leftarrow K + 1\)</li>
+    </ul>
+  </li>
+  <li>
+    Output:
+    <ul>
+      <li>\(\mathrm{Spk} = K &#x2F; n\)</li>
+    </ul>
+  </li>
+</ul>
+<p></details></p>
+<p>この値が小さいほどスパイク状に分布してると言える. [Fig 1] でいうと Deezer と Spotify がこれ.</p>
+<h2>グラフモデル</h2>
+<p>今見てきたスパイク構造に対応するようなグラフモデルを考える.</p>
+<h3>Stochastic Block Model (SBM)</h3>
+<p>「コミュニティ」のグラフ表現</p>
+<ul>
+  <li>
+    \(n\) 頂点
+    <ul>
+      <li>\([n] = \{1,2,\ldots,n\}\)</li>
+    </ul>
+  </li>
+  <li>
+    \(K\) コミュニティ
+    <ul>
+      <li>\([K] = \{1,2,\ldots,K\}\)</li>
+    </ul>
+  </li>
+  <li>
+    頂点はコミュニティに属している
+    <ul>
+      <li>\(C \colon [n] \to [K]\)</li>
+      <li>頂点 \(i (1 \leq i \leq n)\) はコミュニティ \(C_i (1 \leq C_i \leq K)\) に属する</li>
+    </ul>
+  </li>
+  <li>
+    コミュニティ間のエッジ
+    <ul>
+      <li>コミュニティ同士が確率的にエッジで結ばれる</li>
+      <li>
+        隣接行列 \(B\)
+        <ul>
+          <li>\(B \in [0,1]^{K \times K}\)</li>
+        </ul>
+      </li>
+      <li>\(B_{ij} = B_{ji}\) がコミュニティ \(i,j\) がエッジで結ばれる <strong>確率</strong></li>
+    </ul>
+  </li>
+  <li>
+    頂点間のエッジ
+    <ul>
+      <li>頂点が属するコミュニティ \(\times B\) からのサンプリングでエッジを決める</li>
+      <li>
+        \(A \in \{0,1\}^{n \times n}\)
+        <ul>
+          <li>\(A_{ij} = A_{ji} \sim B_{C_i, C_j}\) (ベルヌーイ試行)</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+<h3>Degree-Corrected SBM (DCBM)</h3>
+<p>SBM に更にパラメータを追加する</p>
+<ul>
+  <li>
+    頂点 \(i\) にパラメータ \(\alpha_i \in [0,1]\) を追加
+    <ul>
+      <li>コミュニティに属する度合い</li>
+    </ul>
+  </li>
+  <li>
+    行列 \(A\) の値にはこれが更に掛け算される
+    <ul>
+      <li>\(A_{ij} = A_{ji} \sim \alpha_i \alpha_j B_{C_i, C_j}\)</li>
+    </ul>
+  </li>
+</ul>
+<h3>Spike と DCBM の対応</h3>
+<table>
+  <thead>
+    <tr class=header>
+      <th align=left>Spike</th>
+      <th align=left>DCMB</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class=odd>
+      <td align=left>点 (ベクトル)</td>
+      <td align=left>頂点</td>
+    </tr>
+    <tr class=even>
+      <td align=left>スパイク</td>
+      <td align=left>コミュニティ</td>
+    </tr>
+  </tbody>
+</table>
+<h4>SVD の Spike から DCBM の構築</h4>
+<ul>
+  <li>インタラクション行列（のグラム行列）による \(\hat{M} = U\Sigma V^\ast\)</li>
+  <li>
+    \(E = U \Sigma\)
+    <ul>
+      <li>各行 \(e_i\) が item の embedding</li>
+      <li>
+        \(\{ e_1, e_2, \ldots \}\) をスパイクにクラスタリングする
+        <ul>
+          <li>\(K\) のスパイクが見つかったとする</li>
+          <li>各スパイクの代表を \(\{ s_1, s_2, \ldots, s_K \}\) とする</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+<p>グラフを構築する</p>
+<ul>
+  <li>
+    \(n\) 頂点
+    <ul>
+      <li>アイテムの個数</li>
+    </ul>
+  </li>
+  <li>
+    \(K\) コミュニティ
+    <ul>
+      <li>スパイク（クラスタ）の個数</li>
+    </ul>
+  </li>
+  <li>
+    アイテム \(i\) は \(C_i\) に属する
+    <ul>
+      <li>スパイク（クラスタリング）の結果を使う</li>
+    </ul>
+  </li>
+  <li>
+    \(\alpha\) を決める
+    <ul>
+      <li>
+        \(e_i \approx \alpha_i s_c\)
+        <ul>
+          <li>\(0 \leq \alpha_i \leq 1\)</li>
+          <li>ただし \(s_{C_i}\) はアイテム \(i\) が属するクラスタの代表</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>\(B_{ij} = \langle s_i , s_j \rangle\)</li>
+</ul>
+<p>以下を得る</p>
+<ul>
+  <li>
+    アイテム \(i,j\) の関連度
+    <ul>
+      <li>\((M M^\ast)_{ij}\)</li>
+      <li>\(= (U\Sigma V^\ast V \Sigma^\ast U^\ast)_ij\)</li>
+      <li>\(= (U \Sigma \Sigma^\ast V^\ast)_ij\)</li>
+      <li>\(= \langle e_i,e_j \rangle\)</li>
+      <li>\(= \alpha_i \alpha_j \langle s_{C_i} s_{C_j} \rangle\)</li>
+      <li>\(= \alpha_i \alpha_j B_{{C_i} , {C_j}}\)</li>
+    </ul>
+  </li>
+</ul>
+<h2>知見</h2>
+<h3>コサイン類似度を使うか内積を使うか</h3>
+<p>コサイン類似度を使うことはパラメータ \(\alpha\) を無視することに等しい. 発見性 (serendipity) を重視したい場合にはそちらのほうが良い.</p>
+<p>コミュニティ間の距離を正しく測りたい場合は内積を使わないといけない.</p>
+<h3>\(f\) のチューニング</h3>
+<p>Spk を指標にして \(f\) のチューニングが出来る. \(f\) が小さい間は Spk はおおよそ正比例する. (つまり \(f\) を大きくするに従ってスパイクの個数が増える.)</p>
+<p>あるときから Spk が急激に大きくなる (ここでスパイク構造が壊れたと考える). その直前の \(f\) が良いもの</p>
+
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>

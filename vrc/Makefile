@@ -20,3 +20,7 @@ cache/innerhtml/%.html: src/%.md
 
 dev:
 	bash script/hotcompile.sh
+
+git: index
+	git add ./
+	git commit -a -m "vrc/ `date`"

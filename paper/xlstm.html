@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>[2405.04517] xLSTM: Extended Long Short-Term Memory</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-svg-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
+</header>
+
+<h1 class="title">[2405.04517] xLSTM: Extended Long Short-Term Memory</h1>
+<p><ul> <li>original paper: <a href=https://arxiv.org/abs/2405.04517>https://arxiv.org/abs/2405.04517</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#深層学習>深層学習</a> </div></p>
+<h2>概要</h2>
+<p>Long Short-Term Memory (LSTM) の拡張版 xLSTM を提案する. ベンチマークで Transformer に肉薄する結果を出せた.</p>
+<p>変更は3つ</p>
+<ol>
+  <li>指数ゲーティング (exponential gating)</li>
+  <li>
+    メモリ構造の変更
+    <ul>
+      <li>スカラーメモリの sLSTM</li>
+      <li>行列メモリの mLSTM</li>
+    </ul>
+  </li>
+  <li>
+    以上を残渣ブロックに統合した
+    <ul>
+      <li>これを xLSTM と呼ぶ</li>
+    </ul>
+  </li>
+</ol>
+<h2>LSTM</h2>
+<h3>ベース</h3>
+<p>LSTM の初期バージョンは 1991 年には提案されていた. 仔細を省いて概略を描くと, 入力列 \(z_t\) を受け取って隠れ状態の列 \(h_t\) を次のような漸化式で求める.</p>
+\[c_t = f_t c_{t-1} + i_t z_t\]
+\[h_t = o_t c_t\]
+<p>ここで \(f, i, o\) がゲートと呼称されるもので, それぞれ forget, input, output を表現している.</p>
+<p>多くの分野でLSTMは成功したが, 新たに出現した Transformer に比べるとさすがに弱い.</p>
+<h3>sLSTM</h3>
+<p>２つ新しいポイントがあって,</p>
+<ul>
+  <li>normalizer state の導入</li>
+  <li>input gate 及び forget gate に exp を使う</li>
+</ul>
+<p>入力列 \(x_t\) について</p>
+<ul>
+  <li>
+    state
+    <ul>
+      <li>
+        cell state
+        <ul>
+          <li>\(c_t = f_t c_{t-1} + i_t z_t\)</li>
+        </ul>
+      </li>
+      <li>
+        normalizer state
+        <ul>
+          <li>\(n_t = f_t n_{t-1} + i_t\)</li>
+        </ul>
+      </li>
+      <li>
+        hidden state
+        <ul>
+          <li>\(h_t = o_t( c_t &#x2F; n_t )\)</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>
+    cell input
+    <ul>
+      <li>
+        \(z_t = \phi(\tilde{z_t})\)
+        <ul>
+          <li>\(\tilde{z_t} = w_z^\top x_t + r_z h_{t-1} + b_z\)</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>
+    gates
+    <ul>
+      <li>
+        input gate
+        <ul>
+          <li>
+            \(i_t = \exp(\tilde{i_t})\)
+            <ul>
+              <li>\(\tilde{i_t} = w_i^\top x_t + r_i h_{t-1} + b_i\)</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>
+        forget gate
+        <ul>
+          <li>
+            \(f_t = \exp(\tilde{f_t})\) または \(f_t = \sigma(\tilde{f_t})\)
+            <ul>
+              <li>\(\tilde{f_t} = w_f^\top x_t + r_f h_{t-1} + b_f\)</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>
+        output gate
+        <ul>
+          <li>
+            \(o_t = \sigma(\tilde{o_t})\)
+            <ul>
+              <li>\(\tilde{o_t} = w_o^\top x_t + r_o h_{t-1} + b_o\)</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+<p>さらに Milakov & Gimelshein, 2018 で提案された stabilizer テクニックがある. ただし exp にしてるのは本論文の新規性.</p>
+<ul>
+  <li>
+    stabilizer state
+    <ul>
+      <li>\(m_t = \max(\log f_t + m_{t-1}, \log i_t)\)</li>
+    </ul>
+  </li>
+  <li>
+    stabilized input gate
+    <ul>
+      <li>\(i&#x27;_t = \exp(\tilde{i_t} - m_t)\)</li>
+    </ul>
+  </li>
+  <li>
+    stabilized forget gate
+    <ul>
+      <li>\(f&#x27;_t = \exp( \log f_t + m_{t-1} - m_t)\)</li>
+    </ul>
+  </li>
+</ul>
+<p>これで出来た \(i&#x27;, f&#x27;\) で \(i,f\) を置き換えるというもの. exp すると値が大きくなりすぎて数値計算上オーバーフローしうるのでこれを使う.</p>
+<h3>mLSTM</h3>
+<p>\(\def\R{\mathbb{R}}\) LSTM のスカラーメモリを \(c \in \R\) から行列 \(C \in \R^{d \times d}\) に拡張する. Transformer でいうところの key/value を使うため.</p>
+<ul>
+  <li>
+    state
+    <ul>
+      <li>
+        cell state
+        <ul>
+          <li>\(C_t = f_t C_{t-1} + i_t (v_t k_t^\top)\)</li>
+        </ul>
+      </li>
+      <li>
+        normalizer state
+        <ul>
+          <li>\(n_t = f_t n_{t-1} + i_t k_t\)</li>
+        </ul>
+      </li>
+      <li>
+        hidden state
+        <ul>
+          <li>
+            \(h_t = o_t \odot \tilde{h_t}\)
+            <ul>
+              <li>\(\tilde{h_t} = C_t q_t &#x2F; \max(1, n_t^\top q_t)\)</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>
+    input
+    <ul>
+      <li>
+        query input
+        <ul>
+          <li>\(q_t = W_q x_t + b_q\)</li>
+        </ul>
+      </li>
+      <li>
+        key input
+        <ul>
+          <li>\(k_t = \frac{1}{\sqrt{d}} W_k x_t + b_k\)</li>
+        </ul>
+      </li>
+      <li>
+        value input
+        <ul>
+          <li>\(v_t = W_v x_t + b_v\)</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>
+    gate
+    <ul>
+      <li>
+        input gate
+        <ul>
+          <li>
+            \(i_t = \exp(\tilde{i_t})\)
+            <ul>
+              <li>\(\tilde{i_t} = w_i^\top x_t + b_i\)</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>
+        forget gate
+        <ul>
+          <li>
+            \(f_t = \exp(\tilde{f_t})\) または \(\sigma(\tilde{f_t})\)
+            <ul>
+              <li>\(\tilde{f_t} = w_f^\top x_t + b_f\)</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>
+        output gate
+        <ul>
+          <li>
+            \(o_t = \sigma(\tilde{o_t})\)
+            <ul>
+              <li>\(\tilde{o_t} = W_o x_t + b_o\)</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+<h3>xLSTM</h3>
+<p>sLSTM または mLSTM を組み込んだブロックを残渣ブロックとして使う.</p>
+<h4>実験</h4>
+<p>sLSTM ブロックを a 個, mLSTM を b 個使ったものを <code>xLSTM[a:b]</code> と記述する.</p>
+<h2>結果</h2>
+<p>LSTM を数十億のパラメータにスケールアップした結果 「Transformers や State Space Models と同程度に良い」といえる. スケーリング法則によれば, より大きな xLSTM モデルは現在の Transformer ベースの言語モデルの本格的な競合となる可能性がある.</p>
+
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>

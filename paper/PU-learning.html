@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Learning Classifiers from only Positive and Unlabeled Data</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-svg-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
+</header>
+
+<h1 class="title">Learning Classifiers from only Positive and Unlabeled Data</h1>
+<p><ul> <li>original paper: <a href=https://cseweb.ucsd.edu/~elkan/posonly.pdf>https://cseweb.ucsd.edu/~elkan/posonly.pdf</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#半教師アリ学習>半教師アリ学習</a> </div></p>
+<h2>参考</h2>
+<ul>
+  <li><a href="https://mamo3gr.hatenablog.com/entry/2020/11/29/123147">PU learningことはじめ</a></li>
+  <li><a href="https://www.jonki.net/entry/2020/02/22/185542">PU Learningについて勉強した</a></li>
+</ul>
+<h2>PU 学習</h2>
+<h3>問題設定</h3>
+<p>データ空間 \(X\) の各点についてラベル \(Y = \{ 0, 1 \}\) が対応している. \(1\) が Positive で \(0\) が Negative の意味.</p>
+<p>学習データとして有限のサンプル点集合が与えられるのだが, Positive だと分かってるデータ点の集合と, ラベルが不明なデータ点の集合だけが与えられる. ここからラベルの予測器を学習する問題を PU 学習という.</p>
+<p>与えられる学習データは次の \(V\) .</p>
+\[P = \{ (x,y,s=1) \}\]
+\[N = \{ (x,s=0) \}\]
+\[V = P \cup N\]
+<p>ここで \(s\) はラベルが付与されているかどうかを示している. \(x,y\) に加えて \(s\) も確率変数だと見なして議論を進めていく.</p>
+<h3>前提</h3>
+<ul>
+  <li>
+    Negative にはラベルは付与されてない
+    <ul>
+      <li>\(p(s=1 \mid x, y=0) = 0\)</li>
+    </ul>
+  </li>
+  <li>
+    Positive の中でラベルが付与されてるかどうかは無作為
+    <ul>
+      <li>\(p(s=1 \mid x, y=1) = p(s=1 \mid x)\)</li>
+    </ul>
+  </li>
+</ul>
+<h3>方針</h3>
+<ul>
+  <li>
+    nontraditional classifier \(g\) を構築する
+    <ul>
+      <li>これは「ラベルが付与されてそうかどうか」を予測する</li>
+      <li>\(g(x) \approx p(s=1 \mid x)\)</li>
+    </ul>
+  </li>
+  <li>
+    \(g\) から traditional classifier \(f\) を構築する
+    <ul>
+      <li>これは普通にラベルを予測する機械</li>
+      <li>\(f(x) \approx p(y=1 \mid x)\)</li>
+    </ul>
+  </li>
+</ul>
+<h3>\(g\) の学習</h3>
+<p>「ラベルが付与されているかどうか」はデータセット全てについて分かることなので適当な方法で学習する.</p>
+<h3>Lemmma 1</h3>
+<p>ラベルがついているなら必ず Positive だとしてるので,</p>
+\[\begin{align*}
+p(s=1 \mid x)
+&amp; = p(s=1 \land y=1 \mid x) \\
+&amp; = p(y=1 \mid x) p(s=1 \mid x, y=1) \\
+&amp; = p(y=1 \mid x) p(s=1 \mid y=1) \\
+\end{align*}\]
+<p>ここで \(p(s=1 \mid y=1)\) はデータ分布のみによる定数なので, 定数 \(c\) だとおくと,</p>
+\[p(s=1 \mid x) = c p(y=1 \mid x)\]
+<p>という関係を得る.</p>
+<p>左辺と右辺に出てくる確率は結局欲しかった \(g,f\) なので</p>
+\[g(x) = c f(x)\]
+<p>という比例関係を得る.</p>
+<blockquote>\(g\) を学習するというのはこの比例関係の意味で \(f\) を学習することと同値. そしてこれは「ラベルがついてないものを全て Negative だと思った PN 学習」に等しい.</blockquote>
+<h3>\(c\) の推定</h3>
+<p>3つ方法が提案されている</p>
+<ol>
+  <li>
+    Positive なデータ \(x\) を持ってきたときの \(g(x)\) を \(c\) として使う方法
+    <ul>
+      <li>\(c = p(s=1 \mid y=1) = g(x=1)\)</li>
+    </ul>
+  </li>
+  <li>
+    全体の濃度で決める方法
+    <ul>
+      <li>\(c = \sum_{x \in P} g(x) &#x2F; \sum_{x \in V} g(x)\)</li>
+    </ul>
+  </li>
+  <li>
+    実用上
+    <ul>
+      <li>\(c = \max_{x \in V} g(x)\)</li>
+    </ul>
+  </li>
+</ol>
+<p>基本的には 1 が一番オススメされてる.</p>
+<p>Lemmma 1 によると \(f = g&#x2F;c\) で \(f\) が確率として well-defined なためには \(f \leq 1 \iff g \leq c\) なことが必要十分条件になってる. 3 の方法はこれが約束されるので嬉しい.</p>
+<h3>Weighting unlabled examples</h3>
+<p>Lemmma 1 をそのまま使っても \(g\) から \(f\) を構築できるが, 学習データの重みに使う方法も提案されている.</p>
+<p>ラベルが付与されていない \((x, s=0)\) について</p>
+\[\begin{align*}
+p(y=1 \mid x, s=0)
+&amp; = \frac{1-c}{c} \frac{p(s=1\mid x)}{1 - p(s=1 \mid x)} \\
+&amp; = \frac{1-c}{c} \frac{g(x)}{1 - g(x)} \\
+\end{align*}\]
+<p>になる, らしい.</p>
+<p>これがラベルが付与されていない場合に \(y=1\) である確率. これを重みに掛けて学習すればよい.</p>
+<p>\(h(x,y)\) をデータ \(x\) を予測して正解ラベルが \(y\) であるときの損失関数だとする.</p>
+\[\mathcal{L} = \sum_{x \in P} h(x,1) + \sum_{x \in U} p(y=1 \mid x, s=0) h(x,1) + \sum_{x \in U} p(y=0 \mid x,s=0) h(x,0)\]
+<p>として学習する.</p>
+
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>

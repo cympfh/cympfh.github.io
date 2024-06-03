@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="description" content="Mon 01 Apr 2024, Sat 06 Apr 2024, Mon 08 Apr 2024, Tue 09 Apr 2024, Thu 11 Apr 2024, Sun 14 Apr 2024, Tue 16 Apr 2024, Fri 19 Apr 2024, Sun 05 May 2024, Tue 07 May 2024, Wed 15 May 2024, Mon 20 May 2024, Python, Sat 25 May 2024, Sun 26 May 2024, Mon 27 May 2024" />
+  <meta name="og:url" content="http://cympfh.cc/taglibro">
+  <meta name="og:title" content="月報 2024&#x2F;04, 2024&#x2F;05" />
+  <meta name="og:description" content="Mon 01 Apr 2024, Sat 06 Apr 2024, Mon 08 Apr 2024, Tue 09 Apr 2024, Thu 11 Apr 2024, Sun 14 Apr 2024, Tue 16 Apr 2024, Fri 19 Apr 2024, Sun 05 May 2024, Tue 07 May 2024, Wed 15 May 2024, Mon 20 May 2024, Python, Sat 25 May 2024, Sun 26 May 2024, Mon 27 May 2024" />
+  <meta name="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
+  <meta property="og:url" content="http://cympfh.cc/taglibro">
+  <meta property="og:title" content="月報 2024&#x2F;04, 2024&#x2F;05" />
+  <meta property="og:description" content="Mon 01 Apr 2024, Sat 06 Apr 2024, Mon 08 Apr 2024, Tue 09 Apr 2024, Thu 11 Apr 2024, Sun 14 Apr 2024, Tue 16 Apr 2024, Fri 19 Apr 2024, Sun 05 May 2024, Tue 07 May 2024, Wed 15 May 2024, Mon 20 May 2024, Python, Sat 25 May 2024, Sun 26 May 2024, Mon 27 May 2024" />
+  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@cympfh" />
+  <meta name="generator" content="unidoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>月報 2024&#x2F;04, 2024&#x2F;05</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+  </style>
+  <link rel="stylesheet" href="../../resources/css/c.css" />
+  <link rel="stylesheet" href="../../../resources/css/c.css" />
+  <link rel="stylesheet" href="../../../resources/css/youtube.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+  <div class="taglibro">
+    <header class="page-header"><a href='../../index.html'><i class="fas fa-fast-backward"></i></a></header>
+<h1 class="title">月報 2024/04, 2024/05</h1>
+<h2>Mon 01 Apr 2024</h2>
+<h3>18:51:18</h3>
+<p>コマンドライン上でコマンドを編集して実行するテク.</p>
+<p>例えばファイル名の一括変換. カレントディレクトリ直下に <code>A_[0-9]*.jpg</code> が大量にあるときにすべてを <code>B_[0-9]*.jpg</code> に置換したい.</p>
+<pre><code class="code language-bash"># ファイル一覧を確認
+$ ls -1 A_*.jpg
+
+# mv * * っぽいコマンドに整形
+$ ls -1 A_*.jpg | sed &#x27;s&#x2F;.*&#x2F;mv &amp; &amp;&#x2F;g&#x27;
+
+# sed の 2 フラグを使うことで本当に欲しかったコマンドを得る
+$ ls -1 A_*.jpg | sed &#x27;s&#x2F;.*&#x2F;mv &amp; &amp;&#x2F;g&#x27; | sed &#x27;s&#x2F;A&#x2F;B&#x2F;2&#x27;
+
+# 最後に実行
+$ ls -1 A_*.jpg | sed &#x27;s&#x2F;.*&#x2F;mv &amp; &amp;&#x2F;g&#x27; | sed &#x27;s&#x2F;A&#x2F;B&#x2F;2&#x27; | sh
+</code></pre>
+<p>例えば <code>xargs</code> なんかが少しだけ近いことが出来るからついそれを使おうとする人を見るが, あれは高級すぎるし, インターフェースも良いとは思わない. 素朴に実行したいだけなら <code>sed ... | sh</code> で良い. コマンドを逐次作りながら, 正しいコマンドが出来たのを確認して初めて <code>sh</code> に流すのがコツ.</p>
+<p>いっそエディタを利用してしまう場合. 自分でコマンドを書く. 例えば次のようなスクリプト (edit してから shell に流すので <code>esh</code> と名付けよう) を用意する.</p>
+<pre><code class="code language-bash">#!&#x2F;bin&#x2F;bash
+
+TMP=&#x2F;tmp&#x2F;esh
+if [ ! -t 0 ]; then
+  cat &gt;$TMP
+else
+  : &gt;$TMP
+fi
+
+$EDITOR $TMP
+$SHELL $TMP
+</code></pre>
+<p><code>EDITOR</code> には自分が使い慣れてるエディタを登録しておく.</p>
+<pre><code class="code language-bash"># ファイル一覧を確認
+$ ls -1 A_*.jpg
+
+# ある程度の形は最低限作っておく
+$ ls -1 A_*.jpg | sed &#x27;s&#x2F;.*&#x2F;mv &amp; &amp;&#x2F;g&#x27;
+
+# エディタが起動, ファイルを保存してエディタを終了したら実行される
+$ ls -1 A_*.jpg | sed &#x27;s&#x2F;.*&#x2F;mv &amp; &amp;&#x2F;g&#x27; | esh
+</code></pre>
+<p>ただし書きかけて, やっぱやめたとなってもエディタを終了したら問答無用で実行してしまうので, 途中で辞める場合は空にして保存すること.</p>
+<h2>Sat 06 Apr 2024</h2>
+<h3>15:17:47</h3>
+<p>バイクの初回点検ををやった. オイルとオイルフィルターの交換も言われるがままにやった. 初回点検は１年毎、オイル交換も１年毎. オイルフィルターの交換はオイル交換の二回に一回. 多いな.</p>
+<h2>Mon 08 Apr 2024</h2>
+<h3>14:45:22</h3>
+<h4>Tolass_v4</h4>
+<p>Tolass4.5 にアップデートしてゼロから作り直す</p>
+<h5>注意/方針</h5>
+<ul>
+  <li>要素は厳選して使ってなかったものは削除する</li>
+  <li>viseme が壊れてないか細かくチェックする</li>
+  <li>
+    一旦ギリギリまで軽量モデルとして作っておく
+    <ul>
+      <li>追加衣服などはまだ追加しない</li>
+      <li>本当に必須と思えるギミックだけ仕込む</li>
+      <li>alpine モデルとしてコピーしてアップロードしておく</li>
+    </ul>
+  </li>
+</ul>
+<h5>やることリスト</h5>
+<ul>
+  <li><input type=checkbox checked=checked disabled=disabled>thumbnail [2024/04/08 (Mon) 16:20]</li>
+  <li>
+    [-] PhysBone
+    <ul>
+      <li>
+        できるかどうか調査
+        <ul>
+          <li>無理. 一旦やめ</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <input type=checkbox checked=checked disabled=disabled>
+    ホバーシステム [2024/04/08 (Mon) 17:31]
+    <ul>
+      <li>何も問題なく最新版を入れた</li>
+    </ul>
+  </li>
+  <li>
+    [-] AFK 一通り
+    <ul>
+      <li>不要</li>
+    </ul>
+  </li>
+  <li>
+    <input type=checkbox checked=checked disabled=disabled>
+    表情 [2024/04/08 (Mon) 18:42]
+    <ul>
+      <li>DONE viseme が死んでないかチェック</li>
+    </ul>
+  </li>
+  <li><input type=checkbox checked=checked disabled=disabled>猫の手ジェスチャー [2024/04/08 (Mon) 18:50]</li>
+  <li>
+    <input type=checkbox checked=checked disabled=disabled>
+    他アクセサリ [2024/04/09 (Tue) 12:05]
+    <ul>
+      <li><input type=checkbox checked=checked disabled=disabled>メガネ [2024/04/08 (Mon) 19:21]</li>
+      <li><input type=checkbox checked=checked disabled=disabled>ペット [2024/04/09 (Tue) 12:05]</li>
+    </ul>
+  </li>
+  <li>
+    <input type=checkbox checked=checked disabled=disabled>
+    必須ギミック [2024/04/09 (Tue) 13:53]
+    <ul>
+      <li><input type=checkbox checked=checked disabled=disabled>PPPen [2024/04/09 (Tue) 12:10]</li>
+      <li><input type=checkbox checked=checked disabled=disabled>そらとぶ羽 [2024/04/09 (Tue) 13:53]</li>
+    </ul>
+  </li>
+  <li>
+    <input type=checkbox checked=checked disabled=disabled>
+    この時点で軽量モデルとして置いておく [2024/04/09 (Tue) 14:43]
+    <ul>
+      <li>
+        15MB 以下を目指す
+        <ul>
+          <li>10.66MB/Poor</li>
+        </ul>
+      </li>
+      <li>
+        <input type=checkbox checked=checked disabled=disabled>
+        ソワレだけ着せちゃった
+        <ul>
+          <li>12.62MB/VeryPoor</li>
+        </ul>
+      </li>
+      <li>
+        <input type=checkbox checked=checked disabled=disabled>
+        顔の blackbody はこいつからは削除した
+        <ul>
+          <li>12.62MB/Poor</li>
+        </ul>
+      </li>
+      <li>
+        <input type=checkbox checked=checked disabled=disabled>
+        イヤリングを付けた
+        <ul>
+          <li>12.80MB/Poor</li>
+        </ul>
+      </li>
+      <li><input type=checkbox checked=checked disabled=disabled>メニューを整理する [2024/04/09 (Tue) 14:43]</li>
+      <li><input type=checkbox checked=checked disabled=disabled>alpine モデルとしてフォークする [2024/04/09 (Tue) 14:43]</li>
+    </ul>
+  </li>
+  <li>
+    <input type=checkbox checked=checked disabled=disabled>
+    イヤリング [2024/04/09 (Tue) 16:42]
+    <ul>
+      <li>忘れてたね</li>
+    </ul>
+  </li>
+  <li>
+    <input type=checkbox checked=checked disabled=disabled>
+    その他ギミック [2024/04/10 (Wed) 19:30]
+    <ul>
+      <li><input type=checkbox checked=checked disabled=disabled>マスク [2024/04/09 (Tue) 15:03]</li>
+      <li><input type=checkbox checked=checked disabled=disabled>Finger Trail [2024/04/09 (Tue) 15:26]</li>
+      <li><input type=checkbox checked=checked disabled=disabled>猫の足跡 [2024/04/09 (Tue) 15:38]</li>
+      <li><input type=checkbox checked=checked disabled=disabled>吐息 [2024/04/09 (Tue) 15:46]</li>
+      <li><input type=checkbox checked=checked disabled=disabled>心音 [2024/04/09 (Tue) 15:49]</li>
+      <li>
+        [-] ヘッドライト [2024/04/09 (Tue) 15:51]
+        <ul>
+          <li>要らないや</li>
+          <li>代わりにライターがあるので</li>
+        </ul>
+      </li>
+      <li><input type=checkbox checked=checked disabled=disabled>鼻血 [2024/04/09 (Tue) 16:08]</li>
+      <li><input type=checkbox checked=checked disabled=disabled>腹パン [2024/04/09 (Tue) 16:08]</li>
+      <li><input type=checkbox checked=checked disabled=disabled>ステータスマーク [2024/04/09 (Tue) 16:20]</li>
+      <li><input type=checkbox checked=checked disabled=disabled>さにたあ式煙草 [2024/04/10 (Wed) 19:30]</li>
+      <li><input type=checkbox checked=checked disabled=disabled>OAKS</li>
+    </ul>
+  </li>
+  <li>
+    <input type=checkbox checked=checked disabled=disabled>
+    衣服 [2024/04/11 (Thu) 01:55]
+    <ul>
+      <li><input type=checkbox checked=checked disabled=disabled>デフォルト上着開閉 [2024/04/10 (Wed) 19:30]</li>
+      <li><input type=checkbox checked=checked disabled=disabled>追加衣装一通り [2024/04/11 (Thu) 01:55]</li>
+    </ul>
+  </li>
+  <li><input type=checkbox checked=checked disabled=disabled>メニューを全整理する [2024/04/11 (Thu) 01:55]</li>
+</ul>
+<h3>20:05:36</h3>
+<p>２月と３月の月報を今ようやく書いた. 内容が無さすぎるね. 今更振り返ってみようか.</p>
+<ul>
+  <li>
+    バイクを買った
+    <ul>
+      <li>購入を決めたのが2月の初めの日曜日くらい</li>
+      <li>
+        見た目の良さで Kawasaki Ninja と決めていて, あのデジアナメーターが付いてるなら何でも良いと思った
+        <ul>
+          <li>YAMAHA YZF と迷ってたんだけどね</li>
+        </ul>
+      </li>
+      <li>
+        2023 年式の Ninja250 がちょうどあったので, もうこれだと決めた
+        <ul>
+          <li>
+            KRT Edition
+            <ul>
+              <li>ベースが黄緑色に白と黒のサシが入ってるあの見た目)</li>
+              <li>最初に知った Ninja のあの見た目で良かった</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>
+        納車がちょうど１週間後
+        <ul>
+          <li>任意保険どうすんねんと駆け回った</li>
+          <li>
+            結局, 2月の最後の週に, しかも 3/1 からの分で加入した
+            <ul>
+              <li>最初の二週間くらいは本当に家の近所だけを気をつけて走ってた</li>
+            </ul>
+          </li>
+          <li>
+            2/18 日曜日にバイクを受け取った
+            <ul>
+              <li>
+                ガソリンが初め少ししか入ってないから, ケチだなあと正直思っちゃった
+                <ul>
+                  <li>そういうものらしい</li>
+                </ul>
+              </li>
+              <li>まずは家に帰って, 一番最寄りのガソリンスタンドに行った</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>
+        新車は慣らし運転という概念があるので面倒くさい
+        <ul>
+          <li>実は中古でも新車でもそこまでこだわりがあったわけじゃない</li>
+          <li>たまたま店に飾られてたキレイなのが新車だったからそれを買っただけ</li>
+          <li>次は中古で探そう</li>
+        </ul>
+      </li>
+      <li>江ノ島に行った</li>
+      <li>城ヶ島に行った</li>
+      <li>
+        名取さなイベントに行った
+        <ul>
+          <li>3/7 ばくたんと, 3/9 後夜祭と, 3/24 にもう一度コラボカフェに行った</li>
+        </ul>
+      </li>
+      <li>
+        3/24 東京モーターサイクルショーに行った
+        <ul>
+          <li>ぜひ公共交通機関で来ましょう, といってる一方で膨大なバイク駐輪場を確保しており, 私もバイクで行った</li>
+        </ul>
+      </li>
+      <li>
+        ついこないだの土曜日に初回点検に出した
+        <ul>
+          <li>点検は無料なんだけどオイル交換とオイルフィルターの交換でお金取られたね</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>
+    VRChat
+    <ul>
+      <li>積極的にV睡するようになってしまった</li>
+      <li>
+        大体 0 時から 2 時くらいに入眠して, 午前 4 時から 6 時くらいに目が覚める
+        <ul>
+          <li>これで目が覚めた後は, ゴーグルを脱ぎ捨てて普通に寝る</li>
+        </ul>
+      </li>
+      <li>今まではきっちり3時間で目が覚めてたので, これでも睡眠時間は伸びた</li>
+    </ul>
+  </li>
+</ul>
+<h3>20:18:07</h3>
+<p>こないだの日曜日, これに行ってきた.</p>
+<div class="youtube" src-id="57cj4D4PkTQ"></div>
+<p>123.8km/6.04L = 20.496689 km/L</p>
+<h2>Tue 09 Apr 2024</h2>
+<h3>18:53:40</h3>
+<p>バイクの取扱説明書をそういえば今初めて開いて読んでみた. メーターの機能で初めて知ったものがある. ボタンが２つあるのは知ってたんだけどそのうちの一つしか使ってなかったもんな. なんと燃費や航続距離を計測する機能がもう備わってるらしい. いつも給油のタイミングで Trip B を使って自分で割り算してたね. あと時計を12時間制から24時間制にすることが出来るらしい. これは本当に欲しかった機能だ. 自慢じゃないが私は12時間制が苦手で, 午前0時（あるいは午前12時）がいつなのか未だに分かってない. そもそも0時と12時って何か違うんですか？</p>
+<h2>Thu 11 Apr 2024</h2>
+<h3>20:04:51</h3>
+<p>具体的にコードを書いてしまう前に五分間だけでもいいから, 自然言語で書き出してまとめるのが大切. 本当に.</p>
+<h2>Sun 14 Apr 2024</h2>
+<h3>19:03:40</h3>
+<p>土曜日, 浅草の銭湯に行った. 雷門地下駐車場はバイクが12台停められる. 出かける前にはバイク用の駐輪場を調べるのだが, 一箇所だけだと満車の場合に困るので予備を用意しておきたい. だが浅草周辺にはここ一箇所しか見つからなかった. ここが満車だったら今日の予定は丸々変更するつもりだったが, 3台ほど空いていた. 帰る際には満車だったので, いつも空いているということは全くなくて, 時間帯に依るだけだ.</p>
+<p>今日, 近所のオリンピックに文鳥用の止まり木を買いに行った. 一つは今まで使ってたものと全く同じモノを（汚れていたので買い替えたかったのだ）, 一つは少し変わってて, 今までより少し細くて, 扇状に90度曲がっている. 水浴び場の前の止まり木をこちらに差し替えてみた. 今のところは怖がって使ってくれる様子が無い. いつものことなので気にしない. そのうち, 何も気にせず使うようになるだろう. 逆に今までと全く同じものを新品に変えた箇所は全く気づいてないようで同じように使ってる. 匂いなんかではなくて見た目で判断してるらしい.</p>
+<p>皇居を内回りに一周して給油して帰宅した. 桜はすっかり散って葉桜になっていた.</p>
+<h2>Tue 16 Apr 2024</h2>
+<h3>19:13:45</h3>
+<ul>
+  <li>
+    "Is Cosine-Similarity of Embeddings Really About Similarity?"
+    <ul>
+      <li>https://arxiv.org/abs/2403.05440</li>
+    </ul>
+  </li>
+</ul>
+<p>Netflix の論文.</p>
+<p>コサイン類似度を取って類似度とすることはよくあるが気をつけないといけない. 特に, 高次元ベクトルでのコサイン類似度と低次元ベクトルでのコサイン類似度は振る舞いが違う. 内積を取るだけのが良いということはよくある. 線形モデル（行列分解など）の場合を解析してみる.</p>
+<p>\(n\) 点のデータを \(p\) 次元特徴ベクトルで表現したものである \(n \times p\) 行列 \(X\) を行列分解することを考える. 例えば \(X\) は user vs item の行列. \(p\) より小さな \(k\) という値を選んで, \(p \times k\) 行列 \(A, B\) を用意して</p>
+\[X = X A B^t\]
+<p>という近似を考える. これは \(p\) 次元ベクトルを auto-encode した形式になってる. このとき \(XA\) の各行はデータ (user) の情報をより良く圧縮表現したベクトルになってる. 一方で \(B\) の各行は item の特徴ベクトルになってる. これらの行列積（つまり内積）を取るともとに戻るので, user vs item の適合度になる.</p>
+<blockquote>\(X = WH\) みたいな分解もあるけど, 以降の議論はこれらでも同じことが言えると思います.</blockquote>
+<p>しかし一方でよくやるのは, \(XA\) の行同士のコサイン類似度を取ってユーザーの類似度としたり, \(B\) の行同士のコサイン類似度を取ってアイテムの類似度にしたりする.</p>
+<p>さて \(X = X A B^t\) が得られたとする. 任意の回転行列 \(R\) を考える. 回転行列というのは回転行列のことだけど, \(R R^t = 1\) が成り立つ. なので \(A, B\) の代わりに \(AR, BR\) というのを考えてもこれも行列分解の解として等価. すべてが同じように回転されるので, この \(R\) を掛けるという操作はコサイン類似度も内積も保存する.</p>
+<p>次にスカラー倍について考える. 対角行列 \(D\) を掛けて \(A\) の代わりに \(AD\) にすることは各 user ベクトルを \(D\) 倍することになる. \(X = X A B^t = X A D D^{-1} B^t\) なので, \(A, B\) の代わりに \(AD, BD^{-1}\) を使ってもこれも解になってる. こちらは内積もコサイン類似度も全く保存しない.</p>
+<p>じゃあどうしたらいいか？</p>
+<p>そもそも学習は内積なのにコサイン類似度を使ってるのがダメ やれることは2つあって</p>
+<ol>
+  <li>はじめからコサイン類似度で学習する</li>
+  <li>埋め込み空間で測るのをやめる</li>
+</ol>
+<p>1 については <a href="https://arxiv.org/abs/1607.06450">Layer Normalization</a> を見ろ.</p>
+<p>2 について. 行列分解というのは掛け算すれば初めの空間に戻すことが出来る. つまり, \(X = XAB\) の場合は右辺の \(XAB\) を使えば良い. これは raw data \(X\) に対する smoothed version だと言える. \(XAB\) の各行が user feature vector だし, 各列が item feature vector だ. この空間でならコサイン類似度に意味がある (かもしれない).</p>
+<p><strong>実験</strong> Figure 1. が実験結果. user-item のインタラクションデータをダミーで作る. item はあらかじめクラスタに分けられていて, 同じクラスタに所属する item は 100% 類似していて, user は同じ確率でインタラクトしてる. 一番左の図は理想的な item-item 類似度. 同じクラスタに所属していれば類似度 100%.</p>
+<p>真ん中の3枚は Eq.1 による item-item コサイン類似度. Eq.1 をどうやって解いたかというと SVD 分解をした. \(V\) というのが truncated SVD によるもの. \(X = USV\) にした. ここから B を作る方法が何通りかあるのでそれらを試した感じ. 大雑把に書くと \(B = V S^{1&#x2F;2}\) にするのと \(B=V\) にするのと, \(B = VS\) にするのがある (表記は適当です). これは自由に re-scaling 出来るので行列分解の解としてはどれでも問題ない.</p>
+<p>一番右は Eq.2 によるもの. これは解き方としてただ一通りしか得られない.</p>
+<blockquote>意外に使えるようなモノもあるので不思議だね. 一般に「行列分解の解だから, コサイン類似度が使える」は成り立たない, という話でしかない.</blockquote>
+<h2>Fri 19 Apr 2024</h2>
+<h3>16:42:45</h3>
+<p>Python だけで書く web フレームワークというものがある. 「だけで」というのは本当に「だけで」という意味.</p>
+<ul>
+  <li>
+    <a href="https://streamlit.io">streamlit</a>
+    <ul>
+      <li>私が一番好きな web フレームワーク</li>
+      <li>本来 web フレームワークではなくデータ可視化ツール (BI のような) と言われそうだが, あくまで web フレームワークだと主張したい</li>
+      <li>HTML/css/JavaScript/TypeScript を一切書きたくない人向け</li>
+      <li>Python でデータ加工を元々してる人向け</li>
+      <li>見た目は拘らないから勝手に小綺麗なものを生成してくれという人向け</li>
+      <li>
+        コントロールフローすらも勝手にやってくれという人向け
+        <ul>
+          <li>例えばボタンを押したらここのテキストを変える, といった制御すら自分でやりたくない</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <a href="https://nicegui.io">nicegui</a>
+    <ul>
+      <li>後発</li>
+      <li>streamlit と比べられがち</li>
+      <li>やっぱり HTML/... も触りたくない, Python を元々やってる, 見た目も拘らない人向け</li>
+      <li>コントロールフローだけは自分で制御したい人向け</li>
+    </ul>
+  </li>
+</ul>
+<p>簡単な例. <code>value</code> という変数があってこれをテキストとして表示する. ボタンを押すとこの値を変更して表示するテキストも変更したい.</p>
+<pre><code class="code language-python">import streamlit
+
+value: int = 0
+if streamlit.button(&#x27;Click&#x27;):
+    value = 42
+streamlit.write(value)
+</code></pre>
+<p><code>streamlit.button</code> を呼んだ時点でボタンをページに表示する. クリックしたことのイベントに相当するのが <code>if</code> 文. <code>if</code> の中身はクリックされたときの処理を書く. 最後に <code>streamlit.write</code> でデータを出力してくれる. ちなみにデータの型は何でも良くて, 型によってよしなに見た目を変えてくれる.</p>
+<p>普通に Python コードとして読めば分かるように, <code>if</code> の如何に関わらず最後の <code>streamlit.write</code> は発動する. ボタンをクリックすると「勝手に」 <code>if</code> の箇所から処理がやり直されるので, <code>streamlit.write</code> が勝手にやり直される. なので <code>value</code> が変われば勝手にテキストも変更される.</p>
+<p>実行するには <code>streamlit</code> コマンドを使う. <code>streamlit run main.py</code> と実行することでサーバが立ち上がる.</p>
+<p>一方で nicegui の例.</p>
+<pre><code class="code language-python">from nicegui import ui
+
+value: int = 0
+
+
+def update():
+    value = 42
+    label.set_text(str(value))
+
+
+ui.button(&quot;Click&quot;, on_click=update)
+label = ui.label(str(value))
+
+ui.run(port=8081)
+</code></pre>
+<p>自分でボタンクリックイベントの処理 <code>update</code> を書かないといけない. <code>ui.label</code> がテキストの出力. これは勝手に中身を見て書き換えるようなことはないので, <code>update</code> の中で上書きする必要がある.</p>
+<p>どうしても, 後で定義した <code>label</code> という変数を上で参照しないといけないので, コードを下から上にも読まないといけないのがある.</p>
+<p>手元でやってる実験の可視化, デモを作るなら streamlit, web アプリとして作り込みたいなら nicegui かもしれない. ただしコントロールフローに関する作り方は全く異なるので, streamlit で書いてしまったものを nicegui で書き直すというのはややコストが高いと思う.</p>
+<h2>Sun 05 May 2024</h2>
+<h3>14:04:24</h3>
+<p>X100VI が買えないので, 手持ちのX100F でまだ戦わなければいけない. 実は壊れてて, フォーカスモードがマニュアルにできない (AF-Cになる) のと, ファインダーをOVFに切り替えられない. 前回も一度壊れたことがあるのだが, 全く同じ壊れ方をしている. 前回の修理が不完全だったのか, もうこういう壊れ方をしてしまう性質なのか分からない. X100VI を（買えるとしたら）買うよりはずっと安いので修理に出すか, とインターネットで申し込もうと思ったら, ちょうど今年の三月でサポート終了したのを見つけてしまった.</p>
+
+<div class="blogcard" style="width:auto;max-width:9999px;border:1px solid #E0E0E0;border-radius:3px;margin:10px 0;padding:15px;line-height:1.4;text-align:left;background:#FFFFFF;">
+<a href="https://fujifilm-x.com/ja-jp/support/repair/closed/" target="_blank" style="display:block;text-decoration:none;">
+<span class="blogcard-image" style="float:right;width:100px;padding:0 0 0 10px;margin:0 0 5px 5px;">
+<img src="" width="100" style="width:100%;height:auto;max-height:100px;min-width:0;border:0 none;margin:0;" />
+</span><br style="display:none">
+<span class="blogcard-title" style="font-size:112.5%;font-weight:700;color:#333333;margin:0 0 5px 0;">修理受付終了製品 | FUJIFILM X Series &amp; GFX - Japan</span><br />
+<span class="blogcard-content" style="font-size:87.5%;font-weight:400;color:#666666;">修理受付終了製品 2024年5月1日現在 修理受付終了製品一覧 Xシリーズ レンズ交換式カメラ X-A1（2021年6月）/ X-A2（2022年6月）/ X-A3（2024年3月）/ X-E1（2020年6月）/ X-E2（2021年6月）/ X-M1（2021年6月）/ X-Pro1（2021年6月）/ X-T1（2023年2月）/ X-T10（2022年6月）/ X-T20（2024年3月） Xマウント ズームレンズ XC16-50mmF3.5-5.6 OIS（2022年6月）/ XC50-230mmF4.5-6.7 OIS（2022年6月） コンパクトカメラ X10（2019年6月）/ X20（2020年6月）/ X30（2022年6月）/ X70（2023年2月）/ X100（2019年6月）/ X100S（2020年6月）/ X100T（2022年6月）/ X100F（2024年3月） XF1（2019年6月）/ XQ1（2020年6月）/ XQ2（2021年6月）/ X-S1（2019年6月） FinePixシリーズ A / AV / AX シリーズ A100 / A101 / A170 / A201 / A202 / A203 / A210 / A220 / A303 / A310 / A330 […]</span><br />
+<span style="clear:both;display:block;overflow:hidden;height:0;">&nbsp;</span>
+</a><div style="font-size:75%;text-align:right;clear:both"><a href="https://fujifilm-x.com/ja-jp/support/repair/closed/" target="_blank" rel="nofollow">fujifilm-x.com/ja-jp/support/repair/closed/</a></div></div>
+    
+<p>おそらくは, 最新の二世代までしかサポートしてないんだろう. しかし, 勝手に最新作を出しておいて, しかもそれが買えない状態で, 勝手に古いのをサポート終了するのは腹立たしい.</p>
+<h2>Tue 07 May 2024</h2>
+<h3>17:40:33</h3>
+
+<div class="blogcard" style="width:auto;max-width:9999px;border:1px solid #E0E0E0;border-radius:3px;margin:10px 0;padding:15px;line-height:1.4;text-align:left;background:#FFFFFF;">
+<a href="https://vb-audio.com/Services/licensing.htm" target="_blank" style="display:block;text-decoration:none;">
+<span class="blogcard-image" style="float:right;width:100px;padding:0 0 0 10px;margin:0 0 5px 5px;">
+<img src="" width="100" style="width:100%;height:auto;max-height:100px;min-width:0;border:0 none;margin:0;" />
+</span><br style="display:none">
+<span class="blogcard-title" style="font-size:112.5%;font-weight:700;color:#333333;margin:0 0 5px 0;">VB-Audio Licensing</span><br />
+<span class="blogcard-content" style="font-size:87.5%;font-weight:400;color:#666666;"></span><br />
+<span style="clear:both;display:block;overflow:hidden;height:0;">&nbsp;</span>
+</a><div style="font-size:75%;text-align:right;clear:both"><a href="https://vb-audio.com/Services/licensing.htm" target="_blank" rel="nofollow">vb-audio.com/Services/licensing.htm</a></div></div>
+    
+<h4>買ったもの</h4>
+<ul>
+  <li>
+    VB-CABLE
+    <ul>
+      <li>無料, 仮想オーディオケーブル一つ (CABLE)</li>
+    </ul>
+  </li>
+  <li>
+    VB-CABLE A+B
+    <ul>
+      <li>有料, 仮想オーディオケーブル２つ (CABLE-A, CABLE-B)</li>
+    </ul>
+  </li>
+  <li>
+    Voicemeeter Potato
+    <ul>
+      <li>有料, オーディオミキサー</li>
+    </ul>
+  </li>
+</ul>
+<p>正直これらは Windows が標準で実装すべきだと思うんだけどな.</p>
+<h4>運用</h4>
+<ul>
+  <li>
+    VRChat の設定
+    <ul>
+      <li>マイク入力を CABLE Input で固定</li>
+      <li>出力は元々指定できない (標準になるはず)</li>
+    </ul>
+  </li>
+</ul>
+<ul>
+  <li>
+    Voicemeeter の設定
+    <ul>
+      <li>
+        HARDWARE INPUT
+        <ul>
+          <li>
+            CABLE-A Output
+            <ul>
+              <li>CABLE Input に流す</li>
+              <li>自分でも聞くために適宜追加</li>
+            </ul>
+          </li>
+          <li>
+            CABLE-B Output
+            <ul>
+              <li>
+                自分で聞くために適宜追加
+                <ul>
+                  <li>各種スピーカー</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>
+        HARDWARE OUTPUT
+        <ul>
+          <li>
+            CABLE Input
+            <ul>
+              <li>CABLE-A を受け取って VRC に垂れ流す専用</li>
+            </ul>
+          </li>
+          <li>
+            自分で聞く用の適宜
+            <ul>
+              <li>Steam Streaming Speakers (VRヘッドセット)</li>
+              <li>デスクトップスピーカー, ヘッドフォンなど</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+<ul>
+  <li>
+    それ以外の音声を出すアプリ
+    <ul>
+      <li>
+        基本は CABLE-A に流す
+        <ul>
+          <li>VRC に流れる</li>
+        </ul>
+      </li>
+      <li>
+        それ以外は CABLE-B に流す
+        <ul>
+          <li>間違えても VRC に流れたら困るようなもの</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+<p>Windows11 なら <code>設定 &gt; システム &gt; サウンド &gt; 音量ミキサー</code> でアプリごとのマイク入力/スピーカー出力のデバイスが選べるので, ここで CABLE-A と CABLE-B を切り分ける.</p>
+<p>わざわざ Voicemeeter を経由させる良さがあって, 複数の入力を複数の出力に自由に合流/分岐ができる (N-in, M-out). 例えばデスクトップ上で流す音楽を VRC へのマイク入力にしながら自分はヘッドセットで聞くとか. Voicemeeter は Banana という無料お試しバージョンもあるが, その扱えるデバイスの個数 (N, M) に制限がある. 有料版の Potato でも <code>N=M=5</code> という上限があるけどね.</p>
+<h2>Wed 15 May 2024</h2>
+<h3>19:51:13</h3>
+<p>Cover の定理.</p>
+
+<div class="blogcard" style="width:auto;max-width:9999px;border:1px solid #E0E0E0;border-radius:3px;margin:10px 0;padding:15px;line-height:1.4;text-align:left;background:#FFFFFF;">
+<a href="https://en.wikipedia.org/wiki/Cover%27s_theorem" target="_blank" style="display:block;text-decoration:none;">
+<span class="blogcard-image" style="float:right;width:100px;padding:0 0 0 10px;margin:0 0 5px 5px;">
+<img src="" width="100" style="width:100%;height:auto;max-height:100px;min-width:0;border:0 none;margin:0;" />
+</span><br style="display:none">
+<span class="blogcard-title" style="font-size:112.5%;font-weight:700;color:#333333;margin:0 0 5px 0;">Cover&#x27;s theorem - Wikipedia</span><br />
+<span class="blogcard-content" style="font-size:87.5%;font-weight:400;color:#666666;"></span><br />
+<span style="clear:both;display:block;overflow:hidden;height:0;">&nbsp;</span>
+</a><div style="font-size:75%;text-align:right;clear:both"><a href="https://en.wikipedia.org/wiki/Cover%27s_theorem" target="_blank" rel="nofollow">en.wikipedia.org/wiki/Cover%27s_theorem</a></div></div>
+    
+<p>大雑把にいえば、高次元空間に非線形に移せば線形分離できるようになるよ、という定理らしい. 詳しくはまだ分かってない.</p>
+<p>元論文は</p>
+<ul>
+  <li><a href="https://isl.stanford.edu/~cover/papers/paper2.pdf">Geometrical and Statistical Properties of Systems of Linear Inequalities with Applications in Pattern Recognition</a></li>
+</ul>
+<p>一旦 Wikipedia だけ読むか.</p>
+<p>\(D\) 次元空間に一般的な位置にある \(N\) 点についてありえる線形分離の方法 (同じように点を分離する平面は同じとみなした場合の平面の個数) を \(C(N,D)\) 個だとする.</p>
+<p>\(C\) について次がなりたつ.</p>
+\[C(N+1,D) = C(N,D) + C(N,D-1)\]
+<p>このことの帰結として次を得る.</p>
+<ul>
+  <li>
+    \(N \leq D + 1\) のとき
+    <ul>
+      <li>\(C\) は \(N\) に関する指数オーダーになる</li>
+      <li>もはや \(D\) に依存せずにいくらでも線形分離可能だと言うことができる</li>
+    </ul>
+  </li>
+  <li>
+    \(N \gt D + 1\) のとき
+    <ul>
+      <li>\(C\) は指数よりは小さい</li>
+    </ul>
+  </li>
+</ul>
+<p>得られる知見</p>
+<ul>
+  <li>
+    線形分離不能な場合とは
+    <ul>
+      <li>点が一般的な位置にない</li>
+      <li>次元が小さい</li>
+    </ul>
+  </li>
+  <li>
+    これを線形分離可能にするには
+    <ul>
+      <li>非線形写像で高次元空間に写すことが必要</li>
+    </ul>
+  </li>
+</ul>
+<p>論文もちらっと読むか.</p>
+<p>\(C\) は陽に書き下すことが出来て</p>
+\[C(N,D) = 2 \sum_{k=0}^{D-1} \left( N-1; k \right)\]
+<p>ここで \(\left( a ; b \right)\) は二項係数です. \(C(N+1,D) = C(N,D) + C(N,D-1)\) もじゃあ展開すればたぶん確かめられる.</p>
+<h2>Mon 20 May 2024</h2>
+<h3>15:14:09</h3>
+<p>これは五億回言ってることだが join と split って, あたかも逆関数に見えてしまう.</p>
+<p>join は文字列の列 \(A\) と, 区切り文字として使う文字 \(d\) を受け取って, \(A\) の各値を \(d\) で接続した一つの文字列 \(x\) を返す.</p>
+\[[S] \times S \to S\]
+\[(A, d) \mapsto x\]
+<p>\(S\) は文字列という型で \([S]\) はそのリストというつもりで書いた.</p>
+<p>split は一つの文字列 \(x\) と区切り文字とする文字 \(d\) を受け取って, \(x\) を \(d\) で区切って出来た文字列のリスト \(A\) を返す.</p>
+\[S \times S \to [S]\]
+\[(x, d) \mapsto A\]
+<p>区切り文字をお行儀よくしていれば, 大抵の場合はちょうど逆のことをしてくれる.</p>
+<pre><code class="code language-python">## Python
+
+&gt;&gt;&gt; &#x27;,&#x27;.join([&#x27;a&#x27;, &#x27;b&#x27;, &#x27;c&#x27;])
+&#x27;a,b,c&#x27;
+
+&gt;&gt;&gt; &#x27;a,b,c&#x27;.split(&#x27;,&#x27;)
+[&#x27;a&#x27;, &#x27;b&#x27;, &#x27;c&#x27;]
+</code></pre>
+<p>区切り文字 \(d\) は暗に固定するとして, 実際</p>
+\[\mathrm{join}(\mathrm{split}(x)) = x\]
+<p>が成り立つ. たぶん成り立ちそう.</p>
+<p>逆は全く成り立たない ( \(\mathrm{split}(\mathrm{join}(x)) \ne x\) ).</p>
+<pre><code class="code language-python"># A の値に区切り文字 d が入ってる場合
+&gt;&gt;&gt; &#x27;,&#x27;.join([&#x27;a,b&#x27;]).split(&#x27;,&#x27;)
+[&#x27;a&#x27;, &#x27;b&#x27;]
+
+# A が空の場合
+&gt;&gt;&gt; &#x27;,&#x27;.join([])
+&#x27;&#x27;
+&gt;&gt;&gt; &#x27;,&#x27;.join([]).split(&#x27;,&#x27;)
+[&#x27;&#x27;]
+</code></pre>
+<p>特に空文字列の split が空リストにならないのはなんだか直感に反する. 結合という意味で文字列の空とリストの空はそれぞれの単位元なのに, 単位元どうしが対応付いていないのって自然じゃないなあって.</p>
+<p>ちなみにここからは Python の場合だけど, 区切り文字 \(d\) は省略可能で, ドキュメントの言葉を使えばこのときには全く違うアルゴリズムが動く.</p>
+
+<div class="blogcard" style="width:auto;max-width:9999px;border:1px solid #E0E0E0;border-radius:3px;margin:10px 0;padding:15px;line-height:1.4;text-align:left;background:#FFFFFF;">
+<a href="https://docs.python.org/3/library/stdtypes.html#str.split" target="_blank" style="display:block;text-decoration:none;">
+<span class="blogcard-image" style="float:right;width:100px;padding:0 0 0 10px;margin:0 0 5px 5px;">
+<img src="https://docs.python.org/3/_static/og-image.png" width="100" style="width:100%;height:auto;max-height:100px;min-width:0;border:0 none;margin:0;" />
+</span><br style="display:none">
+<span class="blogcard-title" style="font-size:112.5%;font-weight:700;color:#333333;margin:0 0 5px 0;">Built-in Types</span><br />
+<span class="blogcard-content" style="font-size:87.5%;font-weight:400;color:#666666;">The following sections describe the standard types that are built into the interpreter. The principal built-in types are numerics, sequences, mappings, classes, instances and exceptions. Some colle...</span><br />
+<span style="clear:both;display:block;overflow:hidden;height:0;">&nbsp;</span>
+</a><div style="font-size:75%;text-align:right;clear:both"><a href="https://docs.python.org/3/library/stdtypes.html#str.split" target="_blank" rel="nofollow">docs.python.org/3/library/stdtypes.html#str.split</a></div></div>
+    
+<pre><code class="code language-python">&gt;&gt;&gt; &#x27;1   2 3&#x27;.split()
+[&#x27;1&#x27;, &#x27;2&#x27;, &#x27;3&#x27;]
+
+&gt;&gt;&gt; &#x27;&#x27;.split()
+[]
+</code></pre>
+<h2>Sat 25 May 2024</h2>
+<h3>17:16:12</h3>
+<p>八王子のオフハウス行ってきた. ハードオフにゲーム筐体が丸々置いてあってすごい. オフハウスはお皿とかが安い. ブックオフは小さくて残念だった.</p>
+<pre><code class="code">160.1 km &#x2F; 6.9 L =&gt; 23.2 km&#x2F;L
+</code></pre>
+<h2>Sun 26 May 2024</h2>
+<h3>13:04:37</h3>
+<p>chatGPT を使ったコマンドツール</p>
+<p>GPT なので, 翻訳/言い換え/補完 であれば普通は出来ないことが容易にできる. ChatGPT 自体はチャット形式でAPIが公開されているが, 毎回新しいチャットを開いて利用するのも馬鹿らしいのでコマンドとして用意してる.</p>
+<p>この手の簡単な (エイリアス以上スクリプト以下くらいの) コマンドを私は</p>
+
+<div class="blogcard" style="width:auto;max-width:9999px;border:1px solid #E0E0E0;border-radius:3px;margin:10px 0;padding:15px;line-height:1.4;text-align:left;background:#FFFFFF;">
+<a href="https://github.com/cympfh/bin" target="_blank" style="display:block;text-decoration:none;">
+<span class="blogcard-image" style="float:right;width:100px;padding:0 0 0 10px;margin:0 0 5px 5px;">
+<img src="https://opengraph.githubassets.com/1f164e8c987a6b613243a0c085af7fc5dcb0519c93f484d67be2c0438a14d4d2/cympfh/bin" width="100" style="width:100%;height:auto;max-height:100px;min-width:0;border:0 none;margin:0;" />
+</span><br style="display:none">
+<span class="blogcard-title" style="font-size:112.5%;font-weight:700;color:#333333;margin:0 0 5px 0;">GitHub - cympfh/bin: ~/bin</span><br />
+<span class="blogcard-content" style="font-size:87.5%;font-weight:400;color:#666666;">~/bin. Contribute to cympfh/bin development by creating an account on GitHub.</span><br />
+<span style="clear:both;display:block;overflow:hidden;height:0;">&nbsp;</span>
+</a><div style="font-size:75%;text-align:right;clear:both"><a href="https://github.com/cympfh/bin" target="_blank" rel="nofollow">github.com/cympfh/bin</a></div></div>
+    
+<p>で管理してる.</p>
+<h4>翻訳</h4>
+<ul>
+  <li><a href="https://github.com/cympfh/bin/blob/master/translate">translate</a></li>
+</ul>
+<p>タスクとしては一番素直. 初め DeepL を使ってたのでその名残がまだあるがもう ChatGPT でしか使ってない. 翻訳元 (ソース) の言語が何であるかを指定できるようになってるが, ChatGPT は賢いので指定する必要がない. 一応その場合には「自分で推測してくれ」と言ってる.</p>
+<pre><code class="code language-bash">$ translate -t zh &#x27;北京ダックを朝ご飯に食べた&#x27;
+{
+    &quot;detected_source_language&quot;: &quot;JA&quot;,
+    &quot;target_language&quot;: &quot;ZH&quot;,
+    &quot;model&quot;: &quot;gpt&quot;,
+    &quot;text&quot;: &quot;早餐吃了北京烤鸭&quot;
+}
+</code></pre>
+<h4>プログラムコードの生成</h4>
+<ul>
+  <li><a href="https://github.com/cympfh/bin/blob/master/codegpt">codegpt</a></li>
+</ul>
+<p>自然言語で指示してプログラムコードに変換してもらう. これもよくあるタスク. 補完モードとチャットモードを用意したが専らチャットモードで使ってる.</p>
+<pre><code class="code language-bash">$ codegpt chat -L python &#x27;fizzbuzz コード書いて&#x27;
+Running...
+for i in range(1, 101):
+    if i % 15 == 0:
+        print(&quot;FizzBuzz&quot;)
+    elif i % 3 == 0:
+        print(&quot;Fizz&quot;)
+    elif i % 5 == 0:
+        print(&quot;Buzz&quot;)
+    else:
+        print(i)
+</code></pre>
+<p>でも, 実際にはコマンドの使い方を聞くようなケースが多い. Stackoverflow とか見ることが無くなった.</p>
+<pre><code class="code language-bash">$ codegpt chat -L kubectl &#x27;Evicted された pod を全列挙して&#x27;
+Running...
+get pods --field-selector=status.phase=Failed -o json | jq -r &#x27;.items[] | select(.status.reason==&quot;Evicted&quot;) | .metadata.name&#x27;
+</code></pre>
+<h4>論文の翻訳/要約</h4>
+<ul>
+  <li><a href="https://github.com/cympfh/bin/blob/master/papergpt">papergpt</a></li>
+</ul>
+<p>一発で翻訳して要約してもらってそれを読む, というスタイルも試したが私は結局こういうことにした.</p>
+<ol>
+  <li>タイトルと Abstract を読ませる</li>
+  <li>
+    以下ループ
+    <ul>
+      <li>論文の断片をコピペして渡す</li>
+      <li>「タイトル + Abstract + 断片」で断片部分を翻訳して要約してもらう</li>
+    </ul>
+  </li>
+</ol>
+<p>この 2 の部分をループで回す. 素直に使うと ChatGPT はチャットなので会話は普通は積み上げられるものだが, ループの中では直前の会話は毎回捨ててるので今渡した断片以外の部分は知らない.</p>
+<p>一発で上手い要約は難しい. どうしても要約から漏れてる箇所を見つけてしまって追加でそこを質問したくなる. 或いは勝手に自分の持ってる知識を付け足して論文に書かれてないことを言い出す. それよりは一度に与える文章を少なくしてそこだけに集中させたほうがマシ.</p>
+<h4>中国語入力</h4>
+<ul>
+  <li><a href="https://github.com/cympfh/bin/blob/master/zhcomp">zhcomp</a></li>
+</ul>
+<p>いま中国語の学習をしており, PCで中国語の入力をたまにガッとやることがある. 日常的にやるならさすがに Microsoft Pinyin IME とか使うべきなんだけど, あくまでたまにだし, あとピンインを完璧に覚えてもいないので辛い. 毎回辞書でピンインを覚えてそれを入力するというのもある意味学習になるけど, それ辞書で調べるのと入力するというのを兼ねれば良いよね.</p>
+<pre><code class="code language-bash">$ zhcomp &#x27;nandao ni dou wang le ma?&#x27;
+{ &quot;completed&quot;: {&quot;text&quot;: &quot;难道你都忘了吗？&quot;, &quot;pinyin&quot;: &quot;nán dào nǐ dōu wàng le ma?&quot; } }
+
+# ピンインと日本の漢字を混ぜても無理やり中国語に修正してくれる
+$ zhcomp &#x27;keyi 部分含 日本的 hanzi&#x27;
+{ &quot;completed&quot;: {&quot;text&quot;: &quot;可以部分含日本的汉字&quot;, &quot;pinyin&quot;: &quot;kě yǐ bù fèn hán rì běn de hàn zì&quot; } }
+</code></pre>
+<p>もっともピンインをASCII文字だけで書いても声調まで言わないと曖昧だし, なんなら声調を明記しても曖昧性がある (どの漢字を使うか一つに定まらない) ので, 欲しい漢字が出力されるまでたまに無駄な苦労をしないといけないことがある.</p>
+<pre><code class="code language-bash">$ zhcomp &#x27;ta hen gao&#x27;
+{ &quot;completed&quot;: { &quot;text&quot;: &quot;他很高&quot;, &quot;pinyin&quot;: &quot;tā hěn gāo&quot; } }
+
+
+$ zhcomp &#x27;ta(女) hen gao&#x27;
+{ &quot;completed&quot;: { &quot;text&quot;: &quot;她很高&quot;, &quot;pinyin&quot;: &quot;tā hěn gāo&quot; } }
+</code></pre>
+<p>他 (彼) も 她 (彼女) もどちらも同じ ta なので無理やり補足した.</p>
+<p>そういえば <a href="https://platform.openai.com/docs/api-reference/chat/create#chat-create-n">ChatGPT は回答候補を複数出力させられる</a> ので, それを使っても良いかもしれない. その分お金が掛かるけど.</p>
+<h2>Mon 27 May 2024</h2>
+<h3>19:03:19</h3>
+<p>\(n\) 個の \(1\) の和は \(n\) であることの証明.</p>
+<p>\(F_n = n\) とする. 差分 \(F_{n+1} - F_n\) を \(f_n\) と定義する. \(f_n = (n+1) - n = 1\) . 次の和を考える.</p>
+\[G = \sum_{k=1}^n f_k\]
+<p>\(f_n = F_{n+1}-F_n\) を代入してこれを展開すれば,</p>
+\[\begin{align*}
+G
+&amp; = \sum_{k=1}^n (F_{k+1} - F_k) \\
+&amp; = \sum_{k=1}^n F_{k+1} - \sum_{k=1}^n F_{k} \\
+&amp; = F_{n+1} + \sum_{k=2}^n F_{k} - F_1 - \sum_{k=2}^n F_{k} \\
+&amp; = F_{n+1} - F_1 \\
+&amp; = (n+1) - 1 \\
+&amp; = n \\
+\end{align*}\]
+<p>一方で, \(G = \sum_{k=1}^n f_n = 1 + 1 + \cdots + 1\) というように \(G\) は \(n\) 個の \(1\) の和でもある. 以上から \(1\) を \(n\) 個足すと \(n\) になることが示された.</p>
+<p>同様に \(F_n=1\) からスタートすると \(0\) は \(n\) 個足しても \(0\) であることが示せる. すごいね.</p>
+
+    <footer>
+      <p class="is-pulled-right">@cympfh / mail@cympfh.cc</p>
+    </footer>
+  </div>
+  <script src="../../../resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
+  <script src="../../../resources/js/toc.js"></script>
+</body>
+</html>

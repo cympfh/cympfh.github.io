@@ -6,6 +6,7 @@ mkdir -p cache/innerhtml
 postlist() {
   echo README
   cat src/postlist |
+    grep -v '^#' |
     awk '{print $1}' |
     uniq |
     tac

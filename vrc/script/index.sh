@@ -47,7 +47,7 @@ card() {
   INNERHTML=$(cat cache/innerhtml/$WID.html)
   cat <<EOM
 
-<div class="column is-half">
+<div class="column is-half world_column" data-tags="${TAGS}" >
   <div class="card" id="${WID}">
     <header class="card-header">
       <p class="card-header-title"><a href="#${WID}">${TITLE}</a></p>
@@ -83,7 +83,7 @@ card() {
     </div>
     <footer class="card-footer">
       <p class="card-footer-item is-info">
-        $( echo "$TAGS" | awk '{ for (i=1; i<=NF; i++) print "<a class=\"tag is-blue\">"$i"</a>" }' )
+        $( echo "$TAGS" | awk '{ for (i=1; i<=NF; i++) print "<a class=\"tag is-blue\" href=\"#"$i"\">"$i"</a>" }' )
       </p>
       <p class="card-footer-item is-info">
         $( rate-star $RATE )
@@ -132,8 +132,8 @@ TEMPLATE
   </section>
 
   <script src="./resources/js/base.js"></script>
+  <script src="./resources/js/tag.js"></script>
   <script src="../resources/js/youtube.js"></script>
-
 </body></html>
 TEMPLATE
 }

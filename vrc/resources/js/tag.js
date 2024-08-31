@@ -1,8 +1,10 @@
 function search_worlds_by_a_tag() {
   let hash = location.hash;
-  if (hash.length < 2 || hash.indexOf('#wrld_') === 0 || hash == '#README') {
-    // Shows all if no hash or anchor to a world.
+  if (hash.length < 2 || hash == '#README') {
+    // Show all if no hash
     show_by_tag(null);
+  } else if (hash.indexOf('#wrld_') === 0) {
+    // Nop
   } else {
     let tag = decodeURIComponent(hash.slice(1));
     show_by_tag(tag);

@@ -111,7 +111,7 @@ main() {
 <body>
   <section class="section">
     <div class="container">
-        <h1 class="title"><i class="fa fa-map"></i> vrc/</h1>
+        <h1 class="title"><i class="fa fa-map"></i> <a href="#">vrc/</a></h1>
     </div>
   </section>
 

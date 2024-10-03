@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="description" content="Mon Nov 12 2012, Sun Nov 18 2012, Mon Nov 19 02:17 2012, JavaScript におけるパターンマッチ, Nov 28 2012, Dec 06 2012, Dec a day 2012, Dec b day 2012, X a day 2012, F" />
+  <meta name="og:url" content="http://cympfh.cc/taglibro">
+  <meta name="og:title" content="年報 2012" />
+  <meta name="og:description" content="Mon Nov 12 2012, Sun Nov 18 2012, Mon Nov 19 02:17 2012, JavaScript におけるパターンマッチ, Nov 28 2012, Dec 06 2012, Dec a day 2012, Dec b day 2012, X a day 2012, F" />
+  <meta name="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
+  <meta property="og:url" content="http://cympfh.cc/taglibro">
+  <meta property="og:title" content="年報 2012" />
+  <meta property="og:description" content="Mon Nov 12 2012, Sun Nov 18 2012, Mon Nov 19 02:17 2012, JavaScript におけるパターンマッチ, Nov 28 2012, Dec 06 2012, Dec a day 2012, Dec b day 2012, X a day 2012, F" />
+  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@cympfh" />
+  <meta name="generator" content="unidoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>年報 2012</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+  </style>
+  <link rel="stylesheet" href="../../resources/css/c.css" />
+  <link rel="stylesheet" href="../../../resources/css/c.css" />
+  <link rel="stylesheet" href="../../../resources/css/youtube.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+  <div class="taglibro">
+    <header class="page-header"><a href='../../index.html'><i class="fas fa-fast-backward"></i></a></header>
+<h1 class="title">年報 2012</h1>
+<h2>Mon Nov 12 2012</h2>
+<h3>ある事件</h3>
+<p>これは日本での出来事である． <br /> ある男が銃刀法によって逮捕された．電車の中でナイフを出し、 <br /> 自分の腕を切ったと報道された．その後、てきとうなコメンテーター <br /> がお笑い事としてコトの粗筋を説明したことには、 <br /> 男はこの一ヶ月で20回ほど、夜中、閑散とした電車内にて <br /> 少ない乗客にふらりと立ち寄り、その姿はフーテンの酔っ払いの <br /> ようだったという． 突然ナイフを出し、その刃渡りをぎらりと <br /> 見せると、自分の腕にそれを当て、「切ってほしくなかったら、 <br /> 2000円出せ」という脅迫をした．少額であることから19回成功して <br /> おり、通報を受けた鉄道員により逮捕されたという．</p>
+<h2>Sun Nov 18 2012</h2>
+<p>Ubuntu 11.4 を使ってたけど、アップグレードする理由もないけれど <br /> 古いのをずっと使ってる意味もないので、11.4->11.10->12.4->12.10 <br /> と3段階アップグレードすることにした．飛ばしてアップグレードは <br /> できないと聞いたので．(ほんとうかな) <br /> そしたら11.10->12.4のアップグレードが完了して、再起動したら <br /> 12.4が起動するはずの画面でずっとマウスポインタが点滅して、 <br /> 結局起動しなかった．仕方ないので、12.10をUSBからインストールした．</p>
+<h2>Mon Nov 19 02:17 2012</h2>
+<p>昨日全く寝ずに、そのまま東京Node学園祭に行き（はっきりいってくだらなかった．同じ学科の連中の発表のほうがもっと刺激的だ） その帰りの足でアキバで小林ゆうを見た．遠近法の効果により 豆粒ほど小さかった．</p>
+<p>今年の目標を決めた．あと１ヶ月半だけなのだから具合がいい． 人とあまり馴れ馴れしくしないこと． 自立すること．</p>
+<h2>JavaScript におけるパターンマッチ</h2>
+<p>ググっても正規表現マッチしか出てこないけれど、関数型言語 におけるパターンマッチのはなし．</p>
+<pre><code class="code language-ocaml">type Nat = Zero | Succ of Nat
+
+match n with
+  | Zero -&gt; &quot;zero&quot;
+  | Succ(Zero) -&gt; &quot;one&quot;
+  | _ -&gt; &quot;takusan&quot;
+</code></pre>
+<p>これは switch 文以上につよい. 入れ子にできるから. これをjavascriptでどう表現するか. 1.8の構文を用いれば、 <code>let</code> による分割代入ができて、</p>
+<p>パターンマッチだ！とか書いてる記事があるけれど, <br /> 私の知ってる <code>パターンマッチ</code> という言葉遣いと違う. <br /> その記事がいうのは,</p>
+<pre><code class="code language-haskell">let [[a,b],c,d] = [[1,2],3,4]
+</code></pre>
+<p>が可能という意味で、それはOCamlでは</p>
+<pre><code class="code language-ocaml">match [[1;2];3;4] with
+  | (a::b::[])::c::d::[] -&gt; ...
+  | _ -&gt; failwith &quot;&quot;
+</code></pre>
+<p>とまあ確かにパターンマッチでよくやる．</p>
+<p>私がやりたいパターンマッチは最初にかいたやつ． どう表現するか．</p>
+<p>私が昨日一昨日発見して今気に入ってるのはオブジェクトのキーにパターンを列挙するもの． パターンマッチのパターンは有限に列挙するのだからこれは可能だ．</p>
+<pre><code class="code language-javascript">match[&quot;Zero&quot;] = &quot;zero&quot;
+match[&quot;Succ(Zero)&quot;] = &quot;one&quot;
+if (n in match) match[n];
+    else &quot;takusan&quot;;
+</code></pre>
+<p>ほら、できた． 問題は、オブジェクトのキーは処理系によって文字列型にキャストされることであり、 上の例なら <code>Succ(Zero)</code> というデータ構造（これももちろんjavascriptでうまく定義しなければならない） がどう文字列にキャストされるかを知って置かなければならないこと． いっそのこととして私はデータ構造を文字列で持っておくことにした．</p>
+<p>これはまた変態的と言われるかもしれないが、パターンマッチの <code>when</code> も表現できる．</p>
+<pre><code class="code language-ocaml">match n with
+  | _ when n%2=1 -&gt; &quot;odd&quot;
+  | _ -&gt; &quot;even&quot;
+</code></pre>
+<p>を次のように</p>
+<pre><code class="code language-javascript">match[true] = &quot;odd&quot;
+when = n%2 == 1;
+if (when in match) match[when];
+    else &quot;even&quot;;
+</code></pre>
+<p>はじめ、</p>
+<pre><code class="code language-javascript">exp == Int ? exp.val :
+exp == Float ? exp.val :
+</code></pre>
+<p>みたいに書いててそれをパターンマッチだと言い張ってたのだけれど、 ただ switch 文を式として書いてるだけだと気づいたし見た目が最悪なので先のものを思いついた．</p>
+<p><code>if</code> を使わずに <code>fizzbuzz</code> を書く、などというお題に対して使ったトリックだ．</p>
+<h2>Nov 28 2012</h2>
+<h3>CodeVS 2.0</h3>
+<p>今は体験版として公開されていて、簡単なランキングがある． ただ名前と得点を送信して更新されるだけのものだけど． 一時的に10位に入ったんだけど、すぐに13位までに落とされた． 時間を含めたリソースの制限も何もないので、ランダムネスを取り入れるのなら速度勝負だ． F#で書いてみたんだけど、C++なんかに比べて20倍は遅い．というかC++が速すぎるんだよね． 並列計算とかさせたら6,7倍にはなるかもだけど、それでも素直にC++ に敵わないんだからはじめからC++で書けばいいってことになっちゃうって考えたらもうなんか嫌になった． 189万点とれたヤツのソースは <code>&#x2F;fsharp&#x2F;codevs2.fs.txt</code> として公開します．</p>
+<p>「だから関数型なんて遅いんですよ」</p>
+<p>と言われてしまった．</p>
+<h2>Dec 06 2012</h2>
+<h3>日記・バイトを辞めた</h3>
+<p>バイトをやめてあっという間に１ヶ月たった． 忙しいことをやめた人間は新たに忙しくなることを探すのかと思えば ただダメ人間になるだけだった．何度も経験してきたことではあるが．</p>
+<p>バイトのやめ方がひどい． 大学に入って2年間で3つのサークルに入ったがどれも1ヶ月でやめた． やめるとまともに宣言したのは一つで、それも迫られて初めて言った ことだった．終わらせ方が分からない．そんな、唐突にやめますだなんて 言えるわけがないじゃないか．冗談を言える人間なら、大したことじゃ ないんだよという雰囲気を作りながら簡単に言えるのだろうか． バイト先には退院の目処のつかないという入院をしたことにした．</p>
+<h2>Dec a day 2012</h2>
+<h3>日記・F# について</h3>
+<p>考えてみりゃ、関数型だなんて、しかもF#だなんて、そんな簡単にかける言語で処理まで速いなんて夢を見過ぎなんだ．</p>
+<pre><code class="code language-fsharp">&#x2F;&#x2F; test.fs
+open System
+
+let fib i =
+    let rec fib&#x27; a b i =
+        if i=0 then a else fib&#x27; b (a+b) (i-1)
+    in
+    fib&#x27; 0 1 i
+
+for _ in 0 .. 99 do
+    ignore &lt;| fib 40
+
+&#x2F;&#x2F; F# Compiler for F# 3.0 (Open Source Edition)
+&#x2F;&#x2F; real	0m0.018s
+&#x2F;&#x2F; user	0m0.012s
+&#x2F;&#x2F; sys	0m0.004s
+</code></pre>
+<p>出力はしてないけどちゃんと計算してるらしい． fsharpc には三種類ほど最適化オプションが用意されているが、入れても入れなくてもタイムは変わらなかったので、全く効果がないか、何も指定しなければ自動的にオンになるかだ．</p>
+<pre><code class="code language-cpp">&#x2F;&#x2F; test.cpp
+##include &lt;cstdio&gt;
+int fibsub(int a, int b, int i) {
+    if (i==0) return a;
+    else return fibsub(b,a+b,i-1);
+}
+int fib(int i) {
+    return fibsub(0,1,i);
+}
+main() {
+    for (int i=0;i&lt;100;++i) fib(40);
+    return 0;
+}
+&#x2F;&#x2F; &#x2F;usr&#x2F;lib&#x2F;gcc&#x2F;i686-linux-gnu&#x2F;4.7&#x2F;lto-wrapper
+&#x2F;&#x2F; real	0m0.002s
+&#x2F;&#x2F; user	0m0.000s
+&#x2F;&#x2F; sys	0m0.000s
+</code></pre>
+<p>素晴らしい．</p>
+<pre><code class="code language-scheme">; test.scm
+(define (fib i)
+    (define (fib* a b i)
+        (if (= i 0) a (fib* b (+ a b) (- i 1))))
+    (fib* 0 1 i))
+
+(let loop ((i 0))
+    (if (&lt; i 100) (begin (fib 40) (loop (+ i 1))) ))
+
+; Gauche scheme shell, version 0.9.1 [utf-8,pthreads], i686-pc-linux-gnu
+; real	0m0.013s
+; user	0m0.008s
+; sys	0m0.004s
+</code></pre>
+<p>F#をコンパイルしたより速い． そういうこともあるかもしれない．</p>
+<pre><code class="code language-bash"># stalin でのコンパイル
+real	0m0.001s
+user	0m0.000s
+sys	0m0.000s
+</code></pre>
+<p>バカみたいに速い．本当に計算されてるのか、つまり計算結果は捨ててるのでもしかして除去されてるのではないかと毎回 display させてみると、時間は二倍になってC++とやっと並んだ．</p>
+<p>スクリプトとしてそのまま動かしても速いし、Scheme で書くことにしよう．</p>
+<h2>Dec b day 2012</h2>
+<p>一限に出席するために学校に泊まってるのに、それでも出席できないようになってしまった．</p>
+<p>お金が振り込まれてた．キモチが随分軽くなった．天まで届きそうだ</p>
+<ul>
+  <li><code>http:&#x2F;&#x2F;karetta.jp&#x2F;book-node&#x2F;gauche-hacks&#x2F;007051</code></li>
+</ul>
+<p>schemeで、C言語のprintfに相当する <code>format</code> では <code>&quot;~a&quot;</code> なんていうのが <code>&quot;%A&quot;</code> に相当するらしい． なんだか可愛い． それよりも関数型で文字列フォーマットというのはどうやって実現してるんだろう．</p>
+<pre><code class="code language-scheme">gosh&gt; (format &quot;~a ~a ~a&quot; 1 2)
+*** ERROR: too few arguments for format string: &quot;~a ~a ~a&quot;
+</code></pre>
+<h2>X a day 2012, F# の memo</h2>
+<p>F# は OCaml の拡張にも見えるけど独特の関数適用、関数合成の演算子が面白い．</p>
+<h3>関数適用</h3>
+<pre><code class="code language-fsharp">let (|&gt;) x f = f x
+let (&lt;|) f x = f x
+</code></pre>
+<h3>関数合成</h3>
+<pre><code class="code language-fsharp">let (&gt;&gt;) f g = fun x -&gt; g (f x)
+let (&lt;&lt;) f g = fun x -&gt; f (g x)
+</code></pre>
+<p>上の2つは順次パイプライン演算と呼ばれ, 下の2つは順次合成演算という. 入力のしやすさよりも見た目の良さを優先させている観がある.</p>
+<p><code>()</code> で括った二項演算子は中間記法を前提としていて、つまり <code>x |&gt; f</code> と書いて <code>f x</code> を表す．</p>
+<ul>
+  <li><code>(&lt;|)</code> , <code>(|&gt;)</code> は左結合</li>
+  <li><code>(&lt;&lt;)</code> は右結合</li>
+  <li><code>(&gt;&gt;)</code> は左結合</li>
+</ul>
+<p>結合優先順位の強さは次の通り (上に行くほど強い)</p>
+<ul>
+  <li>(通常の関数適用)</li>
+  <li><code>(|&gt;)</code></li>
+  <li><code>(&lt;&lt;)</code></li>
+  <li><code>(&gt;&gt;)</code></li>
+  <li><code>(&lt;|)</code></li>
+</ul>
+<p>左結合右結合は慣れればだいたい見た目通りに思える． 結合優先順位が若干曲者</p>
+<h4>使用例</h4>
+<pre><code class="code language-fsharp">let sq x = x * x
+let add1 x = x + 1
+
+(sq (add1 2))
+</code></pre>
+<p>これを次のように書く．</p>
+<pre><code class="code language-fsharp">2 |&gt; add1 |&gt; sq
+</code></pre>
+<p>次はエラー</p>
+<pre><code class="code language-fsharp">sq &lt;| add1 &lt;| 2
+</code></pre>
+<p>これは</p>
+<pre><code class="code language-fsharp">(sq add1) 2
+</code></pre>
+<p>と解釈される．</p>
+<p>括弧を補うならば</p>
+<pre><code class="code language-fsharp">sq &lt;| (add1 &lt;| 2)
+</code></pre>
+<p>とするしかない． 左向きのパイプラインは関数合成を組み合わせるのが前提で(たぶん)</p>
+<pre><code class="code language-fsharp">sq &lt;&lt; add1 &lt;| 2
+</code></pre>
+<p>とすると、</p>
+<pre><code class="code language-fsharp">(fun x -&gt; sq (add1 x)) 2
+</code></pre>
+<p>と解釈される．</p>
+<p>右向きのパイプライン結合と左向きのパイプライン結合がキレイに左右対象になっていない．ちょっと嫌だ．</p>
+<p><code>f</code> , <code>g</code> , <code>h</code> という3つの関数に <code>x</code> という数を通す</p>
+<pre><code class="code language-fsharp">f (g (h x))
+</code></pre>
+<p>このことをパイプラインで書くことを考えると</p>
+<pre><code class="code language-fsharp">x |&gt; h |&gt; g |&gt; f
+</code></pre>
+<p>これは <code>x</code> を <code>h</code> して、 <code>g</code> して、 <code>f</code> する、と考えたことと文章が一致していてとてもいい． Haskell になどには (簡単に定義できるにしても) ない演算だ．</p>
+<p>左向きのパイプラインでは</p>
+<pre><code class="code language-fsharp">f &lt;&lt; g &lt;&lt; h &lt;| x
+</code></pre>
+<p>となる．記号が左右対象にならない．</p>
+
+    <footer>
+      <p class="is-pulled-right">@cympfh / mail@cympfh.cc</p>
+    </footer>
+  </div>
+  <script src="../../../resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
+  <script src="../../../resources/js/toc.js"></script>
+</body>
+</html>

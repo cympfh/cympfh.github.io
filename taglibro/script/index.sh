@@ -12,6 +12,10 @@ summary() {
     grep '^###* ' "$1" |
         awk '/^## / {
             h2 = substr($0, 4)
+            if ($0 ~ /\*.*\*/) {
+                match($0, /\*([^*]+)\*/);
+                h2 = substr($0, RSTART + 1, RLENGTH - 2)
+            }
             print("<span class=\"subtitles\"><i class=\"fas fa-check\"></i>" h2 "</span>")
         }
         /^### .* \*.*\*$/ {

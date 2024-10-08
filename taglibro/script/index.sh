@@ -7,8 +7,18 @@ title() {
 }
 
 summary() {
-    grep '^## ' "$1" | sed 's/^## //' |
-      sed 's,^.*,<span class="subtitles"><i class="fas fa-check"></i>&</span>,'
+    # grep '^## ' "$1" | sed 's/^## //' |
+    #   sed 's,^.*,<span class="subtitles"><i class="fas fa-check"></i>&</span>,'
+    grep '^###* ' "$1" |
+        awk '/^## / {
+            h2 = substr($0, 4)
+            print("<span class=\"subtitles\"><i class=\"fas fa-check\"></i>" h2 "</span>")
+        }
+        /^### .* \*.*\*$/ {
+            match($0, /\*([^*]+)\*/);
+            h3 = substr($0, RSTART + 1, RLENGTH - 2)
+            print("<span class=\"subtitles\"><i class=\"fas fa-caret-right\"></i>" h3 "</span>")
+        }'
 }
 
 write-item() {
@@ -63,7 +73,7 @@ cat <<EOM
       padding-right: 0.2rem;
     }
     span.subtitles {
-      padding-right: 0.6rem;
+      padding-right: 0.65rem;
     }
     div.hidden {
       display: none;

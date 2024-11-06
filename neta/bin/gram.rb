@@ -13,7 +13,7 @@ db.each_with_index do |item, idx|
 
   images << url
 
-  description.chomp.split(' ').each do |phrase|
+  description.chomp.downcase.split(' ').each do |phrase|
     (0...phrase.size).each do |i|
       gram = []
       (0...4).each do |j|

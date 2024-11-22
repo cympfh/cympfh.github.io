@@ -31,8 +31,10 @@ if [ -z "$IM" ]; then
     exit 1
 fi
 if [ -z "$MSG" ]; then
-    echo "Error: No message passed" >&2
-    exit 1
+    F=/tmp/$$
+    $EDITOR $F
+    MSG=$(cat $F)
 fi
 
-qj -e ".url=$IM" ".description=$MSG" >> db.jsonl
+# qj -e ".url=$IM" ".description=$MSG" >> db.jsonl
+jq -n -c --arg IM "$IM" --arg MSG "$MSG" '{"url":$IM, "description": $MSG}' >> db.jsonl

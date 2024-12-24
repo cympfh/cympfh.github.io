@@ -76,7 +76,8 @@ var data=
     "https://pbs.twimg.com/media/GenEdLHbQAAf0qC?format=jpg&name=medium",
     "https://pbs.twimg.com/media/Gem_CHEaMAEclxQ?format=jpg&name=large",
     "https://pbs.twimg.com/media/Gem70HwboAE3otf?format=jpg&name=medium",
-    "https://pbs.twimg.com/media/Gem5V-RbEAAC4eP?format=jpg&name=900x900"
+    "https://pbs.twimg.com/media/Gem5V-RbEAAC4eP?format=jpg&name=900x900",
+    "https://uc4d7ee6f012a67670dadd055f96.previews.dropboxusercontent.com/p/thumb/ACcifGkJwVQ55PGYXNXc1KzyWqxrYOZD7bxgf-2yguYIl6yUCe5kiXtRjyjNCfTqsM34rOGDHME6l1ClH_SFUftdoxgvJp2A5SBNW6t-US2LEjr8hnkUxafAt1zzdRPyIAw17803yR0G0hDgWkEFRls5Xuz-QXDMSOzrlskuLA1G3a5lgmvthmuCPt7ASA88n27X6oVXrZpGOnM1R0KaB29X5qO7RkdVQErDwCQalHEQ64Ed0D29NQX6rhORWnYoGyRlSvJfftiBKCSmGdpG7AAyS7p9ENMLrp_JGF2D2e_NEteexEpPh-4sbwo5bfkMwQlYLD4-QsyqngH2Tit4cOZV/p.jpeg"
   ],
   "ngrams": {
     "脱": [
@@ -218,7 +219,8 @@ var data=
       0
     ],
     "i": [
-      0
+      0,
+      76
     ],
     "ip": [
       0
@@ -605,7 +607,8 @@ var data=
       61,
       63,
       67,
-      72
+      72,
+      76
     ],
     "泣": [
       3
@@ -1629,7 +1632,8 @@ var data=
       40,
       44,
       56,
-      59
+      59,
+      76
     ],
     "ゃっ": [
       9,
@@ -2138,7 +2142,8 @@ var data=
       56,
       62,
       69,
-      71
+      71,
+      76
     ],
     "ちぴ": [
       14
@@ -2163,7 +2168,8 @@ var data=
       14,
       21,
       44,
-      56
+      56,
+      76
     ],
     "ゃんに": [
       14,
@@ -2832,11 +2838,13 @@ var data=
     ],
     "ちゃ": [
       21,
-      56
+      56,
+      76
     ],
     "ちゃん": [
       21,
-      56
+      56,
+      76
     ],
     "ア": [
       22,
@@ -3006,7 +3014,8 @@ var data=
       27,
       28,
       29,
-      37
+      37,
+      76
     ],
     "ew": [
       23,
@@ -3126,7 +3135,8 @@ var data=
       27,
       28,
       29,
-      37
+      37,
+      76
     ],
     "am": [
       23,
@@ -3136,7 +3146,8 @@ var data=
       27,
       28,
       29,
-      37
+      37,
+      76
     ],
     "ame": [
       23,
@@ -3156,7 +3167,8 @@ var data=
       27,
       28,
       29,
-      37
+      37,
+      76
     ],
     "me": [
       23,
@@ -6802,7 +6814,8 @@ var data=
       58
     ],
     "ノ": [
-      58
+      58,
+      76
     ],
     "ノブ": [
       58
@@ -6847,10 +6860,12 @@ var data=
       58
     ],
     "チ": [
-      58
+      58,
+      76
     ],
     "チノ": [
-      58
+      58,
+      76
     ],
     "チノコ": [
       58
@@ -8445,6 +8460,36 @@ var data=
     ],
     "てた": [
       75
+    ],
+    "チノち": [
+      76
+    ],
+    "チノちゃ": [
+      76
+    ],
+    "ノち": [
+      76
+    ],
+    "ノちゃ": [
+      76
+    ],
+    "ノちゃん": [
+      76
+    ],
+    "y": [
+      76
+    ],
+    "ye": [
+      76
+    ],
+    "yes": [
+      76
+    ],
+    "es": [
+      76
+    ],
+    "s": [
+      76
     ]
   }
 }

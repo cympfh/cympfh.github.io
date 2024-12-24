@@ -10,10 +10,13 @@ ngrams = {}
 db.each_with_index do |item, idx|
   url = item['url']
   description = item['description']
+  description = description.chomp.downcase
+  description = description.gsub(/[「」、。！？・…‥※]/, ' ')
+  description = description.gsub(/\s+/, ' ')
 
   images << url
 
-  description.chomp.downcase.split(' ').each do |phrase|
+  description.split(' ').each do |phrase|
     (0...phrase.size).each do |i|
       gram = []
       (0...4).each do |j|

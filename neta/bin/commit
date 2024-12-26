@@ -19,19 +19,18 @@ MSG=
 AUTO=
 OCRFILE=
 
+trim() {
+    tr '\n' ' ' | sed 's/  */ /g; s/ *$//g'; echo
+}
+
 do_ocr() {
     OCRFILE=/tmp/$$.ocr
     withcache ocr $1 | grep ocr_text >$OCRFILE
-    jq -r '"\(.ocr_text)"' $OCRFILE | tr '\n' ' ' | sed 's/  */ /g; s/ *$//g'; echo
-    jq -r '"\(.description_minor)"' $OCRFILE | tr '\n' ' ' | sed 's/  */ /g; s/ *$//g'; echo
-    jq -r '"\(.description_major)"' $OCRFILE | tr '\n' ' ' | sed 's/  */ /g; s/ *$//g'; echo
+    jq -c . $OCRFILE | sed 's/^/# /'
+    jq -r .ocr_text $OCRFILE | trim
+    jq -r .short $OCRFILE | trim
+    jq -r '.tags | join(" ")' $OCRFILE | trim
     rm $OCRFILE
-}
-
-use_ocr() {
-    jq -r '"\(.ocr_text)"' $OCRFILE | tr '\n' ' ' | sed 's/  */ /g; s/ *$//g'; echo
-    jq -r '"\(.description_minor)"' $OCRFILE | tr '\n' ' ' | sed 's/  */ /g; s/ *$//g'; echo
-    jq -r '"\(.description_major)"' $OCRFILE | tr '\n' ' ' | sed 's/  */ /g; s/ *$//g'; echo
 }
 
 while [ $# -gt 0 ]; do
@@ -43,10 +42,6 @@ while [ $# -gt 0 ]; do
         --auto | -A )
             AUTO=1
             shift
-            ;;
-        --ocr-file )
-            OCRFILE=$2
-            shift 2;
             ;;
         -h | --help )
             usage
@@ -64,15 +59,19 @@ if [ -z "$IM" ]; then
     echo "Error: No image passed" >&2
     exit 1
 fi
+
+if ( grep "$IM" ./db.jsonl >/dev/null ); then
+    echo "Already exists"
+    exit 1
+fi
+
 if [ -z "$MSG" ]; then
     echo "# $IM" >$F
-    if [ ! -z "$OCRFILE" ]; then
-        use_ocr "$OCRFILE" >>$F
-    elif [ "$AUTO" -eq 1 ]; then
+    if [ "$AUTO" -eq 1 ]; then
         do_ocr "$IM" >>$F
     fi
     $EDITOR $F
-    MSG=$(cat $F | awk '/./ && (NR>1 || !/^#/)')  # Delete empty lines and the first comment line
+    MSG=$(cat $F | awk '/./ && !/^#/')  # Delete empty lines and the first comment line
     rm $F
 fi
 

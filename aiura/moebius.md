@@ -61,14 +61,16 @@ $$\sum_{z \in [x,y]} \mu(z, y) = \delta(x, y)$$
 $$\sum_{z \in [x,y]} \mu(x, z) = \delta(x, y)$$
 を書き換えていくことで与えられた式の左辺を作ることを考える.
 
-$$\begin{align*}
+$$
+\begin{align*}
 & \sum_{z \in [x,y]} \mu(x, z) = \delta(x, y) & \text{ 定義}\\
 \iff & \sum_{z \in [z',y]} \mu(z', z) = \delta(z', y) & \text{ 変数の置き換え} \\
-\iff & \sum_{x \preceq z' \preceq y} \sum_{z \in [z',y]} \mu(z', z) = \sum_{z'} \delta(z', y) & \text{ $z'$ を動かす} \\
+\iff & \sum_{x \preceq z' \preceq y} \sum_{z \in [z',y]} \mu(z', z) = \sum_{z'} \delta(z', y) & z' \text{を動かす} \\
 \iff & \sum_{x \preceq z' \preceq y} \sum_{z \in [z',y]} \mu(z', z) = 1 & \text{ 右辺は簡単に計算できる} \\
 \iff & \sum_{x \preceq z \preceq y} \sum_{x \preceq z' \preceq z} \mu(z', z) = 1 & \text{ 気をつけて2つの Sum を交換する} \\
-\iff & \sum_{x \preceq z \preceq y} k(x,z) = 1 & \text{ $k(x,z) = \sum_{x \preceq z' \preceq z} \mu(z', z)$ と置いた} \\
-\end{align*}$$
+\iff & \sum_{x \preceq z \preceq y} k(x,z) = 1 & k(x,z) = \sum_{x \preceq z' \preceq z} \mu(z', z) \text{と置いた} \\
+\end{align*}
+$$
 
 証明したいのはこの最後の $k$ について $k(x,z) = \delta(x,z)$ が成り立つということだった.
 $x=z$ のときには明らか.
@@ -93,10 +95,13 @@ $$k(x,z) = 0$$
 ## リーマン関数（ゼータ関数）
 
 局所有限半順序集合 $E$ に対して,
-$$\zeta(x, y) = \begin{cases}
+
+$$
+\zeta(x, y) = \begin{cases}
 1 & \text{ if } x \preceq y \\
 0 & \text{ else }
-\end{cases}$$
+\end{cases}
+$$
 
 ## 反転公式
 
@@ -115,7 +120,7 @@ $g(x)=$ を仮定したときに2つ目にこれを代入することで等式�
 $$\begin{align*}
 \sum_y \mu(y,x) g(y)
 & = \sum_y \mu(y,x) \sum_z \zeta(z, y) f(z) & \text{ 仮定を代入した } \\
-& = \sum_{y \preceq x} \mu(y,x) \sum_{z \preceq y} f(z) & \text{ $\mu$ が値を持つ範囲に限定した }\\
+& = \sum_{y \preceq x} \mu(y,x) \sum_{z \preceq y} f(z) & \mu \text{ が値を持つ範囲に限定した }\\
 & = \sum_{z \preceq x} f(z) \sum_{y \in [z,x]} \mu(y, x) & \text{ Sum を交換した }\\
 & = \sum_{z \preceq x} f(z) \delta(y, x) & \text{ 上で述べた「性質」}\\
 & = f(x) \\
@@ -130,7 +135,7 @@ $$\begin{align*}
 & = \sum_y \zeta(y,x) \sum_z \mu(z, y) g(z) & \text{ 仮定を代入した } \\
 & = \sum_{y \preceq x} \sum_{z \preceq y} \mu(z, y) g(z) & \text{ それぞれ値が持つ範囲 }\\
 & = \sum_{z \preceq x} g(z) \sum_{y \in [z,x]} \mu(z, y) & \text{ Sum の交換 }\\
-& = \sum_{z \preceq x} g(z) \delta(z, y) & \text{ これは $\mu$ の定義 }\\
+& = \sum_{z \preceq x} g(z) \delta(z, y) & \mu \text{ の定義 }\\
 & = g(x) \\
 \end{align*}$$
 
@@ -247,4 +252,3 @@ $$\mu(a,b) = \begin{cases}
 
 一般の自然数に今の話を拡張するには, 自然数を並べて直積を取ればよく,
 結局 各素数の指数を見て, それが $a+1=b$ であるようなものの個数だけ $(-1)$ の累乗を取ったものになる.
-

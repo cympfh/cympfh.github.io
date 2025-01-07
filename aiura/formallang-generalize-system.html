@@ -1,137 +1,145 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="description" content="Introduction/汎化システム/汎化システムの完全性/正規パターン (Regular Pattern)/" />
-  <meta property="og:url" content="http://cympfh.cc/taglibro">
-  <meta property="og:type" content="article">
-  <meta property="og:title" content="汎化システム" />
-  <meta property="og:description" content="Introduction/汎化システム/汎化システムの完全性/正規パターン (Regular Pattern)/" />
-  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:site" content="@cympfh" />
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>汎化システム</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-svg-full.js"></script>
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
     <a href='index.html'><i class="fa fa-stumbleupon"></i></a>
 </header>
-<header>
-<h1 class="title">汎化システム</h1>
-</header>
-<p class="date" style="text-align: right">
-2015-01-14
-</p>
-<div class="is-pulled-right">
-<p><a class='tag is-red' href=index.html#形式言語>形式言語</a> <a class='tag is-red' href=index.html#言語獲得>言語獲得</a></p>
-</div>
-<h2 id="introduction">Introduction</h2>
-<p>正規言語というものを考えると, これは言語に対して正規表現（あるいはオートマトン）が一対一対応している. すなわち何か言語を説明する description <span class="math inline">\(p\)</span> というものがあって, 同型写像 <span class="math inline">\(L\)</span> によって <span class="math inline">\(L(p)\)</span> という言語を構成することが出来る.</p>
-<p>ある言語クラス <span class="math inline">\(\mathcal L\)</span> は 写像 <span class="math inline">\(L\)</span> によってある集合 <span class="math inline">\(D\)</span> と同型. この <span class="math inline">\(D\)</span> の元を description と呼ぶ.</p>
-<p><span class="math display">\[\begin{align*}
+
+<h1 class="title" id="1-汎化システム">汎化システム</h1>
+<p><p class=date style='text-align: right'>2015-01-14</p> <div class='is-pulled-right'> <a class='tag is-red' href=index.html#形式言語>形式言語</a> <a class='tag is-red' href=index.html#言語獲得>言語獲得</a> </div></p>
+<h2 id="2-Introduction">Introduction</h2>
+<p>正規言語というものを考えると, これは言語に対して正規表現（あるいはオートマトン）が一対一対応している. すなわち何か言語を説明する description \(p\) というものがあって, 同型写像 \(L\) によって \(L(p)\) という言語を構成することが出来る.</p>
+<p>ある言語クラス \(\mathcal L\) は 写像 \(L\) によってある集合 \(D\) と同型. この \(D\) の元を description と呼ぶ.</p>
+\[\begin{align*}
 L \colon &amp; D \simeq \mathcal L \\
 L \colon &amp; p \mapsto L(p) \\
-\end{align*}\]</span></p>
-<p>正規言語の場合, この写像 <span class="math inline">\(L\)</span> とはパターンにマッチする文字列を集めるという関数（オートマトンなら受理する文字列）. <span class="math display">\[L(p) = \{ s \preceq p \mid s \in \Sigma^* \}\]</span> ここでマッチするという関係を <span class="math inline">\(\preceq\)</span> と書いた.</p>
+\end{align*}\]
+<p>正規言語の場合, この写像 \(L\) とはパターンにマッチする文字列を集めるという関数（オートマトンなら受理する文字列）.</p>
+\[L(p) = \{ s \preceq p \mid s \in \Sigma^* \}\]
+<p>ここでマッチするという関係を \(\preceq\) と書いた.</p>
 <p>汎化システムはこのまさにマッチという関係を半順序として一般化することで一般のパターン言語を構成する.</p>
-<h2 id="汎化システム">汎化システム</h2>
-<p><span class="math inline">\(D\)</span> を description の集合とし, そこに半順序 <span class="math inline">\(\preceq\)</span> を入れる. ただし <span class="math inline">\(D\)</span> は最大元 <span class="math inline">\(\top\)</span> を持つとする. このとき <span class="math display">\[(D, \preceq)\]</span>を汎化システムと呼ぶ.</p>
-<h3 id="汎化">汎化</h3>
-<p>半順序 <span class="math inline">\(\preceq\)</span> を汎化関係と呼ぶ.</p>
-<p><span class="math inline">\(p \preceq q\)</span> のとき, <span class="math inline">\(q\)</span> は <span class="math inline">\(p\)</span> の generalization であるといい, また <span class="math inline">\(p\)</span> から <span class="math inline">\(q\)</span> を構成することを generalize という. 逆に <span class="math inline">\(p\)</span> は <span class="math inline">\(q\)</span> の instance であるといい, <span class="math inline">\(q\)</span> から <span class="math inline">\(p\)</span> を構成することを refine という.</p>
-<h3 id="object">object</h3>
-<p><span class="math inline">\(p \in D\)</span> が極小元であるとき, <span class="math inline">\(p\)</span> は object であるという. <span class="math display">\[p \text{ is object } \iff \forall q \in D, q \not\prec p\]</span> すなわちそれ以上 refine できないものを object というのである.</p>
-<h3 id="定理">定理</h3>
-<p><span class="math display">\[p \preceq q \implies L(p) \subseteq L(q)\]</span></p>
-<h4 id="証明">証明</h4>
-<p><span class="math display">\[\begin{align*}
+<h2 id="2-汎化システム">汎化システム</h2>
+<p>\(D\) を description の集合とし, そこに半順序 \(\preceq\) を入れる. ただし \(D\) は最大元 \(\top\) を持つとする. このとき</p>
+\[(D, \preceq)\]
+<p>を汎化システムと呼ぶ.</p>
+<h3 id="3-汎化">汎化</h3>
+<p>半順序 \(\preceq\) を汎化関係と呼ぶ.</p>
+<p>\(p \preceq q\) のとき, \(q\) は \(p\) の generalization であるといい, また \(p\) から \(q\) を構成することを generalize という. 逆に \(p\) は \(q\) の instance であるといい, \(q\) から \(p\) を構成することを refine という.</p>
+<h3 id="3-object">object</h3>
+<p>\(p \in D\) が極小元であるとき, \(p\) は object であるという.</p>
+\[p \text{ is object } \iff \forall q \in D, q \not\prec p\]
+<p>すなわちそれ以上 refine できないものを object というのである.</p>
+<h3 id="3-定理">定理</h3>
+\[p \preceq q \implies L(p) \subseteq L(q)\]
+<h4 id="4-証明">証明</h4>
+\[\begin{align*}
 s \in L(p)
 &amp; \iff s \preceq p ~~\text{(言語の定義)} \\
 &amp; \implies s \preceq q ~~\text{(推移律)} \\
 &amp; \iff s \in L(q) ~~\text{(言語の定義)}
-\end{align*}\]</span></p>
-<h2 id="汎化システムの完全性">汎化システムの完全性</h2>
-<p>先の定理の逆 <span class="math display">\[L(p) \subset L(q) \implies p \preceq q\]</span> は一般には成立 <strong>しない</strong>. これが常に成り立つような汎化システムは <strong>完全 (complete) である</strong> という.</p>
-<h2 id="正規パターン-regular-pattern">正規パターン (Regular Pattern)</h2>
+\end{align*}\]
+<h2 id="2-汎化システムの完全性">汎化システムの完全性</h2>
+<p>先の定理の逆</p>
+\[L(p) \subset L(q) \implies p \preceq q\]
+<p>は一般には成立 <strong>しない</strong> . これが常に成り立つような汎化システムは <strong>完全 (complete) である</strong> という.</p>
+<h2 id="2-正規パターン (Regular Pattern)">正規パターン (Regular Pattern)</h2>
 <p><strong>パターン</strong> 及び <strong>正規パターン</strong> を次で定義する. (いわゆる正規表現ではなくそれより単純化されたものであることに注意.)</p>
 <ul>
-<li>大きさ 2 以上の有限集合: <span class="math inline">\(\Sigma = \{0,1,\ldots\}\)</span>
-<ul>
-<li><span class="math inline">\(\Sigma\)</span> の元を <strong>アルファベット</strong> という</li>
-<li>文字列 (object): <span class="math inline">\(\Sigma^+\)</span></li>
-<li>空文字列: <span class="math inline">\(\Sigma^0 = \{ \epsilon \}\)</span></li>
-</ul></li>
-<li>無限集合 <span class="math inline">\(X = \{x,y,z,\ldots\}\)</span>
-<ul>
-<li>この元を <strong>変数</strong> という</li>
-</ul></li>
-<li><strong>パターン</strong> とはアルファベットと変数からなる列
-<ul>
-<li><span class="math inline">\((\Sigma \cup X)^+\)</span> の元</li>
-<li>e.g. <span class="math inline">\(x\)</span>, <span class="math inline">\(0x2xy\)</span>, <span class="math inline">\(01214\)</span></li>
-</ul></li>
-<li><strong>正規パターン</strong> とはパターンであって, 一つの変数は高々一度しか出現しないもの
-<ul>
-<li>パターン全体を RP と書くことにする</li>
-<li>e.g. <span class="math inline">\(x\)</span>, <span class="math inline">\(0x2yz\)</span>, <span class="math inline">\(01234\)</span></li>
-</ul></li>
+  <li>
+    大きさ 2 以上の有限集合: \(\Sigma = \{0,1,\ldots\}\)
+    <ul>
+      <li>\(\Sigma\) の元を <strong>アルファベット</strong> という</li>
+      <li>文字列 (object): \(\Sigma^+\)</li>
+      <li>空文字列: \(\Sigma^0 = \{ \epsilon \}\)</li>
+    </ul>
+  </li>
+  <li>
+    無限集合 \(X = \{x,y,z,\ldots\}\)
+    <ul>
+      <li>この元を <strong>変数</strong> という</li>
+    </ul>
+  </li>
+  <li>
+    <strong>パターン</strong> とはアルファベットと変数からなる列
+    <ul>
+      <li>\((\Sigma \cup X)^+\) の元</li>
+      <li>e.g. \(x\) , \(0x2xy\) , \(01214\)</li>
+    </ul>
+  </li>
+  <li>
+    <strong>正規パターン</strong> とはパターンであって, 一つの変数は高々一度しか出現しないもの
+    <ul>
+      <li>パターン全体を RP と書くことにする</li>
+      <li>e.g. \(x\) , \(0x2yz\) , \(01234\)</li>
+    </ul>
+  </li>
 </ul>
-<h3 id="代入">代入</h3>
+<h3 id="3-代入">代入</h3>
 <p>（正規）パターンについて <strong>代入</strong> という操作を定義する.</p>
 <p>あるパターンについて, その中に出現する変数一つをパターンで置き換える操作を代入という. 代入によって出来る文字列はやはりパターンである. 正規パターンの場合は正規パターンで置き換える.</p>
 <p>そして, 正規でないパターンの場合, 同じ変数が複数回出現することがあるが, その場合は全て同じパターンで置き換える. また正規パターンの場合は代入によって変数が衝突して正規でなくなる可能性があるが, そのような代入は許さず, 代入でできるパターンも正規であるよう保証する.</p>
-<p>パターン <span class="math inline">\(p\)</span> 中の変数 <span class="math inline">\(x\)</span> を <span class="math inline">\(q\)</span> で置き換えて出来るパターンを <span class="math inline">\(p[q/x]\)</span> と書くことにする.</p>
+<p>パターン \(p\) 中の変数 \(x\) を \(q\) で置き換えて出来るパターンを \(p[q&#x2F;x]\) と書くことにする.</p>
 <p>以下に代入の例を挙げる.</p>
 <ul>
-<li><span class="math inline">\((1x4y)[z/x] = 1z4y\)</span></li>
-<li><span class="math inline">\((1x4y)[23/x] = 1234y\)</span></li>
-<li><span class="math inline">\((1x4y)[x3/x] = 1x34y\)</span></li>
-<li><span class="math inline">\((1x4yy)[5/y] = 1x455\)</span> (正規でない場合)</li>
+  <li>\((1x4y)[z&#x2F;x] = 1z4y\)</li>
+  <li>\((1x4y)[23&#x2F;x] = 1234y\)</li>
+  <li>\((1x4y)[x3&#x2F;x] = 1x34y\)</li>
+  <li>\((1x4yy)[5&#x2F;y] = 1x455\) (正規でない場合)</li>
 </ul>
 <p>今パターンは1文字以上であると定義したので, 変数への代入によって全体の文字数は減らない. 変数をただ消すだけのことができないのでこれを <strong>消去不能 (non-erasing)</strong> パターンと呼ぶ.</p>
 <p>バリエーションとして, 特別に空文字列の代入も許す代入もあり, それは <strong>消去可能 (erasing)</strong> パターンと呼ぶ. 当然表現力としてはこちらのほうが豊かである.</p>
 <p>以下は消去可能パターンの代入の例.</p>
 <ul>
-<li><span class="math inline">\((1xy)[/x] = 1y\)</span></li>
+  <li>\((1xy)[&#x2F;x] = 1y\)</li>
 </ul>
-<blockquote>
-<p>ちなみに代入という操作は <a href="https://link.springer.com/chapter/10.1007/3-540-11980-9_19">Shinohara91</a> では単に &quot;any (possibly erasing) homomorphism from P to P&quot; つまりパターンからパターンへの準同型写像であって, ただし &quot;If f(a) = a for any constant a&quot; つまりアルファベット自体はアルファベット自体に写すようなもの, と定義されている. 準同型の意味であるが, おそらく文字列結合に関する準同型のことだろうと思われる. すなわち <span class="math inline">\(\theta a \cdot \theta b = \theta (a \cdot b)\)</span> を満たす <span class="math inline">\(\theta\)</span> 全てを代入と呼ぶ.</p>
-</blockquote>
-<h3 id="正規パターン言語">正規パターン言語</h3>
+<blockquote>ちなみに代入という操作は <a href="https://link.springer.com/chapter/10.1007/3-540-11980-9_19">Shinohara91</a> では単に "any (possibly erasing) homomorphism from P to P" つまりパターンからパターンへの準同型写像であって, ただし "If f(a) = a for any constant a" つまりアルファベット自体はアルファベット自体に写すようなもの, と定義されている. 準同型の意味であるが, おそらく文字列結合に関する準同型のことだろうと思われる. すなわち \(\theta a \cdot \theta b = \theta (a \cdot b)\) を満たす \(\theta\) 全てを代入と呼ぶ.</blockquote>
+<h3 id="3-正規パターン言語">正規パターン言語</h3>
 <p>以下, 正規パターンに絞って話すが, パターンでも同じ. 正規パターン全体を RP と書くことにする. また消去不能か可能かは先に決めておけばどちらでもいい.</p>
-<h3 id="正規パターンの汎化システム">正規パターンの汎化システム</h3>
-<p>正規パターンを description とし, 代入の関係を順序にすることで汎化システムになる. すなわち, <span class="math inline">\(q\)</span> にある代入を行うと <span class="math inline">\(p\)</span> になるとき, <span class="math inline">\(p \preceq q\)</span> と定める. <span class="math display">\[\exists x \in X, \exists r \in RP, p = q[x/r] \iff p \preceq q\]</span> このとき <span class="math inline">\((RP, \preceq)\)</span> は汎化システムである.</p>
-<h3 id="同値関係">同値関係</h3>
-<p>普通の順序の場合と同様に <span class="math display">\[p = q \iff p \preceq q \land q \preceq p\]</span> と定義する.</p>
-<p>これによって同値になるのは, 全く見た目が同じ場合の他に変数の置換がある. 例えば <span class="math inline">\(x = y\)</span> である. これは変数一つに変数一つを代入した場合.</p>
-<p>消去可能パターンの場合はそれに加えて, 変数一つに1つ以上の変数を代入するのも同値関係である. 例えば <span class="math inline">\(x = xy = xyz\)</span> である. 0個にしちゃうと戻せないのでだめ. <span class="math inline">\(0 \preceq 0x\)</span> だが <span class="math inline">\(0 \succeq 0x\)</span> ではない.</p>
-<h3 id="正規パターン言語-1">正規パターン言語</h3>
+<h3 id="3-正規パターンの汎化システム">正規パターンの汎化システム</h3>
+<p>正規パターンを description とし, 代入の関係を順序にすることで汎化システムになる. すなわち, \(q\) にある代入を行うと \(p\) になるとき, \(p \preceq q\) と定める.</p>
+\[\exists x \in X, \exists r \in RP, p = q[x&#x2F;r] \iff p \preceq q\]
+<p>このとき \((RP, \preceq)\) は汎化システムである.</p>
+<h3 id="3-同値関係">同値関係</h3>
+<p>普通の順序の場合と同様に</p>
+\[p = q \iff p \preceq q \land q \preceq p\]
+<p>と定義する.</p>
+<p>これによって同値になるのは, 全く見た目が同じ場合の他に変数の置換がある. 例えば \(x = y\) である. これは変数一つに変数一つを代入した場合.</p>
+<p>消去可能パターンの場合はそれに加えて, 変数一つに1つ以上の変数を代入するのも同値関係である. 例えば \(x = xy = xyz\) である. 0個にしちゃうと戻せないのでだめ. \(0 \preceq 0x\) だが \(0 \succeq 0x\) ではない.</p>
+<h3 id="3-正規パターン言語">正規パターン言語</h3>
 <p>RP に対して汎化システムを定義したので言語を定義出来る. それを正規パターン言語と呼ぶ. 以下に例を示す.</p>
 <ul>
-<li><span class="math inline">\(L(0x01y0) = \{ 0x01y0 \mid x \in \Sigma^+, y \in \Sigma^+ \}\)</span> (消去不能の場合)</li>
-<li><span class="math inline">\(L(0x01y0) = \{ 0x01y0 \mid x \in \Sigma^*, y \in \Sigma^* \}\)</span> (消去可能の場合)</li>
+  <li>\(L(0x01y0) = \{ 0x01y0 \mid x \in \Sigma^+, y \in \Sigma^+ \}\) (消去不能の場合)</li>
+  <li>\(L(0x01y0) = \{ 0x01y0 \mid x \in \Sigma^*, y \in \Sigma^* \}\) (消去可能の場合)</li>
 </ul>
-<p>さて <span class="math inline">\(\preceq\)</span> の極小元のことを object と呼ぶと先に延べたが, 明らかに object とは <span class="math inline">\(\Sigma^+\)</span> のことであり, 言語の元のことである.</p>
-<h3 id="正規パターン言語の完全性">正規パターン言語の完全性</h3>
-<p><span class="math inline">\(|\Sigma| &gt; 2\)</span> のとき以下は成り立ち, その汎化システムは完全である. <span class="math display">\[L(p) \subseteq L(q) \implies p \preceq q\]</span> しかし <span class="math inline">\(|\Sigma| = 2\)</span> のときは凡例があり成り立たない.</p>
-<h3 id="アルファベットサイズが-2-の消去可能正規パターン言語の汎化システムは不完全">アルファベットサイズが 2 の消去可能正規パターン言語の汎化システムは不完全</h3>
-<p><span class="math inline">\(\Sigma=\{0,1\}\)</span> とする. コレに対して次の2つの正規パターンを考える.</p>
+<p>さて \(\preceq\) の極小元のことを object と呼ぶと先に延べたが, 明らかに object とは \(\Sigma^+\) のことであり, 言語の元のことである.</p>
+<h3 id="3-正規パターン言語の完全性">正規パターン言語の完全性</h3>
+<p>\(|\Sigma| &gt; 2\) のとき以下は成り立ち, その汎化システムは完全である.</p>
+\[L(p) \subseteq L(q) \implies p \preceq q\]
+<p>しかし \(|\Sigma| = 2\) のときは凡例があり成り立たない.</p>
+<h3 id="3-アルファベットサイズが 2 の消去可能正規パターン言語の汎化システムは不完全">アルファベットサイズが 2 の消去可能正規パターン言語の汎化システムは不完全</h3>
+<p>\(\Sigma=\{0,1\}\) とする. コレに対して次の2つの正規パターンを考える.</p>
 <ul>
-<li><span class="math inline">\(p = x 01 y 0 z\)</span></li>
-<li><span class="math inline">\(q = x 0 y 10 z\)</span></li>
+  <li>\(p = x 01 y 0 z\)</li>
+  <li>\(q = x 0 y 10 z\)</li>
 </ul>
-<p><span class="math inline">\(L(p) = L(q)\)</span> であるが <span class="math inline">\(p \not\preceq q\)</span> かつ <span class="math inline">\(q \not\preceq p\)</span> である.</p>
-<h3 id="アルファベットサイズが-3-以上の消去可能正規パターン言語の汎化システムは完全">アルファベットサイズが 3 以上の消去可能正規パターン言語の汎化システムは完全</h3>
+<p>\(L(p) = L(q)\) であるが \(p \not\preceq q\) かつ \(q \not\preceq p\) である.</p>
+<h3 id="3-アルファベットサイズが 3 以上の消去可能正規パターン言語の汎化システムは完全">アルファベットサイズが 3 以上の消去可能正規パターン言語の汎化システムは完全</h3>
 <p>証明は <a href="https://link.springer.com/chapter/10.1007/3-540-11980-9_19">Shinohara91</a> による.</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -236,5 +244,9 @@ s \in L(p)
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

@@ -1,75 +1,77 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="description" content="アダマール変換/高速 Walsh-Hadamard 変換/xor-畳み込み/" />
-  <meta property="og:url" content="http://cympfh.cc/taglibro">
-  <meta property="og:type" content="article">
-  <meta property="og:title" content="アダマール変換, 高速 Walsh-Hadamard 変換, xor-畳み込み" />
-  <meta property="og:description" content="アダマール変換/高速 Walsh-Hadamard 変換/xor-畳み込み/" />
-  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:site" content="@cympfh" />
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>アダマール変換, 高速 Walsh-Hadamard 変換, xor-畳み込み</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-svg-full.js"></script>
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
     <a href='index.html'><i class="fa fa-stumbleupon"></i></a>
 </header>
-<header>
-<h1 class="title">アダマール変換, 高速 Walsh-Hadamard 変換, xor-畳み込み</h1>
-</header>
-<p class="date" style="text-align: right">
-2020-12-05 (Sat.)
-</p>
-<div class="is-pulled-right">
-<p><a class='tag is-red' href=index.html#線形代数>線形代数</a> <a class='tag is-red' href=index.html#競技プログラミング>競技プログラミング</a></p>
-</div>
-<p><span class="math inline">\(\def\ket#1{|#1\rangle}\)</span></p>
-<h2 id="アダマール変換">アダマール変換</h2>
-<p>次で定められる <span class="math inline">\(2^k \times 2^k\)</span> 行列をアダマール行列という.</p>
+
+<h1 class="title" id="1-アダマール変換, 高速 Walsh-Hadamard 変換, xor-畳み込み">アダマール変換, 高速 Walsh-Hadamard 変換, xor-畳み込み</h1>
+<p><p class=date style='text-align: right'>2020-12-05 (Sat.)</p> <div class='is-pulled-right'> <a class='tag is-red' href=index.html#線形代数>線形代数</a> <a class='tag is-red' href=index.html#競技プログラミング>競技プログラミング</a> </div></p>
+<p>\(\def\ket#1{|#1\rangle}\)</p>
+<h2 id="2-アダマール変換">アダマール変換</h2>
+<p>次で定められる \(2^k \times 2^k\) 行列をアダマール行列という.</p>
 <ul>
-<li><span class="math inline">\(H_0 = \left[ \begin{array}{c} 1 \\ \end{array} \right]\)</span></li>
-<li><span class="math inline">\(H_1 = \frac{1}{\sqrt{2}} \left[ \begin{array}{cc} 1 &amp; 1 \\ 1 &amp; -1 \\ \end{array} \right]\)</span></li>
-<li><span class="math inline">\(H_{n+1} = \frac{1}{\sqrt{2^{n+1}}} \left[ \begin{array}{cc} H_n &amp; H_n \\ H_n &amp; -H_n \\ \end{array} \right]\)</span></li>
+  <li>\(H_0 = \left[ \begin{array}{c} 1 \\ \end{array} \right]\)</li>
+  <li>\(H_1 = \frac{1}{\sqrt{2}} \left[ \begin{array}{cc} 1 &amp; 1 \\ 1 &amp; -1 \\ \end{array} \right]\)</li>
+  <li>\(H_{n+1} = \frac{1}{\sqrt{2^{n+1}}} \left[ \begin{array}{cc} H_n &amp; H_n \\ H_n &amp; -H_n \\ \end{array} \right]\)</li>
 </ul>
 <p>この行列が定める線形変換を <strong>アダマール変換</strong> という.</p>
-<p>すなわちアダマール変換は長さ <span class="math inline">\(n=2^k\)</span> の実ベクトル（整数または複素数の上のベクトルでもよい）について <span class="math inline">\(x \mapsto H_n x\)</span> と写す.</p>
-<h3 id="逆変換">逆変換</h3>
-<p><span class="math display">\[H_n H_n = I_n\]</span> が成り立つので, <span class="math inline">\(H_n\)</span> 自身が逆行列になっている.</p>
-<h3 id="定数倍のテクニック">定数倍のテクニック</h3>
-<p>変換するベクトルが整数の場合であっても, 上の行列は <span class="math inline">\(\sqrt{2}\)</span> のせいで実数に写してしまう. 計算機なんかで誤差のない計算をしたい場合にはせっかくなので整数の上で計算を閉じさせたい. そこで,</p>
+<p>すなわちアダマール変換は長さ \(n=2^k\) の実ベクトル（整数または複素数の上のベクトルでもよい）について \(x \mapsto H_n x\) と写す.</p>
+<h3 id="3-逆変換">逆変換</h3>
+\[H_n H_n = I_n\]
+<p>が成り立つので, \(H_n\) 自身が逆行列になっている.</p>
+<h3 id="3-定数倍のテクニック">定数倍のテクニック</h3>
+<p>変換するベクトルが整数の場合であっても, 上の行列は \(\sqrt{2}\) のせいで実数に写してしまう. 計算機なんかで誤差のない計算をしたい場合にはせっかくなので整数の上で計算を閉じさせたい. そこで,</p>
 <ul>
-<li>アダマール変換
-<ul>
-<li><span class="math inline">\(H_n^{\rightarrow} = \sqrt{2^{n+1}} H_n\)</span></li>
-</ul></li>
-<li>逆変換
-<ul>
-<li><span class="math inline">\(H_n^{\leftarrow} = \frac{1}{\sqrt{2^{n+1}}} H_n\)</span></li>
-</ul></li>
+  <li>
+    アダマール変換
+    <ul>
+      <li>\(H_n^{\rightarrow} = \sqrt{2^{n+1}} H_n\)</li>
+    </ul>
+  </li>
+  <li>
+    逆変換
+    <ul>
+      <li>\(H_n^{\leftarrow} = \frac{1}{\sqrt{2^{n+1}}} H_n\)</li>
+    </ul>
+  </li>
 </ul>
 <p>としておくことで整数の範囲で全て計算が出来る. またこれは単に定数倍をしているだけなので, これから言うようなアダマール変換に関する性質は尚保っている.</p>
-<h2 id="高速-walsh-hadamard-変換">高速 Walsh-Hadamard 変換</h2>
-<p>愚直に行列演算としてアダマール変換を計算するとその計算時間は <span class="math inline">\(O(n^2)\)</span> 掛かる. 一方でアダマール行列の再帰的な定義に沿って計算をすると <span class="math inline">\(O(n \log n) = O(nk)\)</span> に節約される. その方法は <a href="https://en.wikipedia.org/wiki/Fast_Walsh%E2%80%93Hadamard_transform">wikipedia/Fast_Walsh-Hadamard_transform</a> の図が詳しい. また Python による実装例そのものもそこにある.</p>
-<p>簡単に説明すれば, まず行列を 2x2 ブロックに区切って <span class="math inline">\(H_1\)</span> だと思って適用する. 次に 2x2 をひとかたまりだと思ってさらにその 2x2 ブロックを作って（全体としては 4x4）にやはり <span class="math inline">\(H_1\)</span> を適用する. ここまでで <span class="math inline">\(H_2\)</span> を適用したことになる. というのを最後まで繰り返していくだけ.</p>
-<h2 id="xor-畳み込み">xor-畳み込み</h2>
-<p>2つの, 長さ <span class="math inline">\(n=2^k\)</span> のベクトル（または数列） <span class="math inline">\(u,v \in \mathbb K^n\)</span> があるとする. ここで <span class="math inline">\(\mathbb K\)</span> は実数などの体. この二つのベクトルに関して次を定める: <span class="math display">\[X(u,v) = H_n (H_n u \ast H_n v).\]</span> 或いは <span class="math display">\[X(u,v) = H_n^{\leftarrow} (H_n^{\rightarrow} u \ast H_n^{\rightarrow} v)\]</span> としても同じである. ただしここで <span class="math inline">\(\ast\)</span> はベクトルの要素ごとの積のこととする <span class="math display">\[a \ast b = \sum_i a_i \times b_i \ket{i}.\]</span></p>
-<p>このとき, 次が成り立つ: <span class="math display">\[X(u,v) = \sum_{i,j} u_i \times v_j \ket{i \oplus j}\]</span> ここで <span class="math inline">\(\oplus\)</span> は2進数の桁ごとの xor のこと. また添字の <span class="math inline">\(i,j\)</span> は <span class="math inline">\(0\)</span> から始まって <span class="math inline">\(n\)</span> 未満までの自然数.</p>
-<p><span class="math inline">\(n=1,2\)</span> の場合だけ例を見る.</p>
-<h3 id="n1"><span class="math inline">\(n=1\)</span></h3>
-<p><span class="math inline">\(u=u_0 \ket{0}, v = v_0 \ket{0}\)</span> について, <span class="math display">\[X(u,v) = H_0 (H_0 u \ast H_0 v) = H_0 (u \ast v) = (u \times v) \ket{0}\]</span> ここで <span class="math inline">\(0 \oplus 0 = 0\)</span> なので確かにそうなっている.</p>
-<h3 id="n2"><span class="math inline">\(n=2\)</span></h3>
-<p><span class="math inline">\(u=\left[ u_0, u_1 \right]^T\)</span>, <span class="math inline">\(v=\left[ v_0, v_1 \right]^T\)</span> について, <span class="math display">\[\begin{align*}
+<h2 id="2-高速 Walsh-Hadamard 変換">高速 Walsh-Hadamard 変換</h2>
+<p>愚直に行列演算としてアダマール変換を計算するとその計算時間は \(O(n^2)\) 掛かる. 一方でアダマール行列の再帰的な定義に沿って計算をすると \(O(n \log n) = O(nk)\) に節約される. その方法は <a href="https://en.wikipedia.org/wiki/Fast_Walsh%E2%80%93Hadamard_transform">wikipedia/Fast_Walsh-Hadamard_transform</a> の図が詳しい. また Python による実装例そのものもそこにある.</p>
+<p>簡単に説明すれば, まず行列を 2x2 ブロックに区切って \(H_1\) だと思って適用する. 次に 2x2 をひとかたまりだと思ってさらにその 2x2 ブロックを作って（全体としては 4x4）にやはり \(H_1\) を適用する. ここまでで \(H_2\) を適用したことになる. というのを最後まで繰り返していくだけ.</p>
+<h2 id="2-xor-畳み込み">xor-畳み込み</h2>
+<p>2つの, 長さ \(n=2^k\) のベクトル（または数列） \(u,v \in \mathbb K^n\) があるとする. ここで \(\mathbb K\) は実数などの体. この二つのベクトルに関して次を定める:</p>
+\[X(u,v) = H_n (H_n u \ast H_n v).\]
+<p>或いは</p>
+\[X(u,v) = H_n^{\leftarrow} (H_n^{\rightarrow} u \ast H_n^{\rightarrow} v)\]
+<p>としても同じである. ただしここで \(\ast\) はベクトルの要素ごとの積のこととする</p>
+\[a \ast b = \sum_i a_i \times b_i \ket{i}.\]
+<p>このとき, 次が成り立つ:</p>
+\[X(u,v) = \sum_{i,j} u_i \times v_j \ket{i \oplus j}\]
+<p>ここで \(\oplus\) は2進数の桁ごとの xor のこと. また添字の \(i,j\) は \(0\) から始まって \(n\) 未満までの自然数.</p>
+<p>\(n=1,2\) の場合だけ例を見る.</p>
+<h3 id="3-\(n=1\)">\(n=1\)</h3>
+<p>\(u=u_0 \ket{0}, v = v_0 \ket{0}\) について,</p>
+\[X(u,v) = H_0 (H_0 u \ast H_0 v) = H_0 (u \ast v) = (u \times v) \ket{0}\]
+<p>ここで \(0 \oplus 0 = 0\) なので確かにそうなっている.</p>
+<h3 id="3-\(n=2\)">\(n=2\)</h3>
+<p>\(u=\left[ u_0, u_1 \right]^T\) , \(v=\left[ v_0, v_1 \right]^T\) について,</p>
+\[\begin{align*}
 X(u,v)
 &amp; = H_1^{\leftarrow} (H_1^{\rightarrow} u \ast H_1^{\rightarrow} v) \\
 &amp; =
@@ -83,17 +85,19 @@ H_1^{\leftarrow}
 u_0 v_0 + u_1 v_1 \\
 u_0 v_1 + u_1 v_0 \\
 \end{array} \right]
-\end{align*}\]</span></p>
-<h3 id="n-2"><span class="math inline">\(n &gt; 2\)</span></h3>
+\end{align*}\]
+<h3 id="3-\(n &gt; 2\)">\(n &gt; 2\)</h3>
 <p>帰納法によって示すことは出来るが書くのは大変にダルいので省く.</p>
-<h3 id="補足">補足</h3>
+<h3 id="3-補足">補足</h3>
 <p><a href="https://stackoverflow.com/questions/53591757/how-to-calculate-xor-dyadic-convolution-with-time-complexity-on-log-n">how to calculate XOR (dyadic) convolution with time complexity O(n log n)</a></p>
-<p>Karatsuba 法の <span class="math inline">\(+\)</span> を <span class="math inline">\(\oplus\)</span> に置き換えたものだと思うことが出来る.</p>
-<h3 id="補足-1">補足</h3>
-<p><span class="math display">\[H_n X(u,v) = H_n u \ast H_n v\]</span> と書くと, <span class="math inline">\(H_n\)</span> は畳み込みから積への準同型を与えるものだと思える.</p>
-<h3 id="補足-2">補足</h3>
+<p>Karatsuba 法の \(+\) を \(\oplus\) に置き換えたものだと思うことが出来る.</p>
+<h3 id="3-補足">補足</h3>
+\[H_n X(u,v) = H_n u \ast H_n v\]
+<p>と書くと, \(H_n\) は畳み込みから積への準同型を与えるものだと思える.</p>
+<h3 id="3-補足">補足</h3>
 <p><a href="https://kopricky.github.io/code/FFTs/fwht.html">/kopricky.github.io/code/FFTs/fwht.html</a></p>
 <p>によれば同じノリで or や and に関する畳み込みも可能らしい.</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -198,5 +202,9 @@ u_0 v_1 + u_1 v_0 \\
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

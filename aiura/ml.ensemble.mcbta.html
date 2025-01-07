@@ -1,72 +1,66 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="description" content="概要/アンサンブル学習/MCBTA; 予測器の選別/" />
-  <meta property="og:url" content="http://cympfh.cc/taglibro">
-  <meta property="og:type" content="article">
-  <meta property="og:title" content="MCBTA の定理" />
-  <meta property="og:description" content="概要/アンサンブル学習/MCBTA; 予測器の選別/" />
-  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:site" content="@cympfh" />
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>MCBTA の定理</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-svg-full.js"></script>
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
     <a href='index.html'><i class="fa fa-stumbleupon"></i></a>
 </header>
-<header>
-<h1 class="title">MCBTA の定理</h1>
-</header>
-<p class="date" style="text-align: right">
-2019-09-24 (Tue.)
-</p>
-<div class="is-pulled-right">
-<p><a class='tag is-red' href=index.html#アンサンブル学習>アンサンブル学習</a></p>
-</div>
-<p><span class="math inline">\(\def\err{\mathrm{error}}\)</span></p>
-<h2 id="概要">概要</h2>
+
+<h1 class="title" id="1-MCBTA の定理">MCBTA の定理</h1>
+<p><p class=date style='text-align: right'>2019-09-24 (Tue.)</p> <div class='is-pulled-right'> <a class='tag is-red' href=index.html#アンサンブル学習>アンサンブル学習</a> </div></p>
+<p>\(\def\err{\mathrm{error}}\)</p>
+<h2 id="2-概要">概要</h2>
 <p>多いは全てより良い (Many Could be Better Than All).</p>
-<h2 id="アンサンブル学習">アンサンブル学習</h2>
+<h2 id="2-アンサンブル学習">アンサンブル学習</h2>
 <p>ざっくりアンサンブル学習が何なのか述べる.</p>
-<p>教師あり学習とは真の関数 <span class="math inline">\(f \colon \mathcal X \to \mathcal Y\)</span> を有限のサンプル <span class="math inline">\(D \subset \mathcal X \times \mathcal Y\)</span> から推測すること （あるいはその分布を推測するなど） であるが, 何でもいいが一つの学習の枠組みによって構成した一つの予測器 <span class="math inline">\(h\)</span> (<span class="math inline">\(h \approx f\)</span>) ではその性能にどうしても限界がある.</p>
-<p>そこで予測器を複数通りの方法で複数構成する. <span class="math display">\[H = \{ h_1, h_2, \ldots, h_m \}\]</span></p>
-<p>これを一つの予測器と見做す. 予測の方法は各予測器 <span class="math inline">\(h_i\)</span> の何かしらの平均を取るとか, 多数決を取るなどする. 例えば重み付き平均を取るとすれば, <span class="math inline">\(H\)</span> を次のようにして予測関数と見做す.</p>
+<p>教師あり学習とは真の関数 \(f \colon \mathcal X \to \mathcal Y\) を有限のサンプル \(D \subset \mathcal X \times \mathcal Y\) から推測すること （あるいはその分布を推測するなど） であるが, 何でもいいが一つの学習の枠組みによって構成した一つの予測器 \(h\) ( \(h \approx f\) ) ではその性能にどうしても限界がある.</p>
+<p>そこで予測器を複数通りの方法で複数構成する.</p>
+\[H = \{ h_1, h_2, \ldots, h_m \}\]
+<p>これを一つの予測器と見做す. 予測の方法は各予測器 \(h_i\) の何かしらの平均を取るとか, 多数決を取るなどする. 例えば重み付き平均を取るとすれば, \(H\) を次のようにして予測関数と見做す.</p>
 <ul>
-<li><span class="math inline">\(H \colon \mathcal X \to \mathcal Y\)</span></li>
-<li><span class="math inline">\(H(x) = \sum_i w^i h_i(x)\)</span>
-<ul>
-<li><span class="math inline">\(w^i \geq 0; \sum_i w^i = 1\)</span></li>
-</ul></li>
+  <li>\(H \colon \mathcal X \to \mathcal Y\)</li>
+  <li>
+    \(H(x) = \sum_i w^i h_i(x)\)
+    <ul>
+      <li>\(w^i \geq 0; \sum_i w^i = 1\)</li>
+    </ul>
+  </li>
 </ul>
-<h3 id="アンサンブル予測器の予測誤差">アンサンブル予測器の予測誤差</h3>
-<p>これは <span class="math inline">\(h_i\)</span> どうしが互いの欠点を補うことを期待している. 例えばテストデータセットについて, 各データが <span class="math inline">\(H\)</span> の内の過半数には正しく予測されるが残りには誤って予測されるようなことを考える. この場合は各 <span class="math inline">\(h_i\)</span> を単体で使うとその性能はせいぜい 50% 強程度である. しかし常にどのデータも過半数には正しく予測されるのであれば, <span class="math inline">\(H\)</span> としての性能は 100% 正しく予測できることになる.</p>
-<p>もちろんこれは各 <span class="math inline">\(h_i\)</span> の性能が多様でバラバラであることを期待している. (だから <span class="math inline">\(H\)</span> の構成方法には工夫が必要になる.)</p>
-<p>さて先のように <span class="math inline">\(H = w^i h_i\)</span> という重み付き平均で構成した場合の予測誤差を評価してみる. 平均の自乗誤差は <span class="math inline">\(\int \left[H(x) - f(x)\right]^2 p(x) dx\)</span> である.</p>
-<p><span class="math display">\[\begin{align*}
+<h3 id="3-アンサンブル予測器の予測誤差">アンサンブル予測器の予測誤差</h3>
+<p>これは \(h_i\) どうしが互いの欠点を補うことを期待している. 例えばテストデータセットについて, 各データが \(H\) の内の過半数には正しく予測されるが残りには誤って予測されるようなことを考える. この場合は各 \(h_i\) を単体で使うとその性能はせいぜい 50% 強程度である. しかし常にどのデータも過半数には正しく予測されるのであれば, \(H\) としての性能は 100% 正しく予測できることになる.</p>
+<p>もちろんこれは各 \(h_i\) の性能が多様でバラバラであることを期待している. (だから \(H\) の構成方法には工夫が必要になる.)</p>
+<p>さて先のように \(H = w^i h_i\) という重み付き平均で構成した場合の予測誤差を評価してみる. 平均の自乗誤差は \(\int \left[H(x) - f(x)\right]^2 p(x) dx\) である.</p>
+\[\begin{align*}
 \int \left[H(x) - f(x)\right]^2 p(x) dx
 &amp; = \int \left[\sum_i w^i h_i(x) - f(x)\right]^2 p(x) dx \\
 &amp; = \int \left[\sum_i w^i \left( h_i(x) - f(x) \right) \right]^2 p(x) dx &amp; ~~ \sum_i w^i=1 \text{ であることを使っている } \\
 &amp; = \int \left[\sum_i w^i \left( h_i(x) - f(x) \right) \right] \left[ \sum_j w^j \left( h_j(x)-f(x) \right) \right] p(x) dx \\
 &amp; = \sum_i \sum_j w^i w^j \int \left( h_i(x) - f(x) \right) \left( h_j(x)-f(x) \right) p(x) dx \\
-\end{align*}\]</span></p>
-<p>最後の <span class="math inline">\(\int \left( h_i(x) - f(x) \right) \left( h_j(x)-f(x) \right) p(x) dx\)</span> を <span class="math inline">\(C_{ij}\)</span> と置くことにする. これは各 <span class="math inline">\(h_i, h_j\)</span> に関する値で, <span class="math inline">\(i=j\)</span> なら普通に <span class="math inline">\(h_i\)</span> 自体の予測誤差. 一般には <span class="math inline">\(h_i\)</span> と <span class="math inline">\(h_j\)</span> の誤差の相関になっている.</p>
-<p><span class="math display">\[\err(H) = w^i w^j C_{ij}\]</span></p>
-<h2 id="mcbta-予測器の選別">MCBTA; 予測器の選別</h2>
-<p>予測器のセット <span class="math inline">\(H\)</span> が与えられた時, 一般には <span class="math inline">\(H\)</span> 全てを使うのが最適ではなく, 適切に選んだ部分 <span class="math inline">\(H&#39; \subset H\)</span> が最適になり得る. これを MCBTA の定理という.</p>
-<h3 id="アンサンブル枝刈り">アンサンブル枝刈り</h3>
-<p>その選別に先に導出した <span class="math inline">\(\err\)</span> を使う. ただし簡単のため <span class="math inline">\(w^i = 1/n\)</span> (<span class="math inline">\(n\)</span> は <span class="math inline">\(H\)</span> のサイズ) とする. すると <span class="math display">\[\err(H) = \frac{1}{n^2} \sum_i \sum_j C_{ij}\]</span> になる. ここで仮に <span class="math inline">\(h_k\)</span> を抜いてみると, <span class="math inline">\(H&#39; = H \setminus \{ h_k \}\)</span> の誤差は <span class="math display">\[\err(H&#39;) = \frac{1}{(n-1)^2} \sum_{i \ne k} \sum_{j \ne k} C_{ij}\]</span></p>
-<p><span class="math inline">\(\err(H) &gt; \err(H&#39;)\)</span> とあれば <span class="math inline">\(h_k\)</span> を抜いていい.</p>
+\end{align*}\]
+<p>最後の \(\int \left( h_i(x) - f(x) \right) \left( h_j(x)-f(x) \right) p(x) dx\) を \(C_{ij}\) と置くことにする. これは各 \(h_i, h_j\) に関する値で, \(i=j\) なら普通に \(h_i\) 自体の予測誤差. 一般には \(h_i\) と \(h_j\) の誤差の相関になっている.</p>
+\[\err(H) = w^i w^j C_{ij}\]
+<h2 id="2-MCBTA; 予測器の選別">MCBTA; 予測器の選別</h2>
+<p>予測器のセット \(H\) が与えられた時, 一般には \(H\) 全てを使うのが最適ではなく, 適切に選んだ部分 \(H&#x27; \subset H\) が最適になり得る. これを MCBTA の定理という.</p>
+<h3 id="3-アンサンブル枝刈り">アンサンブル枝刈り</h3>
+<p>その選別に先に導出した \(\err\) を使う. ただし簡単のため \(w^i = 1&#x2F;n\) ( \(n\) は \(H\) のサイズ) とする. すると</p>
+\[\err(H) = \frac{1}{n^2} \sum_i \sum_j C_{ij}\]
+<p>になる. ここで仮に \(h_k\) を抜いてみると, \(H&#x27; = H \setminus \{ h_k \}\) の誤差は</p>
+\[\err(H&#x27;) = \frac{1}{(n-1)^2} \sum_{i \ne k} \sum_{j \ne k} C_{ij}\]
+<p>\(\err(H) &gt; \err(H&#x27;)\) とあれば \(h_k\) を抜いていい.</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -171,5 +165,9 @@
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

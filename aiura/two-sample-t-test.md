@@ -16,7 +16,9 @@ $\def\N{\mathcal N}\def\bar#1{\overline{#1}}$
 - $X_2^1, \ldots, X_2^{n_2} \sim \N_2$
 
 これらから $\mu_1 = \mu_2$ であるかどうかを検定したい.
-特にここでは $$\sigma_1 = \sigma_2$$ を仮定する.
+特にここでは
+$$\sigma_1 = \sigma_2$$
+を仮定する.
 
 ## 2標本t検定
 
@@ -71,16 +73,7 @@ $$\frac{1}{\sigma^2} (S_1 + S_2) \sim \chi^2_{n_1+n_2-2}$$
 
 以上から次の値が $t_{n_1+n_2-2}$ 分布に従うことが分かる.
 
-$$T = 
-\frac{
-\frac{\bar{X_1} - \bar{X_2}}{\sigma \sqrt{1/n_1+1/n_2}}
-}{
-\frac{1}{\sigma^2} (S_1 + S_2)
-}
-=
-\frac{\bar{X_1} - \bar{X_2}}{
-(1/n_1 + 1/n_2)
-\frac{S_1+S_2}{n_1 + n_2 - 2}}
-\sim t_{n_1+n_2-2}$$
+$$T = \frac{ \frac{\bar{X_1} - \bar{X_2}}{\sigma \sqrt{1/n_1+1/n_2}} }{ \frac{1}{\sigma^2} (S_1 + S_2) } = \frac{\bar{X_1} - \bar{X_2}}{ (1/n_1 + 1/n_2) \frac{S_1+S_2}{n_1 + n_2 - 2}} \sim t_{n_1+n_2-2}$$
 
 これを使った検定のことを, 表題のように言う.
+

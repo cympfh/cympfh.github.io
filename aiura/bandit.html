@@ -1,127 +1,86 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="description" content="参考文献/多腕バンディット問題/基本方針/Epsilon-Greedy/Epsilon-Greedy/Softmax 探索/UCB1 (Upper Confidence Bound)/UCB1-Tuned/" />
-  <meta property="og:url" content="http://cympfh.cc/taglibro">
-  <meta property="og:type" content="article">
-  <meta property="og:title" content="バンディットアルゴリズム" />
-  <meta property="og:description" content="参考文献/多腕バンディット問題/基本方針/Epsilon-Greedy/Epsilon-Greedy/Softmax 探索/UCB1 (Upper Confidence Bound)/UCB1-Tuned/" />
-  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:site" content="@cympfh" />
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>バンディットアルゴリズム</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-  </style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-svg-full.js"></script>
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
     <a href='index.html'><i class="fa fa-stumbleupon"></i></a>
 </header>
-<header>
-<h1 class="title">バンディットアルゴリズム</h1>
-</header>
-<p class="date" style="text-align: right">
-2020-04-23 (Thu.)
-</p>
-<div class="is-pulled-right">
-<p><a class='tag is-red' href=index.html#バンディット>バンディット</a> <a class='tag is-red' href=index.html#強化学習>強化学習</a></p>
-</div>
-<p><span class="math inline">\(\def\eps{\epsilon}\)</span></p>
-<h2 id="参考文献">参考文献</h2>
+
+<h1 class="title" id="1-バンディットアルゴリズム">バンディットアルゴリズム</h1>
+<p><p class=date style='text-align: right'>2020-04-23 (Thu.)</p> <div class='is-pulled-right'> <a class='tag is-red' href=index.html#バンディット>バンディット</a> <a class='tag is-red' href=index.html#強化学習>強化学習</a> </div></p>
+<p>\(\def\eps{\epsilon}\)</p>
+<h2 id="2-参考文献">参考文献</h2>
 <ul>
-<li><a href="https://arxiv.org/abs/1402.6028">&quot;Algorithms for multi-armed bandit problems&quot; arxiv:1402.6028</a></li>
+  <li><a href="https://arxiv.org/abs/1402.6028">"Algorithms for multi-armed bandit problems" arxiv:1402.6028</a></li>
 </ul>
-<h2 id="多腕バンディット問題">多腕バンディット問題</h2>
-<p><span class="math inline">\(N\)</span> 本の腕 <span class="math inline">\(\{0, 1, \ldots, N-1\}\)</span> がある. 時刻 <span class="math inline">\(t\)</span> に対して腕 <span class="math inline">\(i\)</span> には報酬の確率分布 <span class="math inline">\(\mu^i_t : \mathbb R^+\)</span> が決まっているが, この分布を直接観測することは出来ない.</p>
-<p>時刻 <span class="math inline">\(t\)</span> に依らずにこの分布が一定の場合を定常 (stationary) 多腕バンディットという. 逆に時刻で変化するような問題を非定常 (non-stationary) - という.</p>
-<p>各時刻 <span class="math inline">\(t=0,1,2,\ldots\)</span> にあなたは腕を一本選ぶことができる. 腕 <span class="math inline">\(i\)</span> を選ぶと報酬 <span class="math inline">\(X^i_t \sim \mu^i_t\)</span> が与えられる. 適切に腕を選ぶことで報酬の和 <span class="math display">\[R = \sum_t X^i_t\]</span> を最大化したい.</p>
-<h2 id="基本方針">基本方針</h2>
-<p>まずはじめは何もわからないので, すべての腕を一回ずつ引いて様子を見る. 報酬 <span class="math inline">\(X\)</span> を蓄積して <span class="math inline">\(mu\)</span> の平均を腕ごとに集計して, それが高いものを選ぶ. ただし集計が少ないと過小評価している可能性もあるので, そこを上手く頑張る.</p>
-<h2 id="epsilon-greedy">Epsilon-Greedy</h2>
+<h2 id="2-多腕バンディット問題">多腕バンディット問題</h2>
+<p>\(N\) 本の腕 \(\{0, 1, \ldots, N-1\}\) がある. 時刻 \(t\) に対して腕 \(i\) には報酬の確率分布 \(\mu^i_t : \mathbb R^+\) が決まっているが, この分布を直接観測することは出来ない.</p>
+<p>時刻 \(t\) に依らずにこの分布が一定の場合を定常 (stationary) 多腕バンディットという. 逆に時刻で変化するような問題を非定常 (non-stationary) - という.</p>
+<p>各時刻 \(t=0,1,2,\ldots\) にあなたは腕を一本選ぶことができる. 腕 \(i\) を選ぶと報酬 \(X^i_t \sim \mu^i_t\) が与えられる. 適切に腕を選ぶことで報酬の和</p>
+\[R = \sum_t X^i_t\]
+<p>を最大化したい.</p>
+<h2 id="2-基本方針">基本方針</h2>
+<p>まずはじめは何もわからないので, すべての腕を一回ずつ引いて様子を見る. 報酬 \(X\) を蓄積して \(mu\) の平均を腕ごとに集計して, それが高いものを選ぶ. ただし集計が少ないと過小評価している可能性もあるので, そこを上手く頑張る.</p>
+<h2 id="2-Epsilon-Greedy">Epsilon-Greedy</h2>
 <p>素朴であるが定常多腕バンディットにはそれなりに利く手法.</p>
-<p>パラメータ定数 <span class="math inline">\(\eps \in (0, 1)\)</span> をはじめに設定する.</p>
-<ol type="1">
-<li>はじめに各腕を一回ずつ引く</li>
-<li><span class="math inline">\(\eps\)</span> の確率で腕を一様ランダムに選ぶ</li>
-<li>残りの <span class="math inline">\(1 - \eps\)</span> の確率では, 今までに得た報酬の平均 <span class="math inline">\(\overline{X_i}\)</span> が最も高い腕 (greedy) を選ぶ</li>
+<p>パラメータ定数 \(\eps \in (0, 1)\) をはじめに設定する.</p>
+<ol>
+  <li>はじめに各腕を一回ずつ引く</li>
+  <li>\(\eps\) の確率で腕を一様ランダムに選ぶ</li>
+  <li>残りの \(1 - \eps\) の確率では, 今までに得た報酬の平均 \(\overline{X_i}\) が最も高い腕 (greedy) を選ぶ</li>
 </ol>
 <p>この 2. を探索, 3. を活用という.</p>
 <p>形式的に疑似コードで記述すると次の通り.</p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python">N: <span class="bu">int</span>  <span class="co"># 腕の本数</span>
-X_sum: List[<span class="bu">int</span>] <span class="op">=</span> [<span class="dv">0</span>] <span class="op">*</span> N  <span class="co"># 各腕の報酬和</span>
-N_arm: List[<span class="bu">int</span>] <span class="op">=</span> [<span class="dv">0</span>] <span class="op">*</span> N  <span class="co"># 各腕を試した回数</span>
+<pre><code class="code language-python">N: int  # 腕の本数
+X_sum: List[int] = [0] * N  # 各腕の報酬和
+N_arm: List[int] = [0] * N  # 各腕を試した回数
 
-<span class="cf">for</span> t <span class="kw">in</span> <span class="dv">0</span>..:
-    <span class="cf">if</span> t <span class="op">&lt;</span> N:
-        <span class="cf">yield</span> t
-    <span class="cf">elif</span> random.uniform() <span class="op">&lt;</span> eps:
-        <span class="cf">yield</span> random.uniform(<span class="dv">0</span>..N)
-    <span class="cf">else</span>:
-        <span class="cf">yield</span> argmax(X_sum[i] <span class="op">/</span> N_arm[i] <span class="cf">for</span> i <span class="kw">in</span> <span class="dv">0</span>..N)</code></pre></div>
-<h2 id="epsilon-greedysoftmax-探索">Epsilon-Greedy/Softmax 探索</h2>
+for t in 0..:
+    if t &lt; N:
+        yield t
+    elif random.uniform() &lt; eps:
+        yield random.uniform(0..N)
+    else:
+        yield argmax(X_sum[i] &#x2F; N_arm[i] for i in 0..N)
+</code></pre>
+<h2 id="2-Epsilon-Greedy/Softmax 探索">Epsilon-Greedy/Softmax 探索</h2>
 <p>Epsilon-Greedy の改良. 探索の際に一様乱数にしているのが勿体なくて, そこでも報酬の集計を使いたい. softmax サンプリングを用いる.</p>
-<p>活用時点での各腕の報酬の平均を <span class="math inline">\(\overline{X_i}\)</span> とするとき, 腕 <span class="math inline">\(i\)</span> を確率 <span class="math display">\[p_i = \frac{\exp(X_i/T)}{\sum_j \exp(X_j/T)}\]</span> で選ぶことにする.</p>
-<p>ここで <span class="math inline">\(T\)</span> は温度などと呼ばれるパラメータで, 時刻に従って <span class="math inline">\(T \colon T_0 \to T_1\)</span> (<span class="math inline">\(T_0 &gt; T_1 &gt; 0\)</span>) と変化させていく. この温度は十分大きいとき <span class="math inline">\(X_i/T\)</span> の差が減ってくために活用はほとんど一様ランダムに近くなる. 一方で十分ゼロに小さいときは差が極端になるために活用はほとんど greedy に近くなる.</p>
-<h2 id="ucb1-upper-confidence-bound">UCB1 (Upper Confidence Bound)</h2>
+<p>活用時点での各腕の報酬の平均を \(\overline{X_i}\) とするとき, 腕 \(i\) を確率</p>
+\[p_i = \frac{\exp(X_i&#x2F;T)}{\sum_j \exp(X_j&#x2F;T)}\]
+<p>で選ぶことにする.</p>
+<p>ここで \(T\) は温度などと呼ばれるパラメータで, 時刻に従って \(T \colon T_0 \to T_1\) ( \(T_0 &gt; T_1 &gt; 0\) ) と変化させていく. この温度は十分大きいとき \(X_i&#x2F;T\) の差が減ってくために活用はほとんど一様ランダムに近くなる. 一方で十分ゼロに小さいときは差が極端になるために活用はほとんど greedy に近くなる.</p>
+<h2 id="2-UCB1 (Upper Confidence Bound)">UCB1 (Upper Confidence Bound)</h2>
 <p>さらに Epsilon-Greedy の何がイケてないかを考えると, 単に平均だけを取って使ってることである. サンプリング数が少ないとき正しく分布の平均は取れない（大数の法則の逆）. その試行回数から信頼区間を見積もることはできる. その区間の上限を使うことで, 平均が小さくても試行回数が少ない腕を楽観的に使うようになる.</p>
 <p>この手法では活用と探索を両方兼ねて区別していない.</p>
-<ol type="1">
-<li>はじめに各腕を一回ずつ選ぶ</li>
-<li>信頼区間の上限 <span class="math inline">\(\overline{X_i} + c(i)\)</span> が最も高いものを選ぶ</li>
+<ol>
+  <li>はじめに各腕を一回ずつ選ぶ</li>
+  <li>信頼区間の上限 \(\overline{X_i} + c(i)\) が最も高いものを選ぶ</li>
 </ol>
-<p>ここで <span class="math inline">\(\overline{X_i}\)</span> は今までに得た腕ごとの報酬の平均. <span class="math inline">\(c(i)\)</span> は信頼区間の幅で, 次で計算される.</p>
-<p><span class="math display">\[c(i) = \sqrt{\frac{2 \log t}{N_i}}\]</span></p>
-<p>またここで分母の <span class="math inline">\(N_i\)</span> は今までに腕 <span class="math inline">\(i\)</span> を選んだ回数. <span class="math inline">\(t\)</span> は時刻であるが, これは今までに腕を選んだ回数.</p>
-<h2 id="ucb1-tuned">UCB1-Tuned</h2>
+<p>ここで \(\overline{X_i}\) は今までに得た腕ごとの報酬の平均. \(c(i)\) は信頼区間の幅で, 次で計算される.</p>
+\[c(i) = \sqrt{\frac{2 \log t}{N_i}}\]
+<p>またここで分母の \(N_i\) は今までに腕 \(i\) を選んだ回数. \(t\) は時刻であるが, これは今までに腕を選んだ回数.</p>
+<h2 id="2-UCB1-Tuned">UCB1-Tuned</h2>
 <p>UCB1 と一緒に提案されてる別バージョンのアルゴリズム.</p>
 <p>信頼区間を改良したもの. ただしこの改良は理論的なものというよりは経験的に書き換えたものに過ぎない.</p>
-<p><span class="math inline">\(c(i)\)</span> を次に書き換える.</p>
-<p><span class="math display">\[c(i) = \sqrt{\frac{\log t}{N_i} \min\{1/4, V_i\} }\]</span> where <span class="math display">\[V_i = \sigma_i^2 + \sqrt{\frac{2 \log t}{N_i}}\]</span> <span class="math inline">\(\sigma_i^2\)</span> は今まで得た報酬から見積もる標準偏差.</p>
+<p>\(c(i)\) を次に書き換える.</p>
+\[c(i) = \sqrt{\frac{\log t}{N_i} \min\{1&#x2F;4, V_i\} }\]
+<p>where</p>
+\[V_i = \sigma_i^2 + \sqrt{\frac{2 \log t}{N_i}}\]
+<p>\(\sigma_i^2\) は今まで得た報酬から見積もる標準偏差.</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -226,5 +185,9 @@ N_arm: List[<span class="bu">int</span>] <span class="op">=</span> [<span class=
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

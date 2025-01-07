@@ -22,7 +22,9 @@ $$f \sim_\sigma g \iff (1 \otimes f) c_X \sigma = (1 \otimes g) c_X \sigma.$$
 この $\sim_\sigma$ の関係を, **$\sigma$-概同値 ($\sigma$-almost equal)** という.
 
 これはCD圏では $\Hom(X,Y)$ の上の同値関係として定義される.
-この同値で割った商集合を $$\Hom(X,Y)/\sigma$$ と書くことにする.
+この同値で割った商集合を
+$$\Hom(X,Y)/\sigma$$
+と書くことにする.
 
 ## 状態の圏
 

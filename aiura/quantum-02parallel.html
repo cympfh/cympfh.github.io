@@ -1,94 +1,94 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="description" content="量子並列性/ドイチュのアルゴリズム (Deutsch's algorithm)/" />
-  <meta property="og:url" content="http://cympfh.cc/taglibro">
-  <meta property="og:type" content="article">
-  <meta property="og:title" content="量子並列性とドイチュのアルゴリズム" />
-  <meta property="og:description" content="量子並列性/ドイチュのアルゴリズム (Deutsch's algorithm)/" />
-  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:site" content="@cympfh" />
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>量子並列性とドイチュのアルゴリズム</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-svg-full.js"></script>
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
     <a href='index.html'><i class="fa fa-stumbleupon"></i></a>
 </header>
-<header>
-<h1 class="title">量子並列性とドイチュのアルゴリズム</h1>
-</header>
-<p class="date" style="text-align: right">
-2019-09-08 (Sun.)
-</p>
-<div class="is-pulled-right">
-<p><a class='tag is-red' href=index.html#量子計算>量子計算</a></p>
-</div>
-<p><span class="math display">\[\newcommand{\ket}[1]{\left|#1\right\rangle}
+
+<h1 class="title" id="1-量子並列性とドイチュのアルゴリズム">量子並列性とドイチュのアルゴリズム</h1>
+<p><p class=date style='text-align: right'>2019-09-08 (Sun.)</p> <div class='is-pulled-right'> <a class='tag is-red' href=index.html#量子計算>量子計算</a> </div></p>
+\[\newcommand{\ket}[1]{\left|#1\right\rangle}
 \newcommand{\true}{\mathrm{true}}
 \newcommand{\false}{\mathrm{false}}
 \newcommand{\exact}{\mathrm{EXACT}}
 \newcommand{\threshold}{\mathrm{THRESHOLD}}
-\newcommand{\concat}{+\!\!\!+}\]</span></p>
-<h2 id="量子並列性">量子並列性</h2>
-<p><span class="math inline">\(n\)</span> qbit の基底の状態 <span class="math inline">\(\ket{ij\ldots k}\)</span> を普通の古典 <span class="math inline">\(n\)</span> bit <span class="math inline">\(i,j,\ldots,k\)</span> と同一視する. <span class="math inline">\(n\)</span> bit を入力にして 1 bit を出力する古典回路 <span class="math inline">\(f\)</span> について, 同程度の効率で計算できる次のような量子ゲート <span class="math inline">\(U_f\)</span> が存在する: <span class="math display">\[U_f (x \otimes \ket{i}) = x \otimes \ket{i \oplus f(x)}\]</span> ここで <span class="math inline">\(x\)</span> は <span class="math inline">\(n\)</span> qbit. <span class="math inline">\(i\)</span> は <span class="math inline">\(0\)</span> または <span class="math inline">\(1\)</span> (もちろん) で, <span class="math inline">\(\oplus\)</span> は排他的論理和.</p>
-<p>さて, アダマールゲートを用いれば2つの状態を全く同等に含んだ量子を作れるのだった. それを <span class="math inline">\(U_f\)</span> に通すことで, <strong>実質的に</strong> <span class="math inline">\(f(0)\)</span> と <span class="math inline">\(f(1)\)</span> を並列に計算するようなことができる. 具体的には次を実行する.</p>
-<ol type="1">
-<li><span class="math inline">\(H \ket{0}\)</span> に <span class="math inline">\(\ket{0}\)</span> を並べる
-<ul>
-<li><span class="math inline">\((H \ket{0}) \otimes \ket{0} = \frac{1}{\sqrt{2}} \ket{00} + \frac{1}{\sqrt{2}} \ket{10}\)</span></li>
-</ul></li>
-<li>これを <span class="math inline">\(U_f\)</span> に通す
-<ul>
-<li><span class="math inline">\(\frac{1}{\sqrt{2}} \ket{0, f(0)} + \frac{1}{\sqrt{2}} \ket{1, f(1)}\)</span></li>
-</ul></li>
+\newcommand{\concat}{+\!\!\!+}\]
+<h2 id="2-量子並列性">量子並列性</h2>
+<p>\(n\) qbit の基底の状態 \(\ket{ij\ldots k}\) を普通の古典 \(n\) bit \(i,j,\ldots,k\) と同一視する. \(n\) bit を入力にして 1 bit を出力する古典回路 \(f\) について, 同程度の効率で計算できる次のような量子ゲート \(U_f\) が存在する:</p>
+\[U_f (x \otimes \ket{i}) = x \otimes \ket{i \oplus f(x)}\]
+<p>ここで \(x\) は \(n\) qbit. \(i\) は \(0\) または \(1\) (もちろん) で, \(\oplus\) は排他的論理和.</p>
+<p>さて, アダマールゲートを用いれば2つの状態を全く同等に含んだ量子を作れるのだった. それを \(U_f\) に通すことで, <strong>実質的に</strong> \(f(0)\) と \(f(1)\) を並列に計算するようなことができる. 具体的には次を実行する.</p>
+<ol>
+  <li>
+    \(H \ket{0}\) に \(\ket{0}\) を並べる
+    <ul>
+      <li>\((H \ket{0}) \otimes \ket{0} = \frac{1}{\sqrt{2}} \ket{00} + \frac{1}{\sqrt{2}} \ket{10}\)</li>
+    </ul>
+  </li>
+  <li>
+    これを \(U_f\) に通す
+    <ul>
+      <li>\(\frac{1}{\sqrt{2}} \ket{0, f(0)} + \frac{1}{\sqrt{2}} \ket{1, f(1)}\)</li>
+    </ul>
+  </li>
 </ol>
-<p>一度の <span class="math inline">\(U_f\)</span> の計算で <span class="math inline">\(f(0)\)</span> と <span class="math inline">\(f(1)\)</span> が行われているのが分かる. この性質を <strong>量子並列性</strong> という. ただし, これをこのまま観測するだけでは結局そのどちらか <span class="math inline">\(\ket{x, f(x)}\)</span> しか得られない. 並列性のメリットを享受するには工夫が必要である. その古典的な一例であるドイチュのアルゴリズムを次に見る.</p>
-<h2 id="ドイチュのアルゴリズム-deutschs-algorithm">ドイチュのアルゴリズム (Deutsch's algorithm)</h2>
-<p>1 bit から 1 bit を出力する古典回路 <span class="math inline">\(f\)</span> について, <span class="math inline">\(f(0) \oplus f(1)\)</span> を一度の <span class="math inline">\(U_f\)</span> (<span class="math inline">\(f\)</span> 相当の計算) で計算することができる.</p>
+<p>一度の \(U_f\) の計算で \(f(0)\) と \(f(1)\) が行われているのが分かる. この性質を <strong>量子並列性</strong> という. ただし, これをこのまま観測するだけでは結局そのどちらか \(\ket{x, f(x)}\) しか得られない. 並列性のメリットを享受するには工夫が必要である. その古典的な一例であるドイチュのアルゴリズムを次に見る.</p>
+<h2 id="2-ドイチュのアルゴリズム (Deutsch's algorithm)">ドイチュのアルゴリズム (Deutsch's algorithm)</h2>
+<p>1 bit から 1 bit を出力する古典回路 \(f\) について, \(f(0) \oplus f(1)\) を一度の \(U_f\) ( \(f\) 相当の計算) で計算することができる.</p>
 <p>アルゴリズムは次の通り:</p>
-<ol type="1">
-<li><span class="math inline">\(\ket{+} = H \ket{0}\)</span> と <span class="math inline">\(\ket{-} = H \ket{1}\)</span> を得る
-<ul>
-<li>これを並べたものを <span class="math inline">\(\ket{+-} = \ket{+} \otimes \ket{-}\)</span> とする</li>
-</ul></li>
-<li><span class="math inline">\(\ket{\phi_1, \phi_2} = U_f \ket{+-}\)</span></li>
-<li><span class="math inline">\(H \ket{\phi_1, \phi_2} = H \ket{\phi_1} \otimes H\ket{\phi_2}\)</span> を計算して 1 qbit 目を観測する</li>
+<ol>
+  <li>
+    \(\ket{+} = H \ket{0}\) と \(\ket{-} = H \ket{1}\) を得る
+    <ul>
+      <li>これを並べたものを \(\ket{+-} = \ket{+} \otimes \ket{-}\) とする</li>
+    </ul>
+  </li>
+  <li>\(\ket{\phi_1, \phi_2} = U_f \ket{+-}\)</li>
+  <li>\(H \ket{\phi_1, \phi_2} = H \ket{\phi_1} \otimes H\ket{\phi_2}\) を計算して 1 qbit 目を観測する</li>
 </ol>
 <p>具体的に計算を追う.</p>
-<ol type="1">
-<li><span class="math inline">\(\ket{+-} = \ket{+} \otimes \ket{-} = \frac{1}{2} (\ket{00} - \ket{01} + \ket{10} - \ket{11})\)</span></li>
-<li><span class="math inline">\(U_f \ket{+-} = \frac{1}{2} (\ket{0,f(0)} - \ket{0,1-f(0)} + \ket{1,f(1)} - \ket{1,1-f(1)})\)</span></li>
-<li><span class="math inline">\(H(U_f \ket{+-}) = \frac{1}{2} \left[ (\ket{+} \otimes H\ket{f(0)}) - (\ket{+} \otimes H\ket{1 - f(0)}) + (\ket{-} \otimes H\ket{f(1)}) + (\ket{-} \otimes H\ket{1 - f(1)}) \right]\)</span></li>
+<ol>
+  <li>\(\ket{+-} = \ket{+} \otimes \ket{-} = \frac{1}{2} (\ket{00} - \ket{01} + \ket{10} - \ket{11})\)</li>
+  <li>\(U_f \ket{+-} = \frac{1}{2} (\ket{0,f(0)} - \ket{0,1-f(0)} + \ket{1,f(1)} - \ket{1,1-f(1)})\)</li>
+  <li>\(H(U_f \ket{+-}) = \frac{1}{2} \left[ (\ket{+} \otimes H\ket{f(0)}) - (\ket{+} \otimes H\ket{1 - f(0)}) + (\ket{-} \otimes H\ket{f(1)}) + (\ket{-} \otimes H\ket{1 - f(1)}) \right]\)</li>
 </ol>
 <p>最期の式を更に詳細に計算する.</p>
-<p>初めの2項 <span class="math inline">\((\ket{+} \otimes H\ket{f(0)}) - (\ket{+} \otimes H\ket{1 - f(0)})\)</span> を調べる. <span class="math inline">\(f(0), 1-f(0)\)</span> はちょうど一方が 0 なら他方は 1 である.</p>
-<p><span class="math inline">\(f(0) = 0\)</span> のとき,</p>
-<p><span class="math display">\[\begin{align*}
+<p>初めの2項 \((\ket{+} \otimes H\ket{f(0)}) - (\ket{+} \otimes H\ket{1 - f(0)})\) を調べる. \(f(0), 1-f(0)\) はちょうど一方が 0 なら他方は 1 である.</p>
+<p>\(f(0) = 0\) のとき,</p>
+\[\begin{align*}
 (\ket{+} \otimes H\ket{f(0)}) - (\ket{+} \otimes H\ket{1 - f(0)})
 &amp; = \ket{+} \otimes (\ket{+} - \ket{-}) \\\\
 &amp; = \ket{+} \otimes (\sqrt{2} \ket{1}) \\\\
 &amp; = \sqrt{2} (\ket{+} \otimes \ket{1})
-\end{align*}\]</span></p>
-<p>同様に <span class="math inline">\(f(0)=1\)</span> のとき,</p>
-<p><span class="math display">\[\begin{align*}
+\end{align*}\]
+<p>同様に \(f(0)=1\) のとき,</p>
+\[\begin{align*}
 (\ket{+} \otimes H\ket{f(0)}) - (\ket{+} \otimes H\ket{1 - f(0)})
 &amp; = - \sqrt{2} (\ket{+} \otimes \ket{1})
-\end{align*}\]</span></p>
-<p>である. この2つの場合をまとめて <span class="math display">\[(\ket{+} \otimes H\ket{f(0)}) - (\ket{+} \otimes H\ket{1 - f(0)}) = (-1)^{f(0)} \sqrt{2} \ket{+1}\]</span> と書ける. ここで <span class="math inline">\(\ket{+} \otimes \ket{1}\)</span> を <span class="math inline">\(\ket{+1}\)</span> と書いた.</p>
-<p>また残りの2項についても同様に <span class="math display">\[(\ket{-} \otimes H\ket{f(1)}) - (\ket{-} \otimes H\ket{1 - f(1)})
-= (-1)^{f(1)} \sqrt{2} \ket{-1}\]</span> となる.</p>
-<p>というわけで <span class="math display">\[\begin{align*}
+\end{align*}\]
+<p>である. この2つの場合をまとめて</p>
+\[(\ket{+} \otimes H\ket{f(0)}) - (\ket{+} \otimes H\ket{1 - f(0)}) = (-1)^{f(0)} \sqrt{2} \ket{+1}\]
+<p>と書ける. ここで \(\ket{+} \otimes \ket{1}\) を \(\ket{+1}\) と書いた.</p>
+<p>また残りの2項についても同様に</p>
+\[(\ket{-} \otimes H\ket{f(1)}) - (\ket{-} \otimes H\ket{1 - f(1)})
+= (-1)^{f(1)} \sqrt{2} \ket{-1}\]
+<p>となる.</p>
+<p>というわけで</p>
+\[\begin{align*}
 H(U_f\ket{+-})
 &amp; = \frac{1}{2} \left[
     (-1)^{f(0)} \sqrt{2} \ket{+1} + (-1)^{f(1)} \sqrt{2} \ket{-1}
@@ -96,28 +96,39 @@ H(U_f\ket{+-})
 &amp; = \frac{1}{\sqrt{2}} \left[
     (-1)^{f(0)} \ket{+1} + (-1)^{f(1)} \ket{-1}
 \right]
-\end{align*}\]</span></p>
+\end{align*}\]
 <p>を得る.</p>
-<p>2 qbit 目は常に <span class="math inline">\(1\)</span> であることがわかる. さて 1 qbit 目にだけ注目すると <span class="math display">\[\frac{1}{\sqrt{2}}\left[ (-1)^{f(0)} \ket{+} + (-1)^{f(1)} \ket{-} \right]\]</span> である. <span class="math inline">\(f(0), f(1)\)</span> によって4通りに場合分けをすると,</p>
-<ol type="1">
-<li>case <span class="math inline">\(f(0)=0, f(1)=0\)</span>
-<ul>
-<li><span class="math inline">\(\frac{1}{\sqrt{2}} (\ket{+} + \ket{-})) = \ket{0}\)</span></li>
-</ul></li>
-<li>case <span class="math inline">\(f(0)=0, f(1)=1\)</span>
-<ul>
-<li><span class="math inline">\(\frac{1}{\sqrt{2}} (\ket{+} - \ket{-})) = \ket{1}\)</span></li>
-</ul></li>
-<li>case <span class="math inline">\(f(0)=1, f(1)=0\)</span>
-<ul>
-<li><span class="math inline">\(\frac{1}{\sqrt{2}} (- \ket{+} + \ket{-})) = - \ket{1}\)</span></li>
-</ul></li>
-<li>case <span class="math inline">\(f(0)=1, f(1)=1\)</span>
-<ul>
-<li><span class="math inline">\(\frac{1}{\sqrt{2}} (- \ket{+} - \ket{-})) = - \ket{0}\)</span></li>
-</ul></li>
+<p>2 qbit 目は常に \(1\) であることがわかる. さて 1 qbit 目にだけ注目すると</p>
+\[\frac{1}{\sqrt{2}}\left[ (-1)^{f(0)} \ket{+} + (-1)^{f(1)} \ket{-} \right]\]
+<p>である. \(f(0), f(1)\) によって4通りに場合分けをすると,</p>
+<ol>
+  <li>
+    case \(f(0)=0, f(1)=0\)
+    <ul>
+      <li>\(\frac{1}{\sqrt{2}} (\ket{+} + \ket{-})) = \ket{0}\)</li>
+    </ul>
+  </li>
+  <li>
+    case \(f(0)=0, f(1)=1\)
+    <ul>
+      <li>\(\frac{1}{\sqrt{2}} (\ket{+} - \ket{-})) = \ket{1}\)</li>
+    </ul>
+  </li>
+  <li>
+    case \(f(0)=1, f(1)=0\)
+    <ul>
+      <li>\(\frac{1}{\sqrt{2}} (- \ket{+} + \ket{-})) = - \ket{1}\)</li>
+    </ul>
+  </li>
+  <li>
+    case \(f(0)=1, f(1)=1\)
+    <ul>
+      <li>\(\frac{1}{\sqrt{2}} (- \ket{+} - \ket{-})) = - \ket{0}\)</li>
+    </ul>
+  </li>
 </ol>
-<p>観測する場合にはその係数の大きさの自乗の確率で状態を得る. 係数はそれぞれ <span class="math inline">\(+1\)</span> または <span class="math inline">\(-1\)</span> になっているから結局必ず <span class="math inline">\(\ket{0}\)</span> または <span class="math inline">\(\ket{1}\)</span> を得ることになり, それは <span class="math inline">\(f(0) \oplus f(1)\)</span> と一致している. 例えば <span class="math inline">\(f(0)=1, f(1)=0\)</span> の場合は <span class="math inline">\(-\ket{1}\)</span> を得, 観測した結果 <span class="math inline">\((-1)^2\)</span> の確率で <span class="math inline">\(\ket{1}\)</span> を得る.</p>
+<p>観測する場合にはその係数の大きさの自乗の確率で状態を得る. 係数はそれぞれ \(+1\) または \(-1\) になっているから結局必ず \(\ket{0}\) または \(\ket{1}\) を得ることになり, それは \(f(0) \oplus f(1)\) と一致している. 例えば \(f(0)=1, f(1)=0\) の場合は \(-\ket{1}\) を得, 観測した結果 \((-1)^2\) の確率で \(\ket{1}\) を得る.</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -222,5 +233,9 @@ H(U_f\ket{+-})
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

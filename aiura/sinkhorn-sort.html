@@ -1,179 +1,203 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="description" content="参考文献/概要/最適輸送問題/Sinkhorn-Knopp アルゴリズム, Sinkhorn 距離/ソートへの応用/" />
-  <meta property="og:url" content="http://cympfh.cc/taglibro">
-  <meta property="og:type" content="article">
-  <meta property="og:title" content="最適輸送問題, Sinkhorn 距離, ソート" />
-  <meta property="og:description" content="参考文献/概要/最適輸送問題/Sinkhorn-Knopp アルゴリズム, Sinkhorn 距離/ソートへの応用/" />
-  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:site" content="@cympfh" />
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>最適輸送問題, Sinkhorn 距離, ソート</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-svg-full.js"></script>
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
     <a href='index.html'><i class="fa fa-stumbleupon"></i></a>
 </header>
-<header>
-<h1 class="title">最適輸送問題, Sinkhorn 距離, ソート</h1>
-</header>
-<p class="date" style="text-align: right">
-2021-06-03 (Thu.)
-</p>
-<div class="is-pulled-right">
-<p><a class='tag is-red' href=index.html#最適化>最適化</a></p>
-</div>
-<h2 id="参考文献">参考文献</h2>
+
+<h1 class="title" id="1-最適輸送問題, Sinkhorn 距離, ソート">最適輸送問題, Sinkhorn 距離, ソート</h1>
+<p><p class=date style='text-align: right'>2021-06-03 (Thu.)</p> <div class='is-pulled-right'> <a class='tag is-red' href=index.html#最適化>最適化</a> </div></p>
+<h2 id="2-参考文献">参考文献</h2>
 <p>この記事の内容は全て次のいずれかに書かれています.</p>
-<ol type="1">
-<li><a href="https://theory-and-me.hatenablog.com/entry/2021/05/09/181435">輸送問題を近似的に行列計算で解く（機械学習への応用つき） - 私と理論</a></li>
-<li><a href="https://qiita.com/itok_msi/items/f3cff1e586df00a05355">輸送問題の解を微分する - Qiita</a></li>
-<li><a href="https://qiita.com/itok_msi/items/7e14c1b6572f32bc0f87">ソートの微分とソートの一般化 - Qiita</a></li>
+<ol>
+  <li><a href="https://theory-and-me.hatenablog.com/entry/2021/05/09/181435">輸送問題を近似的に行列計算で解く（機械学習への応用つき） - 私と理論</a></li>
+  <li><a href="https://qiita.com/itok_msi/items/f3cff1e586df00a05355">輸送問題の解を微分する - Qiita</a></li>
+  <li><a href="https://qiita.com/itok_msi/items/7e14c1b6572f32bc0f87">ソートの微分とソートの一般化 - Qiita</a></li>
 </ol>
-<h2 id="概要">概要</h2>
+<h2 id="2-概要">概要</h2>
 <p>最適輸送問題と呼ばれる最適化問題は Sinkhorn-Knopp アルゴリズムによって近似的に計算することが出来る. このアルゴリズムは全て線形変換で表現されるので微分可能であり, 勾配法で学習するような機械学習への応用が考えられる. この問題の応用例として数列のソートを紹介する.</p>
 <p>私が理解できてない都合上, なぜ上手くいくのかといった理論部分には触れない.</p>
-<h2 id="最適輸送問題">最適輸送問題</h2>
-<p>ある製品の需要と供給について考える. <span class="math inline">\(N\)</span> 箇所の工場があり, <span class="math inline">\(i\)</span> 番目の工場はその製品を <span class="math inline">\(a_i\)</span> だけ作る. 一方で <span class="math inline">\(M\)</span> 箇所の小売店があり, <span class="math inline">\(j\)</span> 番目の小売店は製品を <span class="math inline">\(b_i\)</span> だけ要求する. <span class="math display">\[\sum_i a_i = \sum_j b_j\]</span> であるとき, 製品を各工場から各小売店に直接輸送することで供給を満たしたい. すなわち, <span class="math inline">\(i\)</span> 番目の工場から <span class="math inline">\(j\)</span> 番目の小売店には製品を <span class="math inline">\(P_{ij}\)</span> だけ運ぶとすれば,</p>
+<h2 id="2-最適輸送問題">最適輸送問題</h2>
+<p>ある製品の需要と供給について考える. \(N\) 箇所の工場があり, \(i\) 番目の工場はその製品を \(a_i\) だけ作る. 一方で \(M\) 箇所の小売店があり, \(j\) 番目の小売店は製品を \(b_i\) だけ要求する.</p>
+\[\sum_i a_i = \sum_j b_j\]
+<p>であるとき, 製品を各工場から各小売店に直接輸送することで供給を満たしたい. すなわち, \(i\) 番目の工場から \(j\) 番目の小売店には製品を \(P_{ij}\) だけ運ぶとすれば,</p>
 <ul>
-<li><span class="math inline">\(\sum_j P_{ij} = a_i ~~ \forall i\)</span></li>
-<li><span class="math inline">\(\sum_i P_{ij} = b_j ~~ \forall j\)</span></li>
+  <li>\(\sum_j P_{ij} = a_i ~~ \forall i\)</li>
+  <li>\(\sum_i P_{ij} = b_j ~~ \forall j\)</li>
 </ul>
-<p>と表現できる. ただしここで各輸送方法にはコストが設定されており, <span class="math inline">\(i\)</span> 番目の工場から <span class="math inline">\(j\)</span> 番目の小売店への輸送には量当たり <span class="math inline">\(C_{ij}\)</span> のコストが掛かる. したがって輸送方法 <span class="math inline">\(P\)</span> に対して全体として <span class="math display">\[\sum_i \sum_j C_{ij} P_{ij}\]</span> のコストが掛かる. これを最小化しようというのが <strong>最適輸送問題</strong> である.</p>
-<p>ただし、本記事では <span class="math inline">\(N = M = n\)</span> であるとする.</p>
-<h3 id="形式的表現">形式的表現</h3>
-<p>文章で問題を表現したが列ベクトルと行列表示すれば最適輸送問題は次で表現される. ただしここで <span class="math inline">\(\mathbb R_+\)</span> は非負整数全体とする.</p>
+<p>と表現できる. ただしここで各輸送方法にはコストが設定されており, \(i\) 番目の工場から \(j\) 番目の小売店への輸送には量当たり \(C_{ij}\) のコストが掛かる. したがって輸送方法 \(P\) に対して全体として</p>
+\[\sum_i \sum_j C_{ij} P_{ij}\]
+<p>のコストが掛かる. これを最小化しようというのが <strong>最適輸送問題</strong> である.</p>
+<p>ただし、本記事では \(N = M = n\) であるとする.</p>
+<h3 id="3-形式的表現">形式的表現</h3>
+<p>文章で問題を表現したが列ベクトルと行列表示すれば最適輸送問題は次で表現される. ただしここで \(\mathbb R_+\) は非負整数全体とする.</p>
 <ul>
-<li>次が与えられる
-<ul>
-<li><span class="math inline">\(a, b \in \mathbb R_+^n\)</span>
-<ul>
-<li>ただし <span class="math inline">\(\sum_i a_i = \sum_i b_i\)</span></li>
-</ul></li>
-<li><span class="math inline">\(C \in \mathbb R_+^{n \times n}\)</span></li>
-</ul></li>
-<li>次の目的関数を最小化する
-<ul>
-<li><span class="math inline">\(L(P) = \sum_i \sum_j C_{ij} P_{ij}\)</span></li>
-</ul></li>
-<li>ただし次を制約とする
-<ul>
-<li><span class="math inline">\(\sum_j P_{ij} = a_i ~~ \forall i\)</span></li>
-<li><span class="math inline">\(\sum_i P_{ij} = b_j ~~ \forall j\)</span></li>
-</ul></li>
+  <li>
+    次が与えられる
+    <ul>
+      <li>
+        \(a, b \in \mathbb R_+^n\)
+        <ul>
+          <li>ただし \(\sum_i a_i = \sum_i b_i\)</li>
+        </ul>
+      </li>
+      <li>\(C \in \mathbb R_+^{n \times n}\)</li>
+    </ul>
+  </li>
+  <li>
+    次の目的関数を最小化する
+    <ul>
+      <li>\(L(P) = \sum_i \sum_j C_{ij} P_{ij}\)</li>
+    </ul>
+  </li>
+  <li>
+    ただし次を制約とする
+    <ul>
+      <li>\(\sum_j P_{ij} = a_i ~~ \forall i\)</li>
+      <li>\(\sum_i P_{ij} = b_j ~~ \forall j\)</li>
+    </ul>
+  </li>
 </ul>
-<p>ちなみに制約の表現だが, 全ての成分が <span class="math inline">\(1\)</span> の列ベクトル <span class="math inline">\(1_n \in \{1\}^n\)</span> を用いると次のように書き直せる:</p>
+<p>ちなみに制約の表現だが, 全ての成分が \(1\) の列ベクトル \(1_n \in \{1\}^n\) を用いると次のように書き直せる:</p>
 <ul>
-<li><span class="math inline">\(P 1_n = a\)</span></li>
-<li><span class="math inline">\(P^\top 1_n = b\)</span></li>
+  <li>\(P 1_n = a\)</li>
+  <li>\(P^\top 1_n = b\)</li>
 </ul>
-<h3 id="最適輸送距離">最適輸送距離</h3>
-<p>2つのベクトル <span class="math inline">\(a, b \in \mathbb R_+^n\)</span> と暗に与えられるコスト行列 <span class="math inline">\(C\)</span> に対して最適輸送問題を解いた結果の <span class="math display">\[\min_P L(P)\]</span> を <span class="math inline">\(a\)</span> と <span class="math inline">\(b\)</span> の距離 <span class="math display">\[d(a, b; C) = \min_P L(P)\]</span> と定義することができる. これを <strong>最適輸送距離</strong> と呼ぶ. これはいわゆる距離の公理を満たす.</p>
-<blockquote>
-<p>この記事では特に <span class="math inline">\(a,b\)</span> の次元を同じに揃えているが本来この2つは異なっていてもよくて, 問題なく定義される.</p>
-</blockquote>
-<p>特にベクトル <span class="math inline">\(a, b\)</span> を離散確率分布だとしたとき, この距離は <strong>Wasserstein 距離</strong> と呼ばれ, 確率分布どうしの距離として定められる. また <strong>Earth-Mover (EM) 距離</strong> と呼ばれる値もこれから定義される.</p>
-<h2 id="sinkhorn-knopp-アルゴリズム-sinkhorn-距離">Sinkhorn-Knopp アルゴリズム, Sinkhorn 距離</h2>
+<h3 id="3-最適輸送距離">最適輸送距離</h3>
+<p>2つのベクトル \(a, b \in \mathbb R_+^n\) と暗に与えられるコスト行列 \(C\) に対して最適輸送問題を解いた結果の</p>
+\[\min_P L(P)\]
+<p>を \(a\) と \(b\) の距離</p>
+\[d(a, b; C) = \min_P L(P)\]
+<p>と定義することができる. これを <strong>最適輸送距離</strong> と呼ぶ. これはいわゆる距離の公理を満たす.</p>
+<blockquote>この記事では特に \(a,b\) の次元を同じに揃えているが本来この2つは異なっていてもよくて, 問題なく定義される.</blockquote>
+<p>特にベクトル \(a, b\) を離散確率分布だとしたとき, この距離は <strong>Wasserstein 距離</strong> と呼ばれ, 確率分布どうしの距離として定められる. また <strong>Earth-Mover (EM) 距離</strong> と呼ばれる値もこれから定義される.</p>
+<h2 id="2-Sinkhorn-Knopp アルゴリズム, Sinkhorn 距離">Sinkhorn-Knopp アルゴリズム, Sinkhorn 距離</h2>
 <p>最適輸送問題における目的関数を次のように変更する.</p>
-<p><span class="math display">\[L(P) = \sum_i \sum_j \left[ C_{ij} P_{ij} + \frac{1}{\lambda} P_{ij} \log P_{ij} \right]\]</span></p>
-<p>これはもとの目的関数から <span class="math inline">\(P\)</span> に関するエントロピーを <strong>減算</strong> した形になっていて, <strong>エントロピー正則化</strong> などとも呼ばれる. 最適化問題の文脈で言えば <strong>緩和</strong> だとも言える. この <span class="math inline">\(L(P)\)</span> の最小値のことを <strong>Sinkhorn 距離</strong> と呼ぶ.</p>
-<p>ここで <span class="math inline">\(\lambda\)</span> は正の定数だとする. <span class="math inline">\(\lambda \to +\infty\)</span> のときに最適輸送問題と一致する. 十分大きな <span class="math inline">\(\lambda\)</span> を与えることで Sinkhorn 距離で最適輸送距離を近似することができる.</p>
+\[L(P) = \sum_i \sum_j \left[ C_{ij} P_{ij} + \frac{1}{\lambda} P_{ij} \log P_{ij} \right]\]
+<p>これはもとの目的関数から \(P\) に関するエントロピーを <strong>減算</strong> した形になっていて, <strong>エントロピー正則化</strong> などとも呼ばれる. 最適化問題の文脈で言えば <strong>緩和</strong> だとも言える. この \(L(P)\) の最小値のことを <strong>Sinkhorn 距離</strong> と呼ぶ.</p>
+<p>ここで \(\lambda\) は正の定数だとする. \(\lambda \to +\infty\) のときに最適輸送問題と一致する. 十分大きな \(\lambda\) を与えることで Sinkhorn 距離で最適輸送距離を近似することができる.</p>
 <p>さてエントロピー正則化された方の最適化問題は次に示す Sinkhorn-Knopp アルゴリズムで解くことができる.</p>
-<h3 id="sinkhorn-knopp-アルゴリズム">Sinkhorn-Knopp アルゴリズム</h3>
-<ol type="1">
-<li>行列 <span class="math inline">\(K\)</span> を次で定める
-<ul>
-<li><span class="math inline">\(K_{ij} = \exp(- \lambda C_{ij})\)</span></li>
-</ul></li>
-<li><span class="math inline">\(u \in \mathbb R^n\)</span> をランダムに決める</li>
-<li>収束するまで次を順次繰り返す
-<ol type="1">
-<li><span class="math inline">\(v \leftarrow b ~/~ (K^\top u)\)</span></li>
-<li><span class="math inline">\(u \leftarrow b ~/~ (K v)\)</span>
-<ul>
-<li>ここで要素同士の除算を <span class="math inline">\(/\)</span> と書いた</li>
-</ul></li>
-</ol></li>
-<li><span class="math inline">\(u, v\)</span> それぞれを対角に置いた <span class="math inline">\(n\times n\)</span> の対角行列を <span class="math inline">\(U,V\)</span> と置く
-<ul>
-<li><span class="math inline">\(U \leftarrow \mathrm{diag}(u)\)</span></li>
-<li><span class="math inline">\(V \leftarrow \mathrm{diag}(v)\)</span></li>
-</ul></li>
-<li>次の <span class="math inline">\(P\)</span> が最適な輸送方法
-<ul>
-<li><span class="math inline">\(P \leftarrow UKV\)</span></li>
-</ul></li>
+<h3 id="3-Sinkhorn-Knopp アルゴリズム">Sinkhorn-Knopp アルゴリズム</h3>
+<ol>
+  <li>
+    行列 \(K\) を次で定める
+    <ul>
+      <li>\(K_{ij} = \exp(- \lambda C_{ij})\)</li>
+    </ul>
+  </li>
+  <li>\(u \in \mathbb R^n\) をランダムに決める</li>
+  <li>
+    収束するまで次を順次繰り返す
+    <ol>
+      <li>\(v \leftarrow b ~&#x2F;~ (K^\top u)\)</li>
+      <li>
+        \(u \leftarrow b ~&#x2F;~ (K v)\)
+        <ul>
+          <li>ここで要素同士の除算を \(&#x2F;\) と書いた</li>
+        </ul>
+      </li>
+    </ol>
+  </li>
+  <li>
+    \(u, v\) それぞれを対角に置いた \(n\times n\) の対角行列を \(U,V\) と置く
+    <ul>
+      <li>\(U \leftarrow \mathrm{diag}(u)\)</li>
+      <li>\(V \leftarrow \mathrm{diag}(v)\)</li>
+    </ul>
+  </li>
+  <li>
+    次の \(P\) が最適な輸送方法
+    <ul>
+      <li>\(P \leftarrow UKV\)</li>
+    </ul>
+  </li>
 </ol>
-<p>計算コストが重たいのは 3.1, 3.2 における行列とベクトルの乗算, 5 の対角行列と行列の乗算であって, これらは計算量 <span class="math inline">\(O(n^2)\)</span> で計算できる.</p>
-<h2 id="ソートへの応用">ソートへの応用</h2>
+<p>計算コストが重たいのは 3.1, 3.2 における行列とベクトルの乗算, 5 の対角行列と行列の乗算であって, これらは計算量 \(O(n^2)\) で計算できる.</p>
+<h2 id="2-ソートへの応用">ソートへの応用</h2>
 <p>数列のソート（整列）は最適輸送問題で解くことができる.</p>
-<h3 id="ソートへの帰着">ソートへの帰着</h3>
-<p>ソートしたい長さ <span class="math inline">\(n\)</span> の数列 <span class="math inline">\(x \in \mathbb R^n\)</span> が与えられたとする. ただしここで, 数列 <span class="math inline">\(x\)</span> と列ベクトル <span class="math inline">\(x\)</span> とは自然に同一視する. <span class="math inline">\(( \left( x_1, x_2, \ldots, x_n \right) \iff \left[ x_1, x_2, \ldots, x_n \right]^\top )\)</span></p>
-<p>これに対して, 以下の <span class="math inline">\((y, a, b, C)\)</span> を用意する.</p>
+<h3 id="3-ソートへの帰着">ソートへの帰着</h3>
+<p>ソートしたい長さ \(n\) の数列 \(x \in \mathbb R^n\) が与えられたとする. ただしここで, 数列 \(x\) と列ベクトル \(x\) とは自然に同一視する. \(( \left( x_1, x_2, \ldots, x_n \right) \iff \left[ x_1, x_2, \ldots, x_n \right]^\top )\)</p>
+<p>これに対して, 以下の \((y, a, b, C)\) を用意する.</p>
 <ul>
-<li>ソート済みの数列 <span class="math inline">\(y \in \mathbb R^n\)</span>
-<ul>
-<li><span class="math inline">\(i &lt; j \iff y_i &lt; y_j\)</span></li>
-<li>例えば <span class="math inline">\(y = \left[ 0, 1, \ldots, n-1 \right]^\top\)</span> としてよい</li>
-</ul></li>
-<li><span class="math inline">\(a, b \in \mathbb R^n\)</span>
-<ul>
-<li><span class="math inline">\(a_i = b_i = 1\)</span> <span class="math inline">\((i=1,2,\ldots,n)\)</span></li>
-</ul></li>
-<li>コスト行列 <span class="math inline">\(C \in \mathbb R^{n \times n}\)</span>
-<ul>
-<li><span class="math inline">\(C_{ij} = h(x_i - y_j)\)</span>
-<ul>
-<li>ここで <span class="math inline">\(h(z)\)</span> は <span class="math inline">\(z=0\)</span> で最小を取るような狭義凸関数
-<ul>
-<li>例えば <span class="math inline">\(h(z) = z^2\)</span> としてよい</li>
-</ul></li>
-</ul></li>
-</ul></li>
+  <li>
+    ソート済みの数列 \(y \in \mathbb R^n\)
+    <ul>
+      <li>\(i &lt; j \iff y_i &lt; y_j\)</li>
+      <li>例えば \(y = \left[ 0, 1, \ldots, n-1 \right]^\top\) としてよい</li>
+    </ul>
+  </li>
+  <li>
+    \(a, b \in \mathbb R^n\)
+    <ul>
+      <li>\(a_i = b_i = 1\) \((i=1,2,\ldots,n)\)</li>
+    </ul>
+  </li>
+  <li>
+    コスト行列 \(C \in \mathbb R^{n \times n}\)
+    <ul>
+      <li>
+        \(C_{ij} = h(x_i - y_j)\)
+        <ul>
+          <li>
+            ここで \(h(z)\) は \(z=0\) で最小を取るような狭義凸関数
+            <ul>
+              <li>例えば \(h(z) = z^2\) としてよい</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
 </ul>
-<p>ここで <span class="math inline">\((a,b,C)\)</span> で定められる最適輸送問題を解いて, 最適な輸送方法が <span class="math inline">\(P \in \mathbb R^{n \times n}\)</span> であったとする. このとき</p>
+<p>ここで \((a,b,C)\) で定められる最適輸送問題を解いて, 最適な輸送方法が \(P \in \mathbb R^{n \times n}\) であったとする. このとき</p>
 <ul>
-<li><span class="math inline">\(S(x) := P^\top x\)</span></li>
-<li><span class="math inline">\(R(x) := P r\)</span>
-<ul>
-<li>ただし <span class="math inline">\(r = \left[ 1, 2, \ldots, n \right]^\top\)</span></li>
-</ul></li>
+  <li>\(S(x) := P^\top x\)</li>
+  <li>
+    \(R(x) := P r\)
+    <ul>
+      <li>ただし \(r = \left[ 1, 2, \ldots, n \right]^\top\)</li>
+    </ul>
+  </li>
 </ul>
-<p>とすると, <span class="math inline">\(S(x)\)</span> は <span class="math inline">\(x\)</span> をソートした数列になっており, <span class="math inline">\(R(x)\)</span> は <span class="math inline">\(x\)</span> のランクを表した数列になっている. つまり <span class="math inline">\(S(x)\)</span> の第 <span class="math inline">\(i\)</span> 成分は <span class="math inline">\(x\)</span> で <span class="math inline">\(i\)</span> 番目に小さい数であって, <span class="math inline">\(R(x)\)</span> の第 <span class="math inline">\(i\)</span> 成分は <span class="math inline">\(x_i\)</span> が <span class="math inline">\(x\)</span> で何番目に小さい数であるかの整数値になっている.</p>
-<blockquote>
-<p><span class="math inline">\(R(x)\)</span> の表す <strong>ランク</strong> は 1-start の整数になっているが, これは <span class="math inline">\(r\)</span> の並び替えをしてるに過ぎないので, <span class="math inline">\(r\)</span> を変えれば 0-start の数字にする等できる.</p>
-</blockquote>
-<h3 id="例">例</h3>
-<p>数列 <span class="math inline">\(x = (4, 6, 2)\)</span> について次を与える <span class="math inline">\((n=3)\)</span>.</p>
+<p>とすると, \(S(x)\) は \(x\) をソートした数列になっており, \(R(x)\) は \(x\) のランクを表した数列になっている. つまり \(S(x)\) の第 \(i\) 成分は \(x\) で \(i\) 番目に小さい数であって, \(R(x)\) の第 \(i\) 成分は \(x_i\) が \(x\) で何番目に小さい数であるかの整数値になっている.</p>
+<blockquote>\(R(x)\) の表す <strong>ランク</strong> は 1-start の整数になっているが, これは \(r\) の並び替えをしてるに過ぎないので, \(r\) を変えれば 0-start の数字にする等できる.</blockquote>
+<h3 id="3-例">例</h3>
+<p>数列 \(x = (4, 6, 2)\) について次を与える \((n=3)\) .</p>
 <ul>
-<li><span class="math inline">\(y = (0, 1, 2)\)</span></li>
-<li><span class="math inline">\(a = b = (1, 1, 1)\)</span></li>
-<li><span class="math inline">\(C = \left[ \begin{array}{ccc}16 &amp; 9 &amp; 4 \\36 &amp; 25 &amp; 16 \\ 4 &amp; 1 &amp; 0\end{array} \right]\)</span>
-<ul>
-<li>ここで <span class="math inline">\(h(z) = z^2\)</span> とした</li>
-</ul></li>
+  <li>\(y = (0, 1, 2)\)</li>
+  <li>\(a = b = (1, 1, 1)\)</li>
+  <li>
+    \(C = \left[ \begin{array}{ccc}16 &amp; 9 &amp; 4 \\36 &amp; 25 &amp; 16 \\ 4 &amp; 1 &amp; 0\end{array} \right]\)
+    <ul>
+      <li>ここで \(h(z) = z^2\) とした</li>
+    </ul>
+  </li>
 </ul>
 <p>このとき最適輸送は</p>
 <ul>
-<li><span class="math inline">\(P = \left[ \begin{array}{ccc}0 &amp; 1 &amp; 0 \\0 &amp; 0 &amp; 1 \\ 1 &amp; 0 &amp; 0\end{array} \right]\)</span></li>
+  <li>\(P = \left[ \begin{array}{ccc}0 &amp; 1 &amp; 0 \\0 &amp; 0 &amp; 1 \\ 1 &amp; 0 &amp; 0\end{array} \right]\)</li>
 </ul>
-<p>であると求まる. これによって <span class="math inline">\(S(x), R(x)\)</span> は次の通り計算される.</p>
+<p>であると求まる. これによって \(S(x), R(x)\) は次の通り計算される.</p>
 <ul>
-<li><span class="math inline">\(S(x) = P^\top x = \left[ \begin{array}{ccc}0 &amp; 0 &amp; 1 \\1 &amp; 0 &amp; 0 \\ 0 &amp; 1 &amp; 0\end{array} \right] \left[ \begin{array}{c}4 \\ 6 \\ 2\end{array} \right] = \left[ \begin{array}{c}2 \\ 4 \\ 6\end{array} \right]\)</span></li>
-<li><span class="math inline">\(R(x) = P \left[ \begin{array}{c}1 \\ 2 \\ 3\end{array} \right] = \left[ \begin{array}{ccc}0 &amp; 1 &amp; 0 \\0 &amp; 0 &amp; 1 \\ 1 &amp; 0 &amp; 0\end{array} \right] \left[ \begin{array}{c}1 \\ 2 \\ 3\end{array} \right] = \left[ \begin{array}{c}2 \\ 3 \\ 1\end{array} \right]\)</span></li>
+  <li>\(S(x) = P^\top x = \left[ \begin{array}{ccc}0 &amp; 0 &amp; 1 \\1 &amp; 0 &amp; 0 \\ 0 &amp; 1 &amp; 0\end{array} \right] \left[ \begin{array}{c}4 \\ 6 \\ 2\end{array} \right] = \left[ \begin{array}{c}2 \\ 4 \\ 6\end{array} \right]\)</li>
+  <li>\(R(x) = P \left[ \begin{array}{c}1 \\ 2 \\ 3\end{array} \right] = \left[ \begin{array}{ccc}0 &amp; 1 &amp; 0 \\0 &amp; 0 &amp; 1 \\ 1 &amp; 0 &amp; 0\end{array} \right] \left[ \begin{array}{c}1 \\ 2 \\ 3\end{array} \right] = \left[ \begin{array}{c}2 \\ 3 \\ 1\end{array} \right]\)</li>
 </ul>
-<p>見ての通り <span class="math inline">\(P^\top\)</span> 及び <span class="math inline">\(P\)</span> はちょうど swap をするだけの行列操作になっている.</p>
+<p>見ての通り \(P^\top\) 及び \(P\) はちょうど swap をするだけの行列操作になっている.</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -278,5 +302,9 @@
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

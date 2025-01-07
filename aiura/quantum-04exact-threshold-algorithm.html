@@ -1,215 +1,262 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="description" content="紹介する論文/notation/Query (量子クエリ)/EXACT/THRESHOLD/" />
-  <meta property="og:url" content="http://cympfh.cc/taglibro">
-  <meta property="og:type" content="article">
-  <meta property="og:title" content="EXACT, THRESHOLD アルゴリズム" />
-  <meta property="og:description" content="紹介する論文/notation/Query (量子クエリ)/EXACT/THRESHOLD/" />
-  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:site" content="@cympfh" />
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>EXACT, THRESHOLD アルゴリズム</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-svg-full.js"></script>
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
     <a href='index.html'><i class="fa fa-stumbleupon"></i></a>
 </header>
-<header>
-<h1 class="title">EXACT, THRESHOLD アルゴリズム</h1>
-</header>
-<p class="date" style="text-align: right">
-2019-09-08 (Sun.)
-</p>
-<div class="is-pulled-right">
-<p><a class='tag is-red' href=index.html#量子計算>量子計算</a></p>
-</div>
-<p><span class="math display">\[\newcommand{\ket}[1]{\left|#1\right\rangle}
+
+<h1 class="title" id="1-EXACT, THRESHOLD アルゴリズム">EXACT, THRESHOLD アルゴリズム</h1>
+<p><p class=date style='text-align: right'>2019-09-08 (Sun.)</p> <div class='is-pulled-right'> <a class='tag is-red' href=index.html#量子計算>量子計算</a> </div></p>
+\[\newcommand{\ket}[1]{\left|#1\right\rangle}
 \newcommand{\true}{\mathrm{true}}
 \newcommand{\false}{\mathrm{false}}
 \newcommand{\exact}{\mathrm{EXACT}}
 \newcommand{\threshold}{\mathrm{THRESHOLD}}
-\newcommand{\concat}{+\!\!\!+}\]</span></p>
-<h2 id="紹介する論文">紹介する論文</h2>
+\newcommand{\concat}{+\!\!\!+}\]
+<h2 id="2-紹介する論文">紹介する論文</h2>
 <ul>
-<li>&quot;Exact quantum query complexity of EXACT and THRESHOLD&quot;</li>
-<li>Andris Ambainis, Jānis Iraids, Juris Smotrovs</li>
-<li><a href="https://arxiv.org/abs/1302.1235">arxiv.org/abs/1302.1235</a></li>
+  <li>
+    "Exact quantum query complexity of EXACT and THRESHOLD"
+    <ul>
+      <li>Andris Ambainis, Jānis Iraids, Juris Smotrovs</li>
+    </ul>
+  </li>
+  <li><a href="https://arxiv.org/abs/1302.1235">arxiv.org/abs/1302.1235</a></li>
 </ul>
-<p>与えられた <span class="math inline">\(n\)</span> bit (qbit ではない) について立ってる (<span class="math inline">\(1\)</span> である) ビットの数を数えるアルゴリズム. 正確に述べると, 立ってるビットの数がちょうど <span class="math inline">\(k\)</span> であるか判定する <span class="math inline">\(\exact^n_k\)</span> と, <span class="math inline">\(k\)</span> 以上であるか判定する <span class="math inline">\(\threshold^n_k\)</span> の2つのアルゴリズムを与える.</p>
-<blockquote>
-<p>もちろん量子計算を用いない古典コンピュータなら全てのビットをチェックする必要がある.</p>
-</blockquote>
-<h2 id="notation">notation</h2>
-<p><span class="math inline">\(n\)</span> qbit の基底の内, <span class="math inline">\(i\)</span> 番目 (<span class="math inline">\(0\)</span>-indexed) の qbit だけが立ってるもの <span class="math inline">\(\ket{0\cdots 0 1 0 \cdots 0}\)</span> を <span class="math display">\[\ket{i}\]</span> と書くことにする (<span class="math inline">\(i=0,1,\ldots,n-1\)</span>).</p>
-<p>2つの <span class="math inline">\(n\)</span> qbit <span class="math inline">\(\ket{i}\)</span> と <span class="math inline">\(\ket{j}\)</span> とを並べたものを <span class="math display">\[\ket{i, j} := \ket{i} \otimes \ket{j}\]</span> と書く.</p>
-<p>更にそれが <span class="math inline">\(2n\)</span> qbit であることが紛らわしく無ければ, <span class="math display">\[\ket{i} := \ket{i, i}\]</span> と書く.</p>
-<blockquote>
-<p><strong>補足</strong>: 実際には, 中身の表現はどうでもよくて, 要するに区別できる状態であればよい. つまり <span class="math inline">\(\ket{\cdot}\)</span> の中に書く数字は単なるラベルだとしか思ってない.</p>
-</blockquote>
-<p>1 qbit <span class="math inline">\(\ket{x}\)</span> (<span class="math inline">\(x=0,1\)</span>) に対して <span class="math inline">\((-1)^x\)</span> を <span class="math inline">\(\hat{x}\)</span> と書く (<span class="math inline">\(\hat{x}=1,-1\)</span>).</p>
-<h2 id="query-量子クエリ">Query (量子クエリ)</h2>
-<p>これから EXACT と THRESHOLD という2つのアルゴリズムを説明するが, 共に <span class="math inline">\(Q\)</span> という操作が登場する. これは入力 <span class="math inline">\(x_1, x_2,\ldots , x_n\)</span> に依存する写像であって,</p>
+<p>与えられた \(n\) bit (qbit ではない) について立ってる ( \(1\) である) ビットの数を数えるアルゴリズム. 正確に述べると, 立ってるビットの数がちょうど \(k\) であるか判定する \(\exact^n_k\) と, \(k\) 以上であるか判定する \(\threshold^n_k\) の2つのアルゴリズムを与える.</p>
+<blockquote>もちろん量子計算を用いない古典コンピュータなら全てのビットをチェックする必要がある.</blockquote>
+<h2 id="2-notation">notation</h2>
+<p>\(n\) qbit の基底の内, \(i\) 番目 ( \(0\) -indexed) の qbit だけが立ってるもの \(\ket{0\cdots 0 1 0 \cdots 0}\) を</p>
+\[\ket{i}\]
+<p>と書くことにする ( \(i=0,1,\ldots,n-1\) ).</p>
+<p>2つの \(n\) qbit \(\ket{i}\) と \(\ket{j}\) とを並べたものを</p>
+\[\ket{i, j} := \ket{i} \otimes \ket{j}\]
+<p>と書く.</p>
+<p>更にそれが \(2n\) qbit であることが紛らわしく無ければ,</p>
+\[\ket{i} := \ket{i, i}\]
+<p>と書く.</p>
+<blockquote><strong>補足</strong> : 実際には, 中身の表現はどうでもよくて, 要するに区別できる状態であればよい. つまり \(\ket{\cdot}\) の中に書く数字は単なるラベルだとしか思ってない.</blockquote>
+<p>1 qbit \(\ket{x}\) ( \(x=0,1\) ) に対して \((-1)^x\) を \(\hat{x}\) と書く ( \(\hat{x}=1,-1\) ).</p>
+<h2 id="2-Query (量子クエリ)">Query (量子クエリ)</h2>
+<p>これから EXACT と THRESHOLD という2つのアルゴリズムを説明するが, 共に \(Q\) という操作が登場する. これは入力 \(x_1, x_2,\ldots , x_n\) に依存する写像であって,</p>
 <ul>
-<li><span class="math inline">\(Q \ket{i} = \hat{x}_i \ket{i}\)</span></li>
+  <li>\(Q \ket{i} = \hat{x}_i \ket{i}\)</li>
 </ul>
 <p>で定めるものである. このように入力に依存する操作をクエリと呼ぶ.</p>
-<p>1回のクエリの処理 (<span class="math inline">\(Q\)</span> の適用) のたびに, 入力 <span class="math inline">\(x_i\)</span> を一回読む必要がある. アルゴリズムの複雑性として, クエリを処理する回数を指標とする. これを量子クエリ計算量という.</p>
-<h2 id="exact">EXACT</h2>
-<p><span class="math inline">\(n\)</span> qbit <span class="math display">\[x=(x_0 x_1 \cdots x_{n-1})\]</span> の内, ちょうど <span class="math inline">\(k\)</span> 個が立ってるか判定するアルゴリズムを <span class="math inline">\(\exact^n_k\)</span> とする.</p>
-<p><span class="math display">\[\exact^n_k : \{0,1\}^n \to \{\true, \false\}\]</span></p>
-<p>今から述べる彼らのアルゴリズムでは <span class="math inline">\(2n\)</span> qbit を用意する. 取り得る状態は <span class="math inline">\(\ket{i}\)</span> と <span class="math inline">\(\ket{i,j}\)</span> <span class="math inline">\((0 \leq i,j \lt n; i \lt j)\)</span> の <span class="math inline">\(n(n+1)/2\)</span> 個だけとし, 初め <span class="math inline">\(\ket{0}\)</span> であるとする. 従って, 長さ <span class="math inline">\(n(n+1)/2\)</span> の複素ベクトルで状態は表現される.</p>
-<p>さていきなり一般の <span class="math inline">\(\exact^n_k\)</span> を考えるのは難しいので, まずは <span class="math inline">\(\exact^{2k}_k\)</span> の場合を考える.</p>
-<h3 id="exact2k_k"><span class="math inline">\(\exact^{2k}_k\)</span></h3>
-<p>全体が偶数ビットで, 内のちょうど半分のビットが立ってるかを判定する. このことは, ビットそれぞれを <span class="math inline">\(x \mapsto \hat{x}\)</span> としたときのその和 <span class="math inline">\(\sum_i \hat{x}_i\)</span> がゼロになることと等しいことを利用する. <span class="math display">\[\exact^{2k}_k(x) = \true \iff \sum_i \hat{x}_i = 0\]</span></p>
+<p>1回のクエリの処理 ( \(Q\) の適用) のたびに, 入力 \(x_i\) を一回読む必要がある. アルゴリズムの複雑性として, クエリを処理する回数を指標とする. これを量子クエリ計算量という.</p>
+<h2 id="2-EXACT">EXACT</h2>
+<p>\(n\) qbit</p>
+\[x=(x_0 x_1 \cdots x_{n-1})\]
+<p>の内, ちょうど \(k\) 個が立ってるか判定するアルゴリズムを \(\exact^n_k\) とする.</p>
+\[\exact^n_k : \{0,1\}^n \to \{\true, \false\}\]
+<p>今から述べる彼らのアルゴリズムでは \(2n\) qbit を用意する. 取り得る状態は \(\ket{i}\) と \(\ket{i,j}\) \((0 \leq i,j \lt n; i \lt j)\) の \(n(n+1)&#x2F;2\) 個だけとし, 初め \(\ket{0}\) であるとする. 従って, 長さ \(n(n+1)&#x2F;2\) の複素ベクトルで状態は表現される.</p>
+<p>さていきなり一般の \(\exact^n_k\) を考えるのは難しいので, まずは \(\exact^{2k}_k\) の場合を考える.</p>
+<h3 id="3-\(\exact^{2k}_k\)">\(\exact^{2k}_k\)</h3>
+<p>全体が偶数ビットで, 内のちょうど半分のビットが立ってるかを判定する. このことは, ビットそれぞれを \(x \mapsto \hat{x}\) としたときのその和 \(\sum_i \hat{x}_i\) がゼロになることと等しいことを利用する.</p>
+\[\exact^{2k}_k(x) = \true \iff \sum_i \hat{x}_i = 0\]
 <p>次の3つの操作を用いる:</p>
-<ol type="1">
-<li><span class="math inline">\(U_1 \ket{0} = \frac{1}{\sqrt{2k}} \sum_{i=0}^{2k-1} \ket{i}\)</span></li>
-<li>クエリ <span class="math inline">\(Q\)</span></li>
-<li><span class="math inline">\(U_2 \ket{i} = \frac{1}{\sqrt{2k}} \left( \sum_{i \lt j} \ket{i,j} - \sum_{i \gt j} \ket{j,i} + \ket{0} \right)\)</span></li>
+<ol>
+  <li>\(U_1 \ket{0} = \frac{1}{\sqrt{2k}} \sum_{i=0}^{2k-1} \ket{i}\)</li>
+  <li>クエリ \(Q\)</li>
+  <li>\(U_2 \ket{i} = \frac{1}{\sqrt{2k}} \left( \sum_{i \lt j} \ket{i,j} - \sum_{i \gt j} \ket{j,i} + \ket{0} \right)\)</li>
 </ol>
-<p>ここで未定義な値 (e.g. <span class="math inline">\(U_1\ket{1}\)</span>) はどう定義してもいいので <span class="math inline">\(U_1, U_2\)</span> をユニタリー行列になるようにする.</p>
-<p><span class="math inline">\(\ket{0}\)</span> にこれらを順に通す:</p>
-<ol type="1">
-<li>初期状態
-<ul>
-<li><span class="math inline">\(\ket{0}\)</span></li>
-</ul></li>
-<li><span class="math inline">\(U_1\)</span>
-<ul>
-<li><span class="math inline">\(\frac{1}{\sqrt{2k}} \sum_{i=0}^{2k-1} \ket{i}\)</span></li>
-</ul></li>
-<li><span class="math inline">\(Q\)</span>
-<ul>
-<li><span class="math inline">\(\frac{1}{\sqrt{2k}} \sum_{i=0}^{2k-1} \hat{x}_i \ket{i}\)</span></li>
-</ul></li>
-<li><span class="math inline">\(U_2\)</span>
-<ul>
-<li><span class="math inline">\(\frac{1}{2k} \left( (\hat{x}_i - \hat{x}_j) \ket{i,j} + \sum_{i=0}^{2k-1} \hat{x}_i \ket{0} \right)\)</span></li>
-</ul></li>
+<p>ここで未定義な値 (e.g. \(U_1\ket{1}\) ) はどう定義してもいいので \(U_1, U_2\) をユニタリー行列になるようにする.</p>
+<p>\(\ket{0}\) にこれらを順に通す:</p>
+<ol>
+  <li>
+    初期状態
+    <ul>
+      <li>\(\ket{0}\)</li>
+    </ul>
+  </li>
+  <li>
+    \(U_1\)
+    <ul>
+      <li>\(\frac{1}{\sqrt{2k}} \sum_{i=0}^{2k-1} \ket{i}\)</li>
+    </ul>
+  </li>
+  <li>
+    \(Q\)
+    <ul>
+      <li>\(\frac{1}{\sqrt{2k}} \sum_{i=0}^{2k-1} \hat{x}_i \ket{i}\)</li>
+    </ul>
+  </li>
+  <li>
+    \(U_2\)
+    <ul>
+      <li>\(\frac{1}{2k} \left( (\hat{x}_i - \hat{x}_j) \ket{i,j} + \sum_{i=0}^{2k-1} \hat{x}_i \ket{0} \right)\)</li>
+    </ul>
+  </li>
 </ol>
 <p>で, 最後の量子を観測したときに得られうる状態は</p>
-<ol type="1">
-<li><span class="math inline">\(\ket{i,j}\)</span> (ただし <span class="math inline">\(i \lt j\)</span> )</li>
-<li><span class="math inline">\(\ket{0}\)</span></li>
+<ol>
+  <li>\(\ket{i,j}\) (ただし \(i \lt j\) )</li>
+  <li>\(\ket{0}\)</li>
 </ol>
 <p>の2種類がある.</p>
-<p>もし <span class="math inline">\(\ket{0}\)</span> を観測したならば, <span class="math inline">\(\sum_i \hat{x}_i\)</span> がゼロでないことがわかる. なぜなら, <span class="math inline">\(\ket{0}\)</span> を観測する確率は <span class="math inline">\((\frac{1}{2k}\sum\hat{x}_i)^2)\)</span> であるから. 従って, <span class="math display">\[\exact^{2k}_k(x) = \false\]</span> であることがわかる.</p>
-<p>次に <span class="math inline">\(\ket{i,j}\)</span> を観測したときを考えると, この係数について <span class="math inline">\(\hat{x}_i - \hat{x}_j \ne 0\)</span> であることがわかる. 即ち, ビット <span class="math inline">\(x_i\)</span> とビット <span class="math inline">\(x_j\)</span> とが異なることを示してる. 今, <span class="math inline">\(\exact^{2k}_k\)</span> はビットが立っているものの数と立っていないものの数が <strong>等しい</strong> かどうかにだけ興味があるので, 次が言える.</p>
-<p><span class="math display">\[\exact^{2k}_{k}(\{ x_0, x_1, \ldots , x_{n-1} \}) =
-\exact^{2k-2}_{k-1}(\{ x_0, x_1, \ldots , x_{n-1}\} \setminus \{x_i, x_j\}).\]</span> (ビットの列を集合に書き換えているので註意.)</p>
-<p>このことはビットに関する帰納法を示唆している. その基底状態として, <span class="math display">\[\exact^0_0~\{\} = \true\]</span> がある.</p>
-<p>帰納部分は, (<span class="math inline">\(\false\)</span> であれば) 運が良ければさっさと終わるが, 最悪 (<span class="math inline">\(\true\)</span> なら必ずそうで) <span class="math inline">\(\frac{2k}{2}\)</span> 回繰り返す必要がある.</p>
-<h3 id="exactn_k"><span class="math inline">\(\exact^n_k\)</span></h3>
-<p>入力 <span class="math inline">\(x = (x_0 \cdots x_{n-1})\)</span> に余計にビットを付け足せば <span class="math inline">\(\exact^{2k}_k\)</span> に出来る. 具体的に, <span class="math inline">\(\exact^n_k(x)\)</span> は次に等しい:</p>
+<p>もし \(\ket{0}\) を観測したならば, \(\sum_i \hat{x}_i\) がゼロでないことがわかる. なぜなら, \(\ket{0}\) を観測する確率は \((\frac{1}{2k}\sum\hat{x}_i)^2)\) であるから. 従って,</p>
+\[\exact^{2k}_k(x) = \false\]
+<p>であることがわかる.</p>
+<p>次に \(\ket{i,j}\) を観測したときを考えると, この係数について \(\hat{x}_i - \hat{x}_j \ne 0\) であることがわかる. 即ち, ビット \(x_i\) とビット \(x_j\) とが異なることを示してる. 今, \(\exact^{2k}_k\) はビットが立っているものの数と立っていないものの数が <strong>等しい</strong> かどうかにだけ興味があるので, 次が言える.</p>
+\[\exact^{2k}_{k}(\{ x_0, x_1, \ldots , x_{n-1} \}) =
+\exact^{2k-2}_{k-1}(\{ x_0, x_1, \ldots , x_{n-1}\} \setminus \{x_i, x_j\}).\]
+<p>(ビットの列を集合に書き換えているので註意.)</p>
+<p>このことはビットに関する帰納法を示唆している. その基底状態として,</p>
+\[\exact^0_0~\{\} = \true\]
+<p>がある.</p>
+<p>帰納部分は, ( \(\false\) であれば) 運が良ければさっさと終わるが, 最悪 ( \(\true\) なら必ずそうで) \(\frac{2k}{2}\) 回繰り返す必要がある.</p>
+<h3 id="3-\(\exact^n_k\)">\(\exact^n_k\)</h3>
+<p>入力 \(x = (x_0 \cdots x_{n-1})\) に余計にビットを付け足せば \(\exact^{2k}_k\) に出来る. 具体的に, \(\exact^n_k(x)\) は次に等しい:</p>
 <ul>
-<li>case <span class="math inline">\(n = 2k\)</span>
-<ul>
-<li><span class="math inline">\(\exact^{2k}_k(x)\)</span></li>
-</ul></li>
-<li>case <span class="math inline">\(n \gt 2k\)</span>
-<ul>
-<li><span class="math inline">\(\exact^{2n-2k}_{n-k}(x \concat (1 \ldots 1))\)</span></li>
-<li><span class="math inline">\(n-2k\)</span> 個の 1 bit 列を連結</li>
-</ul></li>
-<li>case <span class="math inline">\(n \lt 2k\)</span>
-<ul>
-<li><span class="math inline">\(\exact^{2k}_{k}(x \concat (0 \ldots 0))\)</span></li>
-<li><span class="math inline">\(2k-n\)</span> 個の 0 bit 列を連結</li>
-</ul></li>
+  <li>
+    case \(n = 2k\)
+    <ul>
+      <li>\(\exact^{2k}_k(x)\)</li>
+    </ul>
+  </li>
+  <li>
+    case \(n \gt 2k\)
+    <ul>
+      <li>\(\exact^{2n-2k}_{n-k}(x \concat (1 \ldots 1))\)</li>
+      <li>\(n-2k\) 個の 1 bit 列を連結</li>
+    </ul>
+  </li>
+  <li>
+    case \(n \lt 2k\)
+    <ul>
+      <li>\(\exact^{2k}_{k}(x \concat (0 \ldots 0))\)</li>
+      <li>\(2k-n\) 個の 0 bit 列を連結</li>
+    </ul>
+  </li>
 </ul>
-<h3 id="クエリ計算量">クエリ計算量</h3>
-<p><span class="math inline">\(\exact^{2k}_k\)</span> のクエリ計算量は, 再帰の回数なので, 最悪 <span class="math inline">\(k\)</span>. したがって, <span class="math inline">\(\exact^{n}_k\)</span> のクエリ計算量は, 最悪</p>
-<p><span class="math display">\[\max\{k, n-k\}\]</span></p>
+<h3 id="3-クエリ計算量">クエリ計算量</h3>
+<p>\(\exact^{2k}_k\) のクエリ計算量は, 再帰の回数なので, 最悪 \(k\) . したがって, \(\exact^{n}_k\) のクエリ計算量は, 最悪</p>
+\[\max\{k, n-k\}\]
 <p>となる.</p>
-<h2 id="threshold">THRESHOLD</h2>
-<p><span class="math inline">\(n\)</span> bit <span class="math display">\[x = (x_0 x_1 \cdots x_{n-1})\]</span> の内, <span class="math inline">\(k\)</span> 個 <strong>以上</strong> が立ってるか判定するアルゴリズムを <span class="math display">\[\threshold^n_k \colon \{0,1\}^n \to \{\true, \false\}\]</span> とする.</p>
-<h3 id="threshold2k1_k1"><span class="math inline">\(\threshold^{2k+1}_{k+1}\)</span></h3>
-<p>まず初めに <span class="math inline">\(\threshold^{2k+1}_{k+1}\)</span> を考える. これは即ち過半数ビットが立ってるかを判定する手続きである.</p>
-<p>入力は <span class="math inline">\(x_0, x_1, \ldots , x_{2k}\)</span> の <span class="math inline">\(2k+1\)</span> ビット. これに関して</p>
+<h2 id="2-THRESHOLD">THRESHOLD</h2>
+<p>\(n\) bit</p>
+\[x = (x_0 x_1 \cdots x_{n-1})\]
+<p>の内, \(k\) 個 <strong>以上</strong> が立ってるか判定するアルゴリズムを</p>
+\[\threshold^n_k \colon \{0,1\}^n \to \{\true, \false\}\]
+<p>とする.</p>
+<h3 id="3-\(\threshold^{2k+1}_{k+1}\)">\(\threshold^{2k+1}_{k+1}\)</h3>
+<p>まず初めに \(\threshold^{2k+1}_{k+1}\) を考える. これは即ち過半数ビットが立ってるかを判定する手続きである.</p>
+<p>入力は \(x_0, x_1, \ldots , x_{2k}\) の \(2k+1\) ビット. これに関して</p>
 <ul>
-<li><span class="math inline">\(S_0 = \{ i \mid 0 \leq i \lt 2k+1, x_i = 0 \}\)</span></li>
-<li><span class="math inline">\(S_1 = \{ i \mid 0 \leq i \lt 2k+1, x_i = 1 \}\)</span></li>
+  <li>\(S_0 = \{ i \mid 0 \leq i \lt 2k+1, x_i = 0 \}\)</li>
+  <li>\(S_1 = \{ i \mid 0 \leq i \lt 2k+1, x_i = 1 \}\)</li>
 </ul>
-<p>とする. それぞれのサイズ (要素数) を <span class="math inline">\(\#S_0, \#S_1\)</span> と書くことにして, 全体は奇数ビットなので, 必ず <span class="math inline">\(\#S_0 \ne \#S_1\)</span>. 今 <span class="math inline">\(\#S_0 \gt \#S_1\)</span> とする. 逆の場合も同様であるので省略する.</p>
+<p>とする. それぞれのサイズ (要素数) を \(\#S_0, \#S_1\) と書くことにして, 全体は奇数ビットなので, 必ず \(\#S_0 \ne \#S_1\) . 今 \(\#S_0 \gt \#S_1\) とする. 逆の場合も同様であるので省略する.</p>
 <p>次のことが言える:</p>
 <ul>
-<li>when <span class="math inline">\(i \in S_0\)</span>,
+  <li>
+    when \(i \in S_0\) ,
+    <ul>
+      <li>
+        when \(\#S_0 = \#S_1 + 1\)
+        <ul>
+          <li>\(\sum_{j \ne i} \hat{x}_j = 0\)</li>
+        </ul>
+      </li>
+      <li>
+        when \(\#S_0 \gt \#S_1 + 1\)
+        <ul>
+          <li>\(\threshold^{2k+1}_{k+1}(x) = \threshold^{2k-1}_{k-1}(x \setminus \{x_i, x_j\})\) ( \(\forall j \ne i\) )</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
 <ul>
-<li>when <span class="math inline">\(\#S_0 = \#S_1 + 1\)</span>
-<ul>
-<li><span class="math inline">\(\sum_{j \ne i} \hat{x}_j = 0\)</span></li>
-</ul></li>
-<li>when <span class="math inline">\(\#S_0 \gt \#S_1 + 1\)</span>
-<ul>
-<li><span class="math inline">\(\threshold^{2k+1}_{k+1}(x) = \threshold^{2k-1}_{k-1}(x \setminus \{x_i, x_j\})\)</span> (<span class="math inline">\(\forall j \ne i\)</span>)</li>
-</ul></li>
-</ul></li>
-<li>when <span class="math inline">\(i \in S_1\)</span>
-<ul>
-<li><span class="math inline">\(\threshold^{2k+1}_{k+1}(x) = \threshold^{2k-1}_{k-1}(x \setminus \{x_i, x_j\})\)</span> (<span class="math inline">\(\forall j \ne i\)</span>)</li>
-</ul></li>
+  <li>
+    when \(i \in S_1\)
+    <ul>
+      <li>\(\threshold^{2k+1}_{k+1}(x) = \threshold^{2k-1}_{k-1}(x \setminus \{x_i, x_j\})\) ( \(\forall j \ne i\) )</li>
+    </ul>
+  </li>
 </ul>
 <p>THRESHOLD では次の3つの操作を用いる:</p>
-<ol type="1">
-<li><span class="math inline">\(U_1\)</span>
-<ul>
-<li><span class="math inline">\(\exact\)</span> のときと同様</li>
-</ul></li>
-<li><span class="math inline">\(Q\)</span>
-<ul>
-<li><span class="math inline">\(\exact\)</span> のときと同様</li>
-</ul></li>
-<li><span class="math inline">\(U_3\)</span>
-<ul>
-<li><span class="math inline">\(U_3 \ket{i} = \frac{\sqrt{2k+1}}{2k} \left( \sum_{i \lt j} \ket{i,j} - \sum_{i&gt;j} \ket{j,i} + \frac{1}{2k} \ket{j} \right)\)</span></li>
-<li>ユニタリ変換になるように</li>
-</ul></li>
+<ol>
+  <li>
+    \(U_1\)
+    <ul>
+      <li>\(\exact\) のときと同様</li>
+    </ul>
+  </li>
+  <li>
+    \(Q\)
+    <ul>
+      <li>\(\exact\) のときと同様</li>
+    </ul>
+  </li>
+  <li>
+    \(U_3\)
+    <ul>
+      <li>\(U_3 \ket{i} = \frac{\sqrt{2k+1}}{2k} \left( \sum_{i \lt j} \ket{i,j} - \sum_{i&gt;j} \ket{j,i} + \frac{1}{2k} \ket{j} \right)\)</li>
+      <li>ユニタリ変換になるように</li>
+    </ul>
+  </li>
 </ol>
-<p>EXACT と同様に <span class="math inline">\(\ket{0}\)</span> から初めてこれらに順に通す.</p>
+<p>EXACT と同様に \(\ket{0}\) から初めてこれらに順に通す.</p>
 <ul>
-<li>初期状態
-<ul>
-<li><span class="math inline">\(\ket{0}\)</span></li>
-</ul></li>
-<li><span class="math inline">\(U_1\)</span>
-<ul>
-<li><span class="math inline">\(\frac{1}{\sqrt{2k}} \sum_{i=0}^{2k-1} \ket{i}\)</span></li>
-</ul></li>
-<li><span class="math inline">\(Q\)</span>
-<ul>
-<li><span class="math inline">\(\frac{1}{\sqrt{2k}} \sum_{i=0}^{2k-1} \hat{x}_i \ket{i}\)</span></li>
-</ul></li>
-<li><span class="math inline">\(U_3\)</span>
-<ul>
-<li><span class="math inline">\(\frac{\sqrt{2k-1}}{2k \sqrt{2k+1}} \sum_{i \lt j} (\hat{x}_i - \hat{x}_j) \ket{i,j} + \frac{1}{2k\sqrt{2k+1}} \sum_{i=0}^{2k} \sum_{i \ne j} \hat{x}_i \ket{j}\)</span></li>
-</ul></li>
+  <li>
+    初期状態
+    <ul>
+      <li>\(\ket{0}\)</li>
+    </ul>
+  </li>
+  <li>
+    \(U_1\)
+    <ul>
+      <li>\(\frac{1}{\sqrt{2k}} \sum_{i=0}^{2k-1} \ket{i}\)</li>
+    </ul>
+  </li>
+  <li>
+    \(Q\)
+    <ul>
+      <li>\(\frac{1}{\sqrt{2k}} \sum_{i=0}^{2k-1} \hat{x}_i \ket{i}\)</li>
+    </ul>
+  </li>
+  <li>
+    \(U_3\)
+    <ul>
+      <li>\(\frac{\sqrt{2k-1}}{2k \sqrt{2k+1}} \sum_{i \lt j} (\hat{x}_i - \hat{x}_j) \ket{i,j} + \frac{1}{2k\sqrt{2k+1}} \sum_{i=0}^{2k} \sum_{i \ne j} \hat{x}_i \ket{j}\)</li>
+    </ul>
+  </li>
 </ul>
 <p>これを測定すると</p>
-<ol type="1">
-<li><span class="math inline">\(\ket{i,j}\)</span> または</li>
-<li><span class="math inline">\(\ket{j}\)</span></li>
+<ol>
+  <li>\(\ket{i,j}\) または</li>
+  <li>\(\ket{j}\)</li>
 </ol>
 <p>のいずれかを得る.</p>
-<h4 id="ketij-を得た時">1. <span class="math inline">\(\ket{i,j}\)</span> を得た時,</h4>
-<p><span class="math inline">\(\hat{x}_i - \hat{x}_j \ne 0\)</span> であるから, <span class="math inline">\(x_i \ne x_j\)</span>. 従って <span class="math display">\[\threshold^{2k+1}_{k+1}(x) = \threshold^{2k+1}_{k+1}(x \setminus \{x_i, x_j\}).\]</span></p>
-<h4 id="ketj-を得た時">2. <span class="math inline">\(\ket{j}\)</span> を得た時,</h4>
-<p><span class="math inline">\(\sum_{i \ne j} \hat{x}_i \ne 0\)</span>. 先ほどの性質を思い出せば, <span class="math display">\[\threshold^{2k+1}_{k+1}(x) = \threshold^{2k+1}_{k+1}(x \setminus \{x_i, x_j\}).\]</span></p>
-<p>以上から, ちょうど <span class="math inline">\(k\)</span> 回, 再帰的に <span class="math inline">\(U_1, Q, U_2\)</span> を適用することで</p>
-<p><span class="math display">\[\threshold^1_0(x_0) = x_0\]</span></p>
-<p>というわけで <span class="math inline">\(\threshold^{2k+1}_{k+1}\)</span> はクエリ計算量 <span class="math inline">\(k+1\)</span> で解ける.</p>
-<h3 id="thresholdn_k"><span class="math inline">\(\threshold^n_k\)</span></h3>
-<p>一般の場合はやはり EXACT と同様に余分にビットを付け足してやれば結局 <span class="math inline">\(\threshold^{2k+1}_{k+1}\)</span> に帰着でき, クエリ計算量は, <span class="math display">\[\max \{k+1, n-k+1\}.\]</span></p>
+<h4 id="4-1. \(\ket{i,j}\) を得た時,">1. \(\ket{i,j}\) を得た時,</h4>
+<p>\(\hat{x}_i - \hat{x}_j \ne 0\) であるから, \(x_i \ne x_j\) . 従って</p>
+\[\threshold^{2k+1}_{k+1}(x) = \threshold^{2k+1}_{k+1}(x \setminus \{x_i, x_j\}).\]
+<h4 id="4-2. \(\ket{j}\) を得た時,">2. \(\ket{j}\) を得た時,</h4>
+<p>\(\sum_{i \ne j} \hat{x}_i \ne 0\) . 先ほどの性質を思い出せば,</p>
+\[\threshold^{2k+1}_{k+1}(x) = \threshold^{2k+1}_{k+1}(x \setminus \{x_i, x_j\}).\]
+<p>以上から, ちょうど \(k\) 回, 再帰的に \(U_1, Q, U_2\) を適用することで</p>
+\[\threshold^1_0(x_0) = x_0\]
+<p>というわけで \(\threshold^{2k+1}_{k+1}\) はクエリ計算量 \(k+1\) で解ける.</p>
+<h3 id="3-\(\threshold^n_k\)">\(\threshold^n_k\)</h3>
+<p>一般の場合はやはり EXACT と同様に余分にビットを付け足してやれば結局 \(\threshold^{2k+1}_{k+1}\) に帰着でき, クエリ計算量は,</p>
+\[\max \{k+1, n-k+1\}.\]
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -314,5 +361,9 @@
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

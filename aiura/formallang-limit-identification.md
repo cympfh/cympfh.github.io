@@ -219,11 +219,13 @@ $$\PAT = (\Sigma \cup X)^+$$
 
 代入 $[x_i/p]$ とは, パターン中に出現する **全ての** 変数 $x_i$ を **空でない** パターン $p$ に置き換える操作.
 
+$$
 \begin{align*}
 x_1 x_1 & \succeq \underline{x_2} ~ \underline{x_2} & [x_1/x_2] \\
 & \succeq \underline{a x_1} ~ \underline{a x_1} & [x_2/a x_1] \\
 & \succeq a \underline{b c} a \underline{b c} & [x_1/b c] \\
 \end{align*}
+$$
 
 ただし空は代入できないことに注意.
 $$a x_1 a x_1 \not\succeq a a$$

@@ -398,7 +398,7 @@ $$X \mvdarrow Y \mid A-Y$$
 
 > 同じことを言い直すが,
 > 名前列 $A$ を適当な二つ $A_1, A_2$ (ただし $A_1 \lor A_2 = A, A_1 \land A_2 \ne ()$) に分解してこのとき,
-> $$A_1 \land A_2 \mvdarrow A_1 \mid A_2 \iff R[X_1] \ast R[X_2] = R$$
+> $A_1 \land A_2 \mvdarrow A_1 \mid A_2 \iff R[X_1] \ast R[X_2] = R$
 
 自明な多値従属性として
 $Y \prec X \implies X \mvdarrow Y$
@@ -411,7 +411,9 @@ $Y \prec X \implies X \mvdarrow Y$
 $r \in R(A)$ と $X, Y \prec A$ について,
 $r[X]$ が決まるとき $r[Y]$ が決定することを,
 $Y$ は $X$ に関数的に従属するという.
-これを $$X \fdarrow Y$$ と書く.
+これを
+$$X \fdarrow Y$$
+と書く.
 
 $$X \fdarrow Y \iff (\forall r, r' \in R(A), r[X] = r'[X] \implies r[Y], r'[Y])$$
 

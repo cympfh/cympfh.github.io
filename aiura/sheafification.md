@@ -6,21 +6,13 @@
 前層があるとき、以下のステップを踏むことでまず中間層に誘導し、さらにそれを層に誘導できる.
 この手続きを層化という.
 
-1. <a href="#step1">前層・層の定義</a>
-1. <a href="#step2">諸定義</a>
-1. <a href="#step3">中間層の定義</a>
-1. <a href="#step4">前層から中間層への誘導</a>
-1. <a href="#step5">誘導されたそれが中間層であることの確認</a>
-1. <a href="#step6">中間層から層への誘導</a>
-1. <a href="#step7">誘導されたそれが層であることの確認</a>
+## INDEX
 
-<a name="step1"></a>
+<div id=toc></div>
 
-## Def. 前層、層
+## 前層・層の定義
 
 [前記事](sheaf.html) に書いた.
-
-<a name="step2"></a>
 
 ## 諸定義
 
@@ -31,18 +23,16 @@ $U$ についての和を取っていることに註意.
 特に $[f=f] = X$ (全体) である.
 
 2元 $f,g$ が互いのドメインで制限したときに等しいことを「両立している」と表現する.
-すなわち $$f \rceil Eg = g \rceil Ef$$ のことである.
+すなわち
+$$f \rceil Eg = g \rceil Ef$$
+のことである.
 
-<a name="step3"></a>
-
-## Def. 中間層
+## 中間層の定義
 
 前層 $A$ について
 $$\forall f,g \in A, Ef \cap Eg \subseteq [f=g] \implies f\rceil Eg=g\rceil Ef$$
 が成立するものを中間層と言う.
 (逆は一般の前層で成立する.)
-
-<a name="step4"></a>
 
 ## 前層から中間層への誘導
 
@@ -58,9 +48,8 @@ E \varphi(f) = Ef \\
 とする.
 この $\hat{A}$ が中間層になっている.
 
-<a name="step5"></a>
-
 ## 誘導されたそれが中間層であることの確認
+
 前層であることまでは自明だとして、中間層としての条件が満たされてることだけ確認する.
 
 すなわち、任意の2元 $f,g \in A$ に対する $\varphi(f), \varphi(g) \in \hat{A}$ について
@@ -149,8 +138,6 @@ $$
 というわけで、 $\hat{A}$ は中間層である.
 (背理法の中で更に背理法を使ってしまった.)
 
-<a name="step6"></a>
-
 ## 中間層から層への誘導
 
 中間層 $A$ があるとき、
@@ -183,7 +170,9 @@ $F_1 \cup F_2 \in \mathcal F$
 以上から
 $\def\FS{\mathcal F\!/\!\!\equiv}\FS$
 が定まる.
-$\varphi$ を商を取る関数 $$\varphi : \mathcal F \to \FS$$ とする.
+$\varphi$ を商を取る関数
+$$\varphi : \mathcal F \to \FS$$
+とする.
 
 $\FS$ 上の $E, \rceil$ は $\varphi$ によって自然に導かれる.
 すなわち、
@@ -194,8 +183,6 @@ $\FS$ 上の $E, \rceil$ は $\varphi$ によって自然に導かれる.
 このとき
 $\langle \FS, E, \rceil \rangle$
 は層となる.
-
-<a name="step7"></a>
 
 ## 誘導されたそれが層であることの確認
 
@@ -238,7 +225,7 @@ $$\forall F \in \FS,~ \varphi (\psi F) = F$$
 
 > 任意の $\mathcal G \subseteq \mathcal F$ について、
 > $\mathcal G/\!\equiv$ の任意の2元が両立するならば、
-> 唯一の和 $$\bigcup \mathcal G$$ が存在する.
+> 唯一の和 $\bigcup \mathcal G$ が存在する.
 
 まず、和として満たすべき性質を満たす集合が作れること (存在性) を示す.
 次に、その存在が唯一なものであること (唯一性) を示す.
@@ -262,21 +249,21 @@ $$\begin{align*}
 & = \varphi \left( \bigcup_{G \in \mathcal G} G \right) \rceil EG_0 \\
 & = \varphi \left(
     \{ g \rceil EG_0 | G \in \mathcal G, g \in G \}
-\right) ~~~\text{ ...$E$ の定義より} \\
+\right) ~~~\text{ ... } E \text{ の定義より} \\
 & = \varphi \left(
     \bigcup_{G \in \mathcal G} (G \rceil EG_0)
-\right) ~~~\text{ ...$G$ ごとにまとめた} \\
+\right) ~~~\text{ ... } G \text{ ごとにまとめた} \\
 & = \varphi \left(
     \bigcup_{G \in \mathcal G} (G_0 \rceil EG)
-\right) ~~~\text{ ...$\varphi G$ と $\varphi G_0$ は両立してるので (ただしそんなに自明ではない)} \\
+\right) ~~~\text{ ... } \varphi G \text{ と } \varphi G_0 \text{ は両立してるので (ただしそんなに自明ではない)} \\
 & = \varphi \left(
     G_0 \cup \bigcup_{G \ne G_0} (G_0 \rceil EG)
-\right) ~~~\text{ ...後の説明の便宜上 $G=G_0$ の場合とそれ以外とに分けた} \\
+\right) ~~~\text{ ... 後の説明の便宜上 } G=G_0 \text{ の場合とそれ以外とに分けた} \\
 & = \varphi G_1 \text{ とおく}
 \end{align*}$$
 
 示したいのは $\varphi G_0 = \varphi G_1$ であること.
-すなわち $$G_0 \equiv G_1$$ であること.
+すなわち $G_0 \equiv G_1$ であること.
 $\equiv$ であることを示すには次の2つを見れば良いのだった.
 
 i. $EG_0 = EG_1$
@@ -290,7 +277,7 @@ EG_1
 & = EG_0 \cup \bigcup_{G \ne G_0} E(G_0 \rceil EG) \\
 & = EG_0 \cup \bigcup_{G \ne G_0} (EG_0 \cap EG) \\
 & = EG_0
-    ~~~\text{... $EG_0 \supseteq (EG_0 \cap EG)$ より}
+    ~~~\text{... } EG_0 \supseteq (EG_0 \cap EG) \text{ より}
 \end{align*}$$
 
 ##### ii.
@@ -342,7 +329,7 @@ f \rceil Eg
 
 #### 2. 唯一性
 
-他に和としての性質を満たす $$\varphi H \in \FS$$ があるとする.
+他に和としての性質を満たす $\varphi H \in \FS$ があるとする.
 このとき
 $$\varphi H = \bar{G}$$
 であることを示すことで、和が唯一であって
@@ -397,9 +384,9 @@ $$Eh \cap EG = Eg'$$
 また両辺に $\rceil Eg$ を掛けることで
 $$\begin{align*}
 h \rceil Eg
-& = h \rceil EG \rceil Eg ~~~\text{... $Eg \subset EG$ なので} \\
+& = h \rceil EG \rceil Eg ~~~\text{... } Eg \subset EG \text{ なので} \\
 & = g' \rceil Eg \\
-& = g \rceil Eg' ~~~\text{... $G$ の2元は両立してる} \\
+& = g \rceil Eg' ~~~\text{... } G \text{ の2元は両立してる} \\
 & = g \rceil (Eh \cap EG) ~~~\text{... すぐ上で求めた値を代入した} \\
 & = (g \rceil EG) \rceil Eh
 & = g \rceil Eh
@@ -408,6 +395,8 @@ h \rceil Eg
 
 というわけで $H \cap \psi \bar{G}$ の2元はいつも両立している.
 
-というわけで $$\varphi H = \bar{G}$$ が得られた!!
+というわけで
+$$\varphi H = \bar{G}$$
+が得られた!!
 
 以上.

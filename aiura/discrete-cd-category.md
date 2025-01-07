@@ -190,7 +190,9 @@ $$P(y) = \sum_x P(x) P(y|x)$$
 ### 確率の乗法定理
 
 今度は $X$ の確率 $\omega \colon I \to X$ から始めて, これをコピーしてから $f \colon X \to Y$ を適用してみる.
-すなわち $$(1 \otimes f) c_X \sigma \colon I \to X \otimes Y$$ という合成射を考える.
+すなわち
+$$(1 \otimes f) c_X \sigma \colon I \to X \otimes Y$$
+という合成射を考える.
 全体としてみるとこの射は状態 $I \to X \otimes Y$ なので単に同時確率 $P(x,y)$ を表していそう.
 
 この射を $\Sets$ に持ってくると,

@@ -13,7 +13,7 @@ $\def\N{\mathcal N}\def\bar#1{\overline{#1}}\def\bbar#1{\overline{\overline{#1}}
 
 ## 表記
 
-確率変数を大英字を使って $X,Y, X_i$ などと書く.
+確率変数を大英字を使って $X, Y, X_i$ などと書く.
 これを実関数で写して得る確率変数を例えば $X+1$ とか $2X$ とか書く.
 
 その期待値は頭に $E$ を付けて, $EX$ などと書く.
@@ -186,7 +186,9 @@ $X \sim \chi^2_m$ と $Y \sim \chi^2_n$ について $X + Y \sim \chi^2_{m+n}$ �
 
 $n$ 点の標本
 $$X_1, \ldots, X_n \sim \N(\mu, \sigma)$$
-があるとき, $$Z_i = \frac{X_i - \mu}{\sigma}$$ とすればこれは標準正規分布に従う.
+があるとき,
+$$Z_i = \frac{X_i - \mu}{\sigma}$$
+とすればこれは標準正規分布に従う.
 $$Z_1, \ldots, Z_n \sim \N(0,1)$$
 従って, 列ベクトル $Z = [Z_1, \ldots, Z_n]^T$ とおけば,
 このベクトルは多次元正規分布に従う

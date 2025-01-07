@@ -1,90 +1,89 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="description" content="INDEX/表記/前提知識/標本平均/不偏分散 (unbiased sample variance)/χ2分布/t分布/F分布/" />
-  <meta property="og:url" content="http://cympfh.cc/taglibro">
-  <meta property="og:type" content="article">
-  <meta property="og:title" content="不偏分散, χ2分布, t分布, F分布" />
-  <meta property="og:description" content="INDEX/表記/前提知識/標本平均/不偏分散 (unbiased sample variance)/χ2分布/t分布/F分布/" />
-  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:site" content="@cympfh" />
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>不偏分散, χ2分布, t分布, F分布</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-svg-full.js"></script>
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
     <a href='index.html'><i class="fa fa-stumbleupon"></i></a>
 </header>
-<header>
-<h1 class="title">不偏分散, χ2分布, t分布, F分布</h1>
-</header>
-<p class="date" style="text-align: right">
-2021-01-03 (Sun.)
-</p>
-<div class="is-pulled-right">
-<p><a class='tag is-red' href=index.html#統計>統計</a></p>
-</div>
-<p>標本のことを考える.</p>
-<p>この文書は統計検定2級用のチートシートを兼ねてる. <span class="math inline">\(\def\N{\mathcal N}\def\bar#1{\overline{#1}}\def\bbar#1{\overline{\overline{#1}}}\)</span></p>
-<h2 id="index">INDEX</h2>
-<div id="toc">
 
-</div>
-<h2 id="表記">表記</h2>
-<p>確率変数を大英字を使って <span class="math inline">\(X,Y, X_i\)</span> などと書く. これを実関数で写して得る確率変数を例えば <span class="math inline">\(X+1\)</span> とか <span class="math inline">\(2X\)</span> とか書く.</p>
-<p>その期待値は頭に <span class="math inline">\(E\)</span> を付けて, <span class="math inline">\(EX\)</span> などと書く. <span class="math inline">\(E\)</span> が掛かってる部分が曖昧な場合だけカッコを補って <span class="math inline">\(E(X+1)\)</span> とか <span class="math inline">\(E(2X)\)</span> などと書く.</p>
-<p>平均を <span class="math inline">\(\mu\)</span>, 分散を <span class="math inline">\(\sigma^2\)</span> に持つ正規分布を <span class="math inline">\(\N(\mu,\sigma^2)\)</span> と書く. 確率変数 <span class="math inline">\(X\)</span> がこれに従うことを <span class="math display">\[X \sim \mathcal N(\mu, \sigma^2)\]</span> と書く.</p>
-<h2 id="前提知識">前提知識</h2>
-<h3 id="正規分布の二次モーメント">正規分布の二次モーメント</h3>
-<p><span class="math inline">\(X \sim \N(\mu,\sigma^2)\)</span> のとき, <span class="math inline">\(E(X^2) = \mu^2 + \sigma^2\)</span>.</p>
-<h3 id="正規分布の平行移動-スカラー倍">正規分布の平行移動, スカラー倍</h3>
-<p><span class="math inline">\(X \sim \N(\mu,\sigma^2)\)</span> のとき, 任意の実数 <span class="math inline">\(a,b\)</span> について, <span class="math display">\[aX+b \sim \N(a\mu + b, a^2 \sigma^2).\]</span></p>
-<h3 id="正規分布どうしの和">正規分布どうしの和</h3>
-<p>2つの独立な確率変数がそれぞれ <span class="math inline">\(X \sim \N(\mu_X, \sigma_X^2)\)</span>, <span class="math inline">\(Y \sim \N(\mu_Y, \sigma_Y^2)\)</span> であるとする. これらを任意の実数 <span class="math inline">\(a,b\)</span> で線形結合した確率変数 <span class="math inline">\(aX+bY\)</span> は次のような正規分布に従う: <span class="math display">\[aX + bY \sim \N(a \mu_X + b \mu_Y, a^2 \sigma_X^2 + b^2 \sigma_Y^2).\]</span></p>
-<h2 id="標本平均">標本平均</h2>
-<p>正規分布 <span class="math inline">\(\N(\mu,\sigma^2)\)</span> から独立にサンプリングして得た <span class="math inline">\(n\)</span> 個の点 <span class="math display">\[X_1, \ldots,X_n\]</span> を <strong>標本</strong> と呼ぶ.</p>
-<p>この <span class="math inline">\(n\)</span> 点の標本が与えられたときに母平均 <span class="math inline">\(\mu\)</span> を推定することを考える. 次の値は <strong>標本平均</strong> と呼び, <span class="math inline">\(\mu\)</span> の推定値に使われる. <span class="math display">\[\bar{X} = \frac{1}{n} \sum_i X_i\]</span></p>
-<h3 id="標本平均は不偏推定量">標本平均は不偏推定量</h3>
+<h1 class="title" id="1-不偏分散, χ2分布, t分布, F分布">不偏分散, χ2分布, t分布, F分布</h1>
+<p><p class=date style='text-align: right'>2021-01-03 (Sun.)</p> <div class='is-pulled-right'> <a class='tag is-red' href=index.html#統計>統計</a> </div></p>
+<p>標本のことを考える.</p>
+<p>この文書は統計検定2級用のチートシートを兼ねてる. \(\def\N{\mathcal N}\def\bar#1{\overline{#1}}\def\bbar#1{\overline{\overline{#1}}}\)</p>
+<h2 id="2-INDEX">INDEX</h2>
+<p><div id=toc></div></p>
+<h2 id="2-表記">表記</h2>
+<p>確率変数を大英字を使って \(X, Y, X_i\) などと書く. これを実関数で写して得る確率変数を例えば \(X+1\) とか \(2X\) とか書く.</p>
+<p>その期待値は頭に \(E\) を付けて, \(EX\) などと書く. \(E\) が掛かってる部分が曖昧な場合だけカッコを補って \(E(X+1)\) とか \(E(2X)\) などと書く.</p>
+<p>平均を \(\mu\) , 分散を \(\sigma^2\) に持つ正規分布を \(\N(\mu,\sigma^2)\) と書く. 確率変数 \(X\) がこれに従うことを</p>
+\[X \sim \mathcal N(\mu, \sigma^2)\]
+<p>と書く.</p>
+<h2 id="2-前提知識">前提知識</h2>
+<h3 id="3-正規分布の二次モーメント">正規分布の二次モーメント</h3>
+<p>\(X \sim \N(\mu,\sigma^2)\) のとき, \(E(X^2) = \mu^2 + \sigma^2\) .</p>
+<h3 id="3-正規分布の平行移動, スカラー倍">正規分布の平行移動, スカラー倍</h3>
+<p>\(X \sim \N(\mu,\sigma^2)\) のとき, 任意の実数 \(a,b\) について,</p>
+\[aX+b \sim \N(a\mu + b, a^2 \sigma^2).\]
+<h3 id="3-正規分布どうしの和">正規分布どうしの和</h3>
+<p>2つの独立な確率変数がそれぞれ \(X \sim \N(\mu_X, \sigma_X^2)\) , \(Y \sim \N(\mu_Y, \sigma_Y^2)\) であるとする. これらを任意の実数 \(a,b\) で線形結合した確率変数 \(aX+bY\) は次のような正規分布に従う:</p>
+\[aX + bY \sim \N(a \mu_X + b \mu_Y, a^2 \sigma_X^2 + b^2 \sigma_Y^2).\]
+<h2 id="2-標本平均">標本平均</h2>
+<p>正規分布 \(\N(\mu,\sigma^2)\) から独立にサンプリングして得た \(n\) 個の点</p>
+\[X_1, \ldots,X_n\]
+<p>を <strong>標本</strong> と呼ぶ.</p>
+<p>この \(n\) 点の標本が与えられたときに母平均 \(\mu\) を推定することを考える. 次の値は <strong>標本平均</strong> と呼び, \(\mu\) の推定値に使われる.</p>
+\[\bar{X} = \frac{1}{n} \sum_i X_i\]
+<h3 id="3-標本平均は不偏推定量">標本平均は不偏推定量</h3>
 <p>その推定量（ここでは標本平均）の期待値が推定したい真の値に一致するとき, これを <strong>不偏推定量</strong> という.</p>
-<p>標本平均は不偏推定量である. つまり, <span class="math display">\[E \bar{X} = \mu\]</span> が成り立つ.</p>
-<p>期待値の線形性から確認出来る. <span class="math display">\[\begin{align*}
+<p>標本平均は不偏推定量である. つまり,</p>
+\[E \bar{X} = \mu\]
+<p>が成り立つ.</p>
+<p>期待値の線形性から確認出来る.</p>
+\[\begin{align*}
 E \bar{X}
 &amp; = E \frac{1}{n} \sum_i X_i \\
 &amp; = \frac{1}{n} \sum_i E X_i \\
 &amp; = \frac{1}{n} \sum_i \mu \\
 &amp; = \mu \\
-\end{align*}\]</span></p>
-<h3 id="標本平均は一致推定量">標本平均は一致推定量</h3>
-<p>サンプル数 <span class="math inline">\(n\)</span> を無限大に大きくしたその極限値を取ったときに, 推定量が真の値に一致するとき, <strong>一致推定量</strong> であるという.</p>
-<p>標本平均は一致推定量である. つまり, <span class="math display">\[\bar{X} \to \mu ~~ (n \to \infty)\]</span> が成り立つ.</p>
-<blockquote>
-<p>形式的に書く場合は, <span class="math inline">\(\epsilon-\delta\)</span> のときみたいに, 「十分大きいな <span class="math inline">\(n\)</span> を取れば, <span class="math inline">\(\| \bar{X} - \mu \|\)</span> を任意の正数未満にする確率を任意精度で達成できる」みたいな形で定義するはず. ここではフランクに実関数の極限のように記述する.</p>
-</blockquote>
-<p>確率変数 <span class="math inline">\(n \bar{X} = \sum_i X_i\)</span> が従う確率分布を考える. これは同じ正規分布の <span class="math inline">\(n\)</span> 個の和だから, <span class="math display">\[n \bar{X} \sim \N(n \mu, n \sigma^2).\]</span> 両辺を <span class="math inline">\(1/n\)</span> 倍して, <span class="math display">\[\bar{X} \sim \N(\mu, \sigma^2/n).\]</span></p>
-<blockquote>
-<p>これを見ても <span class="math inline">\(E \bar{X} = \mu\)</span> はすぐ分かる.</p>
-</blockquote>
-<p>分散の方にだけ <span class="math inline">\(/n\)</span> というのがあるのがポイントで, これのおかげで <span class="math inline">\(n \to \infty\)</span> のときに分散がゼロになるので, 任意精度で <span class="math inline">\(\bar{X} \to \mu\)</span> に近づける事ができる.</p>
-<h2 id="不偏分散-unbiased-sample-variance">不偏分散 (unbiased sample variance)</h2>
-<p><span class="math inline">\(n\)</span> 点の標本 <span class="math display">\[X_1, \ldots,X_n \sim \mathcal(\mu,\sigma^2)\]</span> から母分散 <span class="math inline">\(\sigma^2\)</span> を推定することを考える. これには <strong>不偏分散</strong> と呼ばれる次の値が使われる. <span class="math display">\[V_X = \frac{1}{n-1} \sum_i (X_i - \bar{X})^2\]</span> ここで <span class="math inline">\(\bar{X}\)</span> は先程定義した <span class="math inline">\(\sum_i X_i / n\)</span> のこと.</p>
-<blockquote>
-<p>単純平均として <span class="math inline">\(n\)</span> で割ったものを標本分散という. 以下で述べる理由から標本分散を使う機会は無く, 不偏分散のことだけを考えてれば良い.</p>
-</blockquote>
-<p><span class="math inline">\(n-1\)</span> で割る前の値を <span class="math inline">\(S^2\)</span> という名前で呼ぶことにする. <span class="math display">\[S^2 = \sum_i (X_i - \bar{X})^2\]</span></p>
-<h3 id="不偏分散は不偏推定量">不偏分散は不偏推定量</h3>
+\end{align*}\]
+<h3 id="3-標本平均は一致推定量">標本平均は一致推定量</h3>
+<p>サンプル数 \(n\) を無限大に大きくしたその極限値を取ったときに, 推定量が真の値に一致するとき, <strong>一致推定量</strong> であるという.</p>
+<p>標本平均は一致推定量である. つまり,</p>
+\[\bar{X} \to \mu ~~ (n \to \infty)\]
+<p>が成り立つ.</p>
+<blockquote>形式的に書く場合は, \(\epsilon-\delta\) のときみたいに, 「十分大きいな \(n\) を取れば, \(\| \bar{X} - \mu \|\) を任意の正数未満にする確率を任意精度で達成できる」みたいな形で定義するはず. ここではフランクに実関数の極限のように記述する.</blockquote>
+<p>確率変数 \(n \bar{X} = \sum_i X_i\) が従う確率分布を考える. これは同じ正規分布の \(n\) 個の和だから,</p>
+\[n \bar{X} \sim \N(n \mu, n \sigma^2).\]
+<p>両辺を \(1&#x2F;n\) 倍して,</p>
+\[\bar{X} \sim \N(\mu, \sigma^2&#x2F;n).\]
+<blockquote>これを見ても \(E \bar{X} = \mu\) はすぐ分かる.</blockquote>
+<p>分散の方にだけ \(&#x2F;n\) というのがあるのがポイントで, これのおかげで \(n \to \infty\) のときに分散がゼロになるので, 任意精度で \(\bar{X} \to \mu\) に近づける事ができる.</p>
+<h2 id="2-不偏分散 (unbiased sample variance)">不偏分散 (unbiased sample variance)</h2>
+<p>\(n\) 点の標本</p>
+\[X_1, \ldots,X_n \sim \mathcal(\mu,\sigma^2)\]
+<p>から母分散 \(\sigma^2\) を推定することを考える. これには <strong>不偏分散</strong> と呼ばれる次の値が使われる.</p>
+\[V_X = \frac{1}{n-1} \sum_i (X_i - \bar{X})^2\]
+<p>ここで \(\bar{X}\) は先程定義した \(\sum_i X_i &#x2F; n\) のこと.</p>
+<blockquote>単純平均として \(n\) で割ったものを標本分散という. 以下で述べる理由から標本分散を使う機会は無く, 不偏分散のことだけを考えてれば良い.</blockquote>
+<p>\(n-1\) で割る前の値を \(S^2\) という名前で呼ぶことにする.</p>
+\[S^2 = \sum_i (X_i - \bar{X})^2\]
+<h3 id="3-不偏分散は不偏推定量">不偏分散は不偏推定量</h3>
 <p>不偏分散は不偏推定量なので不偏分散と呼ばれる.</p>
-<p>いきなり <span class="math inline">\(n-1\)</span> で割ってる値を考えるのは気持ち悪いので, <span class="math inline">\(S^2\)</span> の期待値を計算して, <span class="math inline">\(n-1\)</span> で割る自然さを獲得したい. あと <span class="math inline">\((X_i - \bar{X})^2\)</span> という値も実はやばくて, サンプルの値をサンプルの平均値で引いている. <span class="math inline">\(\mu\)</span> という真の値との差を調べるのが自然で, つまり <span class="math inline">\((X_i - \bar{X})^2 = \left[ (X_i - \mu) - (\bar{X} - \mu) \right]^2\)</span> という式変形をしてこの右辺を考えるのが筋が良い. なぜなら, <span class="math inline">\(\mu\)</span> は真にただの定数だから, <span class="math inline">\(X_i - \mu\)</span> も <span class="math inline">\(\bar{X} - \mu\)</span> も正規分布に従うだけの確率変数になって計算がキレイになるから.</p>
-<p><span class="math display">\[\begin{align*}
+<p>いきなり \(n-1\) で割ってる値を考えるのは気持ち悪いので, \(S^2\) の期待値を計算して, \(n-1\) で割る自然さを獲得したい. あと \((X_i - \bar{X})^2\) という値も実はやばくて, サンプルの値をサンプルの平均値で引いている. \(\mu\) という真の値との差を調べるのが自然で, つまり \((X_i - \bar{X})^2 = \left[ (X_i - \mu) - (\bar{X} - \mu) \right]^2\) という式変形をしてこの右辺を考えるのが筋が良い. なぜなら, \(\mu\) は真にただの定数だから, \(X_i - \mu\) も \(\bar{X} - \mu\) も正規分布に従うだけの確率変数になって計算がキレイになるから.</p>
+\[\begin{align*}
 (X_i - \bar{X})^2
 &amp; = \left[ (X_i - \mu) - (\bar{X} - \mu) \right]^2 \\
 &amp; = (X_i - \mu)^2 + (\bar{X} - \mu)^2 - 2 (X_i -\mu) (\bar{X} - \mu) \\
@@ -94,113 +93,167 @@ E \bar{X}
 &amp; = \sum_i (X_i - \mu)^2 - n (\bar{X} - \mu)^2 \\
 E \sum_i (X_i - \bar{X})^2
 &amp; = \sum_i E (X_i - \mu)^2 - n E (\bar{X} - \mu)^2 \\
-\end{align*}\]</span></p>
-<p>ここで <span class="math inline">\(X_i, \bar{X}\)</span> の分布は分かってるので</p>
+\end{align*}\]
+<p>ここで \(X_i, \bar{X}\) の分布は分かってるので</p>
 <ul>
-<li><span class="math inline">\(X_i - \mu \sim \N(0, \sigma^2)\)</span> for all <span class="math inline">\(i\)</span></li>
-<li><span class="math inline">\(\bar{X} - \mu \sim \N(0, \sigma^2/n)\)</span></li>
+  <li>\(X_i - \mu \sim \N(0, \sigma^2)\) for all \(i\)</li>
+  <li>\(\bar{X} - \mu \sim \N(0, \sigma^2&#x2F;n)\)</li>
 </ul>
-<p>さらに正規分布に対する <span class="math inline">\(EX^2\)</span> という二次モーメントも普通に分かって（前提知識参照）,</p>
-<p><span class="math display">\[\begin{align*}
+<p>さらに正規分布に対する \(EX^2\) という二次モーメントも普通に分かって（前提知識参照）,</p>
+\[\begin{align*}
 \sum_i E (X_i - \mu)^2 - n E (\bar{X} - \mu)^2
-&amp; = \sum_i \sigma^2 - n (\sigma^2/n) \\
-&amp; = n \sigma^2 - n (\sigma^2/n) \\
+&amp; = \sum_i \sigma^2 - n (\sigma^2&#x2F;n) \\
+&amp; = n \sigma^2 - n (\sigma^2&#x2F;n) \\
 &amp; = (n-1) \sigma^2
-\end{align*}\]</span></p>
-<p>というわけで <span class="math display">\[ES^2 = (n-1) \sigma^2\]</span> が得られた. また, <span class="math inline">\(V_X = S^2/(n-1)\)</span> としておけば <span class="math display">\[EV_X = \sigma^2\]</span> を得て, これが分散の不偏推定量となる.</p>
-<h3 id="不偏分散は一致推定量">不偏分散は一致推定量</h3>
+\end{align*}\]
+<p>というわけで</p>
+\[ES^2 = (n-1) \sigma^2\]
+<p>が得られた. また, \(V_X = S^2&#x2F;(n-1)\) としておけば</p>
+\[EV_X = \sigma^2\]
+<p>を得て, これが分散の不偏推定量となる.</p>
+<h3 id="3-不偏分散は一致推定量">不偏分散は一致推定量</h3>
 <p>次の話と被るのと厳密な話は出来ないので省略.</p>
-<h2 id="χ2分布">χ2分布</h2>
-<p>独立な <span class="math inline">\(p\)</span> 個の確率変数が標準正規分布に従っているとする. <span class="math display">\[Y_1, \ldots, Y_p \sim \N(0,1)\]</span> このときに次の確率変数 <span class="math display">\[Z = \sum_i Y_i^2\]</span> が従う確率分布のことを自由度 <span class="math inline">\(p\)</span> の <span class="math inline">\(\chi^2_p\)</span> 分布という.</p>
-<h3 id="性質">性質</h3>
-<p>期待値は <span class="math inline">\(p\)</span>, 分散は <span class="math inline">\(2p\)</span>. <span class="math inline">\(p \to \infty\)</span> のとき, 大変緩やかに正規分布に近づく.</p>
-<p><span class="math inline">\(X \sim \chi^2_m\)</span> と <span class="math inline">\(Y \sim \chi^2_n\)</span> について <span class="math inline">\(X + Y \sim \chi^2_{m+n}\)</span> が成り立つ. この性質には <strong>再生性</strong> という名前がついている.</p>
-<h3 id="不偏分散と-χ2-分布">不偏分散と χ2 分布</h3>
+<h2 id="2-χ2分布">χ2分布</h2>
+<p>独立な \(p\) 個の確率変数が標準正規分布に従っているとする.</p>
+\[Y_1, \ldots, Y_p \sim \N(0,1)\]
+<p>このときに次の確率変数</p>
+\[Z = \sum_i Y_i^2\]
+<p>が従う確率分布のことを自由度 \(p\) の \(\chi^2_p\) 分布という.</p>
+<h3 id="3-性質">性質</h3>
+<p>期待値は \(p\) , 分散は \(2p\) . \(p \to \infty\) のとき, 大変緩やかに正規分布に近づく.</p>
+<p>\(X \sim \chi^2_m\) と \(Y \sim \chi^2_n\) について \(X + Y \sim \chi^2_{m+n}\) が成り立つ. この性質には <strong>再生性</strong> という名前がついている.</p>
+<h3 id="3-不偏分散と χ2 分布">不偏分散と χ2 分布</h3>
 <p>ここが本題.</p>
-<p><span class="math inline">\(n\)</span> 点の標本 <span class="math display">\[X_1, \ldots, X_n \sim \N(\mu, \sigma)\]</span> があるとき, <span class="math display">\[Z_i = \frac{X_i - \mu}{\sigma}\]</span> とすればこれは標準正規分布に従う. <span class="math display">\[Z_1, \ldots, Z_n \sim \N(0,1)\]</span> 従って, 列ベクトル <span class="math inline">\(Z = [Z_1, \ldots, Z_n]^T\)</span> とおけば, このベクトルは多次元正規分布に従う <span class="math display">\[Z \sim \N(0_n, I_n).\]</span></p>
-<p>やや唐突だが, <span class="math inline">\(n \times n\)</span> の直交行列 <span class="math inline">\(G\)</span> を考える. しかもその第一行ベクトル <span class="math inline">\(g^1\)</span> が <span class="math display">\[g^1 = \frac{1}{\sqrt{n}} [1, 1, \ldots, 1]\]</span> であるようなものが存在する（例えばグラムシュミットの方法で具体的に得られる）.</p>
-<p><span class="math inline">\(Y = GZ\)</span> という確率変数を考えるとこれが従う正規分布は, <span class="math display">\[\begin{align*}
+<p>\(n\) 点の標本</p>
+\[X_1, \ldots, X_n \sim \N(\mu, \sigma)\]
+<p>があるとき,</p>
+\[Z_i = \frac{X_i - \mu}{\sigma}\]
+<p>とすればこれは標準正規分布に従う.</p>
+\[Z_1, \ldots, Z_n \sim \N(0,1)\]
+<p>従って, 列ベクトル \(Z = [Z_1, \ldots, Z_n]^T\) とおけば, このベクトルは多次元正規分布に従う</p>
+\[Z \sim \N(0_n, I_n).\]
+<p>やや唐突だが, \(n \times n\) の直交行列 \(G\) を考える. しかもその第一行ベクトル \(g^1\) が</p>
+\[g^1 = \frac{1}{\sqrt{n}} [1, 1, \ldots, 1]\]
+<p>であるようなものが存在する（例えばグラムシュミットの方法で具体的に得られる）.</p>
+<p>\(Y = GZ\) という確率変数を考えるとこれが従う正規分布は,</p>
+\[\begin{align*}
 Y = GZ
 &amp; \sim \N(G 0_n, G I_n G^{-1}) \\
 &amp; \sim \N(0_n, I_n) \\
-\end{align*}\]</span> となって, やはり <span class="math inline">\(Y\)</span> も標準正規分布に従う.</p>
-<p>さて, 不偏分散が不偏推定量を確かめる中で次の式を確認した. <span class="math display">\[S^2 = \sum_i (X_i - \bar{X})^2 = \sum_i (X_i - \mu)^2 - n(\bar{X} - \mu)^2\]</span> ここに <span class="math inline">\(X_i = \mu + \sigma Z_i\)</span> と <span class="math inline">\(\bar{X} = \mu + \sigma \bar{Z}\)</span> （<span class="math inline">\(\bar{Z}\)</span> は <span class="math inline">\(Z_i\)</span> での標本平均) をそれぞれ代入してキレイにすれば, <span class="math display">\[S^2/\sigma^2 = \sum_i (Z_i - \bar{Z})^2 = \sum_i Z_i^2 - n \bar{Z}^2\]</span></p>
-<p>右辺第一項の <span class="math inline">\(\sum_i Z_i^2\)</span> というのはベクトルのノルム <span class="math inline">\(\| Z \|^2\)</span> のことである. ここでしかも <span class="math inline">\(\|Y\|^2 = \| GZ \|^2 = \|Z\|^2\)</span> が成り立つ.</p>
-<p>次に右辺第二項の <span class="math inline">\(n \bar{Z}^2\)</span> をよく睨むと, ベクトル <span class="math inline">\(Y\)</span> の第一成分 <span class="math inline">\(Y_1\)</span> について <span class="math display">\[\begin{align*}
+\end{align*}\]
+<p>となって, やはり \(Y\) も標準正規分布に従う.</p>
+<p>さて, 不偏分散が不偏推定量を確かめる中で次の式を確認した.</p>
+\[S^2 = \sum_i (X_i - \bar{X})^2 = \sum_i (X_i - \mu)^2 - n(\bar{X} - \mu)^2\]
+<p>ここに \(X_i = \mu + \sigma Z_i\) と \(\bar{X} = \mu + \sigma \bar{Z}\) （ \(\bar{Z}\) は \(Z_i\) での標本平均) をそれぞれ代入してキレイにすれば,</p>
+\[S^2&#x2F;\sigma^2 = \sum_i (Z_i - \bar{Z})^2 = \sum_i Z_i^2 - n \bar{Z}^2\]
+<p>右辺第一項の \(\sum_i Z_i^2\) というのはベクトルのノルム \(\| Z \|^2\) のことである. ここでしかも \(\|Y\|^2 = \| GZ \|^2 = \|Z\|^2\) が成り立つ.</p>
+<p>次に右辺第二項の \(n \bar{Z}^2\) をよく睨むと, ベクトル \(Y\) の第一成分 \(Y_1\) について</p>
+\[\begin{align*}
 Y_1
 &amp; = g^1 Z \\
 &amp; = \frac{1}{\sqrt{n}} 1 Z \\
 &amp; = \frac{1}{\sqrt{n}} \sum_i Z_i \\
 &amp; = \sqrt{n} \bar{Z} \\
 Y_1^2 &amp; = n \bar{Z}^2 \\
-\end{align*}\]</span> というわけでこれらを入れれば, <span class="math display">\[S^2/\sigma^2 = \|Y\|^2 - Y_1^2\]</span> 右辺をもっと展開すれば, <span class="math display">\[S^2/\sigma^2 = Y_2^2 + Y_3^2 + \cdots + Y_n^2\]</span> つまり, <span class="math inline">\(Y_1\)</span> だけを除いた <span class="math inline">\(n-1\)</span> 点の（しかも独立な）確率変数の自乗和を表している.</p>
-<p>というわけで定義から <span class="math display">\[S^2 / \sigma^2 \sim \chi^2_{n-1}\]</span> が得られた.</p>
-<p><span class="math inline">\(n \to \infty\)</span> のときに <span class="math inline">\(\chi^2_{n-1}\)</span> が正規分布 <span class="math inline">\(\N(n-1, 2n-2)\)</span> に近づくことを使っていいなら, 不偏分散が一致推定量であることも分かる.</p>
-<h2 id="t分布">t分布</h2>
+\end{align*}\]
+<p>というわけでこれらを入れれば,</p>
+\[S^2&#x2F;\sigma^2 = \|Y\|^2 - Y_1^2\]
+<p>右辺をもっと展開すれば,</p>
+\[S^2&#x2F;\sigma^2 = Y_2^2 + Y_3^2 + \cdots + Y_n^2\]
+<p>つまり, \(Y_1\) だけを除いた \(n-1\) 点の（しかも独立な）確率変数の自乗和を表している.</p>
+<p>というわけで定義から</p>
+\[S^2 &#x2F; \sigma^2 \sim \chi^2_{n-1}\]
+<p>が得られた.</p>
+<p>\(n \to \infty\) のときに \(\chi^2_{n-1}\) が正規分布 \(\N(n-1, 2n-2)\) に近づくことを使っていいなら, 不偏分散が一致推定量であることも分かる.</p>
+<h2 id="2-t分布">t分布</h2>
 <p>2つの独立な確率変数が</p>
 <ul>
-<li><span class="math inline">\(Z \sim \N(0,1)\)</span></li>
-<li><span class="math inline">\(W \sim \chi^2_p\)</span></li>
+  <li>\(Z \sim \N(0,1)\)</li>
+  <li>\(W \sim \chi^2_p\)</li>
 </ul>
-<p>とあるとき, <span class="math display">\[X = \frac{Z}{\sqrt{W/p}}\]</span> が従う確率分布を自由度 <span class="math inline">\(p\)</span> の t 分布といって <span class="math display">\[X \sim t_p\]</span> と書く.</p>
-<h3 id="標本の-t-分布">標本の t 分布</h3>
-<p><span class="math inline">\(\N(\mu, \sigma^2)\)</span> からの <span class="math inline">\(n\)</span> 点標本 <span class="math inline">\(\{ X_1, \ldots, X_n \}\)</span> について,</p>
+<p>とあるとき,</p>
+\[X = \frac{Z}{\sqrt{W&#x2F;p}}\]
+<p>が従う確率分布を自由度 \(p\) の t 分布といって</p>
+\[X \sim t_p\]
+<p>と書く.</p>
+<h3 id="3-標本の t 分布">標本の t 分布</h3>
+<p>\(\N(\mu, \sigma^2)\) からの \(n\) 点標本 \(\{ X_1, \ldots, X_n \}\) について,</p>
 <ul>
-<li>標本平均
-<ul>
-<li><span class="math inline">\(\bar{X} = \frac{1}{n} \sum_i X_i\)</span></li>
-</ul></li>
-<li>不偏分散
-<ul>
-<li><span class="math inline">\(V_X = \frac{1}{n-1} \sum_i (X_i - \bar{X})^2\)</span></li>
-</ul></li>
+  <li>
+    標本平均
+    <ul>
+      <li>\(\bar{X} = \frac{1}{n} \sum_i X_i\)</li>
+    </ul>
+  </li>
+  <li>
+    不偏分散
+    <ul>
+      <li>\(V_X = \frac{1}{n-1} \sum_i (X_i - \bar{X})^2\)</li>
+    </ul>
+  </li>
 </ul>
 <p>という値を見てきた. 適当にゴニョって,</p>
 <ul>
-<li><span class="math inline">\(Z = \frac{\bar{X} - \mu}{\sqrt{\sigma^2 / n}} \sim \N(0,1)\)</span></li>
-<li><span class="math inline">\(W = \frac{n-1}{\sigma^2} V_X \sim \chi^2_{n-1}\)</span></li>
+  <li>\(Z = \frac{\bar{X} - \mu}{\sqrt{\sigma^2 &#x2F; n}} \sim \N(0,1)\)</li>
+  <li>\(W = \frac{n-1}{\sigma^2} V_X \sim \chi^2_{n-1}\)</li>
 </ul>
-<p>であることも既に分かっている. というわけで, <span class="math display">\[\frac{Z}{\sqrt{W/(n-1)}} = \frac{\bar{X} - \mu}{\sqrt{V_X~n}} \sim t_{n-1}\]</span> これが自由度 <span class="math inline">\(n-1\)</span> の t 分布に従っている.</p>
-<h2 id="f分布">F分布</h2>
+<p>であることも既に分かっている. というわけで,</p>
+\[\frac{Z}{\sqrt{W&#x2F;(n-1)}} = \frac{\bar{X} - \mu}{\sqrt{V_X~n}} \sim t_{n-1}\]
+<p>これが自由度 \(n-1\) の t 分布に従っている.</p>
+<h2 id="2-F分布">F分布</h2>
 <p>2つの独立な確率変数</p>
 <ul>
-<li><span class="math inline">\(U \sim \chi^2_p\)</span>,</li>
-<li><span class="math inline">\(V \sim \chi^2_q\)</span></li>
+  <li>\(U \sim \chi^2_p\) ,</li>
+  <li>\(V \sim \chi^2_q\)</li>
 </ul>
-<p>があるとき, <span class="math display">\[X = \frac{U/p}{V/q}\]</span> という値が従う確率分布のことを自由度 <span class="math inline">\((p,q)\)</span> の F 分布 <span class="math inline">\(F(p,q)\)</span> という.</p>
-<h3 id="標本の-f-分布">標本の F 分布</h3>
+<p>があるとき,</p>
+\[X = \frac{U&#x2F;p}{V&#x2F;q}\]
+<p>という値が従う確率分布のことを自由度 \((p,q)\) の F 分布 \(F(p,q)\) という.</p>
+<h3 id="3-標本の F 分布">標本の F 分布</h3>
 <p>二種類の標本がある場合を考える.</p>
 <ul>
-<li><span class="math inline">\(X_1, \ldots, X_n \sim \N(\mu_X, \sigma^2_X)\)</span></li>
-<li><span class="math inline">\(Y_1, \ldots, Y_n \sim \N(\mu_Y, \sigma^2_Y)\)</span></li>
+  <li>\(X_1, \ldots, X_n \sim \N(\mu_X, \sigma^2_X)\)</li>
+  <li>\(Y_1, \ldots, Y_n \sim \N(\mu_Y, \sigma^2_Y)\)</li>
 </ul>
-<p>それぞれの不偏分散 <span class="math inline">\(V_X, V_Y\)</span> を計算すれば, それぞれが <span class="math inline">\(\chi^2_{p-1}\)</span>, <span class="math inline">\(\chi^2_{q-1}\)</span> に従うのだった. というわけで, <span class="math display">\[Z = \frac{V_X / \sigma^2_X}{V_Y / \sigma^2_Y} \sim F(n-1,m-1)\]</span> になる.</p>
-<h3 id="一元配置分析">一元配置分析</h3>
-<p>ある要因 <span class="math inline">\(A = \{A_1, A_2, \ldots, A_a\}\)</span> によって観測値に差があるかを分析したい.</p>
-<p>次のような標本があるとする. 各要因 <span class="math inline">\(i=1,2,\ldots,a\)</span> について, 一定個数 <span class="math inline">\(j=1,2,\ldots,r\)</span> の観測値 <span class="math inline">\(X_i^j\)</span> が与えられる.</p>
+<p>それぞれの不偏分散 \(V_X, V_Y\) を計算すれば, それぞれが \(\chi^2_{p-1}\) , \(\chi^2_{q-1}\) に従うのだった. というわけで,</p>
+\[Z = \frac{V_X &#x2F; \sigma^2_X}{V_Y &#x2F; \sigma^2_Y} \sim F(n-1,m-1)\]
+<p>になる.</p>
+<h3 id="3-一元配置分析">一元配置分析</h3>
+<p>ある要因 \(A = \{A_1, A_2, \ldots, A_a\}\) によって観測値に差があるかを分析したい.</p>
+<p>次のような標本があるとする. 各要因 \(i=1,2,\ldots,a\) について, 一定個数 \(j=1,2,\ldots,r\) の観測値 \(X_i^j\) が与えられる.</p>
 <p>ここで観測値はいつも次のようにモデル化されるということにしておく.</p>
 <ul>
-<li><span class="math inline">\(X_i^j = \mu + \alpha_i + \epsilon_i^j\)</span>
-<ul>
-<li><span class="math inline">\(\mu\)</span> は全体の母平均</li>
-<li><span class="math inline">\(\alpha_i\)</span> は要因ごとの補正
-<ul>
-<li><span class="math inline">\(\sum_i \alpha_i = 0\)</span></li>
-</ul></li>
-<li><span class="math inline">\(\epsilon_i^j\)</span> は観測誤差であって
-<ul>
-<li><span class="math inline">\(\epsilon_i^j \sim \N(0, \sigma^2)\)</span></li>
-</ul></li>
-</ul></li>
+  <li>
+    \(X_i^j = \mu + \alpha_i + \epsilon_i^j\)
+    <ul>
+      <li>\(\mu\) は全体の母平均</li>
+      <li>
+        \(\alpha_i\) は要因ごとの補正
+        <ul>
+          <li>\(\sum_i \alpha_i = 0\)</li>
+        </ul>
+      </li>
+      <li>
+        \(\epsilon_i^j\) は観測誤差であって
+        <ul>
+          <li>\(\epsilon_i^j \sim \N(0, \sigma^2)\)</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
 </ul>
-<p>要因によって差があるかどうかとは, <span class="math inline">\(\alpha_i = 0\)</span> であるかどうかということ.</p>
+<p>要因によって差があるかどうかとは, \(\alpha_i = 0\) であるかどうかということ.</p>
 <ul>
-<li>要因を無視した全体を見ると, <span class="math inline">\(X_i^j \sim \N(\mu, \sigma^2)\)</span>.</li>
-<li>要因 <span class="math inline">\(A_i\)</span> の中で見ると, <span class="math inline">\(X_i^j \sim \N(\mu + \alpha_i, \sigma^2)\)</span>.</li>
+  <li>要因を無視した全体を見ると, \(X_i^j \sim \N(\mu, \sigma^2)\) .</li>
+  <li>要因 \(A_i\) の中で見ると, \(X_i^j \sim \N(\mu + \alpha_i, \sigma^2)\) .</li>
 </ul>
-<p>全体の平均を <span class="math display">\[\bbar{X} = \frac{1}{ar} \sum_i \sum_j X_i^j,\]</span> 要因 <span class="math inline">\(A_i\)</span> の中での平均を <span class="math display">\[\bar{X_i} = \frac{1}{r} \sum_j X_i^j\]</span> と置く.</p>
+<p>全体の平均を</p>
+\[\bbar{X} = \frac{1}{ar} \sum_i \sum_j X_i^j,\]
+<p>要因 \(A_i\) の中での平均を</p>
+\[\bar{X_i} = \frac{1}{r} \sum_j X_i^j\]
+<p>と置く.</p>
 <p>次のような総平方和と呼ばれる値を調べる.</p>
-<p><span class="math display">\[\begin{align*}
+\[\begin{align*}
 \sum_i \sum_j (X_i^j - \bbar{X})^2
 &amp; = \sum_i \sum_j (X_i^j - \bar{X_i} + \bar{X_i} - \bbar{X})^2 \\
 &amp; = \sum_i \sum_j \left[
@@ -211,15 +264,20 @@ Y_1^2 &amp; = n \bar{Z}^2 \\
 &amp; = \sum_i \sum_j (X_i^j - \bar{X_i})^2
     + \sum_i r (\bar{X_i} - \bbar{X})^2
     + 0 \\
-\end{align*}\]</span></p>
-<p>最後のが <span class="math inline">\(0\)</span> になるのはよく見ると分かる.</p>
-<p>この全体の値を先言ったように総平方和 <span class="math inline">\(S_T\)</span> という. 最後の右辺の第一項を残差平方和 <span class="math inline">\(S_e\)</span> という. 第二項を水準間平方和 <span class="math inline">\(S_A\)</span> という.</p>
-<p>今までの不偏分散についての議論をそのままここに適用すれば, <span class="math display">\[S_T / \sigma^2 \sim \chi^2_{ar-1}\]</span> となる. この自由度が特に重要.</p>
-<p><span class="math inline">\(S_A\)</span> は結局 <span class="math inline">\(i=1,2,\ldots,a\)</span> という <span class="math inline">\(a\)</span> 個の標本の不偏分散に過ぎないので <span class="math display">\[S_A / \sigma^2 \sim \chi^2_{a-1}.\]</span></p>
-<p><span class="math inline">\(S_e\)</span> もやはり <span class="math inline">\(\chi^2\)</span> 分布に従うがその自由度はやや直感的には分かりにくい. ここで <span class="math inline">\(\chi^2\)</span> 分布の再生性を使えば, 単に足し引きで分かる. <span class="math inline">\(S_T, S_A\)</span> の自由度は分かっているのでその差の <span class="math inline">\(a(r-1)\)</span> が自由度である. <span class="math display">\[S_e / \sigma^2 \sim \chi^2_{a(r-1)}\]</span></p>
+\end{align*}\]
+<p>最後のが \(0\) になるのはよく見ると分かる.</p>
+<p>この全体の値を先言ったように総平方和 \(S_T\) という. 最後の右辺の第一項を残差平方和 \(S_e\) という. 第二項を水準間平方和 \(S_A\) という.</p>
+<p>今までの不偏分散についての議論をそのままここに適用すれば,</p>
+\[S_T &#x2F; \sigma^2 \sim \chi^2_{ar-1}\]
+<p>となる. この自由度が特に重要.</p>
+<p>\(S_A\) は結局 \(i=1,2,\ldots,a\) という \(a\) 個の標本の不偏分散に過ぎないので</p>
+\[S_A &#x2F; \sigma^2 \sim \chi^2_{a-1}.\]
+<p>\(S_e\) もやはり \(\chi^2\) 分布に従うがその自由度はやや直感的には分かりにくい. ここで \(\chi^2\) 分布の再生性を使えば, 単に足し引きで分かる. \(S_T, S_A\) の自由度は分かっているのでその差の \(a(r-1)\) が自由度である.</p>
+\[S_e &#x2F; \sigma^2 \sim \chi^2_{a(r-1)}\]
 <p>というわけで次のような F 分布に従う値を得る:</p>
-<p><span class="math display">\[X = \frac{S_A / (a-1)}{S_e / a(r-1)} \sim F(a-1, a(r-1)).\]</span></p>
-<p>直感的にはこれは誤差 <span class="math inline">\(\epsilon\)</span> の影響を取り除いた要因ごとの影響の強さを表している.</p>
+\[X = \frac{S_A &#x2F; (a-1)}{S_e &#x2F; a(r-1)} \sim F(a-1, a(r-1)).\]
+<p>直感的にはこれは誤差 \(\epsilon\) の影響を取り除いた要因ごとの影響の強さを表している.</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -324,5 +382,9 @@ Y_1^2 &amp; = n \bar{Z}^2 \\
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

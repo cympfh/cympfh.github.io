@@ -26,7 +26,9 @@ $$L(p) = \{ s \preceq p \mid s \in \Sigma^* \}$$
 
 $D$ を description の集合とし, そこに半順序 $\preceq$ を入れる.
 ただし $D$ は最大元 $\top$ を持つとする.
-このとき $$(D, \preceq)$$を汎化システムと呼ぶ.
+このとき
+$$(D, \preceq)$$
+を汎化システムと呼ぶ.
 
 ### 汎化
 

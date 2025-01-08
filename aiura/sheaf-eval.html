@@ -1,268 +1,330 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="description" content="層の定義/層の射/層の直積/層の冪/evaluation/" />
-  <meta property="og:url" content="http://cympfh.cc/taglibro">
-  <meta property="og:type" content="article">
-  <meta property="og:title" content="層の射、直積、冪、evaluation" />
-  <meta property="og:description" content="層の定義/層の射/層の直積/層の冪/evaluation/" />
-  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:site" content="@cympfh" />
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>層の射、直積、冪、evaluation</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
     <a href='index.html'><i class="fa fa-stumbleupon"></i></a>
 </header>
-<header>
+
 <h1 class="title">層の射、直積、冪、evaluation</h1>
-</header>
-<p class="date" style="text-align: right">
-2018-08-19 (Sun.)
-</p>
-<div class="is-pulled-right">
-<p><a class='tag is-red' href=index.html#層>層</a> <a class='tag is-red' href=index.html#圏論>圏論</a></p>
-</div>
-<h2 id="層の定義">層の定義</h2>
-<p>ここでは次のような形のものを層と呼ぶ.</p>
-<div class="thm">
-<p>位相空間 <span class="math inline">\((X, \mathcal O_X)\)</span> の上の層 <span class="math inline">\(A\)</span> とは集合 <span class="math inline">\(A\)</span> に</p>
+<p><p class=date style='text-align: right'>2018-08-19 (Sun.)</p> <div class='is-pulled-right'> <a class='tag is-red' href=index.html#層>層</a> <a class='tag is-red' href=index.html#圏論>圏論</a> </div></p>
+\[
+\require{amscd}
+\def\ev{\mathrm{ev}}
+\def\Hom{\mathrm{Hom}}
+\]
+<h2>層の定義</h2>
+<p>ここでは次のものを層と呼ぶ.</p>
+<p><div class=thm> 位相空間 \((X, \mathcal O_X)\) の上の層 \(A\) とは集合 \(A\) に</p>
 <ul>
-<li>関数 <span class="math inline">\(E : A \to \mathcal O_X\)</span></li>
-<li>二項演算 <span class="math inline">\(\rceil : A \times \mathcal O_X \to A; a \rceil U \in A\)</span></li>
+  <li>関数 \(E \colon A \to \mathcal O_X\)</li>
+  <li>二項演算 \(\rceil \colon A \times \mathcal O_X \to A; a \rceil U \in A\)</li>
 </ul>
 <p>を加えたもののこと. ただし次の4つが要請される.</p>
-<ol type="1">
-<li>任意の <span class="math inline">\(a, b \in A\)</span> に対して、<span class="math inline">\(a \rceil \emptyset = b \rceil \emptyset\)</span></li>
-<li><span class="math inline">\(a \rceil (Ea) = a\)</span></li>
-<li><span class="math inline">\(E (a \rceil U) = Ea \cap U\)</span></li>
-<li><span class="math inline">\((a \rceil U) \rceil V = a \rceil (U \cap V)\)</span></li>
+<ol>
+  <li>任意の \(a, b \in A\) に対して、 \(a \rceil \emptyset = b \rceil \emptyset\)</li>
+  <li>\(a \rceil (Ea) = a\)</li>
+  <li>\(E (a \rceil U) = Ea \cap U\)</li>
+  <li>\((a \rceil U) \rceil V = a \rceil (U \cap V)\)</li>
 </ol>
-</div>
-<p>ちなみに演算の優先度は, <span class="math inline">\(E\)</span> (関数適用) <span class="math inline">\(&gt;\)</span> <span class="math inline">\(\cap &gt; ~ \rceil\)</span> .</p>
-<h2 id="層の射">層の射</h2>
-<p>層 <span class="math inline">\(A, B\)</span> の間の射 <span class="math inline">\(A \to B\)</span> とは, (2つを集合と見た時の) 関数 <span class="math inline">\(f : A \to B\)</span> であって,</p>
-<ol type="1">
-<li><span class="math inline">\(E(fa) = Ea\)</span></li>
-<li><span class="math inline">\(f(a \rceil U) = f(a) \rceil U\)</span></li>
+<p></div></p>
+<p>ちなみに演算の優先度は, \(E\) への関数適用 \(&gt;\) \(\cap &gt; ~ \rceil\) .</p>
+<h2>層の射</h2>
+<p>層 \(A, B\) の間の射 \(A \to B\) とは, (2つを集合と見た時の) 写像 \(f \colon A \to B\) であって,</p>
+<ol>
+  <li>\(E(fa) = Ea\)</li>
+  <li>\(f(a \rceil U) = f(a) \rceil U\)</li>
 </ol>
-<p>とあること. <span class="math inline">\(f\)</span> が層 <span class="math inline">\(A\)</span> から <span class="math inline">\(B\)</span> への射であることを, 関数の時と全く同様に <span class="math display">\[f : A \to B\]</span> と書いて表す.</p>
-<p>下は <span class="math inline">\(f\)</span> が射になるための関数レベルの可換図式</p>
-<p><img src="data:image/png;base64,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"> <img src="data:image/png;base64,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"></p>
-<h3 id="恒等射">恒等射</h3>
-<p>層 <span class="math inline">\(A\)</span> から <span class="math inline">\(A\)</span> 自身への射として自明なものとして恒等写像があり, これを <span class="math inline">\(1\)</span> と書くことにする. <span class="math display">\[1 : A \to A\]</span> <span class="math display">\[1(a) = a\]</span></p>
-<h2 id="層の直積">層の直積</h2>
-<p>2つの層 <span class="math inline">\(A, B\)</span> があるとき, 新しい層 <span class="math inline">\(A \times B\)</span> を構成してこれを <span class="math inline">\(A\)</span> と <span class="math inline">\(B\)</span> との直積と呼ぶ. 集合の (カルテシアン) 直積とは異なる (寧ろその部分集合) ので注意.</p>
+<p>とあること. \(f\) が層 \(A\) から \(B\) への射であることを, 関数の時と全く同様に</p>
+\[f \colon A \to B\]
+<p>と書いて表す.</p>
+<p>下は \(f\) が射になるため条件を可換図式に描き直したもの.</p>
+\[
+\begin{CD}
+A       @&gt;E&gt;&gt;   O_X \\
+@VfVV           @| \\
+B       @&gt;E&gt;&gt;   O_X \\
+\end{CD}
+\]
+\[
+\begin{CD}
+A       @&gt;f&gt;&gt;   B \\
+@V\rceil UVV         @V\rceil UVV \\
+A       @&gt;f&gt;&gt;   B \\
+\end{CD}
+\]
+<h3>恒等射</h3>
+<p>層 \(A\) から \(A\) 自身への射として自明なものとして恒等写像があり, これを \(1\) と書くことにする.</p>
+\[1 \colon A \to A\]
+\[1(a) = a\]
+<h2>層の直積</h2>
+<p>2つの層 \(A, B\) があるとき, 新しい層 \(A \times B\) を構成してこれを \(A\) と \(B\) との直積と呼ぶ. 集合の (カルテシアン) 直積とは異なる (寧ろその部分集合) ので注意.</p>
 <ul>
-<li><span class="math inline">\(A \times B = \{ (a, b) | a \in A, b \in B, Ea = Eb \}\)</span>
-<ul>
-<li><span class="math inline">\((a, b) \rceil U = (a \rceil U, b \rceil U)\)</span></li>
-<li><span class="math inline">\(E(a, b) = Ea ~(= Eb)\)</span></li>
-</ul></li>
+  <li>
+    \(A \times B = \{ (a, b) | a \in A, b \in B, Ea = Eb \}\)
+    <ul>
+      <li>\((a, b) \rceil U = (a \rceil U, b \rceil U)\)</li>
+      <li>\(E(a, b) = Ea ~(= Eb)\)</li>
+    </ul>
+  </li>
 </ul>
-<blockquote>
-<p>明らかに <span class="math inline">\(A \times A \simeq A\)</span> である</p>
-</blockquote>
-<h3 id="射影">射影</h3>
-<p>層の直積 <span class="math inline">\(A \times B\)</span> に対して次の2つが射としてある.</p>
+<blockquote>明らかに \(A \times A \simeq A\) である</blockquote>
+<h3>射影</h3>
+<p>層の直積 \(A \times B\) に対して次の2つが射としてある.</p>
 <ul>
-<li><span class="math inline">\(A \times B \to A\)</span>
-<ul>
-<li><span class="math inline">\(\pi_1 (a, b) = a\)</span></li>
-</ul></li>
-<li><span class="math inline">\(A \times B \to B\)</span>
-<ul>
-<li><span class="math inline">\(\pi_2 (a, b) = b\)</span></li>
-</ul></li>
+  <li>
+    \(A \times B \to A\)
+    <ul>
+      <li>\(\pi_1 (a, b) = a\)</li>
+    </ul>
+  </li>
+  <li>
+    \(A \times B \to B\)
+    <ul>
+      <li>\(\pi_2 (a, b) = b\)</li>
+    </ul>
+  </li>
 </ul>
-<h3 id="射の積">射の積</h3>
-<p>層 <span class="math inline">\(A,B,C,D\)</span> とそれらの間の2つの射</p>
+<h3>射の積</h3>
+<p>層 \(A,B,C,D\) とそれらの間の2つの射</p>
 <ul>
-<li><span class="math inline">\(f: A \to B\)</span></li>
-<li><span class="math inline">\(g: C \to D\)</span></li>
+  <li>\(f\colon A \to B\)</li>
+  <li>\(g\colon C \to D\)</li>
 </ul>
 <p>があるとき自然に</p>
 <ul>
-<li><span class="math inline">\(f \times g : A \times C \to B \times D\)</span></li>
-<li><span class="math inline">\((f \times g)(a, c) = (f a, g c)\)</span></li>
+  <li>\(f \times g \colon A \times C \to B \times D\)</li>
+  <li>\((f \times g)(a, c) = (f a, g c)\)</li>
 </ul>
-<p>という射 <span class="math inline">\(f \times g\)</span> を定義することができる.</p>
+<p>という射 \(f \times g\) を定義することができる.</p>
 <p>念の為に確認すると,</p>
-<p><span class="math inline">\(f,g\)</span> が射であることから <span class="math inline">\(E(f a) = Ea\)</span> と <span class="math inline">\(E g(c) = Ec\)</span> が従い, <span class="math inline">\((a,c) \in A \times C\)</span> であることから <span class="math inline">\(Ea=Ec\)</span> である. 従って <span class="math inline">\(E(f a)=E(g c)\)</span> なので <span class="math inline">\((f a, g c) \in B \times D\)</span> であることが分かって well-defined である.</p>
-<h2 id="層の冪">層の冪</h2>
-<p>集合 <span class="math inline">\(A, B\)</span> に対して集合 <span class="math inline">\(B^A\)</span> を <span class="math inline">\(A\)</span> から <span class="math inline">\(B\)</span> への写像全体として定めたのと同様のことを層についても定める. 写像の代わりにちょうど層間の射 (のようなもの) を用いる.</p>
-<p>層 <span class="math inline">\(A, B\)</span> があるとき層 <span class="math inline">\(B^A\)</span> を定めてこれを冪と呼ぶ.</p>
+<p>\(f,g\) が射であることから \(E(f a) = Ea\) と \(E g(c) = Ec\) が従い, \((a,c) \in A \times C\) であることから \(Ea=Ec\) である. 従って \(E(f a)=E(g c)\) なので \((f a, g c) \in B \times D\) であることが分かって well-defined である.</p>
+<h2>層の冪</h2>
+<p>集合 \(A, B\) に対して集合 \(B^A\) を \(A\) から \(B\) への写像全体として定めたのと同様のことを層についても定める. 写像の代わりにちょうど層間の射 (のようなもの) を用いる.</p>
+<p>層 \(A, B\) があるとき層 \(B^A\) を定めてこれを冪と呼ぶ.</p>
 <ul>
-<li><span class="math inline">\(B^A = \{ (f, V) | \text{関数}~f : A \to B, V \in \mathcal O_X \}\)</span>
-<ul>
-<li><span class="math inline">\(E(f,V) = V\)</span></li>
-<li><span class="math inline">\((f,V) \rceil U = (f&#39;, V \cap U)\)</span>
-<ul>
-<li><span class="math inline">\(f&#39;\)</span> は <span class="math inline">\(A \to B\)</span> なる関数であって,</li>
-<li><span class="math inline">\(f&#39;(a) = f(a \rceil U)\)</span></li>
-</ul></li>
-<li>ただし <span class="math inline">\((f, V) \in B^A\)</span> について次の2つを要請する:
-<ul>
-<li><span class="math inline">\(E(fa) = Ea \cap V\)</span></li>
-<li><span class="math inline">\(f(a \rceil U) = f(a) \rceil U\)</span></li>
-</ul></li>
-</ul></li>
+  <li>
+    \(B^A = \{ (f, V) | \text{関数}~f \colon A \to B, V \in \mathcal O_X \}\)
+    <ul>
+      <li>\(E(f,V) = V\)</li>
+      <li>
+        \((f,V) \rceil U = (f&#x27;, V \cap U)\)
+        <ul>
+          <li>\(f&#x27;\) は \(A \to B\) なる関数であって,</li>
+          <li>\(f&#x27;(a) = f(a \rceil U)\)</li>
+        </ul>
+      </li>
+      <li>
+        ただし \((f, V) \in B^A\) について次の2つを要請する:
+        <ul>
+          <li>\(E(fa) = Ea \cap V\)</li>
+          <li>\(f(a \rceil U) = f(a) \rceil U\)</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
 </ul>
-<p>さて, 元 <span class="math inline">\((f,V) \in B^A\)</span> を, ただ単に <span class="math inline">\(f \in B^A\)</span> と書くことにする. このとき <span class="math inline">\(f\)</span> には <span class="math inline">\(Ef (=V) \in \mathcal O_X\)</span> というデータが伴っているものとする. 単なる略記だと思えばよい. 例えば同じ一つの <span class="math inline">\(f\)</span> について異なる2元 <span class="math inline">\((f, V_1), (f, V_2)\)</span> が <span class="math inline">\(B^A\)</span> に含まれることはありえるので, この2つを単に <span class="math inline">\(f\)</span> と書いてしまうと区別ができないが, <span class="math inline">\(Ef\)</span> というデータが暗に持たされているのであくまで異なるものと考える. (例えば一方を <span class="math inline">\(f_1\)</span> と書いてもう一方を <span class="math inline">\(f_2\)</span> と書くなど.)</p>
-<p>この略記を用いて改めて <span class="math inline">\(B^A\)</span> の定義を書くと次のようになる.</p>
+<p>さて, 元 \((f,V) \in B^A\) を, ただ単に \(f \in B^A\) と書くことにする. このとき \(f\) には \(Ef (=V) \in \mathcal O_X\) というデータが伴っているものとする. 単なる略記だと思えばよい. 例えば同じ一つの \(f\) について異なる2元 \((f, V_1), (f, V_2)\) が \(B^A\) に含まれることはありえるので, この2つを単に \(f\) と書いてしまうと区別ができないが, \(Ef\) というデータが暗に持たされているのであくまで異なるものと考える. (例えば一方を \(f_1\) と書いてもう一方を \(f_2\) と書くなど.)</p>
+<p>この略記を用いて改めて \(B^A\) の定義を書くと次のようになる.</p>
 <ul>
-<li><span class="math inline">\(B^A = \{ f | \text{関数}~f : A \to B \}\)</span>
-<ul>
-<li><span class="math inline">\(Ef \in \mathcal O_X\)</span>
-<ul>
-<li>(要請はあるがそれを満たすなら自由に定めてよい)</li>
-</ul></li>
-<li><span class="math inline">\(f \rceil U\)</span> は次のような関数 <span class="math inline">\(f&#39; : A \to B\)</span>
-<ul>
-<li><span class="math inline">\(f&#39;(a) = f(a \rceil U)\)</span></li>
-</ul></li>
-<li>ただし
-<ul>
-<li><span class="math inline">\(E(fa) = Ea \cap Ef\)</span></li>
-<li><span class="math inline">\(f(a \rceil U) = f(a) \rceil U\)</span></li>
-</ul></li>
-</ul></li>
+  <li>
+    \(B^A = \{ f | \text{関数}~f \colon A \to B \}\)
+    <ul>
+      <li>
+        \(Ef \in \mathcal O_X\)
+        <ul>
+          <li>(要請はあるがそれを満たすなら自由に定めてよい)</li>
+        </ul>
+      </li>
+      <li>
+        \(f \rceil U\) は次のような関数 \(f&#x27; \colon A \to B\)
+        <ul>
+          <li>\(f&#x27;(a) = f(a \rceil U)\)</li>
+        </ul>
+      </li>
+      <li>
+        ただし
+        <ul>
+          <li>\(E(fa) = Ea \cap Ef\)</li>
+          <li>\(f(a \rceil U) = f(a) \rceil U\)</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
 </ul>
-<blockquote>
-<p><span class="math inline">\(f \in B^A\)</span> は射そのものではない. 射の第二の要請は定義に含まれるため満たされるが, 第一の要請 <span class="math inline">\(E(fa)=Ea\)</span> は一般には定義からは従わない.</p>
-</blockquote>
-<h2 id="evaluation">evaluation</h2>
-<p><span class="math inline">\(f \in B^A\)</span> は関数であるので <span class="math inline">\(a \in A\)</span> を関数適用することができる. この関数適用という操作自体が射であることを見ていく.</p>
-<div class="thm">
-<p>関数 <span class="math inline">\(ev\)</span> を次のように定める. <span class="math display">\[ev : A \times B^A \to B\]</span> <span class="math display">\[ev : (a, f) \to f(a)\]</span></p>
-</div>
-<p>ただしこの定義域の直積は <strong>層の直積</strong> であることに注意. すなわち, <span class="math inline">\((a,f) \in A \times B^A\)</span> には <span class="math inline">\(E(a,f)=Ea=Ef\)</span> という制約がある.</p>
-<div class="thm">
-<p>関数 <span class="math inline">\(ev\)</span> は射である.</p>
-<p>射の定義に照らしあわせて証明する.</p>
-<ol type="i">
-<li><span class="math display">\[\begin{align*}
-E(ev(a,f))
+<blockquote>\(f \in B^A\) は射そのものではない. 射の第二の要請は定義に含まれるため満たされるが, 第一の要請 \(E(fa)=Ea\) は一般には定義からは従わない.</blockquote>
+<h2>evaluation</h2>
+<p>\(f \in B^A\) は関数であるので \(a \in A\) を関数適用することができる. この関数適用という操作自体が射であることを見ていく.</p>
+<p>関数 \(\ev\) を次のように定める.</p>
+\[\ev \colon A \times B^A \to B\]
+\[\ev \colon (a, f) \to f(a)\]
+<p>ただしこの定義域の直積は <strong>層の直積</strong> であることに注意. すなわち, \((a,f) \in A \times B^A\) には \(E(a,f)=Ea=Ef\) という制約がある.</p>
+<p>関数 \(\ev\) は射である. 射の定義に照らしあわせて確認できる.</p>
+<h3>i)</h3>
+\[\begin{align*}
+E(\ev(a,f))
 &amp; = E(f(a))     &amp; \cdots \text{関数evの評価} \\
 &amp; = Ef \cap Ea  &amp; \cdots f \in B^A \text{ なので} \\
 &amp; = E(a,f)      &amp; \cdots \text{層の直積}
-\end{align*}\]</span></li>
-<li><span class="math display">\[\begin{align*}
-ev((a,f) \rceil U)
-&amp; = ev (a \rceil U, f \rceil U) &amp; \cdots \text{直積の制限} \\
+\end{align*}\]
+<h3>ii)</h3>
+\[\begin{align*}
+\ev((a,f) \rceil U)
+&amp; = \ev (a \rceil U, f \rceil U) &amp; \cdots \text{直積の制限} \\
 &amp; = (f \rceil U)(a \rceil U)    &amp; \cdots \text{関数evの評価} \\
 &amp; = f((a \rceil U) \rceil U)    &amp; \cdots \text{冪の制限} \\
 &amp; = f(a \rceil U)     &amp; \\
 &amp; = fa \rceil U       &amp; \cdots \because f \in B^A \\
-&amp; = ev(a, f) \rceil U &amp; \cdots \text{関数evを逆に使った}
-\end{align*}\]</span></li>
-</ol>
-</div>
-<h3 id="冪の普遍性">冪の普遍性</h3>
-<div class="thm">
-<p>層 <span class="math inline">\(A,B,C\)</span> と射 <span class="math inline">\(g : A \times C \to B\)</span> があるとき, 次を可換にする射 <span class="math inline">\(h : C \to B^A\)</span> が <span class="math inline">\(g\)</span> に対して唯一存在する.</p>
-<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOQAAACbCAYAAAByIzeZAAAABmJLR0QA/wD/AP+gvaeTAAANp0lEQVR4nO3de7CUdR3H8TfncDlcFT14CrlYTqVCQE5alqWOmhmJomjjJVJRR43QRpHUZMiY0lQcK8trFnkZTZ2Q8gZemBE1r0yGpoBBaiKCNxDhcNn++DzPPM/ueXbP2XN299mz+3nNnDnsczu/Wfa7v+f5Xb4/MDMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzOz2tUj7QIADcATwEHA5hJe91hgMrAr8C6wCXgj+GkGppfwb5nVjCOBDDClRNdrBh4FlgH7xrb3AE4E1gI3lehvmdWcecAqYCn5a+ydC5wf39cD1bbrgJ3yHH8AcEeRZTSrC2OAq4BpqJY8POGYFuAD4PiEfSOBlcApwetjguu0dzt6dCfKalbzrgOGA/1RrbYwz3HTgC3ApNi24cDrwAKgKdh2GwrIvctRWLNa1gzcGHs9GwXTuDzHTwdagQmooWY5elbsGzvmmeAag0pdWLNadxEwNva6BfgEmFvgnItRS+xKYBHQL2f/UyggP1WyUprVgV7AWyh4cn9aUQ2YpAV1YWRIfg68Odh3UInLa1YRDSn93WOBK1CraPznRBSsP0o4pxk9Y65ADUG3AgfnHLMo+P3V0hfZrDY1AC+iAMvVG3gHeB8YENs+ODjnOWCHYNvlwMfAgTnXfg5YDXw6z9/vgwYMmBlwEvlbUyG67ZwZvB4EPAssoW3f4hxgA7B/bNse6BlzBTARaAy290W3sguBr3S69GY1ZCKqvdYCZybsPwrVcBlgI3AB6tK4FhiS55qzUX9m3IDg3L+hrpGXUA07m/wDBszMzMzMzMzMzMyKVw0TlK10pqIunfXAqajPNeT/a6sbaY14ipsKbCXq1vkJ6j66MrUSmaXkRjQx+hzSG9g+D9iGhh4CjEIB+VRK5bFOqIZv9lpwLxos/wvgTeBh4DQqOwhhAfr/HB+83hT8frSCZTCrKn2BI9AUsg3oFjKsOZPG7pbaFDTR+wrgr8AlREMHzepaPxScd6HaahMwHw1sL8cE6kbgauBzZbi2WU3ZEQXifDTB+hOi4BxQ4LxiXIKyKJwKHAbsh4LTNaRZAYOJgrMVDaIPg7N/F657CBq4nzvhew1O6mXWITsTBecWNL9zPprA3bvIa51Cdra9BmAY8H00x9TMitAMnIEagbajSdpz0XNorwLnAcxAtWFSq+5ngBdKV0yz+jMMtcyGwfkehYNzPgrIi8hOHL03cCewVzkLa1ZPRhAFZwZN7g6Ds2dwzE7Ar1GWhE+Axah19zTar13NrJN2Q8EZZlV4E7gGpTAp11jVBrJz35pZglHALOAVFJz/pXzBOZXC66tYHesPfDbtQlSZMDhfRcG5kig4S2FX4B/A0BJdz2rIcehDZ8nC4FyO3qfXUXB2db2T2SjgR3bxOlZjHJAdNwq4jChL/FIUrHt04loDUX/m6k6ebzXKAVm8BnT7eg3wP7KDs5ixr2cE536Ic9tawAHZNfHgDIfahcG5ezvnNhI1Im1Ew/WszjkgS6eRKDjXEAXnDPI34BwWHLcdDZT/bvmLadXMAVkefdBggz8DH6HsA48DZ9G2y+NhNDB+e3DcyZUqpFUfB2T5NRFNtP4I+CXZWRBGo0AMZ5RsB36YSkktdQ7IyuqHVhi7Fw3LawXuB14L/h2f6vXTdIpoaXJApmcQWr3s7yQvtrsdrd3plJOd5CRXVoyeaN3NsSgAt+Xs7wGcC/wBZyqoG64hK280cAPKC7SF5Nox9+deshM1Wwf0bP8Qq1ONwATgx8A3Ytu3oqBsJPsOayuat/k2Ghm0BnWpPFKJwtYKB6TlGoxaU89G073Wo3mWbwOrUKC9hYbRvY0GF6xG6SetixyQFjcQ+DKaDH0XCrpNBc+wknJAWtx6lAHdUlLtrazlSChsVrVKHZBDUTrCO4Enu3Cd84FF+LnEinc4cDNq6d2CEoA9CDwb/J6UXtHSMRy9Ga904Rp9UDKnpO4Nd3tYe5rQZ+TV2LbeaKmFDHBeGoVKU76ALJSXJXdfOM0nlwPSOiLpM9gTTRtbUfnidEwlnyFb0BtxfMK+kcDz6HbXrFy2ooarqm2bqGRAvgPMRDMI4vfxw4HHgGXAHQnnDQHuRs+T/8IJrqzzJgG7oKF9daXQM+R0NEtgAspmthwtKpqb+zO8ZZ2FatDvED0X+JbV2pMBPgBuQXM8F6ORRKdTh4Pf22vUuRjNNl+JWlP7JRwTBmT8zVuLOqodkNaeDLrrGoGSch0K/A5NIbuS6u/yK6n2ArIFeDc4Lt9SaUmNOuE2B6S1J99ncGqwb0Zli9MxaXxLNAMLUQPPVcCtwMEplMPq01+C30emWoo8Kj10bjAamrUZJUv6EM2puw8Yj3K4mJVTS/D77VRLUUF90S3BaznbB6HREktou47hHGAD2anvw+S+A2PbwpyivmW1QsLP4Kqc7bugxp3NwD6VLlQaDgSuR29GK2pRHRvsawKuRd0YSWYDY1AjzvlEgXc1Ws9jemxbhuJXGLb6cDhqWQ0/J08DD6BAfBm4HWV0txLxSB2rWXXV9GtW7ao1IPfswrk9unh+d9EEXADchJ7NF6DcN6ARKevQncTPY+echRrRTq9cMa0WTAG+nmdfe7ess9BwvFp3A/CF2OuHUCqNsBEs7G/7duyY4cBtFSmd1ZR+aIhcUk1XKCDPRGNla92+5M/2Nj44phdqZZwXO+9SYFzlimnFqtYUHhuBe1Dr2NdQd0doGfCLhHOOAX6LcsLUun3QQPsvFjhmC1pE5wo0IP8NVKMuKXBOE6pRD0TjQFej9z5MbLUGdRlYHRqKuk5eBnaIbU+qIQ9AH5THKlO01M0EPiZ5DHC8XWAQWptjDnBs8NMRzcCFKIhza+AP0Zfi42jQ9pUoVeSJwEHAXmgAiNWgP6IPwWL07Q1tA3I0+tBlUB9UPQjfg5/lbN8TmJazbQ6q7e6m+DuiniiInyL59ngb+iLcTPbiOxk0iPsHRf49q3Kj0XoRGZQbpZHsgByGhkBl0DSueplW0weNBc6g/DEnoNbUh8ge2QTKrboVzbDpii+hDvfNtF1kJ2mNj7O7+PesSj1CtA7htUQBuTO6dQq/maekVcCUjEQNNuvQl9L16FYzydW0Ha7YWUOAX6H3PfyyjNeYW9EXhNWob5H9zftk8O9niL6p1xHd0lp5DESBNo9oTmrS7ev4fBew2tADzWvLfUYJg3ELcElqpatt/dAz5PGo5bsVtXyfgp4rw/+DraiR6ZvpFNMq7WTaBmT4s4n8t2pWvCZgIspvtAEF23FodE+YGfAQovd/C/A+sHfFS2qp6Y36wHKDsRX4fYrlqhWNKMjmEs1RfQI4B60HGdcA/DM4phVlfhiN1Z0Labs24Xbg82kWqhtrRPNPryH6sluKUlsMLXDeFKL3/nWUs8bq0GD0HBOvHe9LtUTdTwNREK4mCsJZwO4dOH8AUS6kf1M4cK0O/IbsPrD9Cx9uZAdhmHEhDMJi7y4uDc5/jtJ1o1g3tjtR/9cLKZel2o1CQRcOIAiDcI9OXm9XdIfyEMlD9qxO3Ys+YN9LuyBVKAzCZeg9+g+qGUtxJ/En1PLaqwTXshqyH/qgVetMlUoLgzDM6L6K0gVhaBxKMlytE9otZfXeAb0XCsKXURC+QRSE5RjPe0iZrmvWbe2G+gWfQEH4Lhq/Wq4gNLMcI4iCcDsaszsXOALfsptVxDCyg/A9oiB0g4pZBTQDk1HmuG1obGgYhE4IbVYBO6EgnI+GBG4M/j0Z9/OZVcRgoiBsRWkuwiDsn2K5zOrGDkRBuJnsIMxNt2FmZdAXPf/NRRN3t6Lnw8koE5yZVdAN6LkwnF2/Y7rFMatvw4lm15uZmZmZmZmZmZkVrwFlGO9TgmsdjtavCHOAzgceRKsGP4hWC85nJuqMH9aBv1PKMptVlSMp7XobTcH1Xo1t643WrMgA5yWcMxBNV3oZTd5tT6nLbFY15qFUEkvJP3m2UD9d0r4MWlIgricalL0i4fgZqMYbg0bLtBT4e9CxMpt1O2OAq9A6hfnWbGxBaxYen7BvJLASjXCJSwpIgHfQ7Pm4vsH28G/PQys2daXMZt3SdWikSn90y7gwz3HT0DNh/BlwOMqGvYC2q1klBeSkYPvlOdvPBZ6Pvd4HWE/+WrmjZTbrVpqBG2OvZ6OAGZfn+OloGtIElPdzOfAoquFyZVCtegtaSnsxmk1/Otm3mH2At9CCMXEPoEVNu1pms27jImBs7HULmm40t8A5F6OW0JXAIvJPzs2gfKMjULLfQ1Fqwk/QOvdhisLxwP20fQ7cD3ictjPwO1Nms6rXC9VMSUvGtaIaMEkL0XoRRxe4fr5nyKnBvhkVLLNZ1TsBPbslbc8AlyXsawZeAp5GtdxG4OA8188XkC3BvieLLG9YtmLLbFb1GoAXSV44tTdq8XwfrZ4UGhyc8xyaVQ9qnPkYODDhOvkCckyw754KlNmsWziJwi2T4UibmcHrQWikzRLarqI0B63cG0+F35coTX7cLqhxZzNqSS1nmc26hYlorcG1wJkJ+49CtWAG3ZJegLo0rgWG5LnmbFTzgfoEbyF6tnsatZguRqNwbkfrW5S7zGZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZrXr/3LOgm7auzUdAAAAAElFTkSuQmCC"></p>
-</div>
-<p>この定理は <span class="math inline">\(A\times C \to B\)</span> という射全体と, <span class="math inline">\(C \to B^A\)</span> という射全体とが一対一対応してることを言っている (随伴).</p>
-<p>証明は, 図式を可換にするような射 <span class="math inline">\(h\)</span> が少なくとも1つは存在することと, このようなものが存在するならばそれらは等しいために唯一であることを示すという二工程に分けることにする.</p>
-<h4 id="証明存在性">証明・存在性</h4>
-<p>まず関数 <span class="math inline">\(h : C \to B^A\)</span> を定義して, これが確かに射であることを確認する. 関数としては <span class="math inline">\(c \in C\)</span> に対して <span class="math inline">\(f_c \in B^A\)</span> とその <span class="math inline">\(Ef_c\)</span> (あるいは <span class="math inline">\((f_c, Ef_c) \in B^A\)</span>) を, 先の図式が可換になるように割り当ててやればよい.</p>
-<p>可換であるとはつまり, <span class="math inline">\((a, c) \in A \times C\)</span> について次の2つ</p>
+&amp; = \ev(a, f) \rceil U &amp; \cdots \text{関数evを逆に使った}
+\end{align*}\]
+<h3>冪の普遍性</h3>
+<p>次の定理が成り立つ.</p>
+<p>層 \(A, B, C\) と射 \(g \colon A \times C \to B\) があるとき, 次を可換にする射 \(h \colon C \to B^A\) が \(g\) に対して唯一存在する.</p>
+\[
+\begin{CD}
+A \times C       @&gt;g&gt;&gt;    B  \\
+@V1\times hVV             @| \\
+A \times B^A     @&gt;\ev&gt;&gt;  B  \\
+\end{CD}
+\]
+<p>このことは \(A\times C \to B\) という射全体と, \(C \to B^A\) という射全体とが一対一対応してることを言っている. このような性質を随伴という.</p>
+<p>図式を可換にするような射 \(h\) が少なくとも1つは存在することと, そしてそれが2つ以上あるなら実は等しいので唯一であるという二工程で証明する.</p>
+<h4>証明・存在性</h4>
+<p>まず関数 \(h \colon C \to B^A\) を定義して, これが確かに射であることを確認する. 関数としては \(c \in C\) に対して \(f_c \in B^A\) とその \(Ef_c\) (あるいは \((f_c, Ef_c) \in B^A\) ) を, 先の図式が可換になるように割り当ててやればよい.</p>
+<p>可換であるとはつまり, \((a, c) \in A \times C\) について次の2つ</p>
 <ul>
-<li><span class="math inline">\(g(a, c)\)</span>,</li>
-<li><span class="math inline">\(ev((1 \times h)(a, c)) = ev(a, hc) = (hc)(a) = f_c(a)\)</span></li>
+  <li>\(g(a, c)\) ,</li>
+  <li>\(\ev((1 \times h)(a, c)) = \ev(a, hc) = (hc)(a) = f_c(a)\)</li>
 </ul>
-<p>が等しいこと. そのようにしたいので, これをそのまま <span class="math display">\[f_c(a) = g(a, c)\]</span> として <span class="math inline">\(f_c\)</span> を定めればよい (仮の定義).</p>
-<p>ただし注意として, 今考えた <span class="math inline">\((a, c)\)</span> は直積から取ってきた点であるので <span class="math inline">\(Ea=Ec\)</span> という制約があり, 全ての点の <span class="math inline">\(a\)</span> について <span class="math inline">\(f_c(a)\)</span> の値が定まっているわけではない. しかしながら <span class="math inline">\(f_c\)</span> は一般に <span class="math inline">\(A \to B\)</span> なる関数である必要があるので, 先程の <span class="math inline">\(f_c\)</span> の定義では未だ部分関数でしかない.</p>
-<p>修正をします. <span class="math display">\[f_c(a) = g(a \rceil Ec, c \rceil Ea)\]</span> 注意として <span class="math inline">\((a,c) \in A \times C (\iff Ea=Ec)\)</span> については, 相変わらず <span class="math inline">\(f_c(a)=g(a,c)\)</span> を満たしているので可換性は守られている.</p>
-<p>というわけで <span class="math inline">\(c \in C\)</span> に対して関数 <span class="math display">\[f_c : A \to B\]</span> を定義することができた.</p>
-<p>次に <span class="math inline">\(Ef_c \in \mathcal O_X\)</span> という値を定める. これは <span class="math inline">\(f_c\)</span> とは独立に決めて良よくて, ここでは <span class="math display">\[Ef_c = Ec\]</span> と定める. これは, 関数 <span class="math inline">\(h\)</span> を <span class="math inline">\(h(c)=f_c\)</span> という風に定めるつもりでいるのだが, <span class="math inline">\(h\)</span> が射であるようにするために <span class="math display">\[E(hc)=Ec\]</span> となる必要があるので, そのために自動的に決まる.</p>
-<p>次に, 関数 <span class="math inline">\(h : C \to B^A\)</span> を定義する. <span class="math display">\[h(c) = (f_c, Ef_c) = (f_c, Ec)\]</span> とすればよい. ただしこれが well-defined であることを確認する必要がある. つまり <span class="math inline">\(f_c \in B^A\)</span> であるかだが, これは下のように確かめられる.</p>
-<div class="thm">
-<p><span class="math inline">\(f_c \in B^A\)</span> の証明.</p>
+<p>が等しいこと. そのようにしたいので, これをそのまま</p>
+\[f_c(a) = g(a, c)\]
+<p>として \(f_c\) を定めればよい (仮の定義).</p>
+<p>ただし注意として, 今考えた \((a, c)\) は直積から取ってきた点であるので \(Ea=Ec\) という制約があり, 全ての点の \(a\) について \(f_c(a)\) の値が定まっているわけではない. しかしながら \(f_c\) は一般に \(A \to B\) なる関数である必要があるので, 先程の \(f_c\) の定義では未だ部分関数でしかない.</p>
+<p>修正をします.</p>
+\[f_c(a) = g(a \rceil Ec, c \rceil Ea)\]
+<p>注意として \((a,c) \in A \times C (\iff Ea=Ec)\) については, 相変わらず \(f_c(a)=g(a,c)\) を満たしているので可換性は守られている.</p>
+<p>というわけで \(c \in C\) に対して関数</p>
+\[f_c \colon A \to B\]
+<p>を定義することができた.</p>
+<p>次に \(Ef_c \in \mathcal O_X\) という値を定める. これは \(f_c\) とは独立に決めて良よくて, ここでは</p>
+\[Ef_c = Ec\]
+<p>と定める. これは, 関数 \(h\) を \(h(c)=f_c\) という風に定めるつもりでいるのだが, \(h\) が射であるようにするために</p>
+\[E(hc)=Ec\]
+<p>となる必要があるので, そのために自動的に決まる.</p>
+<p>次に, 関数 \(h \colon C \to B^A\) を定義する.</p>
+\[h(c) = (f_c, Ef_c) = (f_c, Ec)\]
+<p>とすればよい. ただしこれが well-defined であることを確認する必要がある. つまり \(f_c \in B^A\) であるかだが, これは下のように確かめられる.</p>
+<p><div class=thm> \(f_c \in B^A\) の証明.</p>
 <p>冪の定義に従って, 次の2つを確かめれば良い.</p>
-<ol type="i">
-<li><span class="math inline">\(E(f_c(a)) = Ea \cap Ef_c\)</span></li>
-<li><span class="math inline">\(f_c(a \rceil U) = f_c(a) \rceil U\)</span></li>
+<ol type=a>
+  <li>\(E(f_c(a)) = Ea \cap Ef_c\)</li>
+  <li>\(f_c(a \rceil U) = f_c(a) \rceil U\)</li>
 </ol>
-<p>1つ目は <span class="math display">\[\begin{align*}
+<p>1つ目は</p>
+\[\begin{align*}
 E(f_c(a))
 &amp; = E(g(a \rceil Ec, c \rceil Ea))     &amp; \cdots f_c \text{ の定義} \\
 &amp; = E(a \rceil Ec, c \rceil Ea)        &amp; \cdots g \text{ は射} \\
 &amp; = E(a \rceil Ec)                     &amp; \cdots \text{ 直積の E の定義}\\
 &amp; = Ea \cap Ef_c
-\end{align*}\]</span> なので.</p>
-<p>2つ目は <span class="math display">\[\begin{align*}
+\end{align*}\]
+<p>なので.</p>
+<p>2つ目は</p>
+\[\begin{align*}
 f_c(a \rceil U)
 &amp; = g(a \rceil U \rceil Ec, c \rceil Ea \rceil U)     &amp; \cdots f_c \text{ の定義} \\
 &amp; = g(a \rceil Ec, c \rceil Ea) \rceil U              &amp; \cdots \text{ 直積の制限} \\
 &amp; = f_c(a) \rceil U
-\end{align*}\]</span> なので.</p>
-</div>
-<p>以上で関数 <span class="math display">\[h : C \to B^A\]</span> <span class="math display">\[h(c) = (f_c, Ef_c)\]</span> が定義された!</p>
-<p>次に <span class="math inline">\(h\)</span> が射であることを確認する.</p>
-<ol type="i">
-<li><span class="math inline">\(E(hc) = Ef_c=Ec\)</span></li>
-<li><span class="math inline">\(h(c \rceil U) = (f_{c \rceil U}, Ef_{c \rceil U}) = (f_{c \rceil U}, E(c \rceil U))\)</span>
-<ul>
-<li><span class="math inline">\(f_{c \rceil U}(a) = g(a \rceil Ec \cap U, c \rceil U \rceil Ea) = f_c(a) \rceil U = (f_c \rceil U)(a)\)</span>
-<ul>
-<li>よって (関数として) <span class="math inline">\(f_{c \rceil U} = f_c \rceil U\)</span></li>
-</ul></li>
-<li><span class="math inline">\(Ef_{c \rceil U} = E(c \rceil U) = Ec \cap U = E(f_c \rceil U)\)</span>
-<ul>
-<li>以上2つより <span class="math inline">\(h(c \rceil U) = hc \rceil U\)</span></li>
-</ul></li>
-</ul></li>
+\end{align*}\]
+<p>なので. </div></p>
+<p>以上で関数</p>
+\[h \colon C \to B^A\]
+\[h(c) = (f_c, Ef_c)\]
+<p>が定義された!</p>
+<p>次に \(h\) が射であることを確認する.</p>
+<ol type=a>
+  <li>\(E(hc) = Ef_c=Ec\)</li>
+  <li>
+    \(h(c \rceil U) = (f_{c \rceil U}, Ef_{c \rceil U}) = (f_{c \rceil U}, E(c \rceil U))\)
+    <ul>
+      <li>
+        \(f_{c \rceil U}(a) = g(a \rceil Ec \cap U, c \rceil U \rceil Ea) = f_c(a) \rceil U = (f_c \rceil U)(a)\)
+        <ul>
+          <li>よって (関数として) \(f_{c \rceil U} = f_c \rceil U\)</li>
+        </ul>
+      </li>
+      <li>
+        \(Ef_{c \rceil U} = E(c \rceil U) = Ec \cap U = E(f_c \rceil U)\)
+        <ul>
+          <li>以上2つより \(h(c \rceil U) = hc \rceil U\)</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
 </ol>
-であるので確かに,
-<center>
-<img src="data:image/png;base64,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">
-</center>
-<p>を可換にするような射 <span class="math inline">\(h : C \to B^A\)</span> は少なくとも一つは存在する.</p>
-<h4 id="証明唯一性">証明・唯一性</h4>
-<p>与えられた <span class="math inline">\(g\)</span> に対してこのような <span class="math inline">\(h\)</span> は唯一しか存在しない. これを示す常套的手段として次のような方法を取る. 今 <span class="math inline">\(h\)</span> の他に <span class="math inline">\(h&#39;\)</span> があるとき, 実は <span class="math inline">\(h=h&#39;\)</span> であることを示す. これによって, 2つ以上存在することが言えなくなる. 先ほどの存在性と合わせることで, 唯一の存在であることが言えたことになる.</p>
-<p><span class="math inline">\(h&#39;\)</span> もまた上の図式を可換にするような射であるとする. <span class="math display">\[\forall c \in C, h(c) = h&#39;(c)\]</span> を示すことで <span class="math inline">\(h=h&#39;\)</span> を言うことにする.</p>
-<p>自由に取ってきた <span class="math inline">\(c \in C\)</span> について, <span class="math inline">\(h(c) = h&#39;(c)\)</span> を言う. 注意として <span class="math inline">\(h(c) \in B^A\)</span> であるので, この値の等価性を示すには <span class="math inline">\(h(c)=(f,Ef)\)</span> とすると <span class="math inline">\(f\)</span> の関数としての等価性と <span class="math inline">\(Ef\)</span> の集合としての等価性を合わせて言う必要がある.</p>
-<ol type="i">
-<li><p>2つは射であるので <span class="math display">\[E(hc)=Ec=E(h&#39;c)\]</span></p></li>
-<li><p><span class="math inline">\(h(c)=h&#39;(c)\)</span> を示す. 2つは <span class="math inline">\(A \to B\)</span> な関数なので, 好きに取ってきた <span class="math inline">\(a \in A\)</span> について <span class="math inline">\(h(c)(a) = h&#39;(c)(a)\)</span> を示せばよい.</p></li>
+<p>であるので確かに, 可換にするような射 \(h \colon C \to B^A\) は少なくとも一つは存在する.</p>
+<h4>証明・唯一性</h4>
+<p>与えられた \(g\) に対してこのような \(h\) は唯一しか存在しない. これを示す常套的手段として次のような方法を取る. 今 \(h\) の他に \(h&#x27;\) があるとき, 実は \(h=h&#x27;\) であることを示す. これによって, 2つ以上存在することが言えなくなる. 先ほどの存在性と合わせることで, 唯一の存在であることが言えたことになる.</p>
+<p>\(h&#x27;\) もまた上の図式を可換にするような射であるとする.</p>
+\[\forall c \in C, h(c) = h&#x27;(c)\]
+<p>を示すことで \(h=h&#x27;\) を言うことにする.</p>
+<p>自由に取ってきた \(c \in C\) について, \(h(c) = h&#x27;(c)\) を言う. 注意として \(h(c) \in B^A\) であるので, この値の等価性を示すには \(h(c)=(f,Ef)\) とすると \(f\) の関数としての等価性と \(Ef\) の集合としての等価性を合わせて言う必要がある.</p>
+<ol type=a>
+  <li>2つは射であるので</li>
 </ol>
-<p>今もし <span class="math inline">\(Ea=Ec \iff (a,c) \in A \times C\)</span> ならば, 可換性より即座に <span class="math inline">\(h(c)(a) = ev(a,hc)=g(a,c)=\cdots=h&#39;(c)(a)\)</span> が言える.</p>
-<p>さて <span class="math inline">\(E(h(c)(a))=E(f_c(a))=Ef_c\cap Ea=Ec \cap Ea\)</span> であるので <span class="math inline">\(h(c)(a) = h(c)(a) \rceil Ec \cap Ea ( \in B)\)</span> であるが, <span class="math display">\[\begin{align*}
+\[E(hc)=Ec=E(h&#x27;c)\]
+<ol type=a>
+  <li>\(h(c)=h&#x27;(c)\) を示す.</li>
+</ol>
+<p>2つは \(A \to B\) な関数なので, 好きに取ってきた \(a \in A\) について \(h(c)(a) = h&#x27;(c)(a)\) を示せばよい.</p>
+<p>今もし \(Ea=Ec \iff (a,c) \in A \times C\) ならば, 可換性より即座に \(h(c)(a) = \ev(a,hc)=g(a,c)=\cdots=h&#x27;(c)(a)\) が言える.</p>
+<p>さて \(E(h(c)(a))=E(f_c(a))=Ef_c\cap Ea=Ec \cap Ea\) であるので \(h(c)(a) = h(c)(a) \rceil Ec \cap Ea ( \in B)\) であるが,</p>
+\[\begin{align*}
 h(c)(a) \rceil Ec \cap Ea
 &amp; = h(c) (a \rceil Ec) \rceil Ea  &amp; \cdots h c \in B^A \text{ なので} \\
 &amp; = (hc \rceil Ea) (a \rceil Ec)  &amp; \cdots h c \in B^A \text{ なので} \\
 &amp; = (h(c \rceil Ea)) (a \rceil Ec)  &amp; \cdots h \text{ が射なので} \\
-\end{align*}\]</span> であるので結局 <span class="math inline">\((a&#39;,c&#39;)=(a \rceil Ec, c \rceil Ea)\)</span> を <span class="math inline">\(h\)</span> に適用した場合を考えればよくて, このとき <span class="math inline">\(Ea&#39;=Ec&#39;\)</span> であるので先ほどの議論から <span class="math inline">\(h\)</span> の値と <span class="math inline">\(h&#39;\)</span> の値は等しい.</p>
-<p>以上から <span class="math inline">\(h=h&#39;\)</span>.</p>
-<h3 id="メモ">メモ</h3>
-<p>層 <span class="math inline">\(A\)</span> から <span class="math inline">\(B\)</span> への射全体を圏論的に <span class="math inline">\(Hom(A,B)\)</span> と書いてやると, 今の定理はつまり <span class="math display">\[Hom(A \times C, B) \simeq Hom(C, B^A)\]</span> であることを主張していた.</p>
-<p>この <span class="math inline">\(A\)</span> の部分を隠してやると, 適当な <span class="math inline">\(F,G\)</span> を用いて <span class="math display">\[Hom(F(C), B) \simeq Hom(C, G(B))\]</span> と書き直せる. これを随伴 <a href="https://ja.wikipedia.org/wiki/%E9%9A%8F%E4%BC%B4%E9%96%A2%E6%89%8B">wikipedia</a> という. <span class="math inline">\(F,G\)</span> を随伴関手という.</p>
-<h3 id="メモ-1">メモ</h3>
+\end{align*}\]
+<p>であるので結局 \((a&#x27;,c&#x27;)=(a \rceil Ec, c \rceil Ea)\) を \(h\) に適用した場合を考えればよくて, このとき \(Ea&#x27;=Ec&#x27;\) であるので先ほどの議論から \(h\) の値と \(h&#x27;\) の値は等しい.</p>
+<p>以上から \(h=h&#x27;\) .</p>
+<h3>メモ</h3>
+<p>層 \(A\) から \(B\) への射全体を \(\Hom(A,B)\) と書くと, 今の定理はつまり</p>
+\[\Hom(A \times C, B) \simeq \Hom(C, B^A)\]
+<p>であることを主張していた.</p>
+<p>この \(A\) の部分を隠してやると, 適当な \(F,G\) を用いて</p>
+\[\Hom(F(C), B) \simeq \Hom(C, G(B))\]
+<p>と書き直せる. これを <a href="https://ja.wikipedia.org/wiki/%E9%9A%8F%E4%BC%B4%E9%96%A2%E6%89%8B">随伴</a> という. \(F,G\) を随伴関手という.</p>
+<h3>メモ</h3>
 <p>今の定理はカリーハワード対応を書いてやると</p>
 <ul>
-<li>論理
-<ul>
-<li><span class="math inline">\(\left( (A \land C) \implies B \right) \iff \left( C \implies A \implies B \right)\)</span></li>
-</ul></li>
-<li>プログラム (Haskell)
-<ul>
-<li><code>(a, c) -&gt; b</code> <span class="math inline">\(\iff\)</span> <code>c -&gt; a -&gt; b</code></li>
-<li>左から右をカリー化という</li>
-</ul></li>
+  <li>
+    論理
+    <ul>
+      <li>\(\left( (A \land C) \implies B \right) \iff \left( C \implies A \implies B \right)\)</li>
+    </ul>
+  </li>
+  <li>
+    プログラム (Haskell)
+    <ul>
+      <li><code>(a, c) -&gt; b</code> \(\iff\) <code>c -&gt; a -&gt; b</code></li>
+      <li>左から右をカリー化という</li>
+    </ul>
+  </li>
 </ul>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -367,5 +429,9 @@ h(c)(a) \rceil Ec \cap Ea
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

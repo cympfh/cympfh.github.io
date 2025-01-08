@@ -7,6 +7,7 @@ $\def\A{\mathcal A}
 \def\Hom{\mathrm Hom}
 \def\Sets{\mathrm Sets}
 \def\Gr{\mathrm Gr}$
+$\require{amscd}$
 
 ## 概要
 
@@ -40,7 +41,6 @@ $$\Phi \colon \Hom_\B(FX, Y) \rightleftharpoons \Hom_\A(X, UY) \colon \Psi$$
 自然であるということの意味はここでは次の通り.
 
 任意の $g \colon X' \to X, h \colon Y \to Y'$ について次が可換.
-$\require{AMScd}$
 $$\begin{CD}
 \Hom_\B(FX, Y) @>\Phi>> \Hom_\A(X, UY) \\
 @Vh-FgVV @VUh-gVV \\
@@ -78,7 +78,7 @@ $$\Psi(Uh~f~g) = h~\Psi f~Fg$$
 2つの自然性の式はあとで使うので使いやすい形にだけしておいてメモしておく.
 
 <div class=thm>
-#### memo 1
+**memo**
 
 $$\Phi(h) = Uh~\Phi 1$$
 $$\Psi(Uh~f) = h~\Psi f$$
@@ -91,6 +91,8 @@ $$\Psi(Uh~f) = h~\Psi f$$
 モナドと言ったが個人的には Kleisli Triple の形の方がわかりやすい (定義も書きやすい) のでこちらを使う. モナドとは同値な概念で変換も簡単なのでどっちでも良い.
 
 ここでは次の $(T,\eta,-^\sharp)$ を圏 $\A$ の Kleisli Triple と呼ぶ.
+
+<div class=thm>
 
 - 関手 $T : \A \to \A$
     - (実際には対象の対応付だけで十分)
@@ -106,6 +108,8 @@ $$\Psi(Uh~f) = h~\Psi f$$
 1. $f = f^\sharp \eta_X$ ($f \colon X \to TY$)
 1. $(g^\sharp f)^\sharp = g^\sharp f^\sharp$
 
+</div>
+
 以上が Kleisli Triple である.
 
 > $\eta$ は適当に自然変換になって,
@@ -116,9 +120,7 @@ $$\Psi(Uh~f) = h~\Psi f$$
 
 主張は以下の通りであった.
 
-<div class=thm>
-随伴 $F \dashv U$ について $UF$ はモナド.
-</div>
+> 随伴 $F \dashv U$ について $UF$ はモナド.
 
 $F \colon \A \to \B$,
 $U \colon \B \to \A$
@@ -128,23 +130,20 @@ $$UF \colon \A \to \A$$
 随伴の対応関係を前に書いたように $\Phi, \Psi$ とすると,
 $$\eta_X = \Phi(1_{FX})$$
 $$f^\sharp = U(\Psi f)$$
-とすれば
+としたときに
 $(UF, \eta, -^\sharp)$
-が Kleisli Triple になることを示す.
+が実は Kleisli Triple になっていることを示す.
 
-> コツとしては $1_X$ が常に存在することと,
-> あとは自然に型を合わせれば大抵出来上がる.
+### 証明のコツ
 
-### 証明
+$1_X$ は常に存在すること.
+自然変換の添字や恒等射 $1$ の添字は気にしない.
+適用や合成はただの掛け算.
+型だけ正しく揃える.
 
-Kleisli Triple に要請される3つの条件を満たすことを見ていけば良い.
+では Kleisli Triple に要請される3つの条件を満たすことを見ていく.
 
-> 証明のコツ.
-> 自然変換 (というかポリモーフィズム) の添字とか,
-> 恒等射 $1_X$ の添字とかはもう合ってるものだと信じていちいち気にしない.
-> 適用とか合成とかも全部ただの掛け算だと思って操作してくと気附いたら辻褄が合ってる.
-
-#### 1. $\eta_X^\sharp = 1_{TX}$
+### 1. $\eta_X^\sharp = 1_{TX}$
 
 $$\begin{align*}
 \eta_X^\sharp
@@ -157,7 +156,7 @@ $$\begin{align*}
 $T=UF$ なので確かに型もあってる.
 ただしこれ以降は $1$ の添字は省略してく.
 
-#### 2. $f = f^\sharp \eta_X$
+### 2. $f = f^\sharp \eta_X$
 
 右辺から始める.
 
@@ -165,7 +164,7 @@ $$\begin{align*}
 f^\sharp \eta_X & = U(\Psi f) \Phi(1) \\
 \end{align*}$$
 
-ここで "memo 1" を思い出すと,
+ここで **memo** を思い出すと,
 $$\begin{align*}
 U(\Psi f) \Phi(1)
 & = \Phi(\Psi(f)) \\
@@ -174,7 +173,7 @@ U(\Psi f) \Phi(1)
 
 最後は $\Phi$ は $\Psi$ の逆関数であることを使った.
 
-#### 3. $(g^\sharp f)^\sharp = g^\sharp f^\sharp$
+### 3. $(g^\sharp f)^\sharp = g^\sharp f^\sharp$
 
 $$\begin{align*}
 (g^\sharp f)^\sharp
@@ -182,22 +181,21 @@ $$\begin{align*}
 & = U(\Psi((U \Psi g) ~ f)) \\
 \end{align*}$$
 
-やはり "memo 1" を思い出すと,
+やはり **memo** を思い出すと,
 $\Psi((U \Psi g) ~ f) = (\Psi g) (\Psi f)$
 なので,
 $$\begin{align*}
 (g^\sharp f)^\sharp
-& = U ( (\Psi g) (\Psi f) )
-& = U(\Psi g) ~ U(\Psi f)
+& = U ( (\Psi g) (\Psi f) ) \\
+& = U(\Psi g) ~ U(\Psi f) \\
 & = g^\sharp f^\sharp
 \end{align*}$$
 
 最後は $U$ が関手なので分配できることを使った.
-ところで $\Phi$ や $\Psi$ は別に関手ではないので分配できないことに註意.
+一方で $\Phi$ や $\Psi$ は関手ではないので分配できないことに註意.
 
 以上から確かに $UF$ は適切な操作によって Kleisli Triple になる.
-
-> $\mu_X = 1_{UFX}^\sharp = U(\Psi 1_{UFX})$ によってモナドでもある.
+そして $\mu_X = 1_{UFX}^\sharp = U(\Psi 1_{UFX})$ とすることでモナドである.
 
 ## 例 - リストモナド
 
@@ -240,6 +238,4 @@ $$\eta_X(x) = (a \mapsto (x, a))$$
 
 以上.
 
----
-
-逆に任意のモナドは自明でない随伴に分解出来る?
+> 逆に任意のモナドは自明でない随伴に分解出来るのかな?

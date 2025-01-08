@@ -1,7 +1,6 @@
 % 坪井 多様体 &sect;4 - 接空間
 % 2017-02-21 (Tue.)
-% 幾何学 微分幾何
-% 第4章です. 接空間とか接写像とか
+% 幾何学 微分幾何 接空間 接写像
 
 ## INDEX
 <div id=toc></div>
@@ -89,7 +88,9 @@ $$c \mapsto \frac{d(\phi \circ c)}{dt}(t_0)$$
 > なので厳密には十分に小さな区間を定義域として定義する必要がある.
 
 同型故に $\mathbb{R}^n$ におけるベクトル空間として構成を $C_{x_0}/\sim$ に導くことで、これをベクトル空間とすることができる.
-ベクトル空間としての $C_{x_0}/\sim$ を $$T_{x_0}M$$ と書き、我々はこれを **接空間 (接ベクトル空間)** という.
+ベクトル空間としての $C_{x_0}/\sim$ を
+$$T_{x_0}M$$
+と書き、我々はこれを **接空間 (接ベクトル空間)** という.
 
 > つまり
 > $\phi^*(\alpha_1 c_1 + \alpha_2 c_2) := \alpha_1 \phi^*(c_1) + \alpha_2 \phi^*(c_2)$
@@ -158,17 +159,9 @@ $f$ は $M$ 上の点に関する写像であるが、
 $c$ は区間 $(a, b)$ から $M$ 上の点への写像であったから、
 $f$ との関数合成をすることで、$N$ 上の点に写すことが出来る.
 
-```dot
-digraph {
-  rankdir=LR;
-  bgcolor=transparent;
-  node [shape=plaintext fixedsize=true width=0.6 height=0.3];
-  M -> N [label=f];
-  ab -> M [label=c];
-  ab[label="(a, b)"];
-  ab -> N [label="f・c"];
-}
-```
+$$\begin{CD}
+(a,b) @>c>> M @>f>> N
+\end{CD}$$
 
 すなわち、$M$ 上の曲線 $c$ から $N$ 上の曲線 $f \circ c$ を導いた.
 この定義域は $T_xM$ である.
@@ -188,19 +181,11 @@ digraph {
 
 に写したと考えられる.
 
-```dot
-digraph {
-  rankdir=LR;
-  bgcolor=transparent;
-  node [shape=plaintext fixedsize=true width=0.3 height=0];
-  subgraph cluster_1 {
-  TM -> TN [label=Tf];
-  }
-  subgraph cluster_2 {
-  M -> N [label=f];
-  }
-}
-```
+$$\begin{CD}
+M @>f>> N \\
+@. @. \\
+TM @>Tf>> TN \\
+\end{CD}$$
 
 実はこの $T$ は圏論の言葉で言うところの (共変) 関手である.
 
@@ -261,28 +246,16 @@ $$f_A : \mathbb{R}^2/\mathbb{Z}^2 \to \mathbb{R}^2/\mathbb{Z}^2$$
 $f_A$ は微分可能な写像である.
 というのは、商集合から商集合への写像とすると微分は定義できないが、今、定義域と値域は多様体だとしたので、
 
-```dot
-digraph {
-  rankdir=LR;
-  bgcolor=transparent;
-  node [shape=plaintext fixedsize=true width=0.8 height=0.3];
-  M -> N [label="fA"];
-  M [label="R²/Z²"]
-  N [label="R²/Z²"]
-  M -> X [label="φ"];
-  N -> Y [label="ψ"];
-  X [label="R²"];
-  Y [label="R²"];
-  {rank=same M X}
-  {rank=same N Y}
-  X -> Y [label="fA*"];
-}
-```
+$$\begin{CD}
+\mathbb R^2/\mathbb Z^2    @>fA>>  \mathbb R^2/\mathbb Z^2 \\
+@V\varphi VV  @V\psi VV \\
+\mathbb R^2    @>fA^\ast>>  \mathbb R^2 \\
+\end{CD}$$
 
 $f_A$ の代わりに $f_A^* = \psi \circ f_A \circ \phi^{-1}$ が微分可能であるかを考えればよい.
 これはほぼ自明な局所座標 $\phi, \psi$ を取ることで、
 
-- $f_A^* \left(\begin{array}\\x\\y\end{array}\right) = A \left(\begin{array}\\x\\y\end{array}\right)$
+$$f_A^* \left(\begin{array}\\x\\y\end{array}\right) = A \left(\begin{array}\\x\\y\end{array}\right)$$
 
 とできる.
 これは $C^\infty$ 級なので、「$f$ は $C^\infty$ 級である」と言える.

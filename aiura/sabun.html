@@ -1,118 +1,113 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="description" content="拡散方程式/前進オイラー法/後退オイラー法/クランク・ニコルソン法/" />
-  <meta property="og:url" content="http://cympfh.cc/taglibro">
-  <meta property="og:type" content="article">
-  <meta property="og:title" content="差分法による拡散方程式の数値計算" />
-  <meta property="og:description" content="拡散方程式/前進オイラー法/後退オイラー法/クランク・ニコルソン法/" />
-  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:site" content="@cympfh" />
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>差分法による拡散方程式の数値計算</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
     <a href='index.html'><i class="fa fa-stumbleupon"></i></a>
 </header>
-<header>
+
 <h1 class="title">差分法による拡散方程式の数値計算</h1>
-</header>
-<p class="date" style="text-align: right">
-2013-07-21 (Sun.)
-</p>
-<div class="is-pulled-right">
-<p><a class='tag is-red' href=index.html#数値計算>数値計算</a></p>
-</div>
-<h2 id="拡散方程式">拡散方程式</h2>
-<p>初期値を適当な <span class="math inline">\(u_0(x) = u(x, 0)\)</span> とするような 2変数関数 <span class="math inline">\(u(x, t)\)</span> に関する拡散方程式 <span class="math display">\[u_t = \kappa u_{xx}\]</span></p>
-<p>について、 数値計算的に <span class="math inline">\(t &gt; 0\)</span> の範囲で適当の <span class="math inline">\(x\)</span> に関する <span class="math inline">\(u(x, t)\)</span> の値を計算したい.</p>
-<h2 id="前進オイラー法">前進オイラー法</h2>
-<p>適当に小さな定数 <span class="math inline">\(\Delta t\)</span> を以って <span class="math inline">\(u_t\)</span> を</p>
-<p><span class="math display">\[\frac{u(x, t + \Delta t) - u(x, t)}{\Delta t}\]</span></p>
+<p><p class=date style='text-align: right'>2013-07-21 (Sun.)</p> <div class='is-pulled-right'> <a class='tag is-red' href=index.html#数値計算>数値計算</a> </div> % 前進オイラー法とか後退オイラー法とかです</p>
+<h2>拡散方程式</h2>
+<p>初期値を適当な \(u_0(x) = u(x, 0)\) とするような 2変数関数 \(u(x, t)\) に関する拡散方程式</p>
+\[u_t = \kappa u_{xx}\]
+<p>について、 数値計算的に \(t &gt; 0\) の範囲で適当の \(x\) に関する \(u(x, t)\) の値を計算したい.</p>
+<h2>前進オイラー法</h2>
+<p>適当に小さな定数 \(\Delta t\) を以って \(u_t\) を</p>
+\[\frac{u(x, t + \Delta t) - u(x, t)}{\Delta t}\]
 <p>で置き換える. これはテイラー展開の1次近似 (つまりオイラー法) だと考えると解釈できる. すなわち、</p>
-<p><span class="math display">\[\begin{align}
-&amp; f(t + \Delta t) = f(t) + f&#39;(t) \Delta t + O(\Delta t^2) \\
+\[\begin{align}
+&amp; f(t + \Delta t) = f(t) + f&#x27;(t) \Delta t + O(\Delta t^2) \\
 \Rightarrow
-&amp; f&#39;(t) \approx \frac{1}{\Delta t} \Big( f(t + \Delta t) - f(t) \Big)
-\end{align}\]</span></p>
-<p>同様にして二階微分もテイラー展開の二次近似で求まる. ただし一階微分を打ち消すために <span class="math inline">\(f(x + \Delta x)\)</span> と <span class="math inline">\(f(x - \Delta x)\)</span> の2つの和を考える.</p>
-<p><span class="math display">\[\begin{align}
-&amp; f(x + \Delta x) = f(x) + f&#39;(x) \Delta x + \frac{1}{2}f&#39;&#39;(x) \Delta x^2 + O(\Delta x^3) \\
-&amp; f(x - \Delta x) = f(x) - f&#39;(x) \Delta x + \frac{1}{2}f&#39;&#39;(x) \Delta x^2 + O(\Delta x^3) \\
+&amp; f&#x27;(t) \approx \frac{1}{\Delta t} \Big( f(t + \Delta t) - f(t) \Big)
+\end{align}\]
+<p>同様にして二階微分もテイラー展開の二次近似で求まる. ただし一階微分を打ち消すために \(f(x + \Delta x)\) と \(f(x - \Delta x)\) の2つの和を考える.</p>
+\[\begin{align}
+&amp; f(x + \Delta x) = f(x) + f&#x27;(x) \Delta x + \frac{1}{2}f&#x27;&#x27;(x) \Delta x^2 + O(\Delta x^3) \\
+&amp; f(x - \Delta x) = f(x) - f&#x27;(x) \Delta x + \frac{1}{2}f&#x27;&#x27;(x) \Delta x^2 + O(\Delta x^3) \\
 \Rightarrow
-&amp; f(x + \Delta x) + f(x - \Delta x) = 2 f(x) + f&#39;&#39;(x) \Delta x^2 + O(\Delta x^3) \\
+&amp; f(x + \Delta x) + f(x - \Delta x) = 2 f(x) + f&#x27;&#x27;(x) \Delta x^2 + O(\Delta x^3) \\
 \Rightarrow
-&amp; f&#39;&#39;(x) \approx \frac{1}{\Delta x^2} \Big( f(x + \Delta x) - 2 f(x) + f(x - \Delta x) \Big)
-\end{align}\]</span></p>
-<p>というわけで <span class="math inline">\(u_{xx}\)</span> を</p>
-<p><span class="math display">\[\frac{f(x + \Delta x) - 2 f(x) + f(x - \Delta x)}{\Delta x^2}\]</span></p>
+&amp; f&#x27;&#x27;(x) \approx \frac{1}{\Delta x^2} \Big( f(x + \Delta x) - 2 f(x) + f(x - \Delta x) \Big)
+\end{align}\]
+<p>というわけで \(u_{xx}\) を</p>
+\[\frac{f(x + \Delta x) - 2 f(x) + f(x - \Delta x)}{\Delta x^2}\]
 <p>で置き換えれば良さそう.</p>
 <p>以上から</p>
-<p><span class="math display">\[u(x, t + \Delta t) = u(x, t) + \frac{\kappa \Delta t}{\Delta x^2} \Big( u(x + \Delta x, t) - 2 u(x, t) + u(x - \Delta x, t) \Big)\]</span></p>
-<p>を組み立てられる. 初期値として <span class="math inline">\(x\)</span> に関する <span class="math inline">\(u_0(x)\)</span> が既知なのでこの右辺を用いることで <span class="math inline">\(u(x, \Delta t)\)</span> が求まる. さらに繰り返し適用することで <span class="math inline">\(u(x, 2\Delta x)\)</span> が求まる... このように、時刻変数 <span class="math inline">\(t\)</span> に関して <span class="math inline">\(0\)</span> から初めて前方 (数が増える方向) に進むから、これを前進法という.</p>
-<h2 id="後退オイラー法">後退オイラー法</h2>
-<p><span class="math inline">\(u_t\)</span> を <span class="math display">\[\frac{u(x, t) - u(x, t - \Delta t)}{\Delta t}\]</span> と置き換えても何も問題は無さそう. これを使って先の前進法を適用すると、</p>
-<p><span class="math display">\[u(x, t) = u(x, t - \Delta t) + \frac{\kappa \Delta t}{\Delta x^2} \Big( u(x + \Delta x, t) - 2 u(x, t) + u(x - \Delta x, t) \Big)\]</span></p>
-<p>求めたいのは <span class="math inline">\(t&gt;0\)</span> の範囲であるから、 この式を用いて <span class="math inline">\(u(x, t - \Delta t\)</span> から <span class="math inline">\(u(x, t)\)</span> を求めることを考える.</p>
+\[u(x, t + \Delta t) = u(x, t) + \frac{\kappa \Delta t}{\Delta x^2} \Big( u(x + \Delta x, t) - 2 u(x, t) + u(x - \Delta x, t) \Big)\]
+<p>を組み立てられる. 初期値として \(x\) に関する \(u_0(x)\) が既知なのでこの右辺を用いることで \(u(x, \Delta t)\) が求まる. さらに繰り返し適用することで \(u(x, 2\Delta x)\) が求まる... このように、時刻変数 \(t\) に関して \(0\) から初めて前方 (数が増える方向) に進むから、これを前進法という.</p>
+<h2>後退オイラー法</h2>
+<p>\(u_t\) を</p>
+\[\frac{u(x, t) - u(x, t - \Delta t)}{\Delta t}\]
+<p>と置き換えても何も問題は無さそう. これを使って先の前進法を適用すると、</p>
+\[u(x, t) = u(x, t - \Delta t) + \frac{\kappa \Delta t}{\Delta x^2} \Big( u(x + \Delta x, t) - 2 u(x, t) + u(x - \Delta x, t) \Big)\]
+<p>求めたいのは \(t&gt;0\) の範囲であるから、 この式を用いて \(u(x, t - \Delta t\) から \(u(x, t)\) を求めることを考える.</p>
 <ul>
-<li>ベクトル <span class="math inline">\(u\)</span>
-<ul>
-<li><span class="math inline">\(u_i = u(x_i, t - \Delta t)\)</span></li>
-</ul></li>
-<li>ベクトル <span class="math inline">\(v\)</span>
-<ul>
-<li><span class="math inline">\(u_i = u(x_i, t)\)</span></li>
-</ul></li>
+  <li>
+    ベクトル \(u\)
+    <ul>
+      <li>\(u_i = u(x_i, t - \Delta t)\)</li>
+    </ul>
+  </li>
+  <li>
+    ベクトル \(v\)
+    <ul>
+      <li>\(u_i = u(x_i, t)\)</li>
+    </ul>
+  </li>
 </ul>
 <p>とすると、先の式は</p>
-<p><span class="math display">\[\begin{align}
+\[\begin{align}
      &amp; v_i = u_i + \frac{\kappa \Delta t}{\Delta x^2} \Big( v_{i+1} - 2 v_i + v_{i-1} \Big) \\
 \iff &amp; u_i = - r v_{i+1} + (2r+1) v_i - v_{i-1}
-\end{align}\]</span></p>
-<p>と書き改められる. ここで <span class="math inline">\(r = \frac{\kappa \Delta t}{\Delta x^2}\)</span> と置いた. つまり、十分長いベクトルに関する一次方程式に他ならない. 行列で書き直すと、</p>
-<p><span class="math display">\[\left[\begin{array}\\
+\end{align}\]
+<p>と書き改められる. ここで \(r = \frac{\kappa \Delta t}{\Delta x^2}\) と置いた. つまり、十分長いベクトルに関する一次方程式に他ならない. 行列で書き直すと、</p>
+\[\left[\begin{array}\\
 2r+1 &amp; -r \\
 -r   &amp; 2r+1 &amp; -r \\
      &amp; -r   &amp; 2r+1 &amp; -r \\
      &amp;      &amp; -r   &amp; \ddots &amp; \ddots \\
      &amp;      &amp;      &amp; \ddots &amp; \ddots \\
-\end{array}\right] v = u\]</span></p>
-<p>これを繰り返す解くことで、<span class="math inline">\(u(x, \Delta t), u(x, 2\Delta t), \ldots\)</span> が求まる.</p>
-<h2 id="クランクニコルソン法">クランク・ニコルソン法</h2>
-<p>前進と後退との違いは、<span class="math inline">\(u_{xx}\)</span> の項を <span class="math inline">\(u(x, t)\)</span> に入れるか <span class="math inline">\(u(x, t + \Delta t)\)</span> に入れるかである. 両方に入れれば式が綺麗になる. つまり、前進の</p>
-<p><span class="math display">\[u(x, t + \Delta t) = u(x, t) + \frac{\kappa \Delta t}{\Delta x^2} u_{xx}\]</span></p>
-<p>で、 <span class="math inline">\(u_{xx}\)</span> を</p>
-<p><span class="math display">\[\frac{1}{2}\Big[
+\end{array}\right] v = u\]
+<p>これを繰り返す解くことで、 \(u(x, \Delta t), u(x, 2\Delta t), \ldots\) が求まる.</p>
+<h2>クランク・ニコルソン法</h2>
+<p>前進と後退との違いは、 \(u_{xx}\) の項を \(u(x, t)\) に入れるか \(u(x, t + \Delta t)\) に入れるかである. 両方に入れれば式が綺麗になる. つまり、前進の</p>
+\[u(x, t + \Delta t) = u(x, t) + \frac{\kappa \Delta t}{\Delta x^2} u_{xx}\]
+<p>で、 \(u_{xx}\) を</p>
+\[\frac{1}{2}\Big[
 u(x + \Delta x, t) - 2 u(x, t) + u(x - \Delta x, t)
 +
 u(x + \Delta x, t + \Delta t) - 2 u(x, t + \Delta t) + u(x - \Delta x, t + \Delta t)
-\Big]\]</span></p>
+\Big]\]
 <p>で置き換えた式を整理すると、</p>
-<p><span class="math display">\[-\frac{r}{2} v_{i-1} (r+1) v_i -\frac{r}{2} v_{i+1} = -\frac{r}{2} u_{i-1} (r+1) u_i -\frac{r}{2} u_{i+1}\]</span></p>
-<p><span class="math display">\[\left[\begin{array}\\
- r+1 &amp; -r/2 \\
--r/2 &amp;  r+1 &amp; -r/2 \\
-     &amp; -r/2 &amp;   r+1  &amp; \ddots \\
+\[-\frac{r}{2} v_{i-1} (r+1) v_i -\frac{r}{2} v_{i+1} = -\frac{r}{2} u_{i-1} (r+1) u_i -\frac{r}{2} u_{i+1}\]
+\[\left[\begin{array}\\
+ r+1 &amp; -r&#x2F;2 \\
+-r&#x2F;2 &amp;  r+1 &amp; -r&#x2F;2 \\
+     &amp; -r&#x2F;2 &amp;   r+1  &amp; \ddots \\
      &amp;      &amp; \ddots &amp; \ddots \\
 \end{array}\right] v
 =
 \left[\begin{array}\\
- r+1 &amp; -r/2 \\
--r/2 &amp;  r+1 &amp; -r/2 \\
-     &amp; -r/2 &amp; r+1    &amp; \ddots \\
+ r+1 &amp; -r&#x2F;2 \\
+-r&#x2F;2 &amp;  r+1 &amp; -r&#x2F;2 \\
+     &amp; -r&#x2F;2 &amp; r+1    &amp; \ddots \\
      &amp;      &amp; \ddots &amp; \ddots \\
-\end{array}\right] u\]</span></p>
+\end{array}\right] u\]
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -217,5 +212,9 @@ u(x + \Delta x, t + \Delta t) - 2 u(x, t + \Delta t) + u(x - \Delta x, t + \Delt
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

@@ -1,7 +1,6 @@
 % ラムダ計算
 % 2017-03-15 (Wed.)
-% 計算機言語
-% ラムダ式、SKI式、不動点コンビネータ
+% 計算機言語 ラムダ式 SKI式 不動点コンビネータ
 
 ## index
 
@@ -11,8 +10,8 @@
 
 ラムダ項とは次のBNFで記述されるもの.
 
-- $M ::= \text{Var} | \lambda \text{Var}. M | M M$
-- $\text{Var} ::= x | y | z | \cdots$
+- $M ::= \text{Var} \mid \lambda \text{Var}. M \mid M M$
+- $\text{Var} ::= x \mid y \mid z \mid \cdots$
 
 これに適切な意味を与えたのがラムダ式.
 

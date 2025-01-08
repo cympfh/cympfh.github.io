@@ -1,11 +1,17 @@
 % 不偏ゲームのグランディ数 (ニム数)
 % 2017-03-25 (Sat.)
-% ゲーム理論
-% グランディ数とそのニム和
+% ゲーム理論 グランディ数 ニム和
+
+$$
+\def\I{\mathcal I}
+\def\P{\mathcal P}
+\def\G{\mathcal G}
+\def\mex{\mathrm{mex}}
+\def\bar#1{\overline{#1}}
+$$
 
 ## index
 
-$\def\I{\mathcal I}\def\P{\mathcal P}\def\G{\mathcal G}\def\mex{\mathrm{mex}}\def\bar#1{\overline{#1}}$
 <div id=toc></div>
 
 ## 不偏ゲームとは何か

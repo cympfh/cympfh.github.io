@@ -2,7 +2,12 @@
 % 2018-11-14 (Wed.)
 % 圏論
 
-$\def\C{\mathcal C}\def\D{\mathcal D}\def\colim{\mathrm{colim}\;}\def\i{\hookrightarrow}\def\limD{D_{-\infty}}$
+$\def\C{\mathcal C}
+\def\D{\mathcal D}
+\def\colim{\mathrm{colim}\;}
+\def\i{\hookrightarrow}
+\def\limD{D_{-\infty}}
+\require{amscd}$
 
 ## INDEX
 <div id=toc-level-2></div>
@@ -60,23 +65,7 @@ $$X = \lim \D$$
 と書く.
 ただしこの $X$ には暗に射の集まり $(\mu_i)$ を備えさせる.
 
-<center>
-```dot
-digraph {
-    graph [bgcolor=transparent];
-    node [shape=plaintext];
-    edge [arrowhead=vee];
-    rankdir=LR;
-    Di -> Dj [label=f];
-    X -> Di [label=μ_i];
-    X -> Dj [label=μ_j];
-    Y -> Di [label=σ_i];
-    Y -> Dj [label=σ_j];
-    Y -> X [label="!" style=dotted];
-    { rank=same; X Y }
-}
-```
-</center>
+![](https://i.imgur.com/nTYJ7wh.jpeg)
 
 例えば積やイコライザーなどは, この形式で定義される概念であった.
 

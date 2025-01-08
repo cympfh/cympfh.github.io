@@ -2,7 +2,12 @@
 % 2018-11-10 (Sat.)
 % 圏論
 
-$\def\op#1{{#1}^{\text{op}}}\def\Nat{\mathit{Nat}}$
+$$
+\def\op#1{{#1}^{\text{op}}}
+\def\Nat{\mathit{Nat}}
+\require{amscd}
+$$
+
 極力, 関数適用の括弧や関数合成の $\circ$ は省略する.
 例えば $(g \circ f)(x)$ は単に $gfx$ と書く.
 また対象 $A$ の上の恒等射を $1_A$ と書き, $A$ がどうでもいいとき単に $1$ と書く.
@@ -28,12 +33,14 @@ $$\C(A,-)$$
 $$\C(A,-) : \C \to \Sets$$
 $$\C(A,-) : B \mapsto \C(A,B)$$
 対象の割り当てはこのように定めるが, 射については次のようにする.
-$\require{AMScd}$
+
 $$\begin{CD}
 B_1 @>f>> B_2 \in \C
 \end{CD}$$
+
 について $\C(A,B_1) \to \C(A,B_2)$ なる射を与える必要があるが,
 自明なものとして, $f$ を後ろに合成するという関数があり得る.
+
 $$\C(A,f) : \C(A,B_1) \to \C(A,B_2)$$
 $$\C(A,f) : g \mapsto f \circ g$$
 

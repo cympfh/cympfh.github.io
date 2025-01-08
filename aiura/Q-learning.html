@@ -1,107 +1,98 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="description" content="強化学習の概要/Q学習で tic-tac-toe/" />
-  <meta property="og:url" content="http://cympfh.cc/taglibro">
-  <meta property="og:type" content="article">
-  <meta property="og:title" content="Q-learning" />
-  <meta property="og:description" content="強化学習の概要/Q学習で tic-tac-toe/" />
-  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:site" content="@cympfh" />
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Q-learning</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
     <a href='index.html'><i class="fa fa-stumbleupon"></i></a>
 </header>
-<header>
+
 <h1 class="title">Q-learning</h1>
-</header>
-<p class="date" style="text-align: right">
-2016-01-17 (Sun.) 01:31:22 JST
-</p>
-<div class="is-pulled-right">
-<p><a class='tag is-red' href=index.html#機械学習>機械学習</a></p>
-</div>
-<p>本文書ではまず <a href="https://ja.wikipedia.org/wiki/Q学習">Q-learning (Q学習)</a> の概要を述べ、次に 二人完全情報ゲームである <a href="https://ja.wikipedia.org/wiki/三目並べ">tic-tac-toe (三目並べ)</a> への適用について説明する. 実際の実装は <a href="https://github.com/cympfh/tic-tac-toe">cympfh/tic-tac-toe</a> にある.</p>
-<h2 id="強化学習の概要">強化学習の概要</h2>
+<p><p class=date style='text-align: right'>2016-01-17 (Sun.) 01:31:22 JST</p> <div class='is-pulled-right'> <a class='tag is-red' href=index.html#機械学習>機械学習</a> <a class='tag is-red' href=index.html#tic-tac-toe>tic-tac-toe</a> <a class='tag is-red' href=index.html#Q学習>Q学習</a> </div></p>
+<p>この記事ではまず <a href="https://ja.wikipedia.org/wiki/Q学習">Q-learning (Q学習)</a> の概要を述べ、次に 二人完全情報ゲームである <a href="https://ja.wikipedia.org/wiki/三目並べ">tic-tac-toe (三目並べ)</a> への適用について説明する. 実際の実装は <a href="https://github.com/cympfh/tic-tac-toe">cympfh/tic-tac-toe</a> にある.</p>
+<h2>強化学習の概要</h2>
 <ul>
-<li>(普通有限の) 状態集合 <span class="math inline">\(\mathcal{S}\)</span></li>
-<li>有限のアクション集合 <span class="math inline">\(\mathcal{A}\)</span></li>
-<li>初期状態 <span class="math inline">\(s_0 \in \mathcal{S}\)</span></li>
-<li>意思決定機械とは、<span class="math inline">\(f: \mathcal{S} \rightarrow \mathcal{A}\)</span> なる写像 <span class="math inline">\(f\)</span> である</li>
-<li>状態遷移とは、その時の状態とアクションに対して次の状態を決定する (決定的な) 関数である
-<ul>
-<li><span class="math inline">\(\rm{trans}: (\mathcal{S}, \mathcal{A}) \rightarrow \mathcal{S}\)</span></li>
-</ul></li>
-<li>エージェントとは、状態 <span class="math inline">\(s \in \mathcal{S}\)</span> を一つ持ち、意思決定機械を備え、アクションを行うものである
-<ul>
-<li>アクションを行うとは、エージェントが持つ状態を <span class="math inline">\(\rm{trans}\)</span> によって遷移させることである</li>
-<li>エージェントは状態遷移の際に状態に関して報酬を得る</li>
-</ul></li>
-<li>報酬とは遷移後状態 (もしかしたら遷移の際にとったアクションも) に依って決定される実数である
-<ul>
-<li>エージェントの外部 (環境と呼ばれる) が実数関数 <span class="math inline">\(\rm{reward}\)</span> を備えており、エージェントの内部状態 <span class="math inline">\(s\)</span> によって <span class="math inline">\(\rm{reward}(s)\)</span> の値のみをエージェントに伝える</li>
-<li><span class="math inline">\(\rm{reward}: \mathcal{S} \rightarrow \mathbb{R}\)</span></li>
-</ul></li>
+  <li>(普通有限の) 状態集合 \(\mathcal{S}\)</li>
+  <li>有限のアクション集合 \(\mathcal{A}\)</li>
+  <li>初期状態 \(s_0 \in \mathcal{S}\)</li>
+  <li>意思決定機械とは、 \(f: \mathcal{S} \rightarrow \mathcal{A}\) なる写像 \(f\) である</li>
+  <li>
+    状態遷移とは、その時の状態とアクションに対して次の状態を決定する (決定的な) 関数である
+    <ul>
+      <li>\(\rm{trans}: (\mathcal{S}, \mathcal{A}) \rightarrow \mathcal{S}\)</li>
+    </ul>
+  </li>
+  <li>
+    エージェントとは、状態 \(s \in \mathcal{S}\) を一つ持ち、意思決定機械を備え、アクションを行うものである
+    <ul>
+      <li>アクションを行うとは、エージェントが持つ状態を \(\rm{trans}\) によって遷移させることである</li>
+      <li>エージェントは状態遷移の際に状態に関して報酬を得る</li>
+    </ul>
+  </li>
+  <li>
+    報酬とは遷移後状態 (もしかしたら遷移の際にとったアクションも) に依って決定される実数である
+    <ul>
+      <li>エージェントの外部 (環境と呼ばれる) が実数関数 \(\rm{reward}\) を備えており、エージェントの内部状態 \(s\) によって \(\rm{reward}(s)\) の値のみをエージェントに伝える</li>
+      <li>\(\rm{reward}: \mathcal{S} \rightarrow \mathbb{R}\)</li>
+    </ul>
+  </li>
 </ul>
-<center>
-<img src="data:image/png;base64,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">
-</center>
-<p>状態 <span class="math inline">\(s\)</span> のときにアクション <span class="math inline">\(a\)</span> をしてみた. エージェントは、その結果として状態が <span class="math inline">\(s&#39;\)</span> に変化したことと、環境から報酬 <span class="math inline">\(r\)</span> が来たことを観測できる.</p>
-<p>我々の目的は、エージェントがいい感じに報酬を得るような意思決定機械 <span class="math inline">\(f\)</span> を設計することである. いい感じ、というのは、例えば初期状態から数えて受け取った報酬を順に <span class="math inline">\(r_1, r_2, \ldots\)</span> としたときに</p>
-<p><span class="math display">\[\max  \sum_{t=1}^N \gamma^{N-t} r_t  (0 &lt; \gamma &lt; 1)\]</span></p>
+<p>状態 \(s\) のときにアクション \(a\) をしてみた. エージェントは、その結果として状態が \(s&#x27;\) に変化したことと、環境から報酬 \(r\) が来たことを観測できる.</p>
+<p>我々の目的は、エージェントがいい感じに報酬を得るような意思決定機械 \(f\) を設計することである. いい感じ、というのは、例えば初期状態から数えて受け取った報酬を順に \(r_1, r_2, \ldots\) としたときに</p>
+\[\max  \sum_{t=1}^N \gamma^{N-t} r_t  (0 \lt \gamma \lt 1)\]
 <p>基本的には、こういう状態にときにこういうアクションをしたら報酬がめっちゃ来た、というのを覚えておいて、再び同じ状態になったらそれを再実践する、ということが取られる. あんまりそういうのばっかりをすると局所解に陥るので、上手い学習が必要になる. Q学習は、理論的に最適解に落ちることが保証されている.</p>
-<h3 id="q-learning-の概要">Q-learning の概要</h3>
-<p>Q-learning は強化学習の一手法である. Q-learning ではある時点の状態 <span class="math inline">\(s\)</span> と、その時点から取ることのできるアクション <span class="math inline">\(a\)</span> の組 <span class="math inline">\((s, a)\)</span> に対して良さのようなものを数値として表現する. これは <span class="math inline">\(s\)</span> の時点でアクション <span class="math inline">\(a\)</span> を取ることが自分をどれだけ有利にするかの指標である. これを Q 値と呼び <span class="math inline">\(Q(s, a)\)</span> と書く (quality の &quot;q&quot;?). 初め全ての Q 値は適当に初期化をし、十分回数、ゲームをシミュレーションを繰り返す中でこの Q を最適な値に更新していく. 遷移関数はこの Q 値を使って確率的な振る舞いを与える. すなわち、状態 <span class="math inline">\(s\)</span> の時点でアクション <span class="math inline">\(a\)</span> を取る確率を</p>
-<p><span class="math display">\[\pi(s, a) = \frac{\exp \left( Q(s,a) / T \right)}{\sum_{a&#39; \in \mathcal{A}} \exp \left( Q(s, a&#39;) / T \right)}\]</span></p>
-<p>で与える. ただしここで <span class="math inline">\(T\)</span> は温度と呼ばれるパラメータで、通常、初めは大きな値にしておき学習が進む中で下げることにする (<span class="math inline">\(T_0 \to 1\)</span>). これは Q 値が大きくなるほど大きな確率でそのアクションを選択するような関数となっている. ただし <span class="math inline">\(T\)</span> が大きい場合は Q 値の差がそれほど顕著に反映されないようになっている. 従って学習が十分でない間は、Q 値の低いアクションも積極的に選択できるように設計されている.</p>
-<h4 id="q-の更新">Q の更新</h4>
-<p>Q 値は次のように更新 (学習) する. 状態 <span class="math inline">\(s\)</span> の時点でアクション <span class="math inline">\(a\)</span> を選び、状態 <span class="math inline">\(s&#39;\)</span> に遷移し、報酬 <span class="math inline">\(r\)</span> を受け取ったとする (報酬はアクションの遷移直後に受け取ることに註意). このアクション選択の良さ <span class="math inline">\(Q(s, a)\)</span> とは、 <span class="math inline">\(r\)</span> 及び、<span class="math inline">\(s&#39;\)</span> からとり得る最大の Q 値に凡そ比例すべきである. 従って、学習率 <span class="math inline">\(\alpha, \gamma\)</span> という2つのパラメータを以って</p>
-<p><span class="math display">\[Q(s, a) \leftarrow (1 - \alpha) Q(s, a) + \alpha \left[ r + \gamma \max_{a&#39;} Q(s&#39;, a&#39;) \right]\]</span></p>
-<p>と、このように更新をする. <span class="math inline">\(\gamma\)</span> は <span class="math inline">\(0 \leq \gamma \leq 1\)</span> であるような定数である. <span class="math inline">\(\alpha\)</span> は学習につれて小さくなるような変数であることが求められる. すなわち時刻 <span class="math inline">\(t\)</span> の関数 <span class="math inline">\(\alpha = \alpha(t)\)</span> であって、しかも次の2条件が満たされる時、Q 値は最適解に収束することが保証されている.</p>
-<ol type="1">
-<li><span class="math inline">\(\sum_{t=0}^\infty \alpha(t) \to \infty\)</span></li>
-<li><span class="math inline">\(\sum_{t=0}^\infty \alpha(t)^2 &lt; \infty\)</span></li>
+<h3>Q-learning の概要</h3>
+<p>Q-learning は強化学習の一手法である. Q-learning ではある時点の状態 \(s\) と、その時点から取ることのできるアクション \(a\) の組 \((s, a)\) に対して良さのようなものを数値として表現する. これは \(s\) の時点でアクション \(a\) を取ることが自分をどれだけ有利にするかの指標である. これを Q 値と呼び \(Q(s, a)\) と書く (quality の "q"?). 初め全ての Q 値は適当に初期化をし、十分回数、ゲームをシミュレーションを繰り返す中でこの Q を最適な値に更新していく. 遷移関数はこの Q 値を使って確率的な振る舞いを与える. すなわち、状態 \(s\) の時点でアクション \(a\) を取る確率を</p>
+\[\pi(s, a) = \frac{\exp \left( Q(s,a) &#x2F; T \right)}{\sum_{a&#x27; \in \mathcal{A}} \exp \left( Q(s, a&#x27;) &#x2F; T \right)}\]
+<p>で与える. ただしここで \(T\) は温度と呼ばれるパラメータで、通常、初めは大きな値にしておき学習が進む中で下げることにする ( \(T_0 \to 1\) ). これは Q 値が大きくなるほど大きな確率でそのアクションを選択するような関数となっている. ただし \(T\) が大きい場合は Q 値の差がそれほど顕著に反映されないようになっている. 従って学習が十分でない間は、Q 値の低いアクションも積極的に選択できるように設計されている.</p>
+<h4>Q の更新</h4>
+<p>Q 値は次のように更新 (学習) する. 状態 \(s\) の時点でアクション \(a\) を選び、状態 \(s&#x27;\) に遷移し、報酬 \(r\) を受け取ったとする (報酬はアクションの遷移直後に受け取ることに註意). このアクション選択の良さ \(Q(s, a)\) とは、 \(r\) 及び、 \(s&#x27;\) からとり得る最大の Q 値に凡そ比例すべきである. 従って、学習率 \(\alpha, \gamma\) という2つのパラメータを以って</p>
+\[Q(s, a) \leftarrow (1 - \alpha) Q(s, a) + \alpha \left[ r + \gamma \max_{a&#x27;} Q(s&#x27;, a&#x27;) \right]\]
+<p>と、このように更新をする. \(\gamma\) は \(0 \leq \gamma \leq 1\) であるような定数である. \(\alpha\) は学習につれて小さくなるような変数であることが求められる. すなわち時刻 \(t\) の関数 \(\alpha = \alpha(t)\) であって、しかも次の2条件が満たされる時、Q 値は最適解に収束することが保証されている.</p>
+<ol>
+  <li>\(\sum_{t=0}^\infty \alpha(t) \to \infty\)</li>
+  <li>\(\sum_{t=0}^\infty \alpha(t)^2 \lt \infty\)</li>
 </ol>
 <p>さて、Q学習という素晴らしい古典手法が既に存在するので、意思決定機械はQ学習によって作ることにして、今度の我々の目的は、解きたいタスクを見つけて、それに適した報酬を設定することである. 報酬というのは基本的に、状態 (とアクション) をうまく評価するものでなければならない. ちゃんと数値として決まるようなタスクばかりではない.</p>
-<h2 id="q学習で-tic-tac-toe">Q学習で tic-tac-toe</h2>
+<h2>Q学習で tic-tac-toe</h2>
 <p>tic-tac-toe (三目並べ) を学習させることを考えた.</p>
 <p>しかしこれは、先ほどの枠組みがそのままは使えない. 先ほどの枠組みは、エージェントは自分一人で、ただ自分がアクションを続けさえすればよかった. これは謂わば、一人用ゲームである. 今度は二人用ゲームである.</p>
 <p>普通に考えて、状態とは、3x3の盤面のことである. 初期状態は何も書かれてない3x3であって、マルかバツかが少しずつ埋まってくそれぞれが状態である. 普通に考えて、アクションとは自分一人が打つ手 (マルかバツかを一つ書く行為) のことである. そうすると状態は一つ進む. その状態に対してアクションを行うのは、今度は自分ではなく、相手になる. 報酬は？ どれに対して？</p>
-<figure>
-<img src="http://i.imgur.com/j7hrmVI.png" />
-</figure>
+<p><img src="http://i.imgur.com/j7hrmVI.png" alt="" /></p>
 <p>多少AIに甘く、設計した. 上の木はゲームツリーである. ノードは一つの状態を表す. A と書かれたノードは、「次に手を打つのはAIである」盤面に相当する. ノードから生えてるエッジは打てる手に相当する. 3本生えてるのは、打てる手が3つあって、それぞれ、打つとその先の状態に遷移する. 遷移先は黒いノードである. これは、相手の手番であることを意味する. 相手が手を打つと、また自分の手番になる.</p>
 <p>本来、報酬を決定するはずの「遷移後の状態」を、次 (黒) と次の次 (A) で決定することにした. 具体的には</p>
 <ul>
-<li>次 (黒) においてAIの勝ちが決定したら十分な報酬</li>
-<li>次 (黒) において引き分けが決定したら僅かにプラスの報酬</li>
-<li>次の次においてAIの負けが決定したらマイナスの報酬
-<ul>
-<li>そのような相手の手が少なくとも1つ存在する</li>
-</ul></li>
+  <li>次 (黒) においてAIの勝ちが決定したら十分な報酬</li>
+  <li>次 (黒) において引き分けが決定したら僅かにプラスの報酬</li>
+  <li>
+    次の次においてAIの負けが決定したらマイナスの報酬
+    <ul>
+      <li>そのような相手の手が少なくとも1つ存在する</li>
+    </ul>
+  </li>
 </ul>
 <p>AIの負けが決定するのは、相手の手が決定したあとだからである. しかしながら、プログラムの設計上、相手の手まで待つのは嫌なので、さらに甘い設計をした.</p>
 <p>ゲームツリーでいうところの、2ステップ先まですべてシミュレートして、予め報酬を受け取ってしまう. 本来、Q学習の枠組みでは、実際にアクションをとってしまわないと報酬がいくらか知り得ないのだが、まあ、先に報酬を知ったって、学習がスピードアップするだけだし、いいでしょ.</p>
 <p>報酬の設定で技巧的な点としては、引き分けでもプラスの報酬があるところである. このゲームは本来、両者が最善を尽くせば引き分けで終わるゲームなのである. また、このゲームは、先手のほうが一手多く打てることが期待できるのでは、ランダムな手を打っていると先手のほうが後手より二倍程度有利でもある. 引き分けについて何も学習をしない場合、先手ばかり勝ち方を学習し、後手は何も学習できず、初手から結局どの手を打っても負けるのだと諦めてしまう.</p>
 <p>Q学習というのはゲームツリーの上のDPだと感じた. つまりQ (quality) 関数というのは、ノードから生えてるエッジの重みである. エージェントはその重みに従った確率にしたがって勝手に手を打つので、我々はエッジの重みを正しく設定したい. しかしそのためのヒントは実際にAIが今いるノードと、その2ステップ先までしか分からない. しかもそのノードがゲームの終了状態にあるかどうかだけである (すなわち勝ち負けか引き分けかが決定する状態). 実際にすぐ先にゲームの終了状態があるエッジについては、 さっそくその重みを大幅に調整すればよい. それよりもっと上のエッジについては、何のヒント (報酬) がないので、 更に下のエッジをヒントに、重みを調整する. 逆伝播っぽいし、動的計画法ぽいなと思った.</p>
-<h3 id="他">他</h3>
+<h3>他</h3>
 <p>報酬という形で、あまりにも当たり前なルールは教えてしまうことになる. つまり、今の場合、即座に自分が勝てる手があるなら打て (リーチがあるなら). そこに打った後に即座に相手が勝てる手がある場合、そこには打つな.</p>
 <p>この程度のルールは教えることになってしまう. なので、何も学習してなくても、ランダムなAIにはかなり勝ててしまう. それでバグがあることに気づかずに数日放置していた... 学習していく過程を調べようと思い当たって初めて、何も学習していないということに気づいて、3つ以上の致命的なバグを発見し、この土曜日を潰した.</p>
 <p>引き分けについて報酬を与えることは、かなり恣意的だ. 「勝つならそれは良い手だ」という事実を教えることとかなり程遠い. 将棋AIでは、定石を教えこむということが、たぶん今も、ある. あれは人間が発見した方法を教えることであるが、その人間が正しいとは限らない. 本当に良い方法は、相手の玉を取るのが良い手で、自分の王を取られるのが悪い手である、という2つの事実と、あとは細々とした例外的な禁じ手を教える以外のことをしないで、自然に勝ち筋を発見させることである. もちろん人間を信用するなら定石を教えたほうが早いけど.</p>
 <p>引き分けも悪いものではないと教えたのは、このゲームを学習した収束値が引き分けだと私が偶然知っていたからである. しかしそれは人間の思い違いかもしれないのだ.</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -206,5 +197,9 @@
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

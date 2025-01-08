@@ -3,6 +3,12 @@
 % 機械学習
 % カーネル法によるパターン解析 第4章
 
+$$
+\def\dim{\mathrm{dim}}
+\def\det{\mathop{\mathrm{det}}}
+\def\tr{\mathop{\mathrm{tr}}}
+$$
+
 ## index
 
 <div id=toc></div>
@@ -33,11 +39,11 @@ $$|x| = \sqrt{\langle x,x \rangle}$$
 
 空間 $\mathcal F$ が完備であるとは、任意のコーシー列 $\{ h_i \in \mathcal{F} : i \in \mathbb{N} \}$ がある値 $h \in \mathcal{F}$ に収束すること.
 ここでコーシー列とは
-$$\sup_{m>n} | h_n - h_m | \rightarrow 0 ~~ (n \rightarrow \infty)$$
+$$\sup_{m \gt n} | h_n - h_m | \rightarrow 0 ~ (n \rightarrow \infty)$$
 であった.
 
 また、空間 $\mathcal F$ が可分であるとは、可算な部分集合が稠密であること. すなわち、
-$$\forall \epsilon>0, \exists \{h_1,\ldots,h_N,\ldots\} \subset \mathcal{F}, \forall h \in \mathcal{F}, \min_{i=1,\ldots,N} | h_i - h | < \epsilon$$
+$$\forall \epsilon \gt 0, \exists \{h_1,\ldots,h_N,\ldots\} \subset \mathcal{F}, \forall h \in \mathcal{F}, \min_{i=1,\ldots,N} | h_i - h | \lt \epsilon$$
 となること.
 
 ### 例. $L_2$ 空間
@@ -46,7 +52,7 @@ $X$ を次のような実数の可算無限個からなる列の集合とする.
 
 - $x \in X$
 - $x = \left(x_1, x_2, \ldots, x_n, \ldots\right)$
-    - s.t. $\sum_{i=1}^\infty x_i^2 < \infty$
+    - s.t. $\sum_{i=1}^\infty x_i^2 \lt \infty$
 
 内積を次のように定める:
 
@@ -60,7 +66,7 @@ $$\langle x,y \rangle = \sum_{i=1}^\infty x_i y_i.$$
 先の $L_2$ の連続バージョン.
 $\mathbb{R}^n$ のコンパクトな部分集合 $X$ について
 
-$$L_2(X) = \left\{ f : \int_X f(x)^2 dx < \infty \right\}$$
+$$L_2(X) = \left\{ f : \int_X f(x)^2 dx \lt \infty \right\}$$
 
 とする. $L_2(X)$ 上の内積を次で定める.
 
@@ -227,8 +233,11 @@ $\lambda_1, \lambda_2, \ldots, \lambda_n$
 とする.
 $k$ 番目の固有値は次のように求まる.
 
-$$\lambda_k = \max_{dim(T)=k~} ~~ \min_{v \in T, v \ne 0} \frac{v'Av}{v'v}$$
-$$= \min_{dim(T)=n-k+1~} ~~ \max_{v \in T, v \ne 0} \frac{v'Av}{v'v}$$
+$$\begin{align*}
+\lambda_k
+& = \max_{\dim(T)=k~} ~ \min_{v \in T, v \ne 0} \frac{v'Av}{v'v} \\
+& = \min_{\dim(T)=n-k+1~} ~ \max_{v \in T, v \ne 0} \frac{v'Av}{v'v} \\
+\end{align*}$$
 
 ### 半正定値行列 (positive semi-definite matrices)
 
@@ -285,7 +294,7 @@ $A$ が半正定値行列のとき、
 
 #### 証明
 
-$A \in R^{n \times n}$ についてその主小行列 $M \in R^{m \times m}$ とは、$1 \leq k_1 < k_2 < \ldots < k_m \leq n$ を選んで
+$A \in R^{n \times n}$ についてその主小行列 $M \in R^{m \times m}$ とは、$1 \leq k_1 \lt k_2 \lt \ldots \lt k_m \leq n$ を選んで
 $M_{i,j} = A_{k_i, k_j}$.
 
 証明はほとんど自明.
@@ -298,23 +307,23 @@ $v'Av \geq 0$ より $u'Mu \geq 0$.
 
 ### 行列式とトレース
 
-正方行列 $A$ の **行列式 (determinant)** $det(A)$ とは $A$ の固有値の積であると定義する.
+正方行列 $A$ の **行列式 (determinant)** $\det(A)$ とは $A$ の固有値の積であると定義する.
 従って正定値の行列式は必ず正となる.
 また特異行列の行列式はゼロになる.
 
 また、定義から頑張れば次が導ける:
 
-$$det(AB) = det(A) det(B).$$
+$$\det(AB) = \det(A) \det(B).$$
 
-$A$ の対角成分の和を **トレース (trace)** $tr(A)$ という.
+$A$ の対角成分の和を **トレース (trace)** $\tr(A)$ という.
 
-$$tr(A) = \sum_i A_{i,i}$$
+$$\tr(A) = \sum_i A_{i,i}$$
 
 自明に次が成立:
-$$tr(AB) = tr(BA).$$
+$$\tr(AB) = \tr(BA).$$
 
 これを用いると
-$tr(V^{-1}AV) = tr((AV) V^{-1}) = tr(AI) = tr(A)$
+$\tr(V^{-1}AV) = \tr((AV) V^{-1}) = \tr(AI) = \tr(A)$
 が分かる.
 
 ### Def 3.10

@@ -1,73 +1,65 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="description" content="index/線形分類/双対表現/特徴空間/まとめ/カーネル関数を用いることの利点/" />
-  <meta property="og:url" content="http://cympfh.cc/taglibro">
-  <meta property="og:type" content="article">
-  <meta property="og:title" content="カーネル法 - Introduction" />
-  <meta property="og:description" content="index/線形分類/双対表現/特徴空間/まとめ/カーネル関数を用いることの利点/" />
-  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:site" content="@cympfh" />
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>カーネル法 - Introduction</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
     <a href='index.html'><i class="fa fa-stumbleupon"></i></a>
 </header>
-<header>
-<h1 class="title">カーネル法 - Introduction</h1>
-</header>
-<p class="date" style="text-align: right">
-2016-09-18 (Sun.)
-</p>
-<div class="is-pulled-right">
-<p><a class='tag is-red' href=index.html#機械学習>機械学習</a></p>
-</div>
-<h2 id="index">index</h2>
-<div id="toc">
 
-</div>
-<h2 id="線形分類">線形分類</h2>
-<p>データ <span class="math inline">\(x \in \mathbb{R}^n\)</span> を二値 <span class="math inline">\(y \in \{-1,1\}\)</span> に分類したい. <strong>線形分類</strong> は <span class="math inline">\(\mathbb{R}^n\)</span> 上に超平面 (二次元上なら直線) を引いて、<span class="math inline">\(x\)</span> がそれより上にあるか下にあるかで分類する方法である. どちらでも良いのだが、超平面より上にあるなら <span class="math inline">\(y=+1\)</span> で、下にあるなら <span class="math inline">\(y=-1\)</span> とする.</p>
-<p><span class="math inline">\(\mathbb{R}^n\)</span> 上の超平面はベクトル <span class="math inline">\(w \in \mathbb{R}^n\)</span> とスカラー <span class="math inline">\(b \in \mathbb{R}\)</span> を以って、方程式</p>
-<p><span class="math display">\[\langle w, x \rangle + b = 0\]</span></p>
-<p>と表せる. ここで <span class="math inline">\(\langle x_1, x_2 \rangle\)</span> はベクトル <span class="math inline">\(x_1, x_2\)</span> の内積のこと. 幾何的な文脈では <span class="math inline">\(w\)</span> は法線ベクトルで、<span class="math inline">\(b\)</span> はy切片である. どうせ次元 <span class="math inline">\(n\)</span> が1増えても誰も気にしないので、<span class="math inline">\(x\)</span> の後ろに定数 1 を結合して、<span class="math inline">\(w\)</span> の後ろに <span class="math inline">\(b\)</span> を結合することで、</p>
-<p><span class="math display">\[\langle w, x\rangle = 0\]</span></p>
-<p>と書ける. 式を少しでもすっきりさせたいので、こうする. データが上にあるか下にあるかは <span class="math inline">\(&gt;0\)</span> か <span class="math inline">\(&lt;0\)</span> で表現できる.</p>
-<p>線形分類器とは、与えられた <span class="math inline">\(\{(x_i, y_i)\}_{i=1,2,\ldots,N}\)</span> について、それを正しく (もしかしたら完全にではなくとも、できるだけ) 分類するような超平面のことである. 即ち、 <span class="math display">\[\forall i, (\langle w,x_i \rangle &gt; 0 \land y_i = +1) \lor (\langle w,x_i \rangle &lt; 0 \land y_i = -1)\]</span> が成り立つような <span class="math inline">\(w\)</span> のことである.</p>
-<p>また逆に、ある <span class="math inline">\(w\)</span> によって上が満たせるとき、データ <span class="math inline">\(\{x_i\}_i\)</span> は <strong>線形分離可能</strong> である、と言う.</p>
-<p>また、そのような <span class="math inline">\(w\)</span> を計算する過程のことを、 <strong>線形分類器の学習</strong> と呼ぶ. 学習のためのアルゴリズムはいくつかあるが、<a href="NNs.html">パーセプトロン</a> は単純ながらも興味深い. この方法を踏襲した<a href="arow.pdf">AROW</a> や、また<a href="svm.html">SVM</a> も原理的にはこれと同じである. そしてこれら全てに共通してることとして次のような事実がある.</p>
-<p>パーセプトロン、AROW、SVM で学習して得られた <span class="math inline">\(w\)</span> は、ある <span class="math inline">\(\{\alpha_i\}_{i=1,2,\ldots,N}\)</span> (<span class="math inline">\(\alpha_i \in \mathbb{R}\)</span>) が存在して次で表現される: <span class="math display">\[w = \sum_i \alpha_i x_i.\]</span> 即ち、学習される超平面は、学習データ <span class="math inline">\(x_i\)</span> の線形和で表される.</p>
-<h2 id="双対表現">双対表現</h2>
-<p><span class="math inline">\(w\)</span> の別な表現があるのなら、それを代入したくなるのが人情.</p>
-<p><span class="math display">\[\langle w, x&#39; \rangle = \sum_i \alpha_i \langle x_i, x&#39; \rangle\]</span></p>
-<h2 id="特徴空間">特徴空間</h2>
-<p>線形分類器の致命的な問題は、そもそもデータは線形分離可能とは限らないこと. 曲面でしか分離できないようなケースも十分考えられる. 適当な関数 <span class="math inline">\(\phi\)</span> によって <span class="math inline">\(x \in \mathbb{R}^n \mapsto \phi(x) \in \mathbb{R}^m\)</span> と写すことで線形分離が可能になるかもしれない. この写した先の空間を <strong>特徴空間</strong> と呼ぶ.</p>
-<p>特徴空間での線形分類を考えるには、前章までで述べていた <span class="math inline">\(x\)</span> を <span class="math inline">\(\phi(x)\)</span> に置き換えれば良い.</p>
-<p>双対表現を用いる場合、<span class="math inline">\(\phi\)</span> 自体を陽に記述できる必要はない. なぜなら <span class="math display">\[\langle w, \phi(x&#39;) \rangle = \sum_i \alpha_i \langle \phi(x_i), \phi(x&#39;) \rangle\]</span> の右辺が計算できれば良いので、 <span class="math inline">\(\kappa(x_1, x_2) = \langle \phi(x_1), \phi(x_2) \rangle\)</span> なる <span class="math inline">\(\kappa\)</span> を直接考えても問題ないから. これは <span class="math inline">\(\kappa\)</span> の中身に依っては計算量の削減にもつながる. この <span class="math inline">\(\kappa\)</span> を <strong>カーネル関数</strong> と呼ぶ.</p>
-<h2 id="まとめ">まとめ</h2>
-<p>線形分類器は次のような <span class="math inline">\(f\)</span> である. <span class="math inline">\(f\)</span> の構成には、学習データ <span class="math inline">\(\{x_i\}_{i=1,2,\ldots,N}\)</span> 、パラメータ <span class="math inline">\(\{\alpha_i\}_{i=1,2,\ldots,N}\)</span> 及びカーネル関数 <span class="math inline">\(\kappa\)</span> が必要.</p>
+<h1 class="title">カーネル法 - Introduction</h1>
+<p><p class=date style='text-align: right'>2016-09-18 (Sun.)</p> <div class='is-pulled-right'> <a class='tag is-red' href=index.html#機械学習>機械学習</a> </div> % カーネル法によるパターン解析 第1章</p>
+<h2>index</h2>
+<p><div id=toc></div></p>
+<h2>線形分類</h2>
+<p>データ \(x \in \mathbb{R}^n\) を二値 \(y \in \{-1,1\}\) に分類したい. <strong>線形分類</strong> は \(\mathbb{R}^n\) 上に超平面 (二次元上なら直線) を引いて、 \(x\) がそれより上にあるか下にあるかで分類する方法である. どちらでも良いのだが、超平面より上にあるなら \(y=+1\) で、下にあるなら \(y=-1\) とする.</p>
+<p>\(\mathbb{R}^n\) 上の超平面はベクトル \(w \in \mathbb{R}^n\) とスカラー \(b \in \mathbb{R}\) を以って、方程式</p>
+\[\langle w, x \rangle + b = 0\]
+<p>と表せる. ここで \(\langle x_1, x_2 \rangle\) はベクトル \(x_1, x_2\) の内積のこと. 幾何的な文脈では \(w\) は法線ベクトルで、 \(b\) はy切片である. どうせ次元 \(n\) が1増えても誰も気にしないので、 \(x\) の後ろに定数 1 を結合して、 \(w\) の後ろに \(b\) を結合することで、</p>
+\[\langle w, x\rangle = 0\]
+<p>と書ける. 式を少しでもすっきりさせたいので、こうする. データが上にあるか下にあるかは \(&gt;0\) か \(&lt;0\) で表現できる.</p>
+<p>線形分類器とは、与えられた \(\{(x_i, y_i)\}_{i=1,2,\ldots,N}\) について、それを正しく (もしかしたら完全にではなくとも、できるだけ) 分類するような超平面のことである. 即ち、</p>
+\[\forall i, (\langle w,x_i \rangle &gt; 0 \land y_i = +1) \lor (\langle w,x_i \rangle &lt; 0 \land y_i = -1)\]
+<p>が成り立つような \(w\) のことである.</p>
+<p>また逆に、ある \(w\) によって上が満たせるとき、データ \(\{x_i\}_i\) は <strong>線形分離可能</strong> である、と言う.</p>
+<p>また、そのような \(w\) を計算する過程のことを、 <strong>線形分類器の学習</strong> と呼ぶ. 学習のためのアルゴリズムはいくつかあるが、 <a href="NNs.html">パーセプトロン</a> は単純ながらも興味深い. この方法を踏襲した <a href="arow.pdf">AROW</a> や、また <a href="svm.html">SVM</a> も原理的にはこれと同じである. そしてこれら全てに共通してることとして次のような事実がある.</p>
+<p>パーセプトロン、AROW、SVM で学習して得られた \(w\) は、ある \(\{\alpha_i\}_{i=1,2,\ldots,N}\) ( \(\alpha_i \in \mathbb{R}\) ) が存在して次で表現される:</p>
+\[w = \sum_i \alpha_i x_i.\]
+<p>即ち、学習される超平面は、学習データ \(x_i\) の線形和で表される.</p>
+<h2>双対表現</h2>
+<p>\(w\) の別な表現があるのなら、それを代入したくなるのが人情.</p>
+\[\langle w, x&#x27; \rangle = \sum_i \alpha_i \langle x_i, x&#x27; \rangle\]
+<h2>特徴空間</h2>
+<p>線形分類器の致命的な問題は、そもそもデータは線形分離可能とは限らないこと. 曲面でしか分離できないようなケースも十分考えられる. 適当な関数 \(\phi\) によって \(x \in \mathbb{R}^n \mapsto \phi(x) \in \mathbb{R}^m\) と写すことで線形分離が可能になるかもしれない. この写した先の空間を <strong>特徴空間</strong> と呼ぶ.</p>
+<p>特徴空間での線形分類を考えるには、前章までで述べていた \(x\) を \(\phi(x)\) に置き換えれば良い.</p>
+<p>双対表現を用いる場合、 \(\phi\) 自体を陽に記述できる必要はない. なぜなら</p>
+\[\langle w, \phi(x&#x27;) \rangle = \sum_i \alpha_i \langle \phi(x_i), \phi(x&#x27;) \rangle\]
+<p>の右辺が計算できれば良いので、 \(\kappa(x_1, x_2) = \langle \phi(x_1), \phi(x_2) \rangle\) なる \(\kappa\) を直接考えても問題ないから. これは \(\kappa\) の中身に依っては計算量の削減にもつながる. この \(\kappa\) を <strong>カーネル関数</strong> と呼ぶ.</p>
+<h2>まとめ</h2>
+<p>線形分類器は次のような \(f\) である. \(f\) の構成には、学習データ \(\{x_i\}_{i=1,2,\ldots,N}\) 、パラメータ \(\{\alpha_i\}_{i=1,2,\ldots,N}\) 及びカーネル関数 \(\kappa\) が必要.</p>
 <ul>
-<li><span class="math inline">\(f(x) = \sum_{i=1}^N \alpha_i \kappa(x_i, x)\)</span>.</li>
+  <li>\(f(x) = \sum_{i=1}^N \alpha_i \kappa(x_i, x)\) .</li>
 </ul>
 <p>そしてこれを用いた分類はこう:</p>
 <ul>
-<li><span class="math inline">\(y = +1\)</span> if <span class="math inline">\(f(x) &gt; 0\)</span> else <span class="math inline">\(-1\)</span>.</li>
+  <li>\(y = +1\) if \(f(x) &gt; 0\) else \(-1\) .</li>
 </ul>
-<h2 id="カーネル関数を用いることの利点">カーネル関数を用いることの利点</h2>
-<p>もしかしたら計算量が削れるのも良いことだが、利点はそれだけではない. カーネル関数の型は <span class="math inline">\(\kappa: (T, T) \rightarrow \mathbb{R}\)</span> であれば何だって良い. 今まで、 <span class="math inline">\(x \in \mathbb{R}^n\)</span> としていたが、 <span class="math inline">\(x\)</span> を実ベクトルに限る必要は最早ない. <span class="math inline">\(x\)</span> が集合であってもグラフであっても、適切なカーネル関数を設計できるなら線形分類器を構成することができる.</p>
-<p>あと、直接 <span class="math inline">\(\phi\)</span> を設計することは <span class="math inline">\(\kappa\)</span> を設計することに表現力は落ちる. <span class="math inline">\(\kappa\)</span> は <span class="math inline">\(\phi\)</span> から導けるからである. しかし逆に <span class="math inline">\(\phi\)</span> を <span class="math inline">\(\kappa\)</span> から導けるとは限らない. 例えば<a href="http://ibisforest.org/index.php?Gaussカーネル">rbfカーネル</a> は <span class="math inline">\(\phi\)</span> を陽に記述することはできないが、 なかなか強いカーネルとしてしばしば用いられる. この事実は <span class="math inline">\(\kappa\)</span> の設計は <span class="math inline">\(\phi\)</span> の設計 (つまりどんな特徴空間を用いるか、の設計) よりも大きな表現力を持つことを言っている.</p>
+<h2>カーネル関数を用いることの利点</h2>
+<p>もしかしたら計算量が削れるのも良いことだが、利点はそれだけではない. カーネル関数の型は \(\kappa: (T, T) \rightarrow \mathbb{R}\) であれば何だって良い. 今まで、 \(x \in \mathbb{R}^n\) としていたが、 \(x\) を実ベクトルに限る必要は最早ない. \(x\) が集合であってもグラフであっても、適切なカーネル関数を設計できるなら線形分類器を構成することができる.</p>
+<p>あと、直接 \(\phi\) を設計することは \(\kappa\) を設計することに表現力は落ちる. \(\kappa\) は \(\phi\) から導けるからである. しかし逆に \(\phi\) を \(\kappa\) から導けるとは限らない. 例えば <a href="http://ibisforest.org/index.php?Gaussカーネル">rbfカーネル</a> は \(\phi\) を陽に記述することはできないが、 なかなか強いカーネルとしてしばしば用いられる. この事実は \(\kappa\) の設計は \(\phi\) の設計 (つまりどんな特徴空間を用いるか、の設計) よりも大きな表現力を持つことを言っている.</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -172,5 +164,9 @@
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

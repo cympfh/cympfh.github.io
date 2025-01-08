@@ -148,7 +148,7 @@ $$L(c) = \int_0^1 \sqrt{ q\left(\frac{dc}{dt}\right) } dt = \int_0^1 \sqrt{ g\le
 ### 距離の定義
 
 やはり同様に2点間の距離を
-$$dist(x, y) = \inf \{ L(c) \}$$
+$$\mathrm{dist}(x, y) = \inf \{ L(c) \}$$
 で定める.
 
 これは対称律、三角不等式とかの距離の公理を満たしている.
@@ -156,9 +156,9 @@ $$dist(x, y) = \inf \{ L(c) \}$$
 前回の
 $v^TAv = \sum_{i,j} A_{ij} v_i v_j \geq \lambda v_i^2 = \lambda v^T v$
 から
-$dist(x, y) = \inf \{L(c)\} \geq \lambda \| \varphi(x) - \varphi(y) \|$
+$\mathrm{dist}(x, y) = \inf \{L(c)\} \geq \lambda \| \varphi(x) - \varphi(y) \|$
 と、ユークリッド空間上での距離を下界にできる.
 これを使うと
-$dist(x,y)=0 \implies \| \varphi(x) - \varphi(y) \| =0 \implies x=y$
+$\mathrm{dist}(x,y)=0 \implies \| \varphi(x) - \varphi(y) \| =0 \implies x=y$
 とできて対称律を確かめられる.
 

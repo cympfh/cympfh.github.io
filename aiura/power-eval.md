@@ -5,6 +5,7 @@
 $\def\C{\mathscr{C}}$
 $\def\transpose#1{\overline{#1}}$
 $\def\Sets\{\mathcal{Set}}$
+$\require{amscd}$
 
 ## INDEX
 <div id=toc></div>
@@ -72,7 +73,6 @@ $g \colon Y \to Z$ を写して得られる射
 $g^A \colon Y^A \to Z^A$
 がどのようなもの（であるべき）かは次の可換図式からわかる.
 
-$\require{AMScd}$
 $$\begin{CD}
 \C(Y^A \times A, Y) @>{\mathrm{transpose}}>> \C(Y^A, Y^A) \\
 @V(g \circ -)VV @VV(g^A \circ -)V \\

@@ -9,7 +9,7 @@
   <style type="text/css">code{white-space: pre;}</style>
   <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
   <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
-  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-svg-full.js"></script>
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
   <link href="../resources/css/c.css" rel="stylesheet" />
   <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
 
@@ -19,9 +19,9 @@
     <a href='index.html'><i class="fa fa-stumbleupon"></i></a>
 </header>
 
-<h1 class="title" id="1-Aitken 加速">Aitken 加速</h1>
+<h1 class="title">Aitken 加速</h1>
 <p><p class=date style='text-align: right'>2017-02-14 (Tue.)</p> <div class='is-pulled-right'> <a class='tag is-red' href=index.html#数値計算>数値計算</a> </div></p>
-<h2 id="2-概要・加速法とは何か">概要・加速法とは何か</h2>
+<h2>概要・加速法とは何か</h2>
 <p>収束する数列</p>
 \[a_1, a_2, \ldots, a_N, \ldots\]
 <p>があるときに、その収束値 \(\alpha = a_\infty\) を知りたい. <strong>加速法</strong> は、元の数列よりもその収束が速い数列</p>
@@ -30,7 +30,7 @@
 <p>\(a_n\) の値の計算が定数時間でしかないのなら、 \(a_1, a_2, a_3, \ldots\) と計算する代わりに (例えば) \(a_1, a_4, a_9, \ldots\) と計算すれば、加速するじゃんってことなのだけど、 例えば、 \(a_n\) は漸化式で計算できない等の理由によって、 \(a_n\) の値の計算に \(O(n)\) の時間が掛かる等、 何かそういう理由で、無限列の中の有限の断片</p>
 \[a_1, a_2, \ldots, a_N\]
 <p>しか手に入らないと仮定してるのだと思う. たぶん.</p>
-<h2 id="2-Richardson 加速">Richardson 加速</h2>
+<h2>Richardson 加速</h2>
 <p>収束していく様子を凡そ次で近似する:</p>
 \[a_n \sim \alpha + \beta \gamma^n\]
 <p>ここで \(\alpha\) が実際の収束値で、 \(\gamma\) は大きさが \(1\) 未満の値であって、 \(n \to \infty\) に対してこれが \(0\) に収束する.</p>
@@ -52,7 +52,7 @@
 \[a_1&#x27;, a_2&#x27;, \ldots, a_N&#x27;, \ldots\]
 <p>は元の数列よりも収束に近づいていそう (常にではないが).</p>
 <p>また、 \(a_n&#x27;\) の計算コストは \(a_n\) を計算する時間の二倍でしかないし、 というか \(a_1, \ldots, a_N\) を初めに全て計算してメモしておけば、計算時間は、差を取って割り算する分しか増えない.</p>
-<h2 id="2-Aitken 加速">Aitken 加速</h2>
+<h2>Aitken 加速</h2>
 <p>Aitken 加速は、Richardson 加速で既知だと仮定していた \(\gamma\) も推定する. 2つの未知変数 ( \(\alpha, \beta\) ) を消すために3つ用意して弄る. すなわち、</p>
 <ul>
   <li>\(a_n \sim \alpha + \beta \gamma^n\)</li>
@@ -68,7 +68,7 @@ a_n&#x27; &amp; = \frac{a_{n+1} - \gamma a_n}{1 - \gamma} \\
 &amp; = a_n - \frac{(a_{n+1} - a_n)^2}{a_{n+2} - 2a_{n+1} + a_n}
 \end{align}\]
 <p>を得る. この方法によって、数列 \(\{a_n\}\) から \(\{a_n&#x27;\}\) を得る方法を <strong>Aitken 加速</strong> という. 特にこの方法は繰り返し適用できる. すなわち、 \(\{a_n&#x27;\}\) から \(\{a_n&#x27;&#x27;\}\) を構成し、更なる加速が期待できる. \(k\) 回 Aitken 加速を繰り返し適用したものを、 \(k\) 段のAitken加速列 \(\{a_n^k\}\) という. 特に \(\{a_n\} = \{a_n^0\}\) である.</p>
-<h2 id="2-Aitken 加速の実装">Aitken 加速の実装</h2>
+<h2>Aitken 加速の実装</h2>
 <p>初めに述べたように、 有限の断片 \(a_1, a_2, \ldots, a_N\) しか手に入らない場合を考える.</p>
 <p>また、一回の Aitken 加速は、元の数列の連続した3つの成分から一つの成分を作るので、 数列の長さは 2 ずつ減る. 従って、 \(N&#x2F;2\) 段階程度しか繰り返しの加速は適用できない.</p>
 <p>\(k\) 段階 加速列の第 \(n\) 成分をメモして利用していく.</p>
@@ -115,7 +115,7 @@ a_n&#x27; &amp; = \frac{a_{n+1} - \gamma a_n}{1 - \gamma} \\
             (loop-k (+ k 1) (- len 2))))
       (reverse return))))
 </code></pre>
-<h2 id="2-Aitken 加速のテスト">Aitken 加速のテスト</h2>
+<h2>Aitken 加速のテスト</h2>
 <p>これを実際に使ってみる.</p>
 \[a_i = \sum_{i=1}^n \frac{1}{i^2}\]
 <p>という数列の初めの 20 個だけがある時にこの数列の収束を加速する.</p>

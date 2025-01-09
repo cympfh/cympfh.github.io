@@ -18,7 +18,7 @@
 1. いくつかの図形 $X_1, X_2, \ldots, X_m$ 全てを含む最小の凸集合を
     - $|X_1, X_2, \ldots, X_m|$
     - と書く. 区切りのコンマは雰囲気で付けたり付けなかったりする
-1. $m$ 点 $\lambda_1, \lambda_2, \ldots, \lambda_m$ が一般的な位置にあるとは、ベクトル $\overrightarrow{\lambda_i \lambda_j}$ $(i < j)$ 全てが互いに一次独立であること
+1. $m$ 点 $\lambda_1, \lambda_2, \ldots, \lambda_m$ が一般的な位置にあるとは、ベクトル $\overrightarrow{\lambda_i \lambda_j}$ $(i \lt j)$ 全てが互いに一次独立であること
 
 ## $n$ 単体
 
@@ -58,7 +58,7 @@ $\Delta^1$ はまさに $\Delta^2$ の **辺** そのものであり、3つ含�
 
 <center>
 <table class="no-border-table"><tr><td>
-```dot
+```@dot
 graph {
     rankdir=LR; bgcolor=transparent;
     a [shape=point];
@@ -67,7 +67,7 @@ graph {
 </td><td>
 $\preceq$
 </td><td>
-```dot
+```@dot
 graph {
     rankdir=LR; bgcolor=transparent;
     a -- b
@@ -78,7 +78,7 @@ graph {
 </td><td>
 $\preceq$
 </td><td>
-```dot
+```@dot
 graph {
     rankdir=LR; bgcolor=transparent;
     a [label="" shape=triangle style=filled];
@@ -101,7 +101,7 @@ $$\forall \sigma \in X. \forall \tau \preceq \sigma. \tau \in X$$
 <center>
 <table class="no-border-table"><tr><td>
 
-```dot
+```@dot
 graph {
     rankdir=LR; bgcolor=transparent; splines=false;
     a [label="" shape=triangle];
@@ -110,7 +110,7 @@ graph {
 
 </td><td>$=$</td><td>
 
-```dot
+```@dot
 graph {
     rankdir=LR; bgcolor=transparent; splines=false;
     v1 [shape=circle];
@@ -152,8 +152,8 @@ $$C_n(X) = \bigoplus_{\sigma \in X, \sigma \in \Delta^n} \mathbb{R} \sigma$$
 このように $C_n$ は図形をベクトル空間に写す写像である.
 
 > 複体 $X$ にある頂点の集合を $V$ 、辺の集合を $E$ とすると、
-> $$C_1(X) \cong \mathbb{R}^{|E|}$$
-> $$C_0(X) \cong \mathbb{R}^{|V|}$$
+> $C_1(X) \cong \mathbb{R}^{|E|}$,
+> $C_0(X) \cong \mathbb{R}^{|V|}$.
 
 ### 向き付け
 
@@ -170,7 +170,7 @@ $$C_n(X) = \bigoplus_{\sigma \in X, \sigma \in \Delta^n} \mathbb{R} \sigma$$
 こういうこと:
 
 <center>
-```dot
+```@dot
 digraph {
     rankdir=LR; bgcolor=transparent; splines=false;
     node [shape=point];
@@ -261,8 +261,8 @@ $$\mathrm{rank}\partial = \mathrm{dim}(\mathrm{Image}~\partial)$$
 > __部分群による商集合__  
 > $(A, +)$ が群でその部分群 $B$ があるとき
 > $x,y \in A$ について $x \sim y \iff x-y \in B$ という同値関係を使って
-> $$A/B = A/\sim$$
-> を定める
+> $A/B = A/\sim$
+> を定める.
 
 #### 例
 
@@ -270,7 +270,7 @@ $$\mathrm{rank}\partial = \mathrm{dim}(\mathrm{Image}~\partial)$$
 
 $X=$
 
-```dot
+```@dot
 digraph {
     rankdir=LR; bgcolor=transparent; splines=false;
     node [shape=plaintext];
@@ -294,7 +294,7 @@ digraph {
 
 $Y=$
 
-```dot
+```@dot
 digraph {
     rankdir=LR; bgcolor=transparent; splines=false;
     node [shape=plaintext];
@@ -322,7 +322,7 @@ $H_0, H_1$
 
 $Z=$
 
-```dot
+```@dot
 digraph {
     rankdir=LR; bgcolor=transparent; splines=false;
     node [shape=plaintext];
@@ -447,7 +447,7 @@ $\mathrm{Ker} \partial_0 = C_0$ なので、
 3点 $v_1, v_2, v_3$ を頂点に持つ複体
 $$X = \{ v_1, v_2, v_3, |v_1 v_2|, |v_2 v_3|, |v_3 v_1|, |v_1 v_2 v_3| \}$$
 <center>
-```dot
+```@dot
 digraph {
     rankdir=LR; bgcolor=transparent; splines=false;
     node [shape=plaintext];

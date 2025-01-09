@@ -20,7 +20,7 @@ $\def\singleton{\{\ast\}}$
 
 任意の射 $f \colon A \to \Omega$ について, ちょうどただ一つの射 $g \colon B \to A$ によって,
 
-$\require{AMScd}$
+$\require{amscd}$
 $$\begin{CD}
 B @>!>> 1 \\
 @VgVV   @VtVV \\

@@ -15,13 +15,13 @@ $M$ が連結でないとは、2つの開集合 $U_1, U_2$ で
 
 $\mu$ を $C^\infty$ 級の $\mathbb{R}^m \to \mathbb{R}$ なる関数であって
 $$\begin{cases}
-\mu(x) > 0 & \text{when} & \|x\| < 1 \\
+\mu(x) \gt 0 & \text{when} & \|x\| \lt 1 \\
 \mu(x) = 0 & \text{when} & \|x\| \geq 1 \\
 \end{cases}$$
 
 下図のような関数
 
-```gnuplot
+```@gnuplot
 set grid
 set xrange [-1.2:1.2]
 set yrange [-0.001:0.4]
@@ -37,7 +37,7 @@ $$X = \mu \frac{\partial}{\partial x_1}$$
 
 下図は二次元の場合の、 $x_2=0$ 上だけでのベクトル場を図示したもの.
 
-```gnuplot
+```@gnuplot
 set grid
 set xrange [-2:2]
 set yrange [-1:1]
@@ -49,7 +49,7 @@ plot "<seq -1 .2 1" using 1:(0):(mu($1)):(0) w vectors not
 ちょっとこういうのはベクトルの方向が被ってるとわかりにくいので上向きにすると
 
 
-```gnuplot
+```@gnuplot
 set grid
 set xrange [-2:2]
 set yrange [-1:1]
@@ -270,7 +270,7 @@ $f^{-1}(a) \times [a, b]$
 即ち、以下のような $F_t$ を構成出来る.
 $F_t$ は自由に逆関数を作れるが $f$ は明らかに逆関数を持たないことに註意.
 
-```dot
+```@dot
 digraph {
     rankdir=LR;
     node [shape=plaintext];
@@ -397,7 +397,7 @@ $$f(F_{b - a}(x_0)) = f(x_0) + (b-a) = b.$$
 下図再掲.
 $f$ の逆関数は作れないが、$F_t$ 及び $G_t$ (実数の加算) は逆関数が作れるのでなんとかなるのだ.
 
-```dot
+```@dot
 digraph {
     rankdir=LR;
     node [shape=plaintext];

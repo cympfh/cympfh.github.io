@@ -2,7 +2,7 @@
 % 2019-11-01 (Fri.)
 % トポス 圏論
 
-$\require{AMScd}$
+$\require{amscd}$
 $$\def\true{\mathrm{true}}$$
 
 ## 概要
@@ -14,22 +14,25 @@ $$\def\true{\mathrm{true}}$$
 
 任意の
 
-```tikzcd
-A \ar[r,shift left=.75ex,"f"]
-  \ar[r,shift right=.75ex,swap,"g"]
-&
-B
+```@dot
+digraph {
+  node [shape=plain];
+  rankdir=LR;
+  A -> B [label=f];
+  A -> B [label=g];
+}
 ```
 
 について必ずイコライザー $e$ がある.
 
-```tikzcd
-E \ar[r,"e"]
-&
-A \ar[r,shift left=.75ex,"f"]
-  \ar[r,shift right=.75ex,swap,"g"]
-&
-B
+```@dot
+digraph {
+  node [shape=plain];
+  rankdir=LR;
+  E -> A [label=e];
+  A -> B [label=f];
+  A -> B [label=g];
+}
 ```
 
 ### 復習と直感的な説明

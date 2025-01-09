@@ -2,8 +2,14 @@
 % 2019-10-19 (Sat.)
 % トポス 圏論
 
-$\require{AMScd}$
-$$\def\C{\mathcal C}\def\Sets{\mathrm{Sets}}\def\E{\mathcal E}\def\op{\mathrm{op}}\def\Y{\mathcal Y}$$
+$$
+\require{amscd}
+\def\C{\mathcal C}
+\def\Sets{\mathrm{Sets}}
+\def\E{\mathcal E}
+\def\op{\mathrm{op}}
+\def\Y{\mathcal Y}
+$$
 
 [前回](topos-01.html) はトポスの定義と, トポスの最も簡単な例として $\Sets$ があることを述べた.
 今回は非自明だが典型的なトポスの例として前層を紹介する.

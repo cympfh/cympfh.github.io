@@ -212,7 +212,7 @@ $$V_1 \times \cdots V_n \to k$$
 
 対応は成分ごとに $\kappa$ と $\xi$ で写せばよい??（未確認）
 
-$\require{AMScd}$
+$\require{amscd}$
 $$\begin{CD}
 V \otimes W @<\kappa<< V \times W @>\xi>> (V^* \times W^*)^*
 \end{CD}$$

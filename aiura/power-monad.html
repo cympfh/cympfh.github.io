@@ -1,74 +1,71 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="description" content="Kleisli triple の定義/冪関手 (fmap)/自然変換/モナド/メモ (2018/08/23)/" />
-  <meta property="og:url" content="http://cympfh.cc/taglibro">
-  <meta property="og:type" content="article">
-  <meta property="og:title" content="冪集合モナド" />
-  <meta property="og:description" content="Kleisli triple の定義/冪関手 (fmap)/自然変換/モナド/メモ (2018/08/23)/" />
-  <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:site" content="@cympfh" />
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>冪集合モナド</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
     <a href='index.html'><i class="fa fa-stumbleupon"></i></a>
 </header>
-<header>
+
 <h1 class="title">冪集合モナド</h1>
-</header>
-<p class="date" style="text-align: right">
-2018-07-08 (Sun.)
-</p>
-<div class="is-pulled-right">
-<p><a class='tag is-red' href=index.html#圏論>圏論</a></p>
-</div>
-<h2 id="kleisli-triple-の定義">Kleisli triple の定義</h2>
-<p>圏 <span class="math inline">\(C\)</span> があるとする. Kleisli triple (単に triple) とは次の <span class="math inline">\((T,\eta,-^{\#})\)</span> という三つ組:</p>
-<ol type="1">
-<li><span class="math inline">\(C\)</span> の対象を <span class="math inline">\(C\)</span> の対象に割り当てる関数 <span class="math inline">\(T: Ob(C) \to Ob(C)\)</span></li>
-<li><span class="math inline">\(C\)</span> のそれぞれの対象 <span class="math inline">\(A\)</span> について <span class="math inline">\(\eta_A : A \to TA\)</span> という射を与えるもの</li>
-<li><span class="math inline">\(C\)</span> の射 <span class="math inline">\(f : A \to TB\)</span> に対して、射 <span class="math inline">\(f^{\#} : TA \to TB\)</span> を与えるもの</li>
+<p><p class=date style='text-align: right'>2018-07-08 (Sun.)</p> <div class='is-pulled-right'> <a class='tag is-red' href=index.html#圏論>圏論</a> </div></p>
+<h2>Kleisli triple の定義</h2>
+<p>圏 \(C\) があるとする. Kleisli triple (単に triple) とは次の \((T,\eta,-^{\#})\) という三つ組:</p>
+<ol>
+  <li>\(C\) の対象を \(C\) の対象に割り当てる関数 \(T: Ob(C) \to Ob(C)\)</li>
+  <li>\(C\) のそれぞれの対象 \(A\) について \(\eta_A : A \to TA\) という射を与えるもの</li>
+  <li>\(C\) の射 \(f : A \to TB\) に対して、射 \(f^{\#} : TA \to TB\) を与えるもの</li>
 </ol>
 <p>ただし次を要請する:</p>
-<ol type="1">
-<li>射 <span class="math inline">\(f : A \to TB\)</span> について、<span class="math inline">\(f = f^\# \circ \eta_A\)</span></li>
-<li>対象 <span class="math inline">\(A\)</span> について、<span class="math inline">\(\eta_A^\# = 1_{TA}\)</span></li>
-<li>射 <span class="math inline">\(f: A \to TB, g: B \to TC\)</span> について、<span class="math inline">\(g^\# \circ f^\# = (g^\# \circ f)^\#\)</span></li>
+<ol>
+  <li>射 \(f : A \to TB\) について、 \(f = f^\# \circ \eta_A\)</li>
+  <li>対象 \(A\) について、 \(\eta_A^\# = 1_{TA}\)</li>
+  <li>射 \(f: A \to TB, g: B \to TC\) について、 \(g^\# \circ f^\# = (g^\# \circ f)^\#\)</li>
 </ol>
-<h3 id="冪集合-triple">冪集合 triple</h3>
-<p>対象が全ての集合で、射が写像であるような圏 <span class="math inline">\(Sets\)</span> を考える. 対象 <span class="math inline">\(A\)</span> に対して <span class="math display">\[A \mapsto PA=\{X : X \subseteq A\}\]</span> という割り当てを考えられる. この <span class="math inline">\(P\)</span> は冪集合を作っているわけだが、これは適切な <span class="math inline">\(\eta, -^{\#}\)</span> によって triple になる.</p>
-<p><span class="math inline">\(\eta_A : A \to PA\)</span> を考える. 自明なものとしては <span class="math display">\[\eta_A (a) = \{a\}\]</span> がある. これを採用する.</p>
-<p>要請の1から適切な <span class="math inline">\(-^{\#}\)</span> を考える. <span class="math display">\[\begin{align*}
+<h3>冪集合 triple</h3>
+<p>対象が全ての集合で、射が写像であるような圏 \(Sets\) を考える. 対象 \(A\) に対して</p>
+\[A \mapsto PA=\{X : X \subseteq A\}\]
+<p>という割り当てを考えられる. この \(P\) は冪集合を作っているわけだが、これは適切な \(\eta, -^{\#}\) によって triple になる.</p>
+<p>\(\eta_A : A \to PA\) を考える. 自明なものとしては</p>
+\[\eta_A (a) = \{a\}\]
+<p>がある. これを採用する.</p>
+<p>要請の1から適切な \(-^{\#}\) を考える.</p>
+\[\begin{align*}
 f(a) &amp; = f^\#(\eta_A(a)) \\
      &amp; = f^\#(\{a\})
-\end{align*}\]</span> これが成り立つためには <span class="math inline">\(f(a) \in PB\)</span> に注意すれば <span class="math display">\[f^\#(\alpha) = \bigcup_{a \in \alpha} f(a)\]</span> とすればよいことが分かる.</p>
+\end{align*}\]
+<p>これが成り立つためには \(f(a) \in PB\) に注意すれば</p>
+\[f^\#(\alpha) = \bigcup_{a \in \alpha} f(a)\]
+<p>とすればよいことが分かる.</p>
 <p>残りの要請2,3がたしかに成立していることを確認する.</p>
-<h4 id="要請2">要請2</h4>
-<p><span class="math display">\[\begin{align*}
+<h4>要請2</h4>
+\[\begin{align*}
 \eta_A^\# &amp; : PA \to PA \\
 \eta_A^\#(\alpha)
 &amp; = \bigcup_{a \in \alpha} \eta(a) \\
 &amp; = \bigcup_{a \in \alpha} \{a\} \\
 &amp; = \alpha
-\end{align*}\]</span> となって確かに <span class="math inline">\(\eta_A=1\)</span> となっている.</p>
-<h4 id="要請3">要請3</h4>
+\end{align*}\]
+<p>となって確かに \(\eta_A=1\) となっている.</p>
+<h4>要請3</h4>
 <ul>
-<li><span class="math inline">\(f: A \to PB, f^\#: PA \to PB\)</span></li>
-<li><span class="math inline">\(g: B \to PC, f^\#: PB \to PC\)</span></li>
+  <li>\(f: A \to PB, f^\#: PA \to PB\)</li>
+  <li>\(g: B \to PC, f^\#: PB \to PC\)</li>
 </ul>
-<p>について、 <span class="math display">\[\begin{align*}
+<p>について、</p>
+\[\begin{align*}
 (g^\# \circ f^\#)(\alpha)
 &amp; = g^\# \left( \bigcup_{a \in \alpha} f(a) \right) \\
 &amp; = \bigcup_{b \in \bigcup_{a \in \alpha} f(a)} g(b) \\
@@ -76,16 +73,21 @@ f(a) &amp; = f^\#(\eta_A(a)) \\
 (g^\# \circ f)^\#(\alpha)
 &amp; = \bigcup_{a \in \alpha} g^\#(f(a)) \\
 &amp; = \bigcup_{a \in \alpha} \bigcup_{b \in f(a)} g(b) \\
-\end{align*}\]</span> であるので確かに2つは一致している.</p>
-<h2 id="冪関手-fmap">冪関手 (fmap)</h2>
-<p>triple における <span class="math inline">\(T\)</span> 、冪集合の例での <span class="math inline">\(P\)</span> は単に対象を対象に割り当てるものだったが、 同様に射にも割り当てを構成することで (自己) 関手となる. それには下の図式を用いる.</p>
-<p><span class="math inline">\(\require{AMScd}\)</span> <span class="math display">\[\begin{CD}
+\end{align*}\]
+<p>であるので確かに2つは一致している.</p>
+<h2>冪関手 (fmap)</h2>
+<p>triple における \(T\) 、冪集合の例での \(P\) は単に対象を対象に割り当てるものだったが、 同様に射にも割り当てを構成することで (自己) 関手となる. それには下の図式を用いる.</p>
+<p>\(\require{amscd}\)</p>
+\[\begin{CD}
 A    @&gt;f&gt;&gt;     B           \\
 @.             @V\eta_BVV  \\
 TA   @&gt;(\eta_B \circ f)^\#&gt;&gt;  TB
-\end{CD}\]</span></p>
-<p>即ち射 <span class="math inline">\(f: A \to B\)</span> に対して <span class="math display">\[Tf := (\eta_B \circ f)^\#\]</span> とする.</p>
-<p>冪集合 triple <span class="math inline">\(P\)</span> の場合、これは次のようになる. <span class="math display">\[\begin{align*}
+\end{CD}\]
+<p>即ち射 \(f: A \to B\) に対して</p>
+\[Tf := (\eta_B \circ f)^\#\]
+<p>とする.</p>
+<p>冪集合 triple \(P\) の場合、これは次のようになる.</p>
+\[\begin{align*}
 f &amp; : A \to B \\
 Pf &amp; : PA \to PB \\
 Pf(\alpha)
@@ -93,61 +95,75 @@ Pf(\alpha)
 &amp;= \bigcup_{a \in \alpha} (\eta \circ f)(a) \\
 &amp;= \bigcup_{a \in \alpha} \{f(a)\} \\
 &amp;= \{ f(a) : a \in \alpha \}
-\end{align*}\]</span></p>
-<h2 id="自然変換">自然変換</h2>
-<p>圏 <span class="math inline">\(C,D\)</span> について2つの関手 <span class="math inline">\(F,G : C\to D\)</span> があるとする. <span class="math inline">\(C\)</span> の各対象 <span class="math inline">\(A\)</span> に対して、<span class="math inline">\(D\)</span> の射: <span class="math display">\[\alpha_A : FA \to GA\]</span> を割り当てるような <span class="math inline">\(\alpha\)</span> を自然変換という. ただし、次を要請する.</p>
+\end{align*}\]
+<h2>自然変換</h2>
+<p>圏 \(C,D\) について2つの関手 \(F,G : C\to D\) があるとする. \(C\) の各対象 \(A\) に対して、 \(D\) の射:</p>
+\[\alpha_A : FA \to GA\]
+<p>を割り当てるような \(\alpha\) を自然変換という. ただし、次を要請する.</p>
 <ul>
-<li><span class="math inline">\(C\)</span> の射 <span class="math inline">\(f: A \to B\)</span>
-<ul>
-<li>それを <span class="math inline">\(F, G\)</span> で写した
-<ul>
-<li><span class="math inline">\(Ff: FA \to FB\)</span></li>
-<li><span class="math inline">\(Gf: GA \to GB\)</span></li>
-</ul></li>
-<li><span class="math inline">\(\alpha\)</span> が与える
-<ul>
-<li><span class="math inline">\(\alpha_A : FA \to GA\)</span></li>
-<li><span class="math inline">\(\alpha_B : FB \to GB\)</span></li>
-</ul></li>
-</ul></li>
-<li>これらについて、
-<ul>
-<li><span class="math inline">\(GF \circ \alpha_A = \alpha_B \circ Ff\)</span></li>
-</ul></li>
+  <li>
+    \(C\) の射 \(f: A \to B\)
+    <ul>
+      <li>
+        それを \(F, G\) で写した
+        <ul>
+          <li>\(Ff: FA \to FB\)</li>
+          <li>\(Gf: GA \to GB\)</li>
+        </ul>
+      </li>
+      <li>
+        \(\alpha\) が与える
+        <ul>
+          <li>\(\alpha_A : FA \to GA\)</li>
+          <li>\(\alpha_B : FB \to GB\)</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>
+    これらについて、
+    <ul>
+      <li>\(GF \circ \alpha_A = \alpha_B \circ Ff\)</li>
+    </ul>
+  </li>
 </ul>
 <p>これを図式で書くと、下が可換であるということ</p>
-<p><span class="math display">\[\begin{CD}
+\[\begin{CD}
 FA      @&gt;\alpha_A&gt;&gt;  GA  \\
 @VFfVV                @VGfVV  \\
 FB      @&gt;\alpha_B&gt;&gt;  GB  \\
-\end{CD}\]</span></p>
-<h3 id="冪集合の例">冪集合の例</h3>
-<p>冪集合 triple で登場した <span class="math inline">\(\eta\)</span> はそのまま、自然変換 <span class="math inline">\(1 \to P\)</span> と見做すことができる. 即ち <span class="math inline">\(\eta_A : A \to PA, a \mapsto \{a\}\)</span> であったが、</p>
-<p><span class="math display">\[\begin{CD}
+\end{CD}\]
+<h3>冪集合の例</h3>
+<p>冪集合 triple で登場した \(\eta\) はそのまま、自然変換 \(1 \to P\) と見做すことができる. 即ち \(\eta_A : A \to PA, a \mapsto \{a\}\) であったが、</p>
+\[\begin{CD}
 A      @&gt;\eta_A&gt;&gt;  PA  \\
 @VfVV              @VPfVV  \\
 B      @&gt;\eta_B&gt;&gt;  PB  \\
-\end{CD}\]</span></p>
+\end{CD}\]
 <p>は確かに可換である. 念の為に確認すると、</p>
 <ul>
-<li><span class="math inline">\((Pf \circ \eta_A)(a) = Pf(\{a\}) = \{f(a)\}\)</span></li>
-<li><span class="math inline">\((\eta_B \circ f)(a) = \{f(a)\}\)</span></li>
+  <li>\((Pf \circ \eta_A)(a) = Pf(\{a\}) = \{f(a)\}\)</li>
+  <li>\((\eta_B \circ f)(a) = \{f(a)\}\)</li>
 </ul>
-<h2 id="モナド">モナド</h2>
-<p>圏 <span class="math inline">\(C\)</span> のモナドとは次のような三つ組 <span class="math inline">\((T,\eta,\mu)\)</span> のことを言う.</p>
-<ol type="1">
-<li><span class="math inline">\(C\)</span> から <span class="math inline">\(C\)</span> への (自己) 関手 <span class="math inline">\(T\)</span></li>
-<li>自然変換 <span class="math inline">\(\eta: 1 \to T\)</span>
-<ul>
-<li>すなわち対象 <span class="math inline">\(A\)</span> に対して射 <span class="math inline">\(\eta_A : A \to TA\)</span> を与える</li>
-</ul></li>
-<li>自然変換 <span class="math inline">\(\mu: T \circ T \to T\)</span>
-<ul>
-<li>すなわち対象 <span class="math inline">\(A\)</span> に対して射 <span class="math inline">\(\eta_A : T^2A \to TA\)</span> を与える</li>
-</ul></li>
+<h2>モナド</h2>
+<p>圏 \(C\) のモナドとは次のような三つ組 \((T,\eta,\mu)\) のことを言う.</p>
+<ol>
+  <li>\(C\) から \(C\) への (自己) 関手 \(T\)</li>
+  <li>
+    自然変換 \(\eta: 1 \to T\)
+    <ul>
+      <li>すなわち対象 \(A\) に対して射 \(\eta_A : A \to TA\) を与える</li>
+    </ul>
+  </li>
+  <li>
+    自然変換 \(\mu: T \circ T \to T\)
+    <ul>
+      <li>すなわち対象 \(A\) に対して射 \(\eta_A : T^2A \to TA\) を与える</li>
+    </ul>
+  </li>
 </ol>
 <p>ただし、次の２つの図式を可換にすることを要請する:</p>
-<p><span class="math display">\[\begin{CD}
+\[\begin{CD}
 T^3 @&gt;1 \mu&gt;&gt; T^2 \\
 @V\mu 1VV     @V\mu VV \\
 T^2 @&gt;\mu&gt;&gt; T \\
@@ -156,22 +172,23 @@ T^2 @&gt;\mu&gt;&gt; T \\
 1 \times T @&gt;\eta 1&gt;&gt; T \times T @&lt;1 \eta &lt;&lt; T \times 1 \\
 @| @V\mu VV @| \\
 T @= T @= T \\
-\end{CD}\]</span></p>
-<p>Kleisli triple とモナドは等価で、違いは <span class="math inline">\(f^\#\)</span> と <span class="math inline">\(\mu\)</span> だが、それらは</p>
+\end{CD}\]
+<p>Kleisli triple とモナドは等価で、違いは \(f^\#\) と \(\mu\) だが、それらは</p>
 <ul>
-<li><span class="math inline">\(\mu_A = 1_{TA}^\#\)</span></li>
-<li><span class="math inline">\(f^\# = \mu_B \circ Tf\)</span></li>
+  <li>\(\mu_A = 1_{TA}^\#\)</li>
+  <li>\(f^\# = \mu_B \circ Tf\)</li>
 </ul>
 <p>で変換可能.</p>
-<h3 id="冪集合モナド">冪集合モナド</h3>
-<p>関手 <span class="math inline">\(P\)</span> と 自然変換 <span class="math inline">\(\eta : 1 \to P\)</span> 及び自然変換 <span class="math inline">\(\mu : P^2 \to P\)</span></p>
-<p><span class="math display">\[\begin{align*}
+<h3>冪集合モナド</h3>
+<p>関手 \(P\) と 自然変換 \(\eta : 1 \to P\) 及び自然変換 \(\mu : P^2 \to P\)</p>
+\[\begin{align*}
 \mu_A &amp; : P^2A \to PA \\
 \mu_A(\alpha) &amp; = \bigcup_{a \in \alpha} a
-\end{align*}\]</span></p>
+\end{align*}\]
 <p>です.</p>
-<h2 id="メモ-20180823">メモ (2018/08/23)</h2>
-<p>運良くここに登場する可換図式は全て正方形の形をしていたので、AMScd パッケージを用いて出力してみた.</p>
+<h2>メモ (2018/08/23)</h2>
+<p>運良くここに登場する可換図式は全て正方形の形をしていたので、amscd パッケージを用いて出力してみた.</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -276,5 +293,9 @@ T @= T @= T \\
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

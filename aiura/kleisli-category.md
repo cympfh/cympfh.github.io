@@ -4,7 +4,7 @@
 
 クライスリ圏及びこれを用いたモナドを随伴に分解する方法を紹介する.
 
-$\require{AMScd}$
+$\require{amscd}$
 $\def\KL#1{\mathcal{Kl}(#1)}\def\Set{\mathrm{Set}}\def\Hom{\mathrm{Hom}}$
 
 ## クライスリ圏

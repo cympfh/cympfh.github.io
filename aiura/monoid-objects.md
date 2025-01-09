@@ -2,7 +2,7 @@
 % 2020-08-26 (Wed.)
 % 圏論
 
-$\require{AMScd}$
+$\require{amscd}$
 
 ## index
 

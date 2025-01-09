@@ -140,7 +140,7 @@ $\in T_xM$
 $$\begin{align*}
 ((F_{-t})_* Y)(x)
 & = (F_{-t})_*(Y(F_t(x))) \tag{先の式} \\
-& = (F_{-t})_* \sum_i \left( Y_i(F_t(x)) \frac{\partial}{\partial x_i} \right) \tag{$Y$ の座標表示} \\
+& = (F_{-t})_* \sum_i \left( Y_i(F_t(x)) \frac{\partial}{\partial x_i} \right) \tag{Yの座標表示} \\
 & = \sum_i \left( Y_i(F_t(x)) (F_{-t})_*\left(\frac{\partial}{\partial x_i} \right)\right) \tag{ベクトル線形性} \\
 & = \sum_i Y_i(F_t(x)) \sum_j \left(D(F_{-t})\right)_{i,j} \frac{\partial}{\partial x_j} \tag{ヤコビアン行列} \\
 & = \sum_i Y_i(F_t(x)) \sum_j \frac{\partial x_j^{-t}}{\partial x_i} \frac{\partial}{\partial x_j} \\
@@ -428,10 +428,10 @@ $\xi(h) = ((L_g)_* \xi)(h) = (L_g)_* (\xi (L_g^{-1}(h)))$
 
 というわけで、
 2つのフロー $\varphi_t$ と $L_g \circ \varphi_t \circ L_g^{-1}$ を生成するベクトル場はどちらも $\xi$ である.
-従って２つは一致する.
+従って二つは一致する.
 
 <div class=thm>
-$$L_g \circ \varphi_t \circ L_g^{-1} = \varphi_t \tag{$\ast$}$$
+$$L_g \circ \varphi_t \circ L_g^{-1} = \varphi_t \tag{＊}$$
 </div>
 
 ### (2)
@@ -448,14 +448,15 @@ $$\begin{align*}
 & = \left.\frac{d}{dt}\right|_{t=0} \left( (\varphi_{-t})_* \eta \right) \\
 (L_g)_* [\xi, \eta]
 & = (L_g)_* \left.\frac{d}{dt}\right|_{t=0} \left( (\varphi_{-t})_* \eta \right) \\
-& = \left.\frac{d}{dt}\right|_{t=0} (L_g)_* \left( (\varphi_{-t})_* \eta \right) \tag{$(L_g)_*$ は $t$ に依存しないので} \\
+& = \left.\frac{d}{dt}\right|_{t=0} (L_g)_* \left( (\varphi_{-t})_* \eta \right) \tag{t に依存しないので} \\
 \end{align*}$$
 
-定理 (*) より
+定理 (＊) より
 $L_g \circ \varphi_{-t} = \varphi_{-t} \circ L_g$
 で、これを微分して接写像にした版
 $(L_g)_* \circ (\varphi_{-t})_* = (\varphi_{-t})_* \circ (L_g)_*$
 も得られる.
+
 これを使うと
 
 $$\begin{align*}
@@ -482,8 +483,8 @@ $$(L_g)_* [\xi, \eta] = [\xi, \eta]$$
 
 ### (3)
 
-定理 (*) は
-$$L_g \circ \varphi_t \circ L_g^{-1} = \varphi_t \tag{$\ast$}$$
+定理 (＊) は
+$$L_g \circ \varphi_t \circ L_g^{-1} = \varphi_t \tag{＊}$$
 というものだった.
 両辺を $g$ に適用すると
 $$g \varphi_t(1) = \varphi_t(g)$$

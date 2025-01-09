@@ -17,7 +17,7 @@ $\def\Hom{\mathrm{Hom}}$
 すなわち
 群 $G = \{e, g_1, g_2, \ldots\}$ をつぎのような圏に対応させる:
 
-```dot
+```@dot
 digraph {
     graph [ bgcolor=transparent ];
     node [ width=0.0; shape=plaintext; ];
@@ -95,7 +95,7 @@ $$\rho(g_1 \circ g_2) = \rho(g_1) \circ \rho(g_2)$$
 
 とすればいいのである.
 
-```dot
+```@dot
 digraph {
     graph [ bgcolor=transparent ];
     node [ width=0.0; shape=plaintext; ];
@@ -141,7 +141,7 @@ $$\begin{align}
 と、適用の順序が逆になる.
 
 
-```dot
+```@dot
 digraph {
     graph [ bgcolor=transparent ];
     node [ width=0.0; shape=plaintext; ];
@@ -184,7 +184,7 @@ $\Hom(V,W)$
     - 写像 $f^*$ を次のように定める:
         - $g \in \Hom(V, W)$ を $f^*(g) = g \circ f$ に写すもの
 
-```dot
+```@dot
 digraph {
     graph [ bgcolor=transparent ];
     node [ width=0.0; shape=plaintext; ];
@@ -243,7 +243,7 @@ $$f^* : V^* \to U^*$$
 
 $$f \circ g = h \iff g^{op} \circ f^{op} = h^{op}$$
 
-```dot
+```@dot
 digraph {
     graph [ bgcolor=transparent ];
     node [ width=0.0; shape=plaintext; ];
@@ -323,7 +323,7 @@ $$\mathcal{A} \cong \mathcal{B}$$
 対象が3つくらいあって、その中に多少複雑に射が張っている圏では明らかに同型でないことが分かる.
 次は先ほど見せた例である.
 
-```dot
+```@dot
 digraph {
     graph [ bgcolor=transparent ];
     node [ width=0.0; shape=plaintext; ];
@@ -376,7 +376,7 @@ $X,Z$ をどちらも $Y$ に写したい (逆関手が構成できないこと�
 次に対象が一つだけな圏を考える.
 これは一般にモノイドに相当することは先述した.
 
-```dot
+```@dot
 digraph {
     graph [ bgcolor=transparent ];
     node [ width=0.4 height=0.5 shape=plaintext fixedsize=true ];
@@ -387,7 +387,7 @@ digraph {
 }
 ```
 
-```dot
+```@dot
 digraph {
     graph [ bgcolor=transparent ];
     node [ width=0.4 height=0.5 shape=plaintext fixedsize=true ];
@@ -460,7 +460,7 @@ $$(F(f) = (f^{-1})^{op})$$
 そもそも関手 $F, G$ とは、
 圏 $\mathcal{C}$ における
 
-```dot
+```@dot
 digraph {
     graph [ bgcolor=transparent ];
     node [ width=0.0; shape=plaintext; ];
@@ -475,7 +475,7 @@ digraph {
 を圏 $\mathcal{D}$ で
 
 
-```dot
+```@dot
 digraph {
     graph [ bgcolor=transparent ];
     node [ width=0.0; shape=plaintext; ];
@@ -493,7 +493,7 @@ digraph {
 自然変換 $\alpha$ である.
 具体的には
 
-```dot
+```@dot
 digraph {
     graph [ bgcolor=transparent ];
     node [ width=0.0; shape=plaintext; ];
@@ -515,7 +515,7 @@ digraph {
 各 $A \in \mathcal{C}$ に対して射 $\alpha_B \in \mathcal{D}(FA, GA)$ を与えるものである.
 「添字を対象に取る、射の族」などと言える.
 
-```dot
+```@dot
 digraph {
     graph [ bgcolor=transparent ];
     node [ width=0.0; shape=plaintext; ];
@@ -549,7 +549,7 @@ $\pi(g) : T \to T$ という写像に写すものだとする.
 とすると自然変換 $S \to T$ の役割は
 $g: G \to G$ という射を $S, T$ で写した先をつなげて可換にするもの:
 
-```dot
+```@dot
 digraph {
     graph [ bgcolor=transparent ];
     node [ width=0.0; shape=plaintext; ];
@@ -595,7 +595,7 @@ $$\forall s \in S, g \cdot \alpha(s) = \alpha(g \cdot s)$$
 ということは、そのような圏を考えても良い.
 恒等自然変換は自明なものを採用して、合成も大体自明な方法で定義する.
 
-```dot
+```@dot
 digraph {
     graph [ bgcolor=transparent ];
     node [ width=0.0; shape=plaintext; ];
@@ -632,7 +632,7 @@ $[2; \mathcal{B}]$ ($\mathcal{B}^2$) がどんなんか考えてみる.
 
 そのような関手を関手に写す自然変換は、ただ2つ組を2つ組に移せばいい.
 
-```dot
+```@dot
 digraph {
     graph [ bgcolor=transparent ];
     node [ width=0.0; shape=plaintext; ];
@@ -758,7 +758,7 @@ $B$ に対して $A=F(B) \in \mathcal{A}$ とすれば $F(A) \cong B$ となる.
 
 先ほどの例の続きを考える.
 
-```dot
+```@dot
 digraph {
     node [ width=0.0; shape=plaintext; ];
     edge [ arrowhead=vee ]
@@ -820,7 +820,7 @@ $F(A_1) \to F(A_2)$ な任意の射 $g$ に対して
 $$f = \eta_{A_2}^{-1} \circ Gg \circ \eta_{A_1}$$
 とする.
 
-```dot
+```@dot
 digraph {
     node [ width=0.0; shape=plaintext; ];
     edge [ arrowhead=vee ]
@@ -847,7 +847,7 @@ digraph {
 $f$ の定義域・値域は注意深い観察によって $f: A_1 \to A_2$ であることが分かる.
 これを更に、2つの関手 $1, G \circ F$ で写したものを、上の図式に重ねると次のようになる.
 
-```dot
+```@dot
 digraph {
     node [ width=0.0; shape=plaintext; ];
     edge [ arrowhead=vee ]

@@ -232,7 +232,7 @@ $$\Gamma(U) = \{ f : f:U \to S, p \circ f = i \}$$
 $\Gamma(U)$ の要素は $p$ に対する $U$ 上の切断のこと.
 以下のような可換図式が成り立つ.
 
-```dot
+```@dot
 digraph {
     rankdir=LR
     graph [bgcolor=transparent]

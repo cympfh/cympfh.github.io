@@ -49,7 +49,7 @@ $\ne \emptyset$ の場合も、その中に入ってる点 $x$ に関してだ�
 なんとかして、定義域も値域もユークリッド空間であるような写像を考えるために
 $\gamma_{i,j}$ なるものを考えている.
 
-```dot
+```@dot
 digraph {
 rankdir=LR;
 bgcolor=transparent;

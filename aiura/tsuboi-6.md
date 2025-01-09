@@ -58,26 +58,14 @@ $$F(t_0, x_0) = y_0$$
 $M$ の上で正にベクトル $\vec{y_0~y_1}$ が作られたことに成る.
 これを各点 $x$ について用いれば ($t_0$ は固定して)、$M$ の上のあらゆるところでベクトルが作られ、従ってベクトル場が出来る.
 
-<center>
-
-```dot
-digraph {
-    node [shape=plaintext];
-    bgcolor=transparent;
-    rankdir=LR;
-    x0 -> y0 [label=F];
-    x1 -> y1 [label=F];
-    x0 [label="t_0, x_0"];
-    x1 [label="t_1, x_0"];
-    y0 [label="y_0"];
-    y1 [label="y_1"];
-    y0:se -> y1:ne [color=red];
-    {rank=same x0 x1}
-    {rank=same y0 y1}
-}
-```
-
-</center>
+$$
+\require{amscd}
+\begin{CD}
+(t_0, x_0) @>F>> y_0     \\
+@.               @V!VV   \\
+(t_1, x_0) @>F>> y_1
+\end{CD}
+$$
 
 形式的には次のように書ける.
 今 $x=x_0$ を固定し、$t$ を動かすとき、これは軌道 (曲線)

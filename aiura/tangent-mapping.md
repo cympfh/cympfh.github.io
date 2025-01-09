@@ -2,6 +2,8 @@
 % 2017-05-06 (Sat.)
 % 幾何学 微分幾何
 
+$\require{amscd}$
+
 おさらいをやっていく.
 
 ## 微分可能多様体の定義
@@ -182,21 +184,13 @@ $T_xM$ であった.
 - $c'$ は $t=0$ で $y$ を通るような曲線である.
     - すなわち $c' \in \mathcal{C}_y$.
 
-<center>
-```dot
-digraph {
-    rankdir=LR;
-    bgcolor=transparent;
-    M -> N [label=F];
-    TxM -> TyN [label="??"];
-    M -> Cx -> TxM [style=dotted];
-    N -> Cy -> TyN [style=dotted];
-    Cx -> Cy [label="F.c"];
-    {rank=same; M TxM Cx}
-    {rank=same; N TyN Cy}
-}
-```
-</center>
+$$\begin{CD}
+M   @>F>>  N     \\
+@.       @.  \\
+C_x   @>F \cdot c>>  C_y     \\
+@.       @.  \\
+T_xM   @>?>>  T_yN    \\
+\end{CD}$$
 
 以上話したことを一言で述べると、
 写像 $M \to N$ から写像 $\mathcal{C}_x \to \mathcal{C}_y$ を導いた.
@@ -242,20 +236,13 @@ $T$ (添字とか細かいことは気にしないで) というのは次のよ�
 こうなると、写像 $F$ を写した先の写像のことは $T_xF$ と書くのが妥当に思えてくる.
 (この文書の中においてはほんと添字はあんま気にせんで.)
 
-<center>
-```dot
-digraph {
-    rankdir=LR;
-    bgcolor=transparent;
-    M -> N [label=F];
-    TxM -> TyN [label=TxF];
-    M -> TxM [style=dotted];
-    N -> TyN [style=dotted];
-    {rank=same; M TxM}
-    {rank=same; N TyN}
-}
-```
-</center>
+$$\begin{CD}
+M   @>F>>  N     \\
+@VVV       @VVV  \\
+T_xM   @>T_xF>>  T_yN    \\
+\end{CD}$$
+
+> この上から下への矢印は本来は射じゃなくて関手. 許して.
 
 先章まで述べてきたことを言い直すと、こうだ.
 接空間を考えることで、 写像 $F$ から $T_xF$ を導くことはできるだろうか???

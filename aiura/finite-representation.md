@@ -1,7 +1,10 @@
 % 有限群の表現
 % 2016-12-27 (Tue.)
-% 線形代数
-% 表現論です
+% 線形代数 表現論
+
+$$
+\require{amscd}
+$$
 
 ## INDEX
 <div id=toc></div>
@@ -329,29 +332,14 @@ $v \in V$ について
 
 $$f(g \circ v) = g \circ f(v)$$
 
-すなわち、
+が成り立つようなもののこと.
+可換図式にすると以下の通り.
 
-<center>
-
-```dot
-digraph {
-  bgcolor=transparent;
-  node [shape=plaintext width=1.4 height=0.4 fixedsize=true];
-  edge [arrowhead=vee];
-  v -> fv [label=f];
-  v -> gv;
-  fv -> X;
-  gv -> X [label=f];
-  fv [label="f(v)"];
-  gv [label="g・v"];
-  X [label="f(g・v) = g・f(v)"]
-  rankdir=TB;
-  {rank=same v fv};
-  {rank=same gv X};
-}
-```
-
-</center>
+$$\begin{CD}
+v         @>f>>    f(v)   \\
+@VgVV              @VgVV \\
+g \cdot v @>f>>    f(g \cdot v) = g \cdot f(v) \\
+\end{CD}$$
 
 $V \to W$ なる射全体を $\text{Hom}(V, W)$ と書く.
 
@@ -438,13 +426,11 @@ $$\rho(g) \rho(h) = \rho(h) \rho(g)$$
 
 は $h$ という左作用をかける操作自体が $V \to V$ の射になっていることを言っている.
 
-$$
-\begin{array}\\
-v          & \rightarrow^h & \rho(h, v) \\
-\downarrow &               & \downarrow \\
-\rho(g, v)  & \rightarrow^h & \rho(g) \rho(h, v)
-\end{array}
-$$
+$$\begin{CD}
+v           @>h>>     \rho(h,v) \\
+@VVV                  @VVV      \\
+\rho(g,v)   @>h>>     \rho(g) \rho(h,v) \\
+\end{CD}$$
 
 Schur の補題から
 $\rho(h) \ni \text{Hom}(V,V) \simeq \mathbb{C}$.

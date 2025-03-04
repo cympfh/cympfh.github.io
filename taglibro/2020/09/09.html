@@ -1,284 +1,354 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
 <head>
   <meta charset="utf-8" />
-  <meta name="description" content="遅延セグメントツリーを学んだ, Range Maximum (Minimum) Query, 区間への加算, 例題" />
+  <meta name="description" content="Tue Sep 01 2020 *call/cc の型と排中律* Wed Sep 09 2020 *遅延セグメントツリーを学んだ*" />
+  <meta name="og:url" content="http://cympfh.cc/taglibro">
+  <meta name="og:title" content="月報 2020&#x2F;09" />
+  <meta name="og:description" content="Tue Sep 01 2020 *call/cc の型と排中律* Wed Sep 09 2020 *遅延セグメントツリーを学んだ*" />
+  <meta name="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
   <meta property="og:url" content="http://cympfh.cc/taglibro">
-  <meta property="og:title" content="Wed Sep 09 2020" />
-  <meta property="og:description" content="遅延セグメントツリーを学んだ, Range Maximum (Minimum) Query, 区間への加算, 例題" />
+  <meta property="og:title" content="月報 2020&#x2F;09" />
+  <meta property="og:description" content="Tue Sep 01 2020 *call/cc の型と排中律* Wed Sep 09 2020 *遅延セグメントツリーを学んだ*" />
   <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@cympfh" />
-  <meta name="generator" content="pandoc" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>Wed Sep 09 2020</title>
+  <title>月報 2020&#x2F;09</title>
   <style type="text/css">
       code{white-space: pre-wrap;}
-      span.smallcaps{font-variant: small-caps;}
-      span.underline{text-decoration: underline;}
-      div.column{display: inline-block; vertical-align: top; width: 50%;}
   </style>
+  <link rel="stylesheet" href="../../resources/css/c.css" />
   <link rel="stylesheet" href="../../../resources/css/c.css" />
   <link rel="stylesheet" href="../../../resources/css/youtube.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
-<header class="page-header">
-    <a href='../../index.html'><i class="fas fa-fast-backward"></i></a>
-</header>
-<header>
-<h1 class="title">Wed Sep 09 2020</h1>
-</header>
-<h2 id="遅延セグメントツリーを学んだ">遅延セグメントツリーを学んだ</h2>
+  <div class="taglibro">
+    <header class="page-header"><a href='../../index.html'><i class="fas fa-fast-backward"></i></a></header>
+<h1 class="title">月報 2020/09</h1>
+<h2>Tue Sep 01 2020 <em>call/cc の型と排中律</em></h2>
+<p>\(\def\rewrite{\color{blue}{\iff}}\)</p>
+<h3>call/cc の概要</h3>
+<p>Scheme には <code>call&#x2F;cc</code> (call-with-current-continuaion; 現在継続) というプリミティブな手続きがある. Lisp は計算モデルを最小で構成する理論から生まれ Scheme はその流れを汲んだ由緒正しいプログラミング言語だが, <code>call&#x2F;cc</code> に関しては理論ありきではなく, その真逆で, 実装できたから実装したという言語機能だという.</p>
+<p><code>call&#x2F;cc</code> は関数に対しての <code>return</code> だと言える. <code>return</code> という文はすごくて, 大域脱出をしつつ値を返すというすごい機能をサポートしている.</p>
+<p>何ともつかない擬似言語で書くと <code>return</code> というのは次のようなものだろう.</p>
+<pre><code class="code language-javascript">function f() {
+    do1();
+    return 42;
+    do2();
+}
+</code></pre>
+<p>これは関数 <code>f</code> を定義している. <code>f</code> を呼び出すとこれはおそらく <code>do1</code> という手続きを実行し, そして <code>42</code> を返して即座に終了する. すなわち, 後続する <code>do2</code> という手続きは実行 <strong>されない</strong> . すなわち <code>return</code> はその一行でだけの効果ではなくて, それに続く後ろをスキップするという信じられない効果を持っている. これを <strong>大域脱出</strong> という. <code>for</code> 文に対する <code>break</code> も同じような効果を持っている. <code>return</code> は関数の中ならどこでも呼ぶことが出来て, <code>for</code> 文の中からでも脱出することが出来る.</p>
+<pre><code class="code language-javascript">function f() {
+    do1();
+    for (var i = 0; i &lt; 10; ++i) {
+        return i;
+    }
+    do2();
+}
+</code></pre>
+<p>この <code>return</code> はたぶん <code>i=0</code> の時点で <code>return 0</code> を実行するから, <code>i=1</code> 以降は実行すらされない. すごい.</p>
+<p>また <code>break</code> との違いとして, 値を返す効果も持っている. <code>return x</code> とすると, <code>f</code> の値が <code>x</code> になる.</p>
+<p><code>call&#x2F;cc</code> はこの <code>return</code> という手続き自体を値としてプリミティブに扱うことのできる機能である. Scheme には <code>return</code> というキーワード自体が無いわけだが, 次のようなことができる.</p>
+<pre><code class="code language-scheme">(define (f)
+  (call&#x2F;cc (lambda (return)
+    (print &#x27;do1)
+    (return 42)
+    (print &#x27;do2)
+    )))
+</code></pre>
+<p>この手続き <code>f</code> を呼び出すと <code>do1</code> を表示したら <code>42</code> を <code>f</code> の値として返して即座に終了する. ここでこの <code>return</code> というのはいわゆる <code>return</code> 的な操作をする手続きが入った変数であり, 親しみのために <code>return</code> という名前をつけているだけで何でもいい.</p>
+<p>ここで <code>return</code> はユーザーが定義した手続きと同様に使えるので, その値をそのまま他の式に渡せる. 例えば次は <code>2 * (return 42)</code> みたいなことをしている.</p>
+<pre><code class="code language-scheme">(define (f)
+  (call&#x2F;cc (lambda (return)
+    (print &#x27;do1)
+    (*
+      2
+      (return 42))
+    (print &#x27;do2)
+    )))
+</code></pre>
+<p>この <code>f</code> を呼ぶと何が返ってくるのかというと <code>2 * 42</code> ではなく, <code>42</code> そのものが返ってくる. <code>return</code> は式の中の部分であっても間違いなく大域脱出をしてくれる.</p>
+<h3>call/cc の型</h3>
+<p>実際には Scheme は動的型付けなので何でもいいんだけど, （静的に）型を与えることを考える.</p>
+<p>仮に <code>x</code> の型を <code>T</code> とする. <code>return</code> は <code>T</code> を受け取る. 返り値は無いし <code>return</code> の値自体が使われるこはない. これは先程 <code>(* 2 (return 42))</code> と書いたときに <code>(* 2 ...)</code> 部分が実行されなかったことから分かる通り.</p>
+<p>仮に何も無いことを表す型を <code>Nothing</code> と書く. 例えば Scala だとずばり <a href="https://www.scala-lang.org/api/current/scala/Nothing.html">Nothing</a> という型がある. 型理論だと \(\bot\) と書いたほうが馴染みがあるかもしれない.</p>
+<blockquote>多くの言語にある Null とは全く別物なので注意. Null は null とか nil という値を取得することが出来る. 一方で Nothing は値を持つことが出来ない.</blockquote>
+<pre><code class="code language-scala">return : T -&gt; Nothing
+</code></pre>
+<p>次に <code>call&#x2F;cc</code> の第一引数 <code>(lambda (return) ...)</code> の型だが <code>...</code> が分からないので仮にここを <code>?</code> にすると</p>
+<pre><code class="code language-scala">(lambda (return) ...) : (T -&gt; Nothing) -&gt; ?
+</code></pre>
+<p>となる. 最後にこれらを組み合わせて <code>call&#x2F;cc</code> の型が付く. <code>call&#x2F;cc</code> の最後の値は <code>(return x)</code> していれば <code>x</code> なので,</p>
+<pre><code class="code language-scala">call&#x2F;cc : ((T -&gt; Nothing) -&gt; ?) -&gt; T
+</code></pre>
+<p>さて <code>?</code> だが, これは <code>...</code> の中で <code>return</code> を使わない場合を考えると自然に決まる.</p>
+<pre><code class="code">(call&#x2F;cc (lambda (return)
+  42))
+</code></pre>
+<p>このような場合は <code>call&#x2F;cc</code> 全体の値は <code>42</code> になるのが自然でそのためには <code>(lambda (return) 42)</code> の値が <code>42</code> である必要がある. 従って, <code>?</code> には <code>x</code> の型が入るべきで</p>
+<pre><code class="code language-scala">call&#x2F;cc : ((T -&gt; Nothing) -&gt; T) -&gt; T
+</code></pre>
+<p>となる.</p>
+<h3>カリーハワード対応</h3>
+<p>ご存知のように（純粋関数言語の）プログラムの型は論理式に対応する. 特に <code>Nothing</code> という型は矛盾を表す命題 \(\bot\) に対応して</p>
+<p>論理式 <code>call&#x2F;cc</code> :</p>
+\[((T \implies \bot) \implies T) \implies T\]
+<p>を得る.</p>
+<p>また NOT 演算 \(\lnot T \iff (T \implies \bot)\) を使うと <code>call&#x2F;cc</code> は</p>
+\[(\lnot T \implies T) \implies T\]
+<p>とすっきり書ける.</p>
+<h3>排中律との対比</h3>
+<p>白状すればこの議論は直観論理もしくは古典論理で行っている. このどちらでも次の2つは成立する.</p>
+<ul>
+  <li>
+    含意の展開
+    <ul>
+      <li>\((X \implies Y) \rewrite \lnot X \lor Y\)</li>
+    </ul>
+  </li>
+  <li>
+    ド・モルガン
+    <ul>
+      <li>\(\lnot (X \lor Y) \rewrite \lnot X \land \lnot Y\)</li>
+    </ul>
+  </li>
+</ul>
+<blockquote>命題の中における \(\iff\) と区別してよりメタな意味での書き換えを表すのに \(\rewrite\) を使ってみる. 単に読みやすさのために.</blockquote>
+<p>これらを使うと,</p>
+\[\begin{align*}
+\mathrm{call&#x2F;cc}
+&amp; ~~ \colon ~ (\lnot T \implies T) \implies T \\
+&amp; \rewrite \lnot (\lnot T \implies T) \lor T \\
+&amp; \rewrite \lnot (\lnot \lnot T \lor T) \lor T \\
+&amp; \rewrite (\lnot \lnot \lnot T \land \lnot T) \lor T \\
+\end{align*}\]
+<p>古典論理なら二重否定除去 \(\lnot \lnot T \rewrite T\) を使って即座に \(\mathrm{call&#x2F;cc} \rewrite \lnot T \lor T\) を得る. 直観論理では二重否定除去は使えないが, \(\lnot \lnot \lnot T \land \lnot T \iff \lnot T\) が, というかもっと一般に, \(\lnot \lnot X \land X \iff X\) が言えるので, やはり \(\lnot T \lor T\) を得る.</p>
+<p>以上から <code>call&#x2F;cc</code> の型はカリーハワード対応によって排中律に対応していることが分かった.</p>
+<h3>補足: \(\lnot \lnot X \land X \iff X\)</h3>
+<p>直観論理の体系でこれを確認する.</p>
+<p>\(\implies\) は自明で \(\land\) の右を取ればよい. \(\impliedby\) を確認する.</p>
+<p>\(X \implies X\) と \(X \implies \lnot \lnot X\) が同時に成り立てば, これらを組み合わせて \(X \implies \lnot \lnot X \land X\) を得る. 1つ目は自明なので \(X \implies \lnot \lnot X\) を証明すればよい.</p>
+<p>\(\lnot\) の糖衣構文を展開すると,</p>
+\[\begin{align*}
+&amp; X \implies \lnot \lnot X \\
+\rewrite &amp; X \implies \lnot X \implies \bot \\
+\rewrite &amp; X \implies (X \implies \bot) \implies \bot &amp; \text{ 三段論法}\\
+\rewrite &amp; X \land (X \implies \bot) \implies \bot \\
+\rewrite &amp; \bot \implies \bot \\
+\rewrite &amp; \top \\
+\end{align*}\]
+<p>と確認できた.</p>
+<p>以上より \(\lnot \lnot X \land X \iff X\) である.</p>
+<p>涼宮ハルヒの直観楽しみ～2020</p>
+<h2>Wed Sep 09 2020 <em>遅延セグメントツリーを学んだ</em></h2>
 <p>2020 年になってようやく遅延（伝播）セグメントツリーを知ったので解ける問題が増えて今嬉しい.</p>
-<p>遅延セグメントツリーは一言で言えばこのようなもの. モノイド <span class="math inline">\(X\)</span> と, それに対するモノイド作用 <span class="math inline">\(M\)</span> があるときにこんなことが出来る. <span class="math inline">\(X\)</span> の要素からなる長さ <span class="math inline">\(N\)</span>の数列 <span class="math inline">\(x\)</span> について,</p>
-<ol type="1">
-<li>任意の添字区間 <span class="math inline">\(I\)</span> に対して <span class="math inline">\(\prod_{i \in I} x_i\)</span> を <span class="math inline">\(O(\log N)\)</span> 程度で計算する</li>
-<li>任意の添字区間 <span class="math inline">\(I\)</span> と（左）作用 <span class="math inline">\(m \in M\)</span> について <span class="math inline">\(x_i \leftarrow m(x) ~(i \in I)\)</span> という更新を <span class="math inline">\(O(\log N)\)</span> 程度で行う</li>
+<p>遅延セグメントツリーは一言で言えばこのようなもの. モノイド \(X\) と, それに対するモノイド作用 \(M\) があるときにこんなことが出来る. \(X\) の要素からなる長さ \(N\) の数列 \(x\) について,</p>
+<ol>
+  <li>任意の添字区間 \(I\) に対して \(\prod_{i \in I} x_i\) を \(O(\log N)\) 程度で計算する</li>
+  <li>任意の添字区間 \(I\) と（左）作用 \(m \in M\) について \(x_i \leftarrow m(x) ~(i \in I)\) という更新を \(O(\log N)\) 程度で行う</li>
 </ol>
 <p>という2つの計算をサポートする. 特に2つ目の更新は区間に対して行えるのがただのセグメントツリーとの違い.</p>
 <ul>
-<li>プロコン用ライブラリ:
-<ul>
-<li><a href="https://cympfh.cc/procon/seq.lazy_segment_tree">procon/seq.lazy_segment_tree</a></li>
-</ul></li>
+  <li>
+    プロコン用ライブラリ:
+    <ul>
+      <li><a href="https://cympfh.cc/procon/seq.lazy_segment_tree">procon/seq.lazy_segment_tree</a></li>
+    </ul>
+  </li>
 </ul>
-<p>私が書いたライブラリは一般にモノイド作用つきモノイドについて定義できるようになっているので, 今の説明で言うところの <span class="math inline">\(X\)</span> と <span class="math inline">\(M\)</span> だけ問題に合わせたものを定義すればいつの間にか完成する.</p>
+<p>私が書いたライブラリは一般にモノイド作用つきモノイドについて定義できるようになっているので, 今の説明で言うところの \(X\) と \(M\) だけ問題に合わせたものを定義すればいつの間にか完成する.</p>
 <ul>
-<li>ちゃんとした説明:
-<ul>
-<li><a href="https://cympfh.cc/aiura/monoidic-act-and-lazy-segment-tree">aiura/monoidic-act-and-lazy-segment-tree</a></li>
-</ul></li>
+  <li>
+    ちゃんとした説明:
+    <ul>
+      <li><a href="https://cympfh.cc/aiura/monoidic-act-and-lazy-segment-tree">aiura/monoidic-act-and-lazy-segment-tree</a></li>
+    </ul>
+  </li>
 </ul>
-<h2 id="range-maximum-minimum-query">Range Maximum (Minimum) Query</h2>
-<p>整数の列 <span class="math inline">\(x\)</span> について</p>
+<h3>Range Maximum (Minimum) Query</h3>
+<p>整数の列 \(x\) について</p>
 <ul>
-<li>区間取得: <span class="math inline">\(\sum_{i \in I} x_i\)</span></li>
-<li>区間更新: <span class="math inline">\(x_i \leftarrow z\)</span></li>
+  <li>区間取得: \(\sum_{i \in I} x_i\)</li>
+  <li>区間更新: \(x_i \leftarrow z\)</li>
 </ul>
-<p>というタイプの問題を考える. 更新は区間と代入する値 <span class="math inline">\(z\)</span> を決めたらその区間の中の値を <span class="math inline">\(z\)</span> で上書きしてしまうタイプ.</p>
-<p>まず <span class="math inline">\(X\)</span> とその積は区間取得の方法をそのまま実装するだけ. 更新というのが作用に相当する. 作用の積は少し非自明だけど, 作用の合成を注意深く追えばいい.</p>
+<p>というタイプの問題を考える. 更新は区間と代入する値 \(z\) を決めたらその区間の中の値を \(z\) で上書きしてしまうタイプ.</p>
+<p>まず \(X\) とその積は区間取得の方法をそのまま実装するだけ. 更新というのが作用に相当する. 作用の積は少し非自明だけど, 作用の合成を注意深く追えばいい.</p>
 <ul>
-<li><span class="math inline">\(X = \mathbb Z\)</span>
-<ul>
-<li>積
-<ul>
-<li><span class="math inline">\(x_1 \times x_2 := x_1 + x_2\)</span></li>
-</ul></li>
-<li>単位元
-<ul>
-<li><span class="math inline">\(0 \times x = x \times 0 = x\)</span></li>
-</ul></li>
-</ul></li>
-<li><span class="math inline">\(M = \mathbb Z + 1\)</span>
-<ul>
-<li>積
-<ul>
-<li><span class="math inline">\(\ast \times n = n\)</span></li>
-<li><span class="math inline">\(m \times n = m\)</span> (if <span class="math inline">\(m \ne \ast\)</span>)</li>
-</ul></li>
-<li>単位元
-<ul>
-<li><span class="math inline">\(\ast \times m = m \times \ast = m\)</span></li>
-</ul></li>
-</ul></li>
+  <li>
+    \(X = \mathbb Z\)
+    <ul>
+      <li>
+        積
+        <ul>
+          <li>\(x_1 \times x_2 := x_1 + x_2\)</li>
+        </ul>
+      </li>
+      <li>
+        単位元
+        <ul>
+          <li>\(0 \times x = x \times 0 = x\)</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>
+    \(M = \mathbb Z + 1\)
+    <ul>
+      <li>
+        積
+        <ul>
+          <li>\(\ast \times n = n\)</li>
+          <li>\(m \times n = m\) (if \(m \ne \ast\) )</li>
+        </ul>
+      </li>
+      <li>
+        単位元
+        <ul>
+          <li>\(\ast \times m = m \times \ast = m\)</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
 </ul>
-<p>ここで <span class="math inline">\(M\)</span> は左作用として定義している. また <span class="math inline">\(\mathbb Z + 1\)</span> は整数集合と単集合 <span class="math inline">\(\{ \ast \}\)</span> との直和のこと.</p>
-<p><span class="math inline">\(M\)</span> の <span class="math inline">\(X\)</span> に対する作用は <span class="math inline">\(m \in M, x \in X\)</span> について</p>
+<p>ここで \(M\) は左作用として定義している. また \(\mathbb Z + 1\) は整数集合と単集合 \(\{ \ast \}\) との直和のこと.</p>
+<p>\(M\) の \(X\) に対する作用は \(m \in M, x \in X\) について</p>
 <ul>
-<li><span class="math inline">\(\ast(x) = x\)</span></li>
-<li><span class="math inline">\(m(x) = m\)</span> (if <span class="math inline">\(m \ne \ast\)</span>)</li>
+  <li>\(\ast(x) = x\)</li>
+  <li>\(m(x) = m\) (if \(m \ne \ast\) )</li>
 </ul>
-<p>この作用が数列の値の上書きを意味している. 特に <span class="math inline">\(\ast \in M\)</span> は何も上書きしないということを表していて, 単位元としての役割を与えている. <span class="math inline">\(M\)</span> の積だが, <span class="math inline">\(m(n(x)) = (m \times n)(x)\)</span> を満たすような <span class="math inline">\(m \times n\)</span> が定義できていれば正しい. 今回は値の上書きなので, 後から適用したものを優先していればいい.</p>
-<h2 id="区間への加算">区間への加算</h2>
+<p>この作用が数列の値の上書きを意味している. 特に \(\ast \in M\) は何も上書きしないということを表していて, 単位元としての役割を与えている. \(M\) の積だが, \(m(n(x)) = (m \times n)(x)\) を満たすような \(m \times n\) が定義できていれば正しい. 今回は値の上書きなので, 後から適用したものを優先していればいい.</p>
+<h3>区間への加算</h3>
 <p>先程は区間へ定数を代入するタイプだったが, それぞれに値を加算するタイプのものも見かける.</p>
 <ul>
-<li>区間取得: <span class="math inline">\(\sum_{i \in I} x_i\)</span></li>
-<li>区間更新: <span class="math inline">\(x_i \leftarrow x_i + z\)</span></li>
+  <li>区間取得: \(\sum_{i \in I} x_i\)</li>
+  <li>区間更新: \(x_i \leftarrow x_i + z\)</li>
 </ul>
-<p>すぐ思いつくのは次のようなものだ. <span class="math inline">\(X\)</span> は先程と全く同じで良さそう. それから <span class="math inline">\(M\)</span> は <span class="math inline">\(M=\mathbb Z\)</span> で <span class="math inline">\(m(x) = m+x\)</span> とでもしておけば動きそう. これは実は間違えている.</p>
-<p>なぜなら, <span class="math inline">\(m(x_1 \times x_2) = m(x_1) \times m(x_2)\)</span> というモノイド作用が満たすべき準同型を満たしていない.</p>
-<p>例えば <span class="math inline">\(m\)</span> が <span class="math inline">\(+1\)</span> することを表してるとき, 各子ノードに <span class="math inline">\(+1\)</span> したのに親ノードにも <span class="math inline">\(+1\)</span> してるようなものだからだ. 親ノードは子ノードの値全ての和を表してるはずだから, 各子ノードに <span class="math inline">\(+1\)</span> したなら, ノード数分だけ, 加算する必要が生じる.</p>
-<p>じゃあ <span class="math inline">\(X\)</span> にそのノード数まで情報として持たせればいい. つまり <span class="math inline">\(X\)</span> はカバーする区間に含まれる値の和と区間の長さのペアにする.</p>
+<p>すぐ思いつくのは次のようなものだ. \(X\) は先程と全く同じで良さそう. それから \(M\) は \(M=\mathbb Z\) で \(m(x) = m+x\) とでもしておけば動きそう. これは実は間違えている.</p>
+<p>なぜなら, \(m(x_1 \times x_2) = m(x_1) \times m(x_2)\) というモノイド作用が満たすべき準同型を満たしていない.</p>
+<p>例えば \(m\) が \(+1\) することを表してるとき, 各子ノードに \(+1\) したのに親ノードにも \(+1\) してるようなものだからだ. 親ノードは子ノードの値全ての和を表してるはずだから, 各子ノードに \(+1\) したなら, ノード数分だけ, 加算する必要が生じる.</p>
+<p>じゃあ \(X\) にそのノード数まで情報として持たせればいい. つまり \(X\) はカバーする区間に含まれる値の和と区間の長さのペアにする.</p>
 <ul>
-<li><span class="math inline">\(X = \mathbb Z \times \mathbb N\)</span>
-<ul>
-<li>(和, 長さ)</li>
-<li>積
-<ul>
-<li><span class="math inline">\((x_1, \ell_1) \times (x_2, \ell_2) := (x_1 + x_2, \ell_1 + \ell_2)\)</span></li>
-</ul></li>
-<li>単位元
-<ul>
-<li><span class="math inline">\((0, 0)\)</span></li>
-</ul></li>
-</ul></li>
-<li><span class="math inline">\(M = \mathbb Z\)</span>
-<ul>
-<li><span class="math inline">\(m \in M\)</span> は <span class="math inline">\(+m\)</span> することを表す</li>
-<li>積
-<ul>
-<li><span class="math inline">\(m \times n = m + n\)</span></li>
-</ul></li>
-<li>単位元
-<ul>
-<li><span class="math inline">\(0\)</span></li>
-</ul></li>
-<li>作用
-<ul>
-<li><span class="math inline">\(m(x, \ell) = x + m \ell\)</span>
-<ul>
-<li>ここが重要</li>
-</ul></li>
-</ul></li>
-</ul></li>
+  <li>
+    \(X = \mathbb Z \times \mathbb N\)
+    <ul>
+      <li>(和, 長さ)</li>
+      <li>
+        積
+        <ul>
+          <li>\((x_1, \ell_1) \times (x_2, \ell_2) := (x_1 + x_2, \ell_1 + \ell_2)\)</li>
+        </ul>
+      </li>
+      <li>
+        単位元
+        <ul>
+          <li>\((0, 0)\)</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>
+    \(M = \mathbb Z\)
+    <ul>
+      <li>\(m \in M\) は \(+m\) することを表す</li>
+      <li>
+        積
+        <ul>
+          <li>\(m \times n = m + n\)</li>
+        </ul>
+      </li>
+      <li>
+        単位元
+        <ul>
+          <li>\(0\)</li>
+        </ul>
+      </li>
+      <li>
+        作用
+        <ul>
+          <li>
+            \(m(x, \ell) = x + m \ell\)
+            <ul>
+              <li>ここが重要</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
 </ul>
-<p>長さ <span class="math inline">\(\ell\)</span> の区間があって今そこの和が <span class="math inline">\(x\)</span> のとき, この各値に <span class="math inline">\(m\)</span> を足すと, 和は <span class="math inline">\(x + m \ell\)</span>. 当たり前ですね.</p>
-<h2 id="例題">例題</h2>
-<h3 id="atcoder-library-practice-contest-k---range-affine-range-sum"><a href="https://atcoder.jp/contests/practice2/tasks/practice2_k">AtCoder Library Practice Contest/ K - Range Affine Range Sum</a></h3>
+<p>長さ \(\ell\) の区間があって今そこの和が \(x\) のとき, この各値に \(m\) を足すと, 和は \(x + m \ell\) . 当たり前ですね.</p>
+<h3>例題</h3>
+
+<div class="blogcard" style="width:auto;max-width:9999px;border:1px solid #E0E0E0;border-radius:3px;margin:10px 0;padding:15px;line-height:1.4;text-align:left;background:#FFFFFF;">
+<a href="https://atcoder.jp/contests/practice2/tasks/practice2_k" target="_blank" style="display:block;text-decoration:none;">
+<span class="blogcard-image" style="float:right;width:100px;padding:0 0 0 10px;margin:0 0 5px 5px;">
+<img src="https://img.atcoder.jp/assets/atcoder.png" width="100" style="width:100%;height:auto;max-height:100px;min-width:0;border:0 none;margin:0;" />
+</span><br style="display:none">
+<span class="blogcard-title" style="font-size:112.5%;font-weight:700;color:#333333;margin:0 0 5px 0;">K - Range Affine Range Sum</span><br />
+<span class="blogcard-content" style="font-size:87.5%;font-weight:400;color:#666666;">AtCoder is a programming contest site for anyone from beginners to experts. We hold weekly programming contests online.</span><br />
+<span style="clear:both;display:block;overflow:hidden;height:0;">&nbsp;</span>
+</a><div style="font-size:75%;text-align:right;clear:both"><a href="https://atcoder.jp/contests/practice2/tasks/practice2_k" target="_blank" rel="nofollow">atcoder.jp/contests/practice2/tasks/practice2_k</a></div></div>
+    
 <ul>
-<li>区間取得: <span class="math inline">\(\sum_{i \in I} x_i\)</span></li>
-<li>区間更新: <span class="math inline">\(x_i \leftarrow b x_i + c\)</span></li>
+  <li>区間取得: \(\sum_{i \in I} x_i\)</li>
+  <li>区間更新: \(x_i \leftarrow b x_i + c\)</li>
 </ul>
 <p>今度は足すだけじゃなくて掛け算も入ってる. でもさっきのとほとんど同じ.</p>
-<p>作用 <span class="math inline">\(m = (b, c) \in \mathbb Z \times \mathbb Z\)</span> について,</p>
+<p>作用 \(m = (b, c) \in \mathbb Z \times \mathbb Z\) について,</p>
 <ul>
-<li><span class="math inline">\(m(x, \ell) = bx + c\)</span></li>
+  <li>\(m(x, \ell) = bx + c\)</li>
 </ul>
-<p>というのが実際の作用だし, <span class="math inline">\(M\)</span> の積はこれを満たすように適切に定めるだけ.</p>
-<h3 id="atcoder-library-practice-contest-l---range-affine-range-sum"><a href="https://atcoder.jp/contests/practice2/tasks/practice2_l">AtCoder Library Practice Contest/ L - Range Affine Range Sum</a></h3>
-<p>どんな情報があれば転倒数がマージできるか考えればおのずと <span class="math inline">\(X\)</span> が決まる.</p>
-<p>区間 <span class="math inline">\(I_1\)</span> を左に, <span class="math inline">\(I_2\)</span> を右にしてマージするとき, 出来上がった区間の転倒数は, それぞれの転倒数はそのまま足して, 新たに出来る転倒というのは <span class="math inline">\(I_1\)</span> に含まれる <span class="math inline">\(1\)</span> の数と <span class="math inline">\(0\)</span> の数との積, これを加える. 従って, まず <span class="math inline">\(0,1\)</span> それぞれの個数と, 転倒数を情報として持っておけば良さそう.</p>
-<p>さてこの問題における区間に対する更新というのが 0/1 のフリップ操作. フリップしたときに出来る転倒数は今述べた3つの情報だけからは分から無さそう. しかし, 「フリップしたら転倒する」数というのも転倒数と同じ計算量で計算できるに決まってるので, これも持っておけばいい. つまり, <span class="math inline">\(X\)</span> はその区間における</p>
+<p>というのが実際の作用だし, \(M\) の積はこれを満たすように適切に定めるだけ.</p>
+
+<div class="blogcard" style="width:auto;max-width:9999px;border:1px solid #E0E0E0;border-radius:3px;margin:10px 0;padding:15px;line-height:1.4;text-align:left;background:#FFFFFF;">
+<a href="https://atcoder.jp/contests/practice2/tasks/practice2_l" target="_blank" style="display:block;text-decoration:none;">
+<span class="blogcard-image" style="float:right;width:100px;padding:0 0 0 10px;margin:0 0 5px 5px;">
+<img src="https://img.atcoder.jp/assets/atcoder.png" width="100" style="width:100%;height:auto;max-height:100px;min-width:0;border:0 none;margin:0;" />
+</span><br style="display:none">
+<span class="blogcard-title" style="font-size:112.5%;font-weight:700;color:#333333;margin:0 0 5px 0;">L - Lazy Segment Tree</span><br />
+<span class="blogcard-content" style="font-size:87.5%;font-weight:400;color:#666666;">AtCoder is a programming contest site for anyone from beginners to experts. We hold weekly programming contests online.</span><br />
+<span style="clear:both;display:block;overflow:hidden;height:0;">&nbsp;</span>
+</a><div style="font-size:75%;text-align:right;clear:both"><a href="https://atcoder.jp/contests/practice2/tasks/practice2_l" target="_blank" rel="nofollow">atcoder.jp/contests/practice2/tasks/practice2_l</a></div></div>
+    
+<p>どんな情報があれば転倒数がマージできるか考えればおのずと \(X\) が決まる.</p>
+<p>区間 \(I_1\) を左に, \(I_2\) を右にしてマージするとき, 出来上がった区間の転倒数は, それぞれの転倒数はそのまま足して, 新たに出来る転倒というのは \(I_1\) に含まれる \(1\) の数と \(0\) の数との積, これを加える. 従って, まず \(0,1\) それぞれの個数と, 転倒数を情報として持っておけば良さそう.</p>
+<p>さてこの問題における区間に対する更新というのが 0/1 のフリップ操作. フリップしたときに出来る転倒数は今述べた3つの情報だけからは分から無さそう. しかし, 「フリップしたら転倒する」数というのも転倒数と同じ計算量で計算できるに決まってるので, これも持っておけばいい. つまり, \(X\) はその区間における</p>
 <ul>
-<li><span class="math inline">\(z =~\)</span> <span class="math inline">\(0\)</span> の個数</li>
-<li><span class="math inline">\(o =~\)</span> <span class="math inline">\(1\)</span> の個数</li>
-<li><span class="math inline">\(i =~\)</span> 転倒数</li>
-<li><span class="math inline">\(p =~\)</span> 逆転倒数 (0/1 をフリップした場合の転倒数)</li>
+  <li>\(z =~\) \(0\) の個数</li>
+  <li>\(o =~\) \(1\) の個数</li>
+  <li>\(i =~\) 転倒数</li>
+  <li>\(p =~\) 逆転倒数 (0/1 をフリップした場合の転倒数)</li>
 </ul>
-<p>の組 <span class="math inline">\(x = (z,o,i,p)\)</span>. そして積は <span class="math display">\[x_1 \times x_2
+<p>の組 \(x = (z,o,i,p)\) . そして積は</p>
+\[x_1 \times x_2
 = (z_1, o_1, i_1, p_1) \times (z_2, o_2, i_2, p_2)
-= (z_1 + z_2, o_1 + o_2, i_1 + i_2 + o_1 z_2, p_1+p_2+o_2z_1)\]</span> で定義される.</p>
+= (z_1 + z_2, o_1 + o_2, i_1 + i_2 + o_1 z_2, p_1+p_2+o_2z_1)\]
+<p>で定義される.</p>
 <p>更新操作は簡単で, フリップするかしないかの2状態しかない. 「スリップする」をちょうど2回適用したときはもとに戻って「フリップしない」と等しいことに注意しよう.</p>
-<p><span class="math inline">\(\def\true{\mathrm{true}}\def\false{\mathrm{false}}\)</span> <span class="math inline">\(M = \{\true, \false\}\)</span> としておいて,</p>
+<p>\(\def\true{\mathrm{true}}\def\false{\mathrm{false}}\) \(M = \{\true, \false\}\) としておいて,</p>
 <ul>
-<li>作用
-<ul>
-<li><span class="math inline">\(\true(z,o,i,p) = (o,z,p,i)\)</span> (交換する)</li>
-<li><span class="math inline">\(\false(x) = x\)</span> (交換しない)</li>
-</ul></li>
+  <li>
+    作用
+    <ul>
+      <li>\(\true(z,o,i,p) = (o,z,p,i)\) (交換する)</li>
+      <li>\(\false(x) = x\) (交換しない)</li>
+    </ul>
+  </li>
 </ul>
 <p>を定める.</p>
-<footer>
-    <p class="is-pulled-right">
-    @cympfh / mail@cympfh.cc
-    </p>
-</footer>
-<!--
 
-  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
-  ただし "INDEX" は除外する.
-
-    <div id=toc></div>
-
-
-  H2, H3 タグまでを列挙するには以下を埋め込む.
-
-    <div id=toc-level-2></div>
-
--->
-<script>
-(function() {
-
-  function naming(obj, name) {
-      var PREF = document.createElement('a');
-      PREF.name = name;
-      obj.appendChild(PREF);
-  }
-
-  function level1() {
-
-    var sections = document.getElementsByTagName('h2');
-    var OL = document.createElement('ol');
-    for (var i=0; i < sections.length; ++i) {
-      var LI = document.createElement('li');
-      var A = document.createElement('a');
-      A.innerHTML = sections[i].innerHTML;
-      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
-      A.href = '#' + i;
-      LI.appendChild(A);
-      OL.appendChild(LI);
-      naming(sections[i], i);
-      // var PREF = document.createElement('a');
-      // PREF.name = i;
-      // sections[i].appendChild(PREF);
-    }
-
-    return OL;
-  }
-
-  function level2() {
-
-    var sections = document.querySelectorAll('h2,h3');
-    var tree = [];
-    for (var i = 0; i < sections.length; ++i) {
-      if (sections[i].tagName == 'H2') {
-        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
-        tree.push([sections[i]]);
-      } else {
-        if (tree.length > 0) {
-          tree[tree.length-1].push(sections[i]);
-        } else {
-          tree.push([sections[i]]);
-        }
-      }
-    }
-
-    var OL = document.createElement('ol');
-    for (var i = 0; i < tree.length; ++i) {
-
-      // h2-level
-      var LI = document.createElement('li');
-      var A = document.createElement('a');
-      A.innerHTML = tree[i][0].innerHTML;
-      A.href = '#' + i;
-      naming(tree[i][0], i);
-      LI.appendChild(A);
-
-      // h3-level
-      if (tree[i].length > 1) {
-        var OL_sub = document.createElement('ol');
-        for (var j = 1; j < tree[i].length; ++j) {
-          var LI_sub = document.createElement('li');
-          var A = document.createElement('a');
-          A.innerHTML = tree[i][j].innerHTML;
-          A.href = `#${i}-${j}`;
-          naming(tree[i][j], `${i}-${j}`);
-          LI_sub.appendChild(A);
-          OL_sub.appendChild(LI_sub);
-        }
-        LI.appendChild(OL_sub);
-      }
-
-      OL.appendChild(LI);
-    }
-
-    return OL;
-  }
-
-  function append_toc() {
-    if (document.getElementById('toc')) {
-      document.getElementById('toc').appendChild(level1());
-    }
-    if (document.getElementById('toc-level-2')) {
-      document.getElementById('toc-level-2').appendChild(level2());
-    }
-  }
-
-  window.addEventListener('DOMContentLoaded', append_toc, false);
-}());
-</script>
+    <footer>
+      <p class="is-pulled-right">@cympfh / mail@cympfh.cc</p>
+    </footer>
+  </div>
   <script src="../../../resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
+  <script src="../../../resources/js/toc.js"></script>
 </body>
 </html>

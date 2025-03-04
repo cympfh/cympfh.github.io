@@ -1,105 +1,118 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Class-based n-gram models of natural language</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">Class-based n-gram models of natural language</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=http://dl.acm.org/citation.cfm?id=176316>http://dl.acm.org/citation.cfm?id=176316</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#言語モデル>言語モデル</a> <a class='tag is-blue' href=index.html#自然言語処理>自然言語処理</a></p>
-</div>
+<p><ul> <li>original paper: <a href=http://dl.acm.org/citation.cfm?id=176316>http://dl.acm.org/citation.cfm?id=176316</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#言語モデル>言語モデル</a> <a class='tag is-blue' href=index.html#自然言語処理>自然言語処理</a> </div></p>
 <p>Brown+ら.</p>
-<p><a href="memo/learning-phrase-patterns.md">Learning phrase patterns for Text Classification</a> の中で, &quot;単語のクラスを1次マルコフモデル尤度を最大化することによって自動分類した&quot; とあって引用されていた.</p>
-<h2 id="introduction">Introduction</h2>
+<p><a href="memo/learning-phrase-patterns.md">Learning phrase patterns for Text Classification</a> の中で, "単語のクラスを1次マルコフモデル尤度を最大化することによって自動分類した" とあって引用されていた.</p>
+<h2>Introduction</h2>
 <p>noisy channel 経由で来た, 歪んだ英語の文章を元に戻したい. これが第一の議論である. それに関与することとして, 単語にクラスを当てはめることを統計的にしたい. これが第二の議論である.</p>
-<h2 id="言語モデル">言語モデル</h2>
+<h2>言語モデル</h2>
 <p>次のような言語モデルを考える.</p>
-<p>単語列 <span class="math inline">\(w_1, \ldots, w_k\)</span> を条件付き確率 <span class="math display">\[P(w_k | w_1, \ldots, w_{k-1})\]</span> で特徴づける. ここで <span class="math inline">\(w_1,\ldots,w_{k-1}\)</span> のことを <span class="math inline">\(w_k\)</span> の history と呼ぶことにする.</p>
-<p>文章全体が出来上がる確率は先頭から順に生成されると仮定して, <span class="math display">\[P(w_1,\ldots,w_k) = \prod_{i=1}^k Pr(w_k | w_1,\ldots,w_{k-1})\]</span></p>
-<h3 id="n-gram-言語モデル">n-gram 言語モデル</h3>
-<p>n-gram 言語モデルでは, history の内の最後の <span class="math inline">\(n-1\)</span> words だけを見る. すなわち <span class="math display">\[P(w_k | w_1,\ldots,w_{k-1}) = P(w_k | w_{k-n+1},\ldots,w_{k-1})\]</span> とする.</p>
-<p>ただし <span class="math inline">\(k &lt; n\)</span> のときは勝手に短くする.</p>
-<p>では確率 <span class="math inline">\(P(w_k | w_{k-n+1},\ldots,w_{k-1})\)</span> をどっからもってくるか. training text における最尤推定を行う. すなわち数えて割合を出すことをする.</p>
-<p>training text において (連続) 部分列 <span class="math inline">\(w_1,\ldots,w_k\)</span> の頻度を <span class="math inline">\(C(w_1,\ldots,w_k)\)</span> とするとき, <span class="math display">\[Pr(w_n | w_1,\ldots,w_{n-1}) = \dfrac{C(w_1,\ldots,w_n)}{\sum_v C(w_1,\ldots,w_{n-1}, v)}\]</span></p>
-<h3 id="interpolated-estimation-jelinek-and-mercer-1980">interpolated estimation (Jelinek and Mercer, 1980)</h3>
-<p>語彙は十分多いことが望ましいが <span class="math inline">\(n\)</span> が増えるに従って必要な語彙数は指数的に増える. しかしながら精度のためには <span class="math inline">\(n\)</span> はできるだけ多い方がよい.</p>
-<p>interpolated estimation はいくつかの言語モデル <span class="math inline">\(P^{(j)}\)</span> を構築して, それらをcombineすることで <span class="math inline">\(P&#39;\)</span> を得る手法. <span class="math display">\[P&#39;(w_k | w_1,\ldots,w_{i-k}) = \sum_j \lambda_j(w_1,\ldots,w_{k-1}) P^{(j)}(w_k | w_1,\ldots,w_{i-k})\]</span></p>
-<p>重み <span class="math inline">\(\lambda_j\)</span> は EMアルゴリズムで作る.</p>
-<h2 id="word-classes">Word Classes</h2>
-<p>意味的にか, 構造的にか, ある語とある語が似ているということがある. 例えば <code>Thursday</code>, <code>Friday</code> とか.</p>
-<p>vocabulary <span class="math inline">\(V\)</span>, classes <span class="math inline">\(C\)</span> があって, 語 <span class="math inline">\(w\)</span> をclass <span class="math inline">\(c\)</span> に写す写像を <span class="math inline">\(\pi\)</span> とする. <span class="math display">\[\pi : V \to C\]</span></p>
-<h3 id="n-gram-class-model">n-gram class model</h3>
-<p>写像 <span class="math inline">\(\pi\)</span> が既に与えられた上で, クラスを用いた言語モデルを次のように定める. 単語列 <span class="math inline">\(w_1,\ldots,w_k,\ldots,w_N\)</span> についてクラス列 <span class="math inline">\(c_i = \pi(w_i)\)</span> があって, <span class="math display">\[P(w_k | w_1,\ldots,w_{k-1}) = P(w_k | c_k) P(c_k | c_1,\ldots,c_k)\]</span></p>
-<p>さらに n-gram クラスモデルとは, 上の history を <span class="math inline">\(n-1\)</span> に制限したもの: <span class="math display">\[P(w_k | w_1,\ldots,w_{k-1}) = P(w_k | c_k) P(c_k | c_{k-n+1},\ldots,c_k)\]</span></p>
+<p>単語列 \(w_1, \ldots, w_k\) を条件付き確率</p>
+\[P(w_k | w_1, \ldots, w_{k-1})\]
+<p>で特徴づける. ここで \(w_1,\ldots,w_{k-1}\) のことを \(w_k\) の history と呼ぶことにする.</p>
+<p>文章全体が出来上がる確率は先頭から順に生成されると仮定して,</p>
+\[P(w_1,\ldots,w_k) = \prod_{i=1}^k Pr(w_k | w_1,\ldots,w_{k-1})\]
+<h3>n-gram 言語モデル</h3>
+<p>n-gram 言語モデルでは, history の内の最後の \(n-1\) words だけを見る. すなわち</p>
+\[P(w_k | w_1,\ldots,w_{k-1}) = P(w_k | w_{k-n+1},\ldots,w_{k-1})\]
+<p>とする.</p>
+<p>ただし \(k &lt; n\) のときは勝手に短くする.</p>
+<p>では確率 \(P(w_k | w_{k-n+1},\ldots,w_{k-1})\) をどっからもってくるか. training text における最尤推定を行う. すなわち数えて割合を出すことをする.</p>
+<p>training text において (連続) 部分列 \(w_1,\ldots,w_k\) の頻度を \(C(w_1,\ldots,w_k)\) とするとき,</p>
+\[Pr(w_n | w_1,\ldots,w_{n-1}) = \dfrac{C(w_1,\ldots,w_n)}{\sum_v C(w_1,\ldots,w_{n-1}, v)}\]
+<h3>interpolated estimation (Jelinek and Mercer, 1980)</h3>
+<p>語彙は十分多いことが望ましいが \(n\) が増えるに従って必要な語彙数は指数的に増える. しかしながら精度のためには \(n\) はできるだけ多い方がよい.</p>
+<p>interpolated estimation はいくつかの言語モデル \(P^{(j)}\) を構築して, それらをcombineすることで \(P&#x27;\) を得る手法.</p>
+\[P&#x27;(w_k | w_1,\ldots,w_{i-k}) = \sum_j \lambda_j(w_1,\ldots,w_{k-1}) P^{(j)}(w_k | w_1,\ldots,w_{i-k})\]
+<p>重み \(\lambda_j\) は EMアルゴリズムで作る.</p>
+<h2>Word Classes</h2>
+<p>意味的にか, 構造的にか, ある語とある語が似ているということがある. 例えば <code>Thursday</code> , <code>Friday</code> とか.</p>
+<p>vocabulary \(V\) , classes \(C\) があって, 語 \(w\) をclass \(c\) に写す写像を \(\pi\) とする.</p>
+\[\pi : V \to C\]
+<h3>n-gram class model</h3>
+<p>写像 \(\pi\) が既に与えられた上で, クラスを用いた言語モデルを次のように定める. 単語列 \(w_1,\ldots,w_k,\ldots,w_N\) についてクラス列 \(c_i = \pi(w_i)\) があって,</p>
+\[P(w_k | w_1,\ldots,w_{k-1}) = P(w_k | c_k) P(c_k | c_1,\ldots,c_k)\]
+<p>さらに n-gram クラスモデルとは, 上の history を \(n-1\) に制限したもの:</p>
+\[P(w_k | w_1,\ldots,w_{k-1}) = P(w_k | c_k) P(c_k | c_{k-n+1},\ldots,c_k)\]
 <p>training text から, 右辺の2つの確率を最尤推定する.</p>
 <p>1-gram であれば,</p>
 <ul>
-<li><span class="math inline">\(P(w | c) = \dfrac{C(w)}{C(c)}\)</span></li>
-<li><span class="math inline">\(P(c) = \dfrac{C(c)}{C()}\)</span></li>
+  <li>\(P(w | c) = \dfrac{C(w)}{C(c)}\)</li>
+  <li>\(P(c) = \dfrac{C(c)}{C()}\)</li>
 </ul>
 <p>2-gram であれば,</p>
 <ul>
-<li><span class="math inline">\(P(w | c) = \dfrac{C(w)}{C(c)}\)</span> (同じ)</li>
-<li><span class="math inline">\(P(c_2 | c_1) = \dfrac{C(c_1, c_2)}{\sum_d C(c_1, d)}\)</span></li>
+  <li>\(P(w | c) = \dfrac{C(w)}{C(c)}\) (同じ)</li>
+  <li>\(P(c_2 | c_1) = \dfrac{C(c_1, c_2)}{\sum_d C(c_1, d)}\)</li>
 </ul>
-<p>ただし空列の <span class="math inline">\(C()\)</span> とは training text に登場する単語数のこと.</p>
-<h3 id="尤度">尤度</h3>
-<p><span class="math inline">\(T=C()\)</span> として, training data 全体の単語列を <span class="math inline">\(t_1,\ldots,t_T\)</span> とする.</p>
-<p><span class="math display">\[L(\pi) = \dfrac{1}{T-1} \log P(t_2,\ldots,t_T | t_1)\]</span> を <span class="math inline">\(\pi\)</span> の尤度とする. 2-gram model の下でこれを式変形すると, <span class="math display">\[L(\pi) = \sum_{w_1, w_2} \dfrac{C(w_1 w_2)}{T-1} \log P(c_2 | c_1) P(w_2 | c_2)\]</span></p>
-<p>さらにうわぁーってやると, <span class="math display">\[L(\pi) = -H(w) + I(c1, c2)\]</span> ここで, <span class="math inline">\(H\)</span>はエントロピー, <span class="math inline">\(I\)</span>は相互情報量. <span class="math inline">\(w\)</span> は training text から降ってくる.</p>
-<p><span class="math inline">\(L(\pi)\)</span>を最大化するような <span class="math inline">\(\pi\)</span> を選択する, というのは, 相互情報量を最大化するようなクラス分類を選択することになる.</p>
-<h3 id="最適化">最適化</h3>
-<p><span class="math inline">\(\max I\)</span> を厳密に解くのは大変 (また最大であるかを判定するのも大変). 貪欲法で頑張る.</p>
-<p>語彙数 <span class="math inline">\(V\)</span> に対して欲しいクラスの数 <span class="math inline">\(C\)</span> を決める (<span class="math inline">\(C &lt; V\)</span>). 始めは全ての語彙は異なるクラスにあるとし, 一個ずつマージしてクラス数が <span class="math inline">\(C\)</span> になったら止める. 始めはクラス数が <span class="math inline">\(V\)</span> あるのでちょうど <span class="math inline">\(V-k\)</span> 回マージした時点でクラス数は <span class="math inline">\(k\)</span> 種類ある. それを <span class="math display">\[C^k_1, \ldots,C^k_k\]</span> とする.</p>
-<p><span class="math inline">\(1 \leq i &lt; j \leq k\)</span> について <span class="math inline">\(C^k_i\)</span> と <span class="math inline">\(C^k_j\)</span> とをマージすることを考える.</p>
+<p>ただし空列の \(C()\) とは training text に登場する単語数のこと.</p>
+<h3>尤度</h3>
+<p>\(T=C()\) として, training data 全体の単語列を \(t_1,\ldots,t_T\) とする.</p>
+\[L(\pi) = \dfrac{1}{T-1} \log P(t_2,\ldots,t_T | t_1)\]
+<p>を \(\pi\) の尤度とする. 2-gram model の下でこれを式変形すると,</p>
+\[L(\pi) = \sum_{w_1, w_2} \dfrac{C(w_1 w_2)}{T-1} \log P(c_2 | c_1) P(w_2 | c_2)\]
+<p>さらにうわぁーってやると,</p>
+\[L(\pi) = -H(w) + I(c1, c2)\]
+<p>ここで, \(H\) はエントロピー, \(I\) は相互情報量. \(w\) は training text から降ってくる.</p>
+<p>\(L(\pi)\) を最大化するような \(\pi\) を選択する, というのは, 相互情報量を最大化するようなクラス分類を選択することになる.</p>
+<h3>最適化</h3>
+<p>\(\max I\) を厳密に解くのは大変 (また最大であるかを判定するのも大変). 貪欲法で頑張る.</p>
+<p>語彙数 \(V\) に対して欲しいクラスの数 \(C\) を決める ( \(C &lt; V\) ). 始めは全ての語彙は異なるクラスにあるとし, 一個ずつマージしてクラス数が \(C\) になったら止める. 始めはクラス数が \(V\) あるのでちょうど \(V-k\) 回マージした時点でクラス数は \(k\) 種類ある. それを</p>
+\[C^k_1, \ldots,C^k_k\]
+<p>とする.</p>
+<p>\(1 \leq i &lt; j \leq k\) について \(C^k_i\) と \(C^k_j\) とをマージすることを考える.</p>
 <p>次の4つの値を導入する:</p>
 <ul>
-<li><span class="math inline">\(p_k(l,m) = P(C^k_l, C^k_m)\)</span></li>
-<li><span class="math inline">\(\def\pl{\mathrm{pl}}\pl_k(l) = \sum_m p_k(l,m)\)</span></li>
-<li><span class="math inline">\(\def\pr{\mathrm{pr}}\pr_k(m) = \sum_l p_k(l,m)\)</span></li>
-<li><span class="math inline">\(q_k(l,m) = p_k(l,m) \log \dfrac{p_k(l, m)}{\pl_k(l) \pr_k(m)}\)</span></li>
+  <li>\(p_k(l,m) = P(C^k_l, C^k_m)\)</li>
+  <li>\(\def\pl{\mathrm{pl}}\pl_k(l) = \sum_m p_k(l,m)\)</li>
+  <li>\(\def\pr{\mathrm{pr}}\pr_k(m) = \sum_l p_k(l,m)\)</li>
+  <li>\(q_k(l,m) = p_k(l,m) \log \dfrac{p_k(l, m)}{\pl_k(l) \pr_k(m)}\)</li>
 </ul>
-<p>こうすると <span class="math inline">\(C^k\)</span> の相互情報量は <span class="math display">\[I_k = \sum_{l,m} q_k(l, m)\]</span> で表される.</p>
-<p>さて <span class="math inline">\(i\)</span> と <span class="math inline">\(j\)</span> をマージするならば, あたらしい <span class="math inline">\(i \oplus j\)</span> クラスが出来て, 各値は</p>
+<p>こうすると \(C^k\) の相互情報量は</p>
+\[I_k = \sum_{l,m} q_k(l, m)\]
+<p>で表される.</p>
+<p>さて \(i\) と \(j\) をマージするならば, あたらしい \(i \oplus j\) クラスが出来て, 各値は</p>
 <ul>
-<li><span class="math inline">\(p_k(i \oplus j, m) = p_k(i, m) + p_k(j, m)\)</span></li>
-<li><span class="math inline">\(q_k(i \oplus j, m) = p_k(i \oplus j, m) + \log \dfrac{p_k(i \oplus j, m)}{\pl_k(i \oplus j) \pr_k(m)}\)</span></li>
+  <li>\(p_k(i \oplus j, m) = p_k(i, m) + p_k(j, m)\)</li>
+  <li>\(q_k(i \oplus j, m) = p_k(i \oplus j, m) + \log \dfrac{p_k(i \oplus j, m)}{\pl_k(i \oplus j) \pr_k(m)}\)</li>
 </ul>
-<p>で更新されて, 相互情報量は <span class="math display">\[I&#39; = I_k - s_k(i) - s_k(j) + q_k(i,j) + q_k(j,i) + q_k(i+j,i+j) + \sum_{l \ne i,j} q_k(l, i+j) + \sum_{m \ne i,j} q_k(i+j,m)\]</span> where <span class="math inline">\(s_k(i) = \sum_l q_k(l, i) + \sum_m q_k(i, m) - q_k(i,i)\)</span></p>
-<p>というわけで <span class="math inline">\(I&#39;\)</span> を最大化するペア <span class="math inline">\((i,j)\)</span> を探してマージしていけばよい.</p>
-<blockquote>
-<p>そのまま実装すると <span class="math inline">\(V^2\)</span> で大変そう.</p>
-</blockquote>
-<h3 id="classes-gotten-with-this-alogrithm">Classes gotten with this alogrithm</h3>
+<p>で更新されて, 相互情報量は</p>
+\[I&#x27; = I_k - s_k(i) - s_k(j) + q_k(i,j) + q_k(j,i) + q_k(i+j,i+j) + \sum_{l \ne i,j} q_k(l, i+j) + \sum_{m \ne i,j} q_k(i+j,m)\]
+<p>where \(s_k(i) = \sum_l q_k(l, i) + \sum_m q_k(i, m) - q_k(i,i)\)</p>
+<p>というわけで \(I&#x27;\) を最大化するペア \((i,j)\) を探してマージしていけばよい.</p>
+<blockquote>そのまま実装すると \(V^2\) で大変そう.</blockquote>
+<h3>Classes gotten with this alogrithm</h3>
 <p>次のようなものが同じクラスの語彙として得られた:</p>
-<ol type="1">
-<li>Friday, Monday, ... Sunday, weekends</li>
-<li>June, March, July ...</li>
-<li>people guys folks fellows ...</li>
-<li>down, backwards, ashore, sideways ...</li>
-<li>water, gas, coal, liquid ...</li>
-<li>had, hadn't hath would've could've ...</li>
+<ol>
+  <li>Friday, Monday, ... Sunday, weekends</li>
+  <li>June, March, July ...</li>
+  <li>people guys folks fellows ...</li>
+  <li>down, backwards, ashore, sideways ...</li>
+  <li>water, gas, coal, liquid ...</li>
+  <li>had, hadn't hath would've could've ...</li>
 </ol>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -204,5 +217,9 @@ original paper: <a href=http://dl.acm.org/citation.cfm?id=176316>http://dl.acm.o
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

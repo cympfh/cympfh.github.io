@@ -1,103 +1,98 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>[2003.08063] Stable Neural Flows</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">[2003.08063] Stable Neural Flows</h1>
-</header>
+<p><ul> <li>original paper: <a href=https://arxiv.org/abs/2003.08063>https://arxiv.org/abs/2003.08063</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#深層学習>深層学習</a> </div></p>
+<h2>Python ライブラリ</h2>
 <ul>
-<li>
-original paper: <a href=https://arxiv.org/abs/2003.08063>https://arxiv.org/abs/2003.08063</a>
-</li>
+  <li><a href="https://torchdyn.readthedocs.io/en/latest/index.html">TorchDyn</a></li>
 </ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a></p>
-</div>
-<h2 id="python-ライブラリ">Python ライブラリ</h2>
+<h2>関連</h2>
 <ul>
-<li><a href="https://torchdyn.readthedocs.io/en/latest/index.html">TorchDyn</a></li>
+  <li><a href="https://arxiv.org/abs/1806.07366">[arxiv:1806.07366] Neural Ordinary Differential Equations</a></li>
 </ul>
-<h2 id="関連">関連</h2>
-<ul>
-<li><a href="https://arxiv.org/abs/1806.07366">[arxiv:1806.07366] Neural Ordinary Differential Equations</a></li>
-</ul>
-<h2 id="概要">概要</h2>
+<h2>概要</h2>
 <p>十分たくさんの層を重ねる代わりに, 常微分方程式 (ODE) 一つを置くことでより細やかなDNNが再現できる. 学習は微分方程式を解くことで, 推論はそれを積分することに相当させる.</p>
-<h2 id="dnn---flow">DNN -&gt; Flow</h2>
-<h3 id="dnn">DNN</h3>
-<p>DNN は結局（一個一個は単純な）関数を直列に合成したもの: <span class="math display">\[F(x) = f_N ( \cdots ( f_2 ( f_1 (x) ) ) \cdots )\]</span></p>
-<p>ここで <span class="math inline">\(f_i\)</span> という関数は重み <span class="math inline">\(w_i\)</span> を用いた <span class="math inline">\(i\)</span> 番目の方法で計算をするものだから, その処理系を <span class="math inline">\(f(i, w_i, x) = f_i(x)\)</span> と書くことができるはず. これを使うと,</p>
+<h2>DNN -> Flow</h2>
+<h3>DNN</h3>
+<p>DNN は結局（一個一個は単純な）関数を直列に合成したもの:</p>
+\[F(x) = f_N ( \cdots ( f_2 ( f_1 (x) ) ) \cdots )\]
+<p>ここで \(f_i\) という関数は重み \(w_i\) を用いた \(i\) 番目の方法で計算をするものだから, その処理系を \(f(i, w_i, x) = f_i(x)\) と書くことができるはず. これを使うと,</p>
 <ul>
-<li><span class="math inline">\(x_1 = x\)</span></li>
-<li><span class="math inline">\(x_{i+1} = f(i, w_i, x_i)\)</span></li>
-<li><span class="math inline">\(F(x) = x_{N+1}\)</span></li>
+  <li>\(x_1 = x\)</li>
+  <li>\(x_{i+1} = f(i, w_i, x_i)\)</li>
+  <li>\(F(x) = x_{N+1}\)</li>
 </ul>
 <p>と書ける.</p>
-<h3 id="residual">Residual</h3>
-<p>経験的に <span class="math inline">\(f_i(x)\)</span> を使うより <span class="math inline">\(x + f_i(x)\)</span> をするほうが学習上手く行くことがわかってる. これは逆伝播が直接前の層に伝えられるから. これと同じことを今さっきのに適用しよう.</p>
+<h3>Residual</h3>
+<p>経験的に \(f_i(x)\) を使うより \(x + f_i(x)\) をするほうが学習上手く行くことがわかってる. これは逆伝播が直接前の層に伝えられるから. これと同じことを今さっきのに適用しよう.</p>
 <ul>
-<li><span class="math inline">\(x_1 = x\)</span></li>
-<li><span class="math inline">\(x_{i+1} = f(i, w_i, x_i) + x_i\)</span>
-<ul>
-<li><span class="math inline">\(\iff x_{i+1} - x_i = f(i, w_i, x_i)\)</span></li>
-</ul></li>
-<li><span class="math inline">\(F(x) = x_{N+1}\)</span></li>
+  <li>\(x_1 = x\)</li>
+  <li>
+    \(x_{i+1} = f(i, w_i, x_i) + x_i\)
+    <ul>
+      <li>\(\iff x_{i+1} - x_i = f(i, w_i, x_i)\)</li>
+    </ul>
+  </li>
+  <li>\(F(x) = x_{N+1}\)</li>
 </ul>
-<h3 id="flow-へ">Flow へ</h3>
-<p>この <span class="math inline">\(x_1, x_2, \ldots, x_{N+1}\)</span> というのを同じ多様体 <span class="math inline">\(X\)</span> の上の点のフローだと思ってみる. すなわち, <span class="math inline">\(x_i\)</span> を <span class="math inline">\(X\)</span> 上の時刻 <span class="math inline">\(i\)</span> 時点の点だと言うことにする. すると <span class="math inline">\(x_{i+1} - x_i\)</span> というのは <span class="math inline">\(\Delta x\)</span> に見えてくる.</p>
-<p>時刻も離散的な <span class="math inline">\(1,2,\ldots, N+1\)</span> から, 実数区間 <span class="math inline">\(0 \to 1\)</span> にした方がきれい.</p>
+<h3>Flow へ</h3>
+<p>この \(x_1, x_2, \ldots, x_{N+1}\) というのを同じ多様体 \(X\) の上の点のフローだと思ってみる. すなわち, \(x_i\) を \(X\) 上の時刻 \(i\) 時点の点だと言うことにする. すると \(x_{i+1} - x_i\) というのは \(\Delta x\) に見えてくる.</p>
+<p>時刻も離散的な \(1,2,\ldots, N+1\) から, 実数区間 \(0 \to 1\) にした方がきれい.</p>
 <ul>
-<li><span class="math inline">\(x_0 = x\)</span></li>
-<li><span class="math inline">\(\frac{dx}{dt} = f(t, w_t, x_t)\)</span></li>
-<li><span class="math inline">\(F(x) = x_1\)</span></li>
+  <li>\(x_0 = x\)</li>
+  <li>\(\frac{dx}{dt} = f(t, w_t, x_t)\)</li>
+  <li>\(F(x) = x_1\)</li>
 </ul>
-<p>ここで <span class="math inline">\(x_t\)</span> は時刻 <span class="math inline">\(t\)</span> 時点の点 <span class="math inline">\(x\)</span>. 従って入力 <span class="math inline">\(x\)</span> が <span class="math inline">\(x_0\)</span>. 最後の値 <span class="math inline">\(x_1\)</span> が元のDNNの出力.</p>
-<figure>
-<img src="https://i.imgur.com/nd2HXln.png" />
-<figcaption>
-関連 arxiv:1806.07366 より引用.<br> 左の depth は第何層を表している. 離散的に値を少しずつずらしている.<br> 一方右では depth は時刻を表している.
-</figcaption>
-</figure>
-<h2 id="neural-flows">Neural Flows</h2>
+<p>ここで \(x_t\) は時刻 \(t\) 時点の点 \(x\) . 従って入力 \(x\) が \(x_0\) . 最後の値 \(x_1\) が元のDNNの出力.</p>
+<p><figure> <img src="https://i.imgur.com/nd2HXln.png" /> <figcaption> 関連 arxiv:1806.07366 より引用.<br> 左の depth は第何層を表している. 離散的に値を少しずつずらしている.<br> 一方右では depth は時刻を表している. </figcaption> </figure></p>
+<h2>Neural Flows</h2>
 <p>微分方程式部分にはいくつかバリエーションが考えられる.</p>
-<h3 id="depth-variant">Depth Variant</h3>
-<p>これはさっきみせたもの. 各層は異なる計算をさせたいから depth <span class="math inline">\(t\)</span> を入力に入れる.</p>
+<h3>Depth Variant</h3>
+<p>これはさっきみせたもの. 各層は異なる計算をさせたいから depth \(t\) を入力に入れる.</p>
 <ul>
-<li><span class="math inline">\(\frac{dx}{dt} = f(t, w(t), x_t)\)</span></li>
+  <li>\(\frac{dx}{dt} = f(t, w(t), x_t)\)</li>
 </ul>
-<h3 id="depth-invariant">Depth Invariant</h3>
+<h3>Depth Invariant</h3>
 <p>時刻パラメータに依存しないパターン. 状態を持たない RNN みたいな感じかな.</p>
 <ul>
-<li><span class="math inline">\(\frac{dx}{dt} = f(w(t), x_t)\)</span></li>
+  <li>\(\frac{dx}{dt} = f(w(t), x_t)\)</li>
 </ul>
-<h2 id="機械学習への適用">機械学習への適用</h2>
-<p>ODE 部分は同じ空間 <span class="math inline">\(X\)</span> から <span class="math inline">\(X\)</span> への写像として使われる. 実際に学習させたいものはそういう形式ではないだろうから適当な空間へのエンコードとデコードを行う.</p>
+<h2>機械学習への適用</h2>
+<p>ODE 部分は同じ空間 \(X\) から \(X\) への写像として使われる. 実際に学習させたいものはそういう形式ではないだろうから適当な空間へのエンコードとデコードを行う.</p>
 <ul>
-<li>Input: <span class="math inline">\(x\)</span></li>
-<li>Encode: <span class="math inline">\(z_0 = E(x) \in Z\)</span></li>
-<li>ODE: <span class="math inline">\(Z \to Z\)</span>
-<ul>
-<li><span class="math inline">\(dz/dt = f(z, \cdots)\)</span></li>
-</ul></li>
-<li>Decode: <span class="math inline">\(y = D(z_1)\)</span></li>
-<li>Output: <span class="math inline">\(y\)</span></li>
+  <li>Input: \(x\)</li>
+  <li>Encode: \(z_0 = E(x) \in Z\)</li>
+  <li>
+    ODE: \(Z \to Z\)
+    <ul>
+      <li>\(dz&#x2F;dt = f(z, \cdots)\)</li>
+    </ul>
+  </li>
+  <li>Decode: \(y = D(z_1)\)</li>
+  <li>Output: \(y\)</li>
 </ul>
-<p>ここで出てくる <span class="math inline">\(E, f, D\)</span> を DNN で構成する.</p>
+<p>ここで出てくる \(E, f, D\) を DNN で構成する.</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -202,5 +197,9 @@ original paper: <a href=https://arxiv.org/abs/2003.08063>https://arxiv.org/abs/2
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

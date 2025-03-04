@@ -1,50 +1,45 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Weight Normalization</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">Weight Normalization</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=https://arxiv.org/abs/1602.07868>https://arxiv.org/abs/1602.07868</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a></p>
-</div>
-<h2 id="概要手法">概要・手法</h2>
-<p>ディープラーニングにおける 1 層とは、ある重みパラメータ (行列) <span class="math inline">\(W\)</span> を以って 入力ベクトル (あるいは行列) <span class="math inline">\(x\)</span> から</p>
-<p><span class="math display">\[y = W*x\]</span></p>
-<p>という操作をすること. <span class="math inline">\(*\)</span> は行列の掛け算だったり畳み込みだったりする演算.</p>
-<p>Weight Normalization は <span class="math inline">\(W\)</span> というパラメータを陽に持たず、代わりに スカラー <span class="math inline">\(g\)</span> 及び行列 <span class="math inline">\(V\)</span> を持ち、</p>
-<p><span class="math display">\[W = g \frac{V}{\|V\|}\]</span></p>
-<p>として使う. 学習も <span class="math inline">\(g, V\)</span> それぞれを更新する.</p>
-<h2 id="メリット">メリット</h2>
+<p><ul> <li>original paper: <a href=https://arxiv.org/abs/1602.07868>https://arxiv.org/abs/1602.07868</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#深層学習>深層学習</a> </div></p>
+<h2>概要・手法</h2>
+<p>ディープラーニングにおける 1 層とは、ある重みパラメータ (行列) \(W\) を以って 入力ベクトル (あるいは行列) \(x\) から</p>
+\[y = W*x\]
+<p>という操作をすること. \(*\) は行列の掛け算だったり畳み込みだったりする演算.</p>
+<p>Weight Normalization は \(W\) というパラメータを陽に持たず、代わりに スカラー \(g\) 及び行列 \(V\) を持ち、</p>
+\[W = g \frac{V}{\|V\|}\]
+<p>として使う. 学習も \(g, V\) それぞれを更新する.</p>
+<h2>メリット</h2>
 <p>学習の安定化、高速化</p>
-<p>学習が全然吹っ飛ばないので学習率を思い切って上げて良い. 本来学習率 <span class="math inline">\(lr\)</span> に対して、学習の速度は</p>
-<p><span class="math display">\[lr, lr(LR - lr)\]</span></p>
-<p>という2つの値の大きさで決まる. ここで <span class="math inline">\(LR\)</span> はある定数で、<span class="math inline">\(lr\)</span> が大きいほど一つ目の値が大きくなる分、早くなるが、 二つ目は小さくなるので遅くなり、ある以上大きくなるとマイナスになって学習が進まなくなる (吹っ飛ぶ).</p>
+<p>学習が全然吹っ飛ばないので学習率を思い切って上げて良い. 本来学習率 \(lr\) に対して、学習の速度は</p>
+\[lr, lr(LR - lr)\]
+<p>という2つの値の大きさで決まる. ここで \(LR\) はある定数で、 \(lr\) が大きいほど一つ目の値が大きくなる分、早くなるが、 二つ目は小さくなるので遅くなり、ある以上大きくなるとマイナスになって学習が進まなくなる (吹っ飛ぶ).</p>
 <p>Weight Normalization では、学習の速度は</p>
-<p><span class="math display">\[lr, lr&#39; (LR&#39; - lr&#39;)\]</span></p>
-<p>という2つの値の大きさで決まる. <span class="math inline">\(LR&#39;\)</span> はまた定数. <span class="math inline">\(lr&#39;\)</span> とは、<span class="math inline">\(lr\)</span> を <span class="math inline">\(\|V\|\)</span> の自乗くらいで割った大きさ. <span class="math inline">\(\|V\|\)</span> は <span class="math inline">\(W\)</span> に影響しないのに速度には影響を与える. ある程度大きければ、 <span class="math inline">\((LR&#39; - lr&#39;)\)</span> はマイナスにならないので学習が安定化して、普通よりも思い切って大きい学習率を使っていい.</p>
-<p>特長として、学習の中で <span class="math inline">\(\|V\|\)</span> は単調に大きくなるというのがある.</p>
-<p><span class="math inline">\(W\)</span> に <span class="math inline">\(V\)</span> はノルム正規化してから使われてるので、微分したとき、<span class="math inline">\(V\)</span> の接方向 (<span class="math inline">\(V\)</span> と直交方向) にしか動かないことは自明. となると <span class="math inline">\(\|V\|\)</span> は大きくなる.</p>
+\[lr, lr&#x27; (LR&#x27; - lr&#x27;)\]
+<p>という2つの値の大きさで決まる. \(LR&#x27;\) はまた定数. \(lr&#x27;\) とは、 \(lr\) を \(\|V\|\) の自乗くらいで割った大きさ. \(\|V\|\) は \(W\) に影響しないのに速度には影響を与える. ある程度大きければ、 \((LR&#x27; - lr&#x27;)\) はマイナスにならないので学習が安定化して、普通よりも思い切って大きい学習率を使っていい.</p>
+<p>特長として、学習の中で \(\|V\|\) は単調に大きくなるというのがある.</p>
+<p>\(W\) に \(V\) はノルム正規化してから使われてるので、微分したとき、 \(V\) の接方向 ( \(V\) と直交方向) にしか動かないことは自明. となると \(\|V\|\) は大きくなる.</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -149,5 +144,9 @@ original paper: <a href=https://arxiv.org/abs/1602.07868>https://arxiv.org/abs/1
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

@@ -1,58 +1,47 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Weight Agnostic Neural Networks (WANN)</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">Weight Agnostic Neural Networks (WANN)</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=https://weightagnostic.github.io/>https://weightagnostic.github.io/</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a></p>
-</div>
-<h2 id="概要">概要</h2>
+<p><ul> <li>original paper: <a href=https://weightagnostic.github.io/>https://weightagnostic.github.io/</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#深層学習>深層学習</a> </div></p>
+<h2>概要</h2>
 <p>実際の生物を観察すると, 生まれたてにも関わらずに運動能力や認知能力をすぐに獲得する. NNs で言えばパラメータがまだランダムな状態でもある程度の能力が獲得できるということになる.</p>
 <p>パラメータはランダムはままで頑張る系の研究はままある. ランダムなままの CNN で画像をどうこうする系とか LSTM で系列をどうこうする系とか. NNs というのはパラメータに対しては意外と剛健らしい. しかしながら逆に構造は重要で, やはり画像には CNN だし系列には LSTM 系が強い.</p>
 <p>というわけで, パラメータはランダムなままで, ネットワーク構造を進化させる方向で強いものが作れるか実験をする.</p>
-<h2 id="実験">実験</h2>
+<h2>実験</h2>
 <p>単純なネットワークから初めて（パラメータは未熟な状態で）動かして評価して強いのを作ってく.</p>
-<figure>
-<img src="https://i.imgur.com/pTc7BFx.png" />
-</figure>
+<p><img src="https://i.imgur.com/pTc7BFx.png" alt="" /></p>
 <p>一番左の状態からスタートして, 徐々に複雑化してく.</p>
-<figure>
-<img src="https://i.imgur.com/aFbu2bU.png" />
-</figure>
+<p><img src="https://i.imgur.com/aFbu2bU.png" alt="" /></p>
 <p>パラメータは先程述べたように基本的にランダムだが, 次の四通りを試した.</p>
-<ol type="1">
-<li>random weights: それぞれ <span class="math inline">\(U(-2, 2)\)</span> (一様ランダム)</li>
-<li>random shared weight: 共通して一つの重み <span class="math inline">\(U(-2, 2)\)</span> を使う</li>
-<li>tuned shared weight: 共通して一つを使うが <span class="math inline">\((-2, 2)\)</span> の中で最高性能を出すものを選ぶ</li>
-<li>tuned weight: これはちゃんと強化学習してチューニングしたもの</li>
+<ol>
+  <li>random weights: それぞれ \(U(-2, 2)\) (一様ランダム)</li>
+  <li>random shared weight: 共通して一つの重み \(U(-2, 2)\) を使う</li>
+  <li>tuned shared weight: 共通して一つを使うが \((-2, 2)\) の中で最高性能を出すものを選ぶ</li>
+  <li>tuned weight: これはちゃんと強化学習してチューニングしたもの</li>
 </ol>
-<figure>
-<img src="https://i.imgur.com/zPW4Oof.png" />
-</figure>
-<p>チューニングはチューニングなんだからシたほうが結果がよくなるのは当然だけど, shared が実は強い. 大雑把に言えば <span class="math inline">\(1&lt;2&lt;3&lt;4\)</span> という結果.</p>
+<p><img src="https://i.imgur.com/zPW4Oof.png" alt="" /></p>
+<p>チューニングはチューニングなんだからシたほうが結果がよくなるのは当然だけど, shared が実は強い. 大雑把に言えば \(1&lt;2&lt;3&lt;4\) という結果.</p>
 <p><a href="https://weightagnostic.github.io/">weightagnostic.github.io</a> にデモがある.</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -157,5 +146,9 @@ original paper: <a href=https://weightagnostic.github.io/>https://weightagnostic
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

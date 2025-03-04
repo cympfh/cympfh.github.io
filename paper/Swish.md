@@ -9,7 +9,7 @@
     - この亜種として Swish-$\beta$, $f(x;\beta) = 2x \sigma(\beta x)$
 - 明らかにこれは relu の亜種であるので、 relu を使っているような場面で Swish は候補の1つとなる
 
-```gnuplot
+```@gnuplot
 set grid
 set xrange [-5: 8]
 sigmoid(x) = 1/(1+exp(-x))

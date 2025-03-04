@@ -83,7 +83,7 @@ $P:U$ のデータが $2\theta_P:1$ の重みで扱われていることが分�
 $$\ell(m) = \frac{1}{2} \max(0, \min(2, 1-m))$$
 がある.
 
-```gnuplot
+```@gnuplot
 set grid
 set xrange [-2:2]
 set yrange [-0.2:1.2]

@@ -24,7 +24,9 @@ $$P_{ij} = \sigma(o_{ij}) = \frac{1}{1 + \exp (-o_{ij})}$$
 
 $o_{ji} = - o_{ij}$ から $P_{ji} = 1 - P_{ij}$ になってることが確認出来る.
 
-```gnuplot
+<center>
+
+```@gnuplot
 set xlabel "o"
 set grid
 set key bottom right
@@ -32,6 +34,7 @@ set xrange [-5:5]
 plot exp(x) / (1 + exp(x))
 ```
 
+</center>
 というわけで、スコアを直接学習するのではなく、確率を学習するものだと思うことにする.
 教師信号は実際の大小関係 $(\succ)$ を使って、
 
@@ -49,12 +52,16 @@ $$\mathcal{L} = - P_{ij}^* \log P_{ij} - P_{ji}^* \log P_{ji}$$
 $P_{ij}$ の式を頑張って代入すると、
 $$\mathcal{L} = - P_{ij}^* o_{ij} + \log \left( 1 + \exp o_{ij} \right)$$
 
-```gnuplot
+<center>
+
+```@gnuplot
 set xlabel "o"
 set grid
 set xrange [-5:5]
 plot (-x + log(1 + exp(x))) title "L(P^*=1)", (log(1 + exp(x))) title "L(P^*=0)", (-x/2 + log(1 + exp(x))) title"L(P^*=0.5)"
 ```
+
+</center>
 
 ### 確率合成
 

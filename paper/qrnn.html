@@ -1,76 +1,78 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Quasi-Recurrent Neural Network (QRNN)</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">Quasi-Recurrent Neural Network (QRNN)</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=https://arxiv.org/abs/1611.01576>https://arxiv.org/abs/1611.01576</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a></p>
-</div>
+<p><ul> <li>original paper: <a href=https://arxiv.org/abs/1611.01576>https://arxiv.org/abs/1611.01576</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#深層学習>深層学習</a> </div></p>
 <p>RNN と言えば LSTM だが、とにかく学習 (1回の逆伝播) が遅い. また、ユニットの状態を見て一体どんな特徴を捉えているのかの分析も難しい. QRNN はこれら2つを解決する.</p>
-<h2 id="手法">手法</h2>
+<h2>手法</h2>
 <p>入力は系列:</p>
-<p><span class="math display">\[x_1, x_2, \ldots, x_t, \ldots, x_T\]</span></p>
-<p>各 <span class="math inline">\(x_i\)</span> はベクトル <span class="math inline">\(\mathbb{R}^n\)</span>.</p>
-<figure>
-<img src="img/qrnn/fig.png" />
-</figure>
+\[x_1, x_2, \ldots, x_t, \ldots, x_T\]
+<p>各 \(x_i\) はベクトル \(\mathbb{R}^n\) .</p>
+<p><img src="img/qrnn/fig.png" alt="" /></p>
 <p>次のようにして、LSTMライクなことをする.</p>
-<ol type="1">
-<li>Convolution
-<ul>
-<li>画像の畳込み同様に <span class="math inline">\(x_1, x_2, \ldots, x_t, \ldots, x_T\)</span> から次の最大 4 つのパラメータを作る
-<ol type="1">
-<li><span class="math inline">\(z_1, z_2, \ldots, z_t, \ldots, z_T\)</span> <span class="math inline">\((\tanh)\)</span></li>
-<li><span class="math inline">\(i_1, i_2, \ldots, i_t, \ldots, i_T\)</span> <span class="math inline">\((\sigma)\)</span> (optional)</li>
-<li><span class="math inline">\(f_1, f_2, \ldots, f_t, \ldots, f_T\)</span> <span class="math inline">\((\sigma)\)</span></li>
-<li><span class="math inline">\(o_1, o_2, \ldots, o_t, \ldots, o_T\)</span> <span class="math inline">\((\sigma)\)</span> (optional)</li>
-</ol></li>
-<li>括弧内は最後の活性化層</li>
-<li>実際の畳み込み方はバリエーションが考えられる
-<ul>
-<li>元論文の例では、 <span class="math inline">\(z_t, i_t, f_t, o_t\)</span> を <span class="math inline">\(x_t, x_{t-1}\)</span> から作る</li>
-</ul></li>
-<li><span class="math inline">\(i_t, o_t\)</span> は省略可 (後述)</li>
-<li>注意点としてこの計算 (逆伝播含めて) は並列化可能であること</li>
-</ul></li>
-<li>Pooling
-<ul>
-<li>系列 <span class="math inline">\((z_1, i_1, f_1, o_1), \ldots\)</span> から <span class="math inline">\(h_t\)</span> を作る</li>
-<li>内部状態 <span class="math inline">\(c_t\)</span> を持ち、<span class="math inline">\(h_t\)</span> を出力する</li>
-<li>適当な初期値 <span class="math inline">\(c_0\)</span> を以って、次の式を以って系列に沿って計算する</li>
-</ul></li>
+<ol>
+  <li>
+    Convolution
+    <ul>
+      <li>
+        画像の畳込み同様に \(x_1, x_2, \ldots, x_t, \ldots, x_T\) から次の最大 4 つのパラメータを作る
+        <ol>
+          <li>\(z_1, z_2, \ldots, z_t, \ldots, z_T\) \((\tanh)\)</li>
+          <li>\(i_1, i_2, \ldots, i_t, \ldots, i_T\) \((\sigma)\) (optional)</li>
+          <li>\(f_1, f_2, \ldots, f_t, \ldots, f_T\) \((\sigma)\)</li>
+          <li>\(o_1, o_2, \ldots, o_t, \ldots, o_T\) \((\sigma)\) (optional)</li>
+        </ol>
+      </li>
+      <li>括弧内は最後の活性化層</li>
+      <li>
+        実際の畳み込み方はバリエーションが考えられる
+        <ul>
+          <li>元論文の例では、 \(z_t, i_t, f_t, o_t\) を \(x_t, x_{t-1}\) から作る</li>
+        </ul>
+      </li>
+      <li>\(i_t, o_t\) は省略可 (後述)</li>
+      <li>注意点としてこの計算 (逆伝播含めて) は並列化可能であること</li>
+    </ul>
+  </li>
+  <li>
+    Pooling
+    <ul>
+      <li>系列 \((z_1, i_1, f_1, o_1), \ldots\) から \(h_t\) を作る</li>
+      <li>内部状態 \(c_t\) を持ち、 \(h_t\) を出力する</li>
+      <li>適当な初期値 \(c_0\) を以って、次の式を以って系列に沿って計算する</li>
+    </ul>
+  </li>
 </ol>
-<p><span class="math display">\[c_t = f_t \odot c_{t_1} + i_t \odot z_t\]</span> <span class="math display">\[h_t = o_t \odot c_t\]</span></p>
+\[c_t = f_t \odot c_{t_1} + i_t \odot z_t\]
+\[h_t = o_t \odot c_t\]
 <ul>
-<li><span class="math inline">\(i_t\)</span> を省略する場合、<span class="math inline">\(i_t = 1 - f_t\)</span> とする</li>
-<li><span class="math inline">\(o_t\)</span> を省略する場合、<span class="math inline">\(o_t = 1\)</span> <span class="math inline">\((c_t = h_t)\)</span> とする</li>
+  <li>\(i_t\) を省略する場合、 \(i_t = 1 - f_t\) とする</li>
+  <li>\(o_t\) を省略する場合、 \(o_t = 1\) \((c_t = h_t)\) とする</li>
 </ul>
-<p>どれを省略するかによって、<span class="math inline">\(\mathit{f}\)</span>-pooling, <span class="math inline">\(\mathit{fo}\)</span>-pooling, <span class="math inline">\(\mathit{ifo}\)</span>-pooling と呼ぶ.</p>
+<p>どれを省略するかによって、 \(\mathit{f}\) -pooling, \(\mathit{fo}\) -pooling, \(\mathit{ifo}\) -pooling と呼ぶ.</p>
 <p>系列に沿った逆伝播は pooling のところだけだけど、LSTM と異なってただの掛け算だけなので、 マシな計算量で済むのが特長.</p>
-<h3 id="dropout">Dropout</h3>
-<p><span class="math inline">\(f_{tj} = 1, i_{tj} = 0\)</span> なる要素があれば、時刻 <span class="math inline">\(t\)</span> の成分 <span class="math inline">\(j\)</span> は落ちる.</p>
+<h3>Dropout</h3>
+<p>\(f_{tj} = 1, i_{tj} = 0\) なる要素があれば、時刻 \(t\) の成分 \(j\) は落ちる.</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -175,5 +177,9 @@ original paper: <a href=https://arxiv.org/abs/1611.01576>https://arxiv.org/abs/1
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

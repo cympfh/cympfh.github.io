@@ -1,76 +1,85 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Collaborative Filtering for Implicit Feedback Datasets (Weighted Regularized Matrix Factorization)</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">Collaborative Filtering for Implicit Feedback Datasets (Weighted Regularized Matrix Factorization)</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=http://yifanhu.net/PUB/cf.pdf>http://yifanhu.net/PUB/cf.pdf</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#推薦システム>推薦システム</a> <a class='tag is-blue' href=index.html#行列分解>行列分解</a></p>
-</div>
-<h2 id="概要">概要</h2>
+<p><ul> <li>original paper: <a href=http://yifanhu.net/PUB/cf.pdf>http://yifanhu.net/PUB/cf.pdf</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#推薦システム>推薦システム</a> <a class='tag is-blue' href=index.html#行列分解>行列分解</a> </div></p>
+<h2>概要</h2>
 <p>協調レコメンドである行列分解に正則化と重み付けを足した.</p>
 <p><a href="https://arxiv.org/pdf/1810.01520.pdf">RecSys2018 Spotify チャレンジ</a> で spotif.ai というチームが用いていた.</p>
-<h2 id="手法">手法</h2>
-<h3 id="通常の行列分解">通常の行列分解</h3>
-<p><span class="math inline">\(m\)</span> ユーザーと <span class="math inline">\(n\)</span> アイテムがあって, 既に何かしらの指標 <span class="math inline">\(r_{ui}\)</span> が各ユーザー <span class="math inline">\(u\)</span>, アイテム <span class="math inline">\(i\)</span> ごとにある. この指標は例えば視聴したとか購入したとかで, <span class="math display">\[p_{ui} = \begin{cases}1 &amp; \text{ if } r_{ui} &gt; 0 \\ 0 &amp; \text{ otherwise}\end{cases}\]</span> と量化して使う. この <span class="math inline">\(p\)</span> を学習データにして <span class="math inline">\(p\)</span> を予測する.</p>
-<p>ここで普通のよくある行列分解では潜在ベクトル次元を <span class="math inline">\(f\)</span> として, ユーザーベクトル <span class="math inline">\(X \in \mathbb R^{m \times f}\)</span> と アイテムベクトル <span class="math inline">\(Y \in \mathbb R^{n \times f}\)</span> を作る. それぞれの行ベクトルを <span class="math inline">\(x_u, y_i\)</span> などと書くことにする.</p>
-<p>ここで <span class="math inline">\(x_u^T y_i\)</span> が <span class="math inline">\(p_{ui}\)</span> になるようなものを目指す. したがって損失関数が次で与えられる. <span class="math display">\[\mathcal L = \sum_{u,i} \| p_{ui} - x_u^T y_i \|^2\]</span></p>
-<h3 id="正則化">正則化</h3>
-<p>ここで <span class="math inline">\(x_u, y_i\)</span> をL2正則化することが考えられる. <span class="math display">\[\mathcal L = \sum_{u,i} \| p_{ui} - x_u^T y_i \|^2 + \lambda \left( \|x_u\|^2 + \|y_i\|^2 \right)\]</span></p>
-<h3 id="重み付け">重み付け</h3>
-<p>彼らは更にこの第一項のところに重みをつけた. <span class="math inline">\(p\)</span> は <span class="math inline">\(r\)</span> を量化して作ったが, <span class="math inline">\(r\)</span> を重みとして用いたい. より積極的に高評価があるものはよく反映するべきだし, また <span class="math inline">\(p=0\)</span> は必ずしも不評ではなく単に欠損値であるだけかもしれないから重みは小さくていい. <span class="math inline">\(r\)</span> が大きければ大きくなって, <span class="math inline">\(r=0\)</span> のときに <span class="math inline">\(1\)</span> であるような値として</p>
+<h2>手法</h2>
+<h3>通常の行列分解</h3>
+<p>\(m\) ユーザーと \(n\) アイテムがあって, 既に何かしらの指標 \(r_{ui}\) が各ユーザー \(u\) , アイテム \(i\) ごとにある. この指標は例えば視聴したとか購入したとかで,</p>
+\[p_{ui} = \begin{cases}1 &amp; \text{ if } r_{ui} &gt; 0 \\ 0 &amp; \text{ otherwise}\end{cases}\]
+<p>と量化して使う. この \(p\) を学習データにして \(p\) を予測する.</p>
+<p>ここで普通のよくある行列分解では潜在ベクトル次元を \(f\) として, ユーザーベクトル \(X \in \mathbb R^{m \times f}\) と アイテムベクトル \(Y \in \mathbb R^{n \times f}\) を作る. それぞれの行ベクトルを \(x_u, y_i\) などと書くことにする.</p>
+<p>ここで \(x_u^T y_i\) が \(p_{ui}\) になるようなものを目指す. したがって損失関数が次で与えられる.</p>
+\[\mathcal L = \sum_{u,i} \| p_{ui} - x_u^T y_i \|^2\]
+<h3>正則化</h3>
+<p>ここで \(x_u, y_i\) をL2正則化することが考えられる.</p>
+\[\mathcal L = \sum_{u,i} \| p_{ui} - x_u^T y_i \|^2 + \lambda \left( \|x_u\|^2 + \|y_i\|^2 \right)\]
+<h3>重み付け</h3>
+<p>彼らは更にこの第一項のところに重みをつけた. \(p\) は \(r\) を量化して作ったが, \(r\) を重みとして用いたい. より積極的に高評価があるものはよく反映するべきだし, また \(p=0\) は必ずしも不評ではなく単に欠損値であるだけかもしれないから重みは小さくていい. \(r\) が大きければ大きくなって, \(r=0\) のときに \(1\) であるような値として</p>
 <ul>
-<li><span class="math inline">\(c_{ui} = 1 + \alpha r_{ui}\)</span></li>
-<li><span class="math inline">\(c_{ui} = 1 + \alpha \log (1 + r_{ui} / \epsilon )\)</span></li>
+  <li>\(c_{ui} = 1 + \alpha r_{ui}\)</li>
+  <li>\(c_{ui} = 1 + \alpha \log (1 + r_{ui} &#x2F; \epsilon )\)</li>
 </ul>
 <p>を提案している. 彼らの実験では１つ目を使っている.</p>
-<p><span class="math display">\[\mathcal L = \sum_{u,i} c_{ui} \| p_{ui} - x_u^T y_i \|^2 + \lambda \left( \|x_u\|^2 + \|y_i\|^2 \right)\]</span></p>
-<h3 id="最適化">最適化</h3>
-<p>（直接上の損失関数の最小化を勾配法とかでやってもいいと思うけど）<span class="math inline">\(X,Y\)</span> の片方を止めて微分をして極値の条件を求めるとと次の２つの関係が出てくる.</p>
+\[\mathcal L = \sum_{u,i} c_{ui} \| p_{ui} - x_u^T y_i \|^2 + \lambda \left( \|x_u\|^2 + \|y_i\|^2 \right)\]
+<h3>最適化</h3>
+<p>（直接上の損失関数の最小化を勾配法とかでやってもいいと思うけど） \(X,Y\) の片方を止めて微分をして極値の条件を求めるとと次の２つの関係が出てくる.</p>
 <ul>
-<li><span class="math inline">\(x_i = (Y^T C^u Y + \lambda I_f)^{-1} Y^T C^u p^u\)</span></li>
-<li><span class="math inline">\(y_u = (X^T C^i X + \lambda I_f)^{-1} X^T C^i p^i\)</span></li>
+  <li>\(x_i = (Y^T C^u Y + \lambda I_f)^{-1} Y^T C^u p^u\)</li>
+  <li>\(y_u = (X^T C^i X + \lambda I_f)^{-1} X^T C^i p^i\)</li>
 </ul>
-<p>ただしここで <span class="math inline">\(C^u\)</span> は対角行列であって <span class="math inline">\(C^u_{ii} = c_{ui}\)</span> というもの. 同様に <span class="math inline">\(C^i\)</span> は対角行列であって <span class="math inline">\(C^i_{uu} = c_{ui}\)</span> であるもの. <span class="math inline">\(p^u\)</span> は <span class="math inline">\(n\)</span> 次元ベクトルで <span class="math inline">\(p^u_i = p_{ui}\)</span> であるもの. 同様に <span class="math inline">\(p^i\)</span> は <span class="math inline">\(m\)</span> 次元ベクトルで <span class="math inline">\(p^i_u = p_{ui}\)</span> であるもの.</p>
+<p>ただしここで \(C^u\) は対角行列であって \(C^u_{ii} = c_{ui}\) というもの. 同様に \(C^i\) は対角行列であって \(C^i_{uu} = c_{ui}\) であるもの. \(p^u\) は \(n\) 次元ベクトルで \(p^u_i = p_{ui}\) であるもの. 同様に \(p^i\) は \(m\) 次元ベクトルで \(p^i_u = p_{ui}\) であるもの.</p>
 <p>この２つの関係式を使って, 一方を止めて他方を最適化, というのを交互に繰り返すことで最適化ができる.</p>
-<h3 id="説明的推薦">説明的推薦</h3>
-<p>先の関係式を用いると, アイテムどうしの類似度が出てきて, 「このアイテムを購入したからこれがお薦め」という説明が可能. ユーザー <span class="math inline">\(u\)</span> へのアイテム <span class="math inline">\(i\)</span> のスコアは <span class="math inline">\(y_i^T x_u\)</span> で計算できるが, <span class="math inline">\(x_u\)</span> は先の関係から <span class="math inline">\(C^u, p^u, Y\)</span> で表現できて <span class="math display">\[s^u_i = y_i^T (Y^T C^u Y + \lambda I_f)^{-1} Y^T C^u p^u\]</span> 一旦この真中の <span class="math inline">\((Y^T C^u Y + \lambda I_f)^{-1}\)</span> を <span class="math inline">\(W^u\)</span> と書くと <span class="math display">\[s^u_i = y_i^T W^u Y^T C^u p^u\]</span> <span class="math inline">\(p^u\)</span> で 1 が立っているところを <span class="math inline">\(j_1, j_2, \ldots\)</span> とする. それ以外はゼロなので <span class="math display">\[s^u_i = \sum_j c_{uj} (y_i^T W^u y_j)\]</span> になる. <span class="math inline">\(y_i^T W^u y_j\)</span> という値を <span class="math inline">\(i\)</span> と <span class="math inline">\(j\)</span> との類似度と見ることが出来て, 結局スコアは <span class="math inline">\(u\)</span> が過去視聴/購入したアイテムとの類似度との線形結合である, と解釈できる.</p>
-<h2 id="感想">感想</h2>
+<h3>説明的推薦</h3>
+<p>先の関係式を用いると, アイテムどうしの類似度が出てきて, 「このアイテムを購入したからこれがお薦め」という説明が可能. ユーザー \(u\) へのアイテム \(i\) のスコアは \(y_i^T x_u\) で計算できるが, \(x_u\) は先の関係から \(C^u, p^u, Y\) で表現できて</p>
+\[s^u_i = y_i^T (Y^T C^u Y + \lambda I_f)^{-1} Y^T C^u p^u\]
+<p>一旦この真中の \((Y^T C^u Y + \lambda I_f)^{-1}\) を \(W^u\) と書くと</p>
+\[s^u_i = y_i^T W^u Y^T C^u p^u\]
+<p>\(p^u\) で 1 が立っているところを \(j_1, j_2, \ldots\) とする. それ以外はゼロなので</p>
+\[s^u_i = \sum_j c_{uj} (y_i^T W^u y_j)\]
+<p>になる. \(y_i^T W^u y_j\) という値を \(i\) と \(j\) との類似度と見ることが出来て, 結局スコアは \(u\) が過去視聴/購入したアイテムとの類似度との線形結合である, と解釈できる.</p>
+<h2>感想</h2>
 <p>手法自体は既にある正則化付き行列分解に重みを付けただけだけど, 最適化の式とアイテムの類似度の算出が面白い. その類似度が本当に説明になっているのかは眉唾だが, 「良い推薦システムは説明的であるべき」という主張は同意できる.</p>
-<p>ところで重みなしにしたかったら <span class="math inline">\(C^u=I, C^i=I\)</span> にすればいいだけで, 正則化なしにしたかったら <span class="math inline">\(\lambda = 0\)</span> にすればいいだけなのだが, その場合 <span class="math inline">\(W^u = Y^T Y\)</span> であり, <span class="math inline">\(i\)</span> と <span class="math inline">\(j\)</span> の類似度として <span class="math inline">\(s_{ij} = y_i^T Y^T Y y_j = (Yy_i)^T (Yy_j)\)</span> となる. これはどんな値なんだろう. <span class="math inline">\(Y y_j\)</span> は <span class="math inline">\((y_k^T y_j)_k\)</span> なるベクトルで, <span class="math inline">\(Yy_i = (y_k^T y_j)_k\)</span> との内積をとると <span class="math inline">\(s_{ij} = \sum_k (y_k^T y_i) (y_k^T y_j)\)</span>.</p>
-<p>何も考察せずにアイテムどうしの類似度を出せと言われたらつい <span class="math inline">\(y_i^T y_j\)</span> を計算してしまう. この単純な内積による類似度を <span class="math inline">\(t_{ij}\)</span> ということにすると, <span class="math inline">\(s_{ij} = \sum_k t_{ik} t_{kj}\)</span> となる. <span class="math inline">\(k\)</span> を仲介にした類似度?</p>
-<h2 id="関連">関連</h2>
+<p>ところで重みなしにしたかったら \(C^u=I, C^i=I\) にすればいいだけで, 正則化なしにしたかったら \(\lambda = 0\) にすればいいだけなのだが, その場合 \(W^u = Y^T Y\) であり, \(i\) と \(j\) の類似度として \(s_{ij} = y_i^T Y^T Y y_j = (Yy_i)^T (Yy_j)\) となる. これはどんな値なんだろう. \(Y y_j\) は \((y_k^T y_j)_k\) なるベクトルで, \(Yy_i = (y_k^T y_j)_k\) との内積をとると \(s_{ij} = \sum_k (y_k^T y_i) (y_k^T y_j)\) .</p>
+<p>何も考察せずにアイテムどうしの類似度を出せと言われたらつい \(y_i^T y_j\) を計算してしまう. この単純な内積による類似度を \(t_{ij}\) ということにすると, \(s_{ij} = \sum_k t_{ik} t_{kj}\) となる. \(k\) を仲介にした類似度?</p>
+<h2>関連</h2>
 <ul>
-<li><a href="https://medium.com/radon-dev/als-implicit-collaborative-filtering-5ed653ba39fe">ALS Implicit Collaborative Filtering</a>
-<ul>
-<li>解説記事. タイトルの ALS とは最適化の手法名で, パラメータをどれか止めて一つだけを最適化するのを交互にやる方法らしい</li>
-</ul></li>
-<li><a href="https://implicit.readthedocs.io/en/latest/als.html">implicit</a>
-<ul>
-<li>Python で実装されたライブラリ</li>
-</ul></li>
+  <li>
+    <a href="https://medium.com/radon-dev/als-implicit-collaborative-filtering-5ed653ba39fe">ALS Implicit Collaborative Filtering</a>
+    <ul>
+      <li>解説記事. タイトルの ALS とは最適化の手法名で, パラメータをどれか止めて一つだけを最適化するのを交互にやる方法らしい</li>
+    </ul>
+  </li>
+  <li>
+    <a href="https://implicit.readthedocs.io/en/latest/als.html">implicit</a>
+    <ul>
+      <li>Python で実装されたライブラリ</li>
+    </ul>
+  </li>
 </ul>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -175,5 +184,9 @@ original paper: <a href=http://yifanhu.net/PUB/cf.pdf>http://yifanhu.net/PUB/cf.
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

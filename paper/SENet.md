@@ -2,7 +2,10 @@
 % https://arxiv.org/abs/1709.01507
 % 深層学習 画像認識
 
-$\def\relu{\mathit{relu}}\def\fc{\mathit{fc}}$
+$\def\relu{\mathrm{relu}}\def\fc{\mathrm{fc}}
+\def\height{\mathrm{height}}
+\def\width{\mathrm{width}}
+$
 
 ## リンク
 
@@ -17,7 +20,7 @@ $\def\relu{\mathit{relu}}\def\fc{\mathit{fc}}$
 
 ## SE Module
 
-入力 $x$ は画像で3次元のテンソル $(ch, height, width)$ とする.
+入力 $x$ は画像で3次元のテンソル $(ch, \height, \width)$ とする.
 これを一回の (average) pooling で $(ch,)$ に潰す操作を $F$ とする.
 またベクトルを受け取って長さ $m$ のベクトルを出力する関数を $\fc^m$ とする.
 

@@ -38,7 +38,7 @@ $\mathrm{arcosh}$ は
 $$\mathrm{arcosh}(x) = \log\left(x + \sqrt{x+1}\sqrt{x-1}\right)$$
 だそうです.
 
-```gnuplot
+```@gnuplot
 set grid
 set xrange [1:10]
 plot log(x+sqrt(x+1)*sqrt(x-1))
@@ -79,7 +79,7 @@ $$\theta \leftarrow \mathrm{proj} \left( \theta - \alpha \frac{(1 - \|\theta\|^2
 
 見てみると、直接距離を学習するようなモデルを実装してる.
 
-```dot
+```@dot
 digraph {
     rankdir=LR;
     bgcolor=transparent;

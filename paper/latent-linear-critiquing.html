@@ -1,102 +1,127 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Latent Linear Critiquing for Conversational Recommender Systems</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">Latent Linear Critiquing for Conversational Recommender Systems</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=https://dl.acm.org/doi/10.1145/3366423.3380003>https://dl.acm.org/doi/10.1145/3366423.3380003</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#推薦システム>推薦システム</a></p>
-</div>
-<h2 id="critiquing-批評">Critiquing (批評)</h2>
+<p><ul> <li>original paper: <a href=https://dl.acm.org/doi/10.1145/3366423.3380003>https://dl.acm.org/doi/10.1145/3366423.3380003</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#推薦システム>推薦システム</a> </div></p>
+<h2>Critiquing (批評)</h2>
 <p>ユーザーと対話的に結果を絞り込むレコメンド手法. 特にこの論文ではこんな設定を考えている.</p>
-<ol type="1">
-<li>ユーザーはアイテム一つを提示される
-<ul>
-<li>アイテムには説明属性が与えられている</li>
-</ul></li>
-<li>ユーザーは次の二通りができる
-<ol type="1">
-<li>提示されたアイテムを受け入れる</li>
-<li>その属性を批評して次のアイテムを提示してもらう
-<ul>
-<li>「もっとこういう性質を持ったものが良い」</li>
-</ul></li>
-</ol></li>
+<ol>
+  <li>
+    ユーザーはアイテム一つを提示される
+    <ul>
+      <li>アイテムには説明属性が与えられている</li>
+    </ul>
+  </li>
+  <li>
+    ユーザーは次の二通りができる
+    <ol>
+      <li>提示されたアイテムを受け入れる</li>
+      <li>
+        その属性を批評して次のアイテムを提示してもらう
+        <ul>
+          <li>「もっとこういう性質を持ったものが良い」</li>
+        </ul>
+      </li>
+    </ol>
+  </li>
 </ol>
-<h2 id="notation">Notation</h2>
+<h2>Notation</h2>
 <ul>
-<li><span class="math inline">\(R_{i,j}\)</span>
-<ul>
-<li>user <span class="math inline">\(i\)</span> に対する item <span class="math inline">\(j\)</span> の Preference 行列</li>
-</ul></li>
-<li><span class="math inline">\(S_{i,k}\)</span>
-<ul>
-<li>user <span class="math inline">\(i\)</span> の key phrase <span class="math inline">\(k\)</span> を使う頻度行列</li>
-</ul></li>
-<li><span class="math inline">\(S&#39;_{j,k}\)</span>
-<ul>
-<li>item <span class="math inline">\(j\)</span> の属性記述に key phrase <span class="math inline">\(k\)</span> が使われる頻度行列</li>
-</ul></li>
-<li><span class="math inline">\(j^{-k}\)</span>
-<ul>
-<li><span class="math inline">\(S&#39;_{j,k} = 0\)</span> であるような <span class="math inline">\(j\)</span> のこと</li>
-</ul></li>
-<li><span class="math inline">\(j^{+k}\)</span>
-<ul>
-<li><span class="math inline">\(S&#39;_{j,k} &gt; 0\)</span> であるような <span class="math inline">\(j\)</span> のこと</li>
-</ul></li>
+  <li>
+    \(R_{i,j}\)
+    <ul>
+      <li>user \(i\) に対する item \(j\) の Preference 行列</li>
+    </ul>
+  </li>
+  <li>
+    \(S_{i,k}\)
+    <ul>
+      <li>user \(i\) の key phrase \(k\) を使う頻度行列</li>
+    </ul>
+  </li>
+  <li>
+    \(S&#x27;_{j,k}\)
+    <ul>
+      <li>item \(j\) の属性記述に key phrase \(k\) が使われる頻度行列</li>
+    </ul>
+  </li>
+  <li>
+    \(j^{-k}\)
+    <ul>
+      <li>\(S&#x27;_{j,k} = 0\) であるような \(j\) のこと</li>
+    </ul>
+  </li>
+  <li>
+    \(j^{+k}\)
+    <ul>
+      <li>\(S&#x27;_{j,k} &gt; 0\) であるような \(j\) のこと</li>
+    </ul>
+  </li>
 </ul>
-<h2 id="projected-linear-recommendation-plrec">Projected Linear Recommendation (PLRec)</h2>
+<h2>Projected Linear Recommendation (PLRec)</h2>
 <p>ユーザー同士及びアイテム同士の類似度を得る方法.</p>
-<p>Preference 行列 <span class="math inline">\(R\)</span> の各ユーザー <span class="math inline">\(i\)</span> に対応する各列ベクトルを <span class="math inline">\(r_i\)</span> と書くことにする.</p>
-<p>次のような素朴な方法で類似度行列を得られる (Liner Recommendation): <span class="math display">\[\min_W \sum_i \| r_i - r_i W \|_2^2 + \Omega(W)\]</span> ここで <span class="math inline">\(\Omega\)</span> の方は正則化項.</p>
-<p>ただし当然 <span class="math inline">\(W\)</span> はユーザー数の正方行列になって膨大になる. 実用的なのは射影するような行列を挟む方法で, &quot;Practical Linear Models for Large-Scale One-Class Collaborative Filtering&quot; で提案されている次の方法.</p>
-<p><span class="math display">\[\min_W \sum_i \| r_i - r_i V W \|_2^2 + \Omega(W)\]</span></p>
-<p>ここで <span class="math inline">\(V\)</span> は SVD 低ランク分解で <span class="math inline">\(R = U \Sigma V^T\)</span> によって得てこれを使う. <span class="math inline">\(V\)</span> のランクを十分小さく設定することで実用性が生まれる. また <span class="math inline">\(z_i = r_i V\)</span> を user <span class="math inline">\(i\)</span> の埋め込み表現として用いる.</p>
-<p><span class="math inline">\(\| r_i - z_i W \|_2 \simeq 0\)</span> となるように <span class="math inline">\(W\)</span> は学習されるので, <span class="math display">\[\hat{r_i} = z_i W\]</span> によって <span class="math inline">\(z_i\)</span> から <span class="math inline">\(r_i\)</span> が近似的に復元できる.</p>
-<h2 id="conversational-critiquing">Conversational Critiquing</h2>
-<p>Critiquing の各ステップは, user <span class="math inline">\(i\)</span> の preference の行ベクトル <span class="math inline">\(r_i\)</span> を修正する演算として定義される. 行列 <span class="math inline">\(S\)</span> の user <span class="math inline">\(i\)</span> の行ベクトル <span class="math inline">\(s_i\)</span> に批評 <span class="math inline">\(c\)</span> をしたとき, 新しいベクトル <span class="math display">\[\tilde{s_i} = \psi(s_i, c)\]</span> を生成して, <span class="math inline">\(r_i\)</span> を修正する: <span class="math display">\[\hat{r_i} = f_m(r_i, \tilde{s_i}).\]</span></p>
-<p>批評を逐次的に行うことを考えると, <span class="math inline">\(\psi\)</span> は前回の批評を蓄積的に計算するものであってもよい.</p>
-<h3 id="co-embedding-of-language-based-feedback">Co-embedding of Language-based feedback</h3>
-<p>ユーザーからの批評は自然言語で来て, キーワードベースでベクトル <span class="math inline">\(s_i\)</span> になる. これをユーザーの埋め込みベクトル <span class="math inline">\(z_i\)</span> に対応付けることでキーワードの埋め込みベクトルを得る. <span class="math display">\[\min_{X,b} \sum_i \| z_i - (s_i X + b) \|_2^2 + \Omega(W)\]</span></p>
-<p>以上から <span class="math inline">\(f_m\)</span> を構成する. すなわち,</p>
+<p>Preference 行列 \(R\) の各ユーザー \(i\) に対応する各列ベクトルを \(r_i\) と書くことにする.</p>
+<p>次のような素朴な方法で類似度行列を得られる (Liner Recommendation):</p>
+\[\min_W \sum_i \| r_i - r_i W \|_2^2 + \Omega(W)\]
+<p>ここで \(\Omega\) の方は正則化項.</p>
+<p>ただし当然 \(W\) はユーザー数の正方行列になって膨大になる. 実用的なのは射影するような行列を挟む方法で, "Practical Linear Models for Large-Scale One-Class Collaborative Filtering" で提案されている次の方法.</p>
+\[\min_W \sum_i \| r_i - r_i V W \|_2^2 + \Omega(W)\]
+<p>ここで \(V\) は SVD 低ランク分解で \(R = U \Sigma V^T\) によって得てこれを使う. \(V\) のランクを十分小さく設定することで実用性が生まれる. また \(z_i = r_i V\) を user \(i\) の埋め込み表現として用いる.</p>
+<p>\(\| r_i - z_i W \|_2 \simeq 0\) となるように \(W\) は学習されるので,</p>
+\[\hat{r_i} = z_i W\]
+<p>によって \(z_i\) から \(r_i\) が近似的に復元できる.</p>
+<h2>Conversational Critiquing</h2>
+<p>Critiquing の各ステップは, user \(i\) の preference の行ベクトル \(r_i\) を修正する演算として定義される. 行列 \(S\) の user \(i\) の行ベクトル \(s_i\) に批評 \(c\) をしたとき, 新しいベクトル</p>
+\[\tilde{s_i} = \psi(s_i, c)\]
+<p>を生成して, \(r_i\) を修正する:</p>
+\[\hat{r_i} = f_m(r_i, \tilde{s_i}).\]
+<p>批評を逐次的に行うことを考えると, \(\psi\) は前回の批評を蓄積的に計算するものであってもよい.</p>
+<h3>Co-embedding of Language-based feedback</h3>
+<p>ユーザーからの批評は自然言語で来て, キーワードベースでベクトル \(s_i\) になる. これをユーザーの埋め込みベクトル \(z_i\) に対応付けることでキーワードの埋め込みベクトルを得る.</p>
+\[\min_{X,b} \sum_i \| z_i - (s_i X + b) \|_2^2 + \Omega(W)\]
+<p>以上から \(f_m\) を構成する. すなわち,</p>
 <ul>
-<li>Coding
-<ul>
-<li>user: <span class="math inline">\(r_i \mapsto z_i = r_i V\)</span></li>
-<li>keyphrases: <span class="math inline">\(s_i \mapsto \tilde{z_i} = s_i X + b\)</span></li>
-</ul></li>
-<li>Merging
-<ul>
-<li><span class="math inline">\(\hat{z_i} = \phi(z_i, \tilde{z_i})\)</span></li>
-</ul></li>
-<li>Decoding
-<ul>
-<li><span class="math inline">\(\hat{r_i} = \hat{z_i} W\)</span></li>
-</ul></li>
+  <li>
+    Coding
+    <ul>
+      <li>user: \(r_i \mapsto z_i = r_i V\)</li>
+      <li>keyphrases: \(s_i \mapsto \tilde{z_i} = s_i X + b\)</li>
+    </ul>
+  </li>
+  <li>
+    Merging
+    <ul>
+      <li>\(\hat{z_i} = \phi(z_i, \tilde{z_i})\)</li>
+    </ul>
+  </li>
+  <li>
+    Decoding
+    <ul>
+      <li>\(\hat{r_i} = \hat{z_i} W\)</li>
+    </ul>
+  </li>
 </ul>
-<h2 id="疲れた続きはいつか読む">疲れた。続きはいつか読む。</h2>
+<h2>疲れた。続きはいつか読む。</h2>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -201,5 +226,9 @@ original paper: <a href=https://dl.acm.org/doi/10.1145/3366423.3380003>https://d
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

@@ -1,77 +1,90 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>[1804.06655] Deep Face Recognition: A Survey</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">[1804.06655] Deep Face Recognition: A Survey</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=https://arxiv.org/abs/1804.06655>https://arxiv.org/abs/1804.06655</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#顔認証>顔認証</a> <a class='tag is-blue' href=index.html#距離学習>距離学習</a> <a class='tag is-blue' href=index.html#類似度学習>類似度学習</a></p>
-</div>
-<h2 id="概要">概要</h2>
+<p><ul> <li>original paper: <a href=https://arxiv.org/abs/1804.06655>https://arxiv.org/abs/1804.06655</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#顔認証>顔認証</a> <a class='tag is-blue' href=index.html#距離学習>距離学習</a> <a class='tag is-blue' href=index.html#類似度学習>類似度学習</a> </div></p>
+<h2>概要</h2>
 <p>Face Recognition (FR; 顔認証) の手法の近年の遷移をサーベイした論文.</p>
-<figure>
-<img src="https://i.imgur.com/nASiTF2.png" />
-</figure>
-<h2 id="リンク">リンク</h2>
+<p><img src="https://i.imgur.com/nASiTF2.png" alt="" /></p>
+<h2>リンク</h2>
 <ul>
-<li><a href="https://qiita.com/yu4u/items/078054dfb5592cbb80cc">モダンな深層距離学習 (deep metric learning) 手法: SphereFace, CosFace, ArcFace - Qiita</a></li>
+  <li><a href="https://qiita.com/yu4u/items/078054dfb5592cbb80cc">モダンな深層距離学習 (deep metric learning) 手法: SphereFace, CosFace, ArcFace - Qiita</a></li>
 </ul>
-<blockquote class="twitter-tweet" data-lang="en">
-<p lang="ja" dir="ltr">
-LFW自体がCNN使わずとも98.5%とか出ちゃう簡単なベンチマークなので、この表はほとんど意味ないです…<br>ここ最近の傾向だと、SphereFaceとCosineFaceとArcFaceを合体させて一般化したCombined Margin Lossがファイナルアンサーっぽい感じです。<a href="https://t.co/K9ciQQlqNe">https://t.co/K9ciQQlqNe</a>
-</p>
-— Koichi Takahashi (<span class="citation" data-cites="51Takahashi">@51Takahashi</span>) <a href="https://twitter.com/51Takahashi/status/1095689245350449152?ref_src=twsrc%5Etfw">February 13, 2019</a>
-</blockquote>
-<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-<h2 id="距離学習の概要">距離学習の概要</h2>
-<p>(顔写真などの) 2枚の画像 <span class="math inline">\(I_1, I_2 \in \mathrm{Images}\)</span> について, 適当な 前処理 <span class="math inline">\(P \colon \mathrm{Images} \to \mathrm{Images}\)</span>, 特徴抽出 <span class="math inline">\(F \colon \mathrm{Images} \to \mathbb R^m\)</span>, そして距離 (マッチング) 関数 <span class="math inline">\(M \colon \mathbb R^m \times \mathbb R^m \to \mathbb R_{\geq 0}\)</span> によって <span class="math display">\[M(F(P(I_1)), F(P(I_2)))\]</span> で表されるこの値が <span class="math inline">\(I_1\)</span> と <span class="math inline">\(I_2\)</span> の類似度になるようにしたい.</p>
-<p>前処理 <span class="math inline">\(I\)</span> は, いわゆる one-to-many augmentation と many-to-one normalization のこと. 前者はランダムにパッチを切り出すとかポーズのバラエティとか. 後者は顔を真正面に向かせるとか.</p>
+<p><blockquote class="twitter-tweet" data-lang="en"><p lang="ja" dir="ltr">LFW自体がCNN使わずとも98.5%とか出ちゃう簡単なベンチマークなので、この表はほとんど意味ないです…<br>ここ最近の傾向だと、SphereFaceとCosineFaceとArcFaceを合体させて一般化したCombined Margin Lossがファイナルアンサーっぽい感じです。<a href="https://t.co/K9ciQQlqNe">https://t.co/K9ciQQlqNe</a></p>&mdash; Koichi Takahashi (@51Takahashi) <a href="https://twitter.com/51Takahashi/status/1095689245350449152?ref_src=twsrc%5Etfw">February 13, 2019</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script></p>
+<h2>距離学習の概要</h2>
+<p>(顔写真などの) 2枚の画像 \(I_1, I_2 \in \mathrm{Images}\) について, 適当な 前処理 \(P \colon \mathrm{Images} \to \mathrm{Images}\) , 特徴抽出 \(F \colon \mathrm{Images} \to \mathbb R^m\) , そして距離 (マッチング) 関数 \(M \colon \mathbb R^m \times \mathbb R^m \to \mathbb R_{\geq 0}\) によって</p>
+\[M(F(P(I_1)), F(P(I_2)))\]
+<p>で表されるこの値が \(I_1\) と \(I_2\) の類似度になるようにしたい.</p>
+<p>前処理 \(I\) は, いわゆる one-to-many augmentation と many-to-one normalization のこと. 前者はランダムにパッチを切り出すとかポーズのバラエティとか. 後者は顔を真正面に向かせるとか.</p>
 <p>特徴抽出は NNs で組むところで普通最近の強い CNN などを採用する.</p>
-<p>以降では <span class="math inline">\(x_i = FPI_i\)</span> として <span class="math inline">\(M(x_1, x_2)\)</span> について考える.</p>
-<h2 id="ユークリッド距離ベース">ユークリッド距離ベース</h2>
+<p>以降では \(x_i = FPI_i\) として \(M(x_1, x_2)\) について考える.</p>
+<h2>ユークリッド距離ベース</h2>
 <p>2017までの主流.</p>
-<p>距離を <span class="math display">\[M(x_1, x_2) = \| x_1 - x_2 \|_2\]</span> として, 2 アイテムが似てたらこの値が小さく (0 に近く) なるように, さもなくば大きくなるようにする.</p>
-<p>損失関数は <span class="math display">\[\mathcal L(x_1, x_2, y_{12}) = y_{12} [M(x_1, x_2) - \epsilon^+]^+ + (1 - y_{12}) [\epsilon^- - M(x_1, x_2)]^+\]</span> と記述される. ここで <span class="math inline">\([\cdot]^+ = \max \{ 0, \cdot \}\)</span>, <span class="math inline">\(\epsilon^+, \epsilon^-\)</span> は適当なマージン. また <span class="math inline">\(y_{12}\)</span> は <span class="math inline">\((x_1, x_2)\)</span> についてのラベルで, 類似してる (マッチングしてる) なら <span class="math inline">\(1\)</span>, さもなくば <span class="math inline">\(-1\)</span>.</p>
-<p>コレ自体は 2003 年には発表されている: (&quot;Distance metriclearning with application to clustering with side-information. InNIPS,pages 521–528, 2003&quot;). <a href="deepid.html">DeepID</a>, <a href="face-representation.html">DeepID2</a> なんかはCNNに当時の強いのを特徴抽出に採用してクラス分類と組み合わせることで安定した学習を実現させた. FaceNet では入力の与え方を工夫（より制限）して, 各アイテム <span class="math inline">\(x\)</span> について類似してるアイテム <span class="math inline">\(x^p\)</span> と類似していないアイテム <span class="math inline">\(x^n\)</span> を与える <a href="triplet-network.html">Triplet Loss</a> を採用した. これは <span class="math display">\[M(x, x^p) + \alpha &lt; M(x, x^n)\]</span> なるように学習をさせる. ここで <span class="math inline">\(\alpha\)</span> はマージン.</p>
-<p>逆に今までの入力が2アイテム (pair-wise) な損失関数は &quot;contrastive loss&quot; と呼ばれる.</p>
-<p>問題点としては contrastive / triplet loss はそれだけだと学習が不安定なこと. (個人的な経験でも, うまくネガティブサンプリング等をしないとすべてのアイテムがある一つの特徴ベクトルに写ってしまう &quot;縮退&quot; とも呼ぶべき現象がしばしば見られた.) だからこそ DeepID ではクラス分類を補助タスクとして足すことで安定化を図っている.</p>
-<h2 id="角度cosine-距離ベース">角度/cosine 距離ベース</h2>
+<p>距離を</p>
+\[M(x_1, x_2) = \| x_1 - x_2 \|_2\]
+<p>として, 2 アイテムが似てたらこの値が小さく (0 に近く) なるように, さもなくば大きくなるようにする.</p>
+<p>損失関数は</p>
+\[\mathcal L(x_1, x_2, y_{12}) = y_{12} [M(x_1, x_2) - \epsilon^+]^+ + (1 - y_{12}) [\epsilon^- - M(x_1, x_2)]^+\]
+<p>と記述される. ここで \([\cdot]^+ = \max \{ 0, \cdot \}\) , \(\epsilon^+, \epsilon^-\) は適当なマージン. また \(y_{12}\) は \((x_1, x_2)\) についてのラベルで, 類似してる (マッチングしてる) なら \(1\) , さもなくば \(-1\) .</p>
+<p>コレ自体は 2003 年には発表されている: ("Distance metriclearning with application to clustering with side-information. InNIPS,pages 521–528, 2003"). <a href="deepid.html">DeepID</a> , <a href="face-representation.html">DeepID2</a> なんかはCNNに当時の強いのを特徴抽出に採用してクラス分類と組み合わせることで安定した学習を実現させた. FaceNet では入力の与え方を工夫（より制限）して, 各アイテム \(x\) について類似してるアイテム \(x^p\) と類似していないアイテム \(x^n\) を与える <a href="triplet-network.html">Triplet Loss</a> を採用した. これは</p>
+\[M(x, x^p) + \alpha &lt; M(x, x^n)\]
+<p>なるように学習をさせる. ここで \(\alpha\) はマージン.</p>
+<p>逆に今までの入力が2アイテム (pair-wise) な損失関数は "contrastive loss" と呼ばれる.</p>
+<p>問題点としては contrastive / triplet loss はそれだけだと学習が不安定なこと. (個人的な経験でも, うまくネガティブサンプリング等をしないとすべてのアイテムがある一つの特徴ベクトルに写ってしまう "縮退" とも呼ぶべき現象がしばしば見られた.) だからこそ DeepID ではクラス分類を補助タスクとして足すことで安定化を図っている.</p>
+<h2>角度/cosine 距離ベース</h2>
 <p>2017以降の主流.</p>
 <p>直接にはクラス分類として解かせて, 結果的に cosine 類似度で距離が学習されるようにする.</p>
-<p>クラス <span class="math inline">\(i\)</span> に対応するベクトル <span class="math inline">\(w_i \in \mathbb R^m\)</span> とアイテムの特徴ベクトル <span class="math inline">\(x\)</span> があって <span class="math inline">\(\|w_i\|_2 = 1, \|x\|_2=1\)</span> のとき, <span class="math display">\[w_i \cdot x = \cos(w_i, x)\]</span> この値によってクラス分類をすることを考える. すなわち <span class="math display">\[\max_i \cos(w_i, x)\]</span> によってクラス <span class="math inline">\(i\)</span> を予測する.</p>
-<p>値が大きいものを選ぶというのは softmax と性質が等しい. 従って, <span class="math display">\[W = \left[ w_1, w_2, \ldots, w_k \right]^T\]</span> として <span class="math display">\[\mathrm{softmax}(W x)\]</span> を学習/予測するのと等しい (<span class="math inline">\(W\)</span> もパラメータ).</p>
+<p>クラス \(i\) に対応するベクトル \(w_i \in \mathbb R^m\) とアイテムの特徴ベクトル \(x\) があって \(\|w_i\|_2 = 1, \|x\|_2=1\) のとき,</p>
+\[w_i \cdot x = \cos(w_i, x)\]
+<p>この値によってクラス分類をすることを考える. すなわち</p>
+\[\max_i \cos(w_i, x)\]
+<p>によってクラス \(i\) を予測する.</p>
+<p>値が大きいものを選ぶというのは softmax と性質が等しい. 従って,</p>
+\[W = \left[ w_1, w_2, \ldots, w_k \right]^T\]
+<p>として</p>
+\[\mathrm{softmax}(W x)\]
+<p>を学習/予測するのと等しい ( \(W\) もパラメータ).</p>
 <p>実際にはここにマージンを足してスケーリングをする.</p>
-<h3 id="large-margin-softmax-l-softmax">large-margin softmax (L-softmax)</h3>
-<p>これは <span class="math inline">\(w_i\)</span> や <span class="math inline">\(x\)</span> を特別に正規化せず <span class="math display">\[\hat{y} = \mathrm{softmax}(W x)\]</span> として, このマイナス対数を損失関数とする (エントロピー).</p>
-<p>ただし, <span class="math inline">\(x\)</span> の正解ラベル <span class="math inline">\(i\)</span> に対応する <span class="math display">\[\cos(\theta_i) = w_i x\]</span> については <span class="math display">\[\cos(m \theta_i)\]</span> にスケーリングして修正する <span class="math inline">\((m&gt;1)\)</span>. すなわち <span class="math inline">\(\ne i\)</span> のクラスに比べて <span class="math inline">\(1/m\)</span> 倍で角度を小さくしないといけないようにする.</p>
-<h3 id="a-softmax">A-softmax</h3>
-<p>これは L-softmax で出てくるベクトルを正規化する. だから内積が cosine に一致するようにする. <span class="math inline">\(W,x\)</span> をそれぞれ (列ごとに) 正規化したものを <span class="math inline">\(\hat{W}, \hat{x}\)</span> と書くと, <span class="math display">\[\hat{y} = \mathrm{softmax}(W x).\]</span></p>
-<p>L-softmax 同様に, 正解ラベルの角度だけは <span class="math inline">\(m (&gt;1)\)</span> 倍に増やす.</p>
-<h3 id="arcface">ArcFace</h3>
-<p>マージンの取り方を変える. <span class="math inline">\(\cos(m \theta_i)\)</span> の代わりに <span class="math display">\[\cos(\theta_i + m)\]</span> とする.</p>
-<h3 id="cosineface">CosineFace</h3>
-<p><span class="math display">\[\cos(\theta_i) - m\]</span> とする.</p>
+<h3>large-margin softmax (L-softmax)</h3>
+<p>これは \(w_i\) や \(x\) を特別に正規化せず</p>
+\[\hat{y} = \mathrm{softmax}(W x)\]
+<p>として, このマイナス対数を損失関数とする (エントロピー).</p>
+<p>ただし, \(x\) の正解ラベル \(i\) に対応する</p>
+\[\cos(\theta_i) = w_i x\]
+<p>については</p>
+\[\cos(m \theta_i)\]
+<p>にスケーリングして修正する \((m&gt;1)\) . すなわち \(\ne i\) のクラスに比べて \(1&#x2F;m\) 倍で角度を小さくしないといけないようにする.</p>
+<h3>A-softmax</h3>
+<p>これは L-softmax で出てくるベクトルを正規化する. だから内積が cosine に一致するようにする. \(W,x\) をそれぞれ (列ごとに) 正規化したものを \(\hat{W}, \hat{x}\) と書くと,</p>
+\[\hat{y} = \mathrm{softmax}(W x).\]
+<p>L-softmax 同様に, 正解ラベルの角度だけは \(m (&gt;1)\) 倍に増やす.</p>
+<h3>ArcFace</h3>
+<p>マージンの取り方を変える. \(\cos(m \theta_i)\) の代わりに</p>
+\[\cos(\theta_i + m)\]
+<p>とする.</p>
+<h3>CosineFace</h3>
+\[\cos(\theta_i) - m\]
+<p>とする.</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -176,5 +189,9 @@ LFW自体がCNN使わずとも98.5%とか出ちゃう簡単なベンチマーク
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

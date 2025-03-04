@@ -1,4 +1,4 @@
-% [1704.07926] From Language to Programs: Bridging Reinforcement Learning and Maximum Marginal Likelihood 
+% [1704.07926] From Language to Programs: Bridging Reinforcement Learning and Maximum Marginal Likelihood
 % https://arxiv.org/abs/1704.07926
 % 強化学習 模擬世界 言語獲得
 

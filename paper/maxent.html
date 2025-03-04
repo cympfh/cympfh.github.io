@@ -1,173 +1,222 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Using Maximum Entropy for Text Classification</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/</a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">Using Maximum Entropy for Text Classification</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=http://www.kamalnigam.com/papers/maxent-ijcaiws99.pdf>http://www.kamalnigam.com/papers/maxent-ijcaiws99.pdf</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#自然言語処理>自然言語処理</a> <a class='tag is-blue' href=index.html#機械学習>機械学習</a> <a class='tag is-blue' href=index.html#テキスト分類>テキスト分類</a></p>
-</div>
+<p><ul> <li>original paper: <a href=http://www.kamalnigam.com/papers/maxent-ijcaiws99.pdf>http://www.kamalnigam.com/papers/maxent-ijcaiws99.pdf</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#自然言語処理>自然言語処理</a> <a class='tag is-blue' href=index.html#機械学習>機械学習</a> <a class='tag is-blue' href=index.html#テキスト分類>テキスト分類</a> </div></p>
 <p>1999年の論文。 なんか線形SVMっぽい??</p>
-<h2 id="最大エントロピーによるテキスト分類の直感的な知見">最大エントロピーによるテキスト分類の直感的な知見</h2>
+<h2>最大エントロピーによるテキスト分類の直感的な知見</h2>
 <p>4つのクラス A, B, C, D に各文書が振り分けられているときに、 次の命題があるとする。</p>
-<blockquote>
-<p>&quot;professor&quot; という単語を含む文書の 40% が クラス A であった</p>
-</blockquote>
+<blockquote>"professor" という単語を含む文書の 40% が クラス A であった</blockquote>
 <p>ここから次のように確率を推定するのは自然だろう.</p>
-<blockquote>
-<p>&quot;professor&quot; を含む文書は、40% の確率で クラス A. 各々 20% の確率で、クラス B, C, D</p>
-</blockquote>
+<blockquote>"professor" を含む文書は、40% の確率で クラス A. 各々 20% の確率で、クラス B, C, D</blockquote>
 <p>加えて、</p>
-<blockquote>
-<p>&quot;professor&quot; を含まない文書は、各々 25% ずつの確率で、クラス A, B, C, D</p>
-</blockquote>
-<h2 id="model">model</h2>
-<h3 id="maximum-entropy">Maximum entropy</h3>
-<p>文書 <span class="math inline">\(d\)</span> とクラス <span class="math inline">\(c\)</span> に関する適当な素性</p>
-<p><span class="math display">\[f_i(d, c) \in \mathbb{R}\]</span></p>
-<p>を考える. これは、実関数ならなんでもよく、例えば、ある単語 <span class="math inline">\(w_i\)</span> の出現頻度とか.</p>
-<p>コーパス <span class="math inline">\(D = \{ (d_i, c_i) \}_i\)</span> が与えられているとする.</p>
-<p>コーパスにおける素性 <span class="math inline">\(f_i\)</span> の平均は</p>
-<ol type="1">
-<li><span class="math inline">\(\frac{1}{|D|} \sum_{d \in D} f_i(d, c(d))\)</span></li>
+<blockquote>"professor" を含まない文書は、各々 25% ずつの確率で、クラス A, B, C, D</blockquote>
+<h2>model</h2>
+<h3>Maximum entropy</h3>
+<p>文書 \(d\) とクラス \(c\) に関する適当な素性</p>
+\[f_i(d, c) \in \mathbb{R}\]
+<p>を考える. これは、実関数ならなんでもよく、例えば、ある単語 \(w_i\) の出現頻度とか.</p>
+<p>コーパス \(D = \{ (d_i, c_i) \}_i\) が与えられているとする.</p>
+<p>コーパスにおける素性 \(f_i\) の平均は</p>
+<ol>
+  <li>\(\frac{1}{|D|} \sum_{d \in D} f_i(d, c(d))\)</li>
 </ol>
-<p>仮に分布 <span class="math inline">\(Pr(d)\)</span>, <span class="math inline">\(Pr(c|d)\)</span> が与えられてれば、 ある文書 <span class="math inline">\(d\)</span> についての <span class="math inline">\(f_i\)</span> の期待値は、 <span class="math inline">\(\sum_c Pr(c|d) f_i(d, c)\)</span> と厳密に表せる. 更に、コーパス全体でこの期待値を取ると、</p>
-<ol start="2" type="1">
-<li><span class="math inline">\(\sum_{d \in D} Pr(d) \sum_c Pr(c|d) f_i(d, c)\)</span></li>
+<p>仮に分布 \(Pr(d)\) , \(Pr(c|d)\) が与えられてれば、 ある文書 \(d\) についての \(f_i\) の期待値は、 \(\sum_c Pr(c|d) f_i(d, c)\) と厳密に表せる. 更に、コーパス全体でこの期待値を取ると、</p>
+<ol>
+  <li>\(\sum_{d \in D} Pr(d) \sum_c Pr(c|d) f_i(d, c)\)</li>
 </ol>
 <p>となる.</p>
 <p><code>(1.)</code> と <code>(2.)</code> が等しいことを、最大エントロピー法は仮定する.</p>
-<p><span class="math display">\[Pr(d) = \frac{1}{|D|}\]</span> としてしまえば、 これを <code>(2.)</code> に代入して <code>(1.)</code> と比較することで、</p>
-<p><span class="math display">\[\sum_{d \in D} f_i(d, c(d)) = \sum_{d \in D} \sum_c Pr(c|d) f_i(d, c)\]</span></p>
+\[Pr(d) = \frac{1}{|D|}\]
+<p>としてしまえば、 これを <code>(2.)</code> に代入して <code>(1.)</code> と比較することで、</p>
+\[\sum_{d \in D} f_i(d, c(d)) = \sum_{d \in D} \sum_c Pr(c|d) f_i(d, c)\]
 <p>を得る.</p>
-<p>さて、 <code>Della Pietra+, 1997</code> によれば、最大エントロピーに従う確率分布は、exp の形に書ける。 今の場合、 <span class="math inline">\(n\)</span> 種類の素性 <span class="math inline">\(f_1, f_2, \ldots, f_n\)</span> について、 対応する重み <span class="math display">\[\Lambda = [ \lambda_1, \lambda_2, \dots, \lambda_n ] \]</span> が存在して、次のように、</p>
-<p><span class="math display">\[Pr_\Lambda(c|d) = \frac{1}{Z(d)} \exp \left[ \sum_i \lambda_i f_i(d, c) \right]\]</span></p>
-<p>という形に表せるという仮定が通用するらしい. ここでお決まりの <span class="math inline">\(Z(d)\)</span> は確率全ての和が <span class="math inline">\(1\)</span> になるよう正規化するために割る数.</p>
+<p>さて、 <code>Della Pietra+, 1997</code> によれば、最大エントロピーに従う確率分布は、exp の形に書ける。 今の場合、 \(n\) 種類の素性 \(f_1, f_2, \ldots, f_n\) について、 対応する重み</p>
+\[\Lambda = [ \lambda_1, \lambda_2, \dots, \lambda_n ] \]
+<p>が存在して、次のように、</p>
+\[Pr_\Lambda(c|d) = \frac{1}{Z(d)} \exp \left[ \sum_i \lambda_i f_i(d, c) \right]\]
+<p>という形に表せるという仮定が通用するらしい. ここでお決まりの \(Z(d)\) は確率全ての和が \(1\) になるよう正規化するために割る数.</p>
 <p>これを使えば、対数尤度は、</p>
-<p><span class="math display">\[\ell(\Lambda; D) = \sum_{(d, c) \in D} \log Pr_\Lambda(c | d)\]</span></p>
-<h3 id="improved-iterative-scaling-iis">Improved Iterative Scaling (IIS)</h3>
-<p>先ほどの、 <span class="math inline">\(\ell(\Lambda; D) = \sum_{(d, c) \in D} \log Pr_\Lambda(c | d)\)</span> の最大化を目指す. 実は、 <span class="math inline">\(\frac{\partial^2}{\partial \lambda_i^2} \ell\)</span> を調べると、 関数 <span class="math inline">\(\ell\)</span> は上に凸であることが分かるので、山登り法で解く.</p>
-<p><span class="math inline">\(\Lambda\)</span> に関する微小な変化 <span class="math inline">\(\Delta = [\delta_1, \delta_2, \ldots, \delta_n]\)</span> について、</p>
-<p><span class="math display">\[\begin{align*}
+\[\ell(\Lambda; D) = \sum_{(d, c) \in D} \log Pr_\Lambda(c | d)\]
+<h3>Improved Iterative Scaling (IIS)</h3>
+<p>先ほどの、 \(\ell(\Lambda; D) = \sum_{(d, c) \in D} \log Pr_\Lambda(c | d)\) の最大化を目指す. 実は、 \(\frac{\partial^2}{\partial \lambda_i^2} \ell\) を調べると、 関数 \(\ell\) は上に凸であることが分かるので、山登り法で解く.</p>
+<p>\(\Lambda\) に関する微小な変化 \(\Delta = [\delta_1, \delta_2, \ldots, \delta_n]\) について、</p>
+\[\begin{align*}
 \ell(\Lambda + \Delta | D) - \ell(\Lambda | D)
 &amp; = \sum_d \sum_i \delta_i f_i - \sum_d \left[
 \log \sum_c \exp \sum_i \left[ (\lambda_i + \delta_i) f_i \right]
 - \log \sum_c \exp \left[ \sum_i \lambda_i f_i \right] \right] \\
 &amp; = \sum_d \sum_i \delta_i f_i
 - \sum_d \log \dfrac{\sum_c \exp \sum (\lambda + \delta) f}{\sum_c \exp \sum_i \lambda f}
-\end{align*}\]</span></p>
+\end{align*}\]
 <p>Jensen の不等式を用いると、</p>
-<p><span class="math display">\[\ge \sum_d \sum_i \delta_i f_i
-- \log \sum_d \dfrac{\sum_c \exp \sum (\lambda + \delta) f}{\sum_c \exp \sum_i \lambda f}\]</span></p>
-<p>加えて、<span class="math inline">\(- \log(x) \geq 1 - x\)</span> を使って</p>
-<p><span class="math display">\[\ge 1 + \sum_d \sum_i \delta_i f_i
-- \sum_d \dfrac{\sum_c \exp \sum (\lambda + \delta) f}{\sum_c \exp \sum_i \lambda f} = B(\Lambda)\]</span></p>
-<p>もうちょっと式を綺麗にする. <span class="math inline">\(f^\# = f^\#(d, c) = \sum_i f_i(d, c)\)</span> を定める.</p>
-<p><span class="math display">\[\begin{align*}
+\[\ge \sum_d \sum_i \delta_i f_i
+- \log \sum_d \dfrac{\sum_c \exp \sum (\lambda + \delta) f}{\sum_c \exp \sum_i \lambda f}\]
+<p>加えて、 \(- \log(x) \geq 1 - x\) を使って</p>
+\[\ge 1 + \sum_d \sum_i \delta_i f_i
+- \sum_d \dfrac{\sum_c \exp \sum (\lambda + \delta) f}{\sum_c \exp \sum_i \lambda f} = B(\Lambda)\]
+<p>もうちょっと式を綺麗にする. \(f^\# = f^\#(d, c) = \sum_i f_i(d, c)\) を定める.</p>
+\[\begin{align*}
 B(\Lambda)
 &amp; = 1 + \sum_d \sum_i \delta_i f_i - \sum_d \dfrac{\sum_c \exp \sum (\lambda + \delta) f}{Z(d)} \\
 &amp; = 1 + \sum_d \sum_i \delta_i f_i - \sum_d \dfrac{\sum_c \exp \left[ \sum_i \lambda_i f_i \right] \cdot \exp \left[ \sum_i \delta_i f_i \right]}{Z(d)} \\
 &amp; = 1 + \sum_d \sum_i \delta_i f_i - \sum_d \sum_c P_\Lambda(c|d) \exp \left[ f^\#(d, c) \sum_i \frac{\delta_i f_i(d,c)}{f^\#(d,c)} \right]
-\end{align*}\]</span></p>
-<blockquote>
-<p>ここでの論文における式変形は恐らく誤り.</p>
-</blockquote>
-<p>これは何だったかというと、 <span class="math inline">\(\ell(\Lambda + \Delta | D) - \ell(\Lambda | D)\)</span> の下限だったので、これを大きくするような <span class="math inline">\(\\Delta\)</span> を見つけたい. 次の偏微分を考える.</p>
-<p><span class="math display">\[\frac{\partial B}{\partial \delta_i} = 
+\end{align*}\]
+<blockquote>ここでの論文における式変形は恐らく誤り.</blockquote>
+<p>これは何だったかというと、 \(\ell(\Lambda + \Delta | D) - \ell(\Lambda | D)\) の下限だったので、これを大きくするような \(\\Delta\) を見つけたい. 次の偏微分を考える.</p>
+\[\frac{\partial B}{\partial \delta_i} = 
 \sum_d \left[
 f_i(d, c(d)) -
 \sum_c P_\Lambda(c|d) f_i(d,c) \exp \left[ \delta_i f^\#(d,c) \right]
-\right]\]</span></p>
-<p>これが 0 となるような、<span class="math inline">\(\Delta\)</span> を例えばニュートン法などを用いて解けばよい. 凸性から、解があることは分かっている.</p>
-<h3 id="gaussian-事前分布">Gaussian 事前分布</h3>
-<p>コーパスが大きくない時、求まった <span class="math inline">\(\Lambda\)</span> は実際よりかけ離れたものだろう. 事前分布を仮定すると上手く行く場合がある. 例えばガウシアン分布を仮定する:</p>
-<p><span class="math display">\[Pr(\Lambda) = \prod_i \frac{1}{\sqrt{2 \pi \sigma_i^2}} \exp \left[ \frac{- \lambda_i^2}{2 \sigma_i^2} \right]\]</span></p>
-<p>尤度には、これを乗算すれば良い。 対数尤度には <span class="math inline">\(\log Pr(\Lambda)\)</span> を加えるだけなので、 導関数では</p>
-<p><span class="math display">\[\frac{\partial Pr(\Lambda)}{\partial \lambda_i} = \frac{\lambda_i+\delta_i}{-\sigma_i^2}\]</span></p>
+\right]\]
+<p>これが 0 となるような、 \(\Delta\) を例えばニュートン法などを用いて解けばよい. 凸性から、解があることは分かっている.</p>
+<h3>Gaussian 事前分布</h3>
+<p>コーパスが大きくない時、求まった \(\Lambda\) は実際よりかけ離れたものだろう. 事前分布を仮定すると上手く行く場合がある. 例えばガウシアン分布を仮定する:</p>
+\[Pr(\Lambda) = \prod_i \frac{1}{\sqrt{2 \pi \sigma_i^2}} \exp \left[ \frac{- \lambda_i^2}{2 \sigma_i^2} \right]\]
+<p>尤度には、これを乗算すれば良い。 対数尤度には \(\log Pr(\Lambda)\) を加えるだけなので、 導関数では</p>
+\[\frac{\partial Pr(\Lambda)}{\partial \lambda_i} = \frac{\lambda_i+\delta_i}{-\sigma_i^2}\]
 <p>が加わった形になるだけ.</p>
-<h2 id="features-for-text-classification">features for Text Classification</h2>
+<h2>features for Text Classification</h2>
 <p>素性としては何を用いても良いと言ったが、やっぱり単語の頻度が使われる. 特に文書の単語数で割ることで正規化した値が使われる. コーパス中でクラス毎にこれの統計を取る必要があるので、</p>
-<p><span class="math display">\[f_{w,c&#39;}(d, c) = \begin{cases}
-0 &amp; \text{ if } c \ne c&#39; \\
+\[f_{w,c&#x27;}(d, c) = \begin{cases}
+0 &amp; \text{ if } c \ne c&#x27; \\
 \frac{N(d,w)}{N(d)} &amp; \text{ otherwise }
-\end{cases}\]</span></p>
-<h2 id="experiment">Experiment</h2>
+\end{cases}\]
+<h2>Experiment</h2>
 <p>次の比較を行っている.</p>
 <ul>
-<li>Naiive Bayse (comparison)</li>
-<li>Maximum Entropy (w/o Gaussian Prior)</li>
-<li>Maximum Entropy (w/ Gaussian Prior)</li>
+  <li>Naiive Bayse (comparison)</li>
+  <li>Maximum Entropy (w/o Gaussian Prior)</li>
+  <li>Maximum Entropy (w/ Gaussian Prior)</li>
 </ul>
 <p>3通りのコーパスで実験を行ってるが、まあ良かったり悪かったり. 事前分布を導入してよくなる場合は良くなってるし、変わらない場合もある. 基本的には、ガウシアン事前分布は入れておいて悪く無さそう.</p>
+
 <!--
 
-  HTML として pandoc -B で include する.
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
 
-  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
-  markdown で書いてるだろうから例として次のような段落を書けばよい.
+    <div id=toc></div>
 
-```
-## INDEX
-<div id=toc></div>
-```
 
-  used in
-  - /memo/gnuplot
-  - /memo/linux
-  - /memo/imagemagick
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
 
 -->
 <script>
 (function() {
-  var sections = document.getElementsByTagName('h2');
-  var i;
-  var OL = document.createElement('ol');
-  for (i=0; i < sections.length; ++i) {
-    var LI = document.createElement('li');
-    var A = document.createElement('a');
-    A.innerHTML = sections[i].innerHTML;
-    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
-    A.href = '#' + i;
-    LI.appendChild(A);
-    OL.appendChild(LI);
 
-    var PREF = document.createElement('a');
-    PREF.name = i;
-    sections[i].appendChild(PREF);
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
   }
 
-  var done = false;
-  function work() {
-    if (done) return;
-    if ( document.getElementById('toc') === null) return; // no toc element
-    document.getElementById('toc').appendChild(OL);
-    done = true;
-  };
+  function level1() {
 
-  window.onload = work;
-  setTimeout(work,800);
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

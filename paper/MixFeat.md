@@ -1,4 +1,4 @@
-% MixFeat: Mix Feature in Latent Space Learns Discriminative Space 
+% MixFeat: Mix Feature in Latent Space Learns Discriminative Space
 % https://openreview.net/forum?id=HygT9oRqFX
 % 深層学習 画像認識 データ水増し
 

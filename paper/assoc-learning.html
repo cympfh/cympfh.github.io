@@ -1,127 +1,204 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>[1706.00909] Learning by Association - A versatile semi-supervised training method for neural networks</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/</a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">[1706.00909] Learning by Association - A versatile semi-supervised training method for neural networks</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=https://arxiv.org/abs/1706.00909>https://arxiv.org/abs/1706.00909</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#半教師アリ学習>半教師アリ学習</a></p>
-</div>
-<h2 id="概要">概要</h2>
+<p><ul> <li>original paper: <a href=https://arxiv.org/abs/1706.00909>https://arxiv.org/abs/1706.00909</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#半教師アリ学習>半教師アリ学習</a> </div></p>
+<h2>概要</h2>
 <p>半教師アリ学習の為の新しい手法を提案し、クラス分類に適用した.</p>
-<h2 id="アイデア">アイデア</h2>
-<p>半教師アリで学習する部分はデータから埋め込み表現に変換する <span class="math display">\[F: x \mapsto z\]</span> の部分だけ. 画像に適用するならこれは CNN 等で構成する.</p>
+<h2>アイデア</h2>
+<p>半教師アリで学習する部分はデータから埋め込み表現に変換する</p>
+\[F: x \mapsto z\]
+<p>の部分だけ. 画像に適用するならこれは CNN 等で構成する.</p>
 <p>同じクラスに属するデータならその埋め込み表現も似通っているべきである. 似ているということを assoc の操作によって表現する. 具体的には埋め込み表現ベクトルの内積を取って、値が大きいほど似ているということにする. また Figure 1 の赤色矢印のように、それは１つのデータから別のデータへの有向エッジと見做す. softmax を取る都合からエッジは対称ではない.</p>
 <p>ラベル付きからラベルなしの assoc にラベルなしからラベル付きへの assoc を考えることで、 ラベル同士の比較に落とし込んで教師信号を与える事ができる.</p>
-<h3 id="形式化">形式化</h3>
-<p>ラベル付きデータの集合 <span class="math display">\[x = \{x_1, \ldots, x_n\}\]</span> とラベルなしのデータの集合 <span class="math display">\[y = \{y_1, \ldots, y_m\}\]</span> を用意して１つのバッチとして <span class="math inline">\(F\)</span> に順伝播し、埋め込み表現, <span class="math display">\[A = \{A_1, \ldots, A_n\}\]</span> <span class="math display">\[B = \{B_1, \ldots, B_m\}\]</span> を得る. <span class="math inline">\(A\)</span> が <span class="math inline">\(x\)</span> に、<span class="math inline">\(B\)</span> が <span class="math inline">\(y\)</span> に対応している. <span class="math inline">\(A\)</span> についてのみ、そのクラスがわかっている (ラベル付きなので).</p>
-<p>さて、 <span class="math inline">\(A\)</span> と <span class="math inline">\(B\)</span> との間の assoc を考える. assoc matrix <span class="math display">\[M_{ij} = dot(A_i, B_j)\]</span> を作る. 正しく <span class="math inline">\(A_i, B_j\)</span> の間の関連度を表している. ここで <span class="math inline">\(dot\)</span> はベクトルの内積である. 別のユークリッド距離等に置き換えても良いと彼らは言っている.</p>
-<p><span class="math inline">\(A\)</span> から <span class="math inline">\(B\)</span> への assoc を考える. それはつまり <span class="math inline">\(B_j\)</span> が <span class="math inline">\(A_j\)</span> に関連するという確率 <span class="math inline">\(P^{ab}(B_j | A_i)\)</span> を考えることで、これを</p>
-<p><span class="math display">\[
+<h3>形式化</h3>
+<p>ラベル付きデータの集合</p>
+\[x = \{x_1, \ldots, x_n\}\]
+<p>とラベルなしのデータの集合</p>
+\[y = \{y_1, \ldots, y_m\}\]
+<p>を用意して１つのバッチとして \(F\) に順伝播し、埋め込み表現,</p>
+\[A = \{A_1, \ldots, A_n\}\]
+\[B = \{B_1, \ldots, B_m\}\]
+<p>を得る. \(A\) が \(x\) に、 \(B\) が \(y\) に対応している. \(A\) についてのみ、そのクラスがわかっている (ラベル付きなので).</p>
+<p>さて、 \(A\) と \(B\) との間の assoc を考える. assoc matrix</p>
+\[M_{ij} = dot(A_i, B_j)\]
+<p>を作る. 正しく \(A_i, B_j\) の間の関連度を表している. ここで \(dot\) はベクトルの内積である. 別のユークリッド距離等に置き換えても良いと彼らは言っている.</p>
+<p>\(A\) から \(B\) への assoc を考える. それはつまり \(B_j\) が \(A_j\) に関連するという確率 \(P^{ab}(B_j | A_i)\) を考えることで、これを</p>
+\[
 P^{ab}_{ij}
-= \exp(M_{ij}) / \sum_{j&#39;} \exp(M_{ij&#39;})
-= \exp(dot(A_i, B_j)) / \sum_{j&#39;} \exp( dot(A_i, B_{j&#39;} ))
-\]</span></p>
-<p>でモデリングする. <span class="math inline">\(j\)</span> に関して正規化した softmax であることに注意.</p>
-<p>逆も同様で、今度は <span class="math inline">\(A_i\)</span> の <span class="math inline">\(i\)</span> に関して正規化することで、確率 <span class="math inline">\(P^{ba}(A_i | B_j)\)</span> を次のようにモデリングする.</p>
-<p><span class="math display">\[
+= \exp(M_{ij}) &#x2F; \sum_{j&#x27;} \exp(M_{ij&#x27;})
+= \exp(dot(A_i, B_j)) &#x2F; \sum_{j&#x27;} \exp( dot(A_i, B_{j&#x27;} ))
+\]
+<p>でモデリングする. \(j\) に関して正規化した softmax であることに注意.</p>
+<p>逆も同様で、今度は \(A_i\) の \(i\) に関して正規化することで、確率 \(P^{ba}(A_i | B_j)\) を次のようにモデリングする.</p>
+\[
 P^{ba}_{ji}
-= \exp(M_{ij}) / \sum_{i&#39;} \exp(M_{i&#39;j})
-= \exp(dot(A_i, B_j)) / \sum_{i&#39;} \exp( dot(A_{i&#39;}, B_{j} ))
-\]</span></p>
-<blockquote>
-<p>一般に <span class="math inline">\(P^{ab}_{ij} \ne P^{ba}_{ji}\)</span> であることに注意</p>
-</blockquote>
-<h3 id="walker-loss">walker loss</h3>
+= \exp(M_{ij}) &#x2F; \sum_{i&#x27;} \exp(M_{i&#x27;j})
+= \exp(dot(A_i, B_j)) &#x2F; \sum_{i&#x27;} \exp( dot(A_{i&#x27;}, B_{j} ))
+\]
+<blockquote>一般に \(P^{ab}_{ij} \ne P^{ba}_{ji}\) であることに注意</blockquote>
+<h3>walker loss</h3>
 <p>ラベルなしを経由して、ラベルあり同士の関連度を測る. そうして同じクラスに属するデータ同士の関連度が高くなることを考える.</p>
-<p>ラベルなしを経由する <span class="math inline">\(A_i\)</span> と <span class="math inline">\(A_j\)</span> の関連度 <span class="math display">\[P^{aba}_{ij} = \sum_k P^{ab}_{ik} P^{ba}_{kj}\]</span> と定めて、 <span class="math display">\[\mathcal{L}_{walker} = H(T, P^{aba})\]</span> を損失関数とする. ここで <span class="math inline">\(H\)</span> は交差エントロピー. <span class="math inline">\(T\)</span> はこの教師で、次のように設計する. <span class="math display">\[T_{ij} = \begin{cases}
-1 / \#class(A_i) &amp; class(A_i) = class(A_j) \\
+<p>ラベルなしを経由する \(A_i\) と \(A_j\) の関連度</p>
+\[P^{aba}_{ij} = \sum_k P^{ab}_{ik} P^{ba}_{kj}\]
+<p>と定めて、</p>
+\[\mathcal{L}_{walker} = H(T, P^{aba})\]
+<p>を損失関数とする. ここで \(H\) は交差エントロピー. \(T\) はこの教師で、次のように設計する.</p>
+\[T_{ij} = \begin{cases}
+1 &#x2F; \#class(A_i) &amp; class(A_i) = class(A_j) \\
 0 &amp; else
-\end{cases}\]</span> ここで <span class="math inline">\(class(A_i)\)</span> とはデータ <span class="math inline">\(A_i\)</span> に対応するクラス. <span class="math inline">\(\#class\)</span> は <span class="math inline">\(A\)</span> の中で出現する回数.</p>
-<h3 id="visit-loss">visit loss</h3>
+\end{cases}\]
+<p>ここで \(class(A_i)\) とはデータ \(A_i\) に対応するクラス. \(\#class\) は \(A\) の中で出現する回数.</p>
+<h3>visit loss</h3>
 <p>ラベルなしの中に難しいケースが混じっている場合、どれとも関連しないということになり、 簡単なケースばかりが使われるようになってしまう. どのラベルなしのデータも、どれかのラベルありデータと関連するという制約を持たせる.</p>
-<p>いずれかとの関連度をその平均 <span class="math display">\[P^{visit}_j = 1/|A| \sum_i P^{ab}_{ij}\]</span> で表現して、これについて <span class="math display">\[\mathcal{L}_{visit} = H(V, P^{visit})\]</span> を加える. ここで教師 <span class="math inline">\(V\)</span> は単に一様であることを期待して <span class="math display">\[V_j = 1 / |B|\]</span> とする.</p>
-<blockquote>
-<p>バッチの中に全てのクラスが均一に出現することを期待している</p>
-</blockquote>
-<h3 id="classification-loss">classification loss</h3>
-<p>最終的な目的なクラス分類なので、ラベルアリについてはクラス分類を普通に行うような損失 <span class="math display">\[\mathcal{L}_{class}\]</span> を加える.</p>
-<p>以上の３つを足した <span class="math display">\[\mathcal{L}_{walker} + \mathcal{L}_{visit} + \mathcal{L}_{class}\]</span> を目的関数として、彼らの実験では Adam を使って最小化を目指した.</p>
-<h2 id="実験">実験</h2>
+<p>いずれかとの関連度をその平均</p>
+\[P^{visit}_j = 1&#x2F;|A| \sum_i P^{ab}_{ij}\]
+<p>で表現して、これについて</p>
+\[\mathcal{L}_{visit} = H(V, P^{visit})\]
+<p>を加える. ここで教師 \(V\) は単に一様であることを期待して</p>
+\[V_j = 1 &#x2F; |B|\]
+<p>とする.</p>
+<blockquote>バッチの中に全てのクラスが均一に出現することを期待している</blockquote>
+<h3>classification loss</h3>
+<p>最終的な目的なクラス分類なので、ラベルアリについてはクラス分類を普通に行うような損失</p>
+\[\mathcal{L}_{class}\]
+<p>を加える.</p>
+<p>以上の３つを足した</p>
+\[\mathcal{L}_{walker} + \mathcal{L}_{visit} + \mathcal{L}_{class}\]
+<p>を目的関数として、彼らの実験では Adam を使って最小化を目指した.</p>
+<h2>実験</h2>
 <p>MNIST, STL-10, SVHN を使って実験を行った.</p>
-<p>MNIST では確かに、ラベルなしの同じ文字が同じ文字と強く関連するように学習が行われている (Figure 2). ところで先に述べたように <span class="math inline">\(P^{ab}\)</span> と <span class="math inline">\(P^{ba}\)</span> はモデルでは対称ではないが、学習した結果、対称的なものが得られている. 直感的にも、対称的なのが正しいと思うし. そうなるようなモデリングは難しいのかな. softmax とかいうものを使わなければいいと思うんだけど.</p>
-<p>肝心のクラス分類自体の結果は、20 labeled samples と残りをラベルなしとして、 error rate 0.96%. 20 枚でこの精度はすごそうだけど、比較できる数字が見つからない. 100 枚でやった場合なら見つかったんだけど (<a href="http://musyoku.github.io/2016/12/27/GAN-VAT-ADGM-AAEでMNISTのワンショット学習/" class="uri">http://musyoku.github.io/2016/12/27/GAN-VAT-ADGM-AAEでMNISTのワンショット学習/</a>).</p>
+<p>MNIST では確かに、ラベルなしの同じ文字が同じ文字と強く関連するように学習が行われている (Figure 2). ところで先に述べたように \(P^{ab}\) と \(P^{ba}\) はモデルでは対称ではないが、学習した結果、対称的なものが得られている. 直感的にも、対称的なのが正しいと思うし. そうなるようなモデリングは難しいのかな. softmax とかいうものを使わなければいいと思うんだけど.</p>
+<p>肝心のクラス分類自体の結果は、20 labeled samples と残りをラベルなしとして、 error rate 0.96%. 20 枚でこの精度はすごそうだけど、比較できる数字が見つからない. 100 枚でやった場合なら見つかったんだけど ( <a href="http://musyoku.github.io/2016/12/27/GAN-VAT-ADGM-AAEでMNISTのワンショット学習/">http://musyoku.github.io/2016/12/27/GAN-VAT-ADGM-AAEでMNISTのワンショット学習/</a> ).</p>
 <p>Figure 2 にあるように assoc については完璧なら、ラベルなしにラベルを付けて学習データに追加しちゃダメなのかな.</p>
 <p>Table 3 では SVHN データセットで、ラベル付きの枚数とラベルなしの枚数を色々変えた結果を示している. ラベル付きデータが元々ある程度量が無いと、ラベルなしを加えても返って悪さをしているらしい. 適量の場合 (500-2000) だけ、その真価を発揮している.</p>
+
 <!--
 
-  HTML として pandoc -B で include する.
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
 
-  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
-  markdown で書いてるだろうから例として次のような段落を書けばよい.
+    <div id=toc></div>
 
-```
-## INDEX
-<div id=toc></div>
-```
 
-  used in
-  - /memo/gnuplot
-  - /memo/linux
-  - /memo/imagemagick
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
 
 -->
 <script>
 (function() {
-  var sections = document.getElementsByTagName('h2');
-  var i;
-  var OL = document.createElement('ol');
-  for (i=0; i < sections.length; ++i) {
-    var LI = document.createElement('li');
-    var A = document.createElement('a');
-    A.innerHTML = sections[i].innerHTML;
-    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
-    A.href = '#' + i;
-    LI.appendChild(A);
-    OL.appendChild(LI);
 
-    var PREF = document.createElement('a');
-    PREF.name = i;
-    sections[i].appendChild(PREF);
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
   }
 
-  var done = false;
-  function work() {
-    if (done) return;
-    if ( document.getElementById('toc') === null) return; // no toc element
-    document.getElementById('toc').appendChild(OL);
-    done = true;
-  };
+  function level1() {
 
-  window.onload = work;
-  setTimeout(work,800);
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

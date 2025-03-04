@@ -291,7 +291,7 @@ prod . map prod              == prod . join
 
 - $\text{join}^{ML} = \text{map}^M ~ \text{join}^L \cdot \text{join}^M \cdot \text{map}^M ~ cp$
 
-```dot
+```@dot
 digraph {
     node [shape=plaintext width=0.7 height=0.7 fixedsize=true]
     edge [arrowhead=vee]

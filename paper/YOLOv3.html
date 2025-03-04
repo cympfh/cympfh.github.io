@@ -1,62 +1,58 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>YOLOv3</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">YOLOv3</h1>
-</header>
+<p><ul> <li>original paper: <a href=https://pjreddie.com/media/files/papers/YOLOv3.pdf>https://pjreddie.com/media/files/papers/YOLOv3.pdf</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#物体検出>物体検出</a> </div></p>
+<h1 class="title">links</h1>
 <ul>
-<li>
-original paper: <a href=https://pjreddie.com/media/files/papers/YOLOv3.pdf>https://pjreddie.com/media/files/papers/YOLOv3.pdf</a>
-</li>
+  <li><a href="https://pjreddie.com/media/files/papers/YOLOv3.pdf">paper</a></li>
+  <li><a href="https://pjreddie.com/darknet/yolo/">project page</a></li>
 </ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#物体検出>物体検出</a></p>
-</div>
-<h1 id="links">links</h1>
-<ul>
-<li><a href="https://pjreddie.com/media/files/papers/YOLOv3.pdf">paper</a></li>
-<li><a href="https://pjreddie.com/darknet/yolo/">project page</a></li>
-</ul>
-<h1 id="概要">概要</h1>
+<h1 class="title">概要</h1>
 <p>YOLO のアップデートに関するテクニカルレポート. 以前のものよりも遅くはなったが、より正確になった. 他の手法と比較すると以前として高速で精度も同等以上に良い.</p>
-<h1 id="方法">方法</h1>
-<h2 id="bounding-box-prediction">Bounding Box Prediction</h2>
-<p>YOLO9000と同様. 画像をセルに分割し、各セルを入力として ネットワークは4パラメータ <span class="math inline">\((t_x, t_y, t_w, t_h)\)</span> を予測する. これを次のようにして、bounding box に変換する. 意味としては、そのセルに含まれる物体の、その領域の予測.</p>
-<p>セルの左上の座標 が <span class="math inline">\((c_x, c_y)\)</span> であるとする. また、事前知識として bounding box の幅と高さの目安 <span class="math inline">\((p_w, p_h)\)</span> を持っておいて、</p>
+<h1 class="title">方法</h1>
+<h2>Bounding Box Prediction</h2>
+<p>YOLO9000と同様. 画像をセルに分割し、各セルを入力として ネットワークは4パラメータ \((t_x, t_y, t_w, t_h)\) を予測する. これを次のようにして、bounding box に変換する. 意味としては、そのセルに含まれる物体の、その領域の予測.</p>
+<p>セルの左上の座標 が \((c_x, c_y)\) であるとする. また、事前知識として bounding box の幅と高さの目安 \((p_w, p_h)\) を持っておいて、</p>
 <ul>
-<li><span class="math inline">\(b_x = \sigma(t_x) + c_x\)</span></li>
-<li><span class="math inline">\(b_y = \sigma(t_y) + c_y\)</span></li>
-<li><span class="math inline">\(b_w = p_w e^{t_w}\)</span></li>
-<li><span class="math inline">\(b_h = p_h e^{t_h}\)</span></li>
+  <li>\(b_x = \sigma(t_x) + c_x\)</li>
+  <li>\(b_y = \sigma(t_y) + c_y\)</li>
+  <li>\(b_w = p_w e^{t_w}\)</li>
+  <li>\(b_h = p_h e^{t_h}\)</li>
 </ul>
-<p>とする. bounding box の **中心* を座標 <span class="math inline">\((b_x, b_y)\)</span> とし、幅高さが <span class="math inline">\((b_w, b_h)\)</span> な領域を bounding box として解釈する. 教師データはこれを逆算して <span class="math inline">\(t\)</span> を計算する.</p>
-<blockquote>
-<p>v2 の論文読めばどっかに書いてるのかもだけど、全体の画像サイズを <span class="math inline">\(1.0 \times 1.0\)</span> にリサイズしてから計算してると思う. なので, <span class="math inline">\(0 \leq b_x,b_y, b_w,b_h \leq 1\)</span>.</p>
-</blockquote>
+<p>とする.</p>
+<p>bounding box の中心を座標 \((b_x, b_y)\) とし、幅高さが \((b_w, b_h)\) な領域を bounding box として解釈する. 教師データはこれを逆算して \(t\) を計算する.</p>
+<blockquote>v2 の論文読めばどっかに書いてるのかもだけど、全体の画像サイズを \(1.0 \times 1.0\) にリサイズしてから計算してると思う. なので, \(0 \leq b_x,b_y, b_w,b_h \leq 1\) .</blockquote>
 <ul>
-<li>相対座標であること、中心 (そこに物体がある) を予測すること
-<ul>
-<li>セル (例えば7x7) は領域より小さいサイズを想定していて (?) その領域の中の相対的な場所を学習すること</li>
-</ul></li>
+  <li>
+    相対座標であること、中心 (そこに物体がある) を予測すること
+    <ul>
+      <li>セル (例えば7x7) は領域より小さいサイズを想定していて (?) その領域の中の相対的な場所を学習すること</li>
+    </ul>
+  </li>
 </ul>
 <p>v3 では、目的関数に logistic 回帰を使う. セルが正しい領域に重なっていない場合は</p>
 <p>つかれた</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -161,5 +157,9 @@ original paper: <a href=https://pjreddie.com/media/files/papers/YOLOv3.pdf>https
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

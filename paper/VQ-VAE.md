@@ -29,7 +29,7 @@ $$Q \colon \mathbb R^D \to \mathbb R^D$$
 $$Q(z) = e_k ~~\text{ where }~~ k = \mathrm{argmin}_j \| z - e_j \|$$
 従って固定された $e$ に対して $Q$ の値域は実質 $K$ みたいなもの.
 
-VAE のエンコード部分を $$Q(E(x))$$ に置き換えて使う.
+VAE のエンコード部分を $Q(E(x))$ に置き換えて使う.
 
 ### デコード
 

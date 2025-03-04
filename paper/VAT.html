@@ -1,122 +1,179 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Virtual Adversarial Training</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/</a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">Virtual Adversarial Training</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=https://arxiv.org/abs/1507.00677>https://arxiv.org/abs/1507.00677</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#物体検出>物体検出</a> <a class='tag is-blue' href=index.html#深層学習>深層学習</a></p>
-</div>
-<h2 id="概要">概要</h2>
+<p><ul> <li>original paper: <a href=https://arxiv.org/abs/1507.00677>https://arxiv.org/abs/1507.00677</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#物体検出>物体検出</a> <a class='tag is-blue' href=index.html#深層学習>深層学習</a> </div></p>
+<h2>概要</h2>
 <p>画像を入力、出力をクラスごとの確率分布とするような所謂画像認識を考える. 十分に訓練させた画像認識モデルは入力に対して予測分布が急峻となる問題がある. すなわち、入力に鋭敏で、人の目にはほとんど変化がないようなノイズを加えただけでも予測が急激に変化することがある. これは本来、不自然なことで、適切な汎化性能を持ったモデルとは言えない.</p>
-<h2 id="adversarial-example">Adversarial Example</h2>
-<p>自然画像 <span class="math inline">\(x\)</span> に対して予測分布 <span class="math inline">\(y=f(x)\)</span>.</p>
-<p>適当なノイズ <span class="math inline">\(e\)</span> が加わった場合の予測: <span class="math display">\[y&#39; = f(x + e)\]</span></p>
-<p>出力は確率分布なので、予測の乖離は <span class="math inline">\(\delta_e = \text{KL}(f(x) \| f(x+e))\)</span> で測れる. これが本来小さくあるべき.</p>
-<p>ノイズに何にも制限がないといくらでも <span class="math inline">\(\delta\)</span> は大きくなって当然なので、 ノルムに関して制限を与える. 適当な定数 <span class="math inline">\(\epsilon\)</span> を以って</p>
-<p><span class="math display">\[\| e \| \leq \epsilon\]</span></p>
+<h2>Adversarial Example</h2>
+<p>自然画像 \(x\) に対して予測分布 \(y=f(x)\) .</p>
+<p>適当なノイズ \(e\) が加わった場合の予測:</p>
+\[y&#x27; = f(x + e)\]
+<p>出力は確率分布なので、予測の乖離は \(\delta_e = \text{KL}(f(x) \| f(x+e))\) で測れる. これが本来小さくあるべき.</p>
+<p>ノイズに何にも制限がないといくらでも \(\delta\) は大きくなって当然なので、 ノルムに関して制限を与える. 適当な定数 \(\epsilon\) を以って</p>
+\[\| e \| \leq \epsilon\]
 <p>とする.</p>
-<p>ノイズをランダムに生成しても大した <span class="math inline">\(\delta\)</span> にはならないが、 ちゃんと計算して作ると大きくなる.</p>
-<p><span class="math display">\[e_{ad} = \text{arg max}_{\|e\| \leq \epsilon} \text{KL}(f(x) \| f(x + e))\]</span></p>
+<p>ノイズをランダムに生成しても大した \(\delta\) にはならないが、 ちゃんと計算して作ると大きくなる.</p>
+\[e_{ad} = \text{arg max}_{\|e\| \leq \epsilon} \text{KL}(f(x) \| f(x + e))\]
 <p>このようなノイズを加えた</p>
-<p><span class="math display">\[x_{ad} = x + e_{ad}\]</span></p>
+\[x_{ad} = x + e_{ad}\]
 <p>を、adversarial example という.</p>
-<h3 id="adversarial-example-の作り方">adversarial example の作り方</h3>
-<p>次のような方法で近似的に <span class="math inline">\(e_{ad}\)</span> が求まる.</p>
-<ol type="1">
-<li>単位ベクトル <span class="math inline">\(d\)</span> をランダムに生成</li>
-<li>次を <span class="math inline">\(I_p\)</span> 回繰り返す ( <span class="math inline">\(I_p\)</span> は十分大きいほど精度が良いが <span class="math inline">\(1\)</span> 回やれば十分という話がある)
-<ul>
-<li><span class="math inline">\(d \leftarrow \text{grad}_d \text{KL}(f(x) \| f(x + \xi d))\)</span> ( <span class="math inline">\(\xi\)</span> は適当な定数, <span class="math inline">\(10\)</span> くらい)</li>
-<li><span class="math inline">\(d \leftarrow d / \|d\|\)</span></li>
-</ul></li>
-<li><span class="math inline">\(e_{ad} = \epsilon d\)</span></li>
+<h3>adversarial example の作り方</h3>
+<p>次のような方法で近似的に \(e_{ad}\) が求まる.</p>
+<ol>
+  <li>単位ベクトル \(d\) をランダムに生成</li>
+  <li>
+    次を \(I_p\) 回繰り返す ( \(I_p\) は十分大きいほど精度が良いが \(1\) 回やれば十分という話がある)
+    <ul>
+      <li>\(d \leftarrow \text{grad}_d \text{KL}(f(x) \| f(x + \xi d))\) ( \(\xi\) は適当な定数, \(10\) くらい)</li>
+      <li>\(d \leftarrow d &#x2F; \|d\|\)</li>
+    </ul>
+  </li>
+  <li>\(e_{ad} = \epsilon d\)</li>
 </ol>
-<h2 id="adversarial-training">Adversarial Training</h2>
+<h2>Adversarial Training</h2>
 <p>先行研究の Adversarial Training では、</p>
-<p><span class="math display">\[(x, y)\]</span></p>
+\[(x, y)\]
 <p>の訓練の際に、</p>
-<p><span class="math display">\[(x + e_{ad}, y)\]</span></p>
+\[(x + e_{ad}, y)\]
 <p>を新たな事例として加えて学習する、という使い方をした.</p>
-<h2 id="virtual-adversarial-training-vat">Virtual Adversarial Training (VAT)</h2>
+<h2>Virtual Adversarial Training (VAT)</h2>
 <p>本研究は教師ナシ学習に adversarial example を用いる. 全体として半教師学習にする.</p>
-<h3 id="教師アリ部分">教師アリ部分</h3>
-<p>普通に <span class="math inline">\((x, y)\)</span> を学習する.</p>
-<h3 id="教師ナシ部分">教師ナシ部分</h3>
-<p>ラベルなしデータ <span class="math inline">\(x\)</span> から adversarial example <span class="math inline">\(x_{ad}\)</span> を作って</p>
-<p><span class="math display">\[\text{KL}(f(x), f(x_{ad}))\]</span></p>
-<p>を正則化項として付け加える. すなわち、この KL を最小化することで <span class="math inline">\(f(x)\)</span> の周りの予測分布の滑らかさを要請して汎化性能を上げる.</p>
-<h2 id="実装">実装</h2>
+<h3>教師アリ部分</h3>
+<p>普通に \((x, y)\) を学習する.</p>
+<h3>教師ナシ部分</h3>
+<p>ラベルなしデータ \(x\) から adversarial example \(x_{ad}\) を作って</p>
+\[\text{KL}(f(x), f(x_{ad}))\]
+<p>を正則化項として付け加える. すなわち、この KL を最小化することで \(f(x)\) の周りの予測分布の滑らかさを要請して汎化性能を上げる.</p>
+<h2>実装</h2>
 <p>https://github.com/cympfh/MNIST-etude/blob/master/chainer/vat.py</p>
+
 <!--
 
-  HTML として pandoc -B で include する.
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
 
-  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
-  markdown で書いてるだろうから例として次のような段落を書けばよい.
+    <div id=toc></div>
 
-```
-## INDEX
-<div id=toc></div>
-```
 
-  used in
-  - /memo/gnuplot
-  - /memo/linux
-  - /memo/imagemagick
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
 
 -->
 <script>
 (function() {
-  var sections = document.getElementsByTagName('h2');
-  var i;
-  var OL = document.createElement('ol');
-  for (i=0; i < sections.length; ++i) {
-    var LI = document.createElement('li');
-    var A = document.createElement('a');
-    A.innerHTML = sections[i].innerHTML;
-    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
-    A.href = '#' + i;
-    LI.appendChild(A);
-    OL.appendChild(LI);
 
-    var PREF = document.createElement('a');
-    PREF.name = i;
-    sections[i].appendChild(PREF);
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
   }
 
-  var done = false;
-  function work() {
-    if (done) return;
-    if ( document.getElementById('toc') === null) return; // no toc element
-    document.getElementById('toc').appendChild(OL);
-    done = true;
-  };
+  function level1() {
 
-  window.onload = work;
-  setTimeout(work,800);
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

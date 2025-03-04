@@ -1,102 +1,95 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Fine-Grained Sentiment Analysis with Structural Features</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">Fine-Grained Sentiment Analysis with Structural Features</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=http://aclweb.org/anthology/I/I11/I11-1038.pdf>http://aclweb.org/anthology/I/I11/I11-1038.pdf</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#自然言語処理>自然言語処理</a> <a class='tag is-blue' href=index.html#極性分析>極性分析</a> <a class='tag is-blue' href=index.html#MarkovLogic>MarkovLogic</a></p>
-</div>
-<h2 id="概要">概要</h2>
+<p><ul> <li>original paper: <a href=http://aclweb.org/anthology/I/I11/I11-1038.pdf>http://aclweb.org/anthology/I/I11/I11-1038.pdf</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#自然言語処理>自然言語処理</a> <a class='tag is-blue' href=index.html#極性分析>極性分析</a> <a class='tag is-blue' href=index.html#MarkovLogic>MarkovLogic</a> </div></p>
+<h2>概要</h2>
 <p>商品のレビューテキストの極性判定を行いたい. 極性判定では結局全体として肯定なのか否定なのか調べるために構造的に調べることは必須である. この論文は構造を考慮するために Markov Logic Networks (MLNs) を用いる手法を提案する. セグメントごとの極性判定で正解率 69% の判定を行った. 全体の極性判定はやってないらしい (そっちが重要やろうが).</p>
-<h2 id="考察">考察</h2>
+<h2>考察</h2>
 <p>商品のレビューは一つのレビューの中に肯定と否定が交じることもある:</p>
-<blockquote>
-<p>&quot;Despite the pretty design I would never recommend it, because the sound quality is unacceptable&quot;</p>
-</blockquote>
+<blockquote>"Despite the pretty design I would never recommend it, because the sound quality is unacceptable"</blockquote>
 <p>だから sub-sentence レベルでの解析が必要.</p>
-<h3 id="discourse-segments">discourse segments</h3>
+<h3>discourse segments</h3>
 <p>関連研究として</p>
 <ul>
-<li>Rhetorical Structure Theory (RST) introduced by Mann and Thompson (1988)</li>
+  <li>Rhetorical Structure Theory (RST) introduced by Mann and Thompson (1988)</li>
 </ul>
 <p>これによると、 discourse セグメントの単位で解析をして、セグメント同士の関係を調べるのが良いらしい.</p>
 <p>先ほどの例文は次のように分割されるべきらしい:</p>
-<ol type="1">
-<li>Despite the pretty design</li>
-<li>I would never recommend it</li>
-<li>because the sound quality is unacceptable</li>
+<ol>
+  <li>Despite the pretty design</li>
+  <li>I would never recommend it</li>
+  <li>because the sound quality is unacceptable</li>
 </ol>
 <p>そしてこれらはこのような接続関係を持つ</p>
 <ul>
-<li>CONCESSION 1 2</li>
-<li>CAUSE-EXPLATINATION-EVIDENCE 2 3</li>
+  <li>CONCESSION 1 2</li>
+  <li>CAUSE-EXPLATINATION-EVIDENCE 2 3</li>
 </ul>
-<h3 id="隣接セグメント">隣接セグメント</h3>
+<h3>隣接セグメント</h3>
 <p>多くの場合、隣接したセグメントは同じ極性を持つ</p>
-<h3 id="対比関係">対比関係</h3>
+<h3>対比関係</h3>
 <p>but で接続された隣接するセグメントの極性が同じかどうかは結構微妙で、 彼らが調査したところ、 40% は反対の極性で、60% は同じ極性を持っていたという.</p>
 <p>極性を反転させているかどうかの判定が必要である.</p>
-<h3 id="辞書的分類">辞書的分類</h3>
+<h3>辞書的分類</h3>
 <p>古典的ながら (この論文自体が古典だが) 確実そうなのは、 極性辞書 (語と極性とのペアを集めたもの) を持っておいて、 登場した語が辞書に乗っていたらそれを参照するというものである.</p>
-<h2 id="markov-logic-による極性判定の形式化">Markov Logic による極性判定の形式化</h2>
-<p>セグメント <span class="math inline">\(x\)</span> について、これが positive であるか negative であるかを述語論理</p>
+<h2>Markov Logic による極性判定の形式化</h2>
+<p>セグメント \(x\) について、これが positive であるか negative であるかを述語論理</p>
 <ul>
-<li><span class="math inline">\(P(x)\)</span></li>
-<li><span class="math inline">\(N(x)\)</span></li>
+  <li>\(P(x)\)</li>
+  <li>\(N(x)\)</li>
 </ul>
 <p>で書くことにする. この２つについて次を認める.</p>
 <ul>
-<li><span class="math inline">\(\lnot P(x) \Rightarrow N(x)\)</span></li>
-<li><span class="math inline">\(\lnot N(x) \Rightarrow P(x)\)</span></li>
+  <li>\(\lnot P(x) \Rightarrow N(x)\)</li>
+  <li>\(\lnot N(x) \Rightarrow P(x)\)</li>
 </ul>
-<h3 id="辞書による事前知識">辞書による事前知識</h3>
+<h3>辞書による事前知識</h3>
 <ul>
-<li><span class="math inline">\(PS(x) \iff P(x)\)</span></li>
-<li><span class="math inline">\(NS(x) \iff N(x)\)</span></li>
+  <li>\(PS(x) \iff P(x)\)</li>
+  <li>\(NS(x) \iff N(x)\)</li>
 </ul>
 <p>ここで PS は positive source の略. NS も同様.</p>
 <p>ここが一番重要な気がするけど、WordNet を使ってどうこうとかルールベースで頑張ってるだけという感じ.</p>
-<h3 id="隣接セグメント-1">隣接セグメント</h3>
-<p>２つのセグメント <span class="math inline">\(x, y\)</span> が隣接していることを述語 <span class="math inline">\(pre(x,y)\)</span> で書くとき、</p>
+<h3>隣接セグメント</h3>
+<p>２つのセグメント \(x, y\) が隣接していることを述語 \(pre(x,y)\) で書くとき、</p>
 <ul>
-<li><span class="math inline">\(pre(x,y) \land P(x) \Rightarrow P(y)\)</span></li>
-<li><span class="math inline">\(pre(x,y) \land N(x) \Rightarrow N(y)\)</span></li>
+  <li>\(pre(x,y) \land P(x) \Rightarrow P(y)\)</li>
+  <li>\(pre(x,y) \land N(x) \Rightarrow N(y)\)</li>
 </ul>
 <p>これは隣り合うセグメントは同じ極性を持ちやすいことを言う.</p>
-<h3 id="対比関係-1">対比関係</h3>
-<p>2つのセグメントが対比関係にあるのを述語 <span class="math inline">\(cont(x,y)\)</span> で、 対比関係でないのを述語 <span class="math inline">\(nconst(x,y)\)</span> で書くとき、</p>
+<h3>対比関係</h3>
+<p>2つのセグメントが対比関係にあるのを述語 \(cont(x,y)\) で、 対比関係でないのを述語 \(nconst(x,y)\) で書くとき、</p>
 <ul>
-<li><span class="math inline">\(cont(x,y) \land P(x) \Rightarrow N(y)\)</span></li>
-<li><span class="math inline">\(cont(x,y) \land N(x) \Rightarrow P(y)\)</span></li>
-<li><span class="math inline">\(ncont(x,y) \land P(x) \Rightarrow P(y)\)</span></li>
-<li><span class="math inline">\(ncont(x,y) \land N(x) \Rightarrow N(y)\)</span></li>
+  <li>\(cont(x,y) \land P(x) \Rightarrow N(y)\)</li>
+  <li>\(cont(x,y) \land N(x) \Rightarrow P(y)\)</li>
+  <li>\(ncont(x,y) \land P(x) \Rightarrow P(y)\)</li>
+  <li>\(ncont(x,y) \land N(x) \Rightarrow N(y)\)</li>
 </ul>
-<h2 id="実験">実験</h2>
+<h2>実験</h2>
 <p>Amazon のレビューで実験. SVM が56% で提案手法の max が 69%.</p>
-<h2 id="感想">感想</h2>
+<h2>感想</h2>
 <p>本当に MLNs の貢献なのか大変に疑わしいし、 ルールベースにルールベースを積み重ねたような古典的手法だと思った. 今なら LSTM に読ませるだけでももっとまともな精度が出そう.</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -201,5 +194,9 @@ original paper: <a href=http://aclweb.org/anthology/I/I11/I11-1038.pdf>http://ac
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

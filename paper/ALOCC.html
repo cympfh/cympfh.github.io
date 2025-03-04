@@ -1,74 +1,73 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>[1802.09088] Adversarially Learned One-Class Classifier for Novelty Detection</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">[1802.09088] Adversarially Learned One-Class Classifier for Novelty Detection</h1>
-</header>
+<p><ul> <li>original paper: <a href=https://arxiv.org/abs/1802.09088>https://arxiv.org/abs/1802.09088</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#オートエンコーダ>オートエンコーダ</a> <a class='tag is-blue' href=index.html#GAN>GAN</a> <a class='tag is-blue' href=index.html#異常検出>異常検出</a> </div></p>
+<h2>リンク</h2>
 <ul>
-<li>
-original paper: <a href=https://arxiv.org/abs/1802.09088>https://arxiv.org/abs/1802.09088</a>
-</li>
+  <li><a href="https://github.com/khalooei/ALOCC-CVPR2018">github:khalooei/ALOCC-CVPR2018</a></li>
+  <li>
+    野良解説
+    <ul>
+      <li><a href="https://qiita.com/kzkadc/items/334c3d85c2acab38f105">ディープラーニングによる異常検知手法ALOCCを実装した</a></li>
+    </ul>
+  </li>
 </ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#オートエンコーダ>オートエンコーダ</a> <a class='tag is-blue' href=index.html#GAN>GAN</a> <a class='tag is-blue' href=index.html#異常検出>異常検出</a></p>
-</div>
-<h2 id="リンク">リンク</h2>
-<ul>
-<li><a href="https://github.com/khalooei/ALOCC-CVPR2018">github:khalooei/ALOCC-CVPR2018</a></li>
-<li>野良解説
-<ul>
-<li><a href="https://qiita.com/kzkadc/items/334c3d85c2acab38f105">ディープラーニングによる異常検知手法ALOCCを実装した</a></li>
-</ul></li>
-</ul>
-<h2 id="概要">概要</h2>
+<h2>概要</h2>
 <p>Autoencoder+GAN で異常検出する. ある1クラスのデータ (論文では画像) だけを訓練データにして, ハズレクラスかどうかを検出する (One-Class Classifier).</p>
-<h2 id="手法">手法</h2>
+<h2>手法</h2>
 <ul>
-<li><span class="math inline">\(\mathrm{Encoder} \colon X \to Z\)</span> (<span class="math inline">\(X\)</span> は入力データの空間, <span class="math inline">\(Z = \mathbb R^m\)</span>)</li>
-<li><span class="math inline">\(\mathrm{Decoder} \colon Z \to X\)</span></li>
-<li><span class="math inline">\(R = \mathrm{Decoder} \circ \mathrm{Encoder}\)</span></li>
-<li><span class="math inline">\(D \colon X \to [0,1]\)</span></li>
+  <li>\(\mathrm{Encoder} \colon X \to Z\) ( \(X\) は入力データの空間, \(Z = \mathbb R^m\) )</li>
+  <li>\(\mathrm{Decoder} \colon Z \to X\)</li>
+  <li>\(R = \mathrm{Decoder} \circ \mathrm{Encoder}\)</li>
+  <li>\(D \colon X \to [0,1]\)</li>
 </ul>
-<h3 id="訓練">訓練</h3>
-<p>入力データ <span class="math inline">\(x \in X\)</span> にノイズを加えたデータを <span class="math inline">\(\tilde{x}\)</span> とする. 次の2つの和が損失関数.</p>
+<h3>訓練</h3>
+<p>入力データ \(x \in X\) にノイズを加えたデータを \(\tilde{x}\) とする. 次の2つの和が損失関数.</p>
 <ul>
-<li>autoencoder
-<ul>
-<li><span class="math inline">\(\| R(\tilde{x}) - x \|^2\)</span></li>
-</ul></li>
-<li>GAN
-<ul>
-<li><span class="math inline">\(\mathbb E \log D(x) + \mathbb E \log \left[ 1 - DRx \right]\)</span></li>
-</ul></li>
+  <li>
+    autoencoder
+    <ul>
+      <li>\(\| R(\tilde{x}) - x \|^2\)</li>
+    </ul>
+  </li>
+  <li>
+    GAN
+    <ul>
+      <li>\(\mathbb E \log D(x) + \mathbb E \log \left[ 1 - DRx \right]\)</li>
+    </ul>
+  </li>
 </ul>
-<p>つまり <span class="math inline">\(R\)</span> はノイズを除去する autoencoder. <span class="math inline">\(D\)</span> はオリジナルか復元データかを判別する機械.</p>
-<blockquote>
-<p>要するに autoencoder 部分が GAN で言う generator なわけだが, その作り方にそもそもオリジナル画像 (にノイズを加えたあと頑張って除去したもの) を使ってるので, そもそも正解に近いデータである.</p>
-</blockquote>
-<h3 id="検出">検出</h3>
-<p><span class="math inline">\(D\)</span> のみでなく, <span class="math display">\[D(R(\tilde{x}))\]</span> の値で検出する.</p>
-<p><span class="math inline">\(R\)</span> は正常なデータはより <span class="math inline">\(D\)</span> に正しく判別してもらうための補正をする能力があるはずだから.</p>
-<h2 id="実験">実験</h2>
-<p>MNIST の &quot;1&quot; で訓練する. この <span class="math inline">\(R\)</span> に画像を入れると &quot;1&quot; っぽくなる.</p>
-<figure>
-<img src="https://i.imgur.com/QpcZHOD.png" />
-</figure>
+<p>つまり \(R\) はノイズを除去する autoencoder. \(D\) はオリジナルか復元データかを判別する機械.</p>
+<blockquote>要するに autoencoder 部分が GAN で言う generator なわけだが, その作り方にそもそもオリジナル画像 (にノイズを加えたあと頑張って除去したもの) を使ってるので, そもそも正解に近いデータである.</blockquote>
+<h3>検出</h3>
+<p>\(D\) のみでなく,</p>
+\[D(R(\tilde{x}))\]
+<p>の値で検出する.</p>
+<p>\(R\) は正常なデータはより \(D\) に正しく判別してもらうための補正をする能力があるはずだから.</p>
+<h2>実験</h2>
+<p>MNIST の "1" で訓練する. この \(R\) に画像を入れると "1" っぽくなる.</p>
+<p><img src="https://i.imgur.com/QpcZHOD.png" alt="" /></p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -173,5 +172,9 @@ original paper: <a href=https://arxiv.org/abs/1802.09088>https://arxiv.org/abs/1
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

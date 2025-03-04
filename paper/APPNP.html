@@ -1,63 +1,64 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>[1810.05997] Predict then Propagate: Graph Neural Networks meet Personalized PageRank</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
     <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">[1810.05997] Predict then Propagate: Graph Neural Networks meet Personalized PageRank</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=https://arxiv.org/abs/1810.05997>https://arxiv.org/abs/1810.05997</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#グラフ学習>グラフ学習</a></p>
-</div>
-<figure>
-<img src="https://i.imgur.com/mrT1Z10.png" />
-</figure>
-<h2 id="オリジナル-pagerank-1998">オリジナル PageRank (1998)</h2>
-<p>頂点にいる確率ベクトル <span class="math inline">\(\pi\)</span> と隣接行列（を正規化したもの） <span class="math inline">\(A\)</span> を使って, <span class="math display">\[\pi = A \pi\]</span> を解く.</p>
-<h2 id="personalized-pagerank-1998">Personalized PageRank (1998)</h2>
-<p>テレポート（リスタート）を表す teleport vector <span class="math inline">\(i\)</span> を使って, <span class="math display">\[\pi = (1-\alpha) A \pi + \alpha i\]</span> ここで <span class="math inline">\(\alpha\)</span> は <span class="math inline">\(0 &lt; \alpha \leq 1\)</span> でテレポートする確率を表す.</p>
-<p>これを陽に解くと次の式になる. <span class="math display">\[\pi = \alpha ( I_n - (1-\alpha) A )^{-1} i\]</span></p>
+<p><ul> <li>original paper: <a href=https://arxiv.org/abs/1810.05997>https://arxiv.org/abs/1810.05997</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#グラフ学習>グラフ学習</a> </div></p>
+<p><img src="https://i.imgur.com/mrT1Z10.png" alt="" /></p>
+<h2>オリジナル PageRank (1998)</h2>
+<p>頂点にいる確率ベクトル \(\pi\) と隣接行列（を正規化したもの） \(A\) を使って,</p>
+\[\pi = A \pi\]
+<p>を解く.</p>
+<h2>Personalized PageRank (1998)</h2>
+<p>テレポート（リスタート）を表す teleport vector \(i\) を使って,</p>
+\[\pi = (1-\alpha) A \pi + \alpha i\]
+<p>ここで \(\alpha\) は \(0 &lt; \alpha \leq 1\) でテレポートする確率を表す.</p>
+<p>これを陽に解くと次の式になる.</p>
+\[\pi = \alpha ( I_n - (1-\alpha) A )^{-1} i\]
 <p>このモデルは次のように使われる.</p>
-<p>頂点 <span class="math inline">\(x\)</span> からスタートして頂点 <span class="math inline">\(y\)</span> のスコアを知りたい. <span class="math inline">\(x\)</span> に当たるところだけ bit を立てた one-hot vector を <span class="math inline">\(i\)</span> として使う. 上の式を解いて得た <span class="math inline">\(\pi\)</span> の <span class="math inline">\(y\)</span> に当たる成分が得たかったスコア <span class="math inline">\(I(x,y)\)</span> である.</p>
-<h2 id="personalized-propagation-of-neural-predictions-ppnp">Personalized Propagation of Neural Predictions (PPNP)</h2>
+<p>頂点 \(x\) からスタートして頂点 \(y\) のスコアを知りたい. \(x\) に当たるところだけ bit を立てた one-hot vector を \(i\) として使う. 上の式を解いて得た \(\pi\) の \(y\) に当たる成分が得たかったスコア \(I(x,y)\) である.</p>
+<h2>Personalized Propagation of Neural Predictions (PPNP)</h2>
 <p>以上の手法にニューラルネットを適用する.</p>
-<p>頂点 <span class="math inline">\(i\)</span> に特徴ベクトル <span class="math inline">\(x_i \in \mathbb R^m\)</span> があるとき, パラメータを <span class="math inline">\(\theta\)</span> とするニューラルネットワーク <span class="math inline">\(f_\theta\)</span> を使って <span class="math display">\[h_i = f_\theta(x_i)\]</span> とする. ただしここでグラフの頂点数を <span class="math inline">\(n\)</span> だとして <span class="math inline">\(h_i \in \mathbb R^n\)</span> とする. というのも <span class="math inline">\(h\)</span> が先程の <span class="math inline">\(i\)</span> 相当だから.</p>
-<p><span class="math display">\[z = \mathrm{softmax}( \alpha ( I_n - (1-\alpha) A )^{-1} h_i )\]</span> これの <span class="math inline">\(j\)</span> 成分がスコア <span class="math inline">\((i,j)\)</span> になる.</p>
-<p>全ての頂点に関するスコアを求めるとしたら, <span class="math inline">\(x_i\)</span> を並べた行列 <span class="math inline">\(X\)</span> から <span class="math inline">\((i,j)\)</span> として得られる.</p>
+<p>頂点 \(i\) に特徴ベクトル \(x_i \in \mathbb R^m\) があるとき, パラメータを \(\theta\) とするニューラルネットワーク \(f_\theta\) を使って</p>
+\[h_i = f_\theta(x_i)\]
+<p>とする. ただしここでグラフの頂点数を \(n\) だとして \(h_i \in \mathbb R^n\) とする. というのも \(h\) が先程の \(i\) 相当だから.</p>
+\[z = \mathrm{softmax}( \alpha ( I_n - (1-\alpha) A )^{-1} h_i )\]
+<p>これの \(j\) 成分がスコア \((i,j)\) になる.</p>
+<p>全ての頂点に関するスコアを求めるとしたら, \(x_i\) を並べた行列 \(X\) から \((i,j)\) として得られる.</p>
 <p>以上を使うことでグラフに関するニューラルネットワーク計算が end-to-end に完了できる. ただしこの通りに行列演算するのはあまりに非効率である.</p>
-<blockquote>
-<p>特に逆行列なんて計算するのが無理だろう.</p>
-</blockquote>
-<h2 id="approximate-ppnp-appnp">Approximate PPNP (APPNP)</h2>
+<blockquote>特に逆行列なんて計算するのが無理だろう.</blockquote>
+<h2>Approximate PPNP (APPNP)</h2>
 <p>PageRank を Random walk with restart で近似的に計算するのと同じことをする.</p>
 <ul>
-<li><span class="math inline">\(z_0 = h = f_\theta(x)\)</span></li>
-<li>For each <span class="math inline">\(k=1,\ldots, K\)</span>
-<ul>
-<li><span class="math inline">\(z_k = (1-\alpha) A z_{k-1} + \alpha h\)</span></li>
-</ul></li>
-<li><span class="math inline">\(z = \mathrm{softmax}(z_K)\)</span></li>
+  <li>\(z_0 = h = f_\theta(x)\)</li>
+  <li>
+    For each \(k=1,\ldots, K\)
+    <ul>
+      <li>\(z_k = (1-\alpha) A z_{k-1} + \alpha h\)</li>
+    </ul>
+  </li>
+  <li>\(z = \mathrm{softmax}(z_K)\)</li>
 </ul>
-<p>とは言え行列の掛け算をするので, 頂点数 <span class="math inline">\(N\)</span>, イテレーション数 <span class="math inline">\(K\)</span> に対して <span class="math inline">\(O(K N^2)\)</span> は時間が掛かる. 彼らの実験では <span class="math inline">\(N &lt; 2e4\)</span>, <span class="math inline">\(K \leq 20\)</span> 程度.</p>
+<p>とは言え行列の掛け算をするので, 頂点数 \(N\) , イテレーション数 \(K\) に対して \(O(K N^2)\) は時間が掛かる. 彼らの実験では \(N &lt; 2e4\) , \(K \leq 20\) 程度.</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -162,5 +163,9 @@ original paper: <a href=https://arxiv.org/abs/1810.05997>https://arxiv.org/abs/1
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

@@ -1,50 +1,45 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Unsupervised Word Usage Similarity in Social Media Texts</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">Unsupervised Word Usage Similarity in Social Media Texts</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=http://www.aclweb.org/anthology/S/S13/S13-1036.pdf>http://www.aclweb.org/anthology/S/S13/S13-1036.pdf</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#自然言語処理>自然言語処理</a> <a class='tag is-blue' href=index.html#教師ナシ学習>教師ナシ学習</a> <a class='tag is-blue' href=index.html#類似度学習>類似度学習</a></p>
-</div>
-<h2 id="intro">Intro</h2>
+<p><ul> <li>original paper: <a href=http://www.aclweb.org/anthology/S/S13/S13-1036.pdf>http://www.aclweb.org/anthology/S/S13/S13-1036.pdf</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#自然言語処理>自然言語処理</a> <a class='tag is-blue' href=index.html#教師ナシ学習>教師ナシ学習</a> <a class='tag is-blue' href=index.html#類似度学習>類似度学習</a> </div></p>
+<h2>Intro</h2>
 <p>あるツイートに出現した単語 (paper) が 別のツイートに出現した場合に、 それらが同じような使われ方をしてるかどうかを、 1 から 5 の整数で表す。</p>
 <p>これは WSD (paper = 紙、論文) にも繋がるタスクである。</p>
-<h2 id="data">Data</h2>
+<h2>Data</h2>
 <p>データの作り方を説明する。 ツールの話は役立つはずだ。</p>
 <p><code>langid.py</code> はツイートが英語かどうかを判別するのに用いた。</p>
-<p><code>the dictionary of Han et al. (2012)</code> で、俗的略語 (tmrw) を正規化 (-&gt; tomorrow) した。</p>
+<p><code>the dictionary of Han et al. (2012)</code> で、俗的略語 (tmrw) を正規化 (-> tomorrow) した。</p>
 <p>あと、単語として <code>Erk et al. (2009)</code> に倣った <code>bar, charge, execution, field, figure, function, investigator, match, paper, post</code> の10の名詞を用いる。</p>
-<p>形態素解析として <code>CMU Twitter POS tagger (Owoputi et al., 2012)</code> を用いた。 Twitterで学習したような何からしい。 これ<a href="http://www.ark.cs.cmu.edu/TweetNLP/">Twitter NLP and Part-of-Speech Tagging - CMU ARK Lab</a>かな？</p>
-<h3 id="background-corpus">Background corpus</h3>
+<p>形態素解析として <code>CMU Twitter POS tagger (Owoputi et al., 2012)</code> を用いた。 Twitterで学習したような何からしい。 これ <a href="http://www.ark.cs.cmu.edu/TweetNLP/">Twitter NLP and Part-of-Speech Tagging - CMU ARK Lab</a> かな？</p>
+<h3>Background corpus</h3>
 <p>目的の単語を必ずどれか含むツイート 1 million 程度</p>
-<h2 id="method">Method</h2>
+<h2>Method</h2>
 <p>まず、単語の二次の共起頻度ベクトルをとる。 二次のそれが何であるかは <a href="http://www.sciencedirect.com/science/article/pii/S0306457396000684">A cooccurrence-based thesaurus and two applications to information retrieval</a> を参考するべき。 ただの共起頻度ベクトルよりも良いものであるらしい。</p>
 <p>Background corpus 中の人気トップ 10k 単語との共起を見る。</p>
 <p>で、LDAしただけ？</p>
-<h2 id="result">Result</h2>
-<p>別にそんなによくない。 <span class="math inline">\(0.3\)</span> とかだ</p>
+<h2>Result</h2>
+<p>別にそんなによくない。 \(0.3\) とかだ</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -149,5 +144,9 @@ original paper: <a href=http://www.aclweb.org/anthology/S/S13/S13-1036.pdf>http:
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

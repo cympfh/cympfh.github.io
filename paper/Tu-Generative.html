@@ -1,109 +1,172 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>Learning Generative Models via Discriminative Approaches (Tu's generative model)</title>
+  <title>Learning Generative Models via Discriminative Approaches (Tu&#x27;s generative model)</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/</a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">Learning Generative Models via Discriminative Approaches (Tu's generative model)</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=http://pages.ucsd.edu/~ztu/publication/cvpr07_gdl.pdf>http://pages.ucsd.edu/~ztu/publication/cvpr07_gdl.pdf</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#生成モデル>生成モデル</a></p>
-</div>
-<h2 id="概要">概要</h2>
+<p><ul> <li>original paper: <a href=http://pages.ucsd.edu/~ztu/publication/cvpr07_gdl.pdf>http://pages.ucsd.edu/~ztu/publication/cvpr07_gdl.pdf</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#生成モデル>生成モデル</a> </div></p>
+<h2>概要</h2>
 <p>(主に画像の) 生成モデルを作りたい. 分類モデルを同時に学ぶことで強い生成モデルを作る.</p>
-<h2 id="手法">手法</h2>
-<p>教師あり学習 <span class="math inline">\((X=\mathbb R^n) \to (Y=\{-1,+1\})\)</span> を考える. 目標は生成モデル <span class="math inline">\(p(x|y=+1)\)</span> の獲得である. しかし同時に分類モデル <span class="math inline">\(p(y|x)\)</span> の学習も行うことは次のような理由で意味がある.</p>
-<p>普通のベイズの定理に従って: <span class="math display">\[p(y=+1|x)=\frac{p(x|y=+1)p(y=+1)}{p(x)} \\
-p(y=-1|x)=\frac{p(x|y=-1)p(y=-1)}{p(x)}\]</span> この2つから <span class="math display">\[p(x|y=+1)=
+<h2>手法</h2>
+<p>教師あり学習 \((X=\mathbb R^n) \to (Y=\{-1,+1\})\) を考える. 目標は生成モデル \(p(x|y=+1)\) の獲得である. しかし同時に分類モデル \(p(y|x)\) の学習も行うことは次のような理由で意味がある.</p>
+<p>普通のベイズの定理に従って:</p>
+\[p(y=+1|x)=\frac{p(x|y=+1)p(y=+1)}{p(x)} \\
+p(y=-1|x)=\frac{p(x|y=-1)p(y=-1)}{p(x)}\]
+<p>この2つから</p>
+\[p(x|y=+1)=
 \frac{
 p(y=+1|x) p(y=-1)
 }{
 p(y=-1|x) p(y=+1)
 }
-p(x|y=-1)\]</span> を得る.</p>
-<p>事前知識として <span class="math inline">\(p(y=+1), p(y=-1)\)</span> の比を見積もっておく. 簡単に <span class="math inline">\(1:1\)</span> だと都合よく仮定すると、 <span class="math display">\[p(x|y=+1) = \frac{p(y=+1|x)}{p(y=-1|x)} p(x|y=-1)\]</span> になる.</p>
-<p>この <span class="math inline">\(p(x|y=-1)\)</span> を <span class="math inline">\(p^r(x)\)</span> と書いて <strong>参照分布 (reference distribution)</strong> と呼ぶ. また参照分布からサンプリングして得たデータを <strong>疑似負例 (pseudo-negatives)</strong> と呼ぶ. <span class="math display">\[p(x|y=+1) = \frac{p(y=+1|x)}{p(y=-1|x)} p^r(x)\]</span></p>
-<p>さて広大な空間の <span class="math inline">\(X\)</span> からサンプリングして学習するわけにはいかない. 限られたデータだけを選択していく必要がある.</p>
-<p>時刻 <span class="math inline">\(t (=1,2,\ldots)\)</span> の時点で学習された参照分布を <span class="math inline">\(p^r_t\)</span> と書くことにする. 同様に、分類器 <span class="math inline">\(p(y|x)\)</span> の時刻 <span class="math inline">\(t\)</span> 時点でのモデルを <span class="math inline">\(q_t\)</span> とする.</p>
-<p>初期の参照分布 <span class="math inline">\(p^r_1\)</span> は適当に設定するが、論文では、正例集合 <span class="math inline">\(D\)</span> に対して、 <span class="math display">\[p^r_1(x) = \beta \frac{1}{|D|} \sum_{x&#39; \in D} \delta(x-x&#39;) + (1-\beta) U(x)\]</span> などとしている. ここで <span class="math inline">\(\delta\)</span> は indicator 関数 (<span class="math inline">\(\delta(0)=1, \delta(x)=0 \iff x \ne 0\)</span>)、<span class="math inline">\(U(x)\)</span> は一様分布. 特に <span class="math inline">\(D\)</span> のようなものが無いときは <span class="math inline">\(\beta=0\)</span> としたとある.</p>
-<p>さてここから <span class="math inline">\(p^r\)</span> を正例の分布に近づけるように学習にする. それには上の式を更新式として用いればよい. <span class="math display">\[p^r_{t+1}(x) = \frac{1}{Z} \frac{q_1(y=+1|x)}{q_1(y=-1|x)} p^r_t(x)\]</span> ここで <span class="math inline">\(Z\)</span> は、左辺が確率分布になるようになるための正規化項 (<span class="math inline">\(\int p^r_{t+1}(x) dx=1\)</span>).</p>
-<p>厳密に <span class="math inline">\(Z\)</span> を計算するには右辺を積分することになるが、 実装上は、モンテカルロ法で見積もったと論文にはある. たまたま見つけた<a href="https://gist.github.com/betatim/5fae2137d83c9964bbedd8d8fd646111">野良実装</a> ではそもそも分布を、点集合として持っている.</p>
-<p>また <span class="math inline">\(q_{t+1}\)</span> は <span class="math inline">\(p^r_t(x)\)</span> からの疑似負例を参照して <span class="math inline">\(q_t\)</span> から更に強くしてく.</p>
-<div class="thm">
-<h3 id="定理">定理</h3>
-<p><span class="math display">\[KL\left( p(x|y=+1) \| p^r_{t+1}(x) \right)
+p(x|y=-1)\]
+<p>を得る.</p>
+<p>事前知識として \(p(y=+1), p(y=-1)\) の比を見積もっておく. 簡単に \(1:1\) だと都合よく仮定すると、</p>
+\[p(x|y=+1) = \frac{p(y=+1|x)}{p(y=-1|x)} p(x|y=-1)\]
+<p>になる.</p>
+<p>この \(p(x|y=-1)\) を \(p^r(x)\) と書いて <strong>参照分布 (reference distribution)</strong> と呼ぶ. また参照分布からサンプリングして得たデータを <strong>疑似負例 (pseudo-negatives)</strong> と呼ぶ.</p>
+\[p(x|y=+1) = \frac{p(y=+1|x)}{p(y=-1|x)} p^r(x)\]
+<p>さて広大な空間の \(X\) からサンプリングして学習するわけにはいかない. 限られたデータだけを選択していく必要がある.</p>
+<p>時刻 \(t (=1,2,\ldots)\) の時点で学習された参照分布を \(p^r_t\) と書くことにする. 同様に、分類器 \(p(y|x)\) の時刻 \(t\) 時点でのモデルを \(q_t\) とする.</p>
+<p>初期の参照分布 \(p^r_1\) は適当に設定するが、論文では、正例集合 \(D\) に対して、</p>
+\[p^r_1(x) = \beta \frac{1}{|D|} \sum_{x&#x27; \in D} \delta(x-x&#x27;) + (1-\beta) U(x)\]
+<p>などとしている. ここで \(\delta\) は indicator 関数 ( \(\delta(0)=1, \delta(x)=0 \iff x \ne 0\) )、 \(U(x)\) は一様分布. 特に \(D\) のようなものが無いときは \(\beta=0\) としたとある.</p>
+<p>さてここから \(p^r\) を正例の分布に近づけるように学習にする. それには上の式を更新式として用いればよい.</p>
+\[p^r_{t+1}(x) = \frac{1}{Z} \frac{q_1(y=+1|x)}{q_1(y=-1|x)} p^r_t(x)\]
+<p>ここで \(Z\) は、左辺が確率分布になるようになるための正規化項 ( \(\int p^r_{t+1}(x) dx=1\) ).</p>
+<p>厳密に \(Z\) を計算するには右辺を積分することになるが、 実装上は、モンテカルロ法で見積もったと論文にはある. たまたま見つけた <a href="https://gist.github.com/betatim/5fae2137d83c9964bbedd8d8fd646111">野良実装</a> ではそもそも分布を、点集合として持っている.</p>
+<p>また \(q_{t+1}\) は \(p^r_t(x)\) からの疑似負例を参照して \(q_t\) から更に強くしてく.</p>
+<p><div class=thm> ### 定理</p>
+\[KL\left( p(x|y=+1) \| p^r_{t+1}(x) \right)
 \leq
-KL\left( p(x|y=+1) \| p^r_t(x) \right)\]</span></p>
-<p>証明は論文にあるので省略.</p>
-</div>
-<p>これがあるので、更新を繰り返して行けば <span class="math inline">\(p^r_t\)</span> は真の生成モデル <span class="math inline">\(p(x|y=+1)\)</span> に近づく.</p>
+KL\left( p(x|y=+1) \| p^r_t(x) \right)\]
+<p>証明は論文にあるので省略. </div></p>
+<p>これがあるので、更新を繰り返して行けば \(p^r_t\) は真の生成モデル \(p(x|y=+1)\) に近づく.</p>
+
 <!--
 
-  HTML として pandoc -B で include する.
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
 
-  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
-  markdown で書いてるだろうから例として次のような段落を書けばよい.
+    <div id=toc></div>
 
-```
-## INDEX
-<div id=toc></div>
-```
 
-  used in
-  - /memo/gnuplot
-  - /memo/linux
-  - /memo/imagemagick
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
 
 -->
 <script>
 (function() {
-  var sections = document.getElementsByTagName('h2');
-  var i;
-  var OL = document.createElement('ol');
-  for (i=0; i < sections.length; ++i) {
-    var LI = document.createElement('li');
-    var A = document.createElement('a');
-    A.innerHTML = sections[i].innerHTML;
-    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
-    A.href = '#' + i;
-    LI.appendChild(A);
-    OL.appendChild(LI);
 
-    var PREF = document.createElement('a');
-    PREF.name = i;
-    sections[i].appendChild(PREF);
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
   }
 
-  var done = false;
-  function work() {
-    if (done) return;
-    if ( document.getElementById('toc') === null) return; // no toc element
-    document.getElementById('toc').appendChild(OL);
-    done = true;
-  };
+  function level1() {
 
-  window.onload = work;
-  setTimeout(work,800);
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

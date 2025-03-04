@@ -1,68 +1,71 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>[1704.02227] Training Triplet Networks with GAN</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">[1704.02227] Training Triplet Networks with GAN</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=https://arxiv.org/abs/1704.02227>https://arxiv.org/abs/1704.02227</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#距離学習>距離学習</a> <a class='tag is-blue' href=index.html#類似度学習>類似度学習</a> <a class='tag is-blue' href=index.html#GAN>GAN</a></p>
-</div>
-<h2 id="概要">概要</h2>
+<p><ul> <li>original paper: <a href=https://arxiv.org/abs/1704.02227>https://arxiv.org/abs/1704.02227</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#距離学習>距離学習</a> <a class='tag is-blue' href=index.html#類似度学習>類似度学習</a> <a class='tag is-blue' href=index.html#GAN>GAN</a> </div></p>
+<h2>概要</h2>
 <p>分類タスクを GAN によって半教師的に補強する研究は一般的であるが、 本論文は <a href="triplet-network.html">Triplet Network</a> の学習を GAN によって補強する方法を報告している.</p>
-<h2 id="あらまし">あらまし</h2>
-<h3 id="triplet-network">Triplet Network</h3>
+<h2>あらまし</h2>
+<h3>Triplet Network</h3>
 <p>ちょうどこれについては昔読んで書いた記事が <a href="triplet-network.html">これ</a> なので詳細は省くが、</p>
-<p>triplet <span class="math inline">\((x, x^+, x^-)\)</span> から共通のネットワーク <span class="math inline">\(T\)</span> を用いて <span class="math inline">\((z, z^+, z^-)\)</span> を作って、</p>
-<p><span class="math display">\[\max \frac{\exp \| z - z^- \| }{\exp \| z - z^+ \| + \exp \| z - z^- \| }\]</span></p>
+<p>triplet \((x, x^+, x^-)\) から共通のネットワーク \(T\) を用いて \((z, z^+, z^-)\) を作って、</p>
+\[\max \frac{\exp \| z - z^- \| }{\exp \| z - z^+ \| + \exp \| z - z^- \| }\]
 <p>を目指すのであった.</p>
-<p>この値はちょうど <span class="math inline">\(0\)</span> から <span class="math inline">\(1\)</span> の範囲に収まる値なので、 本論文ではこの値を 「<span class="math inline">\(x\)</span> と <span class="math inline">\(x^+\)</span> とが同じクラスである確率」 <span class="math inline">\(p_T(x, x^+, x^-)\)</span> と表現している. (これの対数尤度を損失関数として設計してある.)</p>
-<h3 id="gan">GAN</h3>
-<p>こちらも詳細は省くが、 2つの機械 <span class="math inline">\(D, G\)</span> について</p>
-<p><span class="math display">\[V(D, G) = \mathbb{E}_{x\text{ is real }} \log D(x)
-+ \mathbb{E}_{z \sim P_z} \log (1 - D(G(z)))\]</span></p>
-<p>を定めた時、 <span class="math display">\[\min_G \max_D V(D, G)\]</span> を目指すものであった. 典型的には、一方を固定して他方を最大化/最小化することを繰り返すことで、 学習を進める.</p>
-<h2 id="triplet-training-with-gan">Triplet Training with GAN</h2>
-<p>GAN の <span class="math inline">\(D\)</span> の前半 (というか大部分) を、triplet network の特徴ベクトルを構成する機械 <span class="math inline">\(T\)</span> だと見做すことにする. 具体的には次のようにそれぞれを構成する.</p>
+<p>この値はちょうど \(0\) から \(1\) の範囲に収まる値なので、 本論文ではこの値を 「 \(x\) と \(x^+\) とが同じクラスである確率」 \(p_T(x, x^+, x^-)\) と表現している. (これの対数尤度を損失関数として設計してある.)</p>
+<h3>GAN</h3>
+<p>こちらも詳細は省くが、 2つの機械 \(D, G\) について</p>
+\[V(D, G) = \mathbb{E}_{x\text{ is real }} \log D(x)
++ \mathbb{E}_{z \sim P_z} \log (1 - D(G(z)))\]
+<p>を定めた時、</p>
+\[\min_G \max_D V(D, G)\]
+<p>を目指すものであった. 典型的には、一方を固定して他方を最大化/最小化することを繰り返すことで、 学習を進める.</p>
+<h2>Triplet Training with GAN</h2>
+<p>GAN の \(D\) の前半 (というか大部分) を、triplet network の特徴ベクトルを構成する機械 \(T\) だと見做すことにする. 具体的には次のようにそれぞれを構成する.</p>
 <ul>
-<li><span class="math inline">\(T: \mathcal{X} \to \mathbb{R}^n\)</span>
-<ul>
-<li>これは NNs でよしなに構成する</li>
-</ul></li>
-<li><span class="math inline">\(D: \mathcal{X} \to \mathbb{R}\)</span></li>
-<li><span class="math inline">\(D(x) = \frac{Z}{Z + 1}\)</span>
-<ul>
-<li>where
-<ul>
-<li><span class="math inline">\(t = (t_1, t_2, \ldots, t_n) = T(x)\)</span></li>
-<li><span class="math inline">\(z_i = \exp t_i\)</span></li>
-<li><span class="math inline">\(Z = \sum_i z_i\)</span></li>
-</ul></li>
-</ul></li>
+  <li>
+    \(T: \mathcal{X} \to \mathbb{R}^n\)
+    <ul>
+      <li>これは NNs でよしなに構成する</li>
+    </ul>
+  </li>
+  <li>\(D: \mathcal{X} \to \mathbb{R}\)</li>
+  <li>
+    \(D(x) = \frac{Z}{Z + 1}\)
+    <ul>
+      <li>
+        where
+        <ul>
+          <li>\(t = (t_1, t_2, \ldots, t_n) = T(x)\)</li>
+          <li>\(z_i = \exp t_i\)</li>
+          <li>\(Z = \sum_i z_i\)</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
 </ul>
-<p>Triplet の学習としてはこの <span class="math inline">\(T\)</span> を行い、 GAN の学習としてはこの <span class="math inline">\(D\)</span> と何か <span class="math inline">\(G\)</span> を用意して行う.</p>
-<h3 id="実験評価">実験評価</h3>
+<p>Triplet の学習としてはこの \(T\) を行い、 GAN の学習としてはこの \(D\) と何か \(G\) を用意して行う.</p>
+<h3>実験評価</h3>
 <p>実験では MNIST/Cifar-10 の分類性能を行っている. また Triplets を分類性能で比較するのか... GAN だけ、Triplets だけと比較して良い. 例えば MNIST では、ラベル付きデータを 100 個だけを使って正解率 97.61% を達成.</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -167,5 +170,9 @@ original paper: <a href=https://arxiv.org/abs/1704.02227>https://arxiv.org/abs/1
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

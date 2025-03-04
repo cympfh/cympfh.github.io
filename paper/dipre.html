@@ -1,112 +1,73 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Dual Iterative Pattern Relation Extraction (DIPRE)</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-  </style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">Dual Iterative Pattern Relation Extraction (DIPRE)</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=http://ilpubs.stanford.edu:8090/421/1/1999-65.pdf>http://ilpubs.stanford.edu:8090/421/1/1999-65.pdf</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#自然言語処理>自然言語処理</a> <a class='tag is-blue' href=index.html#テキストマイニング>テキストマイニング</a> <a class='tag is-blue' href=index.html#パターン>パターン</a></p>
-</div>
+<p><ul> <li>original paper: <a href=http://ilpubs.stanford.edu:8090/421/1/1999-65.pdf>http://ilpubs.stanford.edu:8090/421/1/1999-65.pdf</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#自然言語処理>自然言語処理</a> <a class='tag is-blue' href=index.html#テキストマイニング>テキストマイニング</a> <a class='tag is-blue' href=index.html#パターン>パターン</a> </div></p>
 <p>HTMLテキストから、ある関係 R にあるような 二つの名詞からなるタプルを回収する。</p>
 <p>彼らのシナリオでは、 <code>(本のタイトル, 著者)</code> を回収する。</p>
 <p>このタプルのことを R と言ってる?</p>
-<h2 id="method">method</h2>
-<ol type="1">
-<li>小さなサンプルから関係 R' を抽出 (手でタプルを探す?) <code>R' = Sample</code></li>
-<li>コーパス D から、関係 R' に共起する単語 O <code>O = FindOccurrences R', D</code></li>
-<li>Oからパターンを作ってPとする <code>P = GenPatterns O</code></li>
-<li>Oにマッチする関係を改めて R' とする <code>R' = M_D P</code></li>
-<li>2に戻っても良い <code>goto 2</code></li>
+<h2>method</h2>
+<ol>
+  <li>小さなサンプルから関係 R' を抽出 (手でタプルを探す?) <code>R&#x27; = Sample</code></li>
+  <li>コーパス D から、関係 R' に共起する単語 O <code>O = FindOccurrences R&#x27;, D</code></li>
+  <li>Oからパターンを作ってPとする <code>P = GenPatterns O</code></li>
+  <li>Oにマッチする関係を改めて R' とする <code>R&#x27; = M_D P</code></li>
+  <li>2に戻っても良い <code>goto 2</code></li>
 </ol>
-<h2 id="pattern">pattern</h2>
-<p>pattern とは、 <code>(author, title, order :: Bool, url, prefix, middle, suffix)</code> のこと. order以外は 全部 <code>String</code> 型。 prefix, suffix は長さ<code>m</code> (以下?) とする。</p>
+<h2>pattern</h2>
+<p>pattern とは、 <code>(author, title, order :: Bool, url, prefix, middle, suffix)</code> のこと. order以外は 全部 <code>String</code> 型。 prefix, suffix は長さ <code>m</code> (以下?) とする。</p>
 <p>つまり、tokenizeはしない。 対象がHTMLなので、これは妥当だ。</p>
-<h3 id="意味">意味</h3>
+<h3>意味</h3>
 <p>url は文書のURLを表す(つまり文書ID)けど、 ちょっと謎なことを後でする。</p>
-<p><code>order == True</code> のとき、 文中に、<code>author, title</code> が順に現れ、 <code>author</code> の直前の <code>m</code>文字が <code>prefix</code> で、間が <code>middle</code> で、 <code>title</code> の直後の <code>m</code>文字が <code>suffix</code> である。</p>
-<p><code>order == False</code> なら、<code>title, author</code> の順で現れること。 ほかは同じ。</p>
-<h3 id="generate-a-pattern">generate a pattern</h3>
-<p>ある <code>order</code>, <code>title</code>, <code>author</code> に対して、 共通の <code>middle</code> を持つ文を見つけたら、</p>
-<p>それぞれの、prefixの最長suffixを <code>prefix'</code>, それぞれの、suffixの最長prefixを <code>suffix'</code>, それぞれの、urlの最長prefixを <code>urlprefix</code> とする。</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">outpattern <span class="fu">=</span> (title, author, order, urlprefix, prefix&#39;, middle, suffix&#39;)
-specificity <span class="fu">=</span> (length middle) <span class="fu">*</span> (length urlprefix) <span class="fu">*</span> (length prefix&#39;) <span class="fu">*</span> (length suffix&#39;)</code></pre></div>
+<p><code>order == True</code> のとき、 文中に、 <code>author, title</code> が順に現れ、 <code>author</code> の直前の <code>m</code> 文字が <code>prefix</code> で、間が <code>middle</code> で、 <code>title</code> の直後の <code>m</code> 文字が <code>suffix</code> である。</p>
+<p><code>order == False</code> なら、 <code>title, author</code> の順で現れること。 ほかは同じ。</p>
+<h3>generate a pattern</h3>
+<p>ある <code>order</code> , <code>title</code> , <code>author</code> に対して、 共通の <code>middle</code> を持つ文を見つけたら、</p>
+<p>それぞれの、prefixの最長suffixを <code>prefix&#x27;</code> , それぞれの、suffixの最長prefixを <code>suffix&#x27;</code> , それぞれの、urlの最長prefixを <code>urlprefix</code> とする。</p>
+<pre><code class="code language-haskell">outpattern = (title, author, order, urlprefix, prefix&#x27;, middle, suffix&#x27;)
+specificity = (length middle) * (length urlprefix) * (length prefix&#x27;) * (length suffix&#x27;)
+</code></pre>
 <p>specificity が適当な閾値より小さかったら捨てる</p>
-<h3 id="example">example</h3>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="st">&quot;www.sff.net/locus/c.*&quot;</span>
-(<span class="st">&quot;&lt;LI&gt;&lt;B&gt;&quot;</span>, <span class="dt">Title</span>, <span class="st">&quot;&lt;/B&gt; by &quot;</span>, <span class="dt">Author</span>, <span class="st">&quot; (&quot;</span>)</code></pre></div>
-<h2 id="実験">実験</h2>
-<h3 id="datum">datum</h3>
+<h3>example</h3>
+<pre><code class="code language-haskell">&quot;www.sff.net&#x2F;locus&#x2F;c.*&quot;
+(&quot;&lt;LI&gt;&lt;B&gt;&quot;, Title, &quot;&lt;&#x2F;B&gt; by &quot;, Author, &quot; (&quot;)
+</code></pre>
+<h2>実験</h2>
+<h3>datum</h3>
 <ul>
-<li>24 million web pages</li>
-<li>start with 5 tuples (author, title)</li>
+  <li>24 million web pages</li>
+  <li>start with 5 tuples (author, title)</li>
 </ul>
-<h3 id="first-iteration">first iteration</h3>
+<h3>first iteration</h3>
 <ul>
-<li>105 patterns</li>
-<li>9369 unique (author, title)</li>
+  <li>105 patterns</li>
+  <li>9369 unique (author, title)</li>
 </ul>
-<h3 id="final-iteration">final iteration</h3>
+<h3>final iteration</h3>
 <ul>
-<li>346 patterns</li>
-<li>15257 unique (author, title)</li>
+  <li>346 patterns</li>
+  <li>15257 unique (author, title)</li>
 </ul>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -211,5 +172,9 @@ specificity <span class="fu">=</span> (length middle) <span class="fu">*</span> 
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

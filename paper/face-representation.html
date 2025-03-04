@@ -1,95 +1,98 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Deep Learning Face Representation by Joint Identification-Verification (DeepID2)</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">Deep Learning Face Representation by Joint Identification-Verification (DeepID2)</h1>
-</header>
+<p><ul> <li>original paper: <a href=https://arxiv.org/abs/1406.4773>https://arxiv.org/abs/1406.4773</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#距離学習>距離学習</a> <a class='tag is-blue' href=index.html#類似度学習>類似度学習</a> <a class='tag is-blue' href=index.html#顔認証>顔認証</a> </div></p>
 <ul>
-<li>
-original paper: <a href=https://arxiv.org/abs/1406.4773>https://arxiv.org/abs/1406.4773</a>
-</li>
+  <li>論文リンク: <a href="https://arxiv.org/abs/1406.4773">arxiv.org/abs/1406.4773</a></li>
+  <li>関連資料: <a href="http://vision.ia.ac.cn/zh/senimar/reports/Siamese-Network-Architecture-and-Applications-in-Computer-Vision.pdf">Siamese-Network-Architecture-and-Applications-in-Computer-Vision.pdf</a></li>
 </ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#距離学習>距離学習</a> <a class='tag is-blue' href=index.html#類似度学習>類似度学習</a> <a class='tag is-blue' href=index.html#顔認証>顔認証</a></p>
-</div>
+<h2>概要</h2>
 <ul>
-<li>論文リンク: <a href="https://arxiv.org/abs/1406.4773">arxiv.org/abs/1406.4773</a></li>
-<li>関連資料: <a href="http://vision.ia.ac.cn/zh/senimar/reports/Siamese-Network-Architecture-and-Applications-in-Computer-Vision.pdf">Siamese-Network-Architecture-and-Applications-in-Computer-Vision.pdf</a></li>
+  <li>55x47x3 の顔の画像から、写っている人間を特定するタスク</li>
+  <li>
+    教師アリ学習を行う
+    <ul>
+      <li>通常のマルチクラス分類に加えて、Siamese ネットワークの要領を加えている</li>
+    </ul>
+  </li>
 </ul>
-<h2 id="概要">概要</h2>
+<h2>手法</h2>
+<p>入力 \(x\) から、CNNを 4 つ重ねることで 160 次元の特徴ベクトル \(f_x\) を得る. 彼らはこの特徴ベクトルを DeepID2 と呼んでいる. (version 2 の 2 らしい.)</p>
+<h3>Identify</h3>
+<p>通常の、マルチクラス分類と同様のことを、DeepID2 \(f_x\) から行う. すなわち、 入力 \(x\) がクラス \(t\) である確率を \(f_x\) から求める関数を学習する.</p>
 <ul>
-<li>55x47x3 の顔の画像から、写っている人間を特定するタスク</li>
-<li>教師アリ学習を行う
-<ul>
-<li>通常のマルチクラス分類に加えて、Siamese ネットワークの要領を加えている</li>
-</ul></li>
+  <li>
+    確率の予測
+    <ul>
+      <li>\((f_x, t) \mapsto \hat{p_t}\)</li>
+    </ul>
+  </li>
+  <li>
+    この予測器に関する目的関数はクロスエントロピー
+    <ul>
+      <li>\(\text{Ident}(f_x, t) = - \sum_{t&#x27;} p_{t&#x27;} \log \hat{p_{t&#x27;}} = - \log \hat{p_t}\)</li>
+    </ul>
+  </li>
 </ul>
-<h2 id="手法">手法</h2>
-<p>入力 <span class="math inline">\(x\)</span> から、CNNを 4 つ重ねることで 160 次元の特徴ベクトル <span class="math inline">\(f_x\)</span> を得る. 彼らはこの特徴ベクトルを DeepID2 と呼んでいる. (version 2 の 2 らしい.)</p>
-<h3 id="identify">Identify</h3>
-<p>通常の、マルチクラス分類と同様のことを、DeepID2 <span class="math inline">\(f_x\)</span> から行う. すなわち、 入力 <span class="math inline">\(x\)</span> がクラス <span class="math inline">\(t\)</span> である確率を <span class="math inline">\(f_x\)</span> から求める関数を学習する.</p>
+<h3>Verify</h3>
+<p>同時に、距離学習 (metrics learning) も、行う. すなわち、入力 \(x_1, x_2\) から DeepID2 \(f_1, f_2\) を得、この２つから、 \(x_1, x_2\) のラベルが同じかどうかを推定する. この推定は、ほとんど DeepID2 そのものを使う.</p>
+<h4>L2 に基づく Verify</h4>
 <ul>
-<li>確率の予測
-<ul>
-<li><span class="math inline">\((f_x, t) \mapsto \hat{p_t}\)</span></li>
-</ul></li>
-<li>この予測器に関する目的関数はクロスエントロピー
-<ul>
-<li><span class="math inline">\(\text{Ident}(f_x, t) = - \sum_{t&#39;} p_{t&#39;} \log \hat{p_{t&#39;}} = - \log \hat{p_t}\)</span></li>
-</ul></li>
+  <li>\((f_1, f_2) \mapsto \| f_1 - f_2 \|^2\)</li>
+  <li>目的関数は次の通り</li>
 </ul>
-<h3 id="verify">Verify</h3>
-<p>同時に、距離学習 (metrics learning) も、行う. すなわち、入力 <span class="math inline">\(x_1, x_2\)</span> から DeepID2 <span class="math inline">\(f_1, f_2\)</span> を得、この２つから、<span class="math inline">\(x_1, x_2\)</span> のラベルが同じかどうかを推定する. この推定は、ほとんど DeepID2 そのものを使う.</p>
-<h4 id="l2-に基づく-verify">L2 に基づく Verify</h4>
-<ul>
-<li><span class="math inline">\((f_1, f_2) \mapsto \| f_1 - f_2 \|^2\)</span></li>
-<li>目的関数は次の通り</li>
-</ul>
-<p><span class="math display">\[\text{Verify}(f_1, f_2) =
+\[\text{Verify}(f_1, f_2) =
 \begin{cases}
 \frac{1}{2} \| f_1 - f_2 \|^2 &amp; \text{ when labels are same } \\
 \frac{1}{2} \max(0, m - \| f_1 - f_2 \|^2) &amp; \text{ when different}
-\end{cases}\]</span></p>
-<p>すなわち、ラベルが等しいときは、DeepID2 の L2 距離が近くなるようにし、 等しくない場合は、マージン <span class="math inline">\(m\)</span> より離れるように学習する (ここは &quot;contrastive loss&quot; が使われてる).</p>
+\end{cases}\]
+<p>すなわち、ラベルが等しいときは、DeepID2 の L2 距離が近くなるようにし、 等しくない場合は、マージン \(m\) より離れるように学習する (ここは "contrastive loss" が使われてる).</p>
 <p>別な種類の Verify も提案している.</p>
-<h4 id="l1-に基づく-verify">L1 に基づく Verify</h4>
+<h4>L1 に基づく Verify</h4>
 <ul>
-<li><span class="math inline">\((f_1, f_2) \mapsto \sigma(b + w \cos(f_1, f_2))\)</span>
-<ul>
-<li><span class="math inline">\(\sigma\)</span> はシグモイド関数</li>
-</ul></li>
-<li>目的関数は次の通り</li>
+  <li>
+    \((f_1, f_2) \mapsto \sigma(b + w \cos(f_1, f_2))\)
+    <ul>
+      <li>\(\sigma\) はシグモイド関数</li>
+    </ul>
+  </li>
+  <li>目的関数は次の通り</li>
 </ul>
-<p><span class="math display">\[\text{Verify}(f_1, f_2) =
+\[\text{Verify}(f_1, f_2) =
 \begin{cases}
 \frac{1}{2} (1 - \sigma(b + w \cos(f_1, f_2)))^2 &amp; \text{ when labels are same } \\
 \frac{1}{2} (\sigma(b + w \cos(f_1, f_2)))^2 &amp; \text{ when different}
-\end{cases}\]</span></p>
-<p>ここで <span class="math inline">\(b, w\)</span> は学習可能なパラメータ. <span class="math inline">\(\cos\)</span> の出力はスカラーなので、それを線形にちょっと加工するだけの簡素な活性ユニット.</p>
-<h3 id="学習過程">学習過程</h3>
-<p>Identify と Verify という2つの解き方を <span class="math inline">\(1 : \lambda\)</span> の割合で混ぜて学習する. この <span class="math inline">\(\lambda\)</span> は、初め <span class="math inline">\(0\)</span> からスタートして、学習の過程で徐々に、際限なく増やしていく.</p>
+\end{cases}\]
+<p>ここで \(b, w\) は学習可能なパラメータ. \(\cos\) の出力はスカラーなので、それを線形にちょっと加工するだけの簡素な活性ユニット.</p>
+<h3>学習過程</h3>
+<p>Identify と Verify という2つの解き方を \(1 : \lambda\) の割合で混ぜて学習する. この \(\lambda\) は、初め \(0\) からスタートして、学習の過程で徐々に、際限なく増やしていく.</p>
 <p>すなわち、初めは単にマルチクラス分類問題として解き、徐々に、 Siamese Network になる.</p>
-<h2 id="私の感想">私の感想</h2>
+<h2>私の感想</h2>
 <p>既存手法を2つ混ぜたというだけだが、混ぜ方がこの論文の一番のミソだと思う.</p>
 <p>本当は初めから単に Siamese Network にしたかったのだろう、と邪推する. あとから新しいラベル (つまり人物) の顔写真が新しくテストデータに追加されるとき、 マルチクラス分類では、予め用意していたラベルのどれかに振り分けることしかできないが、 Siamese Network では分類することが出来る.</p>
-<p>しかし、いきなり Siamese Network を学習するのは難しい. 学習が全然安定しないからである. 私も何度も試したことがあるが、すぐに縮退 (degeneracy) という現象が起きてしまう. すなわち、ここでいう関数 <span class="math inline">\(x \mapsto f_x\)</span> が定数関数になってしまう. これを避けるのに事前学習などが有効であるが、強い最適化を掛けると、やはり縮退してしまう.</p>
-<p>恐らく、<span class="math inline">\(\lambda\)</span> を徐々に上げるのは、事前学習を混合的に行っているのだと思う.</p>
+<p>しかし、いきなり Siamese Network を学習するのは難しい. 学習が全然安定しないからである. 私も何度も試したことがあるが、すぐに縮退 (degeneracy) という現象が起きてしまう. すなわち、ここでいう関数 \(x \mapsto f_x\) が定数関数になってしまう. これを避けるのに事前学習などが有効であるが、強い最適化を掛けると、やはり縮退してしまう.</p>
+<p>恐らく、 \(\lambda\) を徐々に上げるのは、事前学習を混合的に行っているのだと思う.</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -194,5 +197,9 @@ original paper: <a href=https://arxiv.org/abs/1406.4773>https://arxiv.org/abs/14
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

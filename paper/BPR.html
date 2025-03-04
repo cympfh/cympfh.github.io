@@ -1,50 +1,46 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>BPR: Bayesian Personalized Ranking from Implicit Feedback</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
     <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">BPR: Bayesian Personalized Ranking from Implicit Feedback</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=https://arxiv.org/ftp/arxiv/papers/1205/1205.2618.pdf>https://arxiv.org/ftp/arxiv/papers/1205/1205.2618.pdf</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#推薦システム>推薦システム</a> <a class='tag is-blue' href=index.html#行列分解>行列分解</a></p>
-</div>
-<h2 id="implicit-feedback">Implicit Feedback</h2>
+<p><ul> <li>original paper: <a href=https://arxiv.org/ftp/arxiv/papers/1205/1205.2618.pdf>https://arxiv.org/ftp/arxiv/papers/1205/1205.2618.pdf</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#推薦システム>推薦システム</a> <a class='tag is-blue' href=index.html#行列分解>行列分解</a> </div></p>
+<h2>Implicit Feedback</h2>
 <p>ユーザーにアイテムを推薦するモデルを教師あり学習で構成することを考える. この学習データとしてユーザーから明示的に与えられるアイテムごとのレーティングを Explicit Feedback というのに対して, そうでないものを Implicit Feedback という. 例えば購入履歴や視聴履歴である. これらは明示的にレーティングの量を言っていないし, 仮にポジティブに扱うしかなく, ネガティブデータが与えられない (Pisitive-Unlabeled Data). 仕方がないので, よくある方法としては, 購入してない, 視聴してないアイテムの中からランダムにいくつかサンプリングしてきたものをネガティブとして扱うのが普通 (Negative Sampling). アイテム空間は普通膨大で, そのほとんどはユーザーにとって興味のないネガティブなものである確率が高いという仮定による.</p>
-<h2 id="personalized-ranking">Personalized Ranking</h2>
-<p>ユーザー集合 <span class="math inline">\(U\)</span>, アイテム集合 <span class="math inline">\(I\)</span> に対して, Implicit Feedback とは <span class="math inline">\(S \subset U \times I\)</span> のこと.</p>
-<p>ここで Personalized Ranking は各ユーザー <span class="math inline">\(u \in U\)</span> ごとに <span class="math inline">\(I\)</span> の上の全順序 <span class="math inline">\(&lt;_u\)</span> を定めるタスクを言う.</p>
-<h3 id="notation">notation</h3>
+<h2>Personalized Ranking</h2>
+<p>ユーザー集合 \(U\) , アイテム集合 \(I\) に対して, Implicit Feedback とは \(S \subset U \times I\) のこと.</p>
+<p>ここで Personalized Ranking は各ユーザー \(u \in U\) ごとに \(I\) の上の全順序 \(&lt;_u\) を定めるタスクを言う.</p>
+<h3>notation</h3>
 <ul>
-<li><span class="math inline">\(I_u^+ := \{ i \in I \mid (u,i) \in S\}\)</span></li>
-<li><span class="math inline">\(I_u^- := I \setminus I_u^+\)</span></li>
-<li><span class="math inline">\(U_i^+ := \{ u \in U \mid (u,i) \in S\}\)</span></li>
-<li><span class="math inline">\(U_i^- := U \setminus U_i^+\)</span></li>
+  <li>\(I_u^+ := \{ i \in I \mid (u,i) \in S\}\)</li>
+  <li>\(I_u^- := I \setminus I_u^+\)</li>
+  <li>\(U_i^+ := \{ u \in U \mid (u,i) \in S\}\)</li>
+  <li>\(U_i^- := U \setminus U_i^+\)</li>
 </ul>
-<p>さて, 先に述べたように <span class="math inline">\(U \times I\)</span> の内, <span class="math inline">\(S\)</span> を正例とし, <span class="math inline">\(U \times I\)</span> を擬似的に負例にするのだが, もしこれらに完全にフィッティングさせた場合は, <span class="math inline">\(S\)</span> へ属するかどうかを判定する機械にしかならない. そのために正則化を入れるなど汎化性能を担保するテクが必ず必要.</p>
-<p>さてランキング（すなわち全順序）を pair-wise に学習することを考える. ランキングのためのデータセットは次のようになる: <span class="math display">\[D_S = \{ (u, i, j) \mid u \in U, i \in I_u^+, j \in I_u^- \}\]</span> これはもちろん <span class="math inline">\(i &gt;_u j\)</span> を表している.</p>
-<h3 id="bayesian-personalized-ranking-bpr">Bayesian Personalized Ranking (BPR)</h3>
-<p>確率 <span class="math inline">\(P(i &gt;_u j \mid \Theta)\)</span> を尤度にベイズ推定してく.</p>
-<p><span class="math display">\[\begin{align*}
+<p>さて, 先に述べたように \(U \times I\) の内, \(S\) を正例とし, \(U \times I\) を擬似的に負例にするのだが, もしこれらに完全にフィッティングさせた場合は, \(S\) へ属するかどうかを判定する機械にしかならない. そのために正則化を入れるなど汎化性能を担保するテクが必ず必要.</p>
+<p>さてランキング（すなわち全順序）を pair-wise に学習することを考える. ランキングのためのデータセットは次のようになる:</p>
+\[D_S = \{ (u, i, j) \mid u \in U, i \in I_u^+, j \in I_u^- \}\]
+<p>これはもちろん \(i &gt;_u j\) を表している.</p>
+<h3>Bayesian Personalized Ranking (BPR)</h3>
+<p>確率 \(P(i &gt;_u j \mid \Theta)\) を尤度にベイズ推定してく.</p>
+\[\begin{align*}
 P(&gt; \mid \Theta)
 &amp; = \prod_u P(&gt;_u \mid \Theta) \\
 &amp; = \prod_u
@@ -53,34 +49,43 @@ P(&gt; \mid \Theta)
     \right] \\
 &amp; = \prod_{(u,i,j) \in D_s} P(i &gt;_u j \mid \Theta) ~~~~~~~~\cdots(\text{!}) \\
 P(\Theta \mid &gt;) &amp; \propto P(&gt; \mid \Theta) P(\Theta)
-\end{align*}\]</span></p>
-<p>(!) のところは <span class="math inline">\(D_s\)</span> が性質の良い部分集合であることを仮定してる気がする. 少なくとも近似だと思う.</p>
-<p>シグモイド関数 <span class="math inline">\(\sigma\)</span> を用いると確率は適当な値 <span class="math inline">\(x\)</span> を以て, <span class="math display">\[P(i &gt;_u j \mid \Theta) = \sigma\left(x_u^{ij}(\Theta)\right)\]</span> と表せる. この <span class="math inline">\(x\)</span> を推定することにする. これを入れて, さっきの式の対数をとると, <span class="math display">\[O := \log P(\Theta \mid &gt;) = \sum_{(u,i,j) \in D_s} \log \sigma(x_u^{ij}) + \log P(\Theta)\]</span> これを最大化する <span class="math inline">\(\Theta\)</span> を探索すればよい.</p>
-<h3 id="bpr-learning">BPR Learning</h3>
-<p>さっきの <span class="math inline">\(O\)</span> を微分して勾配法をする.</p>
-<p><span class="math display">\[\begin{align*}
+\end{align*}\]
+<p>(!) のところは \(D_s\) が性質の良い部分集合であることを仮定してる気がする. 少なくとも近似だと思う.</p>
+<p>シグモイド関数 \(\sigma\) を用いると確率は適当な値 \(x\) を以て,</p>
+\[P(i &gt;_u j \mid \Theta) = \sigma\left(x_u^{ij}(\Theta)\right)\]
+<p>と表せる. この \(x\) を推定することにする. これを入れて, さっきの式の対数をとると,</p>
+\[O := \log P(\Theta \mid &gt;) = \sum_{(u,i,j) \in D_s} \log \sigma(x_u^{ij}) + \log P(\Theta)\]
+<p>これを最大化する \(\Theta\) を探索すればよい.</p>
+<h3>BPR Learning</h3>
+<p>さっきの \(O\) を微分して勾配法をする.</p>
+\[\begin{align*}
 \frac{\partial O}{\partial \Theta}
 &amp; = \sum_{(u,i,j) \in D_s} \frac{\partial}{\partial \Theta} \log \sigma(x_u^{ij}) + \frac{\partial}{\partial \Theta} \log P(\Theta) \\
 &amp; = \sum_{(u,i,j) \in D_s} (\sigma(x_u^{ij}) - 1) \frac{\partial x_u^{ij}(\Theta)}{\partial \Theta} + \frac{\partial}{\partial \Theta} \log P(\Theta) \\
-\end{align*}\]</span></p>
-<p>ここで, 最後の <span class="math inline">\(+ \log P(\Theta)\)</span> 及びその微分 <span class="math inline">\(+\frac{\partial}{\partial \Theta} \log P(\Theta)\)</span> はいわゆる罰則化項に対応している. ここは具体的に与えることは出来ないので, 例えば適当に <span class="math inline">\(\log P(\Theta) = - \lambda \| \Theta \|^2\)</span> などとして計算する.</p>
-<h2 id="行列分解への適用">行列分解への適用</h2>
-<p><span class="math inline">\(x\)</span> に関して次のようにモデル化をする.</p>
+\end{align*}\]
+<p>ここで, 最後の \(+ \log P(\Theta)\) 及びその微分 \(+\frac{\partial}{\partial \Theta} \log P(\Theta)\) はいわゆる罰則化項に対応している. ここは具体的に与えることは出来ないので, 例えば適当に \(\log P(\Theta) = - \lambda \| \Theta \|^2\) などとして計算する.</p>
+<h2>行列分解への適用</h2>
+<p>\(x\) に関して次のようにモデル化をする.</p>
 <ul>
-<li><span class="math inline">\(x_u^{ij} := x_u^i - x_u^j\)</span></li>
-<li><span class="math inline">\(x_u^i := w_{uk} h^{ki}\)</span>
-<ul>
-<li>ここで <span class="math inline">\(w_u, h^i\)</span> はそれぞれ同じ長さの実ベクトルで, これの内積を取っている</li>
-</ul></li>
+  <li>\(x_u^{ij} := x_u^i - x_u^j\)</li>
+  <li>
+    \(x_u^i := w_{uk} h^{ki}\)
+    <ul>
+      <li>ここで \(w_u, h^i\) はそれぞれ同じ長さの実ベクトルで, これの内積を取っている</li>
+    </ul>
+  </li>
 </ul>
-<p><span class="math inline">\(w_{uk}, h^{ki}\)</span> は全体としては二次元ベクトルで, 行列 <span class="math inline">\(W, H\)</span> によって与えることが出来る. モデルのパラメータはこれが全てなので, <span class="math display">\[\Theta = (W, H)\]</span> としてよい.</p>
-<p>勾配を計算するのに <span class="math inline">\(\frac{\partial x_u^{ij}}{\partial \Theta}\)</span> が必要だが, これは</p>
-<p><span class="math display">\[\begin{cases}
+<p>\(w_{uk}, h^{ki}\) は全体としては二次元ベクトルで, 行列 \(W, H\) によって与えることが出来る. モデルのパラメータはこれが全てなので,</p>
+\[\Theta = (W, H)\]
+<p>としてよい.</p>
+<p>勾配を計算するのに \(\frac{\partial x_u^{ij}}{\partial \Theta}\) が必要だが, これは</p>
+\[\begin{cases}
 \frac{\partial x_u^{ij}}{\partial \Theta} = \frac{\partial x_u^i}{\partial \Theta} - \frac{\partial x_u^i}{\partial \Theta} \\
 \frac{\partial x_u^i}{\partial w_{uk}} = h^{ki} \\
 \frac{\partial x_u^i}{\partial h^{ki}} = w_{uk} \\
-\end{cases}\]</span></p>
+\end{cases}\]
 <p>これだけ.</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -185,5 +190,9 @@ P(\Theta \mid &gt;) &amp; \propto P(&gt; \mid \Theta) P(\Theta)
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

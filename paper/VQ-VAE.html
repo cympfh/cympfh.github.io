@@ -1,55 +1,66 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>[1711.00937] Neural Discrete Representation Learning (VQ-VAE)</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">[1711.00937] Neural Discrete Representation Learning (VQ-VAE)</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=https://arxiv.org/abs/1711.00937>https://arxiv.org/abs/1711.00937</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#オートエンコーダ>オートエンコーダ</a> <a class='tag is-blue' href=index.html#生成モデル>生成モデル</a> <a class='tag is-blue' href=index.html#VAE>VAE</a></p>
-</div>
-<p><span class="math inline">\(\def\sg{\mathrm{sg}}\)</span></p>
-<h2 id="概要">概要</h2>
+<p><ul> <li>original paper: <a href=https://arxiv.org/abs/1711.00937>https://arxiv.org/abs/1711.00937</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#オートエンコーダ>オートエンコーダ</a> <a class='tag is-blue' href=index.html#生成モデル>生成モデル</a> <a class='tag is-blue' href=index.html#VAE>VAE</a> </div></p>
+<p>\(\def\sg{\mathrm{sg}}\)</p>
+<h2>概要</h2>
 <p>VAE で困るのが, posterior collapse してしまう現象. この論文で提案される VQ-VAE は VAE に Vector Quantization を導入する.</p>
-<h2 id="方法">方法</h2>
-<h3 id="離散-潜在空間">(離散) 潜在空間</h3>
-<p>潜在空間を <span class="math display">\[e = \left[ e_1, e_2, \ldots, e_K \right] \in \mathbb R^{D \times K}\]</span> で表現する (codebook). この空間のサイズは <span class="math inline">\(K\)</span> であって, 各点 <span class="math inline">\(e_i\)</span> はさらに <span class="math inline">\(D\)</span> 次元実ベクトルで表現される. この空間自体もあとで同時に学習する.</p>
-<h3 id="エンコード">エンコード</h3>
-<p>エンコーダー <span class="math inline">\(E\)</span> は入力 <span class="math inline">\(x\)</span> を <span class="math display">\[E \colon \mathcal X \to \mathbb R^D\]</span> <span class="math display">\[E \colon x \mapsto E(x)\]</span> で一旦写した後, 量子化を行う. それは次で定義される. <span class="math display">\[Q \colon \mathbb R^D \to \mathbb R^D\]</span> <span class="math display">\[Q(z) = e_k ~~\text{ where }~~ k = \mathrm{argmin}_j \| z - e_j \|\]</span> 従って固定された <span class="math inline">\(e\)</span> に対して <span class="math inline">\(Q\)</span> の値域は実質 <span class="math inline">\(K\)</span> みたいなもの.</p>
-<p>VAE のエンコード部分を <span class="math display">\[Q(E(x))\]</span> に置き換えて使う.</p>
-<h3 id="デコード">デコード</h3>
-<p>適当に <span class="math inline">\(z = Q(E(x))\)</span> を <span class="math inline">\(x\)</span> に戻すような <span class="math inline">\(D(z)\)</span> を定義する.</p>
-<h3 id="学習">学習</h3>
-<p>学習の中では <span class="math inline">\(e\)</span> も併せて更新していく. ただのオートエンコーダーとしては <span class="math display">\[L = \| x - D(Q(E(x))) \|^2\]</span> とか <span class="math display">\[L = \log p\left( x \mid D(Q(E(x)) \right)\]</span> を損失関数とするが, これに <span class="math inline">\(e\)</span> の更新要素を加えてく. <span class="math display">\[L&#39; = \| \sg[Q(E(x))] - E(x) \|^2 + \beta \| Q(E(x)) - \sg[E(x)] \|^2\]</span> を足す. ここで <span class="math inline">\(\sg[\cdot]\)</span> は勾配計算を止めるだけの操作 (stop gradient).</p>
-<blockquote>
-<p>つまり <span class="math inline">\(\| \sg[a] - b \|^2\)</span> の最小化は <span class="math inline">\(a\)</span> は止めて <span class="math inline">\(b\)</span> だけを <span class="math inline">\(a\)</span> に近づけるように更新する.</p>
-</blockquote>
-<p>また <span class="math inline">\(\beta\)</span> はハイパーパラメータ. この値は変えても結果は大して変わらなくて <span class="math inline">\(0.1\)</span> から <span class="math inline">\(2.0\)</span> の間ぐらいならなんでもよかったらしい. 最終的に <span class="math inline">\(0.25\)</span> を使ったそう.</p>
-<h3 id="a.1-vq-vae-dictionary-updates-with-exponential-moving-averages">A.1 VQ-VAE dictionary updates with Exponential Moving Averages</h3>
-<p>損失関数の <span class="math inline">\(\| \sg[Q(E(x))] - E(x) \|^2\)</span> 部分について.</p>
-<p><span class="math inline">\(n\)</span> 個の <span class="math inline">\(z_1^i = E(x_1), \ldots, z_n^i = E(x_n)\)</span> が, <span class="math inline">\(e_i = Q(z_j^i)\)</span> であったとする. 上の部分を最小化するには当然 <span class="math display">\[e_i = \frac{1}{n} \sum_j z_j^i\]</span> とすれば良いだけになる. ただミニバッチごとにこれをすれば必ずしも損失関数全体が最小化されるわけではないので, 少しずつそれに近づける (exponential moving) ことをする. <span class="math display">\[e_i \leftarrow \gamma e_i + (1-\gamma) \frac{1}{n} \sum z_j^i\]</span> ここで <span class="math inline">\(\gamma\)</span> は 0 と 1 の間の定数で, 彼らは経験的に <span class="math inline">\(0.99\)</span> を設定したという.</p>
-<h3 id="事前分布">事前分布</h3>
+<h2>方法</h2>
+<h3>(離散) 潜在空間</h3>
+<p>潜在空間を</p>
+\[e = \left[ e_1, e_2, \ldots, e_K \right] \in \mathbb R^{D \times K}\]
+<p>で表現する (codebook). この空間のサイズは \(K\) であって, 各点 \(e_i\) はさらに \(D\) 次元実ベクトルで表現される. この空間自体もあとで同時に学習する.</p>
+<h3>エンコード</h3>
+<p>エンコーダー \(E\) は入力 \(x\) を</p>
+\[E \colon \mathcal X \to \mathbb R^D\]
+\[E \colon x \mapsto E(x)\]
+<p>で一旦写した後, 量子化を行う. それは次で定義される.</p>
+\[Q \colon \mathbb R^D \to \mathbb R^D\]
+\[Q(z) = e_k ~~\text{ where }~~ k = \mathrm{argmin}_j \| z - e_j \|\]
+<p>従って固定された \(e\) に対して \(Q\) の値域は実質 \(K\) みたいなもの.</p>
+<p>VAE のエンコード部分を \(Q(E(x))\) に置き換えて使う.</p>
+<h3>デコード</h3>
+<p>適当に \(z = Q(E(x))\) を \(x\) に戻すような \(D(z)\) を定義する.</p>
+<h3>学習</h3>
+<p>学習の中では \(e\) も併せて更新していく. ただのオートエンコーダーとしては</p>
+\[L = \| x - D(Q(E(x))) \|^2\]
+<p>とか</p>
+\[L = \log p\left( x \mid D(Q(E(x)) \right)\]
+<p>を損失関数とするが, これに \(e\) の更新要素を加えてく.</p>
+\[L&#x27; = \| \sg[Q(E(x))] - E(x) \|^2 + \beta \| Q(E(x)) - \sg[E(x)] \|^2\]
+<p>を足す. ここで \(\sg[\cdot]\) は勾配計算を止めるだけの操作 (stop gradient).</p>
+<blockquote>つまり \(\| \sg[a] - b \|^2\) の最小化は \(a\) は止めて \(b\) だけを \(a\) に近づけるように更新する.</blockquote>
+<p>また \(\beta\) はハイパーパラメータ. この値は変えても結果は大して変わらなくて \(0.1\) から \(2.0\) の間ぐらいならなんでもよかったらしい. 最終的に \(0.25\) を使ったそう.</p>
+<h3>A.1 VQ-VAE dictionary updates with Exponential Moving Averages</h3>
+<p>損失関数の \(\| \sg[Q(E(x))] - E(x) \|^2\) 部分について.</p>
+<p>\(n\) 個の \(z_1^i = E(x_1), \ldots, z_n^i = E(x_n)\) が, \(e_i = Q(z_j^i)\) であったとする. 上の部分を最小化するには当然</p>
+\[e_i = \frac{1}{n} \sum_j z_j^i\]
+<p>とすれば良いだけになる. ただミニバッチごとにこれをすれば必ずしも損失関数全体が最小化されるわけではないので, 少しずつそれに近づける (exponential moving) ことをする.</p>
+\[e_i \leftarrow \gamma e_i + (1-\gamma) \frac{1}{n} \sum z_j^i\]
+<p>ここで \(\gamma\) は 0 と 1 の間の定数で, 彼らは経験的に \(0.99\) を設定したという.</p>
+<h3>事前分布</h3>
 <p>VAE を十分学習した後, 潜在分布に対する事前分布を見積もる. よくわからん.</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -154,5 +165,9 @@ original paper: <a href=https://arxiv.org/abs/1711.00937>https://arxiv.org/abs/1
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

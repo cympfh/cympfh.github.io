@@ -1,212 +1,190 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>正規パターン言語の和と共通部分の帰納学習</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-  </style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">正規パターン言語の和と共通部分の帰納学習</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=http://www.kurims.kyoto-u.ac.jp/~kyodo/kokyuroku/contents/pdf/1426-8.pdf>http://www.kurims.kyoto-u.ac.jp/~kyodo/kokyuroku/contents/pdf/1426-8.pdf</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#ALT>ALT</a> <a class='tag is-blue' href=index.html#パターン>パターン</a> <a class='tag is-blue' href=index.html#形式言語>形式言語</a></p>
-</div>
-<h2 id="導入-先に学ぶべきことリスト">導入 (先に学ぶべきことリスト)</h2>
+<p><ul> <li>original paper: <a href=http://www.kurims.kyoto-u.ac.jp/~kyodo/kokyuroku/contents/pdf/1426-8.pdf>http://www.kurims.kyoto-u.ac.jp/~kyodo/kokyuroku/contents/pdf/1426-8.pdf</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#ALT>ALT</a> <a class='tag is-blue' href=index.html#パターン>パターン</a> <a class='tag is-blue' href=index.html#形式言語>形式言語</a> </div></p>
+<h2>導入 (先に学ぶべきことリスト)</h2>
 <p>パターン言語に就て, 空の代入を許すか許さないかで,</p>
 <ul>
-<li>消去可能パターン言語,</li>
-<li>消去不能パターン言語, と言い分ける.</li>
+  <li>消去可能パターン言語,</li>
+  <li>消去不能パターン言語, と言い分ける.</li>
 </ul>
-<ol type="1">
-<li><p>消去不能パターン言語の言語族の推論は, <a href="http://www-personal.umich.edu/~yinw/papers/Angluin80.pdf">Inductive Inference of Formal Languages from Positive Data / Anguin</a> が示した.</p></li>
-<li><p>消去可能パターン言語の言語族の推論は, Reidenbach によって否定されている.</p></li>
-<li><p>正規パターン言語は, 消去の可能, 不能に関わらず, 多項式時間の推論が可能であることを, Shinoharaが1983に示した. <a href="http://link.springer.com/chapter/10.1007/3-540-11980-9_19">Polynomial time inference of extended regular pattern languages</a></p></li>
-<li><p>たかだか k 個のパターン言語の和について, 言語の包含関係とパターン集合の構文的包摂関係の等価性を 与えるような Compactness の概念を 1994, Arimura+ が <a href="http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.52.5331">Finding Minimal Generalizations for Unions of Pattern Languages and Its Application to Inductive Inference from Positive Data</a> で導入した. また, Compactness を有する言語和の族を効率的に学習するアルゴリズムを与えた.</p></li>
-<li><p>消去不能パターン言語についての Compactness の必要十分条件は, 2003, Sato+ によって <a href="http://www.jams.or.jp/scm/contents/Vol-8-5/8-45.pdf">Learning of language generated by patterns from positive examples</a> で与えられた.</p></li>
-<li><p>消去可能パターン言語についての Compactness の必要十分条件は, 2002, Uemura+ によって <a href="http://link.springer.com/chapter/10.1007/3-540-36169-3_24?LI=true">Compactness and Learning of Classes of Unions of Erasing Regular Pattern Languages</a> で与えられた.</p></li>
+<ol>
+  <li>消去不能パターン言語の言語族の推論は,</li>
 </ol>
-<h2 id="趣旨">趣旨</h2>
+<p><a href="http://www-personal.umich.edu/~yinw/papers/Angluin80.pdf">Inductive Inference of Formal Languages from Positive Data / Anguin</a> が示した.</p>
+<ol>
+  <li>消去可能パターン言語の言語族の推論は,</li>
+</ol>
+<p>Reidenbach によって否定されている.</p>
+<ol>
+  <li>正規パターン言語は, 消去の可能, 不能に関わらず,</li>
+</ol>
+<p>多項式時間の推論が可能であることを, Shinoharaが1983に示した. <a href="http://link.springer.com/chapter/10.1007/3-540-11980-9_19">Polynomial time inference of extended regular pattern languages</a></p>
+<ol>
+  <li>たかだか k 個のパターン言語の和について,</li>
+</ol>
+<p>言語の包含関係とパターン集合の構文的包摂関係の等価性を 与えるような Compactness の概念を 1994, Arimura+ が <a href="http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.52.5331">Finding Minimal Generalizations for Unions of Pattern Languages and Its Application to Inductive Inference from Positive Data</a> で導入した. また, Compactness を有する言語和の族を効率的に学習するアルゴリズムを与えた.</p>
+<ol>
+  <li>消去不能パターン言語についての Compactness の必要十分条件は,</li>
+</ol>
+<p>2003, Sato+ によって <a href="http://www.jams.or.jp/scm/contents/Vol-8-5/8-45.pdf">Learning of language generated by patterns from positive examples</a> で与えられた.</p>
+<ol>
+  <li>消去可能パターン言語についての Compactness の必要十分条件は,</li>
+</ol>
+<p>2002, Uemura+ によって <a href="http://link.springer.com/chapter/10.1007/3-540-36169-3_24?LI=true">Compactness and Learning of Classes of Unions of Erasing Regular Pattern Languages</a> で与えられた.</p>
+<h2>趣旨</h2>
 <p>消去可能正規パターン言語の和, 積, 補集合の学習問題を扱う</p>
-<p>たかだか <span class="math inline">\(k\)</span> 個の和積であるところの, <strong><span class="math inline">\(k\)</span>-和積パターン言語</strong> を対象とする.</p>
+<p>たかだか \(k\) 個の和積であるところの, <strong>\(k\) -和積パターン言語</strong> を対象とする.</p>
 <p>二つの表現を定義する</p>
 <ul>
-<li>和積標準形</li>
-<li>消去可能正規パターン言語の有限和</li>
+  <li>和積標準形</li>
+  <li>消去可能正規パターン言語の有限和</li>
 </ul>
 <p>なんか帰納的に有限証拠集合を列挙できることを示す. 最後に, 言語族の集積点の概念とその結果を用いて, 学習不可能であることを示す.</p>
-<h2 id="和積パターン言語の定義">和積パターン言語の定義</h2>
-<h3 id="notation">notation</h3>
+<h2>和積パターン言語の定義</h2>
+<h3>notation</h3>
 <ul>
-<li>アルファベット <span class="math inline">\(\Sigma\)</span> (<span class="math inline">\(\{a,b,c...\}\)</span>) -- 有限集合
-<ul>
-<li>空列を <span class="math inline">\(\epsilon\)</span> で表す</li>
-</ul></li>
-<li>変数 <span class="math inline">\(X\)</span> (<span class="math inline">\(\{x,y,z...\}\)</span>) -- 加算無限集合</li>
-<li>クリーネ閉包 (<span class="math inline">\(\Sigma^*\)</span> が語である)</li>
-<li>長さ <span class="math inline">\(n\)</span> の語全体 (<span class="math inline">\(\Sigma^n\)</span>)</li>
-<li>長さ <span class="math inline">\(n\)</span> 以下の語全体 (<span class="math inline">\(\Sigma^{\leq n}\)</span>)</li>
+  <li>
+    アルファベット \(\Sigma\) ( \(\{a,b,c...\}\) ) -- 有限集合
+    <ul>
+      <li>空列を \(\epsilon\) で表す</li>
+    </ul>
+  </li>
+  <li>変数 \(X\) ( \(\{x,y,z...\}\) ) -- 加算無限集合</li>
+  <li>クリーネ閉包 ( \(\Sigma^*\) が語である)</li>
+  <li>長さ \(n\) の語全体 ( \(\Sigma^n\) )</li>
+  <li>長さ \(n\) 以下の語全体 ( \(\Sigma^{\leq n}\) )</li>
 </ul>
-<p>パターンとは, <span class="math inline">\((\Sigma \cup X)^*\)</span> のことで, 各変数が高々1回出現するものを, 正規パターンという. ここでは正規パターンのみを考える.</p>
-<h3 id="代入">代入</h3>
-<pre><code>assign ::= { units }
+<p>パターンとは, \((\Sigma \cup X)^*\) のことで, 各変数が高々1回出現するものを, 正規パターンという. ここでは正規パターンのみを考える.</p>
+<h3>代入</h3>
+<pre><code class="code">assign ::= { units }
 units ::= unit | units
 unit ::= var := pattern
 var
-pattern</code></pre>
+pattern
+</code></pre>
 <p>を代入という.</p>
-<p>例えば <span class="math inline">\(\theta = \{ x := cc, y := xay \}\)</span> なんかが代入.</p>
-<p>パターン <span class="math inline">\(p = axby\)</span> の, 代入<span class="math inline">\(\theta\)</span> による像は <span class="math inline">\(p\theta = accbxay\)</span> である.</p>
-<h3 id="汎化">汎化</h3>
-<p>二つのパターン <span class="math inline">\(p, q\)</span> について, <span class="math inline">\(\exists \theta . p = q\theta\)</span> のとき, <span class="math inline">\(q\)</span> を <span class="math inline">\(p\)</span> の汎化と言って, <span class="math inline">\(p \preceq q\)</span> と表す.</p>
-<h3 id="言語">言語</h3>
-<p>あるパターン <span class="math inline">\(p\)</span> 変数に空を含む語を代入によって得られる 語全体を言語 <span class="math inline">\(L(p)\)</span> という.</p>
-<h2 id="k-和積パターン言語"><span class="math inline">\(k\)</span>-和積パターン言語</h2>
-<h3 id="和積パターン表現の定義">和積パターン表現の定義</h3>
-<ol type="1">
-<li>長さ0の文字列 (<span class="math inline">\(\lambda\)</span>) は和積パターン表現である</li>
-<li>正規パターンは和積パターン表現である</li>
-<li>和積パターン表現 <span class="math inline">\(P, Q\)</span> に対して <span class="math inline">\((P \land Q)\)</span> は和積パターン表現である</li>
-<li>和積パターン表現 <span class="math inline">\(P, Q\)</span> に対して <span class="math inline">\((P \lor Q)\)</span> は和積パターン表現である</li>
-<li>以上で表される文字列のみが和積パターン表現である</li>
+<p>例えば \(\theta = \{ x := cc, y := xay \}\) なんかが代入.</p>
+<p>パターン \(p = axby\) の, 代入 \(\theta\) による像は \(p\theta = accbxay\) である.</p>
+<h3>汎化</h3>
+<p>二つのパターン \(p, q\) について, \(\exists \theta . p = q\theta\) のとき, \(q\) を \(p\) の汎化と言って, \(p \preceq q\) と表す.</p>
+<h3>言語</h3>
+<p>あるパターン \(p\) 変数に空を含む語を代入によって得られる 語全体を言語 \(L(p)\) という.</p>
+<h2>\(k\) -和積パターン言語</h2>
+<h3>和積パターン表現の定義</h3>
+<ol>
+  <li>長さ0の文字列 ( \(\lambda\) ) は和積パターン表現である</li>
+  <li>正規パターンは和積パターン表現である</li>
+  <li>和積パターン表現 \(P, Q\) に対して \((P \land Q)\) は和積パターン表現である</li>
+  <li>和積パターン表現 \(P, Q\) に対して \((P \lor Q)\) は和積パターン表現である</li>
+  <li>以上で表される文字列のみが和積パターン表現である</li>
 </ol>
-<p>和積パターン表現 <span class="math inline">\(P\)</span> に含まれるパターンの集合を, <span class="math inline">\(E(P)\)</span> で表し, その濃度を <span class="math inline">\(\#E(P)\)</span> で表す. <span class="math inline">\(\#E(P) \leq k\)</span> となるものを, <strong><span class="math inline">\(k\)</span>-和積パターン表現 (<span class="math inline">\(CRP^k\)</span>)</strong> という.</p>
+<p>和積パターン表現 \(P\) に含まれるパターンの集合を, \(E(P)\) で表し, その濃度を \(\#E(P)\) で表す. \(\#E(P) \leq k\) となるものを, <strong>\(k\) -和積パターン表現 ( \(CRP^k\) )</strong> という.</p>
 <p>和積パターン表現から, その言語は自然に導かれる</p>
-<ol type="1">
-<li><span class="math inline">\(L(\lambda) = 0\)</span></li>
-<li><span class="math inline">\(L(P \land Q) = L(P) \cap L(Q)\)</span></li>
+<ol>
+  <li>\(L(\lambda) = 0\)</li>
+  <li>\(L(P \land Q) = L(P) \cap L(Q)\)</li>
 </ol>
 <p>みたいに.</p>
-<p><span class="math inline">\(k\)</span>-和積パターン言語の族を, <span class="math inline">\(CRPL^k\)</span> という.</p>
-<p>正規パターン <span class="math inline">\(p_i\)</span> に対して,</p>
+<p>\(k\) -和積パターン言語の族を, \(CRPL^k\) という.</p>
+<p>正規パターン \(p_i\) に対して,</p>
 <ul>
-<li><span class="math inline">\(p_1 \lor ... \lor p_n\)</span> を和パターン表現,</li>
-<li><span class="math inline">\(p_1 \land ... \land p_n\)</span> を積パターン表現, という.</li>
+  <li>\(p_1 \lor ... \lor p_n\) を和パターン表現,</li>
+  <li>\(p_1 \land ... \land p_n\) を積パターン表現, という.</li>
 </ul>
-<p>含まれる正規パターンの数 (<span class="math inline">\(k = n\)</span>) に対して, <strong><span class="math inline">\(k\)</span>-和パターン表現</strong> だとかいう.</p>
-<h3 id="和積標準形">和積標準形</h3>
-<p>命題論理と同様に, 標準形を考えられる. たぶんだけど, <span class="math inline">\((p \land ... \land p) \lor ... \lor (p \land ... \land p)\)</span> というやつのことだろう.</p>
-<h4 id="例">例</h4>
-<p>2-和積言語 <span class="math inline">\(L(x_0 a_1 x_1 a_2 x_2 a_3 x_3) \cap L(xcy)\)</span> は, 次の4-和積言語で表現できる.</p>
-<p><span class="math display">\[L(x_0 c x_0&#39; a_1 x_1 a_2 x_2 a_3 x_3) \lor
-L(x_0 a_1 x_1 c x_1&#39; a_2 x_2 a_3 x_3) \lor
-L(x_0 a_1 x_1 a_2 x_2 c x_2&#39; a_3 x_3) \lor
-L(x_0 a_1 x_1 a_2 x_2 a_3 x_3 c x_3&#39;)\]</span></p>
-<h2 id="定理-3.1">定理 3.1</h2>
-<p><span class="math inline">\(k\)</span>-和積パターン言語 (<span class="math inline">\(P\)</span>) に等しい 和パターン言語 (<span class="math inline">\(D(P)\)</span> と書く) が存在する.</p>
+<p>含まれる正規パターンの数 ( \(k = n\) ) に対して, <strong>\(k\) -和パターン表現</strong> だとかいう.</p>
+<h3>和積標準形</h3>
+<p>命題論理と同様に, 標準形を考えられる. たぶんだけど, \((p \land ... \land p) \lor ... \lor (p \land ... \land p)\) というやつのことだろう.</p>
+<h4>例</h4>
+<p>2-和積言語 \(L(x_0 a_1 x_1 a_2 x_2 a_3 x_3) \cap L(xcy)\) は, 次の4-和積言語で表現できる.</p>
+\[L(x_0 c x_0&#x27; a_1 x_1 a_2 x_2 a_3 x_3) \lor
+L(x_0 a_1 x_1 c x_1&#x27; a_2 x_2 a_3 x_3) \lor
+L(x_0 a_1 x_1 a_2 x_2 c x_2&#x27; a_3 x_3) \lor
+L(x_0 a_1 x_1 a_2 x_2 a_3 x_3 c x_3&#x27;)\]
+<h2>定理 3.1</h2>
+<p>\(k\) -和積パターン言語 ( \(P\) ) に等しい 和パターン言語 ( \(D(P)\) と書く) が存在する.</p>
 <p>証明は理解できなかったけど, 有限ならいくらでもいいんだから, できると思う</p>
-<h2 id="言語の包含関係">言語の包含関係</h2>
-<h3 id="特徴集合">特徴集合</h3>
-<p>言語族 <span class="math inline">\(\mathcal{L}\)</span> の言語 <span class="math inline">\(L\)</span>の 特徴集合とは, 語の有限集合であって,</p>
-<p><span class="math inline">\(S \subseteq L&#39; \in \mathcal{L} \Rightarrow L \subseteq L&#39;\)</span></p>
-<p>となるような <span class="math inline">\(S\)</span> のこと.</p>
-<p><span class="math inline">\(k\)</span>-和パターン表現 <span class="math inline">\(P, Q\)</span> の 二項関係 <span class="math inline">\(\sqsubseteq\)</span> を次のように定義する.</p>
-<p><span class="math display">\[P \sqsubseteq Q \iff \forall p \in E(P), \exists q \in E(Q) . p \preceq q\]</span></p>
-<p>正規パターン <span class="math inline">\(p\)</span> の変数に, 長さ2の語を代入して得られる語全体を, <span class="math inline">\(S(p)\)</span> と書く. また, 和パターン集合 <span class="math inline">\(P\)</span> について自然に<span class="math inline">\(S\)</span>は次のように定められる. すなわち, <span class="math inline">\(S(P) = \cup_{p} S(p)\)</span>.</p>
-<h3 id="補題-3.2">補題 3.2</h3>
-<p><span class="math inline">\(k\)</span>-和パターン表現 <span class="math inline">\(P, Q\)</span> に対して, アルファベットの濃度が <span class="math inline">\(k+2\)</span>以上ならば,</p>
-<p><span class="math inline">\(S(P) \subseteq L(Q) \iff P \sqsubseteq Q \iff L(P) \subseteq L(Q)\)</span></p>
-<h3 id="補題-3.3-補題2.2の上位互換">補題 3.3 (補題2.2の上位互換)</h3>
-<p>アルファベットの濃度が <span class="math inline">\(k+2\)</span> 以上で, 和パターン表現 <span class="math inline">\(P\)</span>, <span class="math inline">\(k\)</span>-和パターン表現 <span class="math inline">\(Q\)</span> に就て,</p>
-<p><span class="math inline">\(S(P) \subseteq L(Q) \iff P \sqsubseteq Q \iff L(P) \subseteq L(Q)\)</span></p>
-<h3 id="定理-3.4">定理 3.4</h3>
-<p><span class="math inline">\(k\)</span>-和積 <span class="math inline">\(Q\)</span> を次のような積和標準形で書く.</p>
+<h2>言語の包含関係</h2>
+<h3>特徴集合</h3>
+<p>言語族 \(\mathcal{L}\) の言語 \(L\) の 特徴集合とは, 語の有限集合であって,</p>
+<p>\(S \subseteq L&#x27; \in \mathcal{L} \Rightarrow L \subseteq L&#x27;\)</p>
+<p>となるような \(S\) のこと.</p>
+<p>\(k\) -和パターン表現 \(P, Q\) の 二項関係 \(\sqsubseteq\) を次のように定義する.</p>
+\[P \sqsubseteq Q \iff \forall p \in E(P), \exists q \in E(Q) . p \preceq q\]
+<p>正規パターン \(p\) の変数に, 長さ2の語を代入して得られる語全体を, \(S(p)\) と書く. また, 和パターン集合 \(P\) について自然に \(S\) は次のように定められる. すなわち, \(S(P) = \cup_{p} S(p)\) .</p>
+<h3>補題 3.2</h3>
+<p>\(k\) -和パターン表現 \(P, Q\) に対して, アルファベットの濃度が \(k+2\) 以上ならば,</p>
+<p>\(S(P) \subseteq L(Q) \iff P \sqsubseteq Q \iff L(P) \subseteq L(Q)\)</p>
+<h3>補題 3.3 (補題2.2の上位互換)</h3>
+<p>アルファベットの濃度が \(k+2\) 以上で, 和パターン表現 \(P\) , \(k\) -和パターン表現 \(Q\) に就て,</p>
+<p>\(S(P) \subseteq L(Q) \iff P \sqsubseteq Q \iff L(P) \subseteq L(Q)\)</p>
+<h3>定理 3.4</h3>
+<p>\(k\) -和積 \(Q\) を次のような積和標準形で書く.</p>
 <ul>
-<li><span class="math inline">\(Q = I_1 \land ... \land I_m\)</span></li>
-<li><span class="math inline">\(I_i = J_{i,1} \lor ... \lor J_{i, n_i}\)</span></li>
+  <li>\(Q = I_1 \land ... \land I_m\)</li>
+  <li>\(I_i = J_{i,1} \lor ... \lor J_{i, n_i}\)</li>
 </ul>
-<p>アルファベットの濃度が <span class="math inline">\(k+2\)</span> 以上で, <span class="math inline">\(k\)</span>-和積パターン <span class="math inline">\(P, Q\)</span> に対して, Pの和パターン言語 (<span class="math inline">\(D(P)\)</span>) を, <span class="math inline">\(P&#39;\)</span> とすると,</p>
-<p><span class="math display">\[S(P&#39;) \subseteq L(Q) \iff \forall i. P&#39; \sqsubseteq I_i \iff L(P) \subseteq L(Q)\]</span></p>
-<h2 id="k-和積パターン言語の学習"><span class="math inline">\(k\)</span>-和積パターン言語の学習</h2>
-<h3 id="正例からの帰納学習">正例からの帰納学習</h3>
-<p>言語族 <span class="math inline">\(\mathcal{L} = L_1, L_2 ...\)</span> が添え字付きであるとは, 帰納的関数</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">f ::</span> (<span class="dt">Nats</span> <span class="fu">*</span> <span class="dt">Word</span>) <span class="ot">-&gt;</span> <span class="dt">Bool</span>
-f (i, w) <span class="fu">=</span> w <span class="kw">in</span> <span class="dt">L</span>[i]</code></pre></div>
+<p>アルファベットの濃度が \(k+2\) 以上で, \(k\) -和積パターン \(P, Q\) に対して, Pの和パターン言語 ( \(D(P)\) ) を, \(P&#x27;\) とすると,</p>
+\[S(P&#x27;) \subseteq L(Q) \iff \forall i. P&#x27; \sqsubseteq I_i \iff L(P) \subseteq L(Q)\]
+<h2>\(k\) -和積パターン言語の学習</h2>
+<h3>正例からの帰納学習</h3>
+<p>言語族 \(\mathcal{L} = L_1, L_2 ...\) が添え字付きであるとは, 帰納的関数</p>
+<pre><code class="code language-haskell">f :: (Nats * Word) -&gt; Bool
+f (i, w) = w in L[i]
+</code></pre>
 <p>が存在すること.</p>
-<h3 id="正提示">正提示</h3>
-<p>文字列の無限列 <span class="math inline">\(\sigma = w_1, w_2 ...\)</span> が, 言語<span class="math inline">\(L\)</span>の正提示であるとは, <span class="math inline">\(L = \{ w_i : i \in \mathbb{N} \}\)</span> となること.</p>
-<p>有限列 <span class="math inline">\(\sigma[n] = w_1 .. w_n\)</span> を, 初期断片と呼ぶ.</p>
-<h3 id="推論アルゴリズム">推論アルゴリズム</h3>
-<p>推論アルゴリズム <span class="math inline">\(M\)</span> は, 初期断片 <span class="math inline">\(\sigma[n]\)</span> を入力とし, 推測として言語<span class="math inline">\(M(\sigma[n])\)</span> を出力する.</p>
-<p><span class="math inline">\(n\)</span>についての極限が存在するとき, 収束するという.</p>
-<p><span class="math inline">\(M\)</span> が正例から極限同定できるとは, 任意の正提示について, 同じ言語に収束すること.</p>
-<p>言語族 <span class="math inline">\(\mathcal{L}\)</span>に対して, 極限同定できる <span class="math inline">\(M\)</span> が存在するようとき, <span class="math inline">\(\mathcal{L}\)</span>は正例から推論可能である, という.</p>
-<h2 id="k-和積言語の学習"><span class="math inline">\(k\)</span>-和積言語の学習</h2>
-<h3 id="有限証拠集合">有限証拠集合</h3>
-<p>言語族 <span class="math inline">\(\mathcal{L}\)</span> における言語<span class="math inline">\(L\)</span>の有限証拠集合<span class="math inline">\(S\)</span> とは, 語の有限集合であって,</p>
-<p><span class="math display">\[S \subseteq L \Rightarrow \lnot ( \exists L&#39; \in \mathcal{L} . S \subseteq L&#39; \subset L)\]</span></p>
-<h3 id="補題-4.2-angluin">補題 4.2 (Angluin)</h3>
-<p>言語族<span class="math inline">\(\mathcal{L}\)</span>に就て, 次の二つは同値.</p>
+<h3>正提示</h3>
+<p>文字列の無限列 \(\sigma = w_1, w_2 ...\) が, 言語 \(L\) の正提示であるとは, \(L = \{ w_i : i \in \mathbb{N} \}\) となること.</p>
+<p>有限列 \(\sigma[n] = w_1 .. w_n\) を, 初期断片と呼ぶ.</p>
+<h3>推論アルゴリズム</h3>
+<p>推論アルゴリズム \(M\) は, 初期断片 \(\sigma[n]\) を入力とし, 推測として言語 \(M(\sigma[n])\) を出力する.</p>
+<p>\(n\) についての極限が存在するとき, 収束するという.</p>
+<p>\(M\) が正例から極限同定できるとは, 任意の正提示について, 同じ言語に収束すること.</p>
+<p>言語族 \(\mathcal{L}\) に対して, 極限同定できる \(M\) が存在するようとき, \(\mathcal{L}\) は正例から推論可能である, という.</p>
+<h2>\(k\) -和積言語の学習</h2>
+<h3>有限証拠集合</h3>
+<p>言語族 \(\mathcal{L}\) における言語 \(L\) の有限証拠集合 \(S\) とは, 語の有限集合であって,</p>
+\[S \subseteq L \Rightarrow \lnot ( \exists L&#x27; \in \mathcal{L} . S \subseteq L&#x27; \subset L)\]
+<h3>補題 4.2 (Angluin)</h3>
+<p>言語族 \(\mathcal{L}\) に就て, 次の二つは同値.</p>
 <ul>
-<li>任意の<span class="math inline">\(L\)</span>が有限証拠集合を持ち, それを列挙するアルゴリズムが存在する</li>
-<li><span class="math inline">\(\mathcal{L}\)</span>は正例から帰納推論可能</li>
+  <li>任意の \(L\) が有限証拠集合を持ち, それを列挙するアルゴリズムが存在する</li>
+  <li>\(\mathcal{L}\) は正例から帰納推論可能</li>
 </ul>
-<h3 id="定理-4.3">定理 4.3</h3>
-<p>アルファベット濃度が <span class="math inline">\(k+2\)</span>のとき, <span class="math inline">\(CRP^k\)</span> は正例から帰納学習可能である.</p>
-<h3 id="和積補パターン言語">和積補パターン言語</h3>
+<h3>定理 4.3</h3>
+<p>アルファベット濃度が \(k+2\) のとき, \(CRP^k\) は正例から帰納学習可能である.</p>
+<h3>和積補パターン言語</h3>
 <p>和積パターン表現に, 次を加える.</p>
-<ol type="1">
-<li><span class="math inline">\(P\)</span> が和積補パターン表現ならば, <span class="math inline">\(\lnot P\)</span> もそれである.</li>
+<ol>
+  <li>\(P\) が和積補パターン表現ならば, \(\lnot P\) もそれである.</li>
 </ol>
 <p>和積補パターン表現から言語を導くルールとして, 次を加える.</p>
-<ol type="1">
-<li><span class="math inline">\(L(\lnot P) = (L(P))^c\)</span></li>
+<ol>
+  <li>\(L(\lnot P) = (L(P))^c\)</li>
 </ol>
-<p>さて, <span class="math inline">\(k\)</span>-和積補パターン言語は学習不能である.</p>
+<p>さて, \(k\) -和積補パターン言語は学習不能である.</p>
 <p>証明には, 集積点の概念が使われてるため, 私には理解の及ぶところではない.</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -311,5 +289,9 @@ f (i, w) <span class="fu">=</span> w <span class="kw">in</span> <span class="dt"
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

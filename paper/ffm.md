@@ -8,7 +8,7 @@
 
 FMs では性別だろうが地名だろうがお構いなしに、one hot vector でエンコードしたものを並べたものを入力 $x$ として
 $$\phi : \mathbb{R}^N \to \mathbb{R}$$
-$$\phi(x) = b + \sum_i w_i x_i + \sum_{i < j} \langle v_i, v_j \rangle x_i x_j$$
+$$\phi(x) = b + \sum_i w_i x_i + \sum_{i \lt j} \langle v_i, v_j \rangle x_i x_j$$
 としたのだった.
 ここで $w_i$ はスカラー値で、$v_i$ は適当な $k$ 次元のベクトル.
 

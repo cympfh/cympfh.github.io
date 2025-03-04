@@ -1,91 +1,94 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Learning to Rank: From Pairwise Approach to Listwise Approach</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">Learning to Rank: From Pairwise Approach to Listwise Approach</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=http://www.machinelearning.org/proceedings/icml2007/papers/139.pdf>http://www.machinelearning.org/proceedings/icml2007/papers/139.pdf</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#順序学習>順序学習</a></p>
-</div>
-<h2 id="概要">概要</h2>
-<p><a href="ranknet.html">RankNet</a> では <span class="math inline">\((x_1, x_2) : x_1 \succ x_2\)</span> というペアから学習するのに対して、 この論文が提案する <strong>ListNet</strong> は、純粋にランキング <span class="math display">\[(x_1, x_2, \ldots, x_n) : x_1 \succ x_2 \succ \cdots \succ x_n\]</span> から学習する. RankNet が pairwise であると呼ばれるのに ListNet は listwise だと言われる.</p>
-<h2 id="listnet-1">ListNet <a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a></h2>
-<h3 id="置換確率-permutation-probabilities">置換確率 (permutation probabilities)</h3>
-<p>オブジェクト (あるいは素性) の列 <span class="math display">\[x = (x_1, x_2, \ldots, x_n)\]</span> が与えられた時に、これの <strong>置換確率</strong> というものを考える.</p>
-<p><span class="math display">\[\phi : \mathcal{X} \to \mathbb{R}\]</span></p>
-<p>置換 <span class="math inline">\(\pi\)</span> とは <span class="math inline">\((1,2,\ldots,n)\)</span> を並び替えてできる列のこと (対称群の元としての置換).</p>
-<p>これらについて置換確率 <span class="math display">\[P_x(\pi; \phi) = \prod_{j=1}^n \frac{\phi(y_j)}{\sum_{k=j}^n \phi(y_k)}\]</span> ただし <span class="math inline">\(y\)</span> は <span class="math inline">\(x\)</span> を <span class="math inline">\(\pi\)</span> によって置換してできる列 (<span class="math inline">\(y=\pi(x)\)</span>).</p>
-<h3 id="置換確率の性質">置換確率の性質</h3>
+<p><ul> <li>original paper: <a href=http://www.machinelearning.org/proceedings/icml2007/papers/139.pdf>http://www.machinelearning.org/proceedings/icml2007/papers/139.pdf</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#順序学習>順序学習</a> </div></p>
+<h2>概要</h2>
+<p><a href="ranknet.html">RankNet</a> では \((x_1, x_2) : x_1 \succ x_2\) というペアから学習するのに対して、 この論文が提案する <strong>ListNet</strong> は、純粋にランキング</p>
+\[(x_1, x_2, \ldots, x_n) : x_1 \succ x_2 \succ \cdots \succ x_n\]
+<p>から学習する. RankNet が pairwise であると呼ばれるのに ListNet は listwise だと言われる.</p>
+<h2>ListNet [^1]</h2>
+<h3>置換確率 (permutation probabilities)</h3>
+<p>オブジェクト (あるいは素性) の列</p>
+\[x = (x_1, x_2, \ldots, x_n)\]
+<p>が与えられた時に、これの <strong>置換確率</strong> というものを考える.</p>
+\[\phi : \mathcal{X} \to \mathbb{R}\]
+<p>置換 \(\pi\) とは \((1,2,\ldots,n)\) を並び替えてできる列のこと (対称群の元としての置換).</p>
+<p>これらについて置換確率</p>
+\[P_x(\pi; \phi) = \prod_{j=1}^n \frac{\phi(y_j)}{\sum_{k=j}^n \phi(y_k)}\]
+<p>ただし \(y\) は \(x\) を \(\pi\) によって置換してできる列 ( \(y=\pi(x)\) ).</p>
+<h3>置換確率の性質</h3>
 <p>いくつか重要な性質が定理として紹介され論文では証明が載ってる.</p>
-<div class="thm">
-<p>この <span class="math inline">\(P_x\)</span> は置換群の上の確率に確かになっていて、 <span class="math display">\[\sum_{\pi \in \Omega} P_x(\pi ; \phi) = 1\]</span></p>
-</div>
-<div class="thm">
-<p>列 <span class="math inline">\(x\)</span> が降順 (<span class="math inline">\(x_1 \succ x_2 \succ \cdots \succ x_n\)</span>) であって、この順序に関して <span class="math inline">\(\phi\)</span> が単調増加関数であるとき、 <span class="math inline">\(P_x\)</span> は <span class="math inline">\(\pi = (1, 2, \ldots, n)\)</span> のとき最大.</p>
-<p>swap sort みたいなことを考えると確かめられる.</p>
-</div>
-<div class="thm">
-<p><span class="math inline">\(\phi\)</span> が <span class="math inline">\(\phi(ax) = a\phi(x)\)</span> <span class="math inline">\((a&gt;0)\)</span> を満たす時 (全部定数倍になるだけなので) <span class="math display">\[P_x(\pi; \phi) = P_{\lambda x}(\pi; \phi)\]</span></p>
+<p><div class=thm> この \(P_x\) は置換群の上の確率に確かになっていて、</p>
+\[\sum_{\pi \in \Omega} P_x(\pi ; \phi) = 1\]
+<p></div></p>
+<p><div class=thm> 列 \(x\) が降順 ( \(x_1 \succ x_2 \succ \cdots \succ x_n\) ) であって、この順序に関して \(\phi\) が単調増加関数であるとき、 \(P_x\) は \(\pi = (1, 2, \ldots, n)\) のとき最大.</p>
+<p>swap sort みたいなことを考えると確かめられる. </div></p>
+<p><div class=thm> \(\phi\) が \(\phi(ax) = a\phi(x)\) \((a&gt;0)\) を満たす時 (全部定数倍になるだけなので)</p>
+\[P_x(\pi; \phi) = P_{\lambda x}(\pi; \phi)\]
 <p>全く同様に、</p>
-<p><span class="math inline">\(\phi\)</span> が <span class="math inline">\(\phi(x) = \exp(x)\)</span> のとき、 <span class="math inline">\(\phi(x + a) = \exp(a) \phi(x)\)</span> なので <span class="math display">\[P_x(\pi; \phi) = P_{x + \lambda}(\pi; \phi)\]</span></p>
-<p>が成立する.</p>
-</div>
-<p>基本的には <span class="math inline">\(\phi\)</span> には線形関数とか指数関数そのものみたいに簡単な関数が来ることを想定してるらしい.</p>
-<h3 id="top-k-の確率">top <span class="math inline">\(k\)</span> の確率</h3>
-<p>ランキングの top <span class="math inline">\(k\)</span> についてだけ考えるなら、初めの <span class="math inline">\(k\)</span> 項の積だけ計算すれば周辺確率を計算することになって、 <span class="math display">\[P_x^k(\pi; \phi) = \prod_{j=1}^k \frac{\phi(y_j)}{\sum_{k=j}^n \phi(y_k)}\]</span> となって計算量が削減できる.</p>
-<p>ところで softmax 関数は <span class="math inline">\(k=1\)</span> で <span class="math inline">\(\phi = \exp \circ f\)</span> という場合に一致する.</p>
-<h3 id="学習予測">学習・予測</h3>
-<p>というわけで、置換確率を損失関数に入れて、<span class="math inline">\(\phi\)</span> を学習、予測は <span class="math inline">\(\phi(x_i)\)</span> をスコアにしてランキングを作ればよい.</p>
-<p>損失関数は具体的にはあらゆる (top <span class="math inline">\(k\)</span> の) 置換での確率を計算してその交差エントロピーを計算する.</p>
+<p>\(\phi\) が \(\phi(x) = \exp(x)\) のとき、 \(\phi(x + a) = \exp(a) \phi(x)\) なので</p>
+\[P_x(\pi; \phi) = P_{x + \lambda}(\pi; \phi)\]
+<p>が成立する. </div></p>
+<p>基本的には \(\phi\) には線形関数とか指数関数そのものみたいに簡単な関数が来ることを想定してるらしい.</p>
+<h3>top \(k\) の確率</h3>
+<p>ランキングの top \(k\) についてだけ考えるなら、初めの \(k\) 項の積だけ計算すれば周辺確率を計算することになって、</p>
+\[P_x^k(\pi; \phi) = \prod_{j=1}^k \frac{\phi(y_j)}{\sum_{k=j}^n \phi(y_k)}\]
+<p>となって計算量が削減できる.</p>
+<p>ところで softmax 関数は \(k=1\) で \(\phi = \exp \circ f\) という場合に一致する.</p>
+<h3>学習・予測</h3>
+<p>というわけで、置換確率を損失関数に入れて、 \(\phi\) を学習、予測は \(\phi(x_i)\) をスコアにしてランキングを作ればよい.</p>
+<p>損失関数は具体的にはあらゆる (top \(k\) の) 置換での確率を計算してその交差エントロピーを計算する.</p>
 <ul>
-<li>データ列 <span class="math inline">\(x\)</span></li>
-<li>真のスコア <span class="math inline">\(s(x_i)\)</span>
-<ul>
-<li>真のランキングを作るようなスコアを与える
-<ul>
-<li>参考 <a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a> によると、大体適当なスコアで良いらしい</li>
-<li>というのもスコアそのものを学習するわけではないし、前述したようなスケーラビリティがあるから</li>
-</ul></li>
-<li>真の置換確率 <span class="math inline">\(p(\pi) = P_x(\pi ; s)\)</span></li>
-</ul></li>
-<li>学習する <span class="math inline">\(\phi(x_i)\)</span>
-<ul>
-<li>予測のの置換確率 <span class="math inline">\(q(\pi) = P_x(\pi ; \phi)\)</span></li>
-</ul></li>
-<li>損失関数はこの <span class="math inline">\(p, q\)</span> の交差エントロピー
-<ul>
-<li><span class="math inline">\(\mathcal{L} = - \sum_{\pi} p(\pi) \log q(\pi)\)</span></li>
-</ul></li>
+  <li>データ列 \(x\)</li>
+  <li>
+    真のスコア \(s(x_i)\)
+    <ul>
+      <li>
+        真のランキングを作るようなスコアを与える
+        <ul>
+          <li>参考 [^2] によると、大体適当なスコアで良いらしい</li>
+          <li>というのもスコアそのものを学習するわけではないし、前述したようなスケーラビリティがあるから</li>
+        </ul>
+      </li>
+      <li>真の置換確率 \(p(\pi) = P_x(\pi ; s)\)</li>
+    </ul>
+  </li>
+  <li>
+    学習する \(\phi(x_i)\)
+    <ul>
+      <li>予測のの置換確率 \(q(\pi) = P_x(\pi ; \phi)\)</li>
+    </ul>
+  </li>
+  <li>
+    損失関数はこの \(p, q\) の交差エントロピー
+    <ul>
+      <li>\(\mathcal{L} = - \sum_{\pi} p(\pi) \log q(\pi)\)</li>
+    </ul>
+  </li>
 </ul>
-<h2 id="参考">参考</h2>
-<section class="footnotes">
-<hr />
-<ol>
-<li id="fn1"><p><a href="http://www.machinelearning.org/proceedings/icml2007/papers/139.pdf">A Probabilistic Framework for Learning to Rank(final-7).dvi - 139.pdf</a><a href="#fnref1">↩</a></p></li>
-<li id="fn2"><p><a href="http://qiita.com/koreyou/items/a69750696fd0b9d88608">ランク学習のListNetをChainerで実装してみた - Qiita</a><a href="#fnref2">↩</a></p></li>
-</ol>
-</section>
+<h2>参考</h2>
+<p>[^1] : <a href="http://www.machinelearning.org/proceedings/icml2007/papers/139.pdf">A Probabilistic Framework for Learning to Rank(final-7).dvi - 139.pdf</a> [^2] : <a href="http://qiita.com/koreyou/items/a69750696fd0b9d88608">ランク学習のListNetをChainerで実装してみた - Qiita</a></p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -190,5 +193,9 @@ original paper: <a href=http://www.machinelearning.org/proceedings/icml2007/pape
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

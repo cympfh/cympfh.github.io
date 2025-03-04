@@ -1,48 +1,50 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Deep contextualized word reprensetations (Embedding from Language Models; ELMo)</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">Deep contextualized word reprensetations (Embedding from Language Models; ELMo)</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=http://www.aclweb.org/anthology/N18-1202>http://www.aclweb.org/anthology/N18-1202</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#単語分散表現>単語分散表現</a></p>
-</div>
-<p><span class="math display">\[
+<p><ul> <li>original paper: <a href=http://www.aclweb.org/anthology/N18-1202>http://www.aclweb.org/anthology/N18-1202</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#単語分散表現>単語分散表現</a> </div></p>
+\[
 \def\vec#1{\overrightarrow{#1}}
 \def\cev#1{\overleftarrow{#1}}
-\]</span></p>
-<h2 id="概要">概要</h2>
-<p>つよつよ単語分散表現を作る. タイトルにあるとおり &quot;deep contextualized&quot; であることを目指す. 他の単語分散表現と違って, 単語一個にベクトルを与えるのではなくて, 文全体を取ってから単語にベクトルを与えることをする. 関連として [Melamud et al,. 2016] の context2vec は pivot word とその周辺の context からベクトルを作るものがある.</p>
+\]
+<h2>概要</h2>
+<p>つよつよ単語分散表現を作る. タイトルにあるとおり "deep contextualized" であることを目指す. 他の単語分散表現と違って, 単語一個にベクトルを与えるのではなくて, 文全体を取ってから単語にベクトルを与えることをする. 関連として [Melamud et al,. 2016] の context2vec は pivot word とその周辺の context からベクトルを作るものがある.</p>
 <p>[Chelba et al,. 2014] の 30 million sentences をデータセットに 2層 bi-LSTM で Language Model を作る.</p>
-<h2 id="bidirectional-language-model-bilm">Bidirectional Language Model (biLM)</h2>
-<p><span class="math inline">\(N\)</span> 個のトークンからなる文 <span class="math inline">\((t_1, \ldots, t_N)\)</span> について普通の forward な language model は <span class="math display">\[p(t_1,\ldots,t_N) = \prod_{k=1}^N p(t_k | t_1,\ldots,t_{k-1})\]</span> という右辺の <span class="math inline">\(p\)</span> を与えるもの.</p>
-<p>これをLSTMなんかで学習するとセルは内部状態 <span class="math inline">\(h\)</span> を持つ. 全部で <span class="math inline">\(L\)</span> 層あるときに トークン <span class="math inline">\(t_k\)</span> を読んだ直後に <span class="math inline">\(j=1,\ldots,L\)</span> 層目の LSTM のセルが持つ状態を <span class="math inline">\(\vec{h_{k,j}}\)</span> とする. <span class="math inline">\(t_{k+1}\)</span> は <span class="math inline">\(\vec{h_{k,L}}\)</span> を使って予測されるわけである.</p>
-<p>backward な language model とはトークン列の順序を逆順にしただけのもので <span class="math display">\[p(t_1,\ldots,t_N) = \prod_{k=1}^N p(t_k | t_{k+1},\ldots,t_N)\]</span> という右辺の <span class="math inline">\(p\)</span> を与えるもの. 同様に <span class="math inline">\(j\)</span> 層目の LSTM のセルが <span class="math inline">\(t_k\)</span> を読んだ直後に持つ状態を <span class="math inline">\(\cev{h_{k,j}}\)</span> とする.</p>
-<p>bidirectional な language model は以上の forward と backward を次のように組み合わせる: <span class="math display">\[p(t_1,\ldots,t_N) = \prod_{k=1}^N p(t_k | t_1,\ldots,t_{k-1}) \times \prod_{k=1}^N p(t_k | t_{k+1},\ldots,t_N)\]</span> ここで 右辺の2つの <span class="math inline">\(p\)</span> をパラメータを持つわけだが、 token representation のためのパラメータ <span class="math inline">\(\Theta_x\)</span> と 最後の softmax layer のパラメータ <span class="math inline">\(\Theta_s\)</span> は共通して持たせる. つまり一層目と最終層だけ共通.</p>
-<h2 id="elmo">ELMo</h2>
-<p>ELMo は biLM の中の <span class="math inline">\(h\)</span> を使う. トークン <span class="math inline">\(t_k\)</span> を何かしらの方法でまずはベクトル化してるわけだがそれを <span class="math inline">\(x_k\)</span> とし、またそれを <span class="math inline">\(0\)</span> 層目の状態 <span class="math inline">\(h_{k,0}\)</span> と見做す. また forward の <span class="math inline">\(h\)</span> と backward の <span class="math inline">\(h\)</span> を結合して <span class="math inline">\(h_{k,j} = [ \vec{h_{k,j}}; \cev{h_{k,j}} ]\)</span> とする.</p>
-<p>ELMo では <span class="math inline">\([t_1,\ldots,t_N]\)</span> における <span class="math inline">\(t_k\)</span> の表現を次の集合で表す: <span class="math display">\[R_k = \{ x_k, \vec{h_{k,j}}, \cev{h_{k,j}} ~|~ j=1,\ldots,L \} = \{ h_{k,j} ~|~ j=0,1,\ldots,L \}\]</span></p>
+<h2>Bidirectional Language Model (biLM)</h2>
+<p>\(N\) 個のトークンからなる文 \((t_1, \ldots, t_N)\) について普通の forward な language model は</p>
+\[p(t_1,\ldots,t_N) = \prod_{k=1}^N p(t_k | t_1,\ldots,t_{k-1})\]
+<p>という右辺の \(p\) を与えるもの.</p>
+<p>これをLSTMなんかで学習するとセルは内部状態 \(h\) を持つ. 全部で \(L\) 層あるときに トークン \(t_k\) を読んだ直後に \(j=1,\ldots,L\) 層目の LSTM のセルが持つ状態を \(\vec{h_{k,j}}\) とする. \(t_{k+1}\) は \(\vec{h_{k,L}}\) を使って予測されるわけである.</p>
+<p>backward な language model とはトークン列の順序を逆順にしただけのもので</p>
+\[p(t_1,\ldots,t_N) = \prod_{k=1}^N p(t_k | t_{k+1},\ldots,t_N)\]
+<p>という右辺の \(p\) を与えるもの. 同様に \(j\) 層目の LSTM のセルが \(t_k\) を読んだ直後に持つ状態を \(\cev{h_{k,j}}\) とする.</p>
+<p>bidirectional な language model は以上の forward と backward を次のように組み合わせる:</p>
+\[p(t_1,\ldots,t_N) = \prod_{k=1}^N p(t_k | t_1,\ldots,t_{k-1}) \times \prod_{k=1}^N p(t_k | t_{k+1},\ldots,t_N)\]
+<p>ここで 右辺の2つの \(p\) をパラメータを持つわけだが、 token representation のためのパラメータ \(\Theta_x\) と 最後の softmax layer のパラメータ \(\Theta_s\) は共通して持たせる. つまり一層目と最終層だけ共通.</p>
+<h2>ELMo</h2>
+<p>ELMo は biLM の中の \(h\) を使う. トークン \(t_k\) を何かしらの方法でまずはベクトル化してるわけだがそれを \(x_k\) とし、またそれを \(0\) 層目の状態 \(h_{k,0}\) と見做す. また forward の \(h\) と backward の \(h\) を結合して \(h_{k,j} = [ \vec{h_{k,j}}; \cev{h_{k,j}} ]\) とする.</p>
+<p>ELMo では \([t_1,\ldots,t_N]\) における \(t_k\) の表現を次の集合で表す:</p>
+\[R_k = \{ x_k, \vec{h_{k,j}}, \cev{h_{k,j}} ~|~ j=1,\ldots,L \} = \{ h_{k,j} ~|~ j=0,1,\ldots,L \}\]
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -147,5 +149,9 @@ original paper: <a href=http://www.aclweb.org/anthology/N18-1202>http://www.aclw
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

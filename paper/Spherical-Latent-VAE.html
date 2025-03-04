@@ -1,60 +1,58 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Spherical Latent Spaces for Stable Variational Autoencoders</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">Spherical Latent Spaces for Stable Variational Autoencoders</h1>
-</header>
+<p><ul> <li>original paper: <a href=https://arxiv.org/abs/1808.10805>https://arxiv.org/abs/1808.10805</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#オートエンコーダ>オートエンコーダ</a> <a class='tag is-blue' href=index.html#生成モデル>生成モデル</a> <a class='tag is-blue' href=index.html#VAE>VAE</a> </div></p>
+<p>\(\def\vMF#1#2{\mathrm{vMF}(#1, #2)}\)</p>
+<h2>リンク</h2>
 <ul>
-<li>
-original paper: <a href=https://arxiv.org/abs/1808.10805>https://arxiv.org/abs/1808.10805</a>
-</li>
+  <li><a href="https://arxiv.org/abs/1808.10805">arxiv.org/abs/1808.10805</a></li>
+  <li><a href="https://github.com/jiacheng-xu/vmf_vae_nlp">github.com/jiacheng-xu/vmf_vae_nlp</a></li>
 </ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#オートエンコーダ>オートエンコーダ</a> <a class='tag is-blue' href=index.html#生成モデル>生成モデル</a> <a class='tag is-blue' href=index.html#VAE>VAE</a></p>
-</div>
-<p><span class="math inline">\(\def\vMF#1#2{\mathrm{vMF}(#1, #2)}\)</span></p>
-<h2 id="リンク">リンク</h2>
-<ul>
-<li><a href="https://arxiv.org/abs/1808.10805">arxiv.org/abs/1808.10805</a></li>
-<li><a href="https://github.com/jiacheng-xu/vmf_vae_nlp">github.com/jiacheng-xu/vmf_vae_nlp</a></li>
-</ul>
-<h2 id="概要">概要</h2>
+<h2>概要</h2>
 <p>潜在分布にガウシアン分布を用いた <a href="VAE.html">VAE</a> のデメリットとして, collapse してしまう現象に陥ってしまうことがあること. つまり encoder は入力を無視して最適な分布に写し, decoder は潜在分布を無視して平均的なデータを生成するような状態が期待しない局所的最適解として存在する.</p>
 <p>この論文では, ガウシアン分布をやめて von Mises-Fisher (vMF) 分布を用いることで安定化を図る.</p>
-<h2 id="vmf-分布">vMF 分布</h2>
-<p><span class="math inline">\(x \in \mathbb R^d\)</span> に関する <span class="math inline">\(d\)</span> 次元 vMF 分布とは球面 <span class="math inline">\(S_{d-1}\)</span> の上の分布であって, その密度関数は次の <span class="math inline">\(f_d\)</span> で与えられる. ここで <span class="math inline">\(\mu \in \mathbb R^d, \kappa \in \mathbb R\)</span> がパラメータ. ただし制約として <span class="math inline">\(|\mu|=1, \kappa \geq 0\)</span> を要請する. また, <span class="math inline">\(I_v\)</span> は<a href="https://ja.wikipedia.org/wiki/%E3%83%99%E3%83%83%E3%82%BB%E3%83%AB%E9%96%A2%E6%95%B0#%E5%A4%89%E5%BD%A2%E3%83%99%E3%83%83%E3%82%BB%E3%83%AB%E9%96%A2%E6%95%B0">第一種変形ベッセル関数</a>.</p>
-<p><span class="math display">\[f_d(x ; \mu, \kappa) = C_d(\kappa) \exp(\kappa \mu^T x)\]</span> <span class="math display">\[C_d(\kappa) = \frac{\kappa^{d/2-1}}{(2\pi)^{d/2} I_{d/2-1}(\kappa)}\]</span></p>
-<h3 id="一様分布とのkl距離">一様分布とのKL距離</h3>
-<p>パラメータ <span class="math inline">\(\mu, \kappa\)</span> での vMF 分布を <span class="math inline">\(\vMF{\mu}{\kappa}\)</span> と書くことにする. 一様分布は <span class="math inline">\(\vMF{\mu}{0}\)</span> で与えられる. <span class="math inline">\(\mu\)</span> は何でも良い. <span class="math inline">\(\vMF{\mu}{\kappa}\)</span> と一様分布とのKL距離が次で与えられる.</p>
-<p><span class="math display">\[KL(\vMF{\mu}{\kappa} \| \vMF{\cdot}{0}) =
-\kappa \frac{I_{d/2}(\kappa)}{I_{d/2-1}(\kappa)}
-+ (d/2-1) \log \kappa
-- d/2 \log(2\pi)
-- \log I_{d/2-1}(\kappa)
-+ d/2 \log(\pi) + \log 2 - \log \Gamma(d/2)\]</span></p>
-<p><span class="math inline">\(\mu\)</span> は分布の平均？で, 一様分布との距離なので, <span class="math inline">\(\mu\)</span> には依存しない. <span class="math inline">\(\kappa\)</span> が大きくなるに単調に <span class="math inline">\(KL\)</span> も増加する.</p>
-<h3 id="sampling">sampling</h3>
-<p>VAE に使うためには vMF 分布から点をサンプリングする方法が必要. [Wood 1994] &quot;Simulation of the von mises fisher distribution&quot; の方法によると書いてあるが, これを読むには $5.00 必要なので諦める.</p>
-<p>実装が公開されてるのだが, ちょうど <a href="https://github.com/jiacheng-xu/vmf_vae_nlp/blob/master/NVLL/distribution/vmf_only.py#L92">NVLL/distribution/vmf_only.py#L92</a> の部分で <span class="math inline">\(w\)</span> という乱数を <span class="math inline">\(\kappa, d\)</span> によって決める.</p>
-<p>ベクトル <span class="math inline">\(\mu\)</span> とそれに直交するベクトルをランダムに <span class="math inline">\(v\)</span> として選んだ時 <span class="math display">\[w \mu + \sqrt{1-w^2} v\]</span> として, これを <span class="math inline">\(\vMF{\mu}{\kappa}\)</span> からサンプリングして得た点とする.</p>
-<h2 id="vmf-vae">vMF VAE</h2>
+<h2>vMF 分布</h2>
+<p>\(x \in \mathbb R^d\) に関する \(d\) 次元 vMF 分布とは球面 \(S_{d-1}\) の上の分布であって, その密度関数は次の \(f_d\) で与えられる. ここで \(\mu \in \mathbb R^d, \kappa \in \mathbb R\) がパラメータ. ただし制約として \(|\mu|=1, \kappa \geq 0\) を要請する. また, \(I_v\) は <a href="https://ja.wikipedia.org/wiki/%E3%83%99%E3%83%83%E3%82%BB%E3%83%AB%E9%96%A2%E6%95%B0#%E5%A4%89%E5%BD%A2%E3%83%99%E3%83%83%E3%82%BB%E3%83%AB%E9%96%A2%E6%95%B0">第一種変形ベッセル関数</a> .</p>
+\[f_d(x ; \mu, \kappa) = C_d(\kappa) \exp(\kappa \mu^T x)\]
+\[C_d(\kappa) = \frac{\kappa^{d&#x2F;2-1}}{(2\pi)^{d&#x2F;2} I_{d&#x2F;2-1}(\kappa)}\]
+<h3>一様分布とのKL距離</h3>
+<p>パラメータ \(\mu, \kappa\) での vMF 分布を \(\vMF{\mu}{\kappa}\) と書くことにする. 一様分布は \(\vMF{\mu}{0}\) で与えられる. \(\mu\) は何でも良い. \(\vMF{\mu}{\kappa}\) と一様分布とのKL距離が次で与えられる.</p>
+\[KL(\vMF{\mu}{\kappa} \| \vMF{\cdot}{0}) =
+\kappa \frac{I_{d&#x2F;2}(\kappa)}{I_{d&#x2F;2-1}(\kappa)}
++ (d&#x2F;2-1) \log \kappa
+- d&#x2F;2 \log(2\pi)
+- \log I_{d&#x2F;2-1}(\kappa)
++ d&#x2F;2 \log(\pi) + \log 2 - \log \Gamma(d&#x2F;2)\]
+<p>\(\mu\) は分布の平均？で, 一様分布との距離なので, \(\mu\) には依存しない. \(\kappa\) が大きくなるに単調に \(KL\) も増加する.</p>
+<h3>sampling</h3>
+<p>VAE に使うためには vMF 分布から点をサンプリングする方法が必要. [Wood 1994] "Simulation of the von mises fisher distribution" の方法によると書いてあるが, これを読むには $5.00 必要なので諦める.</p>
+<p>実装が公開されてるのだが, ちょうど <a href="https://github.com/jiacheng-xu/vmf_vae_nlp/blob/master/NVLL/distribution/vmf_only.py#L92">NVLL/distribution/vmf_only.py#L92</a> の部分で \(w\) という乱数を \(\kappa, d\) によって決める.</p>
+<p>ベクトル \(\mu\) とそれに直交するベクトルをランダムに \(v\) として選んだ時</p>
+\[w \mu + \sqrt{1-w^2} ~ v\]
+<p>として, これを \(\vMF{\mu}{\kappa}\) からサンプリングして得た点とする.</p>
+<h2>vMF VAE</h2>
 <p>vMF を潜在分布として推定し, 先の方法でサンプリングした点からデータを復元するように VAE を構成する.</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -159,5 +157,9 @@ original paper: <a href=https://arxiv.org/abs/1808.10805>https://arxiv.org/abs/1
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

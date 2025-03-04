@@ -175,8 +175,7 @@ NLTK WordNet lemmatizer を使う
 ### POS
 
 いわずもがな.
-Stanford log-lenear POS tagger ってのがあって, 
-英語と中国語に対して使える？らしいよ.
+Stanford log-lenear POS tagger ってのがあって, 英語と中国語に対して使える？らしいよ.
 
 ### Named entity (NE)
 
@@ -189,10 +188,9 @@ Stanford log-lenear POS tagger ってのがあって,
 Stanford conditional random field-based NE recognizer (NER)
 なるものが良いって.
 
-### LIWC dictionary ($89.95)
+### LIWC dictionary (\$89.95)
 
-Linguistic Inquiry and Word Count (LIWC)
-は, 単語を64の(感情の?)クラスに分類する.
+Linguistic Inquiry and Word Count (LIWC) は, 単語を64の(感情の?)クラスに分類する.
 Facebookが使った奴.
 文脈に依存せず, 一つの単語について分析する.
 
@@ -219,11 +217,10 @@ type=weaksubj len=1 word1=dominate pos1=verb stemmed1=y priorpolarity=negative
 
 > we use various word listsc onstructed by linguists who have looked at data related to some of our tasks.
 
-つまり手作業で, 
-あるクラスに属する単語のリストを作る.
+つまり手作業で, あるクラスに属する単語のリストを作る.
 これは, タスクごとに, そのトピックに詳しい人間がやる.
 
-例えば, 後の実験で使った例では, 
+例えば, 後の実験で使った例では,
 
 ```haskell
 AGREEMENT = [right, agree, true]
@@ -235,7 +232,7 @@ NEGATIVE_DISCOURSE_ORDER = [however, but, nevertheless]
 
 ### automatic
 
-1次マルコフモデルを使って, 
+1次マルコフモデルを使って,
 wordをクラスタリングする.
 クラスた数は 10, 100, 1000 ってする.
 
@@ -245,16 +242,16 @@ Brown+, 1992
 ### 実験
 
 n-gramと他の素性を使えば十分に分類可能なタスクは
-してもしょうがないので, 
+してもしょうがないので,
 それなりに難しいタスクを３つやる.
 
 - speaker role
 - alignment move
 - authority claim
 
-初めに訓練データでパターンを学習して, 
+初めに訓練データでパターンを学習して,
 n-gramの場合と, パターンの場合を比較する.
-公平のために, n-gramは3-gramまで, 
+公平のために, n-gramは3-gramまで,
 パターンも長さ3までにする.
 
 - Maximum entropy classification
@@ -263,13 +260,13 @@ n-gramの場合と, パターンの場合を比較する.
 
 #### Speaker role
 
-ニュースショーにおける, (人, その人が発した言葉) から, 
+ニュースショーにおける, (人, その人が発した言葉) から,
 その人のショーにおける役割をあてる.
 役割とは, Host, Guest, Voice bite
 
 Liu+ 80%
 
-48 English talks and 90 Mandarin talks の録音に対して, 
+48 English talks and 90 Mandarin talks の録音に対して,
 REF (Reference human transcripts) と
 ASR (automatic speech recognition) output
 (using SRI Decipher ASR system)
@@ -284,7 +281,7 @@ kappa = 0.67 / 0.78
 
 #### Alignment move
 
-ネット上の議論において, 
+ネット上の議論において,
 参加者の同意(positive), 異論(negative)
 を見る.
 文に対して,  pos/neg をつける.
@@ -300,7 +297,7 @@ Wikipedia talk page
 kappa = 0.50 / 0.53
 
 で, たまに pos/neg 両方を含むような面倒な文がある.
-そこで, 
+そこで,
 pos/none, neg/none の２つの分類器を作って
 
 #### Authority claim
@@ -336,7 +333,7 @@ Speech role は, REFでもASRでも十分な結果が得られている.
 
 manualは利用ならば, それが最強
 
-Wikipedia English pages alignmentについてのパターンとして, 
+Wikipedia English pages alignmentについてのパターンとして,
 
 ```
 i ALIGNMENT MODAL
@@ -345,7 +342,7 @@ a POSITIVE #idea
 
 とか.
 
-あ, そうそう. 英語のパターンの場合は, 
-２つのトークンが連続で出現してなくてもマッチするわけだけど, 
+あ, そうそう. 英語のパターンの場合は,
+２つのトークンが連続で出現してなくてもマッチするわけだけど,
 上のように`#`というのは, 連続であることを意味するらしい.
 初めからそうすればいいのにね.

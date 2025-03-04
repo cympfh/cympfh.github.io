@@ -1,7 +1,11 @@
 #!/bin/bash
 
 date2822() {
-    date --rfc-2822 $@
+    DATECOMMAND=date
+    if ( type gdate 2>/dev/null ); then
+        DATECOMMAND=gdate
+    fi
+    $DATECOMMAND --rfc-2822 $@
 }
 
 title() {

@@ -70,7 +70,9 @@ H^4 & = H^2 \otimes H^2 \\
 + & + & - & - \\
 + & - & - & + \\
 \end{array}
-\right]$$
+\right]
+\end{align*}
+$$
 $$H^{2m} = H^m \otimes H^2$$
 
 として $H^m \in \{+,-\}^{m\times m}$ が定義される. ただし $m$ は2の累乗.

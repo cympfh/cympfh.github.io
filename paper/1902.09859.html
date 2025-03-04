@@ -1,83 +1,100 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>[1902.09859] Context Vectors are Reflections of Word Vectors in Half the Dimensions</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">[1902.09859] Context Vectors are Reflections of Word Vectors in Half the Dimensions</h1>
-</header>
+<p><ul> <li>original paper: <a href=https://arxiv.org/abs/1902.09859>https://arxiv.org/abs/1902.09859</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#単語分散表現>単語分散表現</a> </div></p>
+<h2>問題設定</h2>
+<p>語彙 \(V = \{1,2,\ldots,n\} (|V| = n)\) を考える. 単語 \(i \in V\) に対して2つの \(d\) 次元実ベクトル</p>
 <ul>
-<li>
-original paper: <a href=https://arxiv.org/abs/1902.09859>https://arxiv.org/abs/1902.09859</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#単語分散表現>単語分散表現</a></p>
-</div>
-<h2 id="問題設定">問題設定</h2>
-<p>語彙 <span class="math inline">\(V = \{1,2,\ldots,n\} (|V| = n)\)</span> を考える. 単語 <span class="math inline">\(i \in V\)</span> に対して2つの <span class="math inline">\(d\)</span> 次元実ベクトル</p>
-<ul>
-<li>word vector <span class="math inline">\(w_i\)</span></li>
-<li>context vector <span class="math inline">\(c_i\)</span></li>
+  <li>word vector \(w_i\)</li>
+  <li>context vector \(c_i\)</li>
 </ul>
 <p>を割り当てる. word vector はいわゆる単語の分散表現のこと. context vector は skipgram のことを考えていて, 最後 softmax に入れる直前に入力ベクトルに掛ける行列の単語に対応するベクトルのこと.</p>
-<p>つまり, 単語 <span class="math inline">\(j\)</span> の周りの文脈（固定長の単語ウィンドウ）の中に単語 <span class="math inline">\(i\)</span> が出現する確率を, <span class="math display">\[P(i | j) \propto p_i \exp[ w_j^T c_i ]\]</span> とする (このように仮定をおく).</p>
-<p>ここで <span class="math inline">\(p_i\)</span> は単語 <span class="math inline">\(i\)</span> が出現する (uni-gram) 確率.</p>
-<h3 id="仮定">仮定</h3>
-<p>次を仮定する: <span class="math display">\[w_i \sim \mathcal N(0, \frac{1}{d} I_d)\]</span></p>
-<p>ある直交行列 <span class="math inline">\(Q\)</span> があって, <span class="math display">\[c_i = Q w_i\]</span></p>
-<p>特に2つ目の仮定から, <span class="math inline">\(c_i\)</span> も <span class="math inline">\(w_i\)</span> と同じ分布に従うことと <span class="math display">\[c_i \sim \mathcal N(0, \frac{1}{d} I_d)\]</span></p>
-<p>内積やノルムが等しいこと <span class="math display">\[c_i^T c_j = w_i^T Q^T Q w_j = w_i w_j\]</span></p>
+<p>つまり, 単語 \(j\) の周りの文脈（固定長の単語ウィンドウ）の中に単語 \(i\) が出現する確率を,</p>
+\[P(i | j) \propto p_i \exp[ w_j^T c_i ]\]
+<p>とする (このように仮定をおく).</p>
+<p>ここで \(p_i\) は単語 \(i\) が出現する (uni-gram) 確率.</p>
+<h3>仮定</h3>
+<p>次を仮定する:</p>
+\[w_i \sim \mathcal N(0, \frac{1}{d} I_d)\]
+<p>ある直交行列 \(Q\) があって,</p>
+\[c_i = Q w_i\]
+<p>特に2つ目の仮定から, \(c_i\) も \(w_i\) と同じ分布に従うことと</p>
+\[c_i \sim \mathcal N(0, \frac{1}{d} I_d)\]
+<p>内積やノルムが等しいこと</p>
+\[c_i^T c_j = w_i^T Q^T Q w_j = w_i w_j\]
 <p>が言える.</p>
-<h4 id="知見">知見</h4>
-<p><span class="math inline">\(w_i\)</span> と <span class="math inline">\(c_i\)</span> との関係については経験的な知見がある. [Bengio+, 2001] によれば <span class="math inline">\(c_i\)</span> と <span class="math inline">\(w_i\)</span> の間の関係に制約をもたせると良い正則化になって学習も高速化する. [Press&amp;Wolf, 2017; Gulordava+, 2018] によれば <span class="math inline">\(Q=I\)</span> すなわち <span class="math inline">\(c_i=w_i\)</span> とするのは全然駄目というのは分かっている. [Mimno&amp;Thompson, 2017; Gulordava+, 2018] によれば, 少なくとも線形変換で写るものらしい: <span class="math display">\[c_i = A w_i\]</span> この論文はこの変換 <span class="math inline">\(Q\)</span> がどういうものかを調べていると言える.</p>
-<h3 id="unigram-確率">unigram 確率</h3>
-<p>訓練データの文書から単語 <span class="math inline">\(i\)</span> が出現する確率 <span class="math inline">\(p_i\)</span> を見積もりたい.</p>
-<p>頻度で尤度を作るより frequency rank を使うのが主流らしい. つまり, 単語 <span class="math inline">\(i\)</span> の頻度が第 <span class="math inline">\(r_i\)</span> 位だとする <span class="math inline">\((r_i=1,2,\ldots)\)</span> とき, <span class="math display">\[p_i \propto r_i^{-(1-\alpha)}\]</span> とする. ここで <span class="math inline">\(\alpha\)</span> は <span class="math inline">\(0 &lt; \alpha \leq 1\)</span> なる定数. <span class="math inline">\(\alpha=0\)</span> のときがちょうど Zipf の法則になっていて, <span class="math inline">\(\alpha=1\)</span> のときがすべての単語が一様になっている. 経験的には <span class="math inline">\(\alpha=0.25\)</span> くらいがちょうど良いらしい.</p>
-<h2 id="theorem-1">Theorem 1</h2>
+<h4>知見</h4>
+<p>\(w_i\) と \(c_i\) との関係については経験的な知見がある. [Bengio+, 2001] によれば \(c_i\) と \(w_i\) の間の関係に制約をもたせると良い正則化になって学習も高速化する. [Press&Wolf, 2017; Gulordava+, 2018] によれば \(Q=I\) すなわち \(c_i=w_i\) とするのは全然駄目というのは分かっている. [Mimno&Thompson, 2017; Gulordava+, 2018] によれば, 少なくとも線形変換で写るものらしい:</p>
+\[c_i = A w_i\]
+<p>この論文はこの変換 \(Q\) がどういうものかを調べていると言える.</p>
+<h3>unigram 確率</h3>
+<p>訓練データの文書から単語 \(i\) が出現する確率 \(p_i\) を見積もりたい.</p>
+<p>頻度で尤度を作るより frequency rank を使うのが主流らしい. つまり, 単語 \(i\) の頻度が第 \(r_i\) 位だとする \((r_i=1,2,\ldots)\) とき,</p>
+\[p_i \propto r_i^{-(1-\alpha)}\]
+<p>とする. ここで \(\alpha\) は \(0 &lt; \alpha \leq 1\) なる定数. \(\alpha=0\) のときがちょうど Zipf の法則になっていて, \(\alpha=1\) のときがすべての単語が一様になっている. 経験的には \(\alpha=0.25\) くらいがちょうど良いらしい.</p>
+<h2>Theorem 1</h2>
 <p>以上の仮定をおいた時,</p>
-<p>&quot;context vector は word vector の <span class="math inline">\(d/2\)</span> 次元での reflextion になっている.&quot;</p>
-<p>すなわち, <span class="math inline">\(w_i, c_i \in \mathbb R^d\)</span> に対応する <span class="math inline">\(\tilde{w_i}, \tilde{c_i} \in \mathbb C^{d/2}\)</span> があって (<span class="math inline">\(\mathbb R^d \simeq \mathbb C^{d/2}\)</span> なので自然な同型射がある), <span class="math inline">\(\tilde{c_i}\)</span> が <span class="math inline">\(\tilde{w_i}\)</span> の複素共役になっている.</p>
-<h3 id="証明">証明</h3>
+<p>"context vector は word vector の \(d&#x2F;2\) 次元での reflextion になっている."</p>
+<p>すなわち, \(w_i, c_i \in \mathbb R^d\) に対応する \(\tilde{w_i}, \tilde{c_i} \in \mathbb C^{d&#x2F;2}\) があって ( \(\mathbb R^d \simeq \mathbb C^{d&#x2F;2}\) なので自然な同型射がある), \(\tilde{c_i}\) が \(\tilde{w_i}\) の複素共役になっている.</p>
+<h3>証明</h3>
 <p>細かいところまでは読んでないので概要だけ.</p>
-<p><span class="math inline">\(w_j, c_i\)</span> が確率変数だと思うと, <span class="math inline">\(Z_j = \sum_{i=1}^n p_i \exp[ w_j^T c_i ]\)</span> は <span class="math inline">\(Z_j \approx 1 + \frac{1}{2d}\)</span> に収束する.</p>
-<p>従って <span class="math inline">\(d\)</span> が十分大きければ, <span class="math inline">\(P(i | j) \propto p_i \exp[ w_j^T c_i ]\)</span> は正規化の必要がなく <span class="math inline">\(P(i | j) \approx p_i \exp[ w_j^T c_i ]\)</span> になる.</p>
-<p>次に <span class="math inline">\(c_i = Q w_i\)</span> のとき, <span class="math inline">\(Q\)</span> は近似的に involutary matrix (自乗して <span class="math inline">\(I\)</span> になる) である. <span class="math inline">\(P(i | j) \approx p_i \exp[ w_j^T c_i ]\)</span> から <span class="math display">\[\log \frac{P(i,j)}{p_i p_j} \approx c_i^T w_j\]</span> を得る. 左辺は単語 <span class="math inline">\(i\)</span> と <span class="math inline">\(j\)</span> の相互情報量 (PMI). 添字を走らせて行列にすると <span class="math display">\[\mathrm{PMI} \approx W Q^T W^T\]</span> と掛ける. ところで PMI は <span class="math inline">\(i,j\)</span> について対称なので, これは対称行列である. 従って自身の転置を取ったものと等しく: <span class="math display">\[W Q^T W^T  \approx  W Q W^T\]</span> <span class="math display">\[\iff W^TW Q^T W^TW  \approx  W^TW Q W^TW\]</span> <span class="math inline">\(W^TW\)</span> は <span class="math inline">\(w_i^T w_j\)</span> で各 <span class="math inline">\(w_k\)</span> は正規分布から取ってきたベクトルなので <span class="math inline">\(W^TW=\frac{1}{2}I\)</span>. これを代入すれば <span class="math inline">\(Q^T \approx Q\)</span> を得る. さらに直交行列なことを仮定したので結局 <span class="math display">\[Q^2 \approx I.\]</span></p>
-<p>任意の involutary 行列はある直交行列 <span class="math inline">\(P\)</span> を以て <span class="math display">\[P^T \mathrm{diag}(\pm 1, \ldots, \pm 1) P\]</span> で表せる.</p>
+<p>\(w_j, c_i\) が確率変数だと思うと, \(Z_j = \sum_{i=1}^n p_i \exp[ w_j^T c_i ]\) は \(Z_j \approx 1 + \frac{1}{2d}\) に収束する.</p>
+<p>従って \(d\) が十分大きければ, \(P(i | j) \propto p_i \exp[ w_j^T c_i ]\) は正規化の必要がなく \(P(i | j) \approx p_i \exp[ w_j^T c_i ]\) になる.</p>
+<p>次に \(c_i = Q w_i\) のとき, \(Q\) は近似的に involutary matrix (自乗して \(I\) になる) である. \(P(i | j) \approx p_i \exp[ w_j^T c_i ]\) から</p>
+\[\log \frac{P(i,j)}{p_i p_j} \approx c_i^T w_j\]
+<p>を得る. 左辺は単語 \(i\) と \(j\) の相互情報量 (PMI). 添字を走らせて行列にすると</p>
+\[\mathrm{PMI} \approx W Q^T W^T\]
+<p>と掛ける. ところで PMI は \(i,j\) について対称なので, これは対称行列である. 従って自身の転置を取ったものと等しく:</p>
+\[W Q^T W^T  \approx  W Q W^T\]
+\[\iff W^TW Q^T W^TW  \approx  W^TW Q W^TW\]
+<p>\(W^TW\) は \(w_i^T w_j\) で各 \(w_k\) は正規分布から取ってきたベクトルなので \(W^TW=\frac{1}{2}I\) . これを代入すれば \(Q^T \approx Q\) を得る. さらに直交行列なことを仮定したので結局</p>
+\[Q^2 \approx I.\]
+<p>任意の involutary 行列はある直交行列 \(P\) を以て</p>
+\[P^T \mathrm{diag}(\pm 1, \ldots, \pm 1) P\]
+<p>で表せる.</p>
 <p>そこで</p>
 <ul>
-<li><span class="math inline">\(Q = \mathrm{diag}(\pm 1, \ldots, \pm 1)\)</span>,</li>
-<li><span class="math inline">\(\hat{w_i} = Pw_i \sim \mathcal N\)</span> (直交行列を掛けても分布は変わらない)</li>
-<li><span class="math inline">\(\hat{c_i} = Pc_i \sim \mathcal N\)</span></li>
+  <li>\(Q = \mathrm{diag}(\pm 1, \ldots, \pm 1)\) ,</li>
+  <li>\(\hat{w_i} = Pw_i \sim \mathcal N\) (直交行列を掛けても分布は変わらない)</li>
+  <li>\(\hat{c_i} = Pc_i \sim \mathcal N\)</li>
 </ul>
-<p>と置くと, 尚 <span class="math inline">\(\hat{c_i} = Q \hat{w_i}\)</span> となっていて見た目が良いので, この <span class="math inline">\(\hat{w_i}, \hat{c_i}\)</span> を <span class="math inline">\(w_i, c_i\)</span> と置くことにして, <span class="math inline">\(Q\)</span> は対角成分が <span class="math inline">\(\pm 1\)</span> の対角行列だとする.</p>
-<p>このようにすると, context vector は word vector の成分の一部をマイナスにした (flipped) ものだと言える. PMI行列の trace が <span class="math inline">\(0\)</span> に収束するはずのことを使うとなんやかんやで, ちょうど半分個の成分がマイナスになるべきだと分かるらしい.</p>
-<h3 id="remark">Remark</h3>
-<p>つまり, <span class="math inline">\(w_i \in mathbb R^d\)</span> の内のちょうど <span class="math inline">\(d/2\)</span> 個の成分を取り出した <span class="math inline">\(x_i\)</span> と残りの <span class="math inline">\(y_i\)</span> について, <span class="math display">\[P(i | j) \approx p_i \exp[ x_j^T x_i - y_j^T y_i ]\]</span> と書ける. ここで <span class="math inline">\(w_i \mapsto (x_i, y_i)\)</span> なる射影の仕方は <span class="math inline">\(i, j\)</span> に依らず固定.</p>
-<h2 id="実験">実験</h2>
+<p>と置くと, 尚 \(\hat{c_i} = Q \hat{w_i}\) となっていて見た目が良いので, この \(\hat{w_i}, \hat{c_i}\) を \(w_i, c_i\) と置くことにして, \(Q\) は対角成分が \(\pm 1\) の対角行列だとする.</p>
+<p>このようにすると, context vector は word vector の成分の一部をマイナスにした (flipped) ものだと言える. PMI行列の trace が \(0\) に収束するはずのことを使うとなんやかんやで, ちょうど半分個の成分がマイナスになるべきだと分かるらしい.</p>
+<h3>Remark</h3>
+<p>つまり, \(w_i \in mathbb R^d\) の内のちょうど \(d&#x2F;2\) 個の成分を取り出した \(x_i\) と残りの \(y_i\) について,</p>
+\[P(i | j) \approx p_i \exp[ x_j^T x_i - y_j^T y_i ]\]
+<p>と書ける. ここで \(w_i \mapsto (x_i, y_i)\) なる射影の仕方は \(i, j\) に依らず固定.</p>
+<h2>実験</h2>
 <p>Figure 2 はよくわからんけど PMI 行列について仮定した事柄が実データセットでも成り立ってるかを見てるっぽい？</p>
-<p>4 章では, <span class="math inline">\(q \in \mathbb R^d\)</span> について <span class="math display">\[c_i = q \odot w_i\]</span> として, word2vec (SGNS; skipgram w/ negative sampling) を学習した. これは <span class="math inline">\(Q\)</span> が対角行列にしてもいいことを使ってる.</p>
-<p>学習するパラメータから <span class="math inline">\(\{c_i\}_{i=1,2,\ldots,n}\)</span> が消えた分, 全体としてパラメータ数がほぼ半分になってる. なので学習率もちょっと変えたと言ってるが, 基本的には <code>https://github.com/tensorflow/models/blob/master/tutorials/embedding/word2vec.py</code> を使ったそう.</p>
-<figure>
-<img src="https://i.imgur.com/rJDV9Dl.png" />
-</figure>
+<p>4 章では, \(q \in \mathbb R^d\) について</p>
+\[c_i = q \odot w_i\]
+<p>として, word2vec (SGNS; skipgram w/ negative sampling) を学習した. これは \(Q\) が対角行列にしてもいいことを使ってる.</p>
+<p>学習するパラメータから \(\{c_i\}_{i=1,2,\ldots,n}\) が消えた分, 全体としてパラメータ数がほぼ半分になってる. なので学習率もちょっと変えたと言ってるが, 基本的には <code>https:&#x2F;&#x2F;github.com&#x2F;tensorflow&#x2F;models&#x2F;blob&#x2F;master&#x2F;tutorials&#x2F;embedding&#x2F;word2vec.py</code> を使ったそう.</p>
+<p><img src="https://i.imgur.com/rJDV9Dl.png" alt="" /></p>
 <p><code>SGNS</code> がただの word2vec でこれと今の制約を足した <code>+WT</code> とを6つのタスクで比較してる. パラメータ数がほぼ半分なのにほぼ同程度の結果を出してるので良いだろ, という主張.</p>
-<h2 id="感想">感想</h2>
-<p>どちらかと言えば性能落ちてる. あと <span class="math inline">\(Q\)</span> が対角行列であることまで使うなら, 成分が <span class="math inline">\(\pm 1\)</span> であることまで使えばいいのに. (たぶんそこまですると目も当てられないくらい悪くなったのでは?????)</p>
+<h2>感想</h2>
+<p>どちらかと言えば性能落ちてる. あと \(Q\) が対角行列であることまで使うなら, 成分が \(\pm 1\) であることまで使えばいいのに. (たぶんそこまですると目も当てられないくらい悪くなったのでは?????)</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -182,5 +199,9 @@ original paper: <a href=https://arxiv.org/abs/1902.09859>https://arxiv.org/abs/1
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

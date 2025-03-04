@@ -1,53 +1,60 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>Knows When it Doesn't Know: Deep Abstaining Classifiers</title>
+  <title>Knows When it Doesn&#x27;t Know: Deep Abstaining Classifiers</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">Knows When it Doesn't Know: Deep Abstaining Classifiers</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=https://openreview.net/forum?id=rJxF73R9tX>https://openreview.net/forum?id=rJxF73R9tX</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#機械学習>機械学習</a> <a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#分類器>分類器</a></p>
-</div>
-<h2 id="概要">概要</h2>
-<p>&quot;deep abstaining classifier (DAC)&quot; を提案する. こいつは学習の時点で学習を難しくするような事例を棄却することを許されている. DAC は noisy or confusiong examples からも台となる構造を学習し, noisy example についてはそれが noise であることを特定でき, out-of-category であることを検出できる.</p>
-<h2 id="dac">DAC</h2>
-<p>多クラス分類 <span class="math display">\[X \to (Y = \{1,2,\ldots,k\})\]</span> を考える.</p>
-<p>普通は分類器として確率 <span class="math display">\[p_i(x) = p(y=i | x; w)\]</span> の近似値を出力するマシンを DNN で構成し, 交差エントロピーを損失関数にする.</p>
-<p>DAC では <span class="math inline">\(k+1\)</span> 番目のクラスを付け足す. すなわち <span class="math inline">\(p_{k+1}\)</span> があって, 損失関数を以下にする: <span class="math display">\[\mathcal{L}(x) = \left( 1 - p_{k+1}(x) \right) \left( - \sum_{i=1}^k t_i \log \dfrac{p_i(x)}{1-p_{k+1}(x)} \right) + \alpha \log \dfrac{1}{1 - p_{k+1}(x)}\]</span> ここで <span class="math inline">\(t_i\)</span> は <span class="math inline">\(x\)</span> の真のラベルが <span class="math inline">\(y=i\)</span> である時に限り <span class="math inline">\(1\)</span> であるインジケータ. <span class="math inline">\(\alpha\)</span> は正の定数.</p>
-<p>1項目は分類に関する損失で <span class="math inline">\(p_{k+1}=0\)</span> で真のラベルを <span class="math inline">\(p_i=1\)</span> で予測するとき最小になる. 或いは <span class="math inline">\(p_{k+1}=1\)</span> にしてもゼロで最小になるので, 分類を諦める (棄却) ことを許している. 2項目は棄却することに対する罰則で, <span class="math inline">\(\alpha (&gt;0)\)</span> がそのペナルティの強さに係ってる. <span class="math inline">\(\alpha\)</span> が十分小さいと全て諦めるのが最適解になる.</p>
-<h3 id="auto-tuning-alpha">Auto-tuning <span class="math inline">\(\alpha\)</span></h3>
-<p>DNN の最終層の出力が <span class="math display">\[a_1, \ldots, a_k, a_{k+1}\]</span> でこれを softmax して <span class="math display">\[p_1, \ldots, p_k, p_{k+1}\]</span> にしているとする.</p>
-<p>損失関数について次が言える. <span class="math inline">\(x \in X\)</span> について, 真のラベルを <span class="math inline">\(y=j\)</span>, 交差エントロピー <span class="math inline">\(g = - \sum_{i=1}^k t_i \log p_i(x)\)</span> とすると,</p>
-<p><span class="math display">\[\begin{align*}
+<p><ul> <li>original paper: <a href=https://openreview.net/forum?id=rJxF73R9tX>https://openreview.net/forum?id=rJxF73R9tX</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#機械学習>機械学習</a> <a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#分類器>分類器</a> </div></p>
+<h2>概要</h2>
+<p>"deep abstaining classifier (DAC)" を提案する. こいつは学習の時点で学習を難しくするような事例を棄却することを許されている. DAC は noisy or confusiong examples からも台となる構造を学習し, noisy example についてはそれが noise であることを特定でき, out-of-category であることを検出できる.</p>
+<h2>DAC</h2>
+<p>多クラス分類</p>
+\[X \to (Y = \{1,2,\ldots,k\})\]
+<p>を考える.</p>
+<p>普通は分類器として確率</p>
+\[p_i(x) = p(y=i | x; w)\]
+<p>の近似値を出力するマシンを DNN で構成し, 交差エントロピーを損失関数にする.</p>
+<p>DAC では \(k+1\) 番目のクラスを付け足す. すなわち \(p_{k+1}\) があって, 損失関数を以下にする:</p>
+\[\mathcal{L}(x) = \left( 1 - p_{k+1}(x) \right) \left( - \sum_{i=1}^k t_i \log \dfrac{p_i(x)}{1-p_{k+1}(x)} \right) + \alpha \log \dfrac{1}{1 - p_{k+1}(x)}\]
+<p>ここで \(t_i\) は \(x\) の真のラベルが \(y=i\) である時に限り \(1\) であるインジケータ. \(\alpha\) は正の定数.</p>
+<p>1項目は分類に関する損失で \(p_{k+1}=0\) で真のラベルを \(p_i=1\) で予測するとき最小になる. 或いは \(p_{k+1}=1\) にしてもゼロで最小になるので, 分類を諦める (棄却) ことを許している. 2項目は棄却することに対する罰則で, \(\alpha (&gt;0)\) がそのペナルティの強さに係ってる. \(\alpha\) が十分小さいと全て諦めるのが最適解になる.</p>
+<h3>Auto-tuning \(\alpha\)</h3>
+<p>DNN の最終層の出力が</p>
+\[a_1, \ldots, a_k, a_{k+1}\]
+<p>でこれを softmax して</p>
+\[p_1, \ldots, p_k, p_{k+1}\]
+<p>にしているとする.</p>
+<p>損失関数について次が言える. \(x \in X\) について, 真のラベルを \(y=j\) , 交差エントロピー \(g = - \sum_{i=1}^k t_i \log p_i(x)\) とすると,</p>
+\[\begin{align*}
 \frac{\partial \mathcal L}{\partial a_{k+1}}
 &amp; = p_{k+1} \left[ (1-p_{k+1}) \left[ \log \frac{1}{1 - p_{k+1}} - g \right] + \alpha \right] \\
 &amp; = p_{k+1} \left[ (1-p_{k+1}) \left[ \log \frac{p_j}{1 - p_{k+1}} \right] + \alpha \right]
-\end{align*}\]</span></p>
-<p>勾配法で最適化するならば, <span class="math inline">\(\frac{\partial \mathcal L}{\partial a_{k+1}}\)</span> が負のとき, <span class="math inline">\(a_{k+1}\)</span> (と <span class="math inline">\(p_{k+1}\)</span>) は増加する. 上の式からその条件は <span class="math display">\[\alpha &lt; - (1-p_{k+1}) \left[ \log \frac{p_j}{1 - p_{k+1}} \right]\]</span> といえる. この値が auto-tuning のための基準になる.</p>
-<p>最初の <span class="math inline">\(L\)</span> エポックは abstaining なし (<span class="math inline">\(\alpha=\infty\)</span>) で学習する. <span class="math inline">\(L\)</span> エポック目に上の値を基準に <span class="math inline">\(\alpha\)</span> をセットする.</p>
-<h2 id="lemma-2">Lemma 2</h2>
-<p>固定の <span class="math inline">\(\alpha\)</span> で無限エポック回した時, abstention rate は <span class="math inline">\(0\)</span> または <span class="math inline">\(1\)</span> に収束する.</p>
+\end{align*}\]
+<p>勾配法で最適化するならば, \(\frac{\partial \mathcal L}{\partial a_{k+1}}\) が負のとき, \(a_{k+1}\) (と \(p_{k+1}\) ) は増加する. 上の式からその条件は</p>
+\[\alpha &lt; - (1-p_{k+1}) \left[ \log \frac{p_j}{1 - p_{k+1}} \right]\]
+<p>といえる. この値が auto-tuning のための基準になる.</p>
+<p>最初の \(L\) エポックは abstaining なし ( \(\alpha=\infty\) ) で学習する. \(L\) エポック目に上の値を基準に \(\alpha\) をセットする.</p>
+<h2>Lemma 2</h2>
+<p>固定の \(\alpha\) で無限エポック回した時, abstention rate は \(0\) または \(1\) に収束する.</p>
 <p>ずっと学習を回してると DAC は全部捨てるか全部分類するかしようとしてしまう.</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -152,5 +159,9 @@ original paper: <a href=https://openreview.net/forum?id=rJxF73R9tX>https://openr
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

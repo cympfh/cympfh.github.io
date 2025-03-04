@@ -1,152 +1,146 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Exploring Twitter Hashtags</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">Exploring Twitter Hashtags</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=http://arxiv.org/pdf/1111.6553.pdf>http://arxiv.org/pdf/1111.6553.pdf</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#自然言語処理>自然言語処理</a> <a class='tag is-blue' href=index.html#twitter>twitter</a></p>
-</div>
+<p><ul> <li>original paper: <a href=http://arxiv.org/pdf/1111.6553.pdf>http://arxiv.org/pdf/1111.6553.pdf</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#自然言語処理>自然言語処理</a> <a class='tag is-blue' href=index.html#twitter>twitter</a> </div></p>
 <p>2011年の論文なので古い部類だろうなあ</p>
-<h2 id="intro">Intro</h2>
+<h2>Intro</h2>
 <p>SMS language</p>
-<ol type="1">
-<li>abbreviation (e.g. &quot;4 u&quot;)</li>
-<li>emoticons (e.g. &quot;:)&quot; )</li>
+<ol>
+  <li>abbreviation (e.g. "4 u")</li>
+  <li>emoticons (e.g. ":)" )</li>
 </ol>
 <p>Twitter-specific forms</p>
-<ol type="1">
-<li>@-replies</li>
-<li>hashtags</li>
+<ol>
+  <li>@-replies</li>
+  <li>hashtags</li>
 </ol>
-<h3 id="例.">例.</h3>
-<blockquote>
-<p><span class="citation" data-cites="merazindagi">@merazindagi</span> Thanks! Will make more 4 U. Live performances in #boulder area will be on http://saxy.us :) #jazz #rock #funk #dance #livemusic</p>
-</blockquote>
+<h3>例.</h3>
+<blockquote>@merazindagi Thanks! Will make more 4 U. Live performances in #boulder area will be on http://saxy.us :) #jazz #rock #funk #dance #livemusic</blockquote>
 <p>ハッシュタグはそのツイートが何の目的であるかを教えてくれるが、 複数のツイートが沢山含まれるようなものは一体何なのかわからなくなる. そこで、co-occurrences に基づく辞書の構築を目指す. 分類器の構成を考え，最終的にアプリケーションを作成する</p>
-<h2 id="dataset">Dataset</h2>
+<h2>Dataset</h2>
 <p>29,000,000 tweets から、 ノイズの少ない 310,000 種類のハッシュタグは取り除いて、 85,503 種類を使った</p>
-<h2 id="hashtag-co-occurrences">Hashtag co-occurrences</h2>
-<h3 id="dictionary">Dictionary</h3>
-<p>共起 where ハッシュタグ <span class="math inline">\(h_i, h_j\)</span>:</p>
-<p><span class="math display">\[C(h_i, h_j) = \# \{ t : t \in \text{tweets},
+<h2>Hashtag co-occurrences</h2>
+<h3>Dictionary</h3>
+<p>共起 where ハッシュタグ \(h_i, h_j\) :</p>
+\[C(h_i, h_j) = \# \{ t : t \in \text{tweets},
 \text{has}(t, h_i)
 \land
-\text{has}(t, h_J) \}\]</span></p>
+\text{has}(t, h_J) \}\]
 <p>辞書:</p>
-<p><span class="math display">\[D(h) = \{ (h&#39;, C(h, h&#39;)) : h \ne h&#39; \}\]</span></p>
-<h3 id="similarity-of-two-hashtags">Similarity of two hashtags</h3>
-<p><span class="math display">\[\text{synnet}: h \mapsto s\]</span></p>
-<p>類似度関数: <span class="math display">\[S(h_1, h_2) = \max \{ S&#39;(s_1, s_2 :
+\[D(h) = \{ (h&#x27;, C(h, h&#x27;)) : h \ne h&#x27; \}\]
+<h3>Similarity of two hashtags</h3>
+\[\text{synnet}: h \mapsto s\]
+<p>類似度関数:</p>
+\[S(h_1, h_2) = \max \{ S&#x27;(s_1, s_2 :
 s_1 \in \text{synset}(h_1),
-s_2 \in \text{synset}(h_2) \}\]</span></p>
-<p><span class="math inline">\(S&#39;\)</span> として、</p>
+s_2 \in \text{synset}(h_2) \}\]
+<p>\(S&#x27;\) として、</p>
 <p>PythonのnltkのWordNet module には、 次の2種類が組み込まれている</p>
-<ol type="1">
-<li>path distance similarity</li>
-<li>Wu-Palmer distance</li>
+<ol>
+  <li>path distance similarity</li>
+  <li>Wu-Palmer distance</li>
 </ol>
 <p>それぞれ、Spath, Swp と呼ぼう．</p>
 <p>どちらも数字が大きいほうが近いことを意味する</p>
 <p>実際の値を見てみると、</p>
 <table>
-<thead>
-<tr class="header">
-<th style="text-align: left;"></th>
-<th style="text-align: left;">Spath</th>
-<th style="text-align: left;">Swp</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">共起ハッシュタグ</td>
-<td style="text-align: left;">0.12</td>
-<td style="text-align: left;">0.37</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Twitter (ランダムな2単語)</td>
-<td style="text-align: left;">0.07</td>
-<td style="text-align: left;">0.26</td>
-</tr>
-</tbody>
+  <thead>
+    <tr class=header>
+      <th align=left></th>
+      <th align=left>Spath</th>
+      <th align=left>Swp</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class=odd>
+      <td align=left>共起ハッシュタグ</td>
+      <td align=left>0.12</td>
+      <td align=left>0.37</td>
+    </tr>
+    <tr class=even>
+      <td align=left>Twitter (ランダムな2単語)</td>
+      <td align=left>0.07</td>
+      <td align=left>0.26</td>
+    </tr>
+  </tbody>
 </table>
 <p>って感じ．</p>
-<h2 id="clustered-graph">Clustered graph</h2>
+<h2>Clustered graph</h2>
 <p>共起してたら枝をつなぐ，でグラフがかけた． 連結成分というクラスらリングもできる．</p>
-<h2 id="classification">Classification</h2>
-<h3 id="hashtag-classes">hashtag classes</h3>
+<h2>Classification</h2>
+<h3>hashtag classes</h3>
 <p>まあハッシュタグは何かそのものを表しているわけだけど，</p>
-<ol type="1">
-<li><code>organization</code></li>
-<li><code>geolocation</code></li>
-<li><code>person</code></li>
-<li><code>event</code>: particular interest on Twitter</li>
-<li><code>category</code>: all other hashtags</li>
+<ol>
+  <li><code>organization</code></li>
+  <li><code>geolocation</code></li>
+  <li><code>person</code></li>
+  <li><code>event</code> : particular interest on Twitter</li>
+  <li><code>category</code> : all other hashtags</li>
 </ol>
 <p>に分類するのを第一目標とする</p>
 <p>例として，</p>
 <table>
-<thead>
-<tr class="header">
-<th style="text-align: left;">class</th>
-<th style="text-align: left;">example hashtags</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">organization</td>
-<td style="text-align: left;">#google, #nokia</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">geolocation</td>
-<td style="text-align: left;">#europe, #uk, #graz</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">person</td>
-<td style="text-align: left;">#obama, #madonna</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">event</td>
-<td style="text-align: left;">#christmas, #election</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">category</td>
-<td style="text-align: left;">#fun, #math, #ipod</td>
-</tr>
-</tbody>
+  <thead>
+    <tr class=header>
+      <th align=left>class</th>
+      <th align=left>example hashtags</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class=odd>
+      <td align=left>organization</td>
+      <td align=left>#google, #nokia</td>
+    </tr>
+    <tr class=even>
+      <td align=left>geolocation</td>
+      <td align=left>#europe, #uk, #graz</td>
+    </tr>
+    <tr class=odd>
+      <td align=left>person</td>
+      <td align=left>#obama, #madonna</td>
+    </tr>
+    <tr class=even>
+      <td align=left>event</td>
+      <td align=left>#christmas, #election</td>
+    </tr>
+    <tr class=odd>
+      <td align=left>category</td>
+      <td align=left>#fun, #math, #ipod</td>
+    </tr>
+  </tbody>
 </table>
-<h2 id="学習">学習</h2>
+<h2>学習</h2>
 <p>最大エントロピー (MaxEnt) で学習する</p>
-<h3 id="features">features</h3>
+<h3>features</h3>
 <ul>
-<li>ハッシュタグ周りの window size 5 の words</li>
-<li>その words の shape</li>
-<li>その words の POS tag</li>
-<li>その words の geographical background knowledge</li>
-<li>ハッシュタグの shape</li>
-<li>ハッシュタグがツイートの最初であるか</li>
+  <li>ハッシュタグ周りの window size 5 の words</li>
+  <li>その words の shape</li>
+  <li>その words の POS tag</li>
+  <li>その words の geographical background knowledge</li>
+  <li>ハッシュタグの shape</li>
+  <li>ハッシュタグがツイートの最初であるか</li>
 </ul>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -251,5 +245,9 @@ s_2 \in \text{synset}(h_2) \}\]</span></p>
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

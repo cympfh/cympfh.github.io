@@ -1,65 +1,54 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>[1810.12890] DropBlock: A regularization method for convolutional networks</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">[1810.12890] DropBlock: A regularization method for convolutional networks</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=https://arxiv.org/abs/1810.12890>https://arxiv.org/abs/1810.12890</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#画像認識>画像認識</a> <a class='tag is-blue' href=index.html#正則化>正則化</a></p>
-</div>
-<h2 id="概要">概要</h2>
+<p><ul> <li>original paper: <a href=https://arxiv.org/abs/1810.12890>https://arxiv.org/abs/1810.12890</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#画像認識>画像認識</a> <a class='tag is-blue' href=index.html#正則化>正則化</a> </div></p>
+<h2>概要</h2>
 <p>汎化性能を上げるための正則化手法として DropBlock を提案する. これを使うと Imagenet/ResNet-50 において 1.6% 性能が上昇した (acc=78.13%).</p>
-<h2 id="関連">関連</h2>
+<h2>関連</h2>
 <ul>
-<li>Dropout</li>
-<li>SpatialDropout</li>
-<li>DropPath</li>
-<li>Cutout</li>
+  <li>Dropout</li>
+  <li>SpatialDropout</li>
+  <li>DropPath</li>
+  <li>Cutout</li>
 </ul>
-<h2 id="dropblock">DropBlock</h2>
-<p>中身も使い方も Dropout によく似ている. Dropout は入力 (3次元テンソル <span class="math inline">\(X\)</span>) のうちランダムにチャンネルベクトル <span class="math inline">\(X_{i,j,\cdot}\)</span> を選んでそれをゼロにしてしまう.</p>
-<figure>
-<img src="https://i.imgur.com/RnuGrBg.png" />
-</figure>
+<h2>DropBlock</h2>
+<p>中身も使い方も Dropout によく似ている. Dropout は入力 (3次元テンソル \(X\) ) のうちランダムにチャンネルベクトル \(X_{i,j,\cdot}\) を選んでそれをゼロにしてしまう.</p>
+<p><img src="https://i.imgur.com/RnuGrBg.png" alt="" /></p>
 <p>DropBlock はチャンネルベクトルの選び方にもう少しだけ規則性を持たせる. 図のように落とすベクトルは矩形上に固まるようにする. その矩形をランダムに選ぶ.</p>
-<figure>
-<img src="https://i.imgur.com/AJFGyaE.png" />
-</figure>
-<p>入力が <span class="math inline">\((X_{ijk})\)</span> のときマスク行列 <span class="math inline">\((M_{ij})\)</span> を作る. 落とすチャンネルだけを <span class="math inline">\(M_{ij}=0\)</span> になるようにする. ベルヌーイ分布に従って独立に点を決めて, その点の周りに矩形を取って全部ゼロにする. 入力の画像に <span class="math inline">\(M\)</span> を掛けるのと, それから残った部分は落としたピクセルの数の分だけ掛けてふやしてやる.</p>
-<blockquote>
-<p>矩形を切り抜くという考え方は CutOut (とか RandomErasing) と同じだ. それを Dropout 同様に中間層にでもずこずこ使ってやろうという話.</p>
-</blockquote>
-<h3 id="その他">その他</h3>
-<p>矩形のサイズ (<code>block_size</code>) を <span class="math inline">\(1\)</span> にしてやればこれは単なる Dropout.</p>
-<p>ベルヌーイ分布のパラメータ <span class="math inline">\(\gamma\)</span> は直接与えずに, Dropout のように <span class="math inline">\(\mathit{keep\_prob}\)</span> (落ちない確率) を決めて決定させた. <span class="math inline">\(\gamma\)</span> と <span class="math inline">\(\mathit{keep\_prob}\)</span> の関係は <span class="math display">\[\gamma = \frac{1-\mathit{keep\_prob}}{\mathit{block\_size}} \frac{\mathit{feat\_size}^2}{(\mathit{feat\_size} - \mathit{block\_size} + 1)^2}\]</span> で与えられる. <span class="math inline">\(\mathit{block\_size}\)</span> は矩形の幅. <span class="math inline">\(\mathit{feat\_size}\)</span> は入力画像の大きさ. 自乗してるのはたぶん縦と横.</p>
-<p><span class="math inline">\(\mathit{keep\_prob}\)</span> を固定にしたままだと彼らも上手く動かせなかったらしく, スケジューリングをさせたそう. <span class="math inline">\(1.0\)</span> からスタートして徐々に目的の値まで下げると大抵上手く行ったそう. 下げ方は linear でいいと.</p>
-<h2 id="実験">実験</h2>
+<p><img src="https://i.imgur.com/AJFGyaE.png" alt="" /></p>
+<p>入力が \((X_{ijk})\) のときマスク行列 \((M_{ij})\) を作る. 落とすチャンネルだけを \(M_{ij}=0\) になるようにする. ベルヌーイ分布に従って独立に点を決めて, その点の周りに矩形を取って全部ゼロにする. 入力の画像に \(M\) を掛けるのと, それから残った部分は落としたピクセルの数の分だけ掛けてふやしてやる.</p>
+<blockquote>矩形を切り抜くという考え方は CutOut (とか RandomErasing) と同じだ. それを Dropout 同様に中間層にでもずこずこ使ってやろうという話.</blockquote>
+<h3>その他</h3>
+<p>矩形のサイズ ( <code>block_size</code> ) を \(1\) にしてやればこれは単なる Dropout.</p>
+<p>ベルヌーイ分布のパラメータ \(\gamma\) は直接与えずに, Dropout のように \(\mathit{keep\_prob}\) (落ちない確率) を決めて決定させた. \(\gamma\) と \(\mathit{keep\_prob}\) の関係は</p>
+\[\gamma = \frac{1-\mathit{keep\_prob}}{\mathit{block\_size}} \frac{\mathit{feat\_size}^2}{(\mathit{feat\_size} - \mathit{block\_size} + 1)^2}\]
+<p>で与えられる. \(\mathit{block\_size}\) は矩形の幅. \(\mathit{feat\_size}\) は入力画像の大きさ. 自乗してるのはたぶん縦と横.</p>
+<p>\(\mathit{keep\_prob}\) を固定にしたままだと彼らも上手く動かせなかったらしく, スケジューリングをさせたそう. \(1.0\) からスタートして徐々に目的の値まで下げると大抵上手く行ったそう. 下げ方は linear でいいと.</p>
+<h2>実験</h2>
 <p>まあ良くなった.</p>
-<figure>
-<img src="https://i.imgur.com/T3AKwYU.png" />
-</figure>
+<p><img src="https://i.imgur.com/T3AKwYU.png" alt="" /></p>
 <p>他の似た正則化手法よりも良くなり方が大きい.</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -164,5 +153,9 @@ original paper: <a href=https://arxiv.org/abs/1810.12890>https://arxiv.org/abs/1
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

@@ -2,7 +2,7 @@
 % http://www.aclweb.org/anthology/P09-1024
 % 自然言語処理 自然言語生成 順序学習
 
-##repo
+## repo
 
 - [github.com/csauper/wikipedia](https://github.com/csauper/wikipedia)
 
@@ -48,8 +48,6 @@ $$\text{[Diagnosis, Causes, Symptoms, Treatment]}$$
 記事のフレーズでググるとまんまの文章が別なページから引っかかる (拾ってきてる)
 
 ![](img/auto-wikipedia/google.jpg)
-
-## 
 
 生成したい文章に必要な文はネットのどこかにあると仮定する.
 ただし、
@@ -227,8 +225,6 @@ perceptron ranking algorithm に基づく.
     - 素性 $\phi: x \mapsto \phi(x) \in \mathbb{R}^s$
     - スコア $score(x,w) = w \cdot \phi(x)$
 
-\pause
-
 - 初期化
     - $w^0 = 0 \in \mathbb{R}^s$
 - For $i=1,2 ~..~ n$
@@ -239,7 +235,7 @@ perceptron ranking algorithm に基づく.
 
 ## Update
 
-$score(x_1, w) < score(x_j, w) (j\ne 1)$ のとき (Else節)、
+$score(x_1, w) \lt score(x_j, w) (j\ne 1)$ のとき (Else節)、
 $$score(x_1, w) - score(x_j, w) = w \cdot (\phi(x_1) - \phi(x_j))$$
 を大きくすればよい.
 
@@ -269,10 +265,8 @@ $s_1, s_2 ~..~ s_k$
 
 - $t_1$: $s_1$; $e_{11}, e_{12} ~..~ e_{1r_1}$
 - $t_2$: $s_2$; $e_{21}, e_{22} ~..~ e_{2r_2}$
-- $~~~~~\vdots$
+- $\vdots$
 - $t_k$: $s_k$; $e_{k1}, e_{k2} ~..~ e_{kr_k}$
-
-\pause
 
 1. Rank with $w_j \mapsto (e_{j1} ~..~ e_{jr}) ~ \forall j$
 1. Optimize as a ILP $x_j = Opt(e_{j1} ~..~ e_{jr}) ~ \forall j$
@@ -293,8 +287,8 @@ $s_1, s_2 ~..~ s_k$
 - ドメイン:
     - American Film Actors: 2150 articles in Wikipedia
     - Diseases: 523
-- 各ドメインの90\% の文章を訓練とする.
-- 残り10\%をテストとする
+- 各ドメインの90% の文章を訓練とする.
+- 残り10%をテストとする
     - 生成する際は、記事のタイトルだけを参照する
 - 平均 4 topic (段落)
 - Search 手続き (Yahoo!) 中ではテストデータ自体を参照しないようにする

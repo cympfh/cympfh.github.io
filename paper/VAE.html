@@ -1,378 +1,218 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Variational Autoencoders (VAEs)</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
-<h1 class="title">Variational Autoencoders (VAEs)</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=https://arxiv.org/abs/1606.05908>https://arxiv.org/abs/1606.05908</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#オートエンコーダ>オートエンコーダ</a> <a class='tag is-blue' href=index.html#生成モデル>生成モデル</a> <a class='tag is-blue' href=index.html#VAE>VAE</a></p>
-</div>
-<h2 id="index">index</h2>
-<div id="toc">
 
-</div>
-<h2 id="参考文献">参考文献</h2>
+<h1 class="title">Variational Autoencoders (VAEs)</h1>
+<p><ul> <li>original paper: <a href=https://arxiv.org/abs/1606.05908>https://arxiv.org/abs/1606.05908</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#オートエンコーダ>オートエンコーダ</a> <a class='tag is-blue' href=index.html#生成モデル>生成モデル</a> <a class='tag is-blue' href=index.html#VAE>VAE</a> </div></p>
+<h2>index</h2>
+<p><div id=toc></div></p>
+<h2>参考文献</h2>
 <ul>
-<li>[1] [[1406.5298] Semi-Supervised Learning with Deep Generative Models](https://arxiv.org/abs/1406.5298)
-<ul>
-<li>オリジナル論文 (2014)</li>
-</ul></li>
-<li>[2] [[1606.05908] Tutorial on Variational Autoencoders](https://arxiv.org/abs/1606.05908)
-<ul>
-<li>再解釈論文 (2016)</li>
-</ul></li>
-<li>[3] [Semi-Supervised Learning with Deep Generative Models [arXiv:1406.5298] - ご注文は機械学習ですか？](http://musyoku.github.io/2016/07/02/semi-supervised-learning-with-deep-generative-models/)
-<ul>
-<li>[1] の解説ブログ. chainer による実装もアリ</li>
-</ul></li>
+  <li>
+    [1] <a href="https://arxiv.org/abs/1406.5298">[1406.5298] Semi-Supervised Learning with Deep Generative Models</a>
+    <ul>
+      <li>オリジナル論文 (2014)</li>
+    </ul>
+  </li>
+  <li>
+    [2] <a href="https://arxiv.org/abs/1606.05908">[1606.05908] Tutorial on Variational Autoencoders</a>
+    <ul>
+      <li>再解釈論文 (2016)</li>
+    </ul>
+  </li>
+  <li>
+    [3] <a href="http://musyoku.github.io/2016/07/02/semi-supervised-learning-with-deep-generative-models/">Semi-Supervised Learning with Deep Generative Models [arXiv:1406.5298] - ご注文は機械学習ですか？</a>
+    <ul>
+      <li>[1] の解説ブログ. chainer による実装もアリ</li>
+    </ul>
+  </li>
 </ul>
-<h2 id="概要">概要</h2>
+<h2>概要</h2>
 <p>VAEs (Variational Autoencoders; 変分自己符号化器) は [1] で提案されたものだが、 [2] ではこれに別な解釈を与え直したもので、今回は主にこちらを参考にしている. (ていうか [1] の説明がいちいち雑すぎる.)</p>
 <p>[2] によれば VAE とは生成モデルの枠組みで自己符号化器 (Autoencoders) を解釈したもので、 生成モデルで言う潜在変数を観測データの符号と見做す. すなわち、観測データから潜在変数を推定する手続きが符号化であり、その逆が復号化である.</p>
 <p>[1] では大きく二通りのモデルが提案されており、1つはシンプルな M1、2つめはこれに条件を加えた M2. M1 のことをスタンダードな VAE 、M2 を Conditional VAE (CVAE) として紹介する. [1] ではさらにこの2つのハイブリッドモデルも示されている.</p>
-<h2 id="vae-m1">VAE (M1)</h2>
+<h2>VAE (M1)</h2>
 <p>次のような単純な生成モデルを考える.</p>
-<p>観測されるデータ <span class="math inline">\(x\)</span> はある潜在変数 <span class="math inline">\(z\)</span> があって生成されるものだというモデルを考える.</p>
-<center>
-<img width="240px" src="img/vae/model.png" />
-</center>
+<p>観測されるデータ \(x\) はある潜在変数 \(z\) があって生成されるものだというモデルを考える.</p>
+<p><center> <img width="240px" src="img/vae/model.png" /> </center></p>
 <p>ここで、次を仮定する</p>
 <ul>
-<li><span class="math inline">\(z \sim \mathcal{N}(0, 1)\)</span> を仮定</li>
-<li><span class="math inline">\(z|x \sim \mathcal{N}(\mu(x), \Sigma(x))\)</span> を仮定</li>
+  <li>\(z \sim \mathcal{N}(0, 1)\) を仮定</li>
+  <li>\(z|x \sim \mathcal{N}(\mu(x), \Sigma(x))\) を仮定</li>
 </ul>
-<h3 id="standard-vaes-の確率予測">Standard VAEs の確率予測</h3>
+<h3>Standard VAEs の確率予測</h3>
 <p>生成モデルなので確率分布がエンコーダー・デコーダーとなる:</p>
 <ul>
-<li>エンコーダー
-<ul>
-<li><span class="math inline">\(Pr(z|x)\)</span></li>
-</ul></li>
-<li>デコーダー
-<ul>
-<li><span class="math inline">\(Pr(x|z)\)</span></li>
-</ul></li>
+  <li>
+    エンコーダー
+    <ul>
+      <li>\(Pr(z|x)\)</li>
+    </ul>
+  </li>
+  <li>
+    デコーダー
+    <ul>
+      <li>\(Pr(x|z)\)</li>
+    </ul>
+  </li>
 </ul>
 <p>これら2つをそれぞれ NNs で構成した</p>
 <ul>
-<li>エンコーダー
-<ul>
-<li><span class="math inline">\(Q(z|x)\)</span></li>
-</ul></li>
-<li>デコーダー
-<ul>
-<li><span class="math inline">\(R(x|z)\)</span></li>
-</ul></li>
+  <li>
+    エンコーダー
+    <ul>
+      <li>\(Q(z|x)\)</li>
+    </ul>
+  </li>
+  <li>
+    デコーダー
+    <ul>
+      <li>\(R(x|z)\)</li>
+    </ul>
+  </li>
 </ul>
 <p>で近似する.</p>
-<p>エンコーダー <span class="math inline">\(Q\)</span> の学習を考える. <span class="math inline">\(Q\)</span> は <span class="math inline">\(Pr(z|x)\)</span> を近似するためのものだから、これら2つの KL 距離を最小化すればよい.</p>
-<p><span class="math display">\[\begin{eqnarray}
+<p>エンコーダー \(Q\) の学習を考える. \(Q\) は \(Pr(z|x)\) を近似するためのものだから、これら2つの KL 距離を最小化すればよい.</p>
+\[\begin{eqnarray}
 \text{KL}(Q(z|x) \| Pr(z|x))
   &amp; = &amp; \mathbb{E}_{z \sim Q(z|x)} \left[ \log Q(z|x) - \log Pr(z|x) \right] \\
   &amp; = &amp; \mathbb{E}_{z \sim Q(z|x)} \left[ \log Q(z|x) - \log Pr(x|z) - \log Pr(z) \right] + \log Pr(x) \\
   &amp; = &amp; \text{KL}(Q(z|x) \| Pr(z)) - \mathbb{E}_{z \sim Q(z|x)} \left[ \log Pr(x|z) \right] + \log Pr(x) \\
 \iff \text{KL}(Q(z|x) \| Pr(z|x)) - \log Pr(x)
   &amp; = &amp; \text{KL}(Q(z|x) \| Pr(z)) - \mathbb{E}_{z \sim Q(z|x)} \left[ \log Pr(x|z) \right]
-\end{eqnarray}\]</span></p>
-<p>左辺の <span class="math inline">\(\text{KL}(Q(z|x) \| Pr(z|x)) (\geq 0)\)</span> を最小化することは <span class="math inline">\(Q\)</span> を学習すること. 左辺に移行した <span class="math inline">\(- \log Pr(x) \geq 0\)</span> は、観測データ <span class="math inline">\(x\)</span> を観測する対数尤度のマイナスであるので、これを最小化することは、 自己符号化器全体 (すなわち <span class="math inline">\(Q, R\)</span>) を訓練すること.</p>
+\end{eqnarray}\]
+<p>左辺の \(\text{KL}(Q(z|x) \| Pr(z|x)) (\geq 0)\) を最小化することは \(Q\) を学習すること. 左辺に移行した \(- \log Pr(x) \geq 0\) は、観測データ \(x\) を観測する対数尤度のマイナスであるので、これを最小化することは、 自己符号化器全体 (すなわち \(Q, R\) ) を訓練すること.</p>
 <p>そういうわけで、最後の式を最小化することを目指せばよい.</p>
-<blockquote>
-<p>註意すべき点として、左辺は未知の確率分布 <span class="math inline">\(Pr(z|x)\)</span> との KL 距離だったものが、 右辺では <span class="math inline">\(Pr(z)\)</span> との KL 距離になっていて、 今 <span class="math inline">\(Pr(z) = \mathcal{N}(0,1)\)</span> と仮定しているので、既知の確率分布との KL 距離になっている.</p>
-</blockquote>
+<blockquote>註意すべき点として、左辺は未知の確率分布 \(Pr(z|x)\) との KL 距離だったものが、 右辺では \(Pr(z)\) との KL 距離になっていて、 今 \(Pr(z) = \mathcal{N}(0,1)\) と仮定しているので、既知の確率分布との KL 距離になっている.</blockquote>
 <p>そういうわけで右辺値を目的関数とする.</p>
-<p><span class="math display">\[\begin{eqnarray}
+\[\begin{eqnarray}
 \mathcal{L}(x; Q,R)
  &amp; = \text{KL}(Q(z|x) \| Pr(z|x)) - \mathbb{E}_{z \sim Q(z|x)} \left[ \log Pr(x|z) \right] \\
  &amp; = \text{KL}(Q(z|x) \| \mathcal{N}(0, 1)) - \mathbb{E}_{z \sim Q(z|x)} \left[ \log Pr(x|z) \right]
-\end{eqnarray}\]</span></p>
-<center style="margin:20px">
-<img width="800px" src="img/vae/ae.png" />
-</center>
-<h3 id="計算のトリック">計算のトリック</h3>
-<h4 id="qzx-の構成法"><span class="math inline">\(Q(z|x)\)</span> の構成法</h4>
-<p><span class="math inline">\(Q\)</span> を適当な NNs で実現するわけだが、出力は確率分布で、しかも <span class="math inline">\(\mathcal{N}\)</span> と仮定している. 従って直接的には、その平均 <span class="math inline">\(\mu(x)\)</span> と分散 <span class="math inline">\(\Sigma(x)\)</span> とを予測する.</p>
+\end{eqnarray}\]
+<p><center style="margin:20px"> <img width="800px" src="img/vae/ae.png" /> </center></p>
+<h3>計算のトリック</h3>
+<h4>\(Q(z|x)\) の構成法</h4>
+<p>\(Q\) を適当な NNs で実現するわけだが、出力は確率分布で、しかも \(\mathcal{N}\) と仮定している. 従って直接的には、その平均 \(\mu(x)\) と分散 \(\Sigma(x)\) とを予測する.</p>
 <p><img width="500px" src="img/vae/q.png" /></p>
-<p><span class="math inline">\(\text{KL}(Q(z|x) \| \mathcal{N}(0, 1))\)</span> の計算も、正規分布同士の計算なのでまあ頑張れば出来る.</p>
-<p><span class="math inline">\(R\)</span> も、まあ大体同様にして学習すればよい.</p>
-<h4 id="サンプリング-reparametarization-trick">サンプリング (reparametarization trick)</h4>
-<p><span class="math inline">\(\mathbb{E}_{z \sim Q(z|x)} \left[ \log Pr(x|z) \right]\)</span> をどうやって計算するか. ある確率分布に沿った期待値を本当に計算したいのだが、 簡単な近似法としては、 適当回数 <span class="math inline">\(Q(z|x)\)</span> から <span class="math inline">\(z\)</span> をサンプリングし、 <span class="math inline">\(\log R(x|z)\)</span> の平均を取れば良い.</p>
-<p>ただし一度の順伝播・逆伝播で <span class="math inline">\(Q\)</span> も <span class="math inline">\(R\)</span> も学習出来るのが本当は理想. そのためにサンプリングの回数は一度だけとする. そして、<span class="math inline">\(\mathcal{N}(\mu, \Sigma)\)</span> からサンプリングという手続きは一般には逆伝播が出来ない計算である. 次のように言い換えることで逆伝播が出来る.</p>
-<ol type="1">
-<li><span class="math inline">\(e \leftarrow \mathcal{N}(0, 1)\)</span> をランダムサンプリング</li>
-<li><span class="math inline">\(z = \mu(x) + e \Sigma(x)\)</span> (ここで <span class="math inline">\(e\)</span> は定数)</li>
+<p>\(\text{KL}(Q(z|x) \| \mathcal{N}(0, 1))\) の計算も、正規分布同士の計算なのでまあ頑張れば出来る.</p>
+<p>\(R\) も、まあ大体同様にして学習すればよい.</p>
+<h4>サンプリング (reparametarization trick)</h4>
+<p>\(\mathbb{E}_{z \sim Q(z|x)} \left[ \log Pr(x|z) \right]\) をどうやって計算するか. ある確率分布に沿った期待値を本当に計算したいのだが、 簡単な近似法としては、 適当回数 \(Q(z|x)\) から \(z\) をサンプリングし、 \(\log R(x|z)\) の平均を取れば良い.</p>
+<p>ただし一度の順伝播・逆伝播で \(Q\) も \(R\) も学習出来るのが本当は理想. そのためにサンプリングの回数は一度だけとする. そして、 \(\mathcal{N}(\mu, \Sigma)\) からサンプリングという手続きは一般には逆伝播が出来ない計算である. 次のように言い換えることで逆伝播が出来る.</p>
+<ol>
+  <li>\(e \leftarrow \mathcal{N}(0, 1)\) をランダムサンプリング</li>
+  <li>\(z = \mu(x) + e \Sigma(x)\) (ここで \(e\) は定数)</li>
 </ol>
-<h4 id="まとめ">まとめ</h4>
+<h4>まとめ</h4>
 <p>以上をまとめると VAE の学習は以下の通り</p>
 <ul>
-<li>事例 <span class="math inline">\(x\)</span> について
-<ol type="1">
-<li><span class="math inline">\(Q\)</span> の順伝播から <span class="math inline">\(\mu(x), \Sigma(x)\)</span> を求める</li>
-<li><span class="math inline">\(e \leftarrow \mathcal{N}(0, 1)\)</span> をランダムサンプリング</li>
-<li><span class="math inline">\(z = \mu(x) + e \Sigma(x)\)</span>
-<ul>
-<li>これは <span class="math inline">\(\mathcal{N}(\mu, \Sigma)\)</span> からのサンプリングと等しい</li>
-</ul></li>
-<li><span class="math inline">\(\log R(x|z)\)</span> を計算</li>
-<li><span class="math inline">\(\text{KL}(Q(z|x) \| \mathcal{N}(0, 1)) - \log R(x|z)\)</span> を損失だとして逆伝播する</li>
-</ol></li>
+  <li>
+    事例 \(x\) について
+    <ol>
+      <li>\(Q\) の順伝播から \(\mu(x), \Sigma(x)\) を求める</li>
+      <li>\(e \leftarrow \mathcal{N}(0, 1)\) をランダムサンプリング</li>
+      <li>
+        \(z = \mu(x) + e \Sigma(x)\)
+        <ul>
+          <li>これは \(\mathcal{N}(\mu, \Sigma)\) からのサンプリングと等しい</li>
+        </ul>
+      </li>
+      <li>\(\log R(x|z)\) を計算</li>
+      <li>\(\text{KL}(Q(z|x) \| \mathcal{N}(0, 1)) - \log R(x|z)\) を損失だとして逆伝播する</li>
+    </ol>
+  </li>
 </ul>
-<center style="margin:20px">
-<img width="800px" src="img/vae/ae.png" />
-</center>
-<h3 id="古典的-autoencoders-との比較">古典的 Autoencoders との比較</h3>
+<p><center style="margin:20px"> <img width="800px" src="img/vae/ae.png" /> </center></p>
+<h3>古典的 Autoencoders との比較</h3>
 <p>特に何の制約もないただの Autoencoders が何をするかと言うと、 出来るだけ同じ変数名を用いて説明すると</p>
 <ul>
-<li>事例 <span class="math inline">\(x\)</span> について
-<ol type="1">
-<li><span class="math inline">\(Q\)</span> の順伝播から <span class="math inline">\(z\)</span> を求める</li>
-<li><span class="math inline">\(R\)</span> の順伝播から <span class="math inline">\(x\)</span> を求める</li>
-<li><span class="math inline">\(- \log R(x|z)\)</span> を損失だとして逆伝播する</li>
-</ol></li>
+  <li>
+    事例 \(x\) について
+    <ol>
+      <li>\(Q\) の順伝播から \(z\) を求める</li>
+      <li>\(R\) の順伝播から \(x\) を求める</li>
+      <li>\(- \log R(x|z)\) を損失だとして逆伝播する</li>
+    </ol>
+  </li>
 </ul>
-<p>大きく違う点としては、エンコードして出来た <span class="math inline">\(z\)</span> に <span class="math inline">\(\text{KL}(Q(z|x) \| \mathcal{N}(0, 1))\)</span> という正則化項を加えるかどうかだけである.</p>
-<h3 id="testing">Testing</h3>
-<p>訓練した VAE をテストするには 適当なノイズ <span class="math inline">\(z \sim \mathcal{N}(0, 1)\)</span> を Decoder <span class="math inline">\(R\)</span> に入れるだけで良い.</p>
+<p>大きく違う点としては、エンコードして出来た \(z\) に \(\text{KL}(Q(z|x) \| \mathcal{N}(0, 1))\) という正則化項を加えるかどうかだけである.</p>
+<h3>Testing</h3>
+<p>訓練した VAE をテストするには 適当なノイズ \(z \sim \mathcal{N}(0, 1)\) を Decoder \(R\) に入れるだけで良い.</p>
 <p>とは言え、適当なノイズを入れただけではやはり平均的な、 例えば MNIST ならボヤケた画像が、出て来るだけになる.</p>
-<h2 id="conditional-variational-autoencoders-cvae-m2">Conditional Variational Autoencoders (CVAE, M2)</h2>
-<p>データ <span class="math inline">\(x\)</span> にラベル <span class="math inline">\(y\)</span> があるとしてそれを活用したい.</p>
-<p>次のグラフィカルモデルを用いる. すなわち、今までは単に潜在変数 <span class="math inline">\(z\)</span> から生成されるとしていたが、それに条件 (condition) <span class="math inline">\(y\)</span> を与える.</p>
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
- "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<!-- Generated by graphviz version 2.40.1 (20161225.0304)
- -->
-<!-- Title: %3 Pages: 1 -->
-<svg width="222pt" height="220pt" viewBox="0.00 0.00 222.00 220.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 216)">
-<title>
-%3
-</title>
-<g id="clust1" class="cluster">
-<title>
-cluster_A
-</title>
-<polygon fill="transparent" stroke="#000000" points="8,-8 8,-204 150,-204 150,-8 8,-8"/> </g> <!-- N --> <g id="node1" class="node">
-<title>
-N
-</title>
-<text text-anchor="middle" x="114" y="-173.8" font-family="Times,serif" font-size="14.00" fill="#000000">N(0, 1)</text> </g> <!-- z --> <g id="node2" class="node">
-<title>
-z
-</title>
-<ellipse fill="none" stroke="#000000" cx="115" cy="-106" rx="27" ry="18"/> <text text-anchor="middle" x="115" y="-101.8" font-family="Times,serif" font-size="14.00" fill="#000000">z</text> </g> <!-- N&#45;&gt;z --> <g id="edge1" class="edge">
-<title>
-N-&gt;z
-</title>
-<path fill="none" stroke="#000000" stroke-dasharray="1,5" d="M114.2523,-159.8314C114.3593,-152.131 114.4865,-142.9743 114.6053,-134.4166"/> <polygon fill="#000000" stroke="#000000" points="118.1049,-134.4609 114.7443,-124.4133 111.1056,-134.3637 118.1049,-134.4609"/> </g> <!-- x --> <g id="node4" class="node">
-<title>
-x
-</title>
-<ellipse fill="none" stroke="#000000" cx="115" cy="-34" rx="27" ry="18"/> <text text-anchor="middle" x="115" y="-29.8" font-family="Times,serif" font-size="14.00" fill="#000000">x</text> </g> <!-- z&#45;&gt;x --> <g id="edge2" class="edge">
-<title>
-z-&gt;x
-</title>
-<path fill="none" stroke="#000000" d="M115,-87.8314C115,-80.131 115,-70.9743 115,-62.4166"/> <polygon fill="#000000" stroke="#000000" points="118.5001,-62.4132 115,-52.4133 111.5001,-62.4133 118.5001,-62.4132"/> </g> <!-- y --> <g id="node3" class="node">
-<title>
-y
-</title>
-<ellipse fill="none" stroke="#000000" cx="43" cy="-106" rx="27" ry="18"/> <text text-anchor="middle" x="43" y="-101.8" font-family="Times,serif" font-size="14.00" fill="#000000">y</text> </g> <!-- y&#45;&gt;x --> <g id="edge3" class="edge">
-<title>
-y-&gt;x
-</title>
-<path fill="none" stroke="#000000" d="M58.2693,-90.7307C68.197,-80.803 81.3153,-67.6847 92.4363,-56.5637"/> <polygon fill="#000000" stroke="#000000" points="95.1564,-58.7933 99.7527,-49.2473 90.2067,-53.8436 95.1564,-58.7933"/> </g> <!-- theta --> <g id="node5" class="node">
-<title>
-theta
-</title>
-<ellipse fill="none" stroke="#000000" cx="187" cy="-106" rx="27" ry="18"/> <text text-anchor="middle" x="187" y="-101.8" font-family="Times,serif" font-size="14.00" fill="#000000">θ</text> </g> <!-- theta&#45;&gt;x --> <g id="edge4" class="edge">
-<title>
-theta-&gt;x
-</title>
-<path fill="none" stroke="#000000" d="M171.7307,-90.7307C161.803,-80.803 148.6847,-67.6847 137.5637,-56.5637"/> <polygon fill="#000000" stroke="#000000" points="139.7933,-53.8436 130.2473,-49.2473 134.8436,-58.7933 139.7933,-53.8436"/> </g> </g>
-</svg>
-<p>先程と同様にエンコーダ <span class="math inline">\(Q\)</span> とデコーダ <span class="math inline">\(R\)</span> を用意する. ただしそれぞれは条件 <span class="math inline">\(y\)</span> が与えられたときの確率分布を表す.</p>
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
- "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<!-- Generated by graphviz version 2.40.1 (20161225.0304)
- -->
-<!-- Title: CVAE Pages: 1 -->
-<svg width="634pt" height="152pt" viewBox="0.00 0.00 634.37 152.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 148)">
-<title>
-CVAE
-</title>
-<g id="clust1" class="cluster">
-<title>
-cluster_CVAE
-</title>
-<polygon fill="transparent" stroke="#000000" points="8,-8 8,-136 618.3721,-136 618.3721,-8 8,-8"/> <text text-anchor="middle" x="313.186" y="-120.8" font-family="Times,serif" font-size="14.00" fill="#000000">CVAE</text> </g> <!-- x --> <g id="node1" class="node">
-<title>
-x
-</title>
-<ellipse fill="none" stroke="#000000" cx="43" cy="-88" rx="27" ry="18"/> <text text-anchor="middle" x="43" y="-83.8" font-family="Times,serif" font-size="14.00" fill="#000000">x</text> </g> <!-- Encoder --> <g id="node3" class="node">
-<title>
-Encoder
-</title>
-<polygon fill="none" stroke="#000000" points="191.3653,-106 106.2109,-106 106.2109,-70 191.3653,-70 191.3653,-106"/> <text text-anchor="middle" x="148.7881" y="-83.8" font-family="Times,serif" font-size="14.00" fill="#000000">Encoder (Q)</text> </g> <!-- x&#45;&gt;Encoder --> <g id="edge1" class="edge">
-<title>
-x-&gt;Encoder
-</title>
-<path fill="none" stroke="#000000" d="M70.2431,-88C78.1604,-88 87.0895,-88 96.014,-88"/> <polygon fill="#000000" stroke="#000000" points="96.034,-91.5001 106.034,-88 96.034,-84.5001 96.034,-91.5001"/> </g> <!-- y --> <g id="node2" class="node">
-<title>
-y
-</title>
-<ellipse fill="none" stroke="#000000" cx="43" cy="-34" rx="27" ry="18"/> <text text-anchor="middle" x="43" y="-29.8" font-family="Times,serif" font-size="14.00" fill="#000000">y</text> </g> <!-- y&#45;&gt;Encoder --> <g id="edge2" class="edge">
-<title>
-y-&gt;Encoder
-</title>
-<path fill="none" stroke="#000000" d="M64.6631,-45.058C76.0576,-50.8744 90.4648,-58.2286 104.1218,-65.1999"/> <polygon fill="#000000" stroke="#000000" points="102.9125,-68.5122 113.4105,-69.9414 106.0951,-62.2775 102.9125,-68.5122"/> </g> <!-- Pr --> <g id="node4" class="node">
-<title>
-Pr
-</title>
-<ellipse fill="none" stroke="#000000" cx="268.186" cy="-88" rx="40.72" ry="18"/> <text text-anchor="middle" x="268.186" y="-83.8" font-family="Times,serif" font-size="14.00" fill="#000000">Pr(z|x,y)</text> </g> <!-- Encoder&#45;&gt;Pr --> <g id="edge3" class="edge">
-<title>
-Encoder-&gt;Pr
-</title>
-<path fill="none" stroke="#000000" d="M191.5562,-88C199.8337,-88 208.5846,-88 217.0969,-88"/> <polygon fill="#000000" stroke="#000000" points="217.314,-91.5001 227.314,-88 217.3139,-84.5001 217.314,-91.5001"/> </g> <!-- z --> <g id="node5" class="node">
-<title>
-z
-</title>
-<ellipse fill="none" stroke="#000000" cx="371.7959" cy="-88" rx="27" ry="18"/> <text text-anchor="middle" x="371.7959" y="-83.8" font-family="Times,serif" font-size="14.00" fill="#000000">z</text> </g> <!-- Pr&#45;&gt;z --> <g id="edge4" class="edge">
-<title>
-Pr-&gt;z
-</title>
-<path fill="none" stroke="#000000" stroke-dasharray="1,5" d="M308.838,-88C317.2889,-88 326.1554,-88 334.4792,-88"/> <polygon fill="#000000" stroke="#000000" points="334.6604,-91.5001 344.6604,-88 334.6603,-84.5001 334.6604,-91.5001"/> </g> <!-- Decoder --> <g id="node7" class="node">
-<title>
-Decoder
-</title>
-<polygon fill="none" stroke="#000000" points="520.1612,-79 435.0068,-79 435.0068,-43 520.1612,-43 520.1612,-79"/> <text text-anchor="middle" x="477.584" y="-56.8" font-family="Times,serif" font-size="14.00" fill="#000000">Decoder (R)</text> </g> <!-- z&#45;&gt;Decoder --> <g id="edge5" class="edge">
-<title>
-z-&gt;Decoder
-</title>
-<path fill="none" stroke="#000000" d="M397.1348,-81.5328C405.4823,-79.4023 415.1001,-76.9476 424.7168,-74.4932"/> <polygon fill="#000000" stroke="#000000" points="425.8608,-77.8134 434.6846,-71.9491 424.1296,-71.0309 425.8608,-77.8134"/> </g> <!-- y&#39; --> <g id="node6" class="node">
-<title>
-y'
-</title>
-<ellipse fill="none" stroke="#000000" cx="371.7959" cy="-34" rx="27" ry="18"/> <text text-anchor="middle" x="371.7959" y="-29.8" font-family="Times,serif" font-size="14.00" fill="#000000">y</text> </g> <!-- y&#39;&#45;&gt;Decoder --> <g id="edge6" class="edge">
-<title>
-y'-&gt;Decoder
-</title>
-<path fill="none" stroke="#000000" d="M397.1348,-40.4672C405.4823,-42.5977 415.1001,-45.0524 424.7168,-47.5068"/> <polygon fill="#000000" stroke="#000000" points="424.1296,-50.9691 434.6846,-50.0509 425.8608,-44.1866 424.1296,-50.9691"/> </g> <!-- x&#39; --> <g id="node8" class="node">
-<title>
-x'
-</title>
-<ellipse fill="none" stroke="#000000" cx="583.3721" cy="-61" rx="27" ry="18"/> <text text-anchor="middle" x="583.3721" y="-56.8" font-family="Times,serif" font-size="14.00" fill="#000000">x'</text> </g> <!-- Decoder&#45;&gt;x&#39; --> <g id="edge7" class="edge">
-<title>
-Decoder-&gt;x'
-</title>
-<path fill="none" stroke="#000000" d="M520.3071,-61C528.855,-61 537.7711,-61 546.1165,-61"/> <polygon fill="#000000" stroke="#000000" points="546.3115,-64.5001 556.3114,-61 546.3114,-57.5001 546.3115,-64.5001"/> </g> </g>
-</svg>
+<h2>Conditional Variational Autoencoders (CVAE, M2)</h2>
+<p>データ \(x\) にラベル \(y\) があるとしてそれを活用したい.</p>
+<p>次のグラフィカルモデルを用いる. すなわち、今までは単に潜在変数 \(z\) から生成されるとしていたが、それに条件 (condition) \(y\) を与える.</p>
+<img src="data:image/png;base64,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">
+<p>先程と同様にエンコーダ \(Q\) とデコーダ \(R\) を用意する. ただしそれぞれは条件 \(y\) が与えられたときの確率分布を表す.</p>
+<img src="data:image/png;base64,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">
 <p>すなわち、</p>
 <ul>
-<li><span class="math inline">\(Q(x, y) \approx Pr(z | x, y)\)</span></li>
-<li><span class="math inline">\(R(z, y) \approx Pr(x | z, y)\)</span></li>
+  <li>\(Q(x, y) \approx Pr(z | x, y)\)</li>
+  <li>\(R(z, y) \approx Pr(x | z, y)\)</li>
 </ul>
-<p>を目指す. テストをするには、適当に <span class="math inline">\(\mathcal{N}\)</span> からサンプリングして得たノイズ <span class="math inline">\(z\)</span> を <span class="math inline">\(y\)</span> と併せて <span class="math inline">\(R\)</span> に入れることで <span class="math inline">\(x\)</span> を生成することで試す.</p>
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
- "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<!-- Generated by graphviz version 2.40.1 (20161225.0304)
- -->
-<!-- Title: CVAE Pages: 1 -->
-<svg width="413pt" height="152pt" viewBox="0.00 0.00 412.87 152.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 148)">
-<title>
-CVAE
-</title>
-<g id="clust1" class="cluster">
-<title>
-cluster_test
-</title>
-<polygon fill="transparent" stroke="#000000" points="8,-8 8,-136 396.8729,-136 396.8729,-8 8,-8"/> <text text-anchor="middle" x="202.4365" y="-120.8" font-family="Times,serif" font-size="14.00" fill="#000000">(testing mode)</text> </g> <!-- Normal --> <g id="node1" class="node">
-<title>
-Normal
-</title>
-<ellipse fill="none" stroke="#000000" cx="51.6484" cy="-88" rx="35.7974" ry="18"/> <text text-anchor="middle" x="51.6484" y="-83.8" font-family="Times,serif" font-size="14.00" fill="#000000">N(0, 1)</text> </g> <!-- z --> <g id="node2" class="node">
-<title>
-z
-</title>
-<ellipse fill="none" stroke="#000000" cx="150.2967" cy="-88" rx="27" ry="18"/> <text text-anchor="middle" x="150.2967" y="-83.8" font-family="Times,serif" font-size="14.00" fill="#000000">z</text> </g> <!-- Normal&#45;&gt;z --> <g id="edge1" class="edge">
-<title>
-Normal-&gt;z
-</title>
-<path fill="none" stroke="#000000" stroke-dasharray="1,5" d="M87.5418,-88C95.8311,-88 104.6682,-88 113.0152,-88"/> <polygon fill="#000000" stroke="#000000" points="113.2479,-91.5001 123.2479,-88 113.2479,-84.5001 113.2479,-91.5001"/> </g> <!-- Decoder_t --> <g id="node4" class="node">
-<title>
-Decoder_t
-</title>
-<polygon fill="none" stroke="#000000" points="298.662,-79 213.5076,-79 213.5076,-43 298.662,-43 298.662,-79"/> <text text-anchor="middle" x="256.0848" y="-56.8" font-family="Times,serif" font-size="14.00" fill="#000000">Decoder (R)</text> </g> <!-- z&#45;&gt;Decoder_t --> <g id="edge2" class="edge">
-<title>
-z-&gt;Decoder_t
-</title>
-<path fill="none" stroke="#000000" d="M175.6356,-81.5328C183.9831,-79.4023 193.601,-76.9476 203.2176,-74.4932"/> <polygon fill="#000000" stroke="#000000" points="204.3616,-77.8134 213.1854,-71.9491 202.6305,-71.0309 204.3616,-77.8134"/> </g> <!-- y --> <g id="node3" class="node">
-<title>
-y
-</title>
-<ellipse fill="none" stroke="#000000" cx="150.2967" cy="-34" rx="27" ry="18"/> <text text-anchor="middle" x="150.2967" y="-29.8" font-family="Times,serif" font-size="14.00" fill="#000000">y</text> </g> <!-- y&#45;&gt;Decoder_t --> <g id="edge3" class="edge">
-<title>
-y-&gt;Decoder_t
-</title>
-<path fill="none" stroke="#000000" d="M175.6356,-40.4672C183.9831,-42.5977 193.601,-45.0524 203.2176,-47.5068"/> <polygon fill="#000000" stroke="#000000" points="202.6305,-50.9691 213.1854,-50.0509 204.3616,-44.1866 202.6305,-50.9691"/> </g> <!-- x&#39; --> <g id="node5" class="node">
-<title>
-x'
-</title>
-<ellipse fill="none" stroke="#000000" cx="361.8729" cy="-61" rx="27" ry="18"/> <text text-anchor="middle" x="361.8729" y="-56.8" font-family="Times,serif" font-size="14.00" fill="#000000">x'</text> </g> <!-- Decoder_t&#45;&gt;x&#39; --> <g id="edge4" class="edge">
-<title>
-Decoder_t-&gt;x'
-</title>
-<path fill="none" stroke="#000000" d="M298.808,-61C307.3558,-61 316.2719,-61 324.6173,-61"/> <polygon fill="#000000" stroke="#000000" points="324.8123,-64.5001 334.8123,-61 324.8122,-57.5001 324.8123,-64.5001"/> </g> </g>
-</svg>
-<p>損失関数は先ほどのやつに <span class="math inline">\(y\)</span> を適切に入れればよくて、</p>
-<p><span class="math display">\[\begin{align*}
+<p>を目指す. テストをするには、適当に \(\mathcal{N}\) からサンプリングして得たノイズ \(z\) を \(y\) と併せて \(R\) に入れることで \(x\) を生成することで試す.</p>
+<img src="data:image/png;base64,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">
+<p>損失関数は先ほどのやつに \(y\) を適切に入れればよくて、</p>
+\[\begin{align*}
 \mathcal{L}(x, y; Q,R)
  &amp; = \text{KL}(Q(z|x,y) \| Pr(z|x,y)) - \log Pr(x|y) \\
  &amp; = \text{KL}(Q(z|x,y) \| Pr(z|x)) - \mathbb{E}_{z \sim Q(z|x,y)} \left[ \log Pr(x|z,y) \right]
-\end{align*}\]</span></p>
-<p>となる. ここで <span class="math inline">\(z\)</span> は他の変数とは独立なノイズで、 <span class="math display">\[Pr(z|x) = Pr(z) = \mathcal{N}(0,1)\]</span> である. これを代入しておくと、 損失関数は改めて書くと <span class="math display">\[\mathcal{L}(x, y; Q,R)
-  = \text{KL}(Q(z|x,y) \| \mathcal{N}(0, 1)) - \mathbb{E}_{z \sim Q(z|x,y)} \left[ \log Pr(x|z,y) \right]\]</span> とし、この最小化を目指す.</p>
-<h3 id="半教師アリ学習としての-cvae-m2">半教師アリ学習としての CVAE (M2)</h3>
+\end{align*}\]
+<p>となる. ここで \(z\) は他の変数とは独立なノイズで、</p>
+\[Pr(z|x) = Pr(z) = \mathcal{N}(0,1)\]
+<p>である. これを代入しておくと、 損失関数は改めて書くと</p>
+\[\mathcal{L}(x, y; Q,R)
+  = \text{KL}(Q(z|x,y) \| \mathcal{N}(0, 1)) - \mathbb{E}_{z \sim Q(z|x,y)} \left[ \log Pr(x|z,y) \right]\]
+<p>とし、この最小化を目指す.</p>
+<h3>半教師アリ学習としての CVAE (M2)</h3>
 <p>参考文献 [2] には CVAE (M2) で半教師アリ学習をすることについては触れられていなかったので、 [1] で該当場所を読んで補足、、、 したいのだが、本当に説明が雑すぎる. [3] も併せて読む.</p>
-<p>ラベル付きデータ <span class="math inline">\((x,y)\)</span> については上の <span class="math inline">\(\mathcal{L}(x,y)\)</span> を用いる. ラベルなしデータ <span class="math inline">\((x, \bot)\)</span> については、仕方ないので <span class="math inline">\(Pr(y|x)\)</span> を学習し、その上の <span class="math inline">\(y\)</span> を使う.</p>
-<p>ということで、以下を目指すような新たにニューラルネット <span class="math inline">\(q\)</span> を1つ追加する. <span class="math display">\[q(x) \approx Pr(y|x)\]</span></p>
-<p><span class="math inline">\(\mathcal{L}\)</span> の中の <span class="math display">\[\mathbb{E}_{z \sim Q(z|x,y)} \left[ \log Pr(x|z,y) \right]\]</span> の部分を <span class="math display">\[\mathbb{E}_{y \sim q(x)} \mathbb{E}_{z \sim Q(z|x,y)} \left[ \cdots \right]\]</span> で置き換えたものを <span class="math display">\[\mathcal{U}(x)\]</span> とし、ラベルなしデータのための損失関数とする.</p>
-<p>結局 <span class="math display">\[\mathcal{J} = \mathcal{L}(\mathcal{D}) =
+<p>ラベル付きデータ \((x,y)\) については上の \(\mathcal{L}(x,y)\) を用いる. ラベルなしデータ \((x, \bot)\) については、仕方ないので \(Pr(y|x)\) を学習し、その上の \(y\) を使う.</p>
+<p>ということで、以下を目指すような新たにニューラルネット \(q\) を1つ追加する.</p>
+\[q(x) \approx Pr(y|x)\]
+<p>\(\mathcal{L}\) の中の</p>
+\[\mathbb{E}_{z \sim Q(z|x,y)} \left[ \log Pr(x|z,y) \right]\]
+<p>の部分を</p>
+\[\mathbb{E}_{y \sim q(x)} \mathbb{E}_{z \sim Q(z|x,y)} \left[ \cdots \right]\]
+<p>で置き換えたものを</p>
+\[\mathcal{U}(x)\]
+<p>とし、ラベルなしデータのための損失関数とする.</p>
+<p>結局</p>
+\[\mathcal{J} = \mathcal{L}(\mathcal{D}) =
 \sum_{\text{labeled} \mathcal{D}} \mathcal{L}(x,y) +
-\sum_{\text{unlabeled} \mathcal{D}} \mathcal{U}(x)\]</span> を全体の損失関数に使う.</p>
-<h3 id="半教師アリ分類学習への適用">半教師アリ分類学習への適用</h3>
-<p>副作用的に <span class="math inline">\(q(x) = Pr(y|x)\)</span> が手に入ったので、これを使って <span class="math inline">\(x\)</span> からラベル <span class="math inline">\(y\)</span> を予測できる、ようになるが、 先ほどの損失関数だと、<span class="math inline">\(q\)</span> はラベルなしの <span class="math inline">\(\mathcal{U}\)</span> の方にしか登場しない. つまり、ラベルなしデータのみから学習してるわけだが、普通に考えて雑魚なので、ラベルありデータからも学習するように、 <span class="math display">\[\mathcal{J} - \alpha \cdot \mathbb{E}_{\text{labeled} \mathcal{D}} \log q(x)\]</span> のようにする. [3] では、<span class="math inline">\(\mathcal{J}\)</span> の学習と、ラベルデータからの <span class="math inline">\(q\)</span> の学習を完全に分けて行ったが上手く行ったそう.</p>
-<h2 id="mnist-実験">MNIST 実験</h2>
+\sum_{\text{unlabeled} \mathcal{D}} \mathcal{U}(x)\]
+<p>を全体の損失関数に使う.</p>
+<h3>半教師アリ分類学習への適用</h3>
+<p>副作用的に \(q(x) = Pr(y|x)\) が手に入ったので、これを使って \(x\) からラベル \(y\) を予測できる、ようになるが、 先ほどの損失関数だと、 \(q\) はラベルなしの \(\mathcal{U}\) の方にしか登場しない. つまり、ラベルなしデータのみから学習してるわけだが、普通に考えて雑魚なので、ラベルありデータからも学習するように、</p>
+\[\mathcal{J} - \alpha \cdot \mathbb{E}_{\text{labeled} \mathcal{D}} \log q(x)\]
+<p>のようにする. [3] では、 \(\mathcal{J}\) の学習と、ラベルデータからの \(q\) の学習を完全に分けて行ったが上手く行ったそう.</p>
+<h2>MNIST 実験</h2>
 <p>このチュートリアルでは MNIST で VAE 及び CVAE を訓練した実験結果を述べている.</p>
 <p>ゼロから学習させずにどっかに落ちているという MNIST で訓練したプレーンな自己符号化器の重みを流用したらしい.</p>
-<p>興味深いテクニックを一つ使っている. MNIST なので、入力は 28x28 の行列で各成分は整数値 <span class="math inline">\([0, 255]\)</span>. これを普通はまず 255 で割り算して <span class="math inline">\([0,1]\)</span> 範囲の実数値だと見なしてから使うだろう. そこまでは同じだが、この実験ではその値を確率だと見なして、<span class="math inline">\(\{0,1\}\)</span> に二値化する. つまり、各ピクセルについて独立に、その確率で <span class="math inline">\(1\)</span> さもなくば <span class="math inline">\(0\)</span> にする. これは画像を NNs に流すタイミングで毎回サンプリングするので、データ水増し的な意味合いもある.</p>
-<pre><code>(Figure 7)</code></pre>
-<p>まず VAE の結果. <span class="math inline">\(x\)</span> は先のテクニックで二値化した <span class="math inline">\(\{0,1\}^{28 \times 28}\)</span>. ただし VAE の出力 (デコード) <span class="math inline">\(x&#39;\)</span> は <span class="math inline">\([0,1]^{28 \times 28}\)</span>. テストではデコード部分だけを動かす. ランダムなノイズをデコーダーに入力して、それらしい手書き文字がランダムに出力される. &quot;7&quot; と &quot;9&quot; の中間っぽい文字が出力されており、入力ノイズの空間が連続であることが示唆される.</p>
-<pre><code>(Figure 8a)</code></pre>
-<p>次に CVAE の結果. こちらは、画像の右半分 (左半分?) を <span class="math inline">\(x\)</span> としている. <span class="math inline">\(y\)</span> は VAE での <span class="math inline">\(x\)</span> (すなわち <span class="math inline">\(\{0,1\}^{28 \times 28}\)</span>). テストではやはりデコード部分だけを動かすのだが、 今度はランダムなノイズと、画像の半分をデコーダーに入れると、画像の全体が出力される. まあ、それらしいのが動いてるなあという感じ.</p>
+<p>興味深いテクニックを一つ使っている. MNIST なので、入力は 28x28 の行列で各成分は整数値 \([0, 255]\) . これを普通はまず 255 で割り算して \([0,1]\) 範囲の実数値だと見なしてから使うだろう. そこまでは同じだが、この実験ではその値を確率だと見なして、 \(\{0,1\}\) に二値化する. つまり、各ピクセルについて独立に、その確率で \(1\) さもなくば \(0\) にする. これは画像を NNs に流すタイミングで毎回サンプリングするので、データ水増し的な意味合いもある.</p>
+<p>(Figure 7)</p>
+<p>まず VAE の結果. \(x\) は先のテクニックで二値化した \(\{0,1\}^{28 \times 28}\) . ただし VAE の出力 (デコード) \(x&#x27;\) は \([0,1]^{28 \times 28}\) . テストではデコード部分だけを動かす. ランダムなノイズをデコーダーに入力して、それらしい手書き文字がランダムに出力される. "7" と "9" の中間っぽい文字が出力されており、入力ノイズの空間が連続であることが示唆される.</p>
+<p>(Figure 8a)</p>
+<p>次に CVAE の結果. こちらは、画像の右半分 (左半分?) を \(x\) としている. \(y\) は VAE での \(x\) (すなわち \(\{0,1\}^{28 \times 28}\) ). テストではやはりデコード部分だけを動かすのだが、 今度はランダムなノイズと、画像の半分をデコーダーに入れると、画像の全体が出力される. まあ、それらしいのが動いてるなあという感じ.</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -477,5 +317,9 @@ Decoder_t-&gt;x'
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

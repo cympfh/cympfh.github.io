@@ -1,95 +1,101 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Factorization Machines (FMs)</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">Factorization Machines (FMs)</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=http://www.csie.ntu.edu.tw/~b97053/paper/Rendle2010FM.pdf>http://www.csie.ntu.edu.tw/~b97053/paper/Rendle2010FM.pdf</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#分類器>分類器</a> <a class='tag is-blue' href=index.html#機械学習>機械学習</a> <a class='tag is-blue' href=index.html#推薦システム>推薦システム</a></p>
-</div>
-<h2 id="fm-とは何か">FM とは何か</h2>
+<p><ul> <li>original paper: <a href=http://www.csie.ntu.edu.tw/~b97053/paper/Rendle2010FM.pdf>http://www.csie.ntu.edu.tw/~b97053/paper/Rendle2010FM.pdf</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#分類器>分類器</a> <a class='tag is-blue' href=index.html#機械学習>機械学習</a> <a class='tag is-blue' href=index.html#推薦システム>推薦システム</a> </div></p>
+<h2>FM とは何か</h2>
 <p>超スパースなデータにも使える予測器. 線形分類器の拡張になっている. 基本的に回帰モデルの形をしているが、分類器としても使えるし、スコアを計算するものだと思えばランキングを予測するようにも使える. スパースでデータ量が増えても線形程度にしか時間及び空間が増えない.</p>
-<h2 id="モデル">モデル</h2>
-<p>データ <span class="math inline">\(x \in \mathbb{R}^n\)</span> から <span class="math inline">\(y\)</span> を次のように予測する: <span class="math display">\[\hat{y} = w_0 + \langle w, x \rangle + \sum_{i &lt; j} \langle v_i, v_j \rangle x_i x_j\]</span></p>
+<h2>モデル</h2>
+<p>データ \(x \in \mathbb{R}^n\) から \(y\) を次のように予測する:</p>
+\[\hat{y} = w_0 + \langle w, x \rangle + \sum_{i &lt; j} \langle v_i, v_j \rangle x_i x_j\]
 <p>(この形を 2-way FM といい, 後に一般化する).</p>
 <p>ここで</p>
 <ul>
-<li><span class="math inline">\(w_0 \in \mathbb{R}\)</span></li>
-<li><span class="math inline">\(w \in \mathbb{R}^n\)</span></li>
-<li><span class="math inline">\(V \in \mathbb{R}^{n \times k}\)</span>
-<ul>
-<li><span class="math inline">\(v_i \in \mathbb{R}^k\)</span> は <span class="math inline">\(V\)</span> の <span class="math inline">\(i\)</span>-th 行ベクトル</li>
-<li><span class="math inline">\(k\)</span> はある自然数 (モデルのためのハイパーパラメータ)</li>
-</ul></li>
-<li><span class="math inline">\(x_i\)</span> は入力 <span class="math inline">\(x\)</span> の <span class="math inline">\(i\)</span>-th 成分</li>
-<li><span class="math inline">\(\langle \cdot, \cdot \rangle\)</span> は2つの同じ長さの行/列ベクトルの内積</li>
+  <li>\(w_0 \in \mathbb{R}\)</li>
+  <li>\(w \in \mathbb{R}^n\)</li>
+  <li>
+    \(V \in \mathbb{R}^{n \times k}\)
+    <ul>
+      <li>\(v_i \in \mathbb{R}^k\) は \(V\) の \(i\) -th 行ベクトル</li>
+      <li>\(k\) はある自然数 (モデルのためのハイパーパラメータ)</li>
+    </ul>
+  </li>
+  <li>\(x_i\) は入力 \(x\) の \(i\) -th 成分</li>
+  <li>\(\langle \cdot, \cdot \rangle\) は2つの同じ長さの行/列ベクトルの内積</li>
 </ul>
-<p>第二項までは通常の線形分類器であり、 第三項はデータの成分間の相互作用 (interaction) を表現している. <span class="math inline">\(\langle v_i, v_j\rangle\)</span> は相互作用の為の重みである. これ自体を <span class="math inline">\(i, j\)</span> 間の相互作用 (interaction) と呼ぶ. わざわざ一個の重み <span class="math inline">\(w_{i,j}\)</span> として表現をしないのは、 陽に <span class="math inline">\(w_{i,j}\)</span> を計算し保持しておくと、<span class="math inline">\(O(n^2)\)</span> の空間が必要になるし、予測の計算も <span class="math inline">\(O(n^2)\)</span> 掛かる. 適当な <span class="math inline">\(k\)</span> を決めて <span class="math inline">\(V\)</span> を持つことにすると、空間は明らかに <span class="math inline">\(O(nk)\)</span> で済み、 後述するように予測の計算も <span class="math inline">\(O(nk)\)</span> で済む.</p>
-<h3 id="データの持ち方">データの持ち方</h3>
+<p>第二項までは通常の線形分類器であり、 第三項はデータの成分間の相互作用 (interaction) を表現している. \(\langle v_i, v_j\rangle\) は相互作用の為の重みである. これ自体を \(i, j\) 間の相互作用 (interaction) と呼ぶ. わざわざ一個の重み \(w_{i,j}\) として表現をしないのは、 陽に \(w_{i,j}\) を計算し保持しておくと、 \(O(n^2)\) の空間が必要になるし、予測の計算も \(O(n^2)\) 掛かる. 適当な \(k\) を決めて \(V\) を持つことにすると、空間は明らかに \(O(nk)\) で済み、 後述するように予測の計算も \(O(nk)\) で済む.</p>
+<h3>データの持ち方</h3>
 <p>データの持ち方が若干特殊. 基本的に素性を何でも突っ込む (ベクトル結合).</p>
-<p>例えば、ユーザー <span class="math inline">\(U\)</span> と、映画 <span class="math inline">\(M\)</span> があって、 ユーザーに関する素性 <span class="math inline">\(V\)</span> と映画に関する素性 <span class="math inline">\(N\)</span> があったときに、 ユーザー <span class="math inline">\(u \in U\)</span> の映画 <span class="math inline">\(m \in M\)</span> に対する評価値 <span class="math inline">\(y \in \mathbb{R}\)</span> を予測することを考える. (この例は元論文にあるものを参考にしている.)</p>
-<p>データ <span class="math inline">\(x\)</span> (列ベクトル) を次のように作る.</p>
+<p>例えば、ユーザー \(U\) と、映画 \(M\) があって、 ユーザーに関する素性 \(V\) と映画に関する素性 \(N\) があったときに、 ユーザー \(u \in U\) の映画 \(m \in M\) に対する評価値 \(y \in \mathbb{R}\) を予測することを考える. (この例は元論文にあるものを参考にしている.)</p>
+<p>データ \(x\) (列ベクトル) を次のように作る.</p>
 <ul>
-<li><span class="math inline">\(x_u\)</span>: ユーザー <span class="math inline">\(u \in U\)</span> を 1-of-K (one-hot) 表現で <span class="math inline">\(|U|\)</span> 次元ベクトルで表現する</li>
-<li><span class="math inline">\(x_m\)</span>: 映画 <span class="math inline">\(m \in M\)</span> を同様に 1-of-K で <span class="math inline">\(|M|\)</span> 次元ベクトルで表現</li>
-<li><span class="math inline">\(x_v\)</span>: 他の素性もよしなにベクトルで表現</li>
-<li><span class="math inline">\(x_n\)</span>: よしなに</li>
+  <li>\(x_u\) : ユーザー \(u \in U\) を 1-of-K (one-hot) 表現で \(|U|\) 次元ベクトルで表現する</li>
+  <li>\(x_m\) : 映画 \(m \in M\) を同様に 1-of-K で \(|M|\) 次元ベクトルで表現</li>
+  <li>\(x_v\) : 他の素性もよしなにベクトルで表現</li>
+  <li>\(x_n\) : よしなに</li>
 </ul>
-<p>これらを結合して <span class="math inline">\(|U|+|M|+\cdots\)</span> 次元の列ベクトル <span class="math inline">\(x\)</span> とする.</p>
-<p>このようにしてデータ <span class="math display">\[\mathcal{D} = \{ (x_i, y_i) \}_i\]</span> を作る.</p>
-<p>元論文では、この列ベクトル <span class="math inline">\((x_i)_i\)</span> を縦に並べて大きな行列としている.</p>
-<h3 id="耐スパース性">耐スパース性</h3>
-<p>FMsはデータが超スパースであることを仮定している. そのような場合、 例えばユーザー <span class="math inline">\(u_1\)</span> の 映画 <span class="math inline">\(m_1\)</span> に対する評価がデータに含まれないことが多い. ということは、<span class="math inline">\(u_1\)</span> (に相当する成分) と <span class="math inline">\(m_1\)</span> (に相当する成分) との相互作用を推定することは出来なさそうに思える. FMs が上手いのはそれを直接推定することはせず、 <span class="math inline">\(v_{u_1}\)</span> 及び <span class="math inline">\(v_{m_1}\)</span> を推定して、その内積を相互作用としていることである. それらは別な関係、例えば <span class="math inline">\(u_1\)</span> と <span class="math inline">\(m_2\)</span> との関係、<span class="math inline">\(u_2\)</span> と <span class="math inline">\(m_1\)</span> との関係などから推定出来るかもしれない.</p>
-<h3 id="予測の計算方法">予測の計算方法</h3>
-<p>初めに示した計算式そのままだと <span class="math inline">\(O(kn^2)\)</span> 掛かりそうだが、式変形を施すと <span class="math inline">\(O(kn)\)</span> で済む.</p>
+<p>これらを結合して \(|U|+|M|+\cdots\) 次元の列ベクトル \(x\) とする.</p>
+<p>このようにしてデータ</p>
+\[\mathcal{D} = \{ (x_i, y_i) \}_i\]
+<p>を作る.</p>
+<p>元論文では、この列ベクトル \((x_i)_i\) を縦に並べて大きな行列としている.</p>
+<h3>耐スパース性</h3>
+<p>FMsはデータが超スパースであることを仮定している. そのような場合、 例えばユーザー \(u_1\) の 映画 \(m_1\) に対する評価がデータに含まれないことが多い. ということは、 \(u_1\) (に相当する成分) と \(m_1\) (に相当する成分) との相互作用を推定することは出来なさそうに思える. FMs が上手いのはそれを直接推定することはせず、 \(v_{u_1}\) 及び \(v_{m_1}\) を推定して、その内積を相互作用としていることである. それらは別な関係、例えば \(u_1\) と \(m_2\) との関係、 \(u_2\) と \(m_1\) との関係などから推定出来るかもしれない.</p>
+<h3>予測の計算方法</h3>
+<p>初めに示した計算式そのままだと \(O(kn^2)\) 掛かりそうだが、式変形を施すと \(O(kn)\) で済む.</p>
 <p>すなわち、第三項であるが (簡略のため先に二倍したものを考えると)、</p>
 <ul>
-<li><span class="math inline">\(2 \sum_{i &lt; j} \langle v_i, v_j \rangle x_i x_j = \sum_i \sum_j \langle v_i,v_j x_i x_j \rangle - \sum_i \langle v_i,v_i \rangle x_i x_i\)</span>
-<ul>
-<li><span class="math inline">\(= \sum_i \sum_j \sum_k v_{i,k} v_{j,k} x_i x_j - \sum_i \sum_k v_{i,k}^2 x_i^2\)</span></li>
-<li><span class="math inline">\(= \sum_k \left[ \sum_i \sum_j v_{i,k} v_{j,k} x_i x_j - \sum_i v_{i,k}^2 x_i^2 \right]\)</span></li>
-<li><span class="math inline">\(= \sum_k \left[ (\sum_i v_{i,k} x_i) (\sum_j v_{j,k} x_j) - \sum_i v_{i,k}^2 x_i^2 \right]\)</span></li>
-<li><span class="math inline">\(= \sum_k \left[ (\sum_i v_{i,k} x_i)^2 - \sum_i (v_{i,k} x_i)^2 \right]\)</span></li>
-</ul></li>
+  <li>
+    \(2 \sum_{i &lt; j} \langle v_i, v_j \rangle x_i x_j = \sum_i \sum_j \langle v_i,v_j x_i x_j \rangle - \sum_i \langle v_i,v_i \rangle x_i x_i\)
+    <ul>
+      <li>\(= \sum_i \sum_j \sum_k v_{i,k} v_{j,k} x_i x_j - \sum_i \sum_k v_{i,k}^2 x_i^2\)</li>
+      <li>\(= \sum_k \left[ \sum_i \sum_j v_{i,k} v_{j,k} x_i x_j - \sum_i v_{i,k}^2 x_i^2 \right]\)</li>
+      <li>\(= \sum_k \left[ (\sum_i v_{i,k} x_i) (\sum_j v_{j,k} x_j) - \sum_i v_{i,k}^2 x_i^2 \right]\)</li>
+      <li>\(= \sum_k \left[ (\sum_i v_{i,k} x_i)^2 - \sum_i (v_{i,k} x_i)^2 \right]\)</li>
+    </ul>
+  </li>
 </ul>
-<p>これなら <span class="math inline">\(O(kn)\)</span> で計算できる.</p>
-<h3 id="最適化-学習">最適化 (学習)</h3>
+<p>これなら \(O(kn)\) で計算できる.</p>
+<h3>最適化 (学習)</h3>
 <p>微分は容易だし、好きな最適化ソルバを流用すれば良い.</p>
 <ul>
-<li><span class="math inline">\(\frac{\partial}{\partial w_0} \hat{y} = 1\)</span></li>
-<li><span class="math inline">\(\frac{\partial}{\partial w_i} \hat{y} = x_i\)</span></li>
-<li><span class="math inline">\(\frac{\partial}{\partial v_{i,k}} \hat{y} = x_i \sum_j v_{j,k} x_j - v_{i,k} x_i^2\)</span></li>
+  <li>\(\frac{\partial}{\partial w_0} \hat{y} = 1\)</li>
+  <li>\(\frac{\partial}{\partial w_i} \hat{y} = x_i\)</li>
+  <li>\(\frac{\partial}{\partial v_{i,k}} \hat{y} = x_i \sum_j v_{j,k} x_j - v_{i,k} x_i^2\)</li>
 </ul>
-<h2 id="d-way-fm"><span class="math inline">\(d\)</span>-way FM</h2>
-<p>先述した形のものは、ちょうど2つの成分の相互作用だけを見るので 2-way FM と呼ぶ. これは一般化できて、ちょうど <span class="math inline">\(d\)</span> つ成分の相互作用を考慮する</p>
-<p><span class="math display">\[\hat{y} = w_0 + \langle w, x \rangle + \sum_{i_1 &lt; i_2 &lt; \cdots &lt; i_d} \left( \prod_i x_i \right) \langle v_{i_1}, v_{i_2}, \ldots v_{i_d} \rangle\]</span></p>
-<p>も考えられる. これを <span class="math inline">\(d\)</span>-way FM と呼ぶ. ここで、 <span class="math inline">\(\langle v_1,v_2,\ldots,v_d \rangle\)</span> は 成分間の積の和で <span class="math inline">\(\sum_i \sum_k v_{i,k}\)</span> と定める.</p>
-<h2 id="svm-との比較">SVM との比較</h2>
-<h2 id="行列分解との関係">行列分解との関係</h2>
+<h2>\(d\) -way FM</h2>
+<p>先述した形のものは、ちょうど2つの成分の相互作用だけを見るので 2-way FM と呼ぶ. これは一般化できて、ちょうど \(d\) つ成分の相互作用を考慮する</p>
+\[\hat{y} = w_0 + \langle w, x \rangle + \sum_{i_1 &lt; i_2 &lt; \cdots &lt; i_d} \left( \prod_i x_i \right) \langle v_{i_1}, v_{i_2}, \ldots v_{i_d} \rangle\]
+<p>も考えられる. これを \(d\) -way FM と呼ぶ. ここで、 \(\langle v_1,v_2,\ldots,v_d \rangle\) は 成分間の積の和で \(\sum_i \sum_k v_{i,k}\) と定める.</p>
+<h2>SVM との比較</h2>
+<h2>行列分解との関係</h2>
 <p>FMは行列分解の拡張だと思うことが出来る.</p>
-<p>まず行列分解について思い出す. 2つの添字の有限集合 <span class="math inline">\(U, V\)</span> (<span class="math inline">\(U \cap V = \emptyset\)</span>) があるとき, 各 <span class="math inline">\(i \in U, j \in V\)</span> について値 <span class="math inline">\(X_{ij}\)</span> を <span class="math display">\[X_{ij} = \langle v_i, v_j \rangle\]</span> で予測するモデルが行列分解モデルであった. ここで <span class="math inline">\(v_i, v_j\)</span> はどちらも <span class="math inline">\(d\)</span> 次元ベクトル.</p>
-<p>ところで, <span class="math inline">\(i\)</span> 番目だけが <span class="math inline">\(1\)</span> の <span class="math inline">\(|U|\)</span> 次元 one-hot ベクトル <span class="math inline">\(x_U^i\)</span> と, <span class="math inline">\(j\)</span> 番目だけが <span class="math inline">\(1\)</span> の <span class="math inline">\(|V|\)</span> 次元 one-hot ベクトル <span class="math inline">\(x_V^j\)</span> とを結合したベクトル <span class="math inline">\(x^{ij}\)</span> から <span class="math inline">\(X_{ij}\)</span> を予測するモデルを FM で作ると, <span class="math display">\[X_{ij}= w_0 + w_i + w_j + \langle v_i, v_j \rangle\]</span> となる. ここで <span class="math inline">\(w_i, w_j\)</span> はあの重み <span class="math inline">\(w\)</span> の, <span class="math inline">\(i \in U\)</span> と <span class="math inline">\(j \in V\)</span> に対応してるところの値. 重みをゼロにすればそのままさっきの行列分解になる.</p>
+<p>まず行列分解について思い出す. 2つの添字の有限集合 \(U, V\) ( \(U \cap V = \emptyset\) ) があるとき, 各 \(i \in U, j \in V\) について値 \(X_{ij}\) を</p>
+\[X_{ij} = \langle v_i, v_j \rangle\]
+<p>で予測するモデルが行列分解モデルであった. ここで \(v_i, v_j\) はどちらも \(d\) 次元ベクトル.</p>
+<p>ところで, \(i\) 番目だけが \(1\) の \(|U|\) 次元 one-hot ベクトル \(x_U^i\) と, \(j\) 番目だけが \(1\) の \(|V|\) 次元 one-hot ベクトル \(x_V^j\) とを結合したベクトル \(x^{ij}\) から \(X_{ij}\) を予測するモデルを FM で作ると,</p>
+\[X_{ij}= w_0 + w_i + w_j + \langle v_i, v_j \rangle\]
+<p>となる. ここで \(w_i, w_j\) はあの重み \(w\) の, \(i \in U\) と \(j \in V\) に対応してるところの値. 重みをゼロにすればそのままさっきの行列分解になる.</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -194,5 +200,9 @@ original paper: <a href=http://www.csie.ntu.edu.tw/~b97053/paper/Rendle2010FM.pd
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

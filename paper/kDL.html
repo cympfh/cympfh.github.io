@@ -1,60 +1,59 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Learning Decision Lists (2001)</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">Learning Decision Lists (2001)</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=https://people.csail.mit.edu/rivest/Rivest-DecisionLists.pdf>https://people.csail.mit.edu/rivest/Rivest-DecisionLists.pdf</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#分類器>分類器</a> <a class='tag is-blue' href=index.html#機械学習>機械学習</a></p>
-</div>
-<p>CNFとかDNFといった述語表現の新しいものとして、決定リストというものを導入する. 深さが <span class="math inline">\(k\)</span> の決定リストを k-DL とかく.</p>
+<p><ul> <li>original paper: <a href=https://people.csail.mit.edu/rivest/Rivest-DecisionLists.pdf>https://people.csail.mit.edu/rivest/Rivest-DecisionLists.pdf</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#分類器>分類器</a> <a class='tag is-blue' href=index.html#機械学習>機械学習</a> </div></p>
+<p>CNFとかDNFといった述語表現の新しいものとして、決定リストというものを導入する. 深さが \(k\) の決定リストを k-DL とかく.</p>
 <p>k-CNF, k-DNF とその表現力を比較していく.</p>
-<h2 id="notation">notation</h2>
-<p>k-CNF は一つの節にリテラルな<span class="math inline">\(k\)</span>個あるやつ.</p>
-<p>k-clause-CNF は節が<span class="math inline">\(k\)</span>個あるやつ.</p>
-<p>変数が <span class="math inline">\(n\)</span> 個 (そのnotも入れると <span class="math inline">\(2n\)</span> 個) としたものを k-CNF(n) みたいに <span class="math inline">\((n)\)</span> を添えて書く.</p>
-<p>連言で高々<span class="math inline">\(k\)</span>個の変数が連なる節として あり得るもの全てを <span class="math inline">\(C^n_k\)</span> と書く. これの大きさは、<span class="math inline">\(2n\)</span>から高々<span class="math inline">\(k\)</span>個選ぶ通りだから、 <span class="math display">\[\sum_{i=0}^k \binom{2n}{i} \in O(n^k)\]</span></p>
-<h2 id="決定木">2.4 決定木</h2>
+<h2>notation</h2>
+<p>k-CNF は一つの節にリテラルな \(k\) 個あるやつ.</p>
+<p>k-clause-CNF は節が \(k\) 個あるやつ.</p>
+<p>変数が \(n\) 個 (そのnotも入れると \(2n\) 個) としたものを k-CNF(n) みたいに \((n)\) を添えて書く.</p>
+<p>連言で高々 \(k\) 個の変数が連なる節として あり得るもの全てを \(C^n_k\) と書く. これの大きさは、 \(2n\) から高々 \(k\) 個選ぶ通りだから、</p>
+\[\sum_{i=0}^k \binom{2n}{i} \in O(n^k)\]
+<h2>2.4 決定木</h2>
 <p>次のような二分木を決定木と呼ぶ</p>
-<ol type="1">
-<li>内部ノードは変数</li>
-<li>葉は0か1かでラベル付けされる</li>
+<ol>
+  <li>内部ノードは変数</li>
+  <li>葉は0か1かでラベル付けされる</li>
 </ol>
 <p>次のように決定木は一つの述語として働く. ノードにラベルされた変数が0であるか1であるかについて左か右の枝を、 根から辿ってく. 葉にたどり着いたらそのラベルが述語の値.</p>
-<p>深さ <span class="math inline">\(k\)</span> の決定木 k-DT.</p>
-<h2 id="決定リスト">2.6 決定リスト</h2>
-<p>決定リストとは、次のようなペアのリストである: <span class="math display">\[(f_1, v_1), \cdots, (f_r, v_r)\]</span> ここで、<span class="math inline">\(f_j\)</span> は <span class="math inline">\(C^n_k\)</span> の要素である. つまり and で連なった変数列であり、述語として働く. <span class="math inline">\(v_j\)</span> は <span class="math inline">\(0\)</span> または <span class="math inline">\(1\)</span> である.</p>
+<p>深さ \(k\) の決定木 k-DT.</p>
+<h2>2.6 決定リスト</h2>
+<p>決定リストとは、次のようなペアのリストである:</p>
+\[(f_1, v_1), \cdots, (f_r, v_r)\]
+<p>ここで、 \(f_j\) は \(C^n_k\) の要素である. つまり and で連なった変数列であり、述語として働く. \(v_j\) は \(0\) または \(1\) である.</p>
 <p>これがどのように述語として働くかと言うと、</p>
-<p><span class="math display">\[\text{if } f_1(x) \text{ then } v_1 \text{ elsif } f_2(x) \text{ then } v_2 \text{ elsif } \cdots\]</span> です.</p>
-<p>ちゃんと完全関数とするためには、最後の <span class="math inline">\(f_r\)</span> は <span class="math inline">\(true\)</span> でないといけない.</p>
+\[\text{if } f_1(x) \text{ then } v_1 \text{ elsif } f_2(x) \text{ then } v_2 \text{ elsif } \cdots\]
+<p>です.</p>
+<p>ちゃんと完全関数とするためには、最後の \(f_r\) は \(true\) でないといけない.</p>
 <p>CNFなんかと違って決定リストは否定を簡単に決定リストとして構成することができる. つまり閉じている.</p>
-<h2 id="他の述語との関係">3. 他の述語との関係</h2>
-<h3 id="theorem-1">Theorem 1</h3>
-<p><span class="math inline">\(k &lt; n\)</span> のとき、k-CNF(n) や k-DNF(n) は k-DL(n) の真の部分集合である. つまり決定リストとして表現し直すことができる.</p>
-<h3 id="theorem-3">Theorem 3</h3>
-<p><span class="math inline">\(k &lt; n\)</span> のとき、 k-DT(n) は k-DL(n) の真の部分集合.</p>
-<h2 id="polynomial-learnability">4. Polynomial Learnability</h2>
+<h2>3. 他の述語との関係</h2>
+<h3>Theorem 1</h3>
+<p>\(k &lt; n\) のとき、k-CNF(n) や k-DNF(n) は k-DL(n) の真の部分集合である. つまり決定リストとして表現し直すことができる.</p>
+<h3>Theorem 3</h3>
+<p>\(k &lt; n\) のとき、 k-DT(n) は k-DL(n) の真の部分集合.</p>
+<h2>4. Polynomial Learnability</h2>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -159,5 +158,9 @@ original paper: <a href=https://people.csail.mit.edu/rivest/Rivest-DecisionLists
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

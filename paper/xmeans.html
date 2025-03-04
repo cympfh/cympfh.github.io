@@ -1,114 +1,168 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>x-means法</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/</a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">x-means法</h1>
-</header>
+<p><ul> <li>original paper: <a href=http://www.cs.cmu.edu/~dpelleg/download/xmeans.pdf>http://www.cs.cmu.edu/~dpelleg/download/xmeans.pdf</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#機械学習>機械学習</a> <a class='tag is-blue' href=index.html#クラスタリング>クラスタリング</a> </div></p>
+<h2>参考</h2>
 <ul>
-<li>
-original paper: <a href=http://www.cs.cmu.edu/~dpelleg/download/xmeans.pdf>http://www.cs.cmu.edu/~dpelleg/download/xmeans.pdf</a>
-</li>
+  <li>論文; http://www.cs.cmu.edu/~dpelleg/download/xmeans.pdf</li>
+  <li>記事; <a href="http://d.hatena.ne.jp/kaiseh/20090628/1246223266">適切なクラスタ数を推定するX-means法 - kaisehのブログ</a></li>
+  <li>さらなる拡張の論文: http://www.rd.dnc.ac.jp/~tunenori/doc/xmeans_euc.pdf</li>
+  <li><a href="http://ja.wikipedia.org/wiki/Kd%E6%9C%A8">kd木 - Wikipedia</a></li>
 </ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#機械学習>機械学習</a> <a class='tag is-blue' href=index.html#クラスタリング>クラスタリング</a></p>
-</div>
-<h2 id="参考">参考</h2>
-<ul>
-<li>論文; http://www.cs.cmu.edu/~dpelleg/download/xmeans.pdf</li>
-<li>記事; <a href="http://d.hatena.ne.jp/kaiseh/20090628/1246223266">適切なクラスタ数を推定するX-means法 - kaisehのブログ</a></li>
-<li>さらなる拡張の論文: http://www.rd.dnc.ac.jp/~tunenori/doc/xmeans_euc.pdf</li>
-<li><a href="http://ja.wikipedia.org/wiki/Kd%E6%9C%A8">kd木 - Wikipedia</a></li>
-</ul>
-<h2 id="intro">Intro</h2>
-<p>k-means法ってゆうクラスタリング手法がある。 これは使う側がクラスタ数 <span class="math inline">\(k\)</span> を決めないといけないために、 曰く、 <code>it scales poorly computationally</code> である。</p>
-<p>x-means法では再帰的に <span class="math inline">\(2\)</span>-means をやっていって、 Bayesian Information Criterion (BIC) (または Akaike ... (AIC)) といった情報量基準を以って再帰を停止する。 したがって、クラスタ数の推定も同時に行う。</p>
+<h2>Intro</h2>
+<p>k-means法ってゆうクラスタリング手法がある。 これは使う側がクラスタ数 \(k\) を決めないといけないために、 曰く、 <code>it scales poorly computationally</code> である。</p>
+<p>x-means法では再帰的に \(2\) -means をやっていって、 Bayesian Information Criterion (BIC) (または Akaike ... (AIC)) といった情報量基準を以って再帰を停止する。 したがって、クラスタ数の推定も同時に行う。</p>
 <p>/// 曰く、BICは自然世界に則していて、かつ計算も速いと。</p>
-<p>また、論文の実装では、 multiresolution <span class="math inline">\(k\)</span>d-tree (k次元木) を用い、ノードに統計量を持つことで、 全体の計算量を大幅に削減したとある。</p>
-<h2 id="notation">notation</h2>
+<p>また、論文の実装では、 multiresolution \(k\) d-tree (k次元木) を用い、ノードに統計量を持つことで、 全体の計算量を大幅に削減したとある。</p>
+<h2>notation</h2>
 <ul>
-<li><span class="math inline">\(p\)</span> 次元点の集合 <span class="math inline">\(D\)</span></li>
-<li><span class="math inline">\(R = |D|\)</span></li>
-<li><span class="math inline">\(D\)</span>を<span class="math inline">\(\{ D_i \}\)</span>に分割する (<span class="math inline">\(i = 1, 2 .. K\)</span>)</li>
-<li><span class="math inline">\(R_i = |D_i|\)</span></li>
-<li><span class="math inline">\(D_i\)</span> の重心を <span class="math inline">\(\mu_i\)</span> と書く</li>
+  <li>\(p\) 次元点の集合 \(D\)</li>
+  <li>\(R = |D|\)</li>
+  <li>\(D\) を \(\{ D_i \}\) に分割する ( \(i = 1, 2 .. K\) )</li>
+  <li>\(R_i = |D_i|\)</li>
+  <li>\(D_i\) の重心を \(\mu_i\) と書く</li>
 </ul>
-<h2 id="ベイズ情報量基準-bic">ベイズ情報量基準 (BIC)</h2>
+<h2>ベイズ情報量基準 (BIC)</h2>
 <p>再帰の停止条件にBICなる情報量基準を用いる。 これは、大きいほどクラスタリング精度が上がっているような量になっている。</p>
-<p><span class="math inline">\(D\)</span> に対してのモデル (分割のしかた) <span class="math inline">\(M\)</span> の BIC は近似的に次の式で求める。</p>
-<p><span class="math display">\[BIC(M) = I(D) - p/2 \cdot \log(R)\]</span></p>
-<p>ここで、説明してないのは <span class="math inline">\(I\)</span>であるが、 これは 正規分布を<span class="math inline">\(p\)</span>変量の正規分布を仮定した時の 対数尤度である。</p>
-<p><span class="math display">\[I(D) = \sum_{x \in D} P(x)
+<p>\(D\) に対してのモデル (分割のしかた) \(M\) の BIC は近似的に次の式で求める。</p>
+\[BIC(M) = I(D) - p&#x2F;2 \cdot \log(R)\]
+<p>ここで、説明してないのは \(I\) であるが、 これは 正規分布を \(p\) 変量の正規分布を仮定した時の 対数尤度である。</p>
+\[I(D) = \sum_{x \in D} P(x)
 = \sum_{D_i} \sum_{x \in D_i} - \log ( \sqrt{2 \pi} \sigma ^p )
-- \frac{1}{2 \sigma^2} | x - \mu_i |^2 + \log \frac{R_i}{R}\]</span></p>
-<p><span class="math inline">\(\sigma\)</span> は全体の分散 (the variance under the identical spherical Gaussian assumption) であるが、</p>
-<p><span class="math display">\[\sigma^2 = \frac{1}{R - K} \sum_{D_i} \sum_{x \in D_i} (x - \mu_i)^2\]</span></p>
+- \frac{1}{2 \sigma^2} | x - \mu_i |^2 + \log \frac{R_i}{R}\]
+<p>\(\sigma\) は全体の分散 (the variance under the identical spherical Gaussian assumption) であるが、</p>
+\[\sigma^2 = \frac{1}{R - K} \sum_{D_i} \sum_{x \in D_i} (x - \mu_i)^2\]
 <p>である。これで計算できることになった。</p>
 <p>分割前のBICを持っておいて、分割した後のBICとを比較し、 大きくなるなら、その分割をして、 再帰的に分割を試みる。 そうでないなら分割せずに停める。</p>
-<p>つまり、1つのクラスタ<span class="math inline">\(C\)</span>があって、それを2-meansで<span class="math inline">\(\{C_1, C_2\}\)</span>に分割する。<span class="math inline">\(BIC(\{C\})\)</span>と<span class="math inline">\(BIC(\{C_1, C_2\})\)</span>との大小を比較する。 分割したら、<span class="math inline">\(C_1\)</span>に対して、<span class="math inline">\(BIC(\{C_1\})\)</span>を計算する必要がある。</p>
+<p>つまり、1つのクラスタ \(C\) があって、それを2-meansで \(\{C_1, C_2\}\) に分割する。 \(BIC(\{C\})\) と \(BIC(\{C_1, C_2\})\) との大小を比較する。 分割したら、 \(C_1\) に対して、 \(BIC(\{C_1\})\) を計算する必要がある。</p>
+
 <!--
 
-  HTML として pandoc -B で include する.
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
 
-  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
-  markdown で書いてるだろうから例として次のような段落を書けばよい.
+    <div id=toc></div>
 
-```
-## INDEX
-<div id=toc></div>
-```
 
-  used in
-  - /memo/gnuplot
-  - /memo/linux
-  - /memo/imagemagick
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
 
 -->
 <script>
 (function() {
-  var sections = document.getElementsByTagName('h2');
-  var i;
-  var OL = document.createElement('ol');
-  for (i=0; i < sections.length; ++i) {
-    var LI = document.createElement('li');
-    var A = document.createElement('a');
-    A.innerHTML = sections[i].innerHTML;
-    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
-    A.href = '#' + i;
-    LI.appendChild(A);
-    OL.appendChild(LI);
 
-    var PREF = document.createElement('a');
-    PREF.name = i;
-    sections[i].appendChild(PREF);
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
   }
 
-  var done = false;
-  function work() {
-    if (done) return;
-    if ( document.getElementById('toc') === null) return; // no toc element
-    document.getElementById('toc').appendChild(OL);
-    done = true;
-  };
+  function level1() {
 
-  window.onload = work;
-  setTimeout(work,800);
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

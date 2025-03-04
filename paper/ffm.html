@@ -1,46 +1,49 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Field-aware Factorization Machines for CTR Prediction</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">Field-aware Factorization Machines for CTR Prediction</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=http://www.csie.ntu.edu.tw/~cjlin/papers/ffm.pdf>http://www.csie.ntu.edu.tw/~cjlin/papers/ffm.pdf</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#分類器>分類器</a> <a class='tag is-blue' href=index.html#機械学習>機械学習</a> <a class='tag is-blue' href=index.html#推薦システム>推薦システム</a></p>
-</div>
-<h2 id="概要">概要</h2>
+<p><ul> <li>original paper: <a href=http://www.csie.ntu.edu.tw/~cjlin/papers/ffm.pdf>http://www.csie.ntu.edu.tw/~cjlin/papers/ffm.pdf</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#分類器>分類器</a> <a class='tag is-blue' href=index.html#機械学習>機械学習</a> <a class='tag is-blue' href=index.html#推薦システム>推薦システム</a> </div></p>
+<h2>概要</h2>
 <p><a href="FM.html">Factorization Machines (FMs)</a> の改良.</p>
-<p>FMs では性別だろうが地名だろうがお構いなしに、one hot vector でエンコードしたものを並べたものを入力 <span class="math inline">\(x\)</span> として <span class="math display">\[\phi : \mathbb{R}^N \to \mathbb{R}\]</span> <span class="math display">\[\phi(x) = b + \sum_i w_i x_i + \sum_{i &lt; j} \langle v_i, v_j \rangle x_i x_j\]</span> としたのだった. ここで <span class="math inline">\(w_i\)</span> はスカラー値で、<span class="math inline">\(v_i\)</span> は適当な <span class="math inline">\(k\)</span> 次元のベクトル.</p>
+<p>FMs では性別だろうが地名だろうがお構いなしに、one hot vector でエンコードしたものを並べたものを入力 \(x\) として</p>
+\[\phi : \mathbb{R}^N \to \mathbb{R}\]
+\[\phi(x) = b + \sum_i w_i x_i + \sum_{i \lt j} \langle v_i, v_j \rangle x_i x_j\]
+<p>としたのだった. ここで \(w_i\) はスカラー値で、 \(v_i\) は適当な \(k\) 次元のベクトル.</p>
 <p>FFMs はその入力のフィールド (e.g. 性別, 地名) まで考慮しようというもの. その分パラメータは増えるが.</p>
-<h2 id="実装">実装</h2>
+<h2>実装</h2>
 <p>作者等による <a href="https://www.csie.ntu.edu.tw/~cjlin/libffm/">LIBFFM</a> がある.</p>
 <p>この <code>Download</code> のとこを見ると</p>
-<pre><code>Warning: FFM is prone to overfitting. See README in the package before using. </code></pre>
+<pre><code class="code">Warning: FFM is prone to overfitting. See README in the package before using. 
+</code></pre>
 <p>という警告がある. なるほど.</p>
-<h2 id="ffms">FFMs</h2>
-<p>入力 <span class="math inline">\(x\)</span> の成分に関してフィールドが <span class="math inline">\(F\)</span> 個 (<span class="math inline">\(f_1, f_2, \ldots, f_F\)</span>) あるとする. FMs の肝は相互作用 <span class="math inline">\(\langle v_i, v_j \rangle\)</span> であるが、これに、相手のフィールドを考慮させる. すなわち、<span class="math inline">\(x_i\)</span> に対応するベクトル <span class="math inline">\(v_i\)</span> に、どのフィールドへの作用かの情報を持たせる. 今まで <span class="math inline">\(v_i\)</span> 一個だったのを、 <span class="math display">\[v_{i,1}, \ldots, v_{i,f}\]</span> と、<span class="math inline">\(F\)</span> 個にして、 <span class="math display">\[\phi(x) = b + \sum_i w_i x_i + \sum_{i &lt; j} \langle v_{i,f_j}, v_{j,f_i} \rangle x_i x_j\]</span> とする. ここで <span class="math inline">\(f_j, f_i\)</span> はそれぞれ、<span class="math inline">\(x_j, x_i\)</span> に対応するフィールド. <span class="math inline">\(v_{i, f_j}\)</span> は <span class="math inline">\(x_i\)</span> のフィールド <span class="math inline">\(f_j\)</span> への作用に相当する.</p>
-<h2 id="パラメータ数計算量">パラメータ数、計算量</h2>
-<p>パラメータ数は FMs が <span class="math inline">\(nk\)</span> だったのに対して <span class="math inline">\(nFk\)</span> 個になる. 計算量は FMs では素朴に実装して <span class="math inline">\(O(n^2k)\)</span> 、最適化して <span class="math inline">\(O(nk)\)</span> であったが、 FFMs では特に最適化は提示されておらず、<span class="math inline">\(O(n^2k)\)</span> のままとなる.</p>
+<h2>FFMs</h2>
+<p>入力 \(x\) の成分に関してフィールドが \(F\) 個 ( \(f_1, f_2, \ldots, f_F\) ) あるとする. FMs の肝は相互作用 \(\langle v_i, v_j \rangle\) であるが、これに、相手のフィールドを考慮させる. すなわち、 \(x_i\) に対応するベクトル \(v_i\) に、どのフィールドへの作用かの情報を持たせる. 今まで \(v_i\) 一個だったのを、</p>
+\[v_{i,1}, \ldots, v_{i,f}\]
+<p>と、 \(F\) 個にして、</p>
+\[\phi(x) = b + \sum_i w_i x_i + \sum_{i &lt; j} \langle v_{i,f_j}, v_{j,f_i} \rangle x_i x_j\]
+<p>とする. ここで \(f_j, f_i\) はそれぞれ、 \(x_j, x_i\) に対応するフィールド. \(v_{i, f_j}\) は \(x_i\) のフィールド \(f_j\) への作用に相当する.</p>
+<h2>パラメータ数、計算量</h2>
+<p>パラメータ数は FMs が \(nk\) だったのに対して \(nFk\) 個になる. 計算量は FMs では素朴に実装して \(O(n^2k)\) 、最適化して \(O(nk)\) であったが、 FFMs では特に最適化は提示されておらず、 \(O(n^2k)\) のままとなる.</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -145,5 +148,9 @@ original paper: <a href=http://www.csie.ntu.edu.tw/~cjlin/papers/ffm.pdf>http://
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

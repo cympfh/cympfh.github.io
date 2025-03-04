@@ -1,65 +1,60 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Deformable Convolutional Networks</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">Deformable Convolutional Networks</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=https://arxiv.org/abs/1703.06211>https://arxiv.org/abs/1703.06211</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#画像認識>画像認識</a></p>
-</div>
-<h2 id="links">links</h2>
-<ol type="1">
-<li><a href="https://arxiv.org/abs/1703.06211">original paper</a></li>
-<li><a href="https://medium.com/@phelixlau/notes-on-deformable-convolutional-networks-baaabbc11cf3#.o1nd2nv1t">a note</a></li>
+<p><ul> <li>original paper: <a href=https://arxiv.org/abs/1703.06211>https://arxiv.org/abs/1703.06211</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#画像認識>画像認識</a> </div></p>
+<h2>links</h2>
+<ol>
+  <li><a href="https://arxiv.org/abs/1703.06211">original paper</a></li>
+  <li><a href="https://medium.com/@phelixlau/notes-on-deformable-convolutional-networks-baaabbc11cf3#.o1nd2nv1t">a note</a></li>
 </ol>
-<h2 id="概要">概要</h2>
-<p>所謂CNNはカーネルが固定だけど、それ自体を学習可能にする. その点を以って &quot;deformable&quot; と形容する. 同様の方式でプーリングも行える. これを RoI (region-of-interest) pooling と呼称する.</p>
-<h2 id="手法">手法</h2>
-<h3 id="cnn">CNN</h3>
+<h2>概要</h2>
+<p>所謂CNNはカーネルが固定だけど、それ自体を学習可能にする. その点を以って "deformable" と形容する. 同様の方式でプーリングも行える. これを RoI (region-of-interest) pooling と呼称する.</p>
+<h2>手法</h2>
+<h3>CNN</h3>
 <p>通常のCNNは次のように定式化出来る.</p>
 <p>カーネルとは二次元グリッド上のオフセットの集合</p>
-<p><span class="math display">\[\mathcal{R} = \{ p_i = (x_i, y_i) \}_{i \in I}\]</span></p>
-<p>のこと. 例えば &quot;3x3 カーネル&quot; とは</p>
-<p><span class="math display">\[\mathcal{R} = \{ (x, y) : -1 \leq x \leq 1, -1 \leq y \leq 1 \}.\]</span></p>
-<p>CNN はグリッド上の点 <span class="math inline">\(p\)</span> 及び、グリッドの上の重み <span class="math inline">\(w(p)\)</span> と入力の値 <span class="math inline">\(x(p)\)</span> を以って</p>
-<p><span class="math display">\[y(p) = \sum_{p_i \in \mathcal{R}} w(p_i) x(p + p_i)\]</span></p>
-<p>という計算によって <span class="math inline">\(x\)</span> から <span class="math inline">\(y\)</span> を求める手続きのこと. ここで <span class="math inline">\(w(p_i)\)</span> のみを訓練する.</p>
-<h3 id="deformable-cnn">deformable CNN</h3>
+\[\mathcal{R} = \{ p_i = (x_i, y_i) \}_{i \in I}\]
+<p>のこと. 例えば "3x3 カーネル" とは</p>
+\[\mathcal{R} = \{ (x, y) : -1 \leq x \leq 1, -1 \leq y \leq 1 \}.\]
+<p>CNN はグリッド上の点 \(p\) 及び、グリッドの上の重み \(w(p)\) と入力の値 \(x(p)\) を以って</p>
+\[y(p) = \sum_{p_i \in \mathcal{R}} w(p_i) x(p + p_i)\]
+<p>という計算によって \(x\) から \(y\) を求める手続きのこと. ここで \(w(p_i)\) のみを訓練する.</p>
+<h3>deformable CNN</h3>
 <p>ここでカーネルの各点にオフセットを設けることで、カーネルの形を変更する:</p>
-<p><span class="math display">\[y(p) = \sum_{p_i \in \mathcal{R}} w(p_i) x(p + p_i + \Delta p_i)\]</span></p>
-<p><span class="math inline">\(\Delta p_i\)</span> がカーネルの各点のオフセット.</p>
-<p>この <span class="math inline">\(\Delta p_i\)</span> 自体がどこから来るかというと、これは通常の CNN の一つのカーネルから計算/学習をする.</p>
-<p><span class="math display">\[\Delta p_i = \sum_{p_i \in \mathcal{R}} v(p_i) x(p + p_i)\]</span></p>
-<p><span class="math inline">\(\Delta p_i\)</span> は <span class="math inline">\(i=1,2,\ldots,N\)</span> (<span class="math inline">\(N=|\mathcal{R}|\)</span>) だけあって、 各々は実際にはグリッド上の点を表現するために <span class="math inline">\((x, y)\)</span> であるので、 <span class="math inline">\(\Delta p_i\)</span> 全てを求めるために、<span class="math inline">\(2N\)</span> 個の CNN を使っている.</p>
-<h3 id="roi-region-of-interest-pooling">RoI (Region-of-interest) Pooling</h3>
+\[y(p) = \sum_{p_i \in \mathcal{R}} w(p_i) x(p + p_i + \Delta p_i)\]
+<p>\(\Delta p_i\) がカーネルの各点のオフセット.</p>
+<p>この \(\Delta p_i\) 自体がどこから来るかというと、これは通常の CNN の一つのカーネルから計算/学習をする.</p>
+\[\Delta p_i = \sum_{p_i \in \mathcal{R}} v(p_i) x(p + p_i)\]
+<p>\(\Delta p_i\) は \(i=1,2,\ldots,N\) ( \(N=|\mathcal{R}|\) ) だけあって、 各々は実際にはグリッド上の点を表現するために \((x, y)\) であるので、 \(\Delta p_i\) 全てを求めるために、 \(2N\) 個の CNN を使っている.</p>
+<h3>RoI (Region-of-interest) Pooling</h3>
 <p>同様にカーネルを学習可能にした Average Pooling を RoI Pooling として提案している.</p>
-<p><span class="math display">\[y(p) = \frac{1}{N} \sum_{p_i \in \mathcal{R}} x(p + p_i + \Delta p_i)\]</span></p>
-<p>やはりオフセット <span class="math inline">\(\Delta p_i\)</span> を学習可能な CNN で計算する.</p>
-<h2 id="実験">実験</h2>
+\[y(p) = \frac{1}{N} \sum_{p_i \in \mathcal{R}} x(p + p_i + \Delta p_i)\]
+<p>やはりオフセット \(\Delta p_i\) を学習可能な CNN で計算する.</p>
+<h2>実験</h2>
 <p>物体検知の各手法に本手法を差し込むことで僅かながら性能向上が確認出来た.</p>
-<h2 id="感想">感想</h2>
+<h2>感想</h2>
 <p>実装がただ大変なだけで、期待するほどの性能向上がなくて残念.</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -164,5 +159,9 @@ original paper: <a href=https://arxiv.org/abs/1703.06211>https://arxiv.org/abs/1
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

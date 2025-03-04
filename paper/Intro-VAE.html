@@ -1,85 +1,85 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>[1807.06358] IntroVAE: Introspective Variational Autoencoders for Photographic Image Synthesis</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">[1807.06358] IntroVAE: Introspective Variational Autoencoders for Photographic Image Synthesis</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=https://arxiv.org/abs/1807.06358>https://arxiv.org/abs/1807.06358</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#オートエンコーダ>オートエンコーダ</a> <a class='tag is-blue' href=index.html#生成モデル>生成モデル</a> <a class='tag is-blue' href=index.html#VAE>VAE</a></p>
-</div>
-<p><span class="math inline">\(\require{AMScd}\)</span> <span class="math inline">\(\def\KL{D_{\text{KL}}}\)</span></p>
+<p><ul> <li>original paper: <a href=https://arxiv.org/abs/1807.06358>https://arxiv.org/abs/1807.06358</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#オートエンコーダ>オートエンコーダ</a> <a class='tag is-blue' href=index.html#生成モデル>生成モデル</a> <a class='tag is-blue' href=index.html#VAE>VAE</a> </div></p>
+<p>\(\require{amscd}\) \(\def\KL{D_{\text{KL}}}\)</p>
 <p>関数適用の括弧は極力省略する.</p>
-<h2 id="概要">概要</h2>
+<h2>概要</h2>
 <p>VAE を introspective にやる.</p>
-<h2 id="introvae">IntroVAE</h2>
-<h3 id="vae">VAE</h3>
+<h2>IntroVAE</h2>
+<h3>VAE</h3>
 <p>VAE を思い出すと,</p>
-<p><span class="math display">\[\begin{CD}
+\[\begin{CD}
 X @&gt;q_\phi&gt;&gt; Z @&gt;p_\theta&gt;&gt; X
-\end{CD}\]</span></p>
-<p>encoder 部分を確率分布 <span class="math inline">\(q_\phi(z|x)\)</span>, decoder 部分を確率分布 <span class="math inline">\(p_\theta(x|z)\)</span> とし, 損失関数は</p>
+\end{CD}\]
+<p>encoder 部分を確率分布 \(q_\phi(z|x)\) , decoder 部分を確率分布 \(p_\theta(x|z)\) とし, 損失関数は</p>
 <ul>
-<li><span class="math inline">\(L_{\text{AE}} = - \mathbb{E}_{z \sim q_\phi} p_\theta(x|z)\)</span></li>
-<li><span class="math inline">\(L_{\text{REG}} = \KL(q_\phi(z|x) \| p(z))\)</span></li>
+  <li>\(L_{\text{AE}} = - \mathbb{E}_{z \sim q_\phi} p_\theta(x|z)\)</li>
+  <li>\(L_{\text{REG}} = \KL(q_\phi(z|x) \| p(z))\)</li>
 </ul>
-<p>の和. <span class="math inline">\(p(z)\)</span> は予め (普通正規分布に) 決めておく.</p>
-<h3 id="adversarial-distribution-matching">Adversarial distribution matching</h3>
+<p>の和. \(p(z)\) は予め (普通正規分布に) 決めておく.</p>
+<h3>Adversarial distribution matching</h3>
 <p>VAE に GAN を足す.</p>
-<p>実際のデータ <span class="math inline">\(x\)</span> と, <span class="math inline">\(p(z)\)</span> からサンプリングした <span class="math inline">\(z&#39;\)</span> を元に生成した <span class="math inline">\(x&#39;\)</span> とで GAN をする.</p>
+<p>実際のデータ \(x\) と, \(p(z)\) からサンプリングした \(z&#x27;\) を元に生成した \(x&#x27;\) とで GAN をする.</p>
 <ul>
-<li>generator <span class="math inline">\(G \colon Z \to X\)</span></li>
-<li>inference model <span class="math inline">\(E \colon X \to \mathbb R\)</span>
-<ul>
-<li><span class="math inline">\(E(x) = \KL(q_\phi(z|x) \| p(z))\)</span></li>
-</ul></li>
+  <li>generator \(G \colon Z \to X\)</li>
+  <li>
+    inference model \(E \colon X \to \mathbb R\)
+    <ul>
+      <li>\(E(x) = \KL(q_\phi(z|x) \| p(z))\)</li>
+    </ul>
+  </li>
 </ul>
 <p>を用いて以下の損失関数を設計する:</p>
 <ul>
-<li><span class="math inline">\(L_E(x,z) = E(x) + \left[ m - EGz \right]^+\)</span>
-<ul>
-<li><span class="math inline">\(\left[ \cdot \right]^+ = \max \{ 0, \cdot \}\)</span></li>
-</ul></li>
-<li><span class="math inline">\(L_G(z) = EGz\)</span></li>
+  <li>
+    \(L_E(x,z) = E(x) + \left[ m - EGz \right]^+\)
+    <ul>
+      <li>\(\left[ \cdot \right]^+ = \max \{ 0, \cdot \}\)</li>
+    </ul>
+  </li>
+  <li>\(L_G(z) = EGz\)</li>
 </ul>
-<p><span class="math inline">\(L_E\)</span> の 1 項目はさっきの <span class="math inline">\(L_{\text{REG}}\)</span> で, 2 項目は生成するデータの分布が真の分布と <span class="math inline">\(m\)</span> 以下しか離れてないようにするもの. ここで <span class="math inline">\(m\)</span> は正の定数.</p>
-<p>GAN の方式で従って <span class="math display">\[\min_E \mathbb{E}_{x \sim p(x), z \sim p(z)} L_E(x,z)\]</span> <span class="math display">\[\min_G \mathbb{E}_{z \sim p(z)} L_G(z)\]</span> によってそれぞれを訓練する.</p>
-<h4 id="theorem-1">Theorem 1</h4>
-<p>ナッシュ均衡に達した時点の <span class="math inline">\((E,G)\)</span> を <span class="math inline">\((E^*, G^*)\)</span> とする. また <span class="math inline">\(\forall x \in X, p(x) &gt; 0\)</span> とする. このとき, <span class="math display">\[p(x) = p(G^*(z))\]</span> <span class="math display">\[E^*(x) = \gamma; \gamma \in [0,m], \text{fixed}\]</span></p>
-<h3 id="introspective-variational-inference">Introspective variational inference</h3>
+<p>\(L_E\) の 1 項目はさっきの \(L_{\text{REG}}\) で, 2 項目は生成するデータの分布が真の分布と \(m\) 以下しか離れてないようにするもの. ここで \(m\) は正の定数.</p>
+<p>GAN の方式で従って</p>
+\[\min_E \mathbb{E}_{x \sim p(x), z \sim p(z)} L_E(x,z)\]
+\[\min_G \mathbb{E}_{z \sim p(z)} L_G(z)\]
+<p>によってそれぞれを訓練する.</p>
+<h4>Theorem 1</h4>
+<p>ナッシュ均衡に達した時点の \((E,G)\) を \((E^*, G^*)\) とする. また \(\forall x \in X, p(x) &gt; 0\) とする. このとき,</p>
+\[p(x) = p(G^*(z))\]
+\[E^*(x) = \gamma; \gamma \in [0,m], \text{fixed}\]
+<h3>Introspective variational inference</h3>
 <p>以下のように修正する:</p>
 <ul>
-<li><span class="math inline">\(L_E(x,z) = E(x) + \left[ m - EGz \right]^+ + L_{\text{AE}}(x)\)</span></li>
-<li><span class="math inline">\(L_G(z) = EGz + L_{\text{AE}}(x)\)</span></li>
+  <li>\(L_E(x,z) = E(x) + \left[ m - EGz \right]^+ + L_{\text{AE}}(x)\)</li>
+  <li>\(L_G(z) = EGz + L_{\text{AE}}(x)\)</li>
 </ul>
 <p>AE で罰金項だったのが Discriminator になってる.</p>
-<figure>
-<img src="https://i.imgur.com/sxkwju9.png" />
-</figure>
-<h2 id="results">Results</h2>
-<figure>
-<img src="https://i.imgur.com/ozHK9Rp.png" />
-</figure>
+<p><img src="https://i.imgur.com/sxkwju9.png" alt="" /></p>
+<h2>Results</h2>
+<p><img src="https://i.imgur.com/ozHK9Rp.png" alt="" /></p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -184,5 +184,9 @@ X @&gt;q_\phi&gt;&gt; Z @&gt;p_\theta&gt;&gt; X
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

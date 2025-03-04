@@ -1,103 +1,100 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>[1707.05589] On the State of the Art of Evaluation in Neural Language Models</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">[1707.05589] On the State of the Art of Evaluation in Neural Language Models</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=https://arxiv.org/abs/1707.05589>https://arxiv.org/abs/1707.05589</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#自然言語処理>自然言語処理</a> <a class='tag is-blue' href=index.html#深層学習>深層学習</a></p>
-</div>
-<h2 id="概要">概要</h2>
+<p><ul> <li>original paper: <a href=https://arxiv.org/abs/1707.05589>https://arxiv.org/abs/1707.05589</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#自然言語処理>自然言語処理</a> <a class='tag is-blue' href=index.html#深層学習>深層学習</a> </div></p>
+<h2>概要</h2>
 <p>Neural Language Model のSOTAなアーキテクチャを同じ環境で比較実験をする</p>
-<h2 id="models">Models</h2>
-<ol type="1">
-<li>Long Short-Term Memory (LSTM) (Hochreiter &amp; Schmidhuber, 1997)</li>
-<li>Recurrent Highway Network (RHN) (Zilly+, 2016)</li>
-<li>NAS (Zoph &amp; Le, 2016)</li>
+<h2>Models</h2>
+<ol>
+  <li>Long Short-Term Memory (LSTM) (Hochreiter & Schmidhuber, 1997)</li>
+  <li>Recurrent Highway Network (RHN) (Zilly+, 2016)</li>
+  <li>NAS (Zoph & Le, 2016)</li>
 </ol>
-<figure>
-<img src="https://i.imgur.com/81S7LOt.png" />
-</figure>
-<h2 id="dataset">Dataset</h2>
-<ol type="1">
-<li>Penn Treebank (Marcus+, 1993), preprocessed (Mikolov+, 2010)</li>
-<li>Wikitext-2 (Merity+, 2016)</li>
-<li>Enwik8 from the Hutter Prize dataset (Hutter, 2012)
-<ul>
-<li>こいつだけ char-level model にする</li>
-</ul></li>
+<p><img src="https://i.imgur.com/81S7LOt.png" alt="" /></p>
+<h2>Dataset</h2>
+<ol>
+  <li>Penn Treebank (Marcus+, 1993), preprocessed (Mikolov+, 2010)</li>
+  <li>Wikitext-2 (Merity+, 2016)</li>
+  <li>
+    Enwik8 from the Hutter Prize dataset (Hutter, 2012)
+    <ul>
+      <li>こいつだけ char-level model にする</li>
+    </ul>
+  </li>
 </ol>
 <p>内の最初の90M文字を train に用いて残りの10M文字で validation と test を作った.</p>
-<h2 id="training">Training</h2>
+<h2>Training</h2>
 <p>Penn Treebank と Wikitext-2 には以下の通りにする.</p>
 <ul>
-<li>batch size: 64</li>
-<li>Adam (Kingma &amp; Ba, 2014)
-<ul>
-<li><span class="math inline">\(\beta_1=0\)</span>
-<ul>
-<li>exponential moving average が切られるのでほぼモーメント無しの RMSProp</li>
-</ul></li>
-<li><span class="math inline">\(\beta_2 = 0.999, \epsilon=10^{-9}\)</span> (default)</li>
-</ul></li>
+  <li>batch size: 64</li>
+  <li>
+    Adam (Kingma & Ba, 2014)
+    <ul>
+      <li>
+        \(\beta_1=0\)
+        <ul>
+          <li>exponential moving average が切られるのでほぼモーメント無しの RMSProp</li>
+        </ul>
+      </li>
+      <li>\(\beta_2 = 0.999, \epsilon=10^{-9}\) (default)</li>
+    </ul>
+  </li>
 </ul>
 <p>Enwik8 は char-level にしたいので以下のように変える</p>
 <ul>
-<li>batch size: 128</li>
-<li>Adam (Kingma &amp; Ba, 2014)
-<ul>
-<li><span class="math inline">\(\beta_1=0\)</span>
-<ul>
-<li>exponential moving average が切られるのでほぼモーメント無しの RMSProp</li>
-</ul></li>
-<li><span class="math inline">\(\beta_2 = 0.99, \epsilon=10^{-5}\)</span> (default)</li>
-</ul></li>
+  <li>batch size: 128</li>
+  <li>
+    Adam (Kingma & Ba, 2014)
+    <ul>
+      <li>
+        \(\beta_1=0\)
+        <ul>
+          <li>exponential moving average が切られるのでほぼモーメント無しの RMSProp</li>
+        </ul>
+      </li>
+      <li>\(\beta_2 = 0.99, \epsilon=10^{-5}\) (default)</li>
+    </ul>
+  </li>
 </ul>
-<h2 id="evaluation">Evaluation</h2>
+<h2>Evaluation</h2>
 <p>validation での perlexity が best の時点のモデルで評価する. 評価時には batch size は 1 にする. Word-level だと, 訓練のときのバッチサイズのままにすると 0.3 PPL くらい悪くなる. Char-level だと影響は無いのでどうでも良いらしい.</p>
-<h3 id="hyperparameter-tuning">Hyperparameter tuning</h3>
+<h3>Hyperparameter tuning</h3>
 <p>Google Vizier (Golovin+, 2017) を使う. こいつはブラックボックス最適化をしてくれる. 簡単のために以下に限って最適化をした:</p>
-<ol type="1">
-<li>learning rate</li>
-<li>input embedding ratio</li>
-<li>input dropout</li>
-<li>state dropout</li>
-<li>output dropout</li>
-<li>weight decay</li>
+<ol>
+  <li>learning rate</li>
+  <li>input embedding ratio</li>
+  <li>input dropout</li>
+  <li>state dropout</li>
+  <li>output dropout</li>
+  <li>weight decay</li>
 </ol>
-<h2 id="results">Results</h2>
-<p>論文報告との比較. Perplexity なので小さい方が良い (PPL<span class="math inline">\(=2^H\)</span>).</p>
-<center>
-<figure>
-<img src="https://i.imgur.com/jJ9G5pK.png" />
-</figure>
-<figure>
-<img src="https://i.imgur.com/W9F7hZF.png" />
-</figure>
-<img src="https://i.imgur.com/8NDjRov.png" />
-</center>
+<h2>Results</h2>
+<p>論文報告との比較. Perplexity なので小さい方が良い (PPL \(=2^H\) ).</p>
+<p><center> <img src="https://i.imgur.com/jJ9G5pK.png" alt="" /></p>
+<p><img src="https://i.imgur.com/W9F7hZF.png" alt="" /></p>
+<p><img src="https://i.imgur.com/8NDjRov.png" alt="" /> </center></p>
 <p>パラメータを注意深く選べば報告よりも良くなる.</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -202,5 +199,9 @@ original paper: <a href=https://arxiv.org/abs/1707.05589>https://arxiv.org/abs/1
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

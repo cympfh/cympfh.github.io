@@ -1,63 +1,59 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Unsupervised Learning by Predicting Noise</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">Unsupervised Learning by Predicting Noise</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=https://arxiv.org/abs/1704.05310>https://arxiv.org/abs/1704.05310</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#画像認識>画像認識</a></p>
-</div>
-<h2 id="概要">概要</h2>
+<p><ul> <li>original paper: <a href=https://arxiv.org/abs/1704.05310>https://arxiv.org/abs/1704.05310</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#画像認識>画像認識</a> </div></p>
+<h2>概要</h2>
 <p>教師ナシで ImageNet を解く. Noise As Target (NAT) という手法を提案しており、文字通り、ノイズを教師信号に用いる.</p>
-<h2 id="手法">手法</h2>
-<p><span class="math inline">\(n\)</span> 枚ある画像データを用いて、適切な <span class="math inline">\(d\)</span> 次元特徴ベクトルへ写す <span class="math inline">\(f_\theta\)</span> を学習したい. 画像 <span class="math inline">\(x_i\)</span> に対して 適切なラベル <span class="math inline">\(y_i\)</span> がある教師アリの状態では、これは例えば</p>
-<p><span class="math display">\[\min_{\theta, \phi}\ell(g_\phi(f_\theta(x_i)), y_i)\]</span></p>
-<p>を解くことなどによって良さそうな特徴ベクトルが得られる. ここで <span class="math inline">\(\ell\)</span> は適当な損失関数.</p>
-<p>今問題を簡単にするために、特徴ベクトルを <span class="math inline">\(S^{d-1}\)</span> 上に限る. 即ち (非ゼロな) <span class="math inline">\(d\)</span> 次元ベクトルを得た後に正規化を行う. <span class="math inline">\(n\)</span> 枚の画像がこの上に写るわけだが、一様に写ることを理想だとする. 基本のアイデアは、<span class="math inline">\(S^{d-1}\)</span> から十分個数の点を一様にサンプリングしたとき、いずれかの画像が写るべき点が1つはあるはずだ、というものである. また、異なる画像が同じ点には写らない (縮退しない) こともついでに要請する.</p>
-<p>画像が <span class="math inline">\(n\)</span> 枚に対して十分多くの <span class="math inline">\(k\)</span> 個のベクトル <span class="math display">\[c_1, c_2, \ldots,c_k\]</span> を <span class="math inline">\(S^{d-1}\)</span> から一様サンプリングする. これを並べて出来る行列</p>
-<p><span class="math display">\[C = \left[c_1, c_2, \ldots, c_k\right] (\in \mathbb{R}^{k \times d})\]</span></p>
-<p>これと、どの特徴ベクトル <span class="math inline">\(c_j\)</span> がどの画像 <span class="math inline">\(x_i\)</span> に割り当てられるかという行列</p>
-<p><span class="math display">\[P = \{0,1\}^{n \times k}\]</span></p>
+<h2>手法</h2>
+<p>\(n\) 枚ある画像データを用いて、適切な \(d\) 次元特徴ベクトルへ写す \(f_\theta\) を学習したい. 画像 \(x_i\) に対して 適切なラベル \(y_i\) がある教師アリの状態では、これは例えば</p>
+\[\min_{\theta, \phi}\ell(g_\phi(f_\theta(x_i)), y_i)\]
+<p>を解くことなどによって良さそうな特徴ベクトルが得られる. ここで \(\ell\) は適当な損失関数.</p>
+<p>今問題を簡単にするために、特徴ベクトルを \(S^{d-1}\) 上に限る. 即ち (非ゼロな) \(d\) 次元ベクトルを得た後に正規化を行う. \(n\) 枚の画像がこの上に写るわけだが、一様に写ることを理想だとする. 基本のアイデアは、 \(S^{d-1}\) から十分個数の点を一様にサンプリングしたとき、いずれかの画像が写るべき点が1つはあるはずだ、というものである. また、異なる画像が同じ点には写らない (縮退しない) こともついでに要請する.</p>
+<p>画像が \(n\) 枚に対して十分多くの \(k\) 個のベクトル</p>
+\[c_1, c_2, \ldots,c_k\]
+<p>を \(S^{d-1}\) から一様サンプリングする. これを並べて出来る行列</p>
+\[C = \left[c_1, c_2, \ldots, c_k\right] (\in \mathbb{R}^{k \times d})\]
+<p>これと、どの特徴ベクトル \(c_j\) がどの画像 \(x_i\) に割り当てられるかという行列</p>
+\[P = \{0,1\}^{n \times k}\]
 <p>とを掛けあわせた</p>
-<p><span class="math display">\[Y = PC\]</span></p>
-<p>が、<span class="math inline">\(X\)</span> が写るべき先というわけで、</p>
-<p><span class="math display">\[\min_{\theta, P}\ell(f_\theta(X), PC)\]</span></p>
-<p>を目指す. ここで割当行列 <span class="math inline">\(P\)</span> もパラメータであることに註意.</p>
-<p>さて <span class="math inline">\(P\)</span> には制約がある. それは、一つの画像は一つの特徴ベクトルが割り当てられ、同じ特徴ベクトルは高々一つの画像にしか割り当てられないというものである. 論文ではこれを</p>
+\[Y = PC\]
+<p>が、 \(X\) が写るべき先というわけで、</p>
+\[\min_{\theta, P}\ell(f_\theta(X), PC)\]
+<p>を目指す. ここで割当行列 \(P\) もパラメータであることに註意.</p>
+<p>さて \(P\) には制約がある. それは、一つの画像は一つの特徴ベクトルが割り当てられ、同じ特徴ベクトルは高々一つの画像にしか割り当てられないというものである. 論文ではこれを</p>
 <ul>
-<li><span class="math inline">\(P 1_k \leq 1_n\)</span></li>
-<li><span class="math inline">\(P^t 1_n = 1_k\)</span></li>
+  <li>\(P 1_k \leq 1_n\)</li>
+  <li>\(P^t 1_n = 1_k\)</li>
 </ul>
-<p>と書かれていた. これは独自解釈だが、<span class="math inline">\(1_k, 1_n\)</span> はそれぞれ <span class="math inline">\(k \times n, n \times k\)</span> な対角成分が 1 の行列なんだと思う. じゃないと合わないので. でも普通、<span class="math inline">\(1_m\)</span> って正方な単位行列だと思わん？？？？</p>
-<h3 id="学習方法">学習方法</h3>
-<p><span class="math inline">\(P\)</span> の更新と <span class="math inline">\(\theta\)</span> の更新を交互に繰り返す.</p>
-<p><span class="math inline">\(\theta\)</span> の更新は所謂勾配法による. ここは普通に CNN の学習.</p>
-<p><span class="math inline">\(P\)</span> の更新は割当問題を解くことによる.<br />
-厳密的に解くにはハンガリアン法で解けるがこれはかなり遅い (分かんないけど <span class="math inline">\(O(n^2k)\)</span> か <span class="math inline">\(O(nk^2)\)</span> かですかね). そこでまず <span class="math inline">\(k=n\)</span> とする (マジかよ…). 特徴ベクトルはちょうどどれか一つの画像に割り当てられているという条件から、制約は <span class="math inline">\(P 1_n = 1_n, P^t 1_n = 1_n\)</span> と書かれる.</p>
-<p>そして、どうせ深層学習の部分で <span class="math inline">\(n\)</span> の画像を一つのサイズを <span class="math inline">\(b\)</span> とする <span class="math inline">\(n/b\)</span> 個のミニバッチに分けている. そこで、ミニバッチごとに <span class="math inline">\(b \times b\)</span> の割当行列 <span class="math inline">\(P\)</span> を求めることにする. この <span class="math inline">\(P\)</span> の最適化はハンガリアン法でやって <span class="math inline">\(O(b^3)\)</span> 掛かる. これが <span class="math inline">\(n/b\)</span> 個なので結局、全体で <span class="math inline">\(O(nb^2)\)</span> かかる.</p>
-<h2 id="感想">感想</h2>
-<p>ランダムはベクトルを教師信号に使うとだけ聞くとかなり驚いたが、割当行列も一緒に学習すると聞けば納得する. 上手いなあ. ただ <span class="math inline">\(P\)</span> の学習方法がしょぼい…。</p>
+<p>と書かれていた. これは独自解釈だが、 \(1_k, 1_n\) はそれぞれ \(k \times n, n \times k\) な対角成分が 1 の行列なんだと思う. じゃないと合わないので. でも普通、 \(1_m\) って正方な単位行列だと思わん？？？？</p>
+<h3>学習方法</h3>
+<p>\(P\) の更新と \(\theta\) の更新を交互に繰り返す.</p>
+<p>\(\theta\) の更新は所謂勾配法による. ここは普通に CNN の学習.</p>
+<p>\(P\) の更新は割当問題を解くことによる. <br /> 厳密的に解くにはハンガリアン法で解けるがこれはかなり遅い (分かんないけど \(O(n^2k)\) か \(O(nk^2)\) かですかね). そこでまず \(k=n\) とする (マジかよ…). 特徴ベクトルはちょうどどれか一つの画像に割り当てられているという条件から、制約は \(P 1_n = 1_n, P^t 1_n = 1_n\) と書かれる.</p>
+<p>そして、どうせ深層学習の部分で \(n\) の画像を一つのサイズを \(b\) とする \(n&#x2F;b\) 個のミニバッチに分けている. そこで、ミニバッチごとに \(b \times b\) の割当行列 \(P\) を求めることにする. この \(P\) の最適化はハンガリアン法でやって \(O(b^3)\) 掛かる. これが \(n&#x2F;b\) 個なので結局、全体で \(O(nb^2)\) かかる.</p>
+<h2>感想</h2>
+<p>ランダムはベクトルを教師信号に使うとだけ聞くとかなり驚いたが、割当行列も一緒に学習すると聞けば納得する. 上手いなあ. ただ \(P\) の学習方法がしょぼい…。</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -162,5 +158,9 @@ original paper: <a href=https://arxiv.org/abs/1704.05310>https://arxiv.org/abs/1
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

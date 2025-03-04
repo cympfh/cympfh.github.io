@@ -1,61 +1,63 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>[1811.00995] Invertible Residual Networks</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">[1811.00995] Invertible Residual Networks</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=https://arxiv.org/abs/1811.00995>https://arxiv.org/abs/1811.00995</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a></p>
-</div>
-<p><span class="math inline">\(\def\Lip{\mathrm{Lip}}\)</span></p>
+<p><ul> <li>original paper: <a href=https://arxiv.org/abs/1811.00995>https://arxiv.org/abs/1811.00995</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#深層学習>深層学習</a> </div></p>
+<p>\(\def\Lip{\mathrm{Lip}}\)</p>
 <p>生成モデルのことを考えると, それはクラス分類モデルの逆関数なので, invertible (reversible, 全単射的) である必要がある. Figure 1 はただの ResNet だと, 詰まる部分があって逆関数が無いことになってしまうことを言っている. 提案する Invertible Residual Networks (i-ResNet) はラベルなし最尤推定で生成モデルを学習することで, 全単射的なモデルを学習する.</p>
-<figure>
-<img src="https://i.imgur.com/itccUeh.png" />
-</figure>
-<h2 id="resnet-の形式化">ResNet の形式化</h2>
-<p>インデックス (時刻) <span class="math inline">\(t\)</span> に対して, ResNet の各レイヤーは <span class="math inline">\(\Lip(g_t) &lt; 1\)</span> なるブロック <span class="math inline">\(g_t \colon \mathbb R^d \to \mathbb R^d\)</span> によって <span class="math display">\[x_{t+1} \leftarrow x_t + g_t(x_t) = (I + g_t)(x_t)\]</span> と表される. <span class="math inline">\(\Lip\)</span> はリプシッツ定数, <span class="math inline">\(I\)</span> は恒等写像.</p>
-<h3 id="theorem-1">Theorem 1</h3>
-<p><span class="math inline">\(\Lip(g)&lt;1\)</span> のとき <span class="math inline">\(I+g\)</span> は invertible.</p>
-<p><span class="math inline">\(y=(I+g)(x)\)</span> について, この逆関数を不動点として与えることが出来る. すなわち,</p>
+<p><img src="https://i.imgur.com/itccUeh.png" alt="" /></p>
+<h2>ResNet の形式化</h2>
+<p>インデックス (時刻) \(t\) に対して, ResNet の各レイヤーは \(\Lip(g_t) &lt; 1\) なるブロック \(g_t \colon \mathbb R^d \to \mathbb R^d\) によって</p>
+\[x_{t+1} \leftarrow x_t + g_t(x_t) = (I + g_t)(x_t)\]
+<p>と表される. \(\Lip\) はリプシッツ定数, \(I\) は恒等写像.</p>
+<h3>Theorem 1</h3>
+<p>\(\Lip(g)&lt;1\) のとき \(I+g\) は invertible.</p>
+<p>\(y=(I+g)(x)\) について, この逆関数を不動点として与えることが出来る. すなわち,</p>
 <ul>
-<li><span class="math inline">\(x^0 = y\)</span></li>
-<li><span class="math inline">\(x^{i+1} = y - g(x^i)\)</span></li>
+  <li>\(x^0 = y\)</li>
+  <li>\(x^{i+1} = y - g(x^i)\)</li>
 </ul>
-<p>とすると <span class="math inline">\(x^i\)</span> の収束値が <span class="math inline">\(x\)</span> になっている. 不動点自体の存在は Banach 不動点定理による (らしい).</p>
-<h3 id="lemma-2">Lemma 2</h3>
-<p><span class="math inline">\(F(x) = (I+g)(x)\)</span> で <span class="math inline">\(g\)</span> がリプシッツ連続かつ <span class="math inline">\(\Lip(g) &lt; 1\)</span> のとき, <span class="math display">\[\Lip(F) \leq 1 + \Lip(g).\]</span> また Theorem 1 から <span class="math inline">\(F\)</span> には逆関数があって, <span class="math display">\[\Lip(F^{-1}) \leq \frac{1}{1 - \Lip(g)}.\]</span></p>
-<h2 id="リプシッツ連続なresnetの構成">リプシッツ連続なResNetの構成</h2>
-<p>各ブロック <span class="math inline">\(g\)</span> は, 線形関数と非線形な関数 <span class="math inline">\(\phi\)</span> を交互に適用するものだとする. 例えば <span class="math inline">\(g = W_3 \phi W_2 \phi W_1\)</span> みたいに.</p>
-<p>各行列 <span class="math inline">\(W_i\)</span> が畳み込みだとすると, <span class="math inline">\(W_i\)</span> のスペクトルノルムが <span class="math inline">\(1\)</span> 未満であれば <span class="math inline">\(\Lip(g)\)</span> も <span class="math inline">\(1\)</span> 未満である. (本当に???????????????? <span class="math inline">\(\phi\)</span> に依らずに???????????????????)</p>
-<h2 id="生成モデル">生成モデル</h2>
-<p><span class="math display">\[p_z(z) \sim z \xrightarrow{\Phi} x\]</span> を考える. しかも <span class="math inline">\(\Phi^{-1}\)</span> が存在してそれを <span class="math inline">\(F\)</span> とする. このとき <span class="math inline">\(p_x\)</span> は <span class="math display">\[\log p_x(x) = \log p_z(z) + \log | \mathrm{det} J_F(x) |\]</span> で計算できる. ここで <span class="math inline">\(J_F\)</span> は <span class="math inline">\(F\)</span> のヤコビアン行列.</p>
+<p>とすると \(x^i\) の収束値が \(x\) になっている. 不動点自体の存在は Banach 不動点定理による (らしい).</p>
+<h3>Lemma 2</h3>
+<p>\(F(x) = (I+g)(x)\) で \(g\) がリプシッツ連続かつ \(\Lip(g) &lt; 1\) のとき,</p>
+\[\Lip(F) \leq 1 + \Lip(g).\]
+<p>また Theorem 1 から \(F\) には逆関数があって,</p>
+\[\Lip(F^{-1}) \leq \frac{1}{1 - \Lip(g)}.\]
+<h2>リプシッツ連続なResNetの構成</h2>
+<p>各ブロック \(g\) は, 線形関数と非線形な関数 \(\phi\) を交互に適用するものだとする. 例えば \(g = W_3 \phi W_2 \phi W_1\) みたいに.</p>
+<p>各行列 \(W_i\) が畳み込みだとすると, \(W_i\) のスペクトルノルムが \(1\) 未満であれば \(\Lip(g)\) も \(1\) 未満である. (本当に???????????????? \(\phi\) に依らずに???????????????????)</p>
+<h2>生成モデル</h2>
+\[p_z(z) \sim z \xrightarrow{\Phi} x\]
+<p>を考える. しかも \(\Phi^{-1}\) が存在してそれを \(F\) とする. このとき \(p_x\) は</p>
+\[\log p_x(x) = \log p_z(z) + \log | \mathrm{det} J_F(x) |\]
+<p>で計算できる. ここで \(J_F\) は \(F\) のヤコビアン行列.</p>
 <p>行列式を真面目に計算するのは3乗の計算量が掛かって大変だが, なんやかんやあって,</p>
 <ul>
-<li><span class="math inline">\(| \mathrm{det} J_F(x) | = \mathrm{det} J_F(x)\)</span></li>
-<li><span class="math inline">\(\log \mathrm{det} J_F(x) = \mathrm{tr} (\log J_F(x))\)</span></li>
+  <li>\(| \mathrm{det} J_F(x) | = \mathrm{det} J_F(x)\)</li>
+  <li>\(\log \mathrm{det} J_F(x) = \mathrm{tr} (\log J_F(x))\)</li>
 </ul>
-<p>となって簡単に計算できる値になる. というわけで <span class="math display">\[\log p_x(x) = \log p_z(z) + \mathrm{tr} (\log (I + J_g(x)))\]</span></p>
+<p>となって簡単に計算できる値になる. というわけで</p>
+\[\log p_x(x) = \log p_z(z) + \mathrm{tr} (\log (I + J_g(x)))\]
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -160,5 +162,9 @@ original paper: <a href=https://arxiv.org/abs/1811.00995>https://arxiv.org/abs/1
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

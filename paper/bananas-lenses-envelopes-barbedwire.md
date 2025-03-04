@@ -2,7 +2,7 @@
 % https://maartenfokkinga.github.io/utwente/mmf91m.pdf
 % 計算 圏論
 
-$\require{AMScd}$
+$\require{amscd}$
 $\def\banana#1{(\!|#1|\!)}$
 $\def\lense#1{[\!(#1)\!]}$
 $\def\envelop#1{[\![ #1 ]\!]}$
@@ -17,6 +17,11 @@ $\def\const#1{#1^\bullet}$
 $\def\VOID{\mathit{VOID}}$
 $\def\join{\mathit{join}}$
 $\def\triangle{\mathop{}\!\mathbin\Delta\;}$
+
+**注意**
+この記事はあまり形式的な圏論で記述されてない.
+考えてる圏は Hask 圏かもしくはせいぜい Set 圏である.
+射のことを関数と書いてあったり, 対象の「要素」なるものを前提なしに取り上げている.
 
 ## 概要
 
@@ -168,7 +173,7 @@ $f\colon A\to B$ と $g\colon C\to D$ を
 $f \dagger g \colon A \dagger C \to B \dagger D$
 とするような $\dagger$ といったもの.
 ただし
-$1\dagger 1=1$, $f\dagger g \circ h \dagger j = fh \dagger gj$
+$1\dagger 1=1$, $(f\dagger g) \circ (h \dagger j) = fh \dagger gj$
 となるもの.
 双関手の変数として $\dagger, \ddagger$ を用いる.
 
@@ -249,52 +254,39 @@ $f+g = i_1 f \triangledown i_2 g$
 ### 矢印
 
 二項演算子 $\to$ を定める.
-対象 $A,B$ について $A\to B$ はまた対象で, $A$ から $B$ への射全体の集まりを表す.
+対象 $A,B$ について $A\to B$ とは対象であって, $A$ から $B$ への射全体の集まりを表す.
+そしてこのような対象には次の射が考えられる.
+
 2つの射
 $f \colon A \to C$ と
 $g \colon C' \to B$ について
 $$(f \to g) \colon (C \to C') \to (A \to B)$$
-$$(f \to g) h = g \circ h \circ f$$
+$$h \mapsto g \circ h \circ f$$
 を定める.
 
-```dot
-digraph {
-    node [shape=plaintext];
-    rankdir=LR;
-    graph [bgcolor=transparent];
-    A -> C [label=f];
-    C -> "C'" [label=h];
-    "C'" -> B [label=g];
-}
-```
+$$\begin{CD}
+A @>f>> C @>h>> C' @>g>> B
+\end{CD}$$
+
+> $(f \to g)$ とはその間を埋める射を受け取って全体を合成して出来る射を返すもの
 
 $(g \leftarrow f)$ を $(f \to g)$ と同じ意味で用いる.
 
-関手 $F$ について
+関手 $F$ があるときに次のような矢印記法を用いる.
 $$(f \xrightarrow{F} g) = g \circ Fh \circ f$$
-で用いる.
 
 また次の合成則がある.
 $$(f \to g) \circ (h \to j) = (h \circ f) \to (g \circ j)$$
 
-```dot
-digraph {
-    node [shape=none];
-    rankdir=LR;
-    graph [bgcolor=transparent];
-    A -> B [label=f];
-    B -> C [label=h];
-    C -> D [style=dotted];
-    D -> E [label=j];
-    E -> F [label=g];
-}
-```
+$$\begin{CD}
+A @>f>> B @>h>> C @>>> D @>j>> E @>g>> F
+\end{CD}$$
 
 ### 恒等関手, 定数関手
 
 恒等関手 $1$ とは対象と射について恒等的に返すもので $1D=D, 1f=f$.
 
-自由に選んだ対象 $D$ に対して, 全ての対象を $D$ に写すような関手 $\underline{D}$ がある.
+自由に選んだ対象 $D$ に対して, 全ての対象を $D$ に写すような関手 $\underline{D}$ を定数関手という.
 ただし射は全て $1_D$ に写すとする.
 
 ### Lifting
@@ -414,8 +406,9 @@ Evaluation Rule (対訳不明), Uniqueness Property (唯一性?), Fusion Law (�
 が成り立つことを見ていく.
 その中で次の幾つかの定理を用いる.
 
+
 <div class=thm>
-#### fixed point fusion (free theorem)
+Fixed point fusion (Free theorem)
 
 関数 $f$ が正格で, $f \circ g = h \circ f$ ならば
 $$f (\mu g) = \mu h$$
@@ -517,7 +510,7 @@ $f \circ \varphi = \psi \circ Ff$ のとき
 $$f \circ \banana{\varphi} = \banana{\psi}$$
 
 <center>
-```dot
+```@dot
 digraph {
     node [shape=plaintext];
     rankdir=LR;
@@ -703,19 +696,15 @@ $$\lense{\psi} x = \cons(x, \lense{\psi}(fx))$$
 
 ### anamorphism の唯一性 (AnaUP)
 
-<div class=thm>
 $$f = \lense{\psi}_F \iff out \circ f = Ff \circ \psi$$
-</div>
 
 ### anamorphism の融合則 (AnaFusion)
 
-<div class=thm>
 $\varphi \circ f = Ff \circ \psi$ のとき
 $$\lense{\varphi} \circ f = \lense{\psi}$$
-</div>
 
 <center>
-```dot
+```@dot
 digraph {
     node [shape=plaintext];
     rankdir=LR;
@@ -755,9 +744,8 @@ $gh=1$ のとき,
 $\mu(f \xleftarrow{F} g) \circ \mu(h \xleftarrow{F} j) = \mu(f \xleftarrow{F} j)$
 が成り立つ.
 これによって次の定理が成り立つ.
-<div class=thm>
+
 $$\envelop{\varphi, \psi} = \banana{\varphi} \circ \lense{\psi}$$
-</div>
 
 ### Shifting Law for Hylomorphism (HyloShift)
 
@@ -767,8 +755,14 @@ $\psi \colon A \to FA$,
 $\xi \colon F \to M$
 とする.
 
+$$\begin{CD}
+A @>\psi >> FA  @>\xi_A>>   MA  \\
+@VVV          @.            @.  \\
+B @<\varphi<< ML  @<\xi_B<< FB   \\
+\end{CD}$$
+
 <center>
-```dot
+```@dot
 digraph {
     node [shape=plaintext];
     rankdir=TB;

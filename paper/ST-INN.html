@@ -1,47 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>[1805.06447] Spatial Transformer Introspective Neural Network</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">[1805.06447] Spatial Transformer Introspective Neural Network</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=https://arxiv.org/abs/1805.06447>https://arxiv.org/abs/1805.06447</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#画像認識>画像認識</a> <a class='tag is-blue' href=index.html#データ水増し>データ水増し</a> <a class='tag is-blue' href=index.html#正則化>正則化</a> <a class='tag is-blue' href=index.html#GAN>GAN</a></p>
-</div>
+<p><ul> <li>original paper: <a href=https://arxiv.org/abs/1805.06447>https://arxiv.org/abs/1805.06447</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#画像認識>画像認識</a> <a class='tag is-blue' href=index.html#データ水増し>データ水増し</a> <a class='tag is-blue' href=index.html#正則化>正則化</a> <a class='tag is-blue' href=index.html#GAN>GAN</a> </div></p>
 <p>誤植っぽいのが多い? pdfのスタイルも悪いし、読みにくい.</p>
-<h2 id="概要">概要</h2>
+<h2>概要</h2>
 <p>広大な画像の空間について、限られたデータセットでいかにして頑強なモデルを作るか. 画像を回転させて伸縮させるような、普通のデータ水増しはそのための一つの解決策であるが、いくらでもある画像のバリエーションに対して限界がある. 見たことのない未知のバリエーションを作りたい. モデルを騙そうとするGANを取り付けるのも、また一つの解決策である. これはどんどん未知の画像を生成しようとする. Introspective Neural Network (INN) は考え方はこれに近い. しかし、提案する Spatial Transformer (ST) を取り付けることで実装する INN は GAN と違って計算が一続きになっているので、一つの逆伝播で学習が可能で、普通の勾配最適化による学習が容易であるそうだ (GANだと敵対する部分で伝播が途切れるので).</p>
-<h2 id="手法">手法</h2>
-<h3 id="introspective-learning">Introspective Learning</h3>
-<p>二値分類 <span class="math inline">\((X=\mathbb R^m) \to (Y=\{-1,+1\})\)</span> について、 <a href="Tu-Generative.html">Tuの生成モデル</a> を使って、 分類器 <span class="math inline">\(q_t(y|x)\)</span> と、疑似負例生成モデル <span class="math inline">\(p^-_t(x|y=-1)\)</span> を反復的に学習していく.</p>
-<p>分類器 <span class="math inline">\(q_t\)</span> は CNN で組む. 彼らはどうも &quot;Wasserstein Introspective Neural Networks&quot; みたいなことがしたいらしいので、単に分類する他に wasserstein 距離の計算もこいつに持たせる. すなわち、 <span class="math display">\[f: X \to Y \times \mathbb R\]</span> という機械 <span class="math inline">\(f\)</span> を構成する.</p>
-<p><span class="math inline">\(f(x)\)</span> の第一成分 (<span class="math inline">\(Y\)</span> 部分) を <span class="math inline">\(f_C(x)\)</span> と、第二成分 (<span class="math inline">\(\mathbb R\)</span> 部分) を <span class="math inline">\(f_w(x)\)</span> と書く. <span class="math inline">\(x, x&#39;\)</span> の wasserstein 距離は <span class="math inline">\(f_w(x) - f_w(x&#39;)\)</span> と計算される (ように学習する).</p>
-<blockquote>
-<p><span class="math inline">\(f, f_C, f_w\)</span> には共通のパラメータ <span class="math inline">\(\theta\)</span> があるので <span class="math inline">\(f(x;\theta), f_w(x;\theta)\)</span> などと書くのが正確だが、省略する.</p>
-</blockquote>
-<h3 id="spatial-transformer">Spatial Transformer</h3>
-<p>入力画像をパラメータ <span class="math inline">\(\tau\)</span> の下でアフィン変換する操作を <span class="math inline">\(T( - ; \tau)\)</span> と書く. 具体的には次のような操作である</p>
-<p><span class="math display">\[\left[\begin{array}{c}
+<h2>手法</h2>
+<h3>Introspective Learning</h3>
+<p>二値分類 \((X=\mathbb R^m) \to (Y=\{-1,+1\})\) について、 <a href="Tu-Generative.html">Tuの生成モデル</a> を使って、 分類器 \(q_t(y|x)\) と、疑似負例生成モデル \(p^-_t(x|y=-1)\) を反復的に学習していく.</p>
+<p>分類器 \(q_t\) は CNN で組む. 彼らはどうも "Wasserstein Introspective Neural Networks" みたいなことがしたいらしいので、単に分類する他に wasserstein 距離の計算もこいつに持たせる. すなわち、</p>
+\[f: X \to Y \times \mathbb R\]
+<p>という機械 \(f\) を構成する.</p>
+<p>\(f(x)\) の第一成分 ( \(Y\) 部分) を \(f_C(x)\) と、第二成分 ( \(\mathbb R\) 部分) を \(f_w(x)\) と書く. \(x, x&#x27;\) の wasserstein 距離は \(f_w(x) - f_w(x&#x27;)\) と計算される (ように学習する).</p>
+<blockquote>\(f, f_C, f_w\) には共通のパラメータ \(\theta\) があるので \(f(x;\theta), f_w(x;\theta)\) などと書くのが正確だが、省略する.</blockquote>
+<h3>Spatial Transformer</h3>
+<p>入力画像をパラメータ \(\tau\) の下でアフィン変換する操作を \(T( - ; \tau)\) と書く. 具体的には次のような操作である</p>
+\[\left[\begin{array}{c}
 x^s \\ y^s
 \end{array}
 \right] =
@@ -51,25 +45,35 @@ x^s \\ y^s
 \end{array}\right]
 \left[\begin{array}{c}
 x^t \\ y^t \\ 1
-\end{array}\right]\]</span> 元画像の座標 <span class="math inline">\((x^s, y^s)\)</span> にあるピクセルを、変換後の座標 <span class="math inline">\((x^t, y^t)\)</span> に割り当てる.</p>
-<h3 id="分類器の学習">分類器の学習</h3>
-<p>分類器を学習する. 普通の教師あり学習のように正例と負例として <span class="math inline">\(S^+, S^-\)</span> があるとする.</p>
-<p>正例については普通のロスを設計する. ただし <span class="math inline">\(T\)</span> による変換した画像についても正しく分類できるようにする. 定数 <span class="math inline">\(t_1, t_2\)</span> を以て <span class="math display">\[t_1 \times L(f_C(x^+)) + t_2 \times L(f_C(T(x^+; \tau)))\]</span> <span class="math inline">\(L\)</span> はなんか損失関数？かな.</p>
-<p>次に、負例を用いて、wasserstein 距離を学習させる. 正例の分布と負例の分布の距離 <span class="math inline">\(f_w(x^+) - f_w(x^-)\)</span> を最大化するのと、 あと wasserstein 距離が wasserstein 距離であるために <span class="math inline">\(f_w\)</span> の傾きが 1 未満である必要がある. というわけで次を損失 (最小化) に加える: <span class="math display">\[t_3 \times \left[ f_w(x^-) - f_w(x^+) + \lambda \left( \| \nabla f_w(\hat{x}) \| - 1 \right)^2 \right]\]</span> いやこれだと傾きがちょうど1であることのが正しいことになるけど、、まあいいのかな？</p>
-<p>以上2つの和を <span class="math inline">\(L_D(\theta)\)</span> と書いて分類器の学習のための損失関数とする. ただし <span class="math inline">\(x^+, x^-\)</span> は <span class="math inline">\(S^+, S^-\)</span> からサンプリングされてきたもの. <span class="math inline">\(\hat{x}\)</span> は正例と負例の中間点をランダムに選ぶとある.</p>
-<h3 id="transformer-の学習">Transformer の学習</h3>
-<p>Transformer の役割は、分類器にとって難しいデータのバリエーションを与えることなので、分類器にとっての損失を最大化させればよい. というわけで次を損失関数にする. <span class="math display">\[L_{stn}(\tau) = -L(f_C(T(x^+; \tau)))\]</span></p>
-<h3 id="負例の増強">負例の増強</h3>
-<p>学習した疑似負例生成モデル <span class="math inline">\(p^-_t\)</span> を用いて <span class="math inline">\(S^-\)</span> を増強する. <span class="math inline">\(p^-_t\)</span> からいくらか疑似負例を集めて <span class="math inline">\(Z\)</span> を作って <span class="math display">\[S^- \leftarrow S^- \cup Z\]</span></p>
-<h3 id="全体の流れ">全体の流れ</h3>
+\end{array}\right]\]
+<p>元画像の座標 \((x^s, y^s)\) にあるピクセルを、変換後の座標 \((x^t, y^t)\) に割り当てる.</p>
+<h3>分類器の学習</h3>
+<p>分類器を学習する. 普通の教師あり学習のように正例と負例として \(S^+, S^-\) があるとする.</p>
+<p>正例については普通のロスを設計する. ただし \(T\) による変換した画像についても正しく分類できるようにする. 定数 \(t_1, t_2\) を以て</p>
+\[t_1 \times L(f_C(x^+)) + t_2 \times L(f_C(T(x^+; \tau)))\]
+<p>\(L\) はなんか損失関数？かな.</p>
+<p>次に、負例を用いて、wasserstein 距離を学習させる. 正例の分布と負例の分布の距離 \(f_w(x^+) - f_w(x^-)\) を最大化するのと、 あと wasserstein 距離が wasserstein 距離であるために \(f_w\) の傾きが 1 未満である必要がある. というわけで次を損失 (最小化) に加える:</p>
+\[t_3 \times \left[ f_w(x^-) - f_w(x^+) + \lambda \left( \| \nabla f_w(\hat{x}) \| - 1 \right)^2 \right]\]
+<p>いやこれだと傾きがちょうど1であることのが正しいことになるけど、、まあいいのかな？</p>
+<p>以上2つの和を \(L_D(\theta)\) と書いて分類器の学習のための損失関数とする. ただし \(x^+, x^-\) は \(S^+, S^-\) からサンプリングされてきたもの. \(\hat{x}\) は正例と負例の中間点をランダムに選ぶとある.</p>
+<h3>Transformer の学習</h3>
+<p>Transformer の役割は、分類器にとって難しいデータのバリエーションを与えることなので、分類器にとっての損失を最大化させればよい. というわけで次を損失関数にする.</p>
+\[L_{stn}(\tau) = -L(f_C(T(x^+; \tau)))\]
+<h3>負例の増強</h3>
+<p>学習した疑似負例生成モデル \(p^-_t\) を用いて \(S^-\) を増強する. \(p^-_t\) からいくらか疑似負例を集めて \(Z\) を作って</p>
+\[S^- \leftarrow S^- \cup Z\]
+<h3>全体の流れ</h3>
 <ul>
-<li>以下を収束まで繰り返す
-<ul>
-<li>適当回数だけ分類器を学習</li>
-<li>Transformer を学習</li>
-<li>負例の増強</li>
-</ul></li>
+  <li>
+    以下を収束まで繰り返す
+    <ul>
+      <li>適当回数だけ分類器を学習</li>
+      <li>Transformer を学習</li>
+      <li>負例の増強</li>
+    </ul>
+  </li>
 </ul>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -174,5 +178,9 @@ x^t \\ y^t \\ 1
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

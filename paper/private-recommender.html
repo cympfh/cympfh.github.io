@@ -1,46 +1,47 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>[2105.12353] Private Recommender Systems: How Can Users Build Their Own Fair Recommender Systems without Log Data?</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
     <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">[2105.12353] Private Recommender Systems: How Can Users Build Their Own Fair Recommender Systems without Log Data?</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=https://arxiv.org/abs/2105.12353>https://arxiv.org/abs/2105.12353</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#推薦システム>推薦システム</a></p>
-</div>
-<h2 id="概要">概要</h2>
+<p><ul> <li>original paper: <a href=https://arxiv.org/abs/2105.12353>https://arxiv.org/abs/2105.12353</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#推薦システム>推薦システム</a> </div></p>
+<h2>概要</h2>
 <p>ログデータを使わずに自分自身のための推薦システムを構築する</p>
-<h2 id="動機">動機</h2>
+<h2>動機</h2>
 <p>あるwebサービスの推薦システムが気に入らないときに, 内部のログデータを閲覧できない立場のユーザー自身が, 自分が気に入るように改良した推薦システムを作りたい. これを <strong>私用推薦システム (private recommender system)</strong> と呼ぶことにする.</p>
-<h2 id="問題設定">問題設定</h2>
-<p>プラットフォームが用意した推薦システムを <span class="math display">\[P \colon I \to I^K\]</span> とする. ここで <span class="math inline">\(I\)</span> はアイテム集合で, 一つのアイテムに対して <span class="math inline">\(K\)</span> 個のアイテムを推薦する. ただし内部ではユーザーごとのパーソナライズがあるかもしれないが, これはユーザーからは観測できないので上のように形式化した.</p>
-<p>私用推薦システム <span class="math display">\[Q \colon I \to I^K\]</span> を <span class="math inline">\(P\)</span> から構築する.</p>
-<h2 id="推薦ネットワーク">推薦ネットワーク</h2>
-<p><span class="math inline">\(P\)</span> を有向エッジと思うことで有向グラフを構築する. ただしここでエッジには重みをつける.</p>
-<p><span class="math inline">\(P(i)\)</span> の <span class="math inline">\(k\)</span> 番目 <span class="math inline">\((k=1,2,=ldots,K)\)</span> を <span class="math inline">\(P(i).k\)</span> とするとき, <span class="math display">\[\mathrm{Edge}(i \to P(i).k, \mathrm{weight}=\frac{1}{\log (k + 1)}\]</span> というエッジを張ることにする.</p>
-<h2 id="private-rank">Private Rank</h2>
+<h2>問題設定</h2>
+<p>プラットフォームが用意した推薦システムを</p>
+\[P \colon I \to I^K\]
+<p>とする. ここで \(I\) はアイテム集合で, 一つのアイテムに対して \(K\) 個のアイテムを推薦する. ただし内部ではユーザーごとのパーソナライズがあるかもしれないが, これはユーザーからは観測できないので上のように形式化した.</p>
+<p>私用推薦システム</p>
+\[Q \colon I \to I^K\]
+<p>を \(P\) から構築する.</p>
+<h2>推薦ネットワーク</h2>
+<p>\(P\) を有向エッジと思うことで有向グラフを構築する. ただしここでエッジには重みをつける.</p>
+<p>\(P(i)\) の \(k\) 番目 \((k=1,2,=ldots,K)\) を \(P(i).k\) とするとき,</p>
+\[\mathrm{Edge}(i \to P(i).k, \mathrm{weight}=\frac{1}{\log (k + 1)}\]
+<p>というエッジを張ることにする.</p>
+<h2>Private Rank</h2>
 <p>このネットワークの上で PageRank (Random Walk with Restart) をする.</p>
-<p>特にこの論文では, <span class="math inline">\(P\)</span> が含んでしまっているバイアスを除去することを盛り込んでいる.</p>
+<p>特にこの論文では, \(P\) が含んでしまっているバイアスを除去することを盛り込んでいる.</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -145,5 +146,9 @@ original paper: <a href=https://arxiv.org/abs/2105.12353>https://arxiv.org/abs/2
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

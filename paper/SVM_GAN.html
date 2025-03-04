@@ -1,89 +1,109 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>[1910.06922] Connections between Support Vector Machines, Wasserstein distance and gradient-penalty GANs</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">[1910.06922] Connections between Support Vector Machines, Wasserstein distance and gradient-penalty GANs</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=https://arxiv.org/abs/1910.06922>https://arxiv.org/abs/1910.06922</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#読みかけ>読みかけ</a></p>
-</div>
-<p><span class="math display">\[\def\relu#1{\left[ #1 \right]^+}\def\X{\mathcal X}\def\Z{\mathcal Z}\def\R{\mathcal R}\def\D{\mathcal D}\def\E#1#2{\mathbb E_{#1}\left[ #2 \right]}\]</span></p>
-<h2 id="概要">概要</h2>
+<p><ul> <li>original paper: <a href=https://arxiv.org/abs/1910.06922>https://arxiv.org/abs/1910.06922</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#読みかけ>読みかけ</a> </div></p>
+\[\def\relu#1{\left[ #1 \right]^+}\def\X{\mathcal X}\def\Z{\mathcal Z}\def\R{\mathcal R}\def\D{\mathcal D}\def\E#1#2{\mathbb E_{#1}\left[ #2 \right]}\]
+<h2>概要</h2>
 <p>SVM と GAN との関連性を考える.</p>
-<h2 id="svm">SVM</h2>
+<h2>SVM</h2>
 <p>SVM は Maximum-Margin Classifiers の一種である.</p>
-<p>簡単に二値分類としての線形 SVM を考える. ラベル <span class="math inline">\(y\)</span> を <span class="math inline">\(\{-1, +1\}\)</span> とし, 超平面 <span class="math inline">\(w\)</span> の上と下で分類するとすると, <span class="math display">\[wx&gt;0 \iff y=+1\]</span> <span class="math display">\[wx&lt;0 \iff y=-1\]</span> という条件がデータを正しく分離できたことを表す. <span class="math inline">\(y=+1\)</span> のときと <span class="math inline">\(y=-1\)</span> のときとをまとめるとこの条件はさらに簡単に <span class="math display">\[y(wx) &gt; 0\]</span> だと書き直せる.</p>
-<p>ところでこの <span class="math inline">\(wx\)</span> という量はデータ <span class="math inline">\(x\)</span> と平面との距離という量に関連していて, その距離は <span class="math inline">\(\frac{|wx|}{\|w\|_2}\)</span> である. SVM はこの距離が大きいほどよいとしている. 分子の絶対値はラベルを掛けてしまえばよくて, すなわち <span class="math display">\[\max_w \frac{y(wx)}{\|w\|_2}\]</span> を目指すものと言える.</p>
-<p>ただしどの点 <span class="math inline">\(x\)</span> からも上記の最大化を目指すのではなくて, データの中でも最も平面に近いものとの距離だけに注目する（そのような距離をマージンと呼ぶのだった）. すなわち、<span class="math inline">\(w\)</span> を固定したときに <span class="math display">\[\min_x \frac{y(wx)}{\|w\|_2}\]</span> を取ってくれるような操作があるとしている.</p>
-<p>２つの最大化と最小化を合わせると <span class="math display">\[\max_w \min_x \frac{y(wx)}{\|w\|_2}\]</span> となる.</p>
-<blockquote>
-<p>max min の最適化は GAN として解釈できる. <span class="math inline">\(\min_x\)</span> の部分は判別器を騙す生成器であって, <span class="math inline">\(\max_w\)</span> の部分は騙されないような頑強な分類器を表す. GAN の場合はこの２つを交互に学習させるが, SVM では一発で最適化する.</p>
-</blockquote>
-<p>実際には SVM はこの max min の式を直接解くのでは無く, まず <span class="math display">\[\min_w \frac{1}{N} \relu{y(wx)} \text{ s.t. } \|w\|_2=1\]</span> という制約付き最適化問題に書き直し（双対を取った）, さらに KKT 条件を用いて <span class="math display">\[\min_{w,\lambda} \frac{1}{N} \sum_{(x,y)} \relu{y(wx)} + \lambda ( \|w\|_2^2 - 1 )\]</span> とする. ここで <span class="math inline">\(\relu{x} = \max(0,x)\)</span> のこと. この最適化問題を解く.</p>
-<h2 id="gan">GAN</h2>
-<p>実データの空間 <span class="math inline">\(\X\)</span> とその上の分布があるとする. また適当な分布を仮定した空間 <span class="math inline">\(\Z\)</span> を用意する. 関数 <span class="math inline">\(G \colon \Z \to \X\)</span> は実データらしいものを生成する. 関数 <span class="math inline">\(C \colon \X \to \R\)</span> はデータが実データ由来か <span class="math inline">\(G\)</span> 由来かを判定する.</p>
-<p>そのために <span class="math inline">\(C, G\)</span> に関して次の２つの最適化を解く.</p>
+<p>簡単に二値分類としての線形 SVM を考える. ラベル \(y\) を \(\{-1, +1\}\) とし, 超平面 \(w\) の上と下で分類するとすると,</p>
+\[wx&gt;0 \iff y=+1\]
+\[wx&lt;0 \iff y=-1\]
+<p>という条件がデータを正しく分離できたことを表す. \(y=+1\) のときと \(y=-1\) のときとをまとめるとこの条件はさらに簡単に</p>
+\[y(wx) &gt; 0\]
+<p>だと書き直せる.</p>
+<p>ところでこの \(wx\) という量はデータ \(x\) と平面との距離という量に関連していて, その距離は \(\frac{|wx|}{\|w\|_2}\) である. SVM はこの距離が大きいほどよいとしている. 分子の絶対値はラベルを掛けてしまえばよくて, すなわち</p>
+\[\max_w \frac{y(wx)}{\|w\|_2}\]
+<p>を目指すものと言える.</p>
+<p>ただしどの点 \(x\) からも上記の最大化を目指すのではなくて, データの中でも最も平面に近いものとの距離だけに注目する（そのような距離をマージンと呼ぶのだった）. すなわち、 \(w\) を固定したときに</p>
+\[\min_x \frac{y(wx)}{\|w\|_2}\]
+<p>を取ってくれるような操作があるとしている.</p>
+<p>２つの最大化と最小化を合わせると</p>
+\[\max_w \min_x \frac{y(wx)}{\|w\|_2}\]
+<p>となる.</p>
+<blockquote>max min の最適化は GAN として解釈できる. \(\min_x\) の部分は判別器を騙す生成器であって, \(\max_w\) の部分は騙されないような頑強な分類器を表す. GAN の場合はこの２つを交互に学習させるが, SVM では一発で最適化する.</blockquote>
+<p>実際には SVM はこの max min の式を直接解くのでは無く, まず</p>
+\[\min_w \frac{1}{N} \relu{y(wx)} \text{ s.t. } \|w\|_2=1\]
+<p>という制約付き最適化問題に書き直し（双対を取った）, さらに KKT 条件を用いて</p>
+\[\min_{w,\lambda} \frac{1}{N} \sum_{(x,y)} \relu{y(wx)} + \lambda ( \|w\|_2^2 - 1 )\]
+<p>とする. ここで \(\relu{x} = \max(0,x)\) のこと. この最適化問題を解く.</p>
+<h2>GAN</h2>
+<p>実データの空間 \(\X\) とその上の分布があるとする. また適当な分布を仮定した空間 \(\Z\) を用意する. 関数 \(G \colon \Z \to \X\) は実データらしいものを生成する. 関数 \(C \colon \X \to \R\) はデータが実データ由来か \(G\) 由来かを判定する.</p>
+<p>そのために \(C, G\) に関して次の２つの最適化を解く.</p>
 <ul>
-<li><span class="math inline">\(\max_C \E{x}{f_1(C(x_1))} + \E{z}{f_2(C(G(z)))}\)</span></li>
-<li><span class="math inline">\(\min_G \E{z}{f_3(C(G(z)))}\)</span></li>
+  <li>\(\max_C \E{x}{f_1(C(x_1))} + \E{z}{f_2(C(G(z)))}\)</li>
+  <li>\(\min_G \E{z}{f_3(C(G(z)))}\)</li>
 </ul>
-<p>ただしここで <span class="math inline">\(f_1,f_2,f_3\)</span> は値を補正する関数 <span class="math inline">\(\R \to \R\)</span> で, いくつものバリエーションが有る.</p>
+<p>ただしここで \(f_1,f_2,f_3\) は値を補正する関数 \(\R \to \R\) で, いくつものバリエーションが有る.</p>
 <ul>
-<li>Standard GAN
-<ul>
-<li><span class="math inline">\(f_1(z) = \log(\sigma(z))\)</span></li>
-<li><span class="math inline">\(f_2(z) = \log(\sigma(-z))\)</span></li>
-<li><span class="math inline">\(f_3 = -f_1\)</span></li>
-</ul></li>
-<li>Least-Squares GAN
-<ul>
-<li><span class="math inline">\(f_1 = -(1-z)^2\)</span></li>
-<li><span class="math inline">\(f_2 = -(1+z)^2\)</span></li>
-<li><span class="math inline">\(f_3 = -f_1\)</span></li>
-</ul></li>
-<li>HingeGAN
-<ul>
-<li><span class="math inline">\(f_1(z) = -\relu{1-z}\)</span></li>
-<li><span class="math inline">\(f_2(z) = -\relu{1+z}\)</span></li>
-<li><span class="math inline">\(f_3(z) = -z\)</span></li>
-</ul></li>
+  <li>
+    Standard GAN
+    <ul>
+      <li>\(f_1(z) = \log(\sigma(z))\)</li>
+      <li>\(f_2(z) = \log(\sigma(-z))\)</li>
+      <li>\(f_3 = -f_1\)</li>
+    </ul>
+  </li>
+  <li>
+    Least-Squares GAN
+    <ul>
+      <li>\(f_1 = -(1-z)^2\)</li>
+      <li>\(f_2 = -(1+z)^2\)</li>
+      <li>\(f_3 = -f_1\)</li>
+    </ul>
+  </li>
+  <li>
+    HingeGAN
+    <ul>
+      <li>\(f_1(z) = -\relu{1-z}\)</li>
+      <li>\(f_2(z) = -\relu{1+z}\)</li>
+      <li>\(f_3(z) = -z\)</li>
+    </ul>
+  </li>
 </ul>
-<h3 id="ipm-based-gan">IPM-based GAN</h3>
+<h3>IPM-based GAN</h3>
 <p>違う形式の GAN もある.</p>
-<p>Integral Probability Metrics (IPMs) は２つの確率分布どうしの距離を測る指標で <span class="math display">\[\mathrm{IPM}(P \| Q) = \sup_C \E{x}{C(x)} - \E{x}{C(x)}\]</span> としている（ただし <span class="math inline">\(C\)</span> は実数関数全体から取る）. ところで GAN の <span class="math inline">\(G\)</span> というのは結局 <span class="math inline">\(G(z)\)</span> が実データの分布に近くなることを目指してるのだから, IPM の最小化を目的関数にすることが考えられる. <span class="math display">\[\min_G \max_C \sup_C \E{x}{C(x)} - \E{z}{C(G(z))}\]</span> これが IPM-based GAN と呼ばれる. IPM based なものも多く亜種があるが, WGAN もその一つ.</p>
-<p>WGAN は距離に Wasserstein 距離を使う. これは <span class="math inline">\(C\)</span> として 1-Lipschitz 連続なものに限定した IPM である.</p>
-<h2 id="一般化-svm">一般化(?) SVM</h2>
-<p><span class="math inline">\(f(x) = wx\)</span> とする. 一時近似してやると <span class="math inline">\(\|w\|_2 \approx \nabla_x f(x)\)</span>. このためさっきの <span class="math inline">\(\frac{y(wx)}{\|w\|_2}\)</span> という量は <span class="math inline">\(\frac{yf(x)}{\| \nabla_x f(x) \|_2}\)</span> に近似できる. これの最大化を目的関数にしていい.</p>
-<blockquote>
-<p>カーネルも一般化して <span class="math inline">\(f(x) = w \phi(x)\)</span> としても <span class="math inline">\(f(x) \approx wx\)</span> である範囲ではこの近似は通用すると言っている.</p>
-</blockquote>
-<p>ここまではデータが線形分離可能であることを仮定していた. そうでない場合のために SVM には soft-margin という考え方があった. <span class="math inline">\(\gamma\)</span> の修正する関数 <span class="math inline">\(F \colon \R \to \R\)</span> を用意して <span class="math inline">\(F(\gamma(x,y;f))\)</span> の最大化を目指すことに置き換える.</p>
-<p>先に掲げた SVM の目的関数は <span class="math display">\[\min_{w,\lambda} \frac{1}{N} \sum_{(x,y)} \relu{y(wx)} + \lambda ( \|w\|_2^2 - 1 )\]</span> であった. 今言った近似と soft-margin をこれに導入する. また <span class="math inline">\(\frac{1}{N} \sum_{(x,y)}\)</span> の部分は要はデータ上の期待値だと見れるのでそうする.</p>
-<p><span class="math display">\[\min_{w,\lambda} \E{(x,y)}{ F(y f(x)) } + \lambda \left( (\nabla_x f(x))^2 - 1 \right)\]</span></p>
-<p>この最後の部分は罰則化項に見える. すると <span class="math inline">\(g\)</span> で一般化したくなってきて <span class="math display">\[\min_{w,\lambda} \E{(x,y)}{ F(y f(x)) } + \lambda g(\nabla_x f(x))\]</span> となる. SVM であれば <span class="math inline">\(g(z) = z^2-1\)</span> である. しかしまあ実際はもっと緩やかな罰則でいいので <span class="math inline">\(g(z)=(z-1)^2\)</span> とか <span class="math inline">\(g(z)=\relu{z-1}\)</span> がいいそう.</p>
-<h2 id="gan-との関連">GAN との関連</h2>
-<p>SVM の最後の式はだいぶ WGAN っぽい. <span class="math inline">\(F(z)=z\)</span>, <span class="math inline">\(g(z)=\relu{z-1}\)</span> にするとそのもの？</p>
+<p>Integral Probability Metrics (IPMs) は２つの確率分布どうしの距離を測る指標で</p>
+\[\mathrm{IPM}(P \| Q) = \sup_C \E{x}{C(x)} - \E{x}{C(x)}\]
+<p>としている（ただし \(C\) は実数関数全体から取る）. ところで GAN の \(G\) というのは結局 \(G(z)\) が実データの分布に近くなることを目指してるのだから, IPM の最小化を目的関数にすることが考えられる.</p>
+\[\min_G \max_C \sup_C \E{x}{C(x)} - \E{z}{C(G(z))}\]
+<p>これが IPM-based GAN と呼ばれる. IPM based なものも多く亜種があるが, WGAN もその一つ.</p>
+<p>WGAN は距離に Wasserstein 距離を使う. これは \(C\) として 1-Lipschitz 連続なものに限定した IPM である.</p>
+<h2>一般化(?) SVM</h2>
+<p>\(f(x) = wx\) とする. 一時近似してやると \(\|w\|_2 \approx \nabla_x f(x)\) . このためさっきの \(\frac{y(wx)}{\|w\|_2}\) という量は \(\frac{yf(x)}{\| \nabla_x f(x) \|_2}\) に近似できる. これの最大化を目的関数にしていい.</p>
+<blockquote>カーネルも一般化して \(f(x) = w \phi(x)\) としても \(f(x) \approx wx\) である範囲ではこの近似は通用すると言っている.</blockquote>
+<p>ここまではデータが線形分離可能であることを仮定していた. そうでない場合のために SVM には soft-margin という考え方があった. \(\gamma\) の修正する関数 \(F \colon \R \to \R\) を用意して \(F(\gamma(x,y;f))\) の最大化を目指すことに置き換える.</p>
+<p>先に掲げた SVM の目的関数は</p>
+\[\min_{w,\lambda} \frac{1}{N} \sum_{(x,y)} \relu{y(wx)} + \lambda ( \|w\|_2^2 - 1 )\]
+<p>であった. 今言った近似と soft-margin をこれに導入する. また \(\frac{1}{N} \sum_{(x,y)}\) の部分は要はデータ上の期待値だと見れるのでそうする.</p>
+\[\min_{w,\lambda} \E{(x,y)}{ F(y f(x)) } + \lambda \left( (\nabla_x f(x))^2 - 1 \right)\]
+<p>この最後の部分は罰則化項に見える. すると \(g\) で一般化したくなってきて</p>
+\[\min_{w,\lambda} \E{(x,y)}{ F(y f(x)) } + \lambda g(\nabla_x f(x))\]
+<p>となる. SVM であれば \(g(z) = z^2-1\) である. しかしまあ実際はもっと緩やかな罰則でいいので \(g(z)=(z-1)^2\) とか \(g(z)=\relu{z-1}\) がいいそう.</p>
+<h2>GAN との関連</h2>
+<p>SVM の最後の式はだいぶ WGAN っぽい. \(F(z)=z\) , \(g(z)=\relu{z-1}\) にするとそのもの？</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -188,5 +208,9 @@ original paper: <a href=https://arxiv.org/abs/1910.06922>https://arxiv.org/abs/1
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

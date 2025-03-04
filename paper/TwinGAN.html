@@ -1,83 +1,75 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>[1809.00946] Twin-GAN -- Unpaired Cross-Domain Image Translation with Weight-Sharing GANs</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">[1809.00946] Twin-GAN -- Unpaired Cross-Domain Image Translation with Weight-Sharing GANs</h1>
-</header>
+<p><ul> <li>original paper: <a href=https://arxiv.org/abs/1809.00946>https://arxiv.org/abs/1809.00946</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#画像生成>画像生成</a> </div></p>
+<p>変数は極力, 一文字にして (添字は長かったりするけど), 関数適用のカッコは積極的に省略する. 例えば, \(DGEx\) は \(D(G(E(x)))\) のこと.</p>
+<h2>リンク</h2>
 <ul>
-<li>
-original paper: <a href=https://arxiv.org/abs/1809.00946>https://arxiv.org/abs/1809.00946</a>
-</li>
+  <li><a href="https://arxiv.org/abs/1809.00946">arxiv:1809.00946</a></li>
+  <li><a href="https://github.com/jerryli27/TwinGAN">github:jerryli27/TwinGAN</a></li>
+  <li><a href="https://github.com/jerryli27/TwinGAN/blob/master/docs/blog/blog_EN.md">ブログ</a></li>
 </ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#画像生成>画像生成</a></p>
-</div>
-<p>変数は極力, 一文字にして (添字は長かったりするけど), 関数適用のカッコは積極的に省略する. 例えば, <span class="math inline">\(DGEx\)</span> は <span class="math inline">\(D(G(E(x)))\)</span> のこと.</p>
-<h2 id="リンク">リンク</h2>
-<ul>
-<li><a href="https://arxiv.org/abs/1809.00946">arxiv:1809.00946</a></li>
-<li><a href="https://github.com/jerryli27/TwinGAN">github:jerryli27/TwinGAN</a></li>
-<li><a href="https://github.com/jerryli27/TwinGAN/blob/master/docs/blog/blog_EN.md">ブログ</a></li>
-</ul>
-<h2 id="概要">概要</h2>
+<h2>概要</h2>
 <p>GANによるきれいな画像生成をしたい. 異なるドメインへの変換 (例えばアニメ絵と写真との間の変換) が出来るようになる.</p>
 <p>手法は CycleGAN の応用. また <a href="https://arxiv.org/abs/1710.10196">Progressive Growing of GANs (PGGAN)</a> の手法も用いてる.</p>
-<h2 id="手法">手法</h2>
-<p>対応付もされていない2つのドメイン (画像データ集合) <span class="math inline">\(X_1\)</span> と <span class="math inline">\(X_2\)</span> を用意する. TwinGAN の目標はドメイン間の相互の変換 <span class="math inline">\(F_{12}\)</span> と <span class="math inline">\(F_{21}\)</span> とを用意することで, <span class="math inline">\(F_{12}(x_1)\)</span> がドメイン 2 の画像になって <span class="math inline">\(F_{21}(x_2)\)</span> がドメイン 1 の画像になるようにさせること. より詳細にはドメインごとのエンコーダ <span class="math inline">\(E_1, E_2\)</span>, ジェネレータ <span class="math inline">\(G_1, G_2\)</span> 及び判別機 <span class="math inline">\(D_1, D_2\)</span> を用意してやって, 変換を <span class="math inline">\(F_{12} = G_2 \circ E_1\)</span>, <span class="math inline">\(F_{21} = G_1 \circ E_2\)</span> と定める.</p>
-<h3 id="アーキテクチャ">アーキテクチャ</h3>
-<ol type="1">
-<li>Progressive GAN</li>
-<li>Encoder and UNet</li>
-<li>Domain-adaptive Batch Renormalization</li>
+<h2>手法</h2>
+<p>対応付もされていない2つのドメイン (画像データ集合) \(X_1\) と \(X_2\) を用意する. TwinGAN の目標はドメイン間の相互の変換 \(F_{12}\) と \(F_{21}\) とを用意することで, \(F_{12}(x_1)\) がドメイン 2 の画像になって \(F_{21}(x_2)\) がドメイン 1 の画像になるようにさせること. より詳細にはドメインごとのエンコーダ \(E_1, E_2\) , ジェネレータ \(G_1, G_2\) 及び判別機 \(D_1, D_2\) を用意してやって, 変換を \(F_{12} = G_2 \circ E_1\) , \(F_{21} = G_1 \circ E_2\) と定める.</p>
+<h3>アーキテクチャ</h3>
+<ol>
+  <li>Progressive GAN</li>
+  <li>Encoder and UNet</li>
+  <li>Domain-adaptive Batch Renormalization</li>
 </ol>
-<h3 id="学習">学習</h3>
-<p>画像集合 <span class="math inline">\(X_1, X_2\)</span> があるとき, 以下を定義する.</p>
+<h3>学習</h3>
+<p>画像集合 \(X_1, X_2\) があるとき, 以下を定義する.</p>
 <ul>
-<li><span class="math inline">\(X_i \subset \mathrm{Images}\)</span> (適切にサイズの揃った画像データ)</li>
-<li><span class="math inline">\(E_i \colon \mathrm{Images} \to \mathbb R^m\)</span> (または <span class="math inline">\(X_i\)</span> に制限)</li>
-<li><span class="math inline">\(G_i \colon \mathbb R^m \to \mathrm{Images}\)</span></li>
-<li><span class="math inline">\(D_i \colon \mathrm{Images} \to \{0,1\}\)</span></li>
+  <li>\(X_i \subset \mathrm{Images}\) (適切にサイズの揃った画像データ)</li>
+  <li>\(E_i \colon \mathrm{Images} \to \mathbb R^m\) (または \(X_i\) に制限)</li>
+  <li>\(G_i \colon \mathbb R^m \to \mathrm{Images}\)</li>
+  <li>\(D_i \colon \mathrm{Images} \to \{0,1\}\)</li>
 </ul>
-<figure>
-<img src="https://i.imgur.com/8e3Shfp.png" width="80%" />
-<figcaption>
-githubから引用
-</figcaption>
-</figure>
-<p><span class="math inline">\(i, j \in \{1,2\}\)</span> についてドメイン <span class="math inline">\(i\)</span> からドメイン <span class="math inline">\(j\)</span> への変換を考える.</p>
-<h4 id="gan-loss">GAN Loss</h4>
+<p><figure> <img src="https://i.imgur.com/8e3Shfp.png" width="80%" /> <figcaption>githubから引用</figcaption> </figure></p>
+<p>\(i, j \in \{1,2\}\) についてドメイン \(i\) からドメイン \(j\) への変換を考える.</p>
+<h4>GAN Loss</h4>
 <p>以下がまず普通の GAN.</p>
-<p><span class="math display">\[L_{\text{VANILLA}}^{i \to j} = \mathbb{E}_{x_j \sim X_j} \log D_j(x_j) + \mathbb{E}_{x_i \sim X_i} \left[ \log ( 1 - D_jG_jE_ix_i ) \right]\]</span></p>
+\[L_{\text{VANILLA}}^{i \to j} = \mathbb{E}_{x_j \sim X_j} \log D_j(x_j) + \mathbb{E}_{x_i \sim X_i} \left[ \log ( 1 - D_jG_jE_ix_i ) \right]\]
 <p>安定性の為に DRAGAN の方法を真似て以下の正則項を付け足す.</p>
-<p><span class="math display">\[L_{\text{DRAGAN}}^j = \lambda \mathbb{E}_{x_j \sim X_j, \delta \sim N(0,cI)} \| \Delta_x D_j(x + \delta) \| - k\]</span></p>
-<p><span class="math inline">\(\Delta_x\)</span> は微分作用素. <span class="math inline">\(D\)</span> に対する正則項として機能する (ちょうど傾き <span class="math inline">\(k/\lambda\)</span> くらいの関数になるようにしてる).</p>
-<p>GAN としてのロスは <span class="math inline">\(i,j\)</span> について4通りの上のロスの和.</p>
-<p><span class="math display">\[L_{\text{GAN}} = \sum_i \sum_j \left[ L_{\text{VANILLA}}^{i \to j} + L_{\text{DRAGAN}}^j \right]\]</span></p>
-<h4 id="cycle-consistency-loss">Cycle Consistency Loss</h4>
-<p>以下を加える. すなわちエンコーダとジェネレータだけを合成したら autoencoder になってるようにする. ただし <span class="math inline">\(L_1\)</span> は L1 ロス (<span class="math inline">\(L_1(x,y) = \|x-y\|_1\)</span>).</p>
-<p><span class="math display">\[L_{\text{cyc}}(E,G) = \mathbb{E}_{x_1} L_1(x_1, G_1 E_1 x_1) + \mathbb{E}_{x_2} L_1(x_2, G_2 E_2 x_2)\]</span></p>
-<h4 id="semantiv-consistency-loss">Semantiv Consistency Loss</h4>
+\[L_{\text{DRAGAN}}^j = \lambda \mathbb{E}_{x_j \sim X_j, \delta \sim N(0,cI)} \| \Delta_x D_j(x + \delta) \| - k\]
+<p>\(\Delta_x\) は微分作用素. \(D\) に対する正則項として機能する (ちょうど傾き \(k&#x2F;\lambda\) くらいの関数になるようにしてる).</p>
+<p>GAN としてのロスは \(i,j\) について4通りの上のロスの和.</p>
+\[L_{\text{GAN}} = \sum_i \sum_j \left[ L_{\text{VANILLA}}^{i \to j} + L_{\text{DRAGAN}}^j \right]\]
+<h4>Cycle Consistency Loss</h4>
+<p>以下を加える. すなわちエンコーダとジェネレータだけを合成したら autoencoder になってるようにする. ただし \(L_1\) は L1 ロス ( \(L_1(x,y) = \|x-y\|_1\) ).</p>
+\[L_{\text{cyc}}(E,G) = \mathbb{E}_{x_1} L_1(x_1, G_1 E_1 x_1) + \mathbb{E}_{x_2} L_1(x_2, G_2 E_2 x_2)\]
+<h4>Semantiv Consistency Loss</h4>
 <p>エンコーダの出力は画像の意味的表現になってること. そしてその意味はドメインにかかわらず比較可能であること.</p>
-<p><span class="math display">\[L_{\text{sem}}(E,G) = \mathbb{E}_{x_1} L_1(E_1x_1, E_2G_2E_1x_1) + \mathbb{E}_{x_2} L_1(E_2x_2, E_1G_1E_2x_2)\]</span></p>
-<p>つまり <span class="math inline">\(E_i \circ G_i = \mathrm{id}\)</span> であることを要請する.</p>
-<h4 id="overall-loss">Overall Loss</h4>
-<p>以上を全部足して TwinGAN のロスとする: <span class="math display">\[\mathcal L = \lambda_1 L_{\text{GAN}} + \lambda_2 L_{\text{cyc}} + \lambda_3 L_{\text{sem}}\]</span> これを普通の GAN のように <span class="math inline">\(D\)</span> については <span class="math inline">\(\max\)</span> を取らせて <span class="math inline">\(E,G\)</span> については <span class="math inline">\(\min\)</span> を取らせる.</p>
+\[L_{\text{sem}}(E,G) = \mathbb{E}_{x_1} L_1(E_1x_1, E_2G_2E_1x_1) + \mathbb{E}_{x_2} L_1(E_2x_2, E_1G_1E_2x_2)\]
+<p>つまり \(E_i \circ G_i = \mathrm{id}\) であることを要請する.</p>
+<h4>Overall Loss</h4>
+<p>以上を全部足して TwinGAN のロスとする:</p>
+\[\mathcal L = \lambda_1 L_{\text{GAN}} + \lambda_2 L_{\text{cyc}} + \lambda_3 L_{\text{sem}}\]
+<p>これを普通の GAN のように \(D\) については \(\max\) を取らせて \(E,G\) については \(\min\) を取らせる.</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -182,5 +174,9 @@ githubから引用
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

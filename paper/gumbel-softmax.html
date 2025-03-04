@@ -1,52 +1,51 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Categorical Reparameterization with Gumbel-Softmax</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">Categorical Reparameterization with Gumbel-Softmax</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=https://arxiv.org/abs/1611.01144>https://arxiv.org/abs/1611.01144</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a></p>
-</div>
-<h2 id="概要">概要</h2>
-<p><span class="math inline">\(\text{softmax}(f(x))\)</span> からのサンプリングを微分可能な式で表現するためのテクニック</p>
-<p>クラス数 <span class="math inline">\(k\)</span> として</p>
-<p><span class="math display">\[\pi = ( \pi_1, \pi_2, \ldots, \pi_k) = \text{softmax}(f(x)) \in \mathbb{R}^k\]</span></p>
-<p>とする. ここから確率分布 <span class="math inline">\(\pi\)</span> に従って one-hot ベクトル <span class="math inline">\(z\)</span> をサンプリングする. 例えば</p>
-<p><span class="math display">\[z = (0, 1, 0, \ldots, 0)\]</span></p>
+<p><ul> <li>original paper: <a href=https://arxiv.org/abs/1611.01144>https://arxiv.org/abs/1611.01144</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#深層学習>深層学習</a> </div></p>
+<h2>概要</h2>
+<p>\(\text{softmax}(f(x))\) からのサンプリングを微分可能な式で表現するためのテクニック</p>
+<p>クラス数 \(k\) として</p>
+\[\pi = ( \pi_1, \pi_2, \ldots, \pi_k) = \text{softmax}(f(x)) \in \mathbb{R}^k\]
+<p>とする. ここから確率分布 \(\pi\) に従って one-hot ベクトル \(z\) をサンプリングする. 例えば</p>
+\[z = (0, 1, 0, \ldots, 0)\]
 <p>みたいな感じ.</p>
-<h2 id="手法">手法</h2>
-<ol type="1">
-<li><span class="math inline">\(i=1,2,\ldots,k\)</span> について
-<ul>
-<li><span class="math inline">\(g_i = -\log \left( -\log u \right)\)</span>
-<ul>
-<li>where <span class="math inline">\(u \sim_u (0,1]\)</span> (一様分布)</li>
-</ul></li>
-</ul></li>
-<li><span class="math inline">\(z = \text{onehot}\left( \text{arg max}_i \{ g_i + \log \pi_i \} \right)\)</span></li>
+<h2>手法</h2>
+<ol>
+  <li>
+    \(i=1,2,\ldots,k\) について
+    <ul>
+      <li>
+        \(g_i = -\log \left( -\log u \right)\)
+        <ul>
+          <li>where \(u \sim_u (0,1]\) (一様分布)</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>\(z = \text{onehot}\left( \text{arg max}_i \{ g_i + \log \pi_i \} \right)\)</li>
 </ol>
-<p>直接 <span class="math inline">\(\pi_i\)</span> の <span class="math inline">\(\text{arg max}\)</span> を見るのではなく適当なノイズを加えることでサンプリングを擬似的に再現してる.</p>
+<p>直接 \(\pi_i\) の \(\text{arg max}\) を見るのではなく適当なノイズを加えることでサンプリングを擬似的に再現してる.</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -151,5 +150,9 @@ original paper: <a href=https://arxiv.org/abs/1611.01144>https://arxiv.org/abs/1
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

@@ -1,61 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Learning Confidence for Out-of-Distribution Detection in Neural Networks</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">Learning Confidence for Out-of-Distribution Detection in Neural Networks</h1>
-</header>
+<p><ul> <li>original paper: <a href=https://arxiv.org/abs/1802.04865>https://arxiv.org/abs/1802.04865</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#機械学習>機械学習</a> <a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#分類器>分類器</a> </div></p>
+<h2>リンク</h2>
 <ul>
-<li>
-original paper: <a href=https://arxiv.org/abs/1802.04865>https://arxiv.org/abs/1802.04865</a>
-</li>
+  <li><a href="https://arxiv.org/abs/1802.04865">arxiv</a></li>
+  <li><a href="https://github.com/uoguelph-mlrg/confidence_estimation">github</a></li>
 </ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#機械学習>機械学習</a> <a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#分類器>分類器</a></p>
-</div>
-<h2 id="リンク">リンク</h2>
-<ul>
-<li><a href="https://arxiv.org/abs/1802.04865">arxiv</a></li>
-<li><a href="https://github.com/uoguelph-mlrg/confidence_estimation">github</a></li>
-</ul>
-<h2 id="概要">概要</h2>
+<h2>概要</h2>
 <p>予測がどれくらいの確信度のものなのか, また入力がそのモデルが確かに予測できるデータの分布から外れていないか (out-of-distribution detection) といった問題を考える.</p>
-<h2 id="confidence-estimation">Confidence Estimation</h2>
-<p>ラベルの予測器を拡張して確信度 <span class="math inline">\(c \in [0,1]\)</span> も同時に出力するようにする. 下図は彼らが画像認識をNNで組んだときのネットワーク図. 最後の方で全結合層で分岐させて最後に sigmoid を噛ましたと述べている.</p>
-<figure>
-<img src="https://i.imgur.com/KuM6bKO.png" />
-</figure>
-<p>画像認識のような多クラス分類だとすると, 本来ラベル予測器は <span class="math display">\[p = f(x; \theta)\]</span> <span class="math display">\[\sum_i p_i = 1, p_i \geq 0\]</span> の形をしているが, これを <span class="math display">\[(p, c) = f(x; \theta)\]</span> にする.</p>
-<p>さて <span class="math inline">\(c\)</span> の教師データは直接与えられないので次のように hint を与えることで間接的に学習させる.</p>
-<p>教師データ <span class="math inline">\((x, y)\)</span> について,</p>
+<h2>Confidence Estimation</h2>
+<p>ラベルの予測器を拡張して確信度 \(c \in [0,1]\) も同時に出力するようにする. 下図は彼らが画像認識をNNで組んだときのネットワーク図. 最後の方で全結合層で分岐させて最後に sigmoid を噛ましたと述べている.</p>
+<p><img src="https://i.imgur.com/KuM6bKO.png" alt="" /></p>
+<p>画像認識のような多クラス分類だとすると, 本来ラベル予測器は</p>
+\[p = f(x; \theta)\]
+\[\sum_i p_i = 1, p_i \geq 0\]
+<p>の形をしているが, これを</p>
+\[(p, c) = f(x; \theta)\]
+<p>にする.</p>
+<p>さて \(c\) の教師データは直接与えられないので次のように hint を与えることで間接的に学習させる.</p>
+<p>教師データ \((x, y)\) について,</p>
 <ul>
-<li><span class="math inline">\((p, c) = f(x; \theta)\)</span></li>
-<li><span class="math inline">\(p&#39; = c \cdot p + (1-c) y\)</span></li>
-<li><span class="math inline">\(\mathcal L(x, y) = -\sum_i y_i \log {p&#39;}_i\)</span></li>
+  <li>\((p, c) = f(x; \theta)\)</li>
+  <li>\(p&#x27; = c \cdot p + (1-c) y\)</li>
+  <li>\(\mathcal L(x, y) = -\sum_i y_i \log {p&#x27;}_i\)</li>
 </ul>
-<p>この <span class="math inline">\(\mathcal L\)</span> を損失関数にして学習する. 通常の教師あり学習は <span class="math inline">\(c=1\)</span> の場合に相当する.</p>
-<blockquote>
-<p>教師データを完全には信用しない学習なので, 嘘のラベルが混じっていてもよくなるのかも?</p>
-</blockquote>
-<p>ただしこれだけだと, 常に <span class="math inline">\(c=0\)</span> と予測すれば最適解になるので, <span class="math display">\[\mathcal L(x, y) - \log c\]</span> を改めて損失関数にする. もちろんこれの最適解は <span class="math inline">\(c=1\)</span> であって, 常に正しい予測をする場合になる.</p>
-<figure>
-<img src="https://i.imgur.com/meGE8S5.png" />
-</figure>
+<p>この \(\mathcal L\) を損失関数にして学習する. 通常の教師あり学習は \(c=1\) の場合に相当する.</p>
+<blockquote>教師データを完全には信用しない学習なので, 嘘のラベルが混じっていてもよくなるのかも?</blockquote>
+<p>ただしこれだけだと, 常に \(c=0\) と予測すれば最適解になるので,</p>
+\[\mathcal L(x, y) - \log c\]
+<p>を改めて損失関数にする. もちろんこれの最適解は \(c=1\) であって, 常に正しい予測をする場合になる.</p>
+<p><img src="https://i.imgur.com/meGE8S5.png" alt="" /></p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -160,5 +156,9 @@ original paper: <a href=https://arxiv.org/abs/1802.04865>https://arxiv.org/abs/1
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

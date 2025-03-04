@@ -13,7 +13,7 @@
 関数 relu
 $$\sigma(x) = \mathrm{max}(x, 0)$$
 をさらに強くすることを考える.
-この関数は $x<0$ の部分では完全に「死んで」いるといえる.
+この関数は $x \lt 0$ の部分では完全に「死んで」いるといえる.
 そこで $\mathrm{min}(x,0)$ という値も付け足せば、死ぬ部分が消える.
 
 $$\sigma(x) = \left(\begin{array}{cc}
@@ -25,7 +25,7 @@ $$\sigma(x) = \left(\begin{array}{cc}
 さらにこれを一般化する方向として、$x$ の区間を細分化する.
 $x$ が取りうる領域を $U \subset \mathbb R$ とし、$U$ を $L-1$ 個の領域に分割する.
 
-$$t^1 < t^2 < \cdots < t^L$$
+$$t^1  \lt  t^2  \lt  \cdots  \lt  t^L$$
 $$U = [t^1, t^L)$$
 
 各領域で値を取る関数 $f_i, g_i$ を定める:
@@ -43,12 +43,16 @@ $$\ell : \mathbb R \to \mathbb R^L$$
 $$\ell(x)_i = f_i(x)     ~~\text{when } x \in [t^i, t^{i+1})$$
 $$\ell(x)_{i+1} = g_i(x) ~~\text{when } x \in [t^i, t^{i+1})$$
 
-```gnuplot
+<center>
+
+```@gnuplot
 set xrange [0:2]
 f(x, t0, t1) = t0 <= x && x <= t1 ? ((t1 - x) / (t1 - t0)) : 0
 g(x, t0, t1) = t0 <= x && x <= t1 ? ((x - t0) / (t1 - t0)) : 0
 plot f(x, 0, 1), g(x, 0, 1), f(x, 1, 2), g(x, 1, 2)
 ```
+
+</center>
 
 > これは点 $x$ の領域を離散化していることに他ならない.
 > $\ell(x)_i$ は $x$ の $t_i$ への近さを $[0,1]$ のなかの値で表現している.

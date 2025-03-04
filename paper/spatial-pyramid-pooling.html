@@ -1,63 +1,59 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>[1406.4729] Spatial Pyramid Pooling in Deep Convolutional Networks for Visual Recognition</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">[1406.4729] Spatial Pyramid Pooling in Deep Convolutional Networks for Visual Recognition</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=https://arxiv.org/abs/1406.4729>https://arxiv.org/abs/1406.4729</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#画像認識>画像認識</a></p>
-</div>
-<h2 id="概要">概要</h2>
+<p><ul> <li>original paper: <a href=https://arxiv.org/abs/1406.4729>https://arxiv.org/abs/1406.4729</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#画像認識>画像認識</a> </div></p>
+<h2>概要</h2>
 <p>畳み込み層 (Convolutional layers) への入力 (画像) は、他の層と同様に通常固定サイズである. 現実の画像は様々なサイズの画像であるので、そのサイズになるように crop (切り取り) や warp (アスペクト比を保持しない拡大縮小) を行うことになる. それにはもちろん、大事な部分が取り除かれるだとか、アスペクト比が強引になるなど危惧がある. Spatial Pyramid Pooling (SPP) はこれらを解決する.</p>
-<h2 id="spp-layer">SPP-layer</h2>
-<p>元論文 <a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> の Figure 3 がメインでこれを SPP-layer と呼んでいる. これを適当に Convolution の最後の方、Dense 等の固定サイズが欲しくなる直前に入れれば良いらしい. しかしこいつらの説明は、結局全然分からなくて (図で説明した気になるのはダメ) 参考文献 <a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a> これでわかった.</p>
-<p>二次元畳み込み層は本来、そのままでも入力画像サイズは (カーネルサイズ以上ありさえすれば) 何でもよいが出力サイズもそれによって変化する. 畳み込み層いくつかによってサイズ <span class="math inline">\(h \times w \times c\)</span> の行列を得たとする. ここで <span class="math inline">\(c\)</span> はチャンネル数 (またはフィルタ数) である.</p>
-<h3 id="feature-map-の分割">feature map の分割</h3>
-<p>予め <span class="math display">\[B = (b_0, b_1, b_2, \ldots, b_m)\]</span> を定めておく. これは分割のレベル及び個数を定めるもので、例えばレベル <span class="math inline">\(i\)</span> では <span class="math inline">\(b_i\)</span> 個に行列を分割する.</p>
-<p>ちなみに元論文では <span class="math inline">\(B = (1, 4, 16)\)</span> を使っている. これは <span class="math inline">\(b_i = k^2\)</span> とすることで <span class="math inline">\(k \times k\)</span> 個にキレイに分割できるという話でしかなく、どうでもいい. 分割されて得た <span class="math inline">\(b_i\)</span> 個の行列はそれぞれ同じサイズである必要は無いから.</p>
-<p>任意サイズの二次元行列 <span class="math inline">\(a\)</span> を <span class="math inline">\(b (=b_i)\)</span> 個に分割する操作を <span class="math display">\[\mathbb{R}^{- \times -} \to \bigoplus^b \mathbb{R}^{- \times -}\]</span> <span class="math display">\[\mathrm{Split}^b : a \mapsto (a_1, a_2, \ldots, a_b)\]</span> と書く.</p>
-<h4 id="例">例</h4>
+<h2>SPP-layer</h2>
+<p>元論文 [^1] の Figure 3 がメインでこれを SPP-layer と呼んでいる. これを適当に Convolution の最後の方、Dense 等の固定サイズが欲しくなる直前に入れれば良いらしい. しかしこいつらの説明は、結局全然分からなくて (図で説明した気になるのはダメ) 参考文献 [^2] これでわかった.</p>
+<p>二次元畳み込み層は本来、そのままでも入力画像サイズは (カーネルサイズ以上ありさえすれば) 何でもよいが出力サイズもそれによって変化する. 畳み込み層いくつかによってサイズ \(h \times w \times c\) の行列を得たとする. ここで \(c\) はチャンネル数 (またはフィルタ数) である.</p>
+<h3>feature map の分割</h3>
+<p>予め</p>
+\[B = (b_0, b_1, b_2, \ldots, b_m)\]
+<p>を定めておく. これは分割のレベル及び個数を定めるもので、例えばレベル \(i\) では \(b_i\) 個に行列を分割する.</p>
+<p>ちなみに元論文では \(B = (1, 4, 16)\) を使っている. これは \(b_i = k^2\) とすることで \(k \times k\) 個にキレイに分割できるという話でしかなく、どうでもいい. 分割されて得た \(b_i\) 個の行列はそれぞれ同じサイズである必要は無いから.</p>
+<p>任意サイズの二次元行列 \(a\) を \(b (=b_i)\) 個に分割する操作を</p>
+\[\mathbb{R}^{- \times -} \to \bigoplus^b \mathbb{R}^{- \times -}\]
+\[\mathrm{Split}^b : a \mapsto (a_1, a_2, \ldots, a_b)\]
+<p>と書く.</p>
+<h4>例</h4>
 <p>次の分割はあくまでも一例</p>
-<p><span class="math display">\[\mathrm{Split}^2 \left(\begin{array}{cc}a&amp;b\\c&amp;d\end{array}\right) = \left( \left(\begin{array}{c}a\\c\end{array}\right) \left(\begin{array}{c}b\\d\end{array}\right) \right)\]</span></p>
-<h3 id="プーリング">プーリング</h3>
-<p>任意サイズを固定サイズに移す肝は結局プーリングで、いわゆる max pooling はカーネルというものを持つが、 カーネルを定めずに入力全体の max を取ることが出来るはずである. <span class="math display">\[\mathrm{MaxPooling} : \mathbb{R}^{h \times w} \to \mathbb{R}\]</span></p>
-<p>これを分割後の各行列に適用することを考える. <span class="math display">\[\mathrm{MaxPooling}(\mathrm{Split}^b(a)) : \mathbb{R}^b\]</span> これの出力は長さ <span class="math inline">\(b\)</span> の実ベクトルとみなせる.</p>
-<p>以上を <span class="math inline">\(c\)</span> チャンネル全てに適用すれば、結局 <span class="math inline">\(cb=cb_i\)</span> サイズのベクトルを得る (結合するだけ).</p>
-<p>以上を全ての <span class="math inline">\(i\)</span> (<span class="math inline">\(b_i\)</span>) について適用すれば結局 <span class="math inline">\(c \sum_i b_i\)</span> サイズのベクトルを得る (結合するだけ).</p>
+\[\mathrm{Split}^2 \left(\begin{array}{cc}a&amp;b\\c&amp;d\end{array}\right) = \left( \left(\begin{array}{c}a\\c\end{array}\right) \left(\begin{array}{c}b\\d\end{array}\right) \right)\]
+<h3>プーリング</h3>
+<p>任意サイズを固定サイズに移す肝は結局プーリングで、いわゆる max pooling はカーネルというものを持つが、 カーネルを定めずに入力全体の max を取ることが出来るはずである.</p>
+\[\mathrm{MaxPooling} : \mathbb{R}^{h \times w} \to \mathbb{R}\]
+<p>これを分割後の各行列に適用することを考える.</p>
+\[\mathrm{MaxPooling}(\mathrm{Split}^b(a)) : \mathbb{R}^b\]
+<p>これの出力は長さ \(b\) の実ベクトルとみなせる.</p>
+<p>以上を \(c\) チャンネル全てに適用すれば、結局 \(cb=cb_i\) サイズのベクトルを得る (結合するだけ).</p>
+<p>以上を全ての \(i\) ( \(b_i\) ) について適用すれば結局 \(c \sum_i b_i\) サイズのベクトルを得る (結合するだけ).</p>
 <p>というわけで間違いなく可変サイズの入力全ての情報を使って固定長のベクトルを得ることに成功した.</p>
-<h2 id="参考">参考</h2>
+<h2>参考</h2>
 <ul>
-<li></li>
-<li></li>
+  <li>[^1] : <a href="https://arxiv.org/abs/1406.4729">[1406.4729] https://arxiv.org/abs/1406.4729</a></li>
+  <li>[^2] : <a href="http://www.shortscience.org/paper?bibtexKey=journals/corr/1406.4729#martinthoma">Summary of Spatial Pyramid Pooling in Deep Convolutional Networks for Visual Recognition on ShortScience.org</a></li>
 </ul>
-<section class="footnotes">
-<hr />
-<ol>
-<li id="fn1"><p><a href="https://arxiv.org/abs/1406.4729">[1406.4729] https://arxiv.org/abs/1406.4729</a><a href="#fnref1">↩</a></p></li>
-<li id="fn2"><p><a href="http://www.shortscience.org/paper?bibtexKey=journals/corr/1406.4729#martinthoma">Summary of Spatial Pyramid Pooling in Deep Convolutional Networks for Visual Recognition on ShortScience.org</a><a href="#fnref2">↩</a></p></li>
-</ol>
-</section>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -162,5 +158,9 @@ original paper: <a href=https://arxiv.org/abs/1406.4729>https://arxiv.org/abs/14
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

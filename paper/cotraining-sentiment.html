@@ -1,124 +1,198 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Co-training for Semi-supervised Sentiment Classification Based on Dual-view Bags-of-words Representation</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/</a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">Co-training for Semi-supervised Sentiment Classification Based on Dual-view Bags-of-words Representation</h1>
-</header>
+<p><ul> <li>original paper: <a href=http://www.aclweb.org/anthology/P15-1102>http://www.aclweb.org/anthology/P15-1102</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#自然言語処理>自然言語処理</a> <a class='tag is-blue' href=index.html#極性分析>極性分析</a> <a class='tag is-blue' href=index.html#半教師アリ学習>半教師アリ学習</a> <a class='tag is-blue' href=index.html#共訓練>共訓練</a> </div></p>
 <ul>
-<li>
-original paper: <a href=http://www.aclweb.org/anthology/P15-1102>http://www.aclweb.org/anthology/P15-1102</a>
-</li>
+  <li>レビューテキストの極性判定. BOW. 線形回帰 (liblinear L2)</li>
+  <li>半教師アリにしたい</li>
+  <li>
+    <i>"we propose a dual-view co-training approach based on dual-view BOW representation for semi-supervised sentiment classification."</i>
+    <ul>
+      <li>
+        単にオリジナルのテキストの pos/neg を学習するのではなくて、そのちょうど反対 (neg/pos) がどんなであるかも学習する
+        <ul>
+          <li>posな文を学習するときに、一緒にnegも必ず学習する</li>
+        </ul>
+      </li>
+      <li>
+        自動で対なる2レビューを人工的に生成する
+        <ul>
+          <li>negator (not) を取り除く</li>
+          <li>
+            sentiment word は全部対義語で置き換える
+            <ul>
+              <li>あらかじめそのような辞書を持っておく</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>
+        dual-view co-training
+        <ul>
+          <li>
+            ラベル付き学習データ \(L_o\) (original)
+            <ul>
+              <li>2値分類器 \(h_o (x \mapsto y \in \{0,1\})\)</li>
+            </ul>
+          </li>
+          <li>
+            対になるように作ったデータ \(L_a\) (antonymous)
+            <ul>
+              <li>2値分類器 \(h_a (x \mapsto y \in \{0,1\})\) を作成</li>
+            </ul>
+          </li>
+          <li>これらを合わせたような \(h_d\) というものを作ることを考える</li>
+          <li>
+            ラベルなし \(x_o\) について対 \(x_a\) を作成する
+            <ul>
+              <li><code>assert</code> \(h_o(x_o) \ne h_a(x_a)\) 一方が pos のとき neg であるべきである</li>
+              <li>
+                それが満たされた場合だけ、それぞれを \(L_o\) , \(L_a\) に追加
+                <ul>
+                  <li>ある程度たまったら \(h_o\) , \(h_a\) を更新する</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li>
+            最終的な予測としては \(h_o\) \(h_a\) の両方を使いたい
+            <ul>
+              <li>各分類器で確率を計算して足して2で割る</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
 </ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#自然言語処理>自然言語処理</a> <a class='tag is-blue' href=index.html#極性分析>極性分析</a> <a class='tag is-blue' href=index.html#半教師アリ学習>半教師アリ学習</a> <a class='tag is-blue' href=index.html#共訓練>共訓練</a></p>
-</div>
-<ul>
-<li>レビューテキストの極性判定. BOW. 線形回帰 (liblinear L2)</li>
-<li>半教師アリにしたい</li>
-<li><i>&quot;we propose a dual-view co-training approach based on dual-view BOW representation for semi-supervised sentiment classification.&quot;</i>
-<ul>
-<li>単にオリジナルのテキストの pos/neg を学習するのではなくて、そのちょうど反対 (neg/pos) がどんなであるかも学習する
-<ul>
-<li>posな文を学習するときに、一緒にnegも必ず学習する</li>
-</ul></li>
-<li>自動で対なる2レビューを人工的に生成する
-<ul>
-<li>negator (not) を取り除く</li>
-<li>sentiment word は全部対義語で置き換える
-<ul>
-<li>あらかじめそのような辞書を持っておく</li>
-</ul></li>
-</ul></li>
-<li>dual-view co-training
-<ul>
-<li>ラベル付き学習データ <span class="math inline">\(L_o\)</span> (original)
-<ul>
-<li>2値分類器 <span class="math inline">\(h_o (x \mapsto y \in \{0,1\})\)</span></li>
-</ul></li>
-<li>対になるように作ったデータ <span class="math inline">\(L_a\)</span> (antonymous)
-<ul>
-<li>2値分類器 <span class="math inline">\(h_a (x \mapsto y \in \{0,1\})\)</span> を作成</li>
-</ul></li>
-<li>これらを合わせたような <span class="math inline">\(h_d\)</span> というものを作ることを考える</li>
-<li>ラベルなし <span class="math inline">\(x_o\)</span> について対 <span class="math inline">\(x_a\)</span> を作成する
-<ul>
-<li><code>assert</code> <span class="math inline">\(h_o(x_o) \ne h_a(x_a)\)</span> 一方が pos のとき neg であるべきである</li>
-<li>それが満たされた場合だけ、それぞれを <span class="math inline">\(L_o\)</span>, <span class="math inline">\(L_a\)</span> に追加
-<ul>
-<li>ある程度たまったら <span class="math inline">\(h_o\)</span>, <span class="math inline">\(h_a\)</span> を更新する</li>
-</ul></li>
-</ul></li>
-<li>最終的な予測としては <span class="math inline">\(h_o\)</span> <span class="math inline">\(h_a\)</span> の両方を使いたい
-<ul>
-<li>各分類器で確率を計算して足して2で割る</li>
-</ul></li>
-</ul></li>
-</ul></li>
-</ul>
+
 <!--
 
-  HTML として pandoc -B で include する.
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
 
-  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
-  markdown で書いてるだろうから例として次のような段落を書けばよい.
+    <div id=toc></div>
 
-```
-## INDEX
-<div id=toc></div>
-```
 
-  used in
-  - /memo/gnuplot
-  - /memo/linux
-  - /memo/imagemagick
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
 
 -->
 <script>
 (function() {
-  var sections = document.getElementsByTagName('h2');
-  var i;
-  var OL = document.createElement('ol');
-  for (i=0; i < sections.length; ++i) {
-    var LI = document.createElement('li');
-    var A = document.createElement('a');
-    A.innerHTML = sections[i].innerHTML;
-    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
-    A.href = '#' + i;
-    LI.appendChild(A);
-    OL.appendChild(LI);
 
-    var PREF = document.createElement('a');
-    PREF.name = i;
-    sections[i].appendChild(PREF);
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
   }
 
-  var done = false;
-  function work() {
-    if (done) return;
-    if ( document.getElementById('toc') === null) return; // no toc element
-    document.getElementById('toc').appendChild(OL);
-    done = true;
-  };
+  function level1() {
 
-  window.onload = work;
-  setTimeout(work,800);
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

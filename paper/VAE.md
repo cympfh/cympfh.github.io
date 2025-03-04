@@ -177,7 +177,7 @@ Decoder $R$ に入れるだけで良い.
 次のグラフィカルモデルを用いる.
 すなわち、今までは単に潜在変数 $z$ から生成されるとしていたが、それに条件 (condition) $y$ を与える.
 
-```dot
+```@dot
 digraph {
     rankdir=TB;
     bgcolor=transparent;
@@ -194,7 +194,7 @@ digraph {
 先程と同様にエンコーダ $Q$ とデコーダ $R$ を用意する.
 ただしそれぞれは条件 $y$ が与えられたときの確率分布を表す.
 
-```dot
+```@dot
 digraph CVAE {
     rankdir=LR;
     bgcolor=transparent;
@@ -221,7 +221,7 @@ digraph CVAE {
 を目指す.
 テストをするには、適当に $\mathcal{N}$ からサンプリングして得たノイズ $z$ を $y$ と併せて $R$ に入れることで $x$ を生成することで試す.
 
-```dot
+```@dot
 digraph CVAE {
     rankdir=LR;
     bgcolor=transparent;

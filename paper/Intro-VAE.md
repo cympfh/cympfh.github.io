@@ -2,7 +2,7 @@
 % https://arxiv.org/abs/1807.06358
 % 深層学習 オートエンコーダ 生成モデル VAE
 
-$\require{AMScd}$
+$\require{amscd}$
 $\def\KL{D_{\text{KL}}}$
 
 関数適用の括弧は極力省略する.

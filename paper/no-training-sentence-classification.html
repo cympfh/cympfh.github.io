@@ -1,71 +1,68 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>No Training Required: Exploring Random Encoders for Sentence Classification</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">No Training Required: Exploring Random Encoders for Sentence Classification</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=https://openreview.net/forum?id=BkgPajAcY7>https://openreview.net/forum?id=BkgPajAcY7</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#自然言語処理>自然言語処理</a> <a class='tag is-blue' href=index.html#文分散表現>文分散表現</a></p>
-</div>
-<h2 id="概要">概要</h2>
+<p><ul> <li>original paper: <a href=https://openreview.net/forum?id=BkgPajAcY7>https://openreview.net/forum?id=BkgPajAcY7</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#自然言語処理>自然言語処理</a> <a class='tag is-blue' href=index.html#文分散表現>文分散表現</a> </div></p>
+<h2>概要</h2>
 <p>単語の分散表現に pre-trained なものだけを使い, RNN 部分は一切訓練せずテキスト分類を解く.</p>
-<h2 id="アプローチ">アプローチ</h2>
-<h3 id="random-sentence-encoders">Random Sentence Encoders</h3>
-<p>訓練済みの単語ベクトルによって, 文 (単語列) について分散ベクトルの列 <span class="math inline">\(e_1,\ldots,e_n\)</span> を得る. 列を読む RNN のような <span class="math inline">\(f_\theta\)</span> を以て <span class="math display">\[h = f_\theta(e_1,\ldots,e_n)\]</span> で分類DNNを構成するが, ここで, パラメータ <span class="math inline">\(\theta\)</span> を一切更新せずランダムに初期化したままにする. ということは教師ラベルは要らない!!</p>
-<p>この <span class="math inline">\(f_\theta\)</span> の計算に次の3通りを試す.</p>
-<ol type="1">
-<li>Bag of Random Embedding Projection</li>
-<li>Random LSTM</li>
-<li>Echo State Network</li>
+<h2>アプローチ</h2>
+<h3>Random Sentence Encoders</h3>
+<p>訓練済みの単語ベクトルによって, 文 (単語列) について分散ベクトルの列 \(e_1,\ldots,e_n\) を得る. 列を読む RNN のような \(f_\theta\) を以て</p>
+\[h = f_\theta(e_1,\ldots,e_n)\]
+<p>で分類DNNを構成するが, ここで, パラメータ \(\theta\) を一切更新せずランダムに初期化したままにする. ということは教師ラベルは要らない!!</p>
+<p>この \(f_\theta\) の計算に次の3通りを試す.</p>
+<ol>
+  <li>Bag of Random Embedding Projection</li>
+  <li>Random LSTM</li>
+  <li>Echo State Network</li>
 </ol>
-<h3 id="bag-of-random-embedding-projection-borep">Bag of Random Embedding Projection (BOREP)</h3>
+<h3>Bag of Random Embedding Projection (BOREP)</h3>
 <p>Bag of Words 的に扱う.</p>
-<p>単語ベクトル <span class="math inline">\(d\)</span> 次元について 各成分を <span class="math inline">\(\left[ -\dfrac{1}{\sqrt{d}}, \dfrac{1}{\sqrt{d}} \right]\)</span> で一様ランダムに作った行列 <span class="math inline">\(W \in \mathbb{R}^{D \times d}\)</span> を用いて, <span class="math inline">\(e \in \mathbb R^d\)</span> について, <span class="math display">\[h = f_{\text{pool}}(W e_1,\ldots,W e_n)\]</span> とする. また <span class="math inline">\(f_{\text{pool}}\)</span> は何かしらのプーリングで, <span class="math inline">\(\sum(x)\)</span>, <span class="math inline">\(\max(x)\)</span>, <span class="math inline">\(\sum(x) / |x|\)</span> など. また適宜 <span class="math inline">\(\max(0,h)\)</span> で活性化もする.</p>
-<h3 id="random-lstm-randlstm">Random LSTM (RandLSTM)</h3>
-<p>パラメータを <span class="math inline">\(\left[ -\dfrac{1}{\sqrt{d}}, \dfrac{1}{\sqrt{d}} \right]\)</span> で一様ランダムに初期化して, また hidden size を <span class="math inline">\(d\)</span> にした BiLSTM によって列を読む. これで読んだ値をプーリングする. <span class="math display">\[h = f_{\text{pool}} (\mathrm{BiLSTM}(e_1,\ldots,e_n))\]</span></p>
-<h3 id="echo-state-network-esn">Echo State Network (ESN)</h3>
+<p>単語ベクトル \(d\) 次元について 各成分を \(\left[ -\dfrac{1}{\sqrt{d}}, \dfrac{1}{\sqrt{d}} \right]\) で一様ランダムに作った行列 \(W \in \mathbb{R}^{D \times d}\) を用いて, \(e \in \mathbb R^d\) について,</p>
+\[h = f_{\text{pool}}(W e_1,\ldots,W e_n)\]
+<p>とする. また \(f_{\text{pool}}\) は何かしらのプーリングで, \(\sum(x)\) , \(\max(x)\) , \(\sum(x) &#x2F; |x|\) など. また適宜 \(\max(0,h)\) で活性化もする.</p>
+<h3>Random LSTM (RandLSTM)</h3>
+<p>パラメータを \(\left[ -\dfrac{1}{\sqrt{d}}, \dfrac{1}{\sqrt{d}} \right]\) で一様ランダムに初期化して, また hidden size を \(d\) にした BiLSTM によって列を読む. これで読んだ値をプーリングする.</p>
+\[h = f_{\text{pool}} (\mathrm{BiLSTM}(e_1,\ldots,e_n))\]
+<h3>Echo State Network (ESN)</h3>
 <p>これは [Jaeger, 2001] で提案されたもので, 入力列について各成分のラベルを予測するようなもの. つまりラベルの列が出力.</p>
 <ul>
-<li><span class="math inline">\(\hat{h}_i = f_{\text{pool}} (W^i e_i + W^h h_{i-1} + b^i)\)</span></li>
-<li><span class="math inline">\(h_i = (1 - \alpha) h{_i-1} + \alpha \hat{h}_i\)</span></li>
+  <li>\(\hat{h}_i = f_{\text{pool}} (W^i e_i + W^h h_{i-1} + b^i)\)</li>
+  <li>\(h_i = (1 - \alpha) h{_i-1} + \alpha \hat{h}_i\)</li>
 </ul>
-<p>もちろん <span class="math inline">\(W^i, W^h, b^i\)</span> はランダムに初期化するパラメータ. <span class="math inline">\(\alpha \in (0,1]\)</span> は適当に決めるパラメータ.</p>
+<p>もちろん \(W^i, W^h, b^i\) はランダムに初期化するパラメータ. \(\alpha \in (0,1]\) は適当に決めるパラメータ.</p>
 <p>予測ラベルは更にこう:</p>
 <ul>
-<li><span class="math inline">\(\hat{y}_i = W^o [e_i;h_i] + b^o\)</span></li>
+  <li>\(\hat{y}_i = W^o [e_i;h_i] + b^o\)</li>
 </ul>
-<p><span class="math inline">\(W^o,b^o\)</span> はランダムで決まるパラメータ.</p>
-<p>以上のようにして列を読んで列を返す手続きを ESN とするとき <span class="math display">\[h = \max(\mathrm{ESN}(e_1,\ldots,e_n))\]</span></p>
-<blockquote>
-<p><span class="math inline">\(h\)</span> からラベル予測はさすがに普通に教師あり学習？？</p>
-</blockquote>
-<h2 id="results">Results</h2>
+<p>\(W^o,b^o\) はランダムで決まるパラメータ.</p>
+<p>以上のようにして列を読んで列を返す手続きを ESN とするとき</p>
+\[h = \max(\mathrm{ESN}(e_1,\ldots,e_n))\]
+<blockquote>\(h\) からラベル予測はさすがに普通に教師あり学習？？</blockquote>
+<h2>Results</h2>
 <p>評価には <a href="SentEval.html">SentEval</a> を使う.</p>
-<figure>
-<img src="https://i.imgur.com/eZDm4SW.png" />
-</figure>
+<p><img src="https://i.imgur.com/eZDm4SW.png" alt="" /></p>
 <p>最新手法をさすがに超えはしないがベースラインにはなると言っている. そして結構迫るくらい精度を出してる.</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -170,5 +167,9 @@ original paper: <a href=https://openreview.net/forum?id=BkgPajAcY7>https://openr
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

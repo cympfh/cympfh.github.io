@@ -1,111 +1,127 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Deep Metric Learning using Triplet Network</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">Deep Metric Learning using Triplet Network</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=https://arxiv.org/abs/1412.6622>https://arxiv.org/abs/1412.6622</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#距離学習>距離学習</a> <a class='tag is-blue' href=index.html#類似度学習>類似度学習</a></p>
-</div>
-<h2 id="手法概要">手法概要</h2>
+<p><ul> <li>original paper: <a href=https://arxiv.org/abs/1412.6622>https://arxiv.org/abs/1412.6622</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#距離学習>距離学習</a> <a class='tag is-blue' href=index.html#類似度学習>類似度学習</a> </div></p>
+<h2>手法概要</h2>
 <p>類似度を学習するための Triplet network を提案する. Siamese network のある種の拡張になっている.</p>
 <p>Siamese network の入力は2つのアイテムのペアと、その2つの類似度であったが、 Triplet network では名前の通り、入力がアイテムの三組になっている.</p>
 <ul>
-<li>入力はアイテムの三組 <span class="math inline">\((x, x^+, x^-)\)</span>
-<ul>
-<li><span class="math inline">\(x\)</span>: 適当なターゲット</li>
-<li><span class="math inline">\(x^+\)</span>: <span class="math inline">\(x\)</span> と近い (類似してる) アイテム</li>
-<li><span class="math inline">\(x^-\)</span>: <span class="math inline">\(x\)</span> と遠い (類似していない) アイテム</li>
-</ul></li>
-<li>これらを共通した一つのニューラネットワーク <span class="math inline">\(f\)</span> に通す
-<ul>
-<li><span class="math inline">\((x, x^+, x^-) \mapsto (f(x), f(x^+), f(x^-)) = (z, z^+, z^-)\)</span></li>
-</ul></li>
+  <li>
+    入力はアイテムの三組 \((x, x^+, x^-)\)
+    <ul>
+      <li>\(x\) : 適当なターゲット</li>
+      <li>\(x^+\) : \(x\) と近い (類似してる) アイテム</li>
+      <li>\(x^-\) : \(x\) と遠い (類似していない) アイテム</li>
+    </ul>
+  </li>
+  <li>
+    これらを共通した一つのニューラネットワーク \(f\) に通す
+    <ul>
+      <li>\((x, x^+, x^-) \mapsto (f(x), f(x^+), f(x^-)) = (z, z^+, z^-)\)</li>
+    </ul>
+  </li>
 </ul>
-<p><img src="data:image/png;base64,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"></p>
-<p>このときに <span class="math inline">\((x, x^+)\)</span> 及び <span class="math inline">\((x, x^-)\)</span> に関して Siamese network 的なことを行う.</p>
+<img src="data:image/png;base64,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">
+<p>このときに \((x, x^+)\) 及び \((x, x^-)\) に関して Siamese network 的なことを行う.</p>
 <p>すなわち、</p>
 <ul>
-<li><span class="math inline">\(x, x^+\)</span> 間の距離 (<span class="math inline">\(d^+\)</span> とする) をゼロにすること</li>
-<li><span class="math inline">\(x, x^-\)</span> 間の距離 (<span class="math inline">\(d^-\)</span> とする) は適度に離れてること</li>
+  <li>\(x, x^+\) 間の距離 ( \(d^+\) とする) をゼロにすること</li>
+  <li>\(x, x^-\) 間の距離 ( \(d^-\) とする) は適度に離れてること</li>
 </ul>
 <p>を目指す.</p>
-<p>このアイテム間の距離として、<span class="math inline">\(z=f(x)\)</span> 同士の L2 距離を算出し、さらに次のように正規化を行う.</p>
-<p><span class="math display">\[d^+ = \frac{\exp \| z - z^+ \| }{\exp \| z - z^+ \| + \exp \| z - z^- \| }\]</span> <span class="math display">\[d^- = \frac{\exp \| z - z^- \| }{\exp \| z - z^+ \| + \exp \| z - z^- \| }\]</span></p>
-<p>すなわち、 <span class="math inline">\(d^+ + d^- = 1\)</span> となるように正規化する. <span class="math inline">\(d^+ = 0\)</span> のとき、<span class="math inline">\(d^- = 1\)</span> となるべきなので、損失は次のようにする. これを triplet loss という.</p>
+<p>このアイテム間の距離として、 \(z=f(x)\) 同士の L2 距離を算出し、さらに次のように正規化を行う.</p>
+\[d^+ = \frac{\exp \| z - z^+ \| }{\exp \| z - z^+ \| + \exp \| z - z^- \| }\]
+\[d^- = \frac{\exp \| z - z^- \| }{\exp \| z - z^+ \| + \exp \| z - z^- \| }\]
+<p>すなわち、 \(d^+ + d^- = 1\) となるように正規化する. \(d^+ = 0\) のとき、 \(d^- = 1\) となるべきなので、損失は次のようにする. これを triplet loss という.</p>
 <ul>
-<li><span class="math inline">\(L(x, x^+, x^-) = d(y, y^+)^2 + (1 - d(y, y^-))^2\)</span></li>
+  <li>\(L(x, x^+, x^-) = d(y, y^+)^2 + (1 - d(y, y^-))^2\)</li>
 </ul>
-<p>いま <span class="math inline">\(d^+ + d^- = 1\)</span> としてるので</p>
+<p>いま \(d^+ + d^- = 1\) としてるので</p>
 <ul>
-<li><span class="math inline">\(L(x, x^+, x^-) = 2 d(y, y^+)^2\)</span></li>
+  <li>\(L(x, x^+, x^-) = 2 d(y, y^+)^2\)</li>
 </ul>
-<p>となって結局、<span class="math inline">\(d^+\)</span> の最小化、または <span class="math inline">\(d^-\)</span> の最大化と一致する.</p>
-<h3 id="亜種">亜種?</h3>
-<p>この論文を読むより先に &quot;triplet loss&quot; でググってヒットした <a href="http://tech.vasily.jp/entry/detection_and_retrieval#f-44448e46">ディープラーニングによるファッションアイテム検出と検索 - VASILY DEVELOPERS BLOG</a> という記事を読んでおり、その記事では損失関数として、</p>
+<p>となって結局、 \(d^+\) の最小化、または \(d^-\) の最大化と一致する.</p>
+<h3>亜種?</h3>
+<p>この論文を読むより先に "triplet loss" でググってヒットした <a href="http://tech.vasily.jp/entry/detection_and_retrieval#f-44448e46">ディープラーニングによるファッションアイテム検出と検索 - VASILY DEVELOPERS BLOG</a> という記事を読んでおり、その記事では損失関数として、</p>
 <ul>
-<li><span class="math inline">\(L(x, x^+, x^-) = \max \{ d(y, y^+) - d(y, y^-) - margin, 0 \}\)</span>
-<ul>
-<li><span class="math inline">\(d\)</span> は L2距離</li>
-</ul></li>
+  <li>
+    \(L(x, x^+, x^-) = \max \{ d(y, y^+) - d(y, y^-) - margin, 0 \}\)
+    <ul>
+      <li>\(d\) は L2距離</li>
+    </ul>
+  </li>
 </ul>
-<p>というのが &quot;triplet loss&quot; だとして紹介されていた. どうも &quot;contrastive loss&quot; との折衷に見える.</p>
-<p>恐らく、これは <a href="https://arxiv.org/abs/1503.03832">FaceNet</a> で &quot;triplet loss&quot; として提案されたもののことだろう. 論文が出た順で言うと、本文書で紹介している論文のほうが古い.</p>
-<h2 id="評価実験">評価実験</h2>
+<p>というのが "triplet loss" だとして紹介されていた. どうも "contrastive loss" との折衷に見える.</p>
+<p>恐らく、これは <a href="https://arxiv.org/abs/1503.03832">FaceNet</a> で "triplet loss" として提案されたもののことだろう. 論文が出た順で言うと、本文書で紹介している論文のほうが古い.</p>
+<h2>評価実験</h2>
 <ul>
-<li>Siamese ネットワークとの比較をしている.
-<ul>
-<li>MNIST/Cifar10/SVHN/STL10 でラベルの同一性に関して類似度を学習、埋め込み表現を得てその後は線形SVMまたはk近傍で分類をした.</li>
-<li>まあ、そんな良くない</li>
-</ul></li>
+  <li>
+    Siamese ネットワークとの比較をしている.
+    <ul>
+      <li>MNIST/Cifar10/SVHN/STL10 でラベルの同一性に関して類似度を学習、埋め込み表現を得てその後は線形SVMまたはk近傍で分類をした.</li>
+      <li>まあ、そんな良くない</li>
+    </ul>
+  </li>
 </ul>
-<h2 id="感想">感想</h2>
+<h2>感想</h2>
 <ul>
-<li>初めに訓練データを三組に直す処理が必要で、実際に試そうと思うとすこし面倒くさい
-<ul>
-<li>場合によってはラベル付きデータを用意するより楽かもしれない
-<ul>
-<li>「同じラベルがついているペア」というものを探しさえすればいいので</li>
-<li>「異なるラベルがついているペア」というのは簡単なヒューリスティックで作りやすい
-<ul>
-<li>ランダムに選べば大抵異なるラベルであるかもしれない</li>
-</ul></li>
-</ul></li>
-</ul></li>
-<li>三組を用意することは、Siamese Network で、ポジティブとネガティブとを均等に学習させられる利点である</li>
-<li>実際に距離を、ポジティブとネガティブとの比にしていることの良さは、ネガティブとの距離を具体的に決めなくていいことである
-<ul>
-<li>直感的に、ポジティブとは近ければ近いほど良く、距離ゼロという教師データが使えるが、ネガティブの場合は、ある一定上離れてくれてば良いだけなので、どれだけの距離が適切なのか分からない
-<ul>
-<li>&quot;contrastive loss&quot; は、一定以上 (マージン) 離れてればゼロになるような損失関数である</li>
-</ul></li>
-</ul></li>
-<li>評価実験について
-<ul>
-<li>毎回思うが、距離/類似度学習は分類のための手法ではないと思う</li>
-</ul></li>
+  <li>
+    初めに訓練データを三組に直す処理が必要で、実際に試そうと思うとすこし面倒くさい
+    <ul>
+      <li>
+        場合によってはラベル付きデータを用意するより楽かもしれない
+        <ul>
+          <li>「同じラベルがついているペア」というものを探しさえすればいいので</li>
+          <li>
+            「異なるラベルがついているペア」というのは簡単なヒューリスティックで作りやすい
+            <ul>
+              <li>ランダムに選べば大抵異なるラベルであるかもしれない</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>三組を用意することは、Siamese Network で、ポジティブとネガティブとを均等に学習させられる利点である</li>
+  <li>
+    実際に距離を、ポジティブとネガティブとの比にしていることの良さは、ネガティブとの距離を具体的に決めなくていいことである
+    <ul>
+      <li>
+        直感的に、ポジティブとは近ければ近いほど良く、距離ゼロという教師データが使えるが、ネガティブの場合は、ある一定上離れてくれてば良いだけなので、どれだけの距離が適切なのか分からない
+        <ul>
+          <li>"contrastive loss" は、一定以上 (マージン) 離れてればゼロになるような損失関数である</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>
+    評価実験について
+    <ul>
+      <li>毎回思うが、距離/類似度学習は分類のための手法ではないと思う</li>
+    </ul>
+  </li>
 </ul>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -210,5 +226,9 @@ original paper: <a href=https://arxiv.org/abs/1412.6622>https://arxiv.org/abs/14
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

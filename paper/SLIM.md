@@ -29,10 +29,11 @@ $$\min \| a^j - A w^j \|^2$$
 また $A^j$ を見れば答えの $\tilde{a}^j = a^j$ が入っていて $W=I$ という自明解があるので,
 対角成分はゼロ ($w_j^j = 0$) という制約を設ける.
 
-さらに加えて $w_i^j \geqA 0$ ともする（これはなぜ？）.
+さらに加えて $w_i^j \geq A 0$ ともする（これはなぜ？）.
 
 結局次のような最適化問題
-$$\min \| A - AW \|_F^2 + \lambda_1 \| W \|_F^2 + \lambda_2 \|W\|_1$$
-<center>such that</center>
-$$W \geq 0, W_j^j = 0$$
+
+- $\min \| A - AW \|_F^2 + \lambda_1 \| W \|_F^2 + \lambda_2 \|W\|_1$
+- such that
+    - $W \geq 0, W_j^j = 0$
 

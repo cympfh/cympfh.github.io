@@ -1,86 +1,92 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Practical Coinduction</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">Practical Coinduction</h1>
-</header>
+<p><ul> <li>original paper: <a href=http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.252.3961>http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.252.3961</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#余帰納法>余帰納法</a> </div></p>
+<h2>Introduction</h2>
+<h3>帰納法 (induction) の例、リスト</h3>
+<p>有限集合 \(A\) 上のリストというものは次のように、 帰納的に定義される.</p>
 <ul>
-<li>
-original paper: <a href=http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.252.3961>http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.252.3961</a>
-</li>
+  <li>\(nil\) はリスト</li>
+  <li>\(a \in A\) と \(A\) 上のリスト \(\ell\) があるとき \(a :: \ell\) は \(A\) 上のリスト</li>
 </ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#余帰納法>余帰納法</a></p>
-</div>
-<h2 id="introduction">Introduction</h2>
-<h3 id="帰納法-induction-の例リスト">帰納法 (induction) の例、リスト</h3>
-<p>有限集合 <span class="math inline">\(A\)</span> 上のリストというものは次のように、 帰納的に定義される.</p>
+<p>次のようにも書ける:</p>
+\[List = nil + A \times List\]
+<p>この構成は、ただひとつの定数 \(nil\) と、 ただひとつの構成子 \(::\) によって、 ただひと通りに定まる. リストの \(length\) 、 \(concat\) といった関数は、 この構成に沿って定義できる.</p>
 <ul>
-<li><span class="math inline">\(nil\)</span> はリスト</li>
-<li><span class="math inline">\(a \in A\)</span> と <span class="math inline">\(A\)</span> 上のリスト <span class="math inline">\(\ell\)</span> があるとき <span class="math inline">\(a :: \ell\)</span> は <span class="math inline">\(A\)</span> 上のリスト</li>
-</ul>
-<p>次のようにも書ける: <span class="math display">\[List = nil + A \times List\]</span></p>
-<p>この構成は、ただひとつの定数 <span class="math inline">\(nil\)</span> と、 ただひとつの構成子 <span class="math inline">\(::\)</span> によって、 ただひと通りに定まる. リストの <span class="math inline">\(length\)</span> 、 <span class="math inline">\(concat\)</span> といった関数は、 この構成に沿って定義できる.</p>
-<ul>
-<li><span class="math inline">\(length(nil) = 0\)</span></li>
-<li><span class="math inline">\(length(a :: \ell) = 1 + length(\ell)\)</span></li>
+  <li>\(length(nil) = 0\)</li>
+  <li>\(length(a :: \ell) = 1 + length(\ell)\)</li>
 </ul>
 <p>みたいに. これの上のいくつかの命題も、構成に沿って証明される.</p>
-<ol type="1">
-<li><span class="math inline">\(length(concat(nil, \ell)) = length(\ell)\)</span></li>
-<li><span class="math inline">\(length(concat(a::m, n)) = length(a::concat(m,n))\)</span></li>
+<ol>
+  <li>\(length(concat(nil, \ell)) = length(\ell)\)</li>
+  <li>\(length(concat(a::m, n)) = length(a::concat(m,n))\)</li>
 </ol>
 <p>これらは、 帰納法と言われる. さて、 双対として、余帰納法がある. 帰納法は大変馴染み深いのに対して、余帰納法は馴染みがないし、綺麗な形式化もない. 帰納法においては、基底があってそこからスタートするのに対して、 余帰納法では基底がなく、無限しかない.</p>
 <p>余帰納法が登場する例として、</p>
-<ol type="1">
-<li>(古典的な) 双模倣の証明</li>
-<li>等価以外の命題
-<ul>
-<li>2つの無限列の辞書的な大小比較</li>
-</ul></li>
-<li>余帰納的な Datatypes の関係証明
-<ul>
-<li>半順序の上の関数が単調であることの証明</li>
-</ul></li>
+<ol>
+  <li>(古典的な) 双模倣の証明</li>
+  <li>
+    等価以外の命題
+    <ul>
+      <li>2つの無限列の辞書的な大小比較</li>
+    </ul>
+  </li>
+  <li>
+    余帰納的な Datatypes の関係証明
+    <ul>
+      <li>半順序の上の関数が単調であることの証明</li>
+    </ul>
+  </li>
 </ol>
-<h2 id="coinductive-datatypes">Coinductive Datatypes</h2>
-<p><span class="math inline">\(A\)</span> の上の無限ストリーム (有限を許さない) <span class="math inline">\(X\)</span> とは、次のような 自己関手 <span class="math inline">\(F : A^\omega \rightarrow A^\omega\)</span> の 終余代数 (final coalgebra) である. <span class="math display">\[F(X) = A \times X\]</span></p>
-<p>一方で、 有限はまたは無限の列 <span class="math inline">\(X\)</span> は、 <span class="math display">\[F(X) = 1 + A \times X\]</span> という 自己関手 <span class="math inline">\(F: A^\infty \rightarrow A^\infty\)</span> の終余代数である.</p>
-<h3 id="ストリームの上の辞書順-lexicographic-order-on-streams">ストリームの上の辞書順 (lexicographic order on streams)</h3>
-<p><span class="math inline">\(A^\omega\)</span> 上の半順序 <span class="math inline">\(\preceq\)</span> を定める. ストリームとは <span class="math inline">\(A^\omega\)</span> の要素、</p>
+<h2>Coinductive Datatypes</h2>
+<p>\(A\) の上の無限ストリーム (有限を許さない) \(X\) とは、次のような 自己関手 \(F : A^\omega \rightarrow A^\omega\) の 終余代数 (final coalgebra) である.</p>
+\[F(X) = A \times X\]
+<p>一方で、 有限はまたは無限の列 \(X\) は、</p>
+\[F(X) = 1 + A \times X\]
+<p>という 自己関手 \(F: A^\infty \rightarrow A^\infty\) の終余代数である.</p>
+<h3>ストリームの上の辞書順 (lexicographic order on streams)</h3>
+<p>\(A^\omega\) 上の半順序 \(\preceq\) を定める. ストリームとは \(A^\omega\) の要素、</p>
 <ul>
-<li><span class="math inline">\(::\)</span> とは <span class="math inline">\(A \times A^\omega \rightarrow A^\omega\)</span></li>
-<li><span class="math inline">\(hd\)</span> とは <span class="math inline">\(A^\omega \rightarrow A\)</span></li>
-<li><span class="math inline">\(tl\)</span> とは <span class="math inline">\(A^\omega \rightarrow A^\omega\)</span></li>
+  <li>\(::\) とは \(A \times A^\omega \rightarrow A^\omega\)</li>
+  <li>\(hd\) とは \(A^\omega \rightarrow A\)</li>
+  <li>\(tl\) とは \(A^\omega \rightarrow A^\omega\)</li>
 </ul>
-<p><span class="math inline">\(A^\omega\)</span> 上の 二項関係 <span class="math inline">\(\preceq_{lex}\)</span> を、 次を満たす関係<span class="math inline">\(R\)</span> の内で最大のものだとする.</p>
+<p>\(A^\omega\) 上の 二項関係 \(\preceq_{lex}\) を、 次を満たす関係 \(R\) の内で最大のものだとする.</p>
 <ul>
-<li><span class="math inline">\(s R t\)</span> のとき、
-<ul>
-<li><span class="math inline">\(hd(s) \leq hd(t)\)</span> かつ、</li>
-<li><span class="math inline">\(hd(s) = hd(t)\)</span> ならば、 <span class="math inline">\(tl(s) R tl(t)\)</span></li>
-</ul></li>
+  <li>
+    \(s R t\) のとき、
+    <ul>
+      <li>\(hd(s) \leq hd(t)\) かつ、</li>
+      <li>\(hd(s) = hd(t)\) ならば、 \(tl(s) R tl(t)\)</li>
+    </ul>
+  </li>
 </ul>
 <p>これが半順序であるのはいいとして、 次のように定義することもできる.</p>
-<p><span class="math display">\[T : (A^\omega , A^\omega) \rightarrow (A^\omega , A^\omega)\]</span> <span class="math display">\[T(R) = \{ (s,t) : hd(s) \leq hd(t) \land hd(s) = hd(t) \Rightarrow tl(s) ~R~ tl(t) \}\]</span></p>
-<p>これを用いて、 <span class="math inline">\(T\)</span> の最大不動点が <span class="math inline">\(\leq_{lex}\)</span> である.</p>
-<h3 id="theorem-3.2-preceq_lex-の推移律">Theorem 3.2: <span class="math inline">\(\preceq_{lex}\)</span> の推移律</h3>
+\[T : (A^\omega , A^\omega) \rightarrow (A^\omega , A^\omega)\]
+\[T(R) = \{ (s,t) : hd(s) \leq hd(t) \land hd(s) = hd(t) \Rightarrow tl(s) ~R~ tl(t) \}\]
+<p>これを用いて、 \(T\) の最大不動点が \(\leq_{lex}\) である.</p>
+<h3>Theorem 3.2: \(\preceq_{lex}\) の推移律</h3>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -185,5 +191,9 @@ original paper: <a href=http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

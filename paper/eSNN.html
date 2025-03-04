@@ -1,50 +1,48 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Learning Similarity Measures from Data (extended Siamese Neural Network; eSNN)</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">Learning Similarity Measures from Data (extended Siamese Neural Network; eSNN)</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=https://link.springer.com/content/pdf/10.1007%2Fs13748-019-00201-2.pdf>https://link.springer.com/content/pdf/10.1007%2Fs13748-019-00201-2.pdf</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#類似度学習>類似度学習</a></p>
-</div>
-<p><span class="math display">\[\def\X{\mathcal X}\def\E{\mathcal E}\def\R{\mathbb R}\]</span></p>
-<h2 id="概要">概要</h2>
+<p><ul> <li>original paper: <a href=https://link.springer.com/content/pdf/10.1007%2Fs13748-019-00201-2.pdf>https://link.springer.com/content/pdf/10.1007%2Fs13748-019-00201-2.pdf</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#類似度学習>類似度学習</a> </div></p>
+\[\def\X{\mathcal X}\def\E{\mathcal E}\def\R{\mathbb R}\]
+<h2>概要</h2>
 <p>距離学習に分類タスクを足した</p>
-<h2 id="手法">手法</h2>
-<h3 id="枠組み">枠組み</h3>
-<p>データの空間を <span class="math inline">\(\X\)</span>, 埋め込み空間を <span class="math inline">\(\E\)</span>, 実数全体を <span class="math inline">\(\R\)</span> とする. ただし <span class="math inline">\(\X, \E\)</span> は暗にユークリッド空間の部分空間としている.</p>
-<p>よくある形式は <span class="math display">\[S \colon \X \times \X \to \R\]</span> <span class="math display">\[S(x, y) = C(G(x), G(y))\]</span> というように <span class="math inline">\(G \colon \X \to \E\)</span> と <span class="math inline">\(C \colon \E \times \E \to \R\)</span> に分けるもの. そしてそれぞれを学習可能なモデルにするか, あるいは手で設計してしまうかでバリエーションがある. 特に <span class="math inline">\(G(x)=I(x)=x\)</span> としてしまうようなものもある.</p>
-<h3 id="g-補助タスク"><span class="math inline">\(G\)</span>: 補助タスク</h3>
-<p><span class="math inline">\(G\)</span> 自体はそれぞれの良い特徴を得る必要がある. データにラベルがあったとして <span class="math inline">\(G(x)\)</span> から分類できるようにする.</p>
-<h3 id="c-拡張"><span class="math inline">\(C\)</span>: 拡張</h3>
-<p>拡張なのかわからないけど <span class="math inline">\(C \colon \E \times \E \to \R\)</span> を <span class="math inline">\(C \colon \E \to \R\)</span> にして <span class="math inline">\(S(x, y) = C(|G(x) - G(y)|)\)</span> とする. ここで <span class="math inline">\(| \cdot - \cdot |\)</span> は要素ごとの差の絶対値を取る操作. <span class="math inline">\(C\)</span> は NN なんかで設計する.</p>
-<h3 id="まとめ">まとめ</h3>
+<h2>手法</h2>
+<h3>枠組み</h3>
+<p>データの空間を \(\X\) , 埋め込み空間を \(\E\) , 実数全体を \(\R\) とする. ただし \(\X, \E\) は暗にユークリッド空間の部分空間としている.</p>
+<p>よくある形式は</p>
+\[S \colon \X \times \X \to \R\]
+\[S(x, y) = C(G(x), G(y))\]
+<p>というように \(G \colon \X \to \E\) と \(C \colon \E \times \E \to \R\) に分けるもの. そしてそれぞれを学習可能なモデルにするか, あるいは手で設計してしまうかでバリエーションがある. 特に \(G(x)=I(x)=x\) としてしまうようなものもある.</p>
+<h3>\(G\) : 補助タスク</h3>
+<p>\(G\) 自体はそれぞれの良い特徴を得る必要がある. データにラベルがあったとして \(G(x)\) から分類できるようにする.</p>
+<h3>\(C\) : 拡張</h3>
+<p>拡張なのかわからないけど \(C \colon \E \times \E \to \R\) を \(C \colon \E \to \R\) にして \(S(x, y) = C(|G(x) - G(y)|)\) とする. ここで \(| \cdot - \cdot |\) は要素ごとの差の絶対値を取る操作. \(C\) は NN なんかで設計する.</p>
+<h3>まとめ</h3>
 <p>まとめると次の損失関数になる:</p>
-<p><span class="math display">\[\mathcal L = \alpha \left( \mathcal L_c (G(x), t_x) + \mathcal L_c(G(y), t_y) \right) + \mathcal L_s(S(x, y), s)\]</span></p>
-<p><span class="math inline">\(t_x, t_y\)</span> はそれぞれのラベルで, <span class="math inline">\(\mathcal L_c\)</span> はラベル分類としての損失関数. <span class="math inline">\(\mathcal L_s\)</span> は類似度（実数） <span class="math inline">\(s\)</span> との回帰損失. 分類では <span class="math inline">\(G\)</span> だけを, 回帰では <span class="math inline">\(G\)</span> と <span class="math inline">\(C\)</span> とをセットで更新されることになる.</p>
-<h2 id="感想">感想</h2>
-<p>新規性全然無い。補助タスクに分類を足すなんて１万回聞いたことがある。 けど、<span class="math inline">\(C\)</span> を <span class="math inline">\(\E \times \E \to \R\)</span> じゃなくて <span class="math inline">\(\E \to \R\)</span> にしちゃうのは初めて見た。 こっちのほうがいいのか？</p>
+\[\mathcal L = \alpha \left( \mathcal L_c (G(x), t_x) + \mathcal L_c(G(y), t_y) \right) + \mathcal L_s(S(x, y), s)\]
+<p>\(t_x, t_y\) はそれぞれのラベルで, \(\mathcal L_c\) はラベル分類としての損失関数. \(\mathcal L_s\) は類似度（実数） \(s\) との回帰損失. 分類では \(G\) だけを, 回帰では \(G\) と \(C\) とをセットで更新されることになる.</p>
+<h2>感想</h2>
+<p>新規性全然無い。補助タスクに分類を足すなんて１万回聞いたことがある。 けど、 \(C\) を \(\E \times \E \to \R\) じゃなくて \(\E \to \R\) にしちゃうのは初めて見た。 こっちのほうがいいのか？</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -149,5 +147,9 @@ original paper: <a href=https://link.springer.com/content/pdf/10.1007%2Fs13748-0
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

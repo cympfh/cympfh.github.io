@@ -47,7 +47,7 @@ $w_i \rightarrow w_{i+1}$
 1. This dog is a dog.
 1. This is a dog.
 
-```dot
+```@dot
 digraph {
     bgcolor=transparent;
     rankdir=LR;

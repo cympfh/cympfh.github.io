@@ -69,7 +69,7 @@ LSP `p` について、
 
 単語も単語クラスとしてのPOSも同列に使う
 
-1. 機能的語 [function words](https://web.archive.org/web/20020828162751/http://www.marlodge.supanet.com/museum/funcword.html) 
+1. 機能的語 [function words](https://web.archive.org/web/20020828162751/http://www.marlodge.supanet.com/museum/funcword.html)
 のkey word list を作る
 1. key word list にある語はそのまま
 1. 無いものはPOSを使う
@@ -98,5 +98,5 @@ frequent sequence mining algorithm [Pei+ 01]
 
 ## 参考文献
 
-1. [function words](https://web.archive.org/web/20020828162751/http://www.marlodge.supanet.com/museum/funcword.html) 
+1. [function words](https://web.archive.org/web/20020828162751/http://www.marlodge.supanet.com/museum/funcword.html)
 1. [Pei+ 01] J.Pei, J.Han, B.Mortazavi-Asl, H.Pinto: Prefixspan: Mining sequential patterns efficiently by prefix-projected pattern growth

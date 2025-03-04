@@ -2,8 +2,18 @@
 % https://arxiv.org/abs/1810.00825
 % 深層学習 集合学習
 
-$\def\pool{\mathit{pool}}\def\net{\mathit{net}}\def\Att{\mathit{Att}}\def\Multihead{\mathit{Multihead}}$
-$\def\MAB{\mathit{MAB}}\def\SAB{\mathit{SAB}}\def\ISAB{\mathit{ISAB}}\def\Norm{\mathit{Norm}}\def\rFF{\mathit{rFF}}\def\PMA{\mathit{PMA}}$
+$$
+\def\pool{\mathrm{pool}}
+\def\net{\mathrm{net}}
+\def\Att{\mathrm{Att}}
+\def\Multihead{\mathrm{Multihead}}
+\def\MAB{\mathop{\mathrm{MAB}}}
+\def\SAB{\mathrm{SAB}}
+\def\ISAB{\mathrm{ISAB}}
+\def\Norm{\mathrm{Norm}}
+\def\rFF{\mathrm{rFF}}
+\def\PMA{\mathrm{PMA}}
+$$
 
 ## 概要
 

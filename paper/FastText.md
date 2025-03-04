@@ -4,7 +4,7 @@
 
 ## src
 
-- https://github.com/facebookresearch/fasttext
+- [[https://github.com/facebookresearch/fasttext]]
 
 ## 概要
 

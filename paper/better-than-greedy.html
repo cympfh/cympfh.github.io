@@ -1,144 +1,185 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>A Better-Than-Greedy Approximation Algorithm for the Minimum Set Cover Problem</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><img src="../resources/img/identicon.png" style="position:relative; top:0.4em; width:1.3em;border-radius:0.8em;" /> paper/</a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">A Better-Than-Greedy Approximation Algorithm for the Minimum Set Cover Problem</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=http://epubs.siam.org/doi/abs/10.1137/S0097539704444750>http://epubs.siam.org/doi/abs/10.1137/S0097539704444750</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#最適化>最適化</a> <a class='tag is-blue' href=index.html#集合被覆>集合被覆</a></p>
-</div>
-<h2 id="重み付き最小集合被覆問題">重み付き最小集合被覆問題</h2>
-<p><span class="math inline">\(E = \{ e_1, e_2 .. e_N \}\)</span> に対して、<span class="math inline">\(E\)</span> の部分集合のコレクション <span class="math inline">\(F\)</span> が与えられている (<span class="math inline">\(S \in F \iff S \subseteq E\)</span>).</p>
-<p>ただし <span class="math inline">\(\bigcup_{S \in F} S = E\)</span> が保証されている.</p>
-<p>また、<span class="math inline">\(S \in F\)</span> にはコスト <span class="math inline">\(c_S\)</span> が予め与えられる.</p>
-<p>集合被覆問題とは、<span class="math inline">\(F\)</span> の部分コレクション <span class="math inline">\(SOL\)</span> であって <span class="math display">\[\bigcup_{S \in SOL} S = E\]</span> を満たすものを求める問題である.</p>
-<p>重み付き最小-問題とは、 そのような <span class="math inline">\(SOL\)</span> ので <span class="math display">\[\min \sum_{S \in SOL} c_S\]</span> を最小化するものを求める問題のこと.</p>
-<p>また、 <span class="math inline">\(\forall S \in F .~ |S| \leq k\)</span> のとき、 k-set cover problem と呼ぶ.</p>
-<h2 id="貪欲法">貪欲法</h2>
-<ol type="1">
-<li>状態として、すでに被覆した部分<span class="math inline">\(C\)</span> を持っておく.</li>
-<li>初め <span class="math inline">\(C = \{\}\)</span> とする.</li>
-<li>答えを入れる <span class="math inline">\(SOL = \{\}\)</span> を用意する.</li>
-<li>次を、<span class="math inline">\(C = E\)</span> になるまで繰り返す.
-<ul>
-<li><span class="math inline">\(r_S = c_S / |S \setminus C|\)</span> が最小な <span class="math inline">\(S\)</span> を <span class="math inline">\(F\)</span> から探して選択する.</li>
-<li><span class="math inline">\(S\)</span> を答え <span class="math inline">\(SOL\)</span> に追加する</li>
-<li><span class="math inline">\(F\)</span> から <span class="math inline">\(S\)</span> を取り除く</li>
-<li><span class="math inline">\(C\)</span> に <span class="math inline">\(S\)</span> をユニオンする</li>
-</ul></li>
-<li><span class="math inline">\(SOL\)</span> を得る</li>
+<p><ul> <li>original paper: <a href=http://epubs.siam.org/doi/abs/10.1137/S0097539704444750>http://epubs.siam.org/doi/abs/10.1137/S0097539704444750</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#最適化>最適化</a> <a class='tag is-blue' href=index.html#集合被覆>集合被覆</a> </div></p>
+<h2>重み付き最小集合被覆問題</h2>
+<p>\(E = \{ e_1, e_2 .. e_N \}\) に対して、 \(E\) の部分集合のコレクション \(F\) が与えられている ( \(S \in F \iff S \subseteq E\) ).</p>
+<p>ただし \(\bigcup_{S \in F} S = E\) が保証されている.</p>
+<p>また、 \(S \in F\) にはコスト \(c_S\) が予め与えられる.</p>
+<p>集合被覆問題とは、 \(F\) の部分コレクション \(SOL\) であって</p>
+\[\bigcup_{S \in SOL} S = E\]
+<p>を満たすものを求める問題である.</p>
+<p>重み付き最小-問題とは、 そのような \(SOL\) ので</p>
+\[\min \sum_{S \in SOL} c_S\]
+<p>を最小化するものを求める問題のこと.</p>
+<p>また、 \(\forall S \in F .~ |S| \leq k\) のとき、 k-set cover problem と呼ぶ.</p>
+<h2>貪欲法</h2>
+<ol>
+  <li>状態として、すでに被覆した部分 \(C\) を持っておく.</li>
+  <li>初め \(C = \{\}\) とする.</li>
+  <li>答えを入れる \(SOL = \{\}\) を用意する.</li>
+  <li>
+    次を、 \(C = E\) になるまで繰り返す.
+    <ul>
+      <li>\(r_S = c_S &#x2F; |S \setminus C|\) が最小な \(S\) を \(F\) から探して選択する.</li>
+      <li>\(S\) を答え \(SOL\) に追加する</li>
+      <li>\(F\) から \(S\) を取り除く</li>
+      <li>\(C\) に \(S\) をユニオンする</li>
+    </ul>
+  </li>
+  <li>\(SOL\) を得る</li>
 </ol>
-<p>V.Chvatal: &quot;A Greedy heuristic for the set-covering problem&quot; はこの貪欲法の近似度を見積もっており、 k-set cover problem のとき、 <span class="math inline">\(H_k = 1 + 1/2 + .. + 1/k\)</span> の近似度であるらしい.</p>
-<h2 id="提案手法-the-greedy-algorithm-with-withdrawals-gaww">提案手法: The greedy algorithm with withdrawals (GAWW)</h2>
+<p>V.Chvatal: "A Greedy heuristic for the set-covering problem" はこの貪欲法の近似度を見積もっており、 k-set cover problem のとき、 \(H_k = 1 + 1&#x2F;2 + .. + 1&#x2F;k\) の近似度であるらしい.</p>
+<h2>提案手法: The greedy algorithm with withdrawals (GAWW)</h2>
 <p>貪欲の改良を行う. 毎ステップで、 <em>Greedy step</em> と <em>Withdrawal step</em> とを行う (withdrawal 引っ込めること,引っ込むこと,退くこと / 引き上げ,回収 / 取り消し,撤回).</p>
-<ol type="1">
-<li>Given
-<ol type="1">
-<li>val <span class="math inline">\(E\)</span></li>
-<li>var <span class="math inline">\(F = \{ S_1, S_2 .. S_N \}\)</span></li>
-</ol></li>
-<li>Init
-<ol type="1">
-<li>val <span class="math inline">\(\alpha = 1 - 1/k^3\)</span></li>
-<li>var <span class="math inline">\(SOL = \{\}\)</span></li>
-<li>被覆してない集合 <span class="math inline">\(U = E\)</span></li>
-<li>every <span class="math inline">\(S \in F\)</span> について every <span class="math inline">\(S&#39; \subseteq S\)</span> を <span class="math inline">\(F\)</span> に追加する. コストを <span class="math inline">\(c_{S&#39;} = c_S\)</span> として、<span class="math inline">\(S&#39;\)</span> の選択を <span class="math inline">\(S\)</span> の選択とあとから見做せば、問題に影響はない. ただし、<span class="math inline">\(S&#39; \subseteq S_1 \land S&#39; \subseteq S_2\)</span> があるときは <span class="math inline">\(c_{S&#39;}\)</span> は <span class="math inline">\(c_{S_1}\)</span> と <span class="math inline">\(c_{S_2}\)</span> の小さい方を使う</li>
-<li><span class="math inline">\(F = \{ S_1 .. S_N .. S_M \}\)</span> を得る</li>
-</ol></li>
-<li>Iteration while <span class="math inline">\(U \ne \{\}\)</span>
-<ol type="1">
-<li><span class="math inline">\(r_j = \frac{c_j}{|S_j \cap U|}\)</span></li>
-<li>for every <span class="math inline">\(S_j \in SOL\)</span> and every subcollection <span class="math inline">\(C \subseteq F\)</span> of at most <span class="math inline">\(k\)</span> subsets such that <span class="math inline">\(S_j \subseteq \bigcup_{S \in C} S\)</span>, let <span class="math inline">\(w(C) := | \bigcup_{S \in C} S \cap U|\)</span> be the number of still uncoverd items that belong to the subsets in <span class="math inline">\(C\)</span>. If <span class="math inline">\(w(C) \ne 0\)</span>, let <span class="math inline">\(r(S_j, C) := (\sum_{i : S_i \in C} (c_i - c_j)) / w(C)\)</span>.</li>
-<li><span class="math inline">\(r_j\)</span> が最小である <span class="math inline">\(j&#39;\)</span> を選択する. <span class="math inline">\(r(S_j, C)\)</span> を最小とする <span class="math inline">\(j&#39;&#39;, C&#39;&#39;\)</span> を選択する.</li>
-<li>If <span class="math inline">\(\alpha r_j&#39; \leq r(S_j&#39;&#39;, C&#39;&#39;)\)</span> のとき
-<ul>
-<li>Greedy step: <span class="math inline">\(S_j&#39;\)</span> を選択する
-<ul>
-<li><span class="math inline">\(U \leftarrow U \setminus S_j&#39;\)</span></li>
-<li><span class="math inline">\(SOL \leftarrow SOL \cup S_j&#39;\)</span></li>
-</ul></li>
-</ul></li>
-<li>Else
-<ul>
-<li>Withdrawal step: <span class="math inline">\(SOL\)</span> から <span class="math inline">\(S_j&#39;&#39;\)</span> を引き払って <span class="math inline">\(C&#39;&#39;\)</span> を代わりに追加する
-<ul>
-<li><span class="math inline">\(U \leftarrow U \setminus \bigcup_{S \in C&#39;&#39;} S\)</span></li>
-<li><span class="math inline">\(SOL \leftarrow (SOL \setminus S_j&#39;&#39;) \cup C&#39;&#39;\)</span></li>
-</ul></li>
-</ul></li>
-</ol></li>
-<li><span class="math inline">\(SOL\)</span> を得る</li>
+<ol>
+  <li>
+    Given
+    <ol>
+      <li>val \(E\)</li>
+      <li>var \(F = \{ S_1, S_2 .. S_N \}\)</li>
+    </ol>
+  </li>
+  <li>
+    Init
+    <ol>
+      <li>val \(\alpha = 1 - 1&#x2F;k^3\)</li>
+      <li>var \(SOL = \{\}\)</li>
+      <li>被覆してない集合 \(U = E\)</li>
+      <li>every \(S \in F\) について every \(S&#x27; \subseteq S\) を \(F\) に追加する.</li>
+    </ol>
+  </li>
 </ol>
+<p>コストを \(c_{S&#x27;} = c_S\) として、 \(S&#x27;\) の選択を \(S\) の選択とあとから見做せば、問題に影響はない. ただし、 \(S&#x27; \subseteq S_1 \land S&#x27; \subseteq S_2\) があるときは \(c_{S&#x27;}\) は \(c_{S_1}\) と \(c_{S_2}\) の小さい方を使う 1. \(F = \{ S_1 .. S_N .. S_M \}\) を得る 1. Iteration while \(U \ne \{\}\) 1. \(r_j = \frac{c_j}{|S_j \cap U|}\) 1. for every \(S_j \in SOL\) and every subcollection \(C \subseteq F\) of at most \(k\) subsets such that \(S_j \subseteq \bigcup_{S \in C} S\) , let \(w(C) := | \bigcup_{S \in C} S \cap U|\) be the number of still uncoverd items that belong to the subsets in \(C\) . If \(w(C) \ne 0\) , let \(r(S_j, C) := (\sum_{i : S_i \in C} (c_i - c_j)) &#x2F; w(C)\) . 1. \(r_j\) が最小である \(j&#x27;\) を選択する. \(r(S_j, C)\) を最小とする \(j&#x27;&#x27;, C&#x27;&#x27;\) を選択する. 1. If \(\alpha r_j&#x27; \leq r(S_j&#x27;&#x27;, C&#x27;&#x27;)\) のとき - Greedy step: \(S_j&#x27;\) を選択する - \(U \leftarrow U \setminus S_j&#x27;\) - \(SOL \leftarrow SOL \cup S_j&#x27;\) 1. Else - Withdrawal step: \(SOL\) から \(S_j&#x27;&#x27;\) を引き払って \(C&#x27;&#x27;\) を代わりに追加する - \(U \leftarrow U \setminus \bigcup_{S \in C&#x27;&#x27;} S\) - \(SOL \leftarrow (SOL \setminus S_j&#x27;&#x27;) \cup C&#x27;&#x27;\) 1. \(SOL\) を得る</p>
 <p>このあと長々と解析が始まる.</p>
+
 <!--
 
-  HTML として pandoc -B で include する.
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
 
-  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
-  markdown で書いてるだろうから例として次のような段落を書けばよい.
+    <div id=toc></div>
 
-```
-## INDEX
-<div id=toc></div>
-```
 
-  used in
-  - /memo/gnuplot
-  - /memo/linux
-  - /memo/imagemagick
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
 
 -->
 <script>
 (function() {
-  var sections = document.getElementsByTagName('h2');
-  var i;
-  var OL = document.createElement('ol');
-  for (i=0; i < sections.length; ++i) {
-    var LI = document.createElement('li');
-    var A = document.createElement('a');
-    A.innerHTML = sections[i].innerHTML;
-    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
-    A.href = '#' + i;
-    LI.appendChild(A);
-    OL.appendChild(LI);
 
-    var PREF = document.createElement('a');
-    PREF.name = i;
-    sections[i].appendChild(PREF);
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
   }
 
-  var done = false;
-  function work() {
-    if (done) return;
-    if ( document.getElementById('toc') === null) return; // no toc element
-    document.getElementById('toc').appendChild(OL);
-    done = true;
-  };
+  function level1() {
 
-  window.onload = work;
-  setTimeout(work,800);
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

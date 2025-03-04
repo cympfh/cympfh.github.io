@@ -1,143 +1,196 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>MixFeat: Mix Feature in Latent Space Learns Discriminative Space</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">MixFeat: Mix Feature in Latent Space Learns Discriminative Space</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=https://openreview.net/forum?id=HygT9oRqFX>https://openreview.net/forum?id=HygT9oRqFX</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#画像認識>画像認識</a> <a class='tag is-blue' href=index.html#データ水増し>データ水増し</a></p>
-</div>
-<h2 id="概要">概要</h2>
+<p><ul> <li>original paper: <a href=https://openreview.net/forum?id=HygT9oRqFX>https://openreview.net/forum?id=HygT9oRqFX</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#画像認識>画像認識</a> <a class='tag is-blue' href=index.html#データ水増し>データ水増し</a> </div></p>
+<h2>概要</h2>
 <p>汎化性能のためのデータ水増しの方法として mixup なんかがあったけどそれを強くした.</p>
-<h2 id="関連">関連</h2>
+<h2>関連</h2>
 <ul>
-<li>mixup [Zhang et al., 2018]
-<ul>
-<li>入力データ (画像) を混ぜて (平均など) 学習する</li>
-</ul></li>
-<li>between-class learning (BCL) [Tokozume et al., 2018]
-<ul>
-<li>知らない</li>
-</ul></li>
-<li><a href="./Manifold-Mixup.html">manifold mixup</a> [Verma et al., 2018]
-<ul>
-<li>mixup の進化系</li>
-<li>入力に限らずいろんな層での値を混ぜる (平均など)</li>
-</ul></li>
+  <li>
+    mixup [Zhang et al., 2018]
+    <ul>
+      <li>入力データ (画像) を混ぜて (平均など) 学習する</li>
+    </ul>
+  </li>
+  <li>
+    between-class learning (BCL) [Tokozume et al., 2018]
+    <ul>
+      <li>知らない</li>
+    </ul>
+  </li>
+  <li>
+    <a href="./Manifold-Mixup.html">manifold mixup</a> [Verma et al., 2018]
+    <ul>
+      <li>mixup の進化系</li>
+      <li>入力に限らずいろんな層での値を混ぜる (平均など)</li>
+    </ul>
+  </li>
 </ul>
-<h2 id="提案手法">提案手法</h2>
-<p>任意のタイミングでの値を, manifold mixup 同様に他のサンプルと混ぜて使ってしまう. ミニバッチ <span class="math inline">\(X\)</span> について, 関数 <span class="math inline">\(F\)</span> はサンプルをランダムにシャッフルする関数だとする.</p>
-<p>とすると mixup は <span class="math inline">\((X, y)\)</span> で学習する代わりに <span class="math inline">\((\alpha X + (1-\alpha) F(X), y)\)</span> で学習するものと書ける. ただしここで <span class="math inline">\(\alpha\)</span> は <span class="math inline">\([0,1]\)</span> の範囲からランダムに選ばれる値. manifold mixup はこれを入力に限らずに任意のタイミングで行うもの (適当な層への入力をこれで置き換える).</p>
-<p>提案する MixFeat はこの混ぜ方を次のようにする: <span class="math display">\[(1 + r \cos \theta) X + r \sin \theta F(X)\]</span> <span class="math display">\[r \sim \mathcal N(0, \sigma^2), \theta \sim U[-\pi, \pi]\]</span></p>
-<p>逆伝播ではこの <span class="math inline">\(r, \theta\)</span> に従って適切に逆関数を与える. またこのように混ぜるのは学習時のみで, 推論時には混ぜない. つまり <span class="math inline">\(r=0\)</span> とする.</p>
-<h3 id="実験">実験</h3>
-<h4 id="性能評価">性能評価</h4>
+<h2>提案手法</h2>
+<p>任意のタイミングでの値を, manifold mixup 同様に他のサンプルと混ぜて使ってしまう. ミニバッチ \(X\) について, 関数 \(F\) はサンプルをランダムにシャッフルする関数だとする.</p>
+<p>とすると mixup は \((X, y)\) で学習する代わりに \((\alpha X + (1-\alpha) F(X), y)\) で学習するものと書ける. ただしここで \(\alpha\) は \([0,1]\) の範囲からランダムに選ばれる値. manifold mixup はこれを入力に限らずに任意のタイミングで行うもの (適当な層への入力をこれで置き換える).</p>
+<p>提案する MixFeat はこの混ぜ方を次のようにする:</p>
+\[(1 + r \cos \theta) X + r \sin \theta F(X)\]
+\[r \sim \mathcal N(0, \sigma^2), \theta \sim U[-\pi, \pi]\]
+<p>逆伝播ではこの \(r, \theta\) に従って適切に逆関数を与える. またこのように混ぜるのは学習時のみで, 推論時には混ぜない. つまり \(r=0\) とする.</p>
+<h3>実験</h3>
+<h4>性能評価</h4>
 <p>次の組み合わせで Error rate を比較 (Table 1)</p>
 <ul>
-<li>CIFAR-10/100</li>
-<li>ResNet-20/110/164, DenseNet, DenseNet-BN, PyramidNet</li>
-<li>Vanilla, Mixup, MixFeat</li>
+  <li>CIFAR-10/100</li>
+  <li>ResNet-20/110/164, DenseNet, DenseNet-BN, PyramidNet</li>
+  <li>Vanilla, Mixup, MixFeat</li>
 </ul>
-<p>Vanilla <span class="math inline">\(&lt;\)</span> Mixup <span class="math inline">\(&lt;\)</span> MixFeat という結論.</p>
-<h4 id="汎化性能">汎化性能</h4>
+<p>Vanilla \(&lt;\) Mixup \(&lt;\) MixFeat という結論.</p>
+<h4>汎化性能</h4>
 <p>過学習を防ぐ役割があるかを, 学習曲線を見比べて比較する. ただし mixup は比較に入れないで vanilla vs MixFeat だけ.</p>
 <p>普通にやった場合は, 全然問題なさそう.</p>
-<figure>
-<img src="https://i.imgur.com/AGzGyk8.png" />
-</figure>
-<blockquote>
-<p>ちょっと test error rate が上がり始めても待ってるとまた落ちる</p>
-</blockquote>
+<p><img src="https://i.imgur.com/AGzGyk8.png" alt="" /></p>
+<blockquote>ちょっと test error rate が上がり始めても待ってるとまた落ちる</blockquote>
 <p>過学習を防ぐかを見る実験では単に CIFAR-10 じゃなくて, 一部のラベルを嘘のものに入れ替えた場合の学習曲線を眺める.</p>
-<figure>
-<img src="https://i.imgur.com/Coxwr2B.png" />
-</figure>
+<p><img src="https://i.imgur.com/Coxwr2B.png" alt="" /></p>
 <p>incorrect labels の割合が増えるに従って増える error rate は vanilla に比べて MixFeat はおとなしい. それは学習曲線を見てても分かる. 真ん中と右の図は incorrect labels が 50% の場合の ResNet-20.</p>
-<h3 id="ablation-analysis">Ablation Analysis</h3>
-<blockquote>
-<p>知らなかったけど, Ablation Analysis というのは提案手法から一部の機能を削ぎ落として性能評価なんかをすることを言うらしい.</p>
-</blockquote>
-<p>簡略版 MixFeat (1次元MixFeat) として <span class="math inline">\(\theta=-\pi/4\)</span> として <span class="math display">\[Y = X + \alpha X - \alpha F(X)\]</span> とできる. <span class="math inline">\(r\)</span> の分布を適当にすることで, これが mixup や BCL に相当する.</p>
-<h3 id="こいつがどう混ぜてるのか">こいつがどう混ぜてるのか</h3>
-<p>データ <span class="math inline">\(x_1\)</span> に対して別なデータ <span class="math inline">\(x_2\)</span> を用意して, こいつは適当な <span class="math inline">\(r, \theta\)</span> を持って <span class="math display">\[x = (1+r \cos\theta) x_1 + r \sin \theta x_2\]</span> とする. この <span class="math inline">\(x\)</span> は <span class="math inline">\(x_1\)</span> と <span class="math inline">\(x_2\)</span> をつなぐ直線上からサンプリングされる. <span class="math inline">\(x\)</span> の期待値は <span class="math inline">\(r\)</span> の期待値が <span class="math inline">\(0\)</span> であることから <span class="math inline">\(\mathbb E x = x_1\)</span> である. <span class="math inline">\(r\)</span> と <span class="math inline">\(\theta\)</span> は, この分布の偏りを決める.</p>
-<!-- ![](https://i.imgur.com/0JXHXyV.png) -->
-<figure>
-<img src="https://i.imgur.com/QUWc75Y.png" />
-</figure>
-<p>この図は一次元データ <span class="math inline">\(x_1=0, x_2=1\)</span> について, 各 <span class="math inline">\(\theta\)</span> (y軸) を取って, <span class="math inline">\(r\)</span> を <span class="math inline">\(\mathcal N(0,1)\)</span> から 1000 回ずつサンプリングして <span class="math inline">\(x\)</span> を作ってプロットしたもの. 確かに <span class="math inline">\(x_1=0\)</span> を中心に正規分布ぽいものが広がっていて, <span class="math inline">\(\theta\)</span> はその裾の広さを決めている.</p>
-<figure>
-<img src="https://i.imgur.com/qSiNeHi.png" />
-</figure>
-<p>今度は二次元データ <span class="math inline">\((x_1=(0, 1), x_2=(2, 0))\)</span> について <span class="math inline">\(r \sim \mathcal N(0,1), \theta \sim U[0,2\pi]\)</span> でサンプリングしてプロットしたもの. 中心はやはり <span class="math inline">\(x_1\)</span> にあるようで, <strong>原点から見て</strong> <span class="math inline">\(x_2\)</span> の方向に広がった正規分布ぽい分布をなしているように見える.</p>
+<h3>Ablation Analysis</h3>
+<blockquote>知らなかったけど, Ablation Analysis というのは提案手法から一部の機能を削ぎ落として性能評価なんかをすることを言うらしい.</blockquote>
+<p>簡略版 MixFeat (1次元MixFeat) として \(\theta=-\pi&#x2F;4\) として</p>
+\[Y = X + \alpha X - \alpha F(X)\]
+<p>とできる. \(r\) の分布を適当にすることで, これが mixup や BCL に相当する.</p>
+<h3>こいつがどう混ぜてるのか</h3>
+<p>データ \(x_1\) に対して別なデータ \(x_2\) を用意して, こいつは適当な \(r, \theta\) を持って</p>
+\[x = (1+r \cos\theta) x_1 + r \sin \theta x_2\]
+<p>とする. この \(x\) は \(x_1\) と \(x_2\) をつなぐ直線上からサンプリングされる. \(x\) の期待値は \(r\) の期待値が \(0\) であることから \(\mathbb E x = x_1\) である. \(r\) と \(\theta\) は, この分布の偏りを決める.</p>
+<p><!-- ![](https://i.imgur.com/0JXHXyV.png) --> <img src="https://i.imgur.com/QUWc75Y.png" alt="" /></p>
+<p>この図は一次元データ \(x_1=0, x_2=1\) について, 各 \(\theta\) (y軸) を取って, \(r\) を \(\mathcal N(0,1)\) から 1000 回ずつサンプリングして \(x\) を作ってプロットしたもの. 確かに \(x_1=0\) を中心に正規分布ぽいものが広がっていて, \(\theta\) はその裾の広さを決めている.</p>
+<p><img src="https://i.imgur.com/qSiNeHi.png" alt="" /></p>
+<p>今度は二次元データ \((x_1=(0, 1), x_2=(2, 0))\) について \(r \sim \mathcal N(0,1), \theta \sim U[0,2\pi]\) でサンプリングしてプロットしたもの. 中心はやはり \(x_1\) にあるようで, <strong>原点から見て</strong> \(x_2\) の方向に広がった正規分布ぽい分布をなしているように見える.</p>
+
 <!--
 
-  HTML として pandoc -B で include する.
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
 
-  <H2> を列挙してそれらにリンクを貼った toc を id='toc' に埋め込む.
-  markdown で書いてるだろうから例として次のような段落を書けばよい.
+    <div id=toc></div>
 
-```
-## INDEX
-<div id=toc></div>
-```
 
-  used in
-  - /memo/gnuplot
-  - /memo/linux
-  - /memo/imagemagick
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
 
 -->
 <script>
 (function() {
-  var sections = document.getElementsByTagName('h2');
-  var i;
-  var OL = document.createElement('ol');
-  for (i=0; i < sections.length; ++i) {
-    var LI = document.createElement('li');
-    var A = document.createElement('a');
-    A.innerHTML = sections[i].innerHTML;
-    if (A.innerHTML.toUpperCase() == 'INDEX') continue;
-    A.href = '#' + i;
-    LI.appendChild(A);
-    OL.appendChild(LI);
 
-    var PREF = document.createElement('a');
-    PREF.name = i;
-    sections[i].appendChild(PREF);
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
   }
 
-  var done = false;
-  function work() {
-    if (done) return;
-    if ( document.getElementById('toc') === null) return; // no toc element
-    document.getElementById('toc').appendChild(OL);
-    done = true;
-  };
+  function level1() {
 
-  window.onload = work;
-  setTimeout(work,800);
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

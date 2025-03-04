@@ -1,47 +1,40 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="generator" content="pandoc">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>One pixel attack for fooling deep neural networks</title>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="../resources/css/c.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="resources/css/c.css" rel="stylesheet" />
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header class="page-header">
-    <a href='index.html'><i class="fa fa-send-o" style="position:absolute; left:0.4em; top:0.4em; width:1.3em;border-radius:0.8em;"></i></a>
+    <a href='index.html'><i class="fa fa-send-o"></i></a>
 </header>
-<header>
+
 <h1 class="title">One pixel attack for fooling deep neural networks</h1>
-</header>
-<ul>
-<li>
-original paper: <a href=https://arxiv.org/abs/1710.08864>https://arxiv.org/abs/1710.08864</a>
-</li>
-</ul>
-<div class="is-pulled-right">
-<p><a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#画像認識>画像認識</a></p>
-</div>
-<h2 id="概要">概要</h2>
+<p><ul> <li>original paper: <a href=https://arxiv.org/abs/1710.08864>https://arxiv.org/abs/1710.08864</a></li> </ul> <div class='is-pulled-right'> <a class='tag is-blue' href=index.html#深層学習>深層学習</a> <a class='tag is-blue' href=index.html#画像認識>画像認識</a> </div></p>
+<h2>概要</h2>
 <p>DNNによる多クラス分類としての物体認識. 70.97% の画像は、入力画像の 1 pixel を変更するだけで、恣意的に選んだ別なクラスに 97.47% の確信度で以って惑わすことが可能であることを示した.</p>
-<figure>
-<img src="https://i.imgur.com/wIrXVmx.png" />
-</figure>
+<p><img src="https://i.imgur.com/wIrXVmx.png" alt="" /></p>
 <p>1 pixel の変更で全く別物に予測させられる.</p>
-<h2 id="github">Github</h2>
+<h2>Github</h2>
 <p><a href="https://github.com/Hyperparticle/one-pixel-attack-keras">Hyperparticle/one-pixel-attack-keras</a></p>
-<h2 id="手法">手法</h2>
-<p>使ってる画像は CIFAR-10. 画像サイズは 28x28 で各ピクセルは 0以上255以下の整数の三組 (RGB). 1 pixel の修正は <span class="math inline">\(X \times Y \times R \times G \times B\)</span> で表される. これは離散空間で、濃度は <span class="math inline">\(32\times32\times256\times256\times256 = 17,179,869,184 = 1e10\)</span>. 全通り試すのはちょっと無理で、この空間の上の最適化問題と見做して解いている.</p>
-<p>Differential Evolution (DE) という最適化手法があって、彼らはそれを用いている (<code>from scipy.optimize import differential_evolution</code>).</p>
+<h2>手法</h2>
+<p>使ってる画像は CIFAR-10. 画像サイズは 28x28 で各ピクセルは 0以上255以下の整数の三組 (RGB). 1 pixel の修正は \(X \times Y \times R \times G \times B\) で表される. これは離散空間で、濃度は \(32\times32\times256\times256\times256 = 17,179,869,184 = 1e10\) . 全通り試すのはちょっと無理で、この空間の上の最適化問題と見做して解いている.</p>
+<p>Differential Evolution (DE) という最適化手法があって、彼らはそれを用いている ( <code>from scipy.optimize import differential_evolution</code> ).</p>
 <p>元の正しいラベルへの確信度を下げる方のアタック (Non-targeted) と、選んだ偽のラベルへの確信度を上げる方のアタック (Targeted) を試してる.</p>
-<h2 id="結果">結果</h2>
+<h2>結果</h2>
 <p>1 pixel だけでも全体の7割程度はラベルをtargetedに変えることが出来てる. ただし、変えることの出来るターゲットラベルには大きく偏りがある (ある一つのラベルには変えやすい). 3 pixel も変えれば、どのラベルにも変更可能である.</p>
+
 <!--
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
@@ -146,5 +139,9 @@ original paper: <a href=https://arxiv.org/abs/1710.08864>https://arxiv.org/abs/1
   window.addEventListener('DOMContentLoaded', append_toc, false);
 }());
 </script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>

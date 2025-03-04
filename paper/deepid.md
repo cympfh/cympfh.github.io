@@ -14,7 +14,7 @@
 画像のペア (つまり２枚) が与えられた時、それぞれを特徴ベクトルに写し、
 特徴ベクトル同士を比較することで顔認証を行う.
 
-```dot
+```@dot
 digraph {
 rankdir=LR;
 bgcolor=transparent;
@@ -30,7 +30,7 @@ node [shape=rect];
 一枚の画像を適当な ConvNet によって 160次元の特徴ベクトル (ひとまずこれを DeepID と呼ぶ) に写す.
 画像には 10,000 クラス程度のラベルがついているので、これを予測する形で DeepID を鍛える.
 
-```dot
+```@dot
 digraph {
 rankdir=LR;
 bgcolor=transparent;
@@ -63,7 +63,7 @@ $i$ 番目のパッチは $i$ 番目の ConvNet で読む.
 
 各 ConvNet 及び DeepID は先述した方法で鍛える.
 
-```dot
+```@dot
 digraph {
 rankdir=LR;
 bgcolor=transparent;

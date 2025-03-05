@@ -1,174 +1,98 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
 <head>
   <meta charset="utf-8" />
   <meta name="description" content="Para 圏" />
+  <meta name="og:url" content="http://cympfh.cc/taglibro">
+  <meta name="og:title" content="Mon Nov 08 2021" />
+  <meta name="og:description" content="Para 圏" />
+  <meta name="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
   <meta property="og:url" content="http://cympfh.cc/taglibro">
   <meta property="og:title" content="Mon Nov 08 2021" />
   <meta property="og:description" content="Para 圏" />
   <meta property="og:image" content="http://cympfh.cc/resources/img/identicon.png" />
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@cympfh" />
-  <meta name="generator" content="pandoc" />
+  <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <title>Mon Nov 08 2021</title>
   <style type="text/css">
       code{white-space: pre-wrap;}
-      span.smallcaps{font-variant: small-caps;}
-      span.underline{text-decoration: underline;}
-      div.column{display: inline-block; vertical-align: top; width: 50%;}
   </style>
   <link rel="stylesheet" href="../../resources/css/c.css" />
   <link rel="stylesheet" href="../../../resources/css/c.css" />
   <link rel="stylesheet" href="../../../resources/css/youtube.css" />
-  <link rel="stylesheet" href="../../../resources/css/web_emb.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
   <div class="taglibro">
-<header class="page-header">
-    <a href='../../index.html'><i class="fas fa-fast-backward"></i></a>
-</header>
-<header>
+    <header class="page-header"><a href='../../index.html'><i class="fas fa-fast-backward"></i></a></header>
 <h1 class="title">Mon Nov 08 2021</h1>
-</header>
+\[
+\require{amscd}
+\]
 <p>参考文献;</p>
 <ul>
-<li><a href="https://arxiv.org/abs/2106.07032">Category Theory in Machine Learning</a></li>
-<li><a href="https://arxiv.org/abs/2103.01931">Categorical Foundations of Gradient-Based Learning</a></li>
+  <li><a href="https://arxiv.org/abs/2106.07032">Category Theory in Machine Learning</a></li>
+  <li><a href="https://arxiv.org/abs/2103.01931">Categorical Foundations of Gradient-Based Learning</a></li>
 </ul>
-<h2 id="para-圏">Para 圏</h2>
-<p>機械学習における予測器のようなものは一種の写像と見なせて, 「画像分類器」なら, 画像の集合 <span class="math inline">\(A\)</span> からラベルの集合 <span class="math inline">\(B\)</span> への写像 <span class="math display">\[f \colon A \to B\]</span> と思える. これを射とする圏を <span class="math inline">\(\mathcal C\)</span> とする. ただし適当な <span class="math inline">\((I, \otimes)\)</span> によってモノイダル圏になってるとする.</p>
-<p>さて, 機械学習においては直接扱うのはパラメータも入力とする <span class="math display">\[f \colon P \otimes A \to B\]</span> という形式であることが普通だ. 例えば線形回帰なら（簡単のためにバイアスを除いてるが）, <span class="math display">\[f \colon P \times A \to B ~~ \text{ where } P=A=B=\mathbb R^n\]</span> <span class="math display">\[f \colon (\theta, x) = \langle \theta, x \rangle\]</span> と記述される（右辺は内積）. モデルを「学習する」とは都合の良い <span class="math inline">\(\theta\)</span> を見つける操作のことであり, これを固定した「学習済み」の予測器になって初めて, <span class="math display">\[f_\theta \colon A \to B\]</span> と書くことが出来る.</p>
-<p>圏 <span class="math inline">\(\mathcal C\)</span> における対象 <span class="math inline">\(A,B,\ldots\)</span> をそのまま対象として, 圏 <span class="math inline">\(\mathcal C\)</span> における射（写像） <span class="math inline">\(f \colon P \otimes A \to B\)</span> に対応して, <span class="math inline">\((P,f) \colon A \to B\)</span> を射として持つような圏を, <span class="math inline">\(\mathcal C\)</span> をパラメタライズした圏 <span class="math inline">\(Para(\mathcal C)\)</span> と呼ぶ.</p>
-<h3 id="合成">合成</h3>
-<p>Para 圏での2つの射 <span class="math inline">\((P,f) \colon A \to B\)</span> と <span class="math inline">\((Q,g) \colon B \to C\)</span> の合成を考える. 元の圏に戻すと, <span class="math display">\[f \colon P \otimes A \to B ,~ g \colon Q \otimes B \to C\]</span> ここから <span class="math display">\[\_ \otimes A \to C\]</span> を作りたい. 適当に型を合わせれば自然に決まって, <span class="math display">\[1_Q \otimes f ~\colon~ Q \otimes P \otimes A \to Q \otimes B\]</span> これに <span class="math inline">\(g\)</span> を合成して, <span class="math display">\[(1_Q \otimes f) ; g ~\colon~ Q \otimes P \otimes A \to C\]</span> が元の圏で得られる. これは Para 圏では, <span class="math display">\[(Q \otimes P, (1_Q \otimes f) ; g) ~\colon~ A \to C\]</span> となる. というわけで, <span class="math display">\[(P,f) ; (Q,g) := (Q \otimes P, (1_Q \otimes f) ; g)\]</span> とすればよい.</p>
-<figure>
-<img src="https://i.imgur.com/SnfVHpZ.png" />
-</figure>
-<h3 id="自然変換">自然変換</h3>
+<h2>Para 圏</h2>
+<p>機械学習における予測器のようなものは一種の写像と見なせて, 「画像分類器」なら, 画像の集合 \(A\) からラベルの集合 \(B\) への写像</p>
+\[f \colon A \to B\]
+<p>と思える. これを射とする圏を \(\mathcal C\) とする. ただし適当な \((I, \otimes)\) によってモノイダル圏になってるとする.</p>
+<p>さて, 機械学習においては直接扱うのはパラメータも入力とする</p>
+\[f \colon P \otimes A \to B\]
+<p>という形式であることが普通だ. 例えば線形回帰なら（簡単のためにバイアスを除いてるが）,</p>
+\[f \colon P \times A \to B ~~ \text{ where } P=A=\mathbb R^n, B=\mathbb R\]
+\[f \colon (\theta, x) = \langle \theta, x \rangle\]
+<p>と記述される（右辺は内積）. モデルを「学習する」とは都合の良い \(\theta\) を見つける操作のことであり, これを固定した「学習済み」の予測器になって初めて,</p>
+\[f_\theta \colon A \to B\]
+<p>と書くことが出来る.</p>
+<p>圏 \(\mathcal C\) における対象 \(A,B,\ldots\) をそのまま対象として, 圏 \(\mathcal C\) における射（写像） \(f \colon P \otimes A \to B\) に対応して, \((P,f) \colon A \to B\) を射として持つような圏を, \(\mathcal C\) をパラメタライズした圏 \(Para(\mathcal C)\) と呼ぶ.</p>
+<h3>合成</h3>
+<p>Para 圏での2つの射 \((P,f) \colon A \to B\) と \((Q,g) \colon B \to C\) の合成を考える. 元の圏に戻すと,</p>
+\[f \colon P \otimes A \to B ,~ g \colon Q \otimes B \to C\]
+<p>ここから</p>
+\[\_ \otimes A \to C\]
+<p>を作りたい. 適当に型を合わせれば自然に決まって,</p>
+\[1_Q \otimes f ~\colon~ Q \otimes P \otimes A \to Q \otimes B\]
+<p>これに \(g\) を合成して,</p>
+\[(1_Q \otimes f) ; g ~\colon~ Q \otimes P \otimes A \to C\]
+<p>が元の圏で得られる. これは Para 圏では,</p>
+\[(Q \otimes P, (1_Q \otimes f) ; g) ~\colon~ A \to C\]
+<p>となる. というわけで,</p>
+\[(P,f) ; (Q,g) := (Q \otimes P, (1_Q \otimes f) ; g)\]
+<p>とすればよい.</p>
+<p><img src="https://i.imgur.com/SnfVHpZ.png" alt="" /></p>
+<h3>自然変換</h3>
 <p>2つの射</p>
 <ul>
-<li><span class="math inline">\((P, f) \colon A \to B\)</span></li>
-<li><span class="math inline">\((P&#39;, f) \colon A&#39; \to B\)</span></li>
+  <li>\((P, f) \colon A \to B\)</li>
+  <li>\((P&#x27;, f) \colon A&#x27; \to B\)</li>
 </ul>
-<p>があるときにこの間の自然変換とは, もとの圏での射 <span class="math display">\[r \colon P \to P&#39;\]</span> であって, <span class="math display">\[f = f&#39; ; (r \otimes 1_A)\]</span> となるようなもの.</p>
-<figure>
-<img src="https://i.imgur.com/g6L7xvH.png" />
-</figure>
-<p>この <span class="math inline">\(r\)</span> をパラメータ変換 (re-parameterization) と呼ぶ.</p>
-<footer>
-    <p class="is-pulled-right">
-    @cympfh / mail@cympfh.cc
-    </p>
-</footer>
-<!--
+<p>があるときにこの間の自然変換とは, もとの圏での射</p>
+\[r \colon P \to P&#x27;\]
+<p>であって,</p>
+\[f = f&#x27; ; (r \otimes 1_A)\]
+<p>となるようなもの.</p>
+\[
+\begin{CD}
+P \times A @&gt;r \times 1&gt;&gt; P&#x27; \times A \\
+@VVV @VVV \\
+B @= B
+\end{CD}
+\]
+<p>この \(r\) をパラメータ変換 (re-parameterization) と呼ぶ.</p>
 
-  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
-  ただし "INDEX" は除外する.
-
-    <div id=toc></div>
-
-
-  H2, H3 タグまでを列挙するには以下を埋め込む.
-
-    <div id=toc-level-2></div>
-
--->
-<script>
-(function() {
-
-  function naming(obj, name) {
-      var PREF = document.createElement('a');
-      PREF.name = name;
-      obj.appendChild(PREF);
-  }
-
-  function level1() {
-
-    var sections = document.getElementsByTagName('h2');
-    var OL = document.createElement('ol');
-    for (var i=0; i < sections.length; ++i) {
-      var LI = document.createElement('li');
-      var A = document.createElement('a');
-      A.innerHTML = sections[i].innerHTML;
-      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
-      A.href = '#' + i;
-      LI.appendChild(A);
-      OL.appendChild(LI);
-      naming(sections[i], i);
-      // var PREF = document.createElement('a');
-      // PREF.name = i;
-      // sections[i].appendChild(PREF);
-    }
-
-    return OL;
-  }
-
-  function level2() {
-
-    var sections = document.querySelectorAll('h2,h3');
-    var tree = [];
-    for (var i = 0; i < sections.length; ++i) {
-      if (sections[i].tagName == 'H2') {
-        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
-        tree.push([sections[i]]);
-      } else {
-        if (tree.length > 0) {
-          tree[tree.length-1].push(sections[i]);
-        } else {
-          tree.push([sections[i]]);
-        }
-      }
-    }
-
-    var OL = document.createElement('ol');
-    for (var i = 0; i < tree.length; ++i) {
-
-      // h2-level
-      var LI = document.createElement('li');
-      var A = document.createElement('a');
-      A.innerHTML = tree[i][0].innerHTML;
-      A.href = '#' + i;
-      naming(tree[i][0], i);
-      LI.appendChild(A);
-
-      // h3-level
-      if (tree[i].length > 1) {
-        var OL_sub = document.createElement('ol');
-        for (var j = 1; j < tree[i].length; ++j) {
-          var LI_sub = document.createElement('li');
-          var A = document.createElement('a');
-          A.innerHTML = tree[i][j].innerHTML;
-          A.href = `#${i}-${j}`;
-          naming(tree[i][j], `${i}-${j}`);
-          LI_sub.appendChild(A);
-          OL_sub.appendChild(LI_sub);
-        }
-        LI.appendChild(OL_sub);
-      }
-
-      OL.appendChild(LI);
-    }
-
-    return OL;
-  }
-
-  function append_toc() {
-    if (document.getElementById('toc')) {
-      document.getElementById('toc').appendChild(level1());
-    }
-    if (document.getElementById('toc-level-2')) {
-      document.getElementById('toc-level-2').appendChild(level2());
-    }
-  }
-
-  window.addEventListener('DOMContentLoaded', append_toc, false);
-}());
-</script>
+    <footer>
+      <p class="is-pulled-right">@cympfh / mail@cympfh.cc</p>
+    </footer>
   </div>
   <script src="../../../resources/js/youtube.js"></script>
-  <script src="../../../resources/js/web_emb.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
+  <script src="../../../resources/js/toc.js"></script>
 </body>
 </html>

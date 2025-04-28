@@ -1,4 +1,4 @@
-<!--
+/*
 
   以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
   ただし "INDEX" は除外する.
@@ -10,7 +10,7 @@
 
     <div id=toc-level-2></div>
 
--->
+*/
 (function() {
 
   function naming(obj, name) {

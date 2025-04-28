@@ -1,7 +1,7 @@
 % Learning Classifiers from Only Positive and Unlabeled Data
 % https://cseweb.ucsd.edu/~elkan/posonly.pdf
 % PU 学習おいて Unlabeled を損失関数に取り入れる方法
-% Semi-Supervised PU
+% 半教師あり PU学習
 
 $$
 \def\N{\mathbb{N}}

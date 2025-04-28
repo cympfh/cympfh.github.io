@@ -12,6 +12,7 @@ URL=$(cat ${SRC_MD} | awk 'NR==2' | sed 's/^% *//')
 SHORT_SUMMARY=$(cat ${SRC_MD} | awk 'NR==3' | sed 's/^% *//')
 TAGS=$(cat ${SRC_MD} | awk 'NR==4' | sed 's/^% *//')
 
+# script/page.sh と揃えてる
 TAGS_HTML=
 for tag in ${TAGS}; do
   TAGS_HTML+="<span class=\"paper_tag\">${tag}</span>"
@@ -29,7 +30,7 @@ cat <<EOM
     ${SHORT_SUMMARY}
   </p>
   <div class="paper_tags">
-    <i class="ri-hashtag"></i>
+    <i class="ri-price-tag-3-line"></i>
     ${TAGS_HTML}
   </div>
 </article>

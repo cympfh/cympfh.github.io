@@ -20,8 +20,11 @@ cache/%.html: %.md
 dev:
 	bash script/hotcompile.sh
 
-new:
-	bash script/new.sh
-
 edit:
 	bash script/edit.sh
+
+new:
+	bash script/edit.sh "*new"
+
+arxiv:
+	bash script/edit.sh "*arxiv"

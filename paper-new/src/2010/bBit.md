@@ -1,7 +1,7 @@
 % b-Bit minwise hashing
 % https://arxiv.org/abs/0910.3349
-% Jaccard 係数を bit 演算で確率近似する
-% ハッシュ
+% Jaccard 係数を任意長 b-bit の比較で近似する
+% ハッシュ Jaccard係数
 
 $$
 \def\Pr{\mathop{\mathrm{Pr}}}

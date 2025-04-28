@@ -16,3 +16,12 @@ pages: $(HTML)
 
 cache/%.html: %.md
 	bash script/summaryblock.sh $< > $@
+
+dev:
+	bash script/hotcompile.sh
+
+new:
+	bash script/new.sh
+
+edit:
+	bash script/edit.sh

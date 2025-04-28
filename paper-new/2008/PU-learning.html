@@ -1,0 +1,154 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Learning Classifiers from Only Positive and Unlabeled Data</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.min.css" rel="stylesheet">
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <link href="../css/c.css" rel="stylesheet" />
+  <link href="/resources/css/c.css" rel="stylesheet" />
+  <link href="/resources/css/youtube.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+</head>
+<body>
+
+  <header class="page-header">
+    <a href='../index.html'><i class="ri-send-plane-fill"></i></a>
+  </header>
+
+  <h1 class="title">Learning Classifiers from Only Positive and Unlabeled Data</h1>
+
+  <div class="metainfo">
+    <ul>
+      <li>
+        <i class="ri-link"></i>
+        <a href="https://cseweb.ucsd.edu/~elkan/posonly.pdf" target="_blank">https://cseweb.ucsd.edu/~elkan/posonly.pdf</a>
+      </li>
+      <li>
+        <i class="ri-lightbulb-flash-line"></i>
+        PU 学習おいて Unlabeled を損失関数に取り入れる方法
+      </li>
+      <li>
+        <i class="ri-hashtag"></i>
+        Semi-Supervised PU
+      </li>
+    </ul>
+  </div>
+
+  \[
+\def\N{\mathbb{N}}
+\def\Pr{\mathop{\mathrm{Pr}}}
+\]
+<h2 id="2-%E3%81%9D%E3%81%AE%E4%BB%96%E3%81%AE%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE">その他の参考文献</h2>
+<ul>
+  <li><a href="https://mamo3gr.hatenablog.com/entry/2020/11/29/123147">PU learningことはじめ</a></li>
+  <li><a href="https://www.jonki.net/entry/2020/02/22/185542">PU Learningについて勉強した</a></li>
+</ul>
+<h2 id="2-Intro">Intro</h2>
+<p>ラベルとして Positive, Negative の二値を考える場合でも, 現実では「ラベルが不明」という状態を表す Unlabeled というラベルがある. Positive と Negative だけからなるデータセットで学習する枠組みを PN 学習というのに対して, Positive と Unlabeled だけからなる学習をする PU 学習をこの論文では考える.</p>
+<h2 id="2-PU%20%E5%AD%A6%E7%BF%92">PU 学習</h2>
+<h3 id="3-%E5%95%8F%E9%A1%8C%E8%A8%AD%E5%AE%9A">問題設定</h3>
+<p>データ空間 \(X\) の各点についてラベル \(Y = \{ 0, 1 \}\) が対応している. \(1\) が Positive で \(0\) が Negative の意味.</p>
+<p>学習データとして有限のサンプル点集合が与えられるのだが, Positive だと分かってるデータ点の集合と, ラベルが不明なデータ点の集合だけが与えられる. ここからラベルの予測器を学習する問題を PU 学習という.</p>
+<p>与えられる学習データは次の \(V\) .</p>
+\[P = \{ (x,y,s=1) \}\]
+\[N = \{ (x,s=0) \}\]
+\[V = P \cup N\]
+<p>ここで \(s\) はラベルが付与されているかどうかを示している. \(x,y\) に加えて \(s\) も確率変数だと見なして議論を進めていく.</p>
+<h3 id="3-%E5%89%8D%E6%8F%90">前提</h3>
+<ul>
+  <li>
+    Negative にはラベルは付与されてない
+    <ul>
+      <li>\(p(s=1 \mid x, y=0) = 0\)</li>
+    </ul>
+  </li>
+  <li>
+    Positive の中でラベルが付与されてるかどうかは無作為
+    <ul>
+      <li>\(p(s=1 \mid x, y=1) = p(s=1 \mid x)\)</li>
+    </ul>
+  </li>
+</ul>
+<h3 id="3-%E6%96%B9%E9%87%9D">方針</h3>
+<ul>
+  <li>
+    nontraditional classifier \(g\) を構築する
+    <ul>
+      <li>これは「ラベルが付与されてそうかどうか」を予測する</li>
+      <li>\(g(x) \approx p(s=1 \mid x)\)</li>
+    </ul>
+  </li>
+  <li>
+    \(g\) から traditional classifier \(f\) を構築する
+    <ul>
+      <li>これは普通にラベルを予測する機械</li>
+      <li>\(f(x) \approx p(y=1 \mid x)\)</li>
+    </ul>
+  </li>
+</ul>
+<h3 id="3-%5C%28g%5C%29%20%E3%81%AE%E5%AD%A6%E7%BF%92">\(g\) の学習</h3>
+<p>「ラベルが付与されているかどうか」はデータセット全てについて分かることなので自由な方法で学習する.</p>
+<h3 id="3-Lemmma%201">Lemmma 1</h3>
+<p>ラベルがついているなら必ず Positive だとしてるので,</p>
+\[\begin{align*}
+p(s=1 \mid x)
+&amp; = p(s=1 \land y=1 \mid x) \\
+&amp; = p(y=1 \mid x) \cdot p(s=1 \mid x, y=1) \\
+&amp; = p(y=1 \mid x) \cdot p(s=1 \mid y=1) \\
+\end{align*}\]
+<p>ここで \(p(s=1 \mid y=1)\) はデータ分布のみによる定数なので, 定数 \(c\) だとおくと,</p>
+\[p(s=1 \mid x) = c \cdot p(y=1 \mid x)\]
+<p>という関係を得る.</p>
+<p>左辺と右辺に出てくる確率は結局欲しかった \(g,f\) なので</p>
+\[g(x) = c f(x)\]
+<p>という比例関係を得る.</p>
+<blockquote>\(g\) を学習するというのはこの比例関係の意味で \(f\) を学習することと同値. そしてこれは「ラベルがついてないものを全て Negative だと思った PN 学習」に等しい.</blockquote>
+<h3 id="3-%5C%28c%5C%29%20%E3%81%AE%E6%8E%A8%E5%AE%9A">\(c\) の推定</h3>
+<p>3つ方法が提案されている</p>
+<ol>
+  <li>
+    Positive なデータ \(x\) を持ってきたときの \(g(x)\) を \(c\) として使う方法
+    <ul>
+      <li>\(c = p(s=1 \mid y=1) = g(x=1)\)</li>
+    </ul>
+  </li>
+  <li>
+    全体の濃度で決める方法
+    <ul>
+      <li>\(c = \sum_{x \in P} g(x) &#x2F; \sum_{x \in V} g(x)\)</li>
+    </ul>
+  </li>
+  <li>
+    実用上
+    <ul>
+      <li>\(c = \max_{x \in V} g(x)\)</li>
+    </ul>
+  </li>
+</ol>
+<p>基本的には 1 が一番オススメされてる.</p>
+<p>Lemmma 1 によると \(f = g&#x2F;c\) で \(f\) が確率として well-defined なためには \(f \leq 1 \iff g \leq c\) なことが必要十分条件になってる. 3 の方法はこれが約束されるので嬉しい.</p>
+<h3 id="3-Weighting%20unlabled%20examples">Weighting unlabled examples</h3>
+<p>Lemmma 1 をそのまま使っても \(g\) から \(f\) を構築できるが, 学習データの重みに使う方法も提案されている.</p>
+<p>ラベルが付与されていない \((x, s=0)\) について</p>
+\[\begin{align*}
+p(y=1 \mid x, s=0)
+&amp; = \frac{1-c}{c} \frac{p(s=1\mid x)}{1 - p(s=1 \mid x)} \\
+&amp; = \frac{1-c}{c} \frac{g(x)}{1 - g(x)} \\
+\end{align*}\]
+<p>になる, らしい.</p>
+<p>これがラベルが付与されていない場合に \(y=1\) である確率. これを重みに掛けて学習すればよい.</p>
+<p>\(h(x,y)\) をデータ \(x\) を予測して正解ラベルが \(y\) であるときの損失関数だとする.</p>
+\[\mathcal{L} = \sum_{x \in P} h(x,1) + \sum_{x \in U} p(y=1 \mid x, s=0) h(x,1) + \sum_{x \in U} p(y=0 \mid x,s=0) h(x,0)\]
+<p>として学習する.</p>
+
+
+  <script src="https://cympfh.cc/resources/js/toc.js"></script>
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>

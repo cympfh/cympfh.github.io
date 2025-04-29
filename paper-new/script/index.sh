@@ -1,7 +1,11 @@
 #!/bin/bash
 
 years() {
-  ls -1 src | sort -nr
+  for y in $(ls -1 src | sort -nr); do
+    if find src/$y -type f -print -quit | grep -q .; then
+      echo $y
+    fi
+  done
 }
 
 # caching

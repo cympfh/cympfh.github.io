@@ -6,6 +6,8 @@
 $$
 \def\N{\mathbb{N}}
 \def\R#1{\mathbb{R}^{#1}}
+\def\Normal{\mathcal{N}}
+\def\ip#1#2{\langle #1, #2 \rangle}
 \def\Pr{\mathop{\mathrm{Pr}}}
 $$
 

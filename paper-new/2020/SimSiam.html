@@ -1,0 +1,114 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>[2011.10566] Exploring Simple Siamese Representation Learning</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.min.css" rel="stylesheet">
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <link href="../css/c.css" rel="stylesheet" />
+  <link href="/resources/css/c.css" rel="stylesheet" />
+  <link href="/resources/css/youtube.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+</head>
+<body>
+
+  <header class="page-header">
+    <a href='../index.html'><i class="ri-send-plane-fill"></i></a>
+  </header>
+
+  <h1 class="title">[2011.10566] Exploring Simple Siamese Representation Learning</h1>
+
+  <div class="metainfo">
+    <ul>
+      <li>
+        <i class="ri-link"></i>
+        <a href="https://arxiv.org/abs/2011.10566" target="_blank">https://arxiv.org/abs/2011.10566</a>
+      </li>
+      <li>
+        <i class="ri-lightbulb-flash-line"></i>
+        シンプルな Siamese ネットワークで学習を崩壊させない方法を探る
+      </li>
+      <li>
+        <i class="ri-price-tag-3-line"></i>
+        <span class="paper_tag">画像認識</span>
+      </li>
+    </ul>
+  </div>
+
+  \[
+\def\N{\mathbb{N}}
+\def\R#1{\mathbb{R}^{#1}}
+\def\Pr{\mathop{\mathrm{Pr}}}
+\]
+<h2>Intro</h2>
+<p>Siamese ネットワークの方法は画像認識の分野では常識化した. これは正例としての2つの画像ペアが同じ（または似てる）というものと, 負例として2つの画像ペアが違うものを表しているというペアのデータセットを学習するものだった.</p>
+<p>ここで紹介される Simple Siamese (以下 SimSiam) は負例ペアを必要としない. 正例ペアも同一の画像に異なるオーグメントを施すことで自動的に作るのでペアのデータセットは完全に不要.</p>
+<p>こうなるとすべての画像について同一のベクトルを出すような崩壊 (collapsing) 現象が起きるのが普通だが, 簡単なテクニックでこれを防げた. 特に勾配を切る操作 (detach, stop-grad) がとても重要だった.</p>
+<h2>Method</h2>
+<p><img src="https://i.imgur.com/aSeKX0Y.png" alt="Figure 1" /></p>
+<p>全く同一のデータ \(x\) に異なる (ランダムな) オーグメントを施して \(x_1,x_2\) を作る. それぞれに encoder を施してこの出力が最終的に求めている画像表現ベクトルになる.</p>
+<p>しかし工夫として, 一方にのみ predictor \(h\) を適用し, もう一方は勾配を切る. 図では左に \(h\) を適用したバージョンだけを書いているが, 実際には左右対称に, 右に \(h\) を適用して左の勾配を切るバージョンも当然考えられる. 実装ではその2つを計算してロスを足し合わせている.</p>
+<pre><code class="code language-python">def D(p, z):
+    &quot;&quot;&quot;損失関数
+
+    コサイン類似度のマイナスを採用している
+    ここで z の方は勾配を切っていることに注意
+    &quot;&quot;&quot;
+    z = z.detach()  # stop gradient
+    return -cosine(p, z)
+
+# 学習可能なエンコーダー層
+f = Encoder()
+
+# 学習可能な予測層
+h = Predictor()
+
+# 学習ループ
+for x in minibatches:
+    x1, x2 = random_augment(x), random_augment(x)  # 独立にランダムなオーグメンテーションを施す
+    z1, z2 = f(x1), f(x2)
+    p1, p2 = h(z1), h(z2)
+    loss1 = D(p1, z2)
+    loss2 = D(p2, z1)
+    loss = (loss1 + loss2) &#x2F; 2
+    loss.backward()
+    optimizer.update()
+</code></pre>
+<p>エンコードで得た <code>z</code> と, そこに更に <code>h</code> を挟んで得た <code>p</code> とを比較する. この比較では <code>p</code> 側に使った方しかアップデートしない.</p>
+<p>上のアルゴリズムでは, 一方に <code>h</code> を適用するのを両方実行して両方のロスを使ってる.</p>
+<p>両方ともにアップデートすると, collapsing (同じ値に潰れる) 問題が起きるのでこれを少し回避できる. 加えて予測層 <code>h</code> を一方にだけ適用する. これで完全に collapsing が起きなくなる. <code>h</code> は浅い MLP 層で良い</p>
+<h2>実験</h2>
+<h3>勾配を切る効果</h3>
+<p>この操作を無くすと損失はあっという間に減って, コサイン類似度が \(1\) になる. すなわち全ての画像について1つの値に潰れる (collapsing) ことがわかる.</p>
+<p>ちなみにガウス分布に独立に従う \(d\) 次元ベクトル \(z\) を標準化したベクトル \(z &#x2F; \|z\|_2\) のその標準偏差は \(1&#x2F; \sqrt{d}\) になる. エンコーダ <code>z</code> による出力について, その標準偏差を考えると大体そのくらいの値になるのが正しい学習に期待される挙動だ. これも一緒に調べると, 勾配を切ることで大体この値より少し小さいくらいを推移するが, 切らないとこれもすぐにゼロになる. 分散がゼロということなのでやはり一つの値に潰れてることが確認できた.</p>
+<h3>予測層 (Predictor) の効果</h3>
+<p>学習可能な予測層を置いておくことはめちゃくちゃ大事. パラメータ固定の MLP を置いておいても意味はなく, 学習が収束しなかった（しかしこれによって collapsing が起きたわけではない）. 学習において lr decay は不要で, 学習率は固定でよかった.</p>
+<h3>バッチサイズについて</h3>
+<p>collapsing を防ぐ目的でバッチサイズを大きくするのがこれまでの一般的なテクだった. 今回の実験では精度への影響はややあったが, どちらにせよ collapsing は他の工夫で防げたのでバッチサイズは重要じゃなかった.</p>
+<h2>仮説: SimSiam は EM アルゴリズムになってる</h2>
+<p>勾配を止める操作がまさに交互に一方を学習してく EM アルゴリズム的になってそう.</p>
+<p>画像 \(x\) , これをランダムにオーグメンテーションした \(T(x)\) , これをエンコードして得る \(F(T(x); \theta)\) があって, \(x\) に対して適切な表現ベクトル \(\eta_x\) になるように学習する.</p>
+\[\mathcal{L}(\theta, \eta) = \mathbb E \left[ \| F(T(x); \theta) - \eta_x \|^2_2 \right]\]
+<p>注意点として \(F\) のパラメータ \(\theta\) だけでなく, 表現ベクトル \(\eta_x\) そのものも学習すべきパラメータであるところ. この2つをアップデートするのに, 一方を固定して他方をアップデートすることを交互にやる. これが EM アルゴリズム的だといっている.</p>
+<p>\(\eta_x\) を固定するのは普通に \(F(T(x); \theta)\) に関してだけアップデートすればいい.</p>
+<p>\(\theta\) を固定して \(\eta_x\) を学習することを考えるが, これは解析的には次が最適解.</p>
+\[\eta_x \leftarrow \mathbb{E} \left[ F(T(x); \theta) \right]\]
+<p>そうすればいいのだが, 期待値を計算するのが実質無理なので, 直前の \(T&#x27;, \theta&#x27;\) を使って</p>
+\[\eta_x = F(T&#x27;(x); \theta)\]
+<p>としておく（ \(T\) はランダムなので \(T&#x27;\) と書いて区別しておく）.</p>
+<p>とすると,</p>
+\[\mathcal{L}(\theta, \eta) = \mathbb E \left[ \| F(T(x); \theta) - F(T&#x27;(x); \theta&#x27;) \|^2_2 \right]\]
+<p>だし, パラメータ \(\theta\) の更新は</p>
+\[\theta \leftarrow \mathop{\mathrm{argmin}}_\theta ~ \mathbb E \left[ \| F(T(x); \theta) - F(T&#x27;(x); \theta&#x27;) \|^2_2 \right]\]
+<p>になった. ここで \(T&#x27;, \theta&#x27;\) が定数なわけだが, これがまさに勾配をストップすることに相当している.</p>
+
+
+  <script src="/resources/js/toc.js?20250428"></script>
+  <script src="/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>

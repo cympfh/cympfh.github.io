@@ -1,0 +1,131 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>[1205.2618] BPR: Bayesian Personalized Ranking from Implicit Feedback</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.min.css" rel="stylesheet">
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <link href="../css/c.css" rel="stylesheet" />
+  <link href="/resources/css/c.css" rel="stylesheet" />
+  <link href="/resources/css/youtube.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+</head>
+<body>
+
+  <header class="page-header">
+    <a href='../index.html'><i class="ri-send-plane-fill"></i></a>
+  </header>
+
+  <h1 class="title">[1205.2618] BPR: Bayesian Personalized Ranking from Implicit Feedback</h1>
+
+  <div class="metainfo">
+    <ul>
+      <li>
+        <i class="ri-link"></i>
+        <a href="https://arxiv.org/abs/1205.2618" target="_blank">https://arxiv.org/abs/1205.2618</a>
+      </li>
+      <li>
+        <i class="ri-lightbulb-flash-line"></i>
+        暗黙的な正フィードバックからランキング学習で推薦システムを構築
+      </li>
+      <li>
+        <i class="ri-price-tag-3-line"></i>
+        <span class="paper_tag">推薦</span><span class="paper_tag">行列分解</span>
+      </li>
+    </ul>
+  </div>
+
+  \[
+\def\N{\mathbb{N}}
+\def\R#1{\mathbb{R}^{#1}}
+\def\Normal{\mathcal{N}}
+\def\ip#1#2{\langle #1, #2 \rangle}
+\def\Pr{\mathop{\mathrm{Pr}}}
+\]
+<h2>Intro</h2>
+<p>ユーザー対アイテムの推薦モデルを構築する. 学習データとして暗黙的 (implicit) な positive feedback だけが使える状況を考える. 例えばユーザーの購入履歴や視聴履歴などである.</p>
+<p>このような状況で学習するために提案される BPR 含めてよく使われる手法はネガティブサンプリングである. つまり, ユーザーがインタラクトしてないアイテムの大半は真にネガティブであることを仮定し, ここからランダムサンプリングしてきたものを負例として扱う.</p>
+<p>提案される BPR はランキング学習である. つまりアイテムの適合度スコアを直接学習せず, 代わりにスコアの大小関係を目的に学習する.</p>
+<h2>Personalized Ranking</h2>
+<p>ユーザー集合 \(U\) , アイテム集合 \(I\) があり, 有限のサンプル \(S \subset U \times I\) が与えられる. これが Implicit feedback.</p>
+<p>ここで Personalized Ranking とは, ユーザー \(u\) ごとの大小関係 \(\gt_u\) のことを言う. ここで \(\gt_u\) は \(I \times I\) 上の <a href="https://ja.wikipedia.org/wiki/%E5%85%A8%E9%A0%86%E5%BA%8F">全順序</a> を言っている.</p>
+<blockquote>暗にスコアが実数で与えられ, その大小で比較することになる. ただし大小だけが問題であって実数に意味はない.</blockquote>
+<p>\(S\) から次を定める.</p>
+<ul>
+  <li>
+    \(I_u^+ := \{ i \in I \mid (u, i) \in S \}\)
+    <ul>
+      <li>ユーザー \(u\) がインタラクトしたアイテム</li>
+    </ul>
+  </li>
+  <li>
+    \(I_u^- := S \setminus I_u^+\)
+    <ul>
+      <li>ユーザー \(u\) がインタラクトしていないアイテム</li>
+    </ul>
+  </li>
+</ul>
+<p>ランキング学習のためのデータセットは次の三組の集合</p>
+\[D = \{ (u, i, j) \mid u \in U, i \in I_u^+, j \in I_u^- \}\]
+<p>ただし \(i\) に対しての \(j\) の選び方はいくつか考えられる. 一旦は一様ランダムに選ぶものとしておく.</p>
+\[(u,i,j) \in D \implies i \gt_u j\]
+<p>だとして学習を進めていく.</p>
+<h3>Bayesian Personalized Ranking (BPR)</h3>
+<p>確率 \(\Pr(i \gt_u j \mid \Theta)\) を尤度にベイズ推定していく.</p>
+\[\begin{align*}
+\Pr(D \mid \Theta)
+&amp;= \prod_u \Pr(\gt_u \mid \Theta) \\
+&amp;= \prod_{(u,i,j) \in D} \Pr(i \gt_u j \mid \Theta) \\
+\end{align*}\]
+\[\begin{align*}
+\Pr(\Theta \mid D)
+&amp;\propto \Pr(D \mid \Theta) \Pr(\Theta) \\
+&amp;= \prod_{(u,i,j) \in D} \Pr(i \gt_u j \mid \Theta) \Pr(\Theta) \\
+\end{align*}\]
+<p>最後の値の対数尤度（のマイナス）を取る.</p>
+\[\mathcal{L} = - \sum_{(u,i,j) \in D} \log \Pr(i \gt_u j \mid \Theta) - \log \Pr(\Theta)\]
+<p>ここである実数 \(x_u^{ij}\) があって, \(\Pr(i \gt_u j \mid \Theta) = \sigma(x_u^{ij})\) と書けることにする. 略記してるが本当は \(x\) はパラメータ \(\Theta\) に依存する関数. ここで \(\sigma\) はシグモイド関数. これを代入したら</p>
+\[\mathcal{L} = - \sum_{(u,i,j) \in D} \log \sigma(x_u^{ij}) - \log \Pr(\Theta)\]
+<p>を得る. これを最小化する \(\Theta\) を求めれば良い.</p>
+<p>\(\Pr(\Theta)\) は正則化項だと思える. 勝手に \(\Theta \sim \Normal(0, \lambda I)\) を仮定すると \(\log \Pr(\Theta) = - \lambda \|\Theta\|^2\) というよくある自乗正則化項が得られる. これを採用して,</p>
+\[\mathcal{L} = - \sum_{(u,i,j) \in D} \log \sigma(x_u^{ij}) + \lambda \|\Theta\|^2\]
+<p>とすると扱いやすい.</p>
+<h3>行列分解モデル (BPR-MF)</h3>
+<p>では \(x\) をどうやってモデル化するかを考える.</p>
+\[x_u^{ij} = x_u^i - x_u^j\]
+<p>だとする. 結局ユーザー対アイテムの適合度 \(x_u^i\) を暗に持つことになる. \(x_u^i\) を持つとはつまり行列 \(X \in \R{U \times I}\) を持つということになる. 行列 \(X\) を予測すると言えば行列分解だ.</p>
+\[X \approx WH^t\]
+<p>ここで \(W \in \R{U \times k}\) , \(H \in \R{k \times I}\) . \(k\) は潜在次元数 \((k \ll U, k \ll I)\) .</p>
+<p>\(x_u^i\) は内積 \(\ip{w_u}{h_i}\) で与えられる. もちろん一般のカーネルに置き換えても良い.</p>
+<p>というわけで \(\Theta = (W, H)\) として \(\mathcal L\) の最適化問題を解けば行列分解モデルの BPR を学習したことになる.</p>
+<h3>kNN モデル (BPR-kNN)</h3>
+<p>行列分解以外のモデルも考案されている.</p>
+<p>ユーザー \(u\) の未知アイテム \(i\) への適合度は, その人が過去にインタラクトした他のアイテム, つまり \(I_u^+\) の中で \(i\) と良く似たアイテムがどれだけ近いものがあるかで決まると思える.</p>
+<p>対称行列 \(C \in \R{I \times I}\) を考える. \(C_{ij}\) はアイテム \(i\) と \(j\) の類似度を表す.</p>
+\[x_u^i = \sum_{i\ne j, j \in I_u^+} C_{ij}\]
+<p>この \(C\) を BPR で最適化するのが BPR-kNN である.</p>
+<p>追加で2つアプローチのヒントが書いてある.</p>
+<p>\(C\) として次は初期値のヒューリスティックとして良さそう</p>
+<ul>
+  <li>
+    \(c_{ij} = \frac{|U_i^+ \cap U_j^+|}{\sqrt{|U_i^+| \cdot |U_j^+|}}\)
+    <ul>
+      <li>ここで \(U_i^+ = \{ u \in U \mid (u,i) \in S \}\) .</li>
+    </ul>
+  </li>
+</ul>
+<p>汎化のために \(H \in \R{I \times k}\) をパラメータ \(\Theta\) だとして</p>
+\[C = H H^t\]
+<p>として使う.</p>
+<blockquote>どこが kNN なの？</blockquote>
+
+
+  <script src="/resources/js/toc.js?20250428"></script>
+  <script src="/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>

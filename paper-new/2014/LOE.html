@@ -33,7 +33,7 @@
       </li>
       <li>
         <i class="ri-price-tag-3-line"></i>
-        <span class="paper_tag">埋め込み表現</span><span class="paper_tag">多様体学習</span><span class="paper_tag">距離学習</span>
+        <span class="paper_tag">埋め込み表現</span><span class="paper_tag">多様体学習</span><span class="paper_tag">距離学習</span><span class="paper_tag">SOE</span><span class="paper_tag">LOE</span>
       </li>
     </ul>
   </div>
@@ -43,21 +43,22 @@
 \def\R#1{\mathbb{R}^{#1}}
 \def\Pr{\mathop{\mathrm{Pr}}}
 \]
-<h2>Abst</h2>
-<p>順序構造が定められた対象に関する埋め込み表現を考える. ここで順序というのは対象同士の距離に関する大小のこと. このような順序に関する制約を満たす埋め込み表現を作る問題を考える. これを最適化問題に落とし込んで解く手法として SOE を提案する. 次に問題を制約を kNN に限定した場合に適用したものを LOE として提案する.</p>
 <h2>Intro</h2>
-<p>対象の集合 \(X = \{x_1, x_2, \ldots, x_n\}\) とそれらの距離 \(\xi \colon X \times X \to \mathbb R_{\geq 0}\) があるとする. ここで \(X\) は陽に与えられるが \(\xi\) は観測できない関数だとする. その代わりに次のような順序だけが与えられている.</p>
-\[(i,j,k,l); \xi_{ij} \lt \xi_{kl}\]
+<p>距離に関する順序構造だけが与えられたときに, これを再現するような埋込表現を獲得することを考える. これを最適化問題に落とし込んで解く SOE を提案する. さらに問題を制約を kNN に限定した LOE を提案する.</p>
+<h2>Ordinal Embedding</h2>
+<p>対象の集合 \(X = \{x_1, x_2, \ldots, x_n\}\) とそれらの距離 \(\xi \colon X \times X \to \mathbb R_{\geq 0}\) があるとする. ここで \(X\) は陽に与えられるが \(\xi\) は観測できない. その代わりに次のような順序に関する制約 \(A\) が与えられている.</p>
+\[A \subset X^4\]
+\[(i,j,k,l) \in A \implies \xi_{ij} \lt \xi_{kl}\]
 <p>そこで適切な埋め込み表現</p>
 \[\hat{x_i} \in \mathbb R^p\]
 <p>を全ての対象について割り当てることで,</p>
 \[\xi_{ij} \lt \xi_{kl} \iff \| \hat{x_i} - \hat{x_j} \| \lt \| \hat{x_k} - \hat{x_l} \|\]
 <p>これを満たすようにしたい.</p>
-<blockquote>このような問題は Ordinal Embedding と呼ばれ Shepard 1962, Kruskal 1964 の時代から研究されてきたそう. 最近は機械学習の文脈でよく出てくるようになった.</blockquote>
+<blockquote>このような問題は Shepard 1962, Kruskal 1964 の時代から研究されてきたそう. 最近は機械学習の文脈でよく出てくるようになった.</blockquote>
 <h2>Soft Ordinal Embedding; SOE</h2>
 <h3>問題設定</h3>
 <p>対象を \([n] = \{1,2,\ldots,n\}\) だとし, 制約として \(A \subset [n]^4\) が与えられる. これの意味は,</p>
-\[(i,j,k,l) \in A \iff \xi_{ij} \lt \xi_{kl}\]
+\[(i,j,k,l) \in A \implies \xi_{ij} \lt \xi_{kl}\]
 <p>ということ.</p>
 <p>このときに埋め込み表現の行列</p>
 \[X \in \mathbb R^{n \times p}\]

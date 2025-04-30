@@ -1,7 +1,7 @@
 % Local Ordinal Embedding
 % http://www.tml.cs.uni-tuebingen.de/team/luxburg/publications/TeradaLuxburg_ICML2014.pdf
 % 距離の順序構造から埋め込み表現を獲得する
-% 埋め込み表現 多様体学習 距離学習
+% 埋め込み表現 多様体学習 距離学習 SOE LOE
 
 $$
 \def\N{\mathbb{N}}
@@ -9,23 +9,22 @@ $$
 \def\Pr{\mathop{\mathrm{Pr}}}
 $$
 
-## Abst
-
-順序構造が定められた対象に関する埋め込み表現を考える.
-ここで順序というのは対象同士の距離に関する大小のこと.
-このような順序に関する制約を満たす埋め込み表現を作る問題を考える.
-これを最適化問題に落とし込んで解く手法として SOE を提案する.
-次に問題を制約を kNN に限定した場合に適用したものを LOE として提案する.
-
 ## Intro
+
+距離に関する順序構造だけが与えられたときに, これを再現するような埋込表現を獲得することを考える.
+これを最適化問題に落とし込んで解く SOE を提案する.
+さらに問題を制約を kNN に限定した LOE を提案する.
+
+## Ordinal Embedding
 
 対象の集合 $X = \{x_1, x_2, \ldots, x_n\}$ とそれらの距離
 $\xi \colon X \times X \to \mathbb R_{\geq 0}$
 があるとする.
-ここで $X$ は陽に与えられるが $\xi$ は観測できない関数だとする.
-その代わりに次のような順序だけが与えられている.
+ここで $X$ は陽に与えられるが $\xi$ は観測できない.
+その代わりに次のような順序に関する制約 $A$ が与えられている.
 
-$$(i,j,k,l); \xi_{ij} \lt \xi_{kl}$$
+$$A \subset X^4$$
+$$(i,j,k,l) \in A \implies \xi_{ij} \lt \xi_{kl}$$
 
 そこで適切な埋め込み表現
 $$\hat{x_i} \in \mathbb R^p$$
@@ -35,7 +34,7 @@ $$\xi_{ij} \lt \xi_{kl} \iff \| \hat{x_i} - \hat{x_j} \| \lt \| \hat{x_k} - \hat
 
 これを満たすようにしたい.
 
-> このような問題は Ordinal Embedding と呼ばれ Shepard 1962, Kruskal 1964 の時代から研究されてきたそう.
+> このような問題は Shepard 1962, Kruskal 1964 の時代から研究されてきたそう.
 > 最近は機械学習の文脈でよく出てくるようになった.
 
 ## Soft Ordinal Embedding; SOE
@@ -45,7 +44,7 @@ $$\xi_{ij} \lt \xi_{kl} \iff \| \hat{x_i} - \hat{x_j} \| \lt \| \hat{x_k} - \hat
 対象を $[n] = \{1,2,\ldots,n\}$ だとし,
 制約として $A \subset [n]^4$ が与えられる.
 これの意味は,
-$$(i,j,k,l) \in A \iff \xi_{ij} \lt \xi_{kl}$$
+$$(i,j,k,l) \in A \implies \xi_{ij} \lt \xi_{kl}$$
 ということ.
 
 このときに埋め込み表現の行列

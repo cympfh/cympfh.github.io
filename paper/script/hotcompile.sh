@@ -1,3 +1,3 @@
 #!/bin/bash
 
-weasel -L --cmd "make posts" .
+weasel -L --cmd "make pages" .

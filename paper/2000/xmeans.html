@@ -1,0 +1,92 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>X-means: Extending K-means with Efficient Estimation of the Number of Clusters</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.min.css" rel="stylesheet">
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <link href="../css/c.css" rel="stylesheet" />
+  <link href="/resources/css/c.css" rel="stylesheet" />
+  <link href="/resources/css/youtube.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+</head>
+<body>
+
+  <header class="page-header">
+    <a href='../index.html'><i class="ri-send-plane-fill"></i></a>
+  </header>
+
+  <h1 class="title">X-means: Extending K-means with Efficient Estimation of the Number of Clusters</h1>
+
+  <div class="metainfo">
+    <ul>
+      <li>
+        <i class="ri-link"></i>
+        <a href="http://www.cs.cmu.edu/~dpelleg/download/xmeans.pdf" target="_blank">http://www.cs.cmu.edu/~dpelleg/download/xmeans.pdf</a>
+      </li>
+      <li>
+        <i class="ri-lightbulb-flash-line"></i>
+        クラスタ数を自動的に決定するクラスタリング手法
+      </li>
+      <li>
+        <i class="ri-price-tag-3-line"></i>
+        <span class="paper_tag">クラスタリング</span><span class="paper_tag">k-means</span>
+      </li>
+    </ul>
+  </div>
+
+  \[
+\def\BIC{\mathrm{BIC}}
+\def\Pr{\mathop{\mathrm{Pr}}}
+\]
+<h2 id="2-%E3%81%9D%E3%81%AE%E4%BB%96%E3%81%AE%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE">その他の参考文献</h2>
+<ul>
+  <li><a href="https://kaiseh.hatenadiary.org/entry/20090628/1246223266">適切なクラスタ数を推定するX-means法 - kaisehのブログ</a></li>
+</ul>
+<h2 id="2-Intro">Intro</h2>
+<p>K-means アルゴリズムはクラスタ数 \(k\) を自分で考えないといけない. 提案手法は BIC (または AIC など) を指標にして再帰的に k-means を適用することで最適なクラスタ数を決定する.</p>
+<h2 id="2-X-means">X-means</h2>
+<h3 id="3-%E3%82%A2%E3%83%AB%E3%82%B4%E3%83%AA%E3%82%BA%E3%83%A0">アルゴリズム</h3>
+<ul>
+  <li>適当な小さいクラスタ数の k-means を適用</li>
+  <li>
+    以下を繰り返す
+    <ul>
+      <li>
+        各クラスタについて \(k=2\) で k-means を適用した場合を考える
+        <ul>
+          <li>もっとも BIC (または別の情報量基準) が最高になるものがあれば分割する</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+<h3 id="3-%E3%83%99%E3%82%A4%E3%82%BA%E6%83%85%E5%A0%B1%E9%87%8F%E8%A6%8F%E6%BA%96%20%28BIC%29">ベイズ情報量規準 (BIC)</h3>
+<ul>
+  <li>\(D\) : \(p\) 次元空間の点の集合</li>
+  <li>\(D\) の分割 \(D = D_1 \cup D_2 \cup \cdots \cup D_k\)</li>
+  <li>\(\mu_i\) : \(D_i\) の重心</li>
+</ul>
+<p>これについて BIC は次の式で定まる.</p>
+\[\BIC = \ell(D) - \frac{p}{2} \log |D|\]
+<p>ここで \(\ell\) は空間を \(p\) 変量の正規分布を仮定した時の対数尤度である.</p>
+\[\ell(D) = \log \prod_{x \in D} P(x)
+= \sum_{i=1}^k \sum_{x \in D_i} \left[
+- \log ( \sqrt{2 \pi} \sigma ^p )
+- \frac{1}{2 \sigma^2} | x - \mu_i |^2 + \log \frac{R_i}{R}
+\right]
+\]
+<p>\(\sigma\) は全体の分散 (the variance under the identical spherical Gaussian assumption) であるが、</p>
+\[\sigma^2 = \frac{1}{R - k} \sum_{i=1}^k \sum_{x \in D_i} (x - \mu_i)^2\]
+<p>以上が今回の BIC の定義.</p>
+
+
+  <script src="https://cympfh.cc/resources/js/toc.js"></script>
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>

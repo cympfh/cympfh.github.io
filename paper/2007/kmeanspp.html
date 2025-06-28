@@ -1,0 +1,80 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>k-means++: The Advantages of Careful Seeding</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.min.css" rel="stylesheet">
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <link href="../css/c.css" rel="stylesheet" />
+  <link href="/resources/css/c.css" rel="stylesheet" />
+  <link href="/resources/css/youtube.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+</head>
+<body>
+
+  <header class="page-header">
+    <a href='../index.html'><i class="ri-send-plane-fill"></i></a>
+  </header>
+
+  <h1 class="title">k-means++: The Advantages of Careful Seeding</h1>
+
+  <div class="metainfo">
+    <ul>
+      <li>
+        <i class="ri-link"></i>
+        <a href="http://ilpubs.stanford.edu:8090/778/1/2006-13.pdf" target="_blank">http://ilpubs.stanford.edu:8090/778/1/2006-13.pdf</a>
+      </li>
+      <li>
+        <i class="ri-lightbulb-flash-line"></i>
+        k-means の改良
+      </li>
+      <li>
+        <i class="ri-price-tag-3-line"></i>
+        <span class="paper_tag">クラスタリング</span><span class="paper_tag">k-means</span>
+      </li>
+    </ul>
+  </div>
+
+  \[
+\def\N{\mathbb{N}}
+\def\Pr{\mathop{\mathrm{Pr}}}
+\]
+<h2 id="2-%E3%81%9D%E3%81%AE%E4%BB%96%E3%81%AE%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE">その他の参考文献</h2>
+<ul>
+  <li><a href="https://ja.wikipedia.org/wiki/K-means%2B%2B%E6%B3%95">k-means++法 - Wikipedia</a></li>
+</ul>
+<h2 id="2-Intro">Intro</h2>
+<p>k-means 法は \(\phi = \sum \min \|x_i - \mu_j\|^2\) の最小化する割当 \((i \mapsto j)\) を求める問題を考えているが, この最適化問題は NP-hard で現実的には厳密に解けない. k-means 法が提案している繰り返し最適化は局所解を求める方法に過ぎず, 理論上は最適解と比べていくらでも悪い局所解に陥るケースが知られている.</p>
+<h2 id="2-k-means">k-means</h2>
+<p>初期の centroid の選び方を工夫する. 各点 \(x\) について次の重みを与える.</p>
+<ul>
+  <li>
+    For all \(x\) について
+    <ul>
+      <li>\(x\) から見た最近傍 \(y\) との距離を \(D(x)\) とする</li>
+      <li>\(D(x)^2\) を重みとする</li>
+    </ul>
+  </li>
+  <li>
+    重みを正規化して
+    <ul>
+      <li>\(p(x) = \frac{D(x)^2}{\sum_{y \in S} D(y)^2}\) とする</li>
+    </ul>
+  </li>
+</ul>
+<p>\(p\) を確率分布だとして \(k\) 個の点をランダムに選ぶ. これを初期値にして k-means 法を実行する. \(D^2\) weighting と呼んでいる.</p>
+<h2 id="2-%E6%80%A7%E8%83%BD%E8%A9%95%E4%BE%A1">性能評価</h2>
+<p>理論的な性能評価がなされている. 最適解と比較して上限はこのくらいという上からの抑え込みがなされてる. よくわからないのでパス.</p>
+<h2 id="2-%E5%AE%9F%E9%A8%93">実験</h2>
+<p>現実データセットで実験した. \(\phi\) の値も大幅に向上してるだけでなく実行時間も短縮されている.</p>
+
+
+  <script src="https://cympfh.cc/resources/js/toc.js"></script>
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>

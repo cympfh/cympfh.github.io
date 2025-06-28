@@ -3,44 +3,64 @@
 listup() {
     echo "*new"
     echo "*arxiv"
-    cat resources/postlist | tac
+    ls -1 src/*/*.md | sort -r
 }
 
-ID=$(listup | peco --query "$1")
-TITLE=title
-URL=url
+arxiv-title() {
+    withcache -- curl -sL "$1" | web-grep "<title>{}</title>"
+}
 
-if [ "$ID" = "" ]; then
+arxiv-year() {
+    withcache -- curl -sL "$1" | web-grep '<meta name="citation_date" content={}>' |
+        grep -o '^[0-9]*'
+}
+
+F=$(listup | peco --query "$1")
+
+if [ -z "$F" ]; then
     echo "canceled"
     exit
 fi
 
-if [ "$ID" = "*new" ]; then
-    echo -n "ID > "
-    read ID
+if [ "$F" = "*new" ]; then
+    echo -n "Page ID > "
+    read page_id
+    echo -n "Year (YYYY) > "
+    read year
+
+    F=src/$year/$page_id.md
+    if [ ! -f "$F" ]; then
+        mkdir -p src/$year
+        cp template/page.md "$F"
+    else
+        echo "$F already exists. Exiting." >&2
+        exit 1
+    fi
 fi
 
-if [ "$ID" = "*arxiv" ]; then
-    echo -n "arxiv URL or ID > "
+if [ "$F" = "*arxiv" ]; then
+    echo -n "arxiv URL > "
     read URL
+    echo -n "Page ID > "
+    read page_id
+
     ARXIV_ID=$(echo "$URL" | grep -Eo '[0-9]{4}\.[0-9]*')
+    ARXIV_URL="https://arxiv.org/abs/$ARXIV_ID"
+    ARXIV_TITLE=$(arxiv-title "$ARXIV_URL")
+    ARXIV_YEAR=$(arxiv-year "$ARXIV_URL")
+    F=src/$ARXIV_YEAR/$page_id.md
 
-    URL="https://arxiv.org/abs/$ARXIV_ID"
-    TITLE=$(curl -s "$URL" | grep '<title>' | grep -o '<title>.*</title>' | sed 's/<[^>]*>//g' | head -1)
-
-    echo -n "ID for $TITLE > "
-    read ID
+    if [ ! -f "$F" ]; then
+        mkdir -p src/$ARXIV_YEAR
+        cat template/page.md |
+            sed "1s@TITLE@${ARXIV_TITLE}@" |
+            sed "2s@URL@${ARXIV_URL}@" >$F
+    else
+        echo "$F already exists. Exiting." >&2
+        exit 1
+    fi
 fi
 
-if [ ! -f "${ID}.md" ]; then
-    echo "$ID" >> resources/postlist
-    cat <<EOM > "$ID.md"
-% $TITLE
-% $URL
-% tags
-
-EOM
-fi
-
-$EDITOR "${ID}.md"
-make "${ID}.html"
+$EDITOR "$F"
+G=$(echo "$F" | sed 's/^src\///; s/\.md$/.html/')
+make $G

@@ -1,0 +1,94 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>[1810.05997] Predict then Propagate: Graph Neural Networks meet Personalized PageRank</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.min.css" rel="stylesheet">
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <link href="../css/c.css" rel="stylesheet" />
+  <link href="/resources/css/c.css" rel="stylesheet" />
+  <link href="/resources/css/youtube.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+</head>
+<body>
+
+  <header class="page-header">
+    <a href='../index.html'><i class="ri-send-plane-fill"></i></a>
+  </header>
+
+  <h1 class="title">[1810.05997] Predict then Propagate: Graph Neural Networks meet Personalized PageRank</h1>
+
+  <div class="metainfo">
+    <ul>
+      <li>
+        <i class="ri-link"></i>
+        <a href="https://arxiv.org/abs/1810.05997" target="_blank">https://arxiv.org/abs/1810.05997</a>
+      </li>
+      <li>
+        <i class="ri-lightbulb-flash-line"></i>
+        PageRank をニューラルネットワークで実行する
+      </li>
+      <li>
+        <i class="ri-price-tag-3-line"></i>
+        <span class="paper_tag">深層学習</span><span class="paper_tag">グラフ学習</span>
+      </li>
+    </ul>
+  </div>
+
+  \[
+\def\N{\mathbb{N}}
+\def\R{\mathbb{R}}
+\def\Normal{\mathcal{N}}
+\def\ip#1#2{\langle #1, #2 \rangle}
+\def\Pr{\mathop{\mathrm{Pr}}}
+\]
+<h2>Intro</h2>
+<p><img src="https://i.imgur.com/mrT1Z10.png" alt="" /></p>
+<h2>オリジナル PageRank (1998)</h2>
+<p>グラフの隣接行列とは, グラフの頂点数 \(n\) に対して \(n \times n\) の行列 \(A\) で, 頂点 \(i\) から \(j\) への辺が結ばれているとき \(A_{ij} = 1\) , そうでないとき \(A_{ij} = 0\) とするもの. 値を適切に正規化することで, \(A\) は辺を辿る確率行列と解釈できる.</p>
+<p>そこでオリジナルの PageRank は次のようなもの.</p>
+<p>隣接行列（を正規化したもの） \(A\) を使って, 頂点にいる確率ベクトル \(\pi\) に関する方程式</p>
+\[\pi = A \pi\]
+<p>を解く.</p>
+<h2>Personalized PageRank (1998)</h2>
+<p>テレポート（リスタート）を表す teleport vector \(i\) を使って,</p>
+\[\pi = (1-\alpha) A \pi + \alpha i\]
+<p>ここで \(\alpha\) は \(0 &lt; \alpha \leq 1\) でテレポートする確率を表す.</p>
+<p>これを陽に解くと次の式になる.</p>
+\[\pi = \alpha ( I_n - (1-\alpha) A )^{-1} i\]
+<p>このモデルは次のように使われる.</p>
+<p>頂点 \(x\) からスタートして頂点 \(y\) のスコアを知りたい. \(x\) に当たるところだけ bit を立てた one-hot vector を \(i\) として使う. 上の式を解いて得た \(\pi\) の \(y\) に当たる成分が得たかったスコア \(I(x,y)\) である.</p>
+<h2>Personalized Propagation of Neural Predictions (PPNP)</h2>
+<p>以上の手法にニューラルネットを適用する.</p>
+<p>頂点 \(i\) に特徴ベクトル \(x_i \in \mathbb R^m\) があるとき, パラメータを \(\theta\) とするニューラルネットワーク \(f_\theta\) を使って</p>
+\[h_i = f_\theta(x_i)\]
+<p>とする. ただしここでグラフの頂点数を \(n\) だとして \(h_i \in \mathbb R^n\) とする. というのも \(h\) が先程の \(i\) 相当だから.</p>
+\[z = \mathrm{softmax}( \alpha ( I_n - (1-\alpha) A )^{-1} h_i )\]
+<p>これの \(j\) 成分がスコア \((i,j)\) になる.</p>
+<p>全ての頂点に関するスコアを求めるとしたら, \(x_i\) を並べた行列 \(X\) から \((i,j)\) として得られる.</p>
+<p>以上を使うことでグラフに関するニューラルネットワーク計算が end-to-end に完了できる. ただしこの通りに行列演算するのはあまりに非効率である.</p>
+<blockquote>特に逆行列なんて計算する計算コストは一般に \(O(n^3)\) 掛かる.</blockquote>
+<h2>Approximate PPNP (APPNP)</h2>
+<p>PageRank を Random walk with restart で近似的に計算するのと同じことをする.</p>
+<ul>
+  <li>\(z_0 = h = f_\theta(x)\)</li>
+  <li>
+    For each \(k=1,\ldots, K\)
+    <ul>
+      <li>\(z_k = (1-\alpha) A z_{k-1} + \alpha h\)</li>
+    </ul>
+  </li>
+  <li>\(z = \mathrm{softmax}(z_K)\)</li>
+</ul>
+<p>とは言え行列の掛け算をするので, 頂点数 \(N\) , イテレーション数 \(K\) に対して \(O(K N^2)\) は時間が掛かる. 彼らの実験では \(N &lt; 2e4\) , \(K \leq 20\) 程度.</p>
+
+
+  <script src="/resources/js/toc.js?20250428"></script>
+  <script src="/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>

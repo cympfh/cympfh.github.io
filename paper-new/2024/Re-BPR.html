@@ -1,0 +1,124 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>[2409.14217] Revisiting BPR: A Replicability Study of a Common Recommender System Baseline</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.min.css" rel="stylesheet">
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <link href="../css/c.css" rel="stylesheet" />
+  <link href="/resources/css/c.css" rel="stylesheet" />
+  <link href="/resources/css/youtube.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+</head>
+<body>
+
+  <header class="page-header">
+    <a href='../index.html'><i class="ri-send-plane-fill"></i></a>
+  </header>
+
+  <h1 class="title">[2409.14217] Revisiting BPR: A Replicability Study of a Common Recommender System Baseline</h1>
+
+  <div class="metainfo">
+    <ul>
+      <li>
+        <i class="ri-link"></i>
+        <a href="https://arxiv.org/abs/2409.14217" target="_blank">https://arxiv.org/abs/2409.14217</a>
+      </li>
+      <li>
+        <i class="ri-lightbulb-flash-line"></i>
+        BPR は本当はめちゃ強いぞ
+      </li>
+      <li>
+        <i class="ri-price-tag-3-line"></i>
+        <span class="paper_tag">推薦</span><span class="paper_tag">行列分解</span>
+      </li>
+    </ul>
+  </div>
+
+  \[
+\def\N{\mathbb{N}}
+\def\R#1{\mathbb{R}^{#1}}
+\def\Normal{\mathcal{N}}
+\def\ip#1#2{\langle #1, #2 \rangle}
+\def\Pr{\mathop{\mathrm{Pr}}}
+\]
+<h2>Intro</h2>
+<p>Bayesian Personalized Ranking ( <a href="../2012/BPR.html">BPR</a> の BPR-MF のこと) は新しい推薦システムを提案する際にほぼ必ずベンチマークとして登場する. その際にオープンソースなライブラリ実装が使われるが, その実装は BPR の原論文の実装とは異なることが多い. 最悪なケースで 50% 以上本来の BPR よりも悪い性能を示すことがある.</p>
+<p>適切なライブラリを選べ. <a href="https://cornac.preferred.ai">cornac</a> を使え.</p>
+<h2>BPR の概要</h2>
+<ul>
+  <li>
+    ユーザー集合 \(U\) , アイテム集合 \(I\)
+    <ul>
+      <li>\(I_u^+\) : ユーザー \(u\) がインタラクトしたアイテム</li>
+      <li>\(I_u^-\) : ユーザー \(u\) がインタラクトしていないアイテム</li>
+    </ul>
+  </li>
+  <li>
+    データセット
+    <ul>
+      <li>\(D = \{ (u, i, j) \mid u \in U, i \in I_u^+, j \in I_u^- \}\)</li>
+    </ul>
+  </li>
+  <li>
+    適合度
+    <ul>
+      <li>\(X \in \R{U \times I}\)</li>
+    </ul>
+  </li>
+  <li>
+    予測モデル
+    <ul>
+      <li>\(X \simeq W H^t\)</li>
+      <li>
+        \(\Pr(i \gt_u j \mid W, H) = \sigma(x_u^i - x_u^j)\)
+        <ul>
+          <li>\(x_u^i = \ip{w_u}{h_i}\)</li>
+          <li>\(x_u^j = \ip{w_u}{h_j}\)</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>
+    学習
+    <ul>
+      <li>
+        \(\mathcal L(W,H) = -\sum_{(u,i,j) \in D} \log \Pr(i \gt_u j \mid W, H) + \Omega(W,H)\)
+        <ul>
+          <li>\(\Omega(W,H)\) : 正則化項</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+<h2>BPR の気にするべきオプション</h2>
+<h3>正則化項</h3>
+<p>\((u,i,j) \in D\) に対して</p>
+\[\lambda_u \|w_u\|^2 + \lambda_i \|h_i\|^2 + \lambda_j \|h_j\|^2\]
+<p>という正則化項が使える. ここで重み \(\lambda\) として, ユーザーに使うもの, ポジティブアイテムに使うもの, ネガティブアイテムに使うものをそれぞれ別に持つことが出来る.</p>
+<blockquote>元論文で既にこの3つがあると言われてるでしょ, と書いてあるが, どこに書いてあるのか分からなかった. \(\lambda_\Theta\) という1つになってるようにしか見えないんだが.</blockquote>
+<p>ライブラリによって \(\lambda\) は一種類だったりする.</p>
+<h3>最適化</h3>
+<p>元論文では普通の SGD で学習している. 現代なら他に Momentum SGD や Adam などがある.</p>
+<h3>ネガティブサンプリング</h3>
+<p>一様ランダムに選ぶだけでなく, その時点で最も予測を外してしまうアイテムを選んでネガティブサンプルとして使うという adaptive sampling が考えられる. 通常こちらの方が良い.</p>
+<blockquote>これも元論文にあると書いてあるけど, どこ？ "bootstrap sampling" というのはあるけど, これのことか？</blockquote>
+<h3>アイテム/ユーザーのバイアス</h3>
+<p>内積 \(\ip{w_u}{h_i}\) にバイアス項を加えて</p>
+\[\ip{w_u}{h_i} + b_u + b_i\]
+<p>とすることが考えられる.</p>
+<p>アイテムのバイアス項は有用. ユーザーのバイアス項は不要.</p>
+<h2>実験</h2>
+<p>上記したオプションをフルに実装した彼ら独自のものと, 有名どころのライブラリを比較した. 各ライブラリの実装は Table 2 にまとめてある. フルに実装されてるものはオリジナルも含めて全く存在しない.</p>
+<p>いくつかのデータセットで実験しなおした. 彼らの実装及び cornac がいつも同率一位.</p>
+
+
+  <script src="/resources/js/toc.js?20250428"></script>
+  <script src="/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>

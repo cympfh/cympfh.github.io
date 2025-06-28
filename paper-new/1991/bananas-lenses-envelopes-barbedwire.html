@@ -1,0 +1,829 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Functional Programming with Bananas, Lenses, Envelopes and Barbed Wire</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.min.css" rel="stylesheet">
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <link href="../css/c.css" rel="stylesheet" />
+  <link href="/resources/css/c.css" rel="stylesheet" />
+  <link href="/resources/css/youtube.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+</head>
+<body>
+
+  <header class="page-header">
+    <a href='../index.html'><i class="ri-send-plane-fill"></i></a>
+  </header>
+
+  <h1 class="title">Functional Programming with Bananas, Lenses, Envelopes and Barbed Wire</h1>
+
+  <div class="metainfo">
+    <ul>
+      <li>
+        <i class="ri-link"></i>
+        <a href="https://maartenfokkinga.github.io/utwente/mmf91m.pdf" target="_blank">https://maartenfokkinga.github.io/utwente/mmf91m.pdf</a>
+      </li>
+      <li>
+        <i class="ri-lightbulb-flash-line"></i>
+        一般の再帰型について畳み込み操作やその逆操作を与える
+      </li>
+      <li>
+        <i class="ri-price-tag-3-line"></i>
+        <span class="paper_tag">計算</span><span class="paper_tag">圏論</span>
+      </li>
+    </ul>
+  </div>
+
+  \[
+\require{amscd}
+\def\N{\mathbb{N}}
+\def\R{\mathbb{R}}
+\def\Normal{\mathcal{N}}
+\def\ip#1#2{\langle #1, #2 \rangle}
+\def\Pr{\mathop{\mathrm{Pr}}}
+
+\def\banana#1{(\!|#1|\!)}
+\def\lense#1{[\!(#1)\!]}
+\def\envelop#1{[\![ #1 ]\!]}
+\def\wire#1{[\!\!\langle #1 \rangle\!\!]}
+
+\DeclareMathOperator{\cons}{cons}
+\DeclareMathOperator{\foldr}{foldr}
+\def\Nil{\mathrm{Nil}}
+\def\Bool{\mathrm{Bool}}
+\def\true{\mathrm{true}}
+\def\false{\mathrm{false}}
+\def\const#1{#1^\bullet}
+
+\def\as{\mathit{as}}
+\def\join{\mathrm{join}}
+
+\def\Hom{\mathrm{Hom}}
+\def\fin{\mathrm{in}}
+\def\fout{\mathrm{out}}
+\def\farrow#1#2#3{(#1 \xleftarrow{#3} #2)}
+\]
+<h2>Intro</h2>
+<p>リストデータについて filter や map であったり fold, unfold といった操作がある. これらは実は catamorphism, anamorphism, hylomorphism, paramorphism という4つの基本的な射を定めることで, それらの組み合わせ, 或いはそれそのものと見なすことが出来る. そしてこれらはリストに限らず一般の再帰型についてそのまま適用することが出来る.</p>
+<h2>Note</h2>
+<p>圏論の知識は次程度を仮定する.</p>
+<ul>
+  <li>圏の定義</li>
+  <li>対象の積, 和</li>
+  <li>関手</li>
+  <li>圏の積</li>
+</ul>
+<p>ただしこの記事においてはその知識が深い必要はない. 考えている圏は常に性質が良いもので, 例えば積や和は常に存在するとしてよい. 具体的には Hask 圏か Set 圏を考えていると思えば良い.</p>
+<p>また <strong>型</strong> という用語を無断で用いているが, この場合は Hask 圏の対象を言っている. 集合 \(A\) について \(a \in A\) と書くことと, 型 \(A\) の値 \(a : A\) と書くことを区別しない.</p>
+<h2>Notation</h2>
+<h3>括弧</h3>
+<p>この論文では独特な括弧が4種類導入されている. 元論文の印刷とは多少見た目が違うが, 頑張って模倣して次のように表記する.</p>
+<table>
+  <thead>
+    <tr class=header>
+      <th align=left>名称</th>
+      <th align=center>表記</th>
+      <th align=center>代替表記</th>
+      <th align=left>備考</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class=odd>
+      <td align=left>バナナ括弧</td>
+      <td align=center>\(\banana{\_}\)</td>
+      <td align=center><code>(| |)</code></td>
+      <td align=left>Bananas</td>
+    </tr>
+    <tr class=even>
+      <td align=left>レンズ括弧</td>
+      <td align=center>\(\lense{\_}\)</td>
+      <td align=center><code>[( )]</code></td>
+      <td align=left>Lenses, 凹レンズ</td>
+    </tr>
+    <tr class=odd>
+      <td align=left>封筒括弧</td>
+      <td align=center>\(\envelop{\_}\)</td>
+      <td align=center><code>[[ ]]</code></td>
+      <td align=left>Envelopes</td>
+    </tr>
+    <tr class=even>
+      <td align=left>有刺鉄線</td>
+      <td align=center>\(\wire{\_}\)</td>
+      <td align=center><code>[&lt; &gt;]</code></td>
+      <td align=left>Barbed Wire</td>
+    </tr>
+  </tbody>
+</table>
+<h3>定数写像</h3>
+<ul>
+  <li>
+    集合 \(A,C\) と \(c \in C\) について
+    <ul>
+      <li>
+        \(\const{c}\) とは \(C\) の定数写像 \(A \to C\)
+        <ul>
+          <li>\(\const{c}(a) = c\)</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+<h3>圏論の記法</h3>
+<p>この論文の記法はずいぶん古いものなので現代風の記法に従う.</p>
+<ul>
+  <li>
+    射
+    <ul>
+      <li>\(f \colon A \to B\)</li>
+      <li>合成 \(f \circ g\)</li>
+    </ul>
+  </li>
+  <li>
+    積
+    <ul>
+      <li>対象 \(A \times B\)</li>
+      <li>射影関数 \(\pi_1, \pi_2\)</li>
+      <li>
+        2つの射 \(f \colon A \to B, g \colon C \to D\) に対して
+        <ul>
+          <li>\(f \times g \colon A \times B \to C \times D\) を自然に定める</li>
+        </ul>
+      </li>
+      <li>
+        対角射 \(\Delta\)
+        <ul>
+          <li>
+            任意の対象 \(A\) について
+            <ul>
+              <li>\(\Delta \colon A \to A \times A\)</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>
+        \(f \colon A \to B, g \colon A \to C\) について
+        <ul>
+          <li>
+            \((f \Delta g) \colon A \to B \times C\)
+            <ul>
+              <li>\((f \Delta g) := (f \times g) \circ \Delta\)</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>
+    和
+    <ul>
+      <li>対象 \(A + B\)</li>
+      <li>包含射 \(\iota_1, \iota_2\)</li>
+      <li>
+        2つの射 \(f \colon A \to B, g \colon C \to D\) に対して
+        <ul>
+          <li>\(f + g \colon A + B \to C + D\) を自然に定める</li>
+        </ul>
+      </li>
+      <li>
+        余対角射 \(\nabla\)
+        <ul>
+          <li>
+            任意の対象 \(A\) について
+            <ul>
+              <li>\(\nabla \colon A + A \to A\)</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>
+        \(f \colon A \to C, g \colon B \to C\) について
+        <ul>
+          <li>
+            \((f \nabla g) \colon A + B \to C\)
+            <ul>
+              <li>\((f \nabla g) := \nabla \circ (f + g)\)</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>
+    homset
+    <ul>
+      <li>
+        \(A,B\) について
+        <ul>
+          <li>\(\Hom(A,B)\) は \(A \to B\) なる射全体の集合</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>
+    恒等射, 恒等関手
+    <ul>
+      <li>単に \(1\) と書いて添字は省略する</li>
+    </ul>
+  </li>
+  <li>
+    終対象
+    <ul>
+      <li>単に \(1\) と書く</li>
+    </ul>
+  </li>
+</ul>
+<p>と書く.</p>
+<h3>Sectioning</h3>
+<p>空間 \(X\) 上にある任意の二項演算子 \(\otimes \colon X \times X \to X\) について, 演算する値を1つだけ与えて固定すれば, これを \(X \to X\) なる関数と思うことが出来る.</p>
+<ul>
+  <li>
+    \((a \otimes) \colon X \to X\)
+    <ul>
+      <li>\((a \otimes)(b) = a \otimes b\)</li>
+    </ul>
+  </li>
+  <li>
+    \((\otimes b) \colon X \to X\)
+    <ul>
+      <li>\((\otimes b)(a) = a \otimes b\)</li>
+    </ul>
+  </li>
+</ul>
+<h3>リスト</h3>
+<p>型 \(A\) に対してリスト型を \([A]\) と書く.</p>
+<p>要素がゼロ個であるリストを空であると言って \(\Nil\) と書く.</p>
+<p>また \(\cons \colon A \times [A] \to [A]\) はリストの先頭に要素を追加する関数である. 空でないリスト \(x: [A]\) は必ずある \(a: A, \as: [A]\) があって \(x = \cons(a, \as)\) と書けることに注意.</p>
+<h2>リストの場合</h2>
+<p>リストの場合の catamorphism, anamorphism, hylomorphism, paramorphism がどんなものか具体的に見ていく.</p>
+<p>ただしリスト型 \([A]\) の厳密な定義をまだしていない (次章で与える). この章では一旦「型 \(A\) の値をゼロ個以上自由に持ってきて一列に並べたデータ」と直感的に理解しておく.</p>
+<h3>catamorphism</h3>
+<p>"cata-" は catastrophic のそれであって, 下方へ, といった意味らしい. リストについての catamorphism は次の関数 \(h\) をいう.</p>
+<ul>
+  <li>\(h \colon [A] \to B\)</li>
+  <li>\(h~\Nil = b\)</li>
+  <li>\(h~(\cons(a, \as)) = a \oplus h(\as)\)</li>
+</ul>
+<p>ここで \(b\) は \(B\) の定数. \(\oplus\) は \(A \times B \to B\) なる二項演算子. このような形の \(h\) は Haskell のような言語では <code>foldr</code> として知られており</p>
+\[h = \foldr(b, \oplus)\]
+<p>のように書ける. この <code>foldr</code> の代わりに, ここでは <strong>バナナ括弧</strong> で括ることで</p>
+\[h = \banana{b, \oplus}\]
+<p>と書く.</p>
+<p>バナナ括弧を使うと例えば次のような関数が定義できる.</p>
+<ul>
+  <li>
+    リストの長さを取る関数 <code>length</code>
+    <ul>
+      <li>\(\mathrm{length} = \banana{0, (\_,n)\mapsto n+1}\)</li>
+    </ul>
+  </li>
+  <li>
+    条件 <code>p</code> を満たす要素だけを残したリストを作る <code>filter</code>
+    <ul>
+      <li>\(\mathrm{filter}(p) = \banana{\Nil, (a, z) \mapsto \begin{cases} \cons(a, z) &amp; \text{ when } p~a \\ z &amp; \text{ otherwise }\end{cases}}\)</li>
+    </ul>
+  </li>
+</ul>
+<h3>anamorphism</h3>
+<p>ちょうど catamorphism の逆のもので, <code>unfold</code> のような名前で知られている関数 \(h\) を次のように定義する.</p>
+<ul>
+  <li>\(h \colon B \to [A]\)</li>
+  <li>\(h~b = \begin{cases} \Nil &amp; \text{ when } p~b \\ \cons(a, h~b&#x27;) &amp; \text { otherwise, where } (a,b&#x27;)=g~b\end{cases}\)</li>
+</ul>
+<p>ただしここで \(p\) は \(B \to \Bool\) なる述語関数. \(g\) は \(B \to A \times B\) なる関数.</p>
+<p>\(g,p\) で定まるこの関数 \(h\) のことを, レンズ括弧で括って</p>
+\[h = \lense{g, p}\]
+<p>と書く.</p>
+<p>例えば, 関数 \(f \colon A \to A\) を繰り返し適用する <code>iterate f</code> という関数 \(A \to [A]\) は \(\lense{a \mapsto (a, f~a), \const{\mathrm{false}}}\) と書ける.</p>
+<h4>map 関数</h4>
+<p>リスト \([A]\) と関数 \(f \colon A \to B\) があるときに, リストの各要素に \(f\) を適用することで \([A] \to [B]\) という関数を構成することができる. Haskell では <code>map f</code> とこれを書くが, 論文に倣って \(f*\) と書くことにする. これは \([A]\) からの catamorphism として書くこともできるし, \([B]\) への anamorphism と書くこともできる.</p>
+<ul>
+  <li>\(f* = \banana{\Nil, (a, b) \mapsto \cons(f~a, f*b)}\)</li>
+  <li>
+    \(f* = \lense{\cons(a, \as) \mapsto (f~a, \as), \mathrm{nil}}\)
+    <ul>
+      <li>
+        where
+        <ul>
+          <li>\(\mathrm{nil}~\Nil=\mathrm{true}\)</li>
+          <li>\(\mathrm{nil}~\cons(x, xs)=\mathrm{false}\)</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+<h3>hylomorphism</h3>
+<p>リストに関する hylomorphism とは, 例えば木構造をリストにしてやるような「線形再帰関数」のもの. 具体的には</p>
+\[h : A \to C\]
+\[h~a = \begin{cases}c &amp; \text{ when } p~a\\ b \oplus h~a&#x27; &amp; \text{ otherwise, where } (b,a&#x27;) = g~a\end{cases}\]
+<p>と書き表されるもの. ここで \(c \colon C\) , \(g \colon A \to B \times A\) , \(\oplus \colon B \times C \to C\) であって \(h \colon A \to C\) である.</p>
+<p>今度の \(h\) は \(c,\oplus, g,p\) という4つで決まる. （ややトリッキーだが）次のように並べて封筒括弧で包んで</p>
+\[h=\envelop{(c,\oplus), (g,p)}\]
+<p>と書き表すことにする.</p>
+<p>そしてこれは</p>
+\[\envelop{(c,\oplus), (g,p)} = \banana{c,\oplus} \circ \lense{g,p}\]
+<p>という合成の形に分解できる. この証明は論文にはあるが省略. リストが一見登場しないが, この合成の形を見るとその中間でリストを経由してることが分かる.</p>
+<p>例えば自然数の階乗を計算する関数 \(\mathbb N \to \mathbb N\) は \(\envelop{(1,\times), ((1+n) \mapsto (1+n, n), \mathrm{zero})}\) と書ける. ここで \(\mathrm{zero}\) は引数がゼロかを判定する述語とする. つまり \(\lense{g,\mathrm{zero}}(m)=[m,m-1,\ldots,1]\) であって \(\banana{1,\times}\) はそれを乗算しながら畳み込む関数である.</p>
+<h3>paramorphism</h3>
+<p>原始再帰のパターンを提供するのが paramorphism であって, リストに関する paramorphism は 次のように定義される.</p>
+<ul>
+  <li>\(h \colon [A] \to B\)</li>
+  <li>\(h~\Nil=b\)</li>
+  <li>\(h~\cons(a,\as)= a \oplus (\as, h~\as)\)</li>
+</ul>
+<p>ここで \(b\colon B\) , \(\oplus\colon A \times([A]\times B) \to B\) である. このような \(h\) はやはり \(b,\oplus\) で決定されるので, 有刺鉄線で括って</p>
+\[h=\wire{b, \oplus}\]
+<p>と書くことにする.</p>
+<p>\(\oplus\) の型が豪華になったので, 値を蓄積しながらのような関数が書けるようになった. 例えば <code>tails</code> は \(\wire{\cons(\Nil,\Nil), (a\oplus(\as,ac)=\cons(\cons(a,\as),ac))}\) と書ける.</p>
+<h2>矢印</h2>
+<p>矢印 \((\leftarrow)\) という二項演算子を定義する.</p>
+<p>2つの射 \(f \colon A \to C\) と \(g \colon C&#x27; \to B\) について</p>
+\[(g \leftarrow f) \colon \Hom(C, C&#x27;) \to \Hom(A, B)\]
+\[(g \leftarrow f)(h) = g \circ h \circ f\]
+<p>を定める.</p>
+<p>さらに関手 \(F\) があるとき</p>
+\[\begin{align*}
+\farrow{g}{f}{F}(h)
+&amp;= (g \leftarrow f)(Fh) \\
+&amp;=  g \circ Fh \circ f
+\end{align*}\]
+<p>と書く.</p>
+<p>2つ定義したけどこの最後のしか使わない.</p>
+<h2>不動点オペレータ</h2>
+<p>\(A \to A\) なる射 \(f\) について \(f\) の不動点を \(\mu f\) と書く.</p>
+\[\mu \colon \Hom(A, A) \to A\]
+<p>ここで不動点とは関数なら \(f x = x\) なる \(x\) のことを言う. ここの意味は別途与えられているものとする.</p>
+<h2>再帰型</h2>
+<p>圏 \(C\) の上の関手 \(F \colon C \to C\) の不動点 \(\mu_F\) を次で定義する.</p>
+<p>対象 \(X \in C\) , 射 \(\fin \colon FX \to X\) , \(\fout \colon X \to FX\) が次を満たすとする</p>
+<ul>
+  <li>\(\fin \circ \fout = 1\)</li>
+  <li>\(\fout \circ \fin = 1\)</li>
+  <li>\(\mu(\fin \xleftarrow{F} \fout) = 1\)</li>
+</ul>
+<p>このときに \((X, \fin, \fout)\) のことを \(F\) の不動点 \(\mu_F\) と定める. \(\fout\) は \(\fin\) の逆射で自明なものなので省略して \((X, \fin)\) としてもよい.</p>
+<p>型の圏について上記の方法で関手 \(F\) から \(\mu_F = (X, \fin, \fout)\) を得たとき, この \(X\) を再帰型（あるいは再帰データなど）と呼ぶ. また \(\fin\) はその型の構成（データから再帰データを得る方法）になっている. \(\fout\) はその逆でデータを分解する方法になっている.</p>
+<h3>リスト型</h3>
+<p>リスト型を定義する準備ができた. 関手 \(LX = 1 + A \times X\) を考える. このとき</p>
+\[\mu_L = ([A], (\const{\Nil} \nabla \cons))\]
+<p>を得る. ここで</p>
+<ul>
+  <li>
+    \([A]\)
+    <ul>
+      <li>これをリスト型と呼ぶ</li>
+    </ul>
+  </li>
+  <li>
+    \(\const{\Nil} \colon 1 \to [A]\)
+    <ul>
+      <li>空リストの定義</li>
+    </ul>
+  </li>
+  <li>
+    \(\cons \colon A \times [A] \to [A]\)
+    <ul>
+      <li>リストの先頭に要素を追加する操作</li>
+    </ul>
+  </li>
+</ul>
+<p>というわけで 「リスト及びその構成は関手 \(L\) の不動点のこと」 という定義を与えることができた.</p>
+<p>念の為に \(\fin, \fout\) を明示的に書くと次のようになっている.</p>
+<ul>
+  <li>
+    \(\fin \colon [A] \to 1 + A \times [A]\)
+    <ul>
+      <li>
+        \(\fin~\ast = \Nil\)
+        <ul>
+          <li>ここで \(\ast \in 1\)</li>
+        </ul>
+      </li>
+      <li>\(\fin~(a, \as) = \cons(a, \as)\)</li>
+    </ul>
+  </li>
+  <li>
+    \(\fout \colon [A] \to 1 + A \times [A]\)
+    <ul>
+      <li>\(\fout~\Nil = \ast\)</li>
+      <li>\(\fout~(\cons(a, \as)) = (a, \as)\)</li>
+    </ul>
+  </li>
+</ul>
+<h3>自然数</h3>
+<p>自然数も再帰型として定義できる. 関手 \(NX = 1 + X\) の不動点を計算すると</p>
+<ul>
+  <li>
+    \(\mu_N = (\N, \const{0} \nabla S)\)
+    <ul>
+      <li>
+        \(\const{0} \colon 1 \to \N\)
+        <ul>
+          <li>ゼロの定義</li>
+        </ul>
+      </li>
+      <li>
+        \(S \colon \N \to \N\)
+        <ul>
+          <li>successor の定義</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+<p>を得る.</p>
+<h2>ポリモーフィズム</h2>
+<p>2つの関手 \(F, G\) について \(\varphi\) がポリモーフィズムであるとは, 任意の対象 \(A\) について射 \(\varphi_A \colon FA \to GA\) を与えるようなもののことで,</p>
+\[\varphi \colon F \to G\]
+<p>と書く.</p>
+<p>これは自然変換からその自然さについての要請を取り除いたもの.</p>
+<h2>再帰スキーム</h2>
+<p>一般の再帰型について catamorphism, anamorphism, hylomorphism, paramorphism を与える.</p>
+<p>関手 \(F\) とその不動点 \(\mu_F = (L, \fin, \fout)\) があるとする. ここで3つのポリモーフィズム</p>
+<ul>
+  <li>\(\varphi_A \colon FA \to A\)</li>
+  <li>\(\psi_A \colon A \to FA\)</li>
+  <li>\(\xi_A \colon F(A \times L) \to A\)</li>
+</ul>
+<p>を自由に持ってくる. このときに次を定義する.</p>
+<ul>
+  <li>
+    catamorphism
+    <ul>
+      <li>\(\banana{\varphi}_F \colon L \to A\)</li>
+      <li>\(\banana{\varphi}_F = \mu(\varphi_A \xleftarrow{F} \fout)\)</li>
+    </ul>
+  </li>
+  <li>
+    anamorphism
+    <ul>
+      <li>\(\lense{\psi}_F \colon A \to L\)</li>
+      <li>\(\lense{\psi}_F = \mu(\fin \xleftarrow{F} \psi_A)\)</li>
+    </ul>
+  </li>
+  <li>
+    hylomorphism
+    <ul>
+      <li>\(\envelop{\varphi, \psi}_F \colon A \to B\)</li>
+      <li>\(\envelop{\varphi, \psi}_F = \mu(\varphi_B \xleftarrow{F} \psi_A)\)</li>
+    </ul>
+  </li>
+  <li>
+    paramorphism
+    <ul>
+      <li>\(\wire{\xi}_F \colon L \to A\)</li>
+      <li>
+        \(\wire{\xi}_F = \mu(g)\)
+        <ul>
+          <li>where \(g(f) = \xi_A \circ F(1 \Delta f) \circ \fout\)</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+<p>括弧の添字の \(F\) は定義のために用いた \(F\) を指すが, 文脈から明らかな場合これを省略する. 例えば \(\banana{\varphi}_F\) の代わりに \(\banana{\varphi}\) と書く.</p>
+<h2>Fixed point fusion (Free theorem)</h2>
+<p>関数 \(f\) が正格で \(f \circ g = h \circ f\) なるとき,</p>
+\[f(\mu g) = \mu h\]
+<h2>Theorem (名称不明)</h2>
+<p>\(gh=1\) のとき</p>
+\[\mu(f \xleftarrow{F} g) \circ \mu(h \xleftarrow{F} j) = \mu(f \xleftarrow{F} j)\]
+<h2>Catamorphisms</h2>
+<h3>CataEval</h3>
+<p>catamorphism を具体的に評価する手段を与える.</p>
+<ul>
+  <li>関手 \(F\)</li>
+  <li>\(\mu_F = (L, \fin, \fout)\)</li>
+  <li>\(\varphi_A \colon FA \to A\)</li>
+</ul>
+<p>から catamorphism \(\banana{\varphi}\) が与えられる.</p>
+<p>定義から</p>
+\[\begin{align*}
+\banana{\varphi}
+&amp; = \mu(\farrow{\varphi}{\fout}{F}) \\
+&amp; = \varphi_A \circ F\banana{\varphi} \circ \fout \\
+\end{align*}\]
+<p>ここで右から \(\fin\) を掛けると \(\fout\) が消えるので</p>
+\[\banana{\varphi} \circ \fin = \varphi_A \circ F\banana{\varphi}\]
+\[\begin{CD}
+L @&lt;\fin&lt;&lt; FL \\
+@V\banana{\varphi}VV @VF\banana{\varphi}VV \\
+A @&lt;\varphi_A&lt;&lt; FA
+\end{CD}\]
+<p>を得る.</p>
+<p>この最後の結果を使えば catamorphism を評価することができる.</p>
+<h4>リストの <code>foldr</code></h4>
+<p>次が与えられる.</p>
+<ul>
+  <li>
+    リスト \([A]\)
+    <ul>
+      <li>関手 \(LX = 1 + A \times X\)</li>
+      <li>
+        不動点 \(\mu_L = ([A], \fin)\)
+        <ul>
+          <li>\(\fin = \const{\Nil} \nabla \cons\)</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>
+    foldr \(\banana{\varphi}\)
+    <ul>
+      <li>
+        ポリモーフィズム \(\varphi_X = \const{c} \nabla \oplus\)
+        <ul>
+          <li>\(\const{c} \colon 1 \to X\)</li>
+          <li>\(\oplus \colon A \times X \to X\)</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+<p>では実際に \(x \in [A]\) に対して \(\banana{\varphi}~x\) を計算してみる. \(x\) が \(\Nil\) か \(\cons(a, \as)\) かで場合分けする.</p>
+\[\begin{align*}
+\banana{\varphi}~\Nil
+&amp;= \banana{\varphi} (\fin ~ \ast) \\
+&amp;= (\banana{\varphi} \circ \fin) ~ \ast \\
+&amp;= (\varphi_A \circ F\banana{\varphi}) ~ \ast \\
+&amp;= (\varphi_A \circ (1 + 1 \times \banana{\varphi})) ~ \ast \\
+&amp;= \varphi_A \ast \\
+&amp;= \const{c} \ast \\
+&amp;= c \\
+\end{align*}\]
+\[\begin{align*}
+\banana{\varphi}~\cons(a, \as)
+&amp;= \banana{\varphi} (\fin (a, \as)) \\
+&amp;= (\varphi_A \circ F \banana{\varphi}) (a, \as) \\
+&amp;= \varphi_A \circ (1 \times \banana{\varphi}) (a, \as) \\
+&amp;= \varphi_A (a, \banana{\varphi}~\as) \\
+&amp;= a \oplus (\banana{\varphi}~\as) \\
+\end{align*}\]
+<p>後者は再帰的に \(\banana{\varphi}\) を使っている. ただしリストの長さを考えると単調減少しているので無限に再帰することはなく, 計算が有限で止まることが分かる.</p>
+<h3>catamorphism の唯一性</h3>
+<p>次が成り立つ.</p>
+\[f = \banana{\varphi} \iff f \circ \fin = \varphi_A \circ Ff\]
+<p>つまり \(f\) が catamorphism であることと, 先の CataEval の式が成り立つことは同値である. このことは catamorphism の唯一性を示している.</p>
+<h3>CataFusion</h3>
+<p>\(f \circ \varphi_A = \psi_B \circ Ff\) のとき</p>
+\[f \circ \banana{\varphi} = \banana{\psi}\]
+\[\begin{CD}
+L @&gt;\banana{\varphi}&gt;&gt; A @&lt;\varphi_A &lt;&lt; FA \\
+@| @VfVV @VEfVV \\
+L @&gt;\banana{\psi}&gt;&gt; B @&lt;\psi_B &lt;&lt; FB
+\end{CD}\]
+<p>が成り立つ.</p>
+<h3>単射は catamorphism</h3>
+<p>\(f \colon A \to B\) と \(g \colon B \to A\) について \(gf=1\) だとする.</p>
+\[\begin{align*}
+&amp; gf = 1 &amp; \\
+\implies &amp; Fg \circ Ff = 1 \\
+\implies &amp; f \circ \varphi_A = f \circ \varphi_A \circ Fg \circ Ff \\
+\end{align*}\]
+<p>ということで \(\psi_B = (f \circ \varphi_A \circ Fg)\) ということにして 先程の CataFusion を使うと</p>
+\[f \circ \banana{\varphi} = \banana{f \circ \varphi_A \circ Fg}\]
+<p>を得る. ここで \(\varphi = \fin\) の場合を考える. 唯一性から \(\banana{\fin}=1\) なので, 代入すると</p>
+\[f = \banana{f \circ \fin \circ Fg}\]
+<p>を得る. \(f\) が単射であれば \(gf=1\) なる射 \(g\) が存在することは同値なので, 上記の方法で \(f\) を catamorphism として書くことができるがわかった.</p>
+<h2>Anamorphisms</h2>
+<h3>AnaEval</h3>
+<p>関手 \(F\) , 不動点 \(\mu_F = (L, \fin, \fout)\) , ポリモーフィズム \(\psi_X \colon X \to FX\) について</p>
+\[\lense{\psi} = \mu(\fin \xleftarrow{F} \psi_X)\]
+<p>であった. 不動点なので \(\lense{\psi} = \fin \circ F\lense{\psi} \circ \psi_X\) . 両辺に左から \(\fout\) を掛けて</p>
+\[\fout \circ \lense{\psi} = F\lense{\psi} \circ \psi_X\]
+\[\begin{CD}
+X                 @&gt;\psi_X&gt;&gt;  FX \\
+@V\lense{\psi}VV            @VF\lense{\psi}VV \\
+L                 @&gt;\fout&gt;&gt;   FL
+\end{CD}\]
+<p>を得る. これを使って具体的に anamorphism を評価することができる.</p>
+<h3>リストの <code>unfold</code></h3>
+<p>\(A\) のリスト型 \([A]\) は \(FX = 1 + A \times X\) で与えられる. そして <code>unfold</code> は初め \(\lense{g, p}\) で定めると紹介したが, 一般の anamorphism として次のように書ける.</p>
+<ul>
+  <li>
+    \(\lense{\psi} = \lense{(\const{\Nil} + g) \circ p?}\)
+    <ul>
+      <li>
+        where
+        <ul>
+          <li>\(g \colon X \to A \times X\)</li>
+          <li>
+            \(p \colon X \to \Bool\)
+            <ul>
+              <li>述語関数</li>
+            </ul>
+          </li>
+          <li>
+            \(p? \colon X \to X + X\)
+            <ul>
+              <li>\(p(x)\) が真のとき \(p?(x) = \iota_1(x)\)</li>
+              <li>さもなくば \(p?(x) = \iota_2(x)\)</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+<p>では実際に評価してみると,</p>
+\[\begin{align*}
+\lense{\psi} x
+&amp; = \fin F\lense{\psi} \psi x \\
+&amp; = \fin (1 + 1 \times \lense{\psi}) (\const\Nil + g) p? x \\
+\end{align*}\]
+<p>\(p(x)\) が真のとき,</p>
+\[\begin{align*}
+\lense{\psi} x
+&amp; = \fin (1 + 1 \times \lense{\psi}) (\const\Nil + g) \iota_1(x) \\
+&amp; = \fin (1 + 1 \times \lense{\psi}) \Nil \\
+&amp; = \fin \ast \\
+&amp; = \Nil \\
+\end{align*}\]
+<p>\(p(x)\) が偽のとき, \((a, x&#x27;) = g(x)\) だとして</p>
+\[\begin{align*}
+\lense{\psi} x
+&amp; = \fin (1 + 1 \times \lense{\psi}) (\const\Nil + g) \iota_2(x) \\
+&amp; = \fin (1 + 1 \times \lense{\psi}) g(x) \\
+&amp; = \fin (a, \lense{\psi(x&#x27;)}) \\
+&amp; = \cons(a, \lense{\psi(x&#x27;)}) \\
+\end{align*}\]
+<p>これがいわゆるリストの <code>unfold</code> である.</p>
+<h3>iterate</h3>
+<p>\(f \colon A \to A\) とリスト型 \(F X = 1 + A \times X\) について</p>
+\[\psi_A \colon A \to FA\]
+\[\psi_A = \iota_2 \circ (1_A \Delta f)\]
+<p>とする.</p>
+\[\begin{align*}
+\fout \lense{\psi} (x)
+&amp; = F \lense{\psi} \psi (x) \\
+&amp; = F \lense{\psi} (x, f(x)) \\
+&amp; = (1 + 1 \times \lense{\psi}) (x, f(x)) \\
+&amp; = (x, \lense{\psi}(f(x))) \\
+\end{align*}\]
+<p>左から \(\fin\) を掛けて</p>
+\[\lense{\psi}(x) = \cons(x, \lense{\psi}(f(x)))\]
+<p>これを <code>iterate f</code> という.</p>
+<h3>anamorphism の唯一性</h3>
+<p>次が成り立つ.</p>
+\[f = \lense{\psi} \iff \fout \circ f = Ff \circ \psi_A\]
+<h3>AnaFusion</h3>
+<p>\(\varphi \circ f = Ff \circ \psi\) のとき</p>
+\[\lense{\varphi} \circ f = \lense{\psi}\]
+<p>が成り立つ.</p>
+<h3>全射は anamorphism</h3>
+<p>catamorphism のときの双対を取るとこのことがそのまま言える. \(f\) が全射のとき, 必ずある \(g\) があって \(fg=1\) となる. \(Ff \circ Fg = 1\) なので</p>
+\[\varphi \circ f = Ff \circ Fg \circ \varphi \circ f\]
+<p>この式に先の AnaFusion を使って</p>
+\[\lense{\varphi} \circ f = \lense{Fg \circ \varphi \circ f}\]
+<p>ここで \(\varphi = \fout\) の場合を考える. 唯一性から \(\lense{\fout} = 1\) なので</p>
+\[f = \lense{Fg \circ \fout \circ f}\]
+<p>すなわち全射であれば anamorphism として書けることが確認できた.</p>
+<h2>Hylomorphisms</h2>
+<h3>HyloSplit</h3>
+<p>\(gh=1\) のとき次の合成則が成り立つのだった.</p>
+\[\mu \farrow{f}{g}{F} \circ \mu \farrow{h}{j}{F} = \mu \farrow{f}{j}{F}\]
+<p>\(\fin, \fout\) は逆射なので次を得る.</p>
+\[\mu \farrow{\varphi_B}{\fout}{F} \circ \mu \farrow{\fin}{\psi_A}{F} = \mu \farrow{\varphi_B}{\psi_A}{F}\]
+<p>すなわち次の合成則を得た.</p>
+\[\banana{\varphi} \circ \lense{\psi} = \envelop{\varphi, \psi}\]
+<h3>HyloShift (Shifting law)</h3>
+<p>2つの関手 \(F,L\) とこれに関する 3つのポリモーフィズム</p>
+<ul>
+  <li>\(\psi_A \colon A \to FA\)</li>
+  <li>\(\varphi_B \colon LB \to B\)</li>
+  <li>\(\xi_A \colon FA \to LA\)</li>
+</ul>
+<p>があるとき次が成り立つ.</p>
+<p>\(\begin{align*}
+\envelop{\varphi \circ \xi , \psi}_F
+&amp; = \mu \farrow{(\varphi_B \circ \xi_B)}{\psi_A}{F} \\
+&amp; = \mu \farrow{\varphi_B}{(\xi_A \circ \psi_A)}{L} \\
+&amp; = \envelop{\varphi, \xi \circ \psi}_L \\
+\end{align*}\)</p>
+<h3>cata と ana の関係</h3>
+<p>HyloSplit と HyloShift から \(\banana{\varphi} = \envelop{\varphi, \fout}\) , \(\lense{\psi} = \envelop{\fin, \psi}\) であることが分かる. ここから cata と ana の関係としていくつか興味深い性質が得られる.</p>
+<p>\(\varphi\) を \(L \to M\) のポリモーフィズムとしたとき,</p>
+\[\banana{\fin \circ \varphi}_L = \lense{\varphi \circ \fout}_M\]
+\[\psi \circ \varphi = 1 \implies \lense{\psi}_L \circ \banana{\varphi}_L = 1\]
+<h2>Paramorphisms</h2>
+<h3>ParaEval</h3>
+<p>\(\mu_F = (L, \fin, \fout)\) , \(\xi_A \colon F(A \times L) \to A\) があるとき</p>
+\[\wire{\xi} = \mu(f \mapsto \xi_A \circ F(1 \Delta f) \circ \fout)\]
+<p>であった. \(\mu\) の定義から</p>
+\[\wire{\xi} = f \mapsto \xi_A \circ F(1 \Delta \wire{\xi}) \circ \fout\]
+<p>両辺に \(\fin\) を掛けて</p>
+\[\wire{\xi} \circ \fin = \xi_A \circ F(1 \Delta \wire{\xi})\]
+<p>これが Paramorphism の評価規則になる.</p>
+<h4>リストの場合</h4>
+<p>関手 \(FX = 1 + AX\) の不動点 \(\mu_F = (L,\fin,\fout)\) がリスト型. ここで \(\xi_A \colon F(A \times L) \to A\) のパラモーフィズムを考える.</p>
+\[\begin{align*}
+\wire{\xi} (\Nil)
+&amp; = \wire{\xi} \fin \ast \\
+&amp; = \xi_A \circ F(1 \Delta \wire{\xi}) \ast \\
+&amp; = \xi_A \ast
+\end{align*}\]
+\[\begin{align*}
+\wire{\xi} \cons(a, \as)
+&amp; = \wire{\xi} \fin (a, \as) \\
+&amp; = \xi_A \circ F(1 \Delta \wire{\xi}) (a, \as) \\
+&amp; = \xi_A (a, (\as, \wire{\xi} (\as))) \\
+\end{align*}\]
+<h3>ParaUP</h3>
+\[f = \wire{\xi}_F \iff f \circ \fin = \xi \circ F(1 \Delta f)\]
+<h3>ParaFusion</h3>
+\[f \circ \varphi = \psi \circ F ( 1 \times f ) \implies f \circ \wire{\varphi} = \wire{\psi}\]
+<h3>Theorem</h3>
+\[f = \wire{f \circ \fin \circ F \pi_1}\]
+<h2>Parameterized Types</h2>
+<h3>Maps</h3>
+<p>リストでいう map 関数というのがある. \(A\) に関するリスト型 \([A]\) が定義でき, \(B\) に関しては \([B]\) が定義できる. このとき \(f \colon A \to B\) があるときに \(f^\ast \colon [A] \to [B]\) という射を定めることができる.</p>
+<p>この \({}^\ast\) については次の2つが成り立っていてほしいだろう.</p>
+<ul>
+  <li>\(1^\ast = 1\)</li>
+  <li>\(f^\ast \circ g^\ast = (fg)^\ast\)</li>
+</ul>
+<p>どうやらこの \({}^\ast\) は関手であるらしい. 形式的な定義を試みる.</p>
+<p>ある双関手 \(\dagger\) と対象 \(A\) があるとき, \(A\) だけ固定して与えた関手 \((A \dagger)\) を考えることができる. これの不動点を \(\mu(A \dagger) = (A^\ast, \fin_A)\) とする. また同様に対象 \(B\) についても \(\mu(B \dagger) = (B^\ast, \fin_B)\) とする.</p>
+<p>ここで射 \(f \colon A \to B\) があるとき,</p>
+\[f^\ast = \banana{ \fin_B \circ (f \dagger)_{B^\ast} }_{(A \dagger)}\]
+<p>だとする.</p>
+\[\begin{CD}
+A^\ast @&lt;\fin_A&lt;&lt; A \dagger A^\ast \\
+@Vf^\ast VV \\
+B^\ast @&lt;\fin_B&lt;&lt; B \dagger B^\ast @&lt;(f \dagger)_{B^\ast} &lt;&lt; A \dagger B^\ast \\
+\end{CD}\]
+<p>先の "cata と ana の関係" から次のようにも書き直せる.</p>
+\[f^\ast = \lense{(f \dagger)_{A^\ast} \circ \fout_A}_{(A \dagger)}\]
+\[\begin{CD}
+A^\ast @&gt;\fout_A&gt;&gt; A \dagger A^\ast @&gt;(f \dagger)_{A^\ast}&gt;&gt; B \dagger A^\ast \\
+@Vf^\ast VV \\
+B^\ast @&lt;\fin_B&lt;&lt; B \dagger B^\ast \\
+\end{CD}\]
+<p>以上の \(f^\ast\) は一般化されたマップ関数である. 特に \(A \dagger B = 1 + A \times B\) と定義すると馴染み深いリストの場合のマップ関数になる.</p>
+<h3>Free types</h3>
+<p>関手 \(F\) と対象 \(A\) について \(A \dagger X = A + FX\) と定める. このときの \(\mu(A \dagger) = (A^\ast, \fin)\) これを \(A\) の上の free \(F\) -型 (自由 \(F\) 型) と定義する.</p>
+<h3>Map-Reduce</h3>
+<p>\(\dagger\) は先程の \(A \dagger X = A + FX\) を使う. free \(F\) -型の \(f \colon A \to B\) のマップ関数は</p>
+\[\begin{align*}
+f^\ast
+&amp; = \banana{ \fin_B \circ (f \dagger)_{B^\ast} }_{(A \dagger)} \\
+&amp; = \banana{ \fin_B \circ (f + 1_{B^\ast}) }_{(A \dagger)} \\
+&amp; = \banana{ (\tau + \join) \circ (f + 1_{B^\ast}) }_{(A \dagger)} \\
+&amp; = \banana{ (\tau \circ f) ~ \nabla ~ \join } \\
+\end{align*}\]
+<p>ここで \(\tau = \fin \circ \iota_1, \join = \fin \circ \iota_2\) である.</p>
+<p>射 \(\varphi\) についてこれの reduction とは</p>
+\[\varphi &#x2F; = \banana{ 1 \nabla \varphi }\]
+<p>だと定める. 次が成り立つ.</p>
+\[\begin{align*}
+\banana{ f \nabla \varphi }
+&amp; = \banana{ (1 \nabla \varphi) \circ (f + 1) } \\
+&amp; = \banana{1 \nabla \varphi} \circ f^\ast \\
+&amp; = \varphi&#x2F; \circ f^\ast \\
+\end{align*}\]
+<p>さて実は \(\tau, \join\) は自然変換である.</p>
+\[\begin{CD}
+A @&gt;f&gt;&gt; B \\
+@V\tau_A VV @V\tau_B VV \\
+A^\ast @&gt;f^\ast&gt;&gt; B^\ast
+\end{CD}\]
+\[\begin{CD}
+FA^\ast @&gt;Ff^\ast&gt;&gt; FB^\ast \\
+@V{\join_A}VV @V{\join_B}VV \\
+A^\ast @&gt;f^\ast&gt;&gt; B^\ast
+\end{CD}\]
+<p>このことから \(f^\ast\) の評価規則を得る:</p>
+<ul>
+  <li>\(f^\ast \circ \tau = \tau \circ f\)</li>
+  <li>\(f^\ast \circ \join = \join \circ Ff^\ast\)</li>
+</ul>
+<p>一方で \(\varphi&#x2F;\) の評価規則は普通に CataEval から次のようになる:</p>
+<ul>
+  <li>\(\varphi&#x2F;\circ \tau = 1\)</li>
+  <li>\(\varphi&#x2F;\circ \join = \varphi \circ F(\varphi&#x2F;)\)</li>
+</ul>
+<h3>モナド</h3>
+<p>任意の free type があるとき, モナドを次のようにして与えることが出来る. つまり</p>
+<ul>
+  <li>関手 \(\ast\)</li>
+  <li>自然変換 \(\tau \colon 1 \to \ast\)</li>
+  <li>自然変換 \(\join&#x2F; \colon \ast \ast \to \ast\)</li>
+</ul>
+<p>について</p>
+<ul>
+  <li>\(\join&#x2F; \circ \tau = 1\)</li>
+  <li>\(\join&#x2F; \circ \tau^\ast = 1\)</li>
+  <li>\(\join&#x2F; \circ \join&#x2F; = \join&#x2F; \circ (\join&#x2F;)^\ast\)</li>
+</ul>
+<p>が成り立つ.</p>
+
+
+  <script src="/resources/js/toc.js?20250428"></script>
+  <script src="/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>

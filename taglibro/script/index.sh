@@ -125,7 +125,7 @@ cat <<EOM
     <div class="container">
 EOM
 
-find . -name '*.md' | sort -r |
+find . -name '*.md' | grep 20 | sort -r |
 while read f; do
     write-item "$f"
 done

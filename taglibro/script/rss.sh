@@ -48,7 +48,7 @@ cat <<EOM
     <description>@cympfh/taglibro</description>
 EOM
 
-find . -type f -name '*.md' | sort -r |
+find . -type f -name '*.md' | grep 20 | sort -r |
     head -n 100 |
     while read f; do
         write-item "$f"

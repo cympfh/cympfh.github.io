@@ -7,7 +7,7 @@ content() {
   if [ -z "$SRC" ]; then
     :
   else
-    cat $SRC | mdc | pandoc -t html5 --mathjax
+    cat $SRC | unidoc
   fi
 }
 
@@ -37,37 +37,26 @@ cat <<EOM
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>procon/</title>
-
+    <style type="text/css">code{white-space: pre;}</style>
     <link rel="stylesheet" href="./resources/c.css">
-    <link rel="stylesheet" href="./resources/highlight.css">
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-
+    <link rel="stylesheet" href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" />
+    <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-svg-full.js"></script>
   </head>
   <body>
-    <section class="section">
-      <div class="container">
-        <section class="main-content columns is-fullheight">
-
-          <div class="article column is-8 is-10-mobile">
-            <div class="content">
-              $(content)
-            </div>
-          </div>
-
-          <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
+    <div class="two-columns">
+      <div class="column-left-80">
+        $(content)
+      </div>
+      <div class="column-right-20 menu">
 $(cat menu.html | menu-open)
-          </aside>
-
-        </section>
+      </div>
     </div>
-  </section>
+    <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+    <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
   </body>
 </html>
 EOM

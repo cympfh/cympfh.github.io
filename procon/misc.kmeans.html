@@ -1,487 +1,488 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>procon/</title>
-
+    <style type="text/css">code{white-space: pre;}</style>
     <link rel="stylesheet" href="./resources/c.css">
-    <link rel="stylesheet" href="./resources/highlight.css">
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-
+    <link rel="stylesheet" href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" />
+    <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-svg-full.js"></script>
   </head>
   <body>
-    <section class="section">
-      <div class="container">
-        <section class="main-content columns is-fullheight">
+    <div class="two-columns">
+      <div class="column-left-80">
+        <h1 class="title">misc.kmeans</h1>
+<h2><a href="misc.kmeans.cc">misc.kmeans.cc</a></h2>
+<pre><code class="code language-cpp">#include &lt;iostream&gt;
+#include &lt;stack&gt;
+#include &lt;cmath&gt;
+#include &lt;vector&gt;
+#include &lt;ctime&gt;
+using namespace std;
 
-          <div class="article column is-8 is-10-mobile">
-            <div class="content">
-              <h1 id="misc.kmeans">misc.kmeans</h1>
-<h2 id="misc.kmeans.cc"><a href="misc.kmeans.cc">misc.kmeans.cc</a></h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb1-1" title="1"><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></a>
-<a class="sourceLine" id="cb1-2" title="2"><span class="pp">#include </span><span class="im">&lt;stack&gt;</span></a>
-<a class="sourceLine" id="cb1-3" title="3"><span class="pp">#include </span><span class="im">&lt;cmath&gt;</span></a>
-<a class="sourceLine" id="cb1-4" title="4"><span class="pp">#include </span><span class="im">&lt;vector&gt;</span></a>
-<a class="sourceLine" id="cb1-5" title="5"><span class="pp">#include </span><span class="im">&lt;ctime&gt;</span></a>
-<a class="sourceLine" id="cb1-6" title="6"><span class="kw">using</span> <span class="kw">namespace</span> std;</a>
-<a class="sourceLine" id="cb1-7" title="7"></a>
-<a class="sourceLine" id="cb1-8" title="8"><span class="pp">#define iota</span>(i,n,b,s)<span class="pp"> </span><span class="cf">for</span>(<span class="dt">int</span><span class="pp"> </span>i=<span class="dt">int</span>(b);i!=<span class="dt">int</span>((b)+(s)*(n));i+=(s))</a>
-<a class="sourceLine" id="cb1-9" title="9"><span class="pp">#define range</span>(i,n,m)<span class="pp"> </span>iota(i,(((n)&gt;(m))?((n)-(m)+<span class="dv">1</span>):((m)-(n)+<span class="dv">1</span>)),(n),((n)&gt;(m)?-<span class="dv">1</span>:<span class="dv">1</span>))</a>
-<a class="sourceLine" id="cb1-10" title="10"><span class="pp">#define rep</span>(i,n)<span class="pp"> </span>iota(i,(n),<span class="dv">0</span>,<span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb1-11" title="11"></a>
-<a class="sourceLine" id="cb1-12" title="12"><span class="pp">#define INF </span>(<span class="fl">1e9</span>)</a>
-<a class="sourceLine" id="cb1-13" title="13"><span class="pp">#define EPS </span>(<span class="fl">1e-9</span>)</a>
-<a class="sourceLine" id="cb1-14" title="14"><span class="pp">#define cons</span>(a,b)<span class="pp"> </span>(make_pair(a,b))</a>
-<a class="sourceLine" id="cb1-15" title="15"><span class="pp">#define car</span>(a)<span class="pp"> </span>(a.first)</a>
-<a class="sourceLine" id="cb1-16" title="16"><span class="pp">#define cdr</span>(a)<span class="pp"> </span>(a.second)</a>
-<a class="sourceLine" id="cb1-17" title="17"><span class="pp">#define cadr</span>(a)<span class="pp"> </span>(car(cdr(a)))</a>
-<a class="sourceLine" id="cb1-18" title="18"><span class="pp">#define cddr</span>(a)<span class="pp"> </span>(cdr(cdr(a)))</a>
-<a class="sourceLine" id="cb1-19" title="19"><span class="pp">#define all</span>(a)<span class="pp"> </span>a.begin(),<span class="pp"> </span>a.end()</a>
-<a class="sourceLine" id="cb1-20" title="20"><span class="pp">#define trace</span>(var)<span class="pp"> </span>cerr&lt;&lt;<span class="st">&quot;&gt;&gt;&gt; &quot;</span>&lt;&lt;<span class="pp">#</span>var&lt;&lt;<span class="st">&quot; = &quot;</span>&lt;&lt;var&lt;&lt;endl;</a>
-<a class="sourceLine" id="cb1-21" title="21"></a>
-<a class="sourceLine" id="cb1-22" title="22"><span class="kw">template</span>&lt;<span class="kw">class</span> S, <span class="kw">class</span> T&gt;</a>
-<a class="sourceLine" id="cb1-23" title="23">ostream&amp; <span class="kw">operator</span>&lt;&lt;(ostream&amp; os, pair&lt;S,T&gt; p) {</a>
-<a class="sourceLine" id="cb1-24" title="24">  os &lt;&lt; <span class="ch">&#39;(&#39;</span> &lt;&lt; car(p) &lt;&lt; <span class="st">&quot;, &quot;</span> &lt;&lt; cdr(p) &lt;&lt; <span class="ch">&#39;)&#39;</span>;</a>
-<a class="sourceLine" id="cb1-25" title="25">  <span class="cf">return</span> os;</a>
-<a class="sourceLine" id="cb1-26" title="26">}</a>
-<a class="sourceLine" id="cb1-27" title="27"></a>
-<a class="sourceLine" id="cb1-28" title="28"><span class="kw">template</span>&lt;<span class="kw">class</span> T&gt;</a>
-<a class="sourceLine" id="cb1-29" title="29">ostream&amp; <span class="kw">operator</span>&lt;&lt;(ostream&amp; os, vector&lt;T&gt; v) {</a>
-<a class="sourceLine" id="cb1-30" title="30">  os &lt;&lt; v[<span class="dv">0</span>];</a>
-<a class="sourceLine" id="cb1-31" title="31">  <span class="cf">for</span> (<span class="dt">int</span> i=<span class="dv">1</span>, len=v.size(); i&lt;len; ++i) os &lt;&lt; <span class="ch">&#39; &#39;</span> &lt;&lt; v[i];</a>
-<a class="sourceLine" id="cb1-32" title="32">  <span class="cf">return</span> os;</a>
-<a class="sourceLine" id="cb1-33" title="33">}</a>
-<a class="sourceLine" id="cb1-34" title="34"></a>
-<a class="sourceLine" id="cb1-35" title="35"><span class="kw">typedef</span> <span class="dt">double</span> Real;</a>
-<a class="sourceLine" id="cb1-36" title="36"><span class="kw">typedef</span> pair&lt;Real, Real&gt; P;</a>
-<a class="sourceLine" id="cb1-37" title="37"></a>
-<a class="sourceLine" id="cb1-38" title="38"><span class="co">/*</span></a>
-<a class="sourceLine" id="cb1-39" title="39"><span class="co"> * k-means</span></a>
-<a class="sourceLine" id="cb1-40" title="40"><span class="co"> *</span></a>
-<a class="sourceLine" id="cb1-41" title="41"><span class="co"> * return vector&lt;int&gt;ids;</span></a>
-<a class="sourceLine" id="cb1-42" title="42"><span class="co"> * ids[i] is the cluster ID of ps[i]</span></a>
-<a class="sourceLine" id="cb1-43" title="43"><span class="co"> */</span></a>
-<a class="sourceLine" id="cb1-44" title="44"></a>
-<a class="sourceLine" id="cb1-45" title="45"><span class="co">/* vector operator */</span></a>
-<a class="sourceLine" id="cb1-46" title="46">P <span class="kw">operator</span>+(P&amp;a, P&amp;b) {</a>
-<a class="sourceLine" id="cb1-47" title="47">    <span class="cf">return</span> cons(car(a) + car(b), cdr(a) + cdr(b));</a>
-<a class="sourceLine" id="cb1-48" title="48">}</a>
-<a class="sourceLine" id="cb1-49" title="49">P <span class="kw">operator</span>-(P&amp;a) {</a>
-<a class="sourceLine" id="cb1-50" title="50">    <span class="cf">return</span> cons(-car(a), -cdr(a));</a>
-<a class="sourceLine" id="cb1-51" title="51">}</a>
-<a class="sourceLine" id="cb1-52" title="52"></a>
-<a class="sourceLine" id="cb1-53" title="53">P <span class="kw">operator</span>-(P&amp;a, P&amp;b) {</a>
-<a class="sourceLine" id="cb1-54" title="54">    <span class="cf">return</span> cons(car(a) - car(b), cdr(a) - cdr(b));</a>
-<a class="sourceLine" id="cb1-55" title="55">}</a>
-<a class="sourceLine" id="cb1-56" title="56"></a>
-<a class="sourceLine" id="cb1-57" title="57">Real Euclidean(P&amp;a, P&amp;b) {</a>
-<a class="sourceLine" id="cb1-58" title="58">  P p = a - b;</a>
-<a class="sourceLine" id="cb1-59" title="59">  <span class="cf">return</span> sqrt(pow(car(p), <span class="dv">2</span>) + pow(cdr(p), <span class="dv">2</span>));</a>
-<a class="sourceLine" id="cb1-60" title="60">}</a>
-<a class="sourceLine" id="cb1-61" title="61"></a>
-<a class="sourceLine" id="cb1-62" title="62">vector&lt;<span class="dt">int</span>&gt;</a>
-<a class="sourceLine" id="cb1-63" title="63">kmeans(<span class="dt">int</span> cluster_N, vector&lt;P&gt;&amp;ps, <span class="dt">int</span> iterator_N = <span class="dv">20</span>) {</a>
-<a class="sourceLine" id="cb1-64" title="64">  <span class="dt">int</span> len = ps.size();</a>
-<a class="sourceLine" id="cb1-65" title="65">  vector&lt;<span class="dt">int</span>&gt; ids(len);</a>
-<a class="sourceLine" id="cb1-66" title="66"></a>
-<a class="sourceLine" id="cb1-67" title="67">  vector&lt;P&gt; ms(cluster_N);</a>
-<a class="sourceLine" id="cb1-68" title="68">  rep (i, cluster_N) ms[i] = ps[i * len / cluster_N];</a>
-<a class="sourceLine" id="cb1-69" title="69"></a>
-<a class="sourceLine" id="cb1-70" title="70">  rep (i, iterator_N) {</a>
-<a class="sourceLine" id="cb1-71" title="71">    cerr &lt;&lt; <span class="st">&quot;iterate: &quot;</span> &lt;&lt; i &lt;&lt; endl;</a>
-<a class="sourceLine" id="cb1-72" title="72">    vector&lt;P&gt; sum(cluster_N, P(<span class="dv">0</span>, <span class="dv">0</span>)); <span class="co">// sum[j] は id j のクラスタの和</span></a>
-<a class="sourceLine" id="cb1-73" title="73">    vector&lt;<span class="dt">int</span>&gt; cod(cluster_N, <span class="dv">0</span>); <span class="co">// id j のクラスタの濃度</span></a>
-<a class="sourceLine" id="cb1-74" title="74"></a>
-<a class="sourceLine" id="cb1-75" title="75">    <span class="co">// ps[j] と ms[n] の比較</span></a>
-<a class="sourceLine" id="cb1-76" title="76">    rep (j, len) {</a>
-<a class="sourceLine" id="cb1-77" title="77">      <span class="dt">int</span> id = -<span class="dv">1</span>;</a>
-<a class="sourceLine" id="cb1-78" title="78">      Real min_d = INF;</a>
-<a class="sourceLine" id="cb1-79" title="79">      rep (n, cluster_N) {</a>
-<a class="sourceLine" id="cb1-80" title="80">        Real d = Euclidean(ps[j], ms[n]);</a>
-<a class="sourceLine" id="cb1-81" title="81">        <span class="cf">if</span> (min_d &gt; d) {</a>
-<a class="sourceLine" id="cb1-82" title="82">          min_d = d;</a>
-<a class="sourceLine" id="cb1-83" title="83">          id = n;</a>
-<a class="sourceLine" id="cb1-84" title="84">        }</a>
-<a class="sourceLine" id="cb1-85" title="85">      }</a>
-<a class="sourceLine" id="cb1-86" title="86">      ids[j] = id;</a>
-<a class="sourceLine" id="cb1-87" title="87">      sum[id] = sum[id] + ps[j];</a>
-<a class="sourceLine" id="cb1-88" title="88">      cod[id]++;</a>
-<a class="sourceLine" id="cb1-89" title="89">    }</a>
-<a class="sourceLine" id="cb1-90" title="90"></a>
-<a class="sourceLine" id="cb1-91" title="91">    <span class="co">// update</span></a>
-<a class="sourceLine" id="cb1-92" title="92">    rep (n, cluster_N) {</a>
-<a class="sourceLine" id="cb1-93" title="93">      <span class="cf">if</span> (cod[n] == <span class="dv">0</span>) {</a>
-<a class="sourceLine" id="cb1-94" title="94">        <span class="co">// fuck</span></a>
-<a class="sourceLine" id="cb1-95" title="95">        ms[n] = ps[rand() % len];</a>
-<a class="sourceLine" id="cb1-96" title="96">      } <span class="cf">else</span> {</a>
-<a class="sourceLine" id="cb1-97" title="97">        <span class="co">// means</span></a>
-<a class="sourceLine" id="cb1-98" title="98">        P total = sum[n];</a>
-<a class="sourceLine" id="cb1-99" title="99">        ms[n] = P(car(total) / cod[n], cdr(total) / cod[n]);</a>
-<a class="sourceLine" id="cb1-100" title="100">      }</a>
-<a class="sourceLine" id="cb1-101" title="101">    }</a>
-<a class="sourceLine" id="cb1-102" title="102">  }</a>
-<a class="sourceLine" id="cb1-103" title="103"></a>
-<a class="sourceLine" id="cb1-104" title="104">  <span class="cf">return</span> ids;</a>
-<a class="sourceLine" id="cb1-105" title="105">}</a>
-<a class="sourceLine" id="cb1-106" title="106"></a>
-<a class="sourceLine" id="cb1-107" title="107"><span class="at">const</span> <span class="dt">int</span> M = <span class="dv">10</span>;</a>
-<a class="sourceLine" id="cb1-108" title="108">Real gaussian_gen() {</a>
-<a class="sourceLine" id="cb1-109" title="109">  <span class="at">const</span> <span class="dt">int</span> mu = <span class="dv">10</span>;</a>
-<a class="sourceLine" id="cb1-110" title="110">  Real x = <span class="dv">0</span>;</a>
-<a class="sourceLine" id="cb1-111" title="111">  rep (j, M) x += Real((rand() % (mu * <span class="dv">2</span>)) - mu);</a>
-<a class="sourceLine" id="cb1-112" title="112">  x /= M;</a>
-<a class="sourceLine" id="cb1-113" title="113">  <span class="cf">return</span> x;</a>
-<a class="sourceLine" id="cb1-114" title="114">}</a>
-<a class="sourceLine" id="cb1-115" title="115"></a>
-<a class="sourceLine" id="cb1-116" title="116"><span class="dt">int</span> main() {</a>
-<a class="sourceLine" id="cb1-117" title="117">  srand(time(NULL));</a>
-<a class="sourceLine" id="cb1-118" title="118"></a>
-<a class="sourceLine" id="cb1-119" title="119">  <span class="co">/*</span></a>
-<a class="sourceLine" id="cb1-120" title="120"><span class="co">   * Point ps[j] has class ts[j]</span></a>
-<a class="sourceLine" id="cb1-121" title="121"><span class="co">   */</span></a>
-<a class="sourceLine" id="cb1-122" title="122">  vector&lt;P&gt; ps; <span class="co">// seq of point</span></a>
-<a class="sourceLine" id="cb1-123" title="123">  vector&lt;<span class="dt">int</span>&gt; ts; <span class="co">// seq of class</span></a>
-<a class="sourceLine" id="cb1-124" title="124"></a>
-<a class="sourceLine" id="cb1-125" title="125">  <span class="at">const</span> <span class="dt">int</span> N = <span class="dv">100</span>;</a>
-<a class="sourceLine" id="cb1-126" title="126">  rep (i, N) {</a>
-<a class="sourceLine" id="cb1-127" title="127">    <span class="dt">int</span> klass = rand() % <span class="dv">3</span>;</a>
-<a class="sourceLine" id="cb1-128" title="128">    Real x = gaussian_gen();</a>
-<a class="sourceLine" id="cb1-129" title="129">    Real y = gaussian_gen();</a>
-<a class="sourceLine" id="cb1-130" title="130"></a>
-<a class="sourceLine" id="cb1-131" title="131">    <span class="co">// give klass by its mean</span></a>
-<a class="sourceLine" id="cb1-132" title="132">    <span class="cf">switch</span> (klass) {</a>
-<a class="sourceLine" id="cb1-133" title="133">      <span class="cf">case</span> <span class="dv">0</span>:</a>
-<a class="sourceLine" id="cb1-134" title="134">        <span class="cf">break</span>;</a>
-<a class="sourceLine" id="cb1-135" title="135">      <span class="cf">case</span> <span class="dv">1</span>:</a>
-<a class="sourceLine" id="cb1-136" title="136">        x += <span class="dv">10</span>;</a>
-<a class="sourceLine" id="cb1-137" title="137">        y += <span class="dv">10</span>;</a>
-<a class="sourceLine" id="cb1-138" title="138">        <span class="cf">break</span>;</a>
-<a class="sourceLine" id="cb1-139" title="139">      <span class="cf">case</span> <span class="dv">2</span>:</a>
-<a class="sourceLine" id="cb1-140" title="140">        x += <span class="dv">5</span>;</a>
-<a class="sourceLine" id="cb1-141" title="141">        y += <span class="dv">5</span>;</a>
-<a class="sourceLine" id="cb1-142" title="142">        <span class="cf">break</span>;</a>
-<a class="sourceLine" id="cb1-143" title="143">    }</a>
-<a class="sourceLine" id="cb1-144" title="144">    ps.push_back(P(x, y));</a>
-<a class="sourceLine" id="cb1-145" title="145">    ts.push_back(klass);</a>
-<a class="sourceLine" id="cb1-146" title="146">  }</a>
-<a class="sourceLine" id="cb1-147" title="147"></a>
-<a class="sourceLine" id="cb1-148" title="148">  <span class="kw">auto</span> result = kmeans(<span class="dv">3</span>, ps);</a>
-<a class="sourceLine" id="cb1-149" title="149"></a>
-<a class="sourceLine" id="cb1-150" title="150">  <span class="co">/*</span></a>
-<a class="sourceLine" id="cb1-151" title="151"><span class="co">   * IDは違うので、単純に比較はできない。</span></a>
-<a class="sourceLine" id="cb1-152" title="152"><span class="co">   */</span></a>
-<a class="sourceLine" id="cb1-153" title="153">  <span class="dt">float</span> acc = <span class="dv">0</span>;</a>
-<a class="sourceLine" id="cb1-154" title="154">  <span class="cf">for</span> (<span class="dt">int</span> id0 = <span class="dv">0</span>; id0 &lt; <span class="dv">3</span>; ++id0) {</a>
-<a class="sourceLine" id="cb1-155" title="155">    <span class="cf">for</span> (<span class="dt">int</span> id1 = <span class="dv">0</span>; id1 &lt; <span class="dv">3</span>; ++id1) {</a>
-<a class="sourceLine" id="cb1-156" title="156">      <span class="cf">if</span> (id0 == id1) <span class="cf">continue</span>;</a>
-<a class="sourceLine" id="cb1-157" title="157">      <span class="cf">for</span> (<span class="dt">int</span> id2 = <span class="dv">0</span>; id2 &lt; <span class="dv">3</span>; ++id2) {</a>
-<a class="sourceLine" id="cb1-158" title="158">        <span class="cf">if</span> (id0 == id2) <span class="cf">continue</span>;</a>
-<a class="sourceLine" id="cb1-159" title="159">        <span class="cf">if</span> (id1 == id2) <span class="cf">continue</span>;</a>
-<a class="sourceLine" id="cb1-160" title="160">        <span class="dt">int</span> n = <span class="dv">0</span>;</a>
-<a class="sourceLine" id="cb1-161" title="161">        rep (i, N) {</a>
-<a class="sourceLine" id="cb1-162" title="162">          <span class="cf">if</span> (ts[i] == <span class="dv">0</span> &amp;&amp; result[i] == id0) ++n;</a>
-<a class="sourceLine" id="cb1-163" title="163">          <span class="cf">else</span> <span class="cf">if</span> (ts[i] == <span class="dv">1</span> &amp;&amp; result[i] == id1) ++n;</a>
-<a class="sourceLine" id="cb1-164" title="164">          <span class="cf">else</span> <span class="cf">if</span> (ts[i] == <span class="dv">2</span> &amp;&amp; result[i] == id2) ++n;</a>
-<a class="sourceLine" id="cb1-165" title="165">        }</a>
-<a class="sourceLine" id="cb1-166" title="166">        acc = max&lt;<span class="dt">float</span>&gt;(acc, <span class="dt">float</span>(n) / <span class="dt">float</span>(N));</a>
-<a class="sourceLine" id="cb1-167" title="167">      }</a>
-<a class="sourceLine" id="cb1-168" title="168">    }</a>
-<a class="sourceLine" id="cb1-169" title="169">  }</a>
-<a class="sourceLine" id="cb1-170" title="170">  cerr &lt;&lt; <span class="st">&quot;Accuracy: &quot;</span> &lt;&lt; (acc * <span class="dv">100</span>) &lt;&lt; <span class="st">&quot;%&quot;</span> &lt;&lt; endl;</a>
-<a class="sourceLine" id="cb1-171" title="171"></a>
-<a class="sourceLine" id="cb1-172" title="172">  <span class="cf">return</span> <span class="dv">0</span>;</a>
-<a class="sourceLine" id="cb1-173" title="173">}</a></code></pre></div>
-            </div>
-          </div>
+#define iota(i,n,b,s) for(int i=int(b);i!=int((b)+(s)*(n));i+=(s))
+#define range(i,n,m) iota(i,(((n)&gt;(m))?((n)-(m)+1):((m)-(n)+1)),(n),((n)&gt;(m)?-1:1))
+#define rep(i,n) iota(i,(n),0,1)
 
-          <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
+#define INF (1e9)
+#define EPS (1e-9)
+#define cons(a,b) (make_pair(a,b))
+#define car(a) (a.first)
+#define cdr(a) (a.second)
+#define cadr(a) (car(cdr(a)))
+#define cddr(a) (cdr(cdr(a)))
+#define all(a) a.begin(), a.end()
+#define trace(var) cerr&lt;&lt;&quot;&gt;&gt;&gt; &quot;&lt;&lt;#var&lt;&lt;&quot; = &quot;&lt;&lt;var&lt;&lt;endl;
+
+template&lt;class S, class T&gt;
+ostream&amp; operator&lt;&lt;(ostream&amp; os, pair&lt;S,T&gt; p) {
+  os &lt;&lt; &#x27;(&#x27; &lt;&lt; car(p) &lt;&lt; &quot;, &quot; &lt;&lt; cdr(p) &lt;&lt; &#x27;)&#x27;;
+  return os;
+}
+
+template&lt;class T&gt;
+ostream&amp; operator&lt;&lt;(ostream&amp; os, vector&lt;T&gt; v) {
+  os &lt;&lt; v[0];
+  for (int i=1, len=v.size(); i&lt;len; ++i) os &lt;&lt; &#x27; &#x27; &lt;&lt; v[i];
+  return os;
+}
+
+typedef double Real;
+typedef pair&lt;Real, Real&gt; P;
+
+&#x2F;*
+ * k-means
+ *
+ * return vector&lt;int&gt;ids;
+ * ids[i] is the cluster ID of ps[i]
+ *&#x2F;
+
+&#x2F;* vector operator *&#x2F;
+P operator+(P&amp;a, P&amp;b) {
+    return cons(car(a) + car(b), cdr(a) + cdr(b));
+}
+P operator-(P&amp;a) {
+    return cons(-car(a), -cdr(a));
+}
+
+P operator-(P&amp;a, P&amp;b) {
+    return cons(car(a) - car(b), cdr(a) - cdr(b));
+}
+
+Real Euclidean(P&amp;a, P&amp;b) {
+  P p = a - b;
+  return sqrt(pow(car(p), 2) + pow(cdr(p), 2));
+}
+
+vector&lt;int&gt;
+kmeans(int cluster_N, vector&lt;P&gt;&amp;ps, int iterator_N = 20) {
+  int len = ps.size();
+  vector&lt;int&gt; ids(len);
+
+  vector&lt;P&gt; ms(cluster_N);
+  rep (i, cluster_N) ms[i] = ps[i * len &#x2F; cluster_N];
+
+  rep (i, iterator_N) {
+    cerr &lt;&lt; &quot;iterate: &quot; &lt;&lt; i &lt;&lt; endl;
+    vector&lt;P&gt; sum(cluster_N, P(0, 0)); &#x2F;&#x2F; sum[j] は id j のクラスタの和
+    vector&lt;int&gt; cod(cluster_N, 0); &#x2F;&#x2F; id j のクラスタの濃度
+
+    &#x2F;&#x2F; ps[j] と ms[n] の比較
+    rep (j, len) {
+      int id = -1;
+      Real min_d = INF;
+      rep (n, cluster_N) {
+        Real d = Euclidean(ps[j], ms[n]);
+        if (min_d &gt; d) {
+          min_d = d;
+          id = n;
+        }
+      }
+      ids[j] = id;
+      sum[id] = sum[id] + ps[j];
+      cod[id]++;
+    }
+
+    &#x2F;&#x2F; update
+    rep (n, cluster_N) {
+      if (cod[n] == 0) {
+        &#x2F;&#x2F; fuck
+        ms[n] = ps[rand() % len];
+      } else {
+        &#x2F;&#x2F; means
+        P total = sum[n];
+        ms[n] = P(car(total) &#x2F; cod[n], cdr(total) &#x2F; cod[n]);
+      }
+    }
+  }
+
+  return ids;
+}
+
+const int M = 10;
+Real gaussian_gen() {
+  const int mu = 10;
+  Real x = 0;
+  rep (j, M) x += Real((rand() % (mu * 2)) - mu);
+  x &#x2F;= M;
+  return x;
+}
+
+int main() {
+  srand(time(NULL));
+
+  &#x2F;*
+   * Point ps[j] has class ts[j]
+   *&#x2F;
+  vector&lt;P&gt; ps; &#x2F;&#x2F; seq of point
+  vector&lt;int&gt; ts; &#x2F;&#x2F; seq of class
+
+  const int N = 100;
+  rep (i, N) {
+    int klass = rand() % 3;
+    Real x = gaussian_gen();
+    Real y = gaussian_gen();
+
+    &#x2F;&#x2F; give klass by its mean
+    switch (klass) {
+      case 0:
+        break;
+      case 1:
+        x += 10;
+        y += 10;
+        break;
+      case 2:
+        x += 5;
+        y += 5;
+        break;
+    }
+    ps.push_back(P(x, y));
+    ts.push_back(klass);
+  }
+
+  auto result = kmeans(3, ps);
+
+  &#x2F;*
+   * IDは違うので、単純に比較はできない。
+   *&#x2F;
+  float acc = 0;
+  for (int id0 = 0; id0 &lt; 3; ++id0) {
+    for (int id1 = 0; id1 &lt; 3; ++id1) {
+      if (id0 == id1) continue;
+      for (int id2 = 0; id2 &lt; 3; ++id2) {
+        if (id0 == id2) continue;
+        if (id1 == id2) continue;
+        int n = 0;
+        rep (i, N) {
+          if (ts[i] == 0 &amp;&amp; result[i] == id0) ++n;
+          else if (ts[i] == 1 &amp;&amp; result[i] == id1) ++n;
+          else if (ts[i] == 2 &amp;&amp; result[i] == id2) ++n;
+        }
+        acc = max&lt;float&gt;(acc, float(n) &#x2F; float(N));
+      }
+    }
+  }
+  cerr &lt;&lt; &quot;Accuracy: &quot; &lt;&lt; (acc * 100) &lt;&lt; &quot;%&quot; &lt;&lt; endl;
+
+  return 0;
+}
+</code></pre>
+      </div>
+      <div class="column-right-20 menu">
 <details class=menu>
 <summary class=menu>代数</summary>
 <ul>
-<li><a href="algebra.monoid.html">モノイド</a>
-<ul>
-<li><a href="algebra.monoid.minmax.html">Min/Max モノイド</a></li>
-<li><a href="algebra.monoid.sum.html">Sum モノイド</a></li>
-</ul></li>
-<li><a href="algebra.group.html">(乗法)群と加法群</a></li>
-<li><a href="algebra.ring.html">環</a></li>
-<li><a href="algebra.field.html">体</a></li>
-<li><a href="algebra.module.html">加群</a></li>
-<li><a href="algebra.ratio.html">有理数</a></li>
-<li><a href="algebra.complex.html">虚数</a></li>
-<li><a href="algebra.matrix.html">行列</a></li>
-<li><a href="algebra.hyper.html">超数</a></li>
-<li><a href="algebra.total.html">全順序化</a></li>
-<li><a href="algebra.modint.html">ModInt</a></li>
-<li><a href="algebra.act.html">作用</a>
-<ul>
-<li><a href="algebra.act.assign.html">代入作用</a></li>
-<li><a href="algebra.act.add.html">加算作用</a></li>
-</ul></li>
+  <li>
+    <a href="algebra.monoid.html">モノイド</a>
+    <ul>
+      <li><a href="algebra.monoid.minmax.html">Min/Max モノイド</a></li>
+      <li><a href="algebra.monoid.sum.html">Sum モノイド</a></li>
+    </ul>
+  </li>
+  <li><a href="algebra.group.html">(乗法)群と加法群</a></li>
+  <li><a href="algebra.ring.html">環</a></li>
+  <li><a href="algebra.field.html">体</a></li>
+  <li><a href="algebra.module.html">加群</a></li>
+  <li><a href="algebra.ratio.html">有理数</a></li>
+  <li><a href="algebra.complex.html">虚数</a></li>
+  <li><a href="algebra.matrix.html">行列</a></li>
+  <li><a href="algebra.hyper.html">超数</a></li>
+  <li><a href="algebra.total.html">全順序化</a></li>
+  <li><a href="algebra.modint.html">ModInt</a></li>
+  <li>
+    <a href="algebra.act.html">作用</a>
+    <ul>
+      <li><a href="algebra.act.assign.html">代入作用</a></li>
+      <li><a href="algebra.act.add.html">加算作用</a></li>
+    </ul>
+  </li>
 </ul>
 </details>
 
 <details class=menu>
 <summary class=menu>グラフ</summary>
-<h2 id="最短路">最短路</h2>
+<h2>最短路</h2>
 <ul>
-<li><a href="graph.dij.html">ダイクストラ法</a></li>
-<li><a href="graph.wall.html">ワーシャル-フロイド法</a></li>
-<li><a href="graph.bellmanford.html">ベルマンフォード法</a></li>
+  <li><a href="graph.dij.html">ダイクストラ法</a></li>
+  <li><a href="graph.wall.html">ワーシャル-フロイド法</a></li>
+  <li><a href="graph.bellmanford.html">ベルマンフォード法</a></li>
 </ul>
-<h2 id="無向グラフ">無向グラフ</h2>
+<h2>無向グラフ</h2>
 <ul>
-<li><a href="graph.undirected.bipartite.html">二部グラフ判定</a></li>
-<li><a href="graph.undirected.diameter.html">直径</a></li>
+  <li><a href="graph.undirected.bipartite.html">二部グラフ判定</a></li>
+  <li><a href="graph.undirected.diameter.html">直径</a></li>
 </ul>
-<h2 id="最小全域木">最小全域木</h2>
+<h2>最小全域木</h2>
 <ul>
-<li><a href="graph.prim.html">プリム法</a></li>
-<li><a href="graph.kruskal.html">クラスカル法</a></li>
+  <li><a href="graph.prim.html">プリム法</a></li>
+  <li><a href="graph.kruskal.html">クラスカル法</a></li>
 </ul>
-<h2 id="木">木</h2>
+<h2>木</h2>
 <ul>
-<li><a href="graph.tree.height.html">高さ</a></li>
-<li><a href="graph.tree.diameter.html">直径</a></li>
-<li><a href="graph.tree.lca.html">最小共通祖先</a></li>
+  <li><a href="graph.tree.height.html">高さ</a></li>
+  <li><a href="graph.tree.diameter.html">直径</a></li>
+  <li><a href="graph.tree.lca.html">最小共通祖先</a></li>
 </ul>
-<h2 id="有向グラフ">有向グラフ</h2>
+<h2>有向グラフ</h2>
 <ul>
-<li><a href="graph.maxflow.html">最大流量</a></li>
-<li><a href="graph.topological.html">トポロジカルソート</a></li>
-<li><a href="graph.scc.html">強連結成分分解</a></li>
+  <li><a href="graph.maxflow.html">最大流量</a></li>
+  <li><a href="graph.topological.html">トポロジカルソート</a></li>
+  <li><a href="graph.scc.html">強連結成分分解</a></li>
 </ul>
 </details>
 
 <details class=menu>
 <summary class=menu>数列</summary>
 <ul>
-<li><a href="seq.lis.html">最長増加部分列</a></li>
-<li><a href="seq.median.html">中央値ヒープ</a></li>
-<li><a href="seq.slide_min.html">スライド最小値</a></li>
+  <li><a href="seq.lis.html">最長増加部分列</a></li>
+  <li><a href="seq.median.html">中央値ヒープ</a></li>
+  <li><a href="seq.slide_min.html">スライド最小値</a></li>
+  <li><a href="seq.bitvecbool.html">BitVecBool</a></li>
 </ul>
-<h2 id="累積処理">累積処理</h2>
+<h2>累積処理</h2>
 <ul>
-<li><a href="seq.cumsum1d.html">一次元累積和</a></li>
-<li><a href="seq.cumsum2d.html">二次元累積和</a></li>
+  <li><a href="seq.cumsum1d.html">一次元累積和</a></li>
+  <li><a href="seq.cumsum2d.html">二次元累積和</a></li>
 </ul>
-<h2 id="区間木">区間木</h2>
+<h2>区間木</h2>
 <ul>
-<li><a href="seq.bit.html">BIT</a>
-<ul>
-<li><a href="seq.bit_cumulative.html">累積和に関するBIT</a></li>
-</ul></li>
-<li><a href="seq.segment_tree.html">セグメントツリー</a>
-<ul>
-<li><a href="seq.rmq.html">RMQ</a></li>
-<li><a href="seq.segment_tree_sum.html">加法セグメントツリー</a></li>
-<li><a href="seq.segment_tree_prod.html">乗法セグメントツリー</a></li>
-</ul></li>
-<li><a href="seq.lazy_segment_tree.html">遅延セグメントツリー</a>
-<ul>
-<li><a href="seq.ranged_assign_rmq.html">区間代入 RMQ</a></li>
-<li><a href="seq.ranged_add_rmq.html">区間加算 RMQ</a></li>
-<li><a href="seq.ranged_add_segment_tree_sum.html">区間加算 加法セグメントツリー</a></li>
-</ul></li>
+  <li>
+    <a href="seq.bit.html">BIT</a>
+    <ul>
+      <li><a href="seq.bit_cumulative.html">累積和に関するBIT</a></li>
+    </ul>
+  </li>
+  <li>
+    <a href="seq.segment_tree.html">セグメントツリー</a>
+    <ul>
+      <li><a href="seq.rmq.html">RMQ</a></li>
+      <li><a href="seq.segment_tree_sum.html">加法セグメントツリー</a></li>
+      <li><a href="seq.segment_tree_prod.html">乗法セグメントツリー</a></li>
+    </ul>
+  </li>
+  <li>
+    <a href="seq.lazy_segment_tree.html">遅延セグメントツリー</a>
+    <ul>
+      <li><a href="seq.ranged_assign_rmq.html">区間代入 RMQ</a></li>
+      <li><a href="seq.ranged_add_rmq.html">区間加算 RMQ</a></li>
+      <li><a href="seq.ranged_add_segment_tree_sum.html">区間加算 加法セグメントツリー</a></li>
+    </ul>
+  </li>
 </ul>
 </details>
 
 <details class=menu>
 <summary class=menu>二次元ユークリッド幾何</summary>
-<h2 id="図形の定義">図形の定義</h2>
+<h2>図形の定義</h2>
 <ul>
-<li><a href="geo.2d.point.html">点</a></li>
-<li><a href="geo.2d.line.html">直線, 線分</a></li>
-<li><a href="geo.2d.polygon.html">多角形</a></li>
-<li><a href="geo.2d.circle.html">円</a></li>
+  <li><a href="geo.2d.point.html">点</a></li>
+  <li><a href="geo.2d.line.html">直線, 線分</a></li>
+  <li><a href="geo.2d.polygon.html">多角形</a></li>
+  <li><a href="geo.2d.circle.html">円</a></li>
 </ul>
-<h2 id="線分">線分</h2>
+<h2>線分</h2>
 <ul>
-<li><a href="geo.2d.ccw.html">線分と点の接触判定</a></li>
-<li><a href="geo.2d.intersection.html">線分と線分の交差判定</a></li>
+  <li><a href="geo.2d.ccw.html">線分と点の接触判定</a></li>
+  <li><a href="geo.2d.intersection.html">線分と線分の交差判定</a></li>
 </ul>
-<h2 id="多角形">多角形</h2>
+<h2>多角形</h2>
 <ul>
-<li><a href="geo.2d.circum.html">三角形の外接円</a></li>
-<li><a href="geo.2d.isin_poly.html">多角形の内外判定</a></li>
-<li><a href="geo.2d.convex_hull.html">凸包</a></li>
+  <li><a href="geo.2d.circum.html">三角形の外接円</a></li>
+  <li><a href="geo.2d.isin_poly.html">多角形の内外判定</a></li>
+  <li><a href="geo.2d.convex_hull.html">凸包</a></li>
 </ul>
-<h2 id="円">円</h2>
+<h2>円</h2>
 <ul>
-<li><a href="geo.2d.circle.intersection.html">円と円との接触関係</a></li>
+  <li><a href="geo.2d.circle.intersection.html">円と円との接触関係</a></li>
 </ul>
-<h2 id="最近点対">最近点対</h2>
+<h2>最近点対</h2>
 <ul>
-<li><a href="geo.closest_pair.html">平面上の分割統治法</a></li>
+  <li><a href="geo.closest_pair.html">平面上の分割統治法</a></li>
 </ul>
-<h2 id="その他">その他</h2>
+<h2>その他</h2>
 <ul>
-<li><a href="geo.polar.html">極座標</a></li>
-<li><a href="geo.cht.html">Convex-Hull Trick (CHT)</a></li>
+  <li><a href="geo.polar.html">極座標</a></li>
+  <li><a href="geo.cht.html">Convex-Hull Trick (CHT)</a></li>
 </ul>
-<h2 id="格子点上の幾何">格子点上の幾何</h2>
+<h2>格子点上の幾何</h2>
 <ul>
-<li><a href="geo.2d.int.point.html">点</a></li>
-<li><a href="geo.2d.int.line.html">直線</a></li>
+  <li><a href="geo.2d.int.point.html">点</a></li>
+  <li><a href="geo.2d.int.line.html">直線</a></li>
 </ul>
 </details>
 
 <details class=menu>
 <summary class=menu>集合</summary>
 <ul>
-<li><a href="set.union_find.html">UnionFind</a></li>
-<li><a href="set.bitset.html">BitSet</a></li>
-<li><a href="set.subbitset.html">部分集合及びその部分集合の列挙</a></li>
-<li><a href="collections.multiset.html">多重集合</a></li>
+  <li><a href="set.union_find.html">UnionFind</a></li>
+  <li><a href="set.bitset.html">BitSet</a></li>
+  <li><a href="set.subbitset.html">部分集合及びその部分集合の列挙</a></li>
+  <li><a href="collections.multiset.html">多重集合</a></li>
 </ul>
 </details>
 
 <details class=menu>
 <summary class=menu>アルゴリズム</summary>
-<h2 id="動的計画法">動的計画法</h2>
+<h2>動的計画法</h2>
 <ul>
-<li><a href="dp.knapsack.01.html">01-ナップザック</a></li>
+  <li><a href="dp.knapsack.01.html">01-ナップザック</a></li>
 </ul>
-<h2 id="二分探索">二分探索</h2>
+<h2>二分探索</h2>
 <ul>
-<li><a href="bin.search.html">二分探索</a></li>
+  <li><a href="bin.search.html">二分探索</a></li>
 </ul>
-<h2 id="フーリエ変換">フーリエ変換</h2>
+<h2>フーリエ変換</h2>
 <ul>
-<li><a href="fft.convolution.html">畳み込み</a></li>
+  <li><a href="fft.convolution.html">畳み込み</a></li>
 </ul>
-<h2 id="循環検出">循環検出</h2>
+<h2>循環検出</h2>
 <ul>
-<li><a href="algorithm.rho.html">フロイドの<span class="math inline"><em>ρ</em></span>アルゴリズム</a></li>
+  <li><a href="algorithm.rho.html">フロイドの \(\rho\) アルゴリズム</a></li>
 </ul>
-<h2 id="連立一次方程式">連立一次方程式</h2>
+<h2>連立一次方程式</h2>
 <ul>
-<li><a href="algorithm.gauss_jordan.html">Gauss-Jordan の消去法</a></li>
+  <li><a href="algorithm.gauss_jordan.html">Gauss-Jordan の消去法</a></li>
 </ul>
 </details>
 
 <details class=menu>
 <summary class=menu>最適化</summary>
 <ul>
-<li><a href="opt.moyasu_umeru.html">燃やす埋める問題</a></li>
+  <li><a href="opt.moyasu_umeru.html">燃やす埋める問題</a></li>
 </ul>
 </details>
 
 <details class=menu>
 <summary class=menu>自然数/整数</summary>
-<h2 id="関数">関数</h2>
+<h2>関数</h2>
 <ul>
-<li><a href="num.gcd.html">GCD</a></li>
-<li><a href="num.exgcd.html">拡張GCD</a></li>
-<li><a href="num.binom.pascal.html">二項係数 (パスカルの三角形)</a></li>
-<li><a href="num.binom.modint.html">二項係数 (ModInt)</a></li>
-<li><a href="num.dislog.html">離散対数</a></li>
-<li><a href="num.derangement.html">完全順列</a></li>
-<li><a href="num.euler_phi.html">オイラーの関数</a></li>
-<li><a href="num.moebius.html">メビウス関数</a></li>
-<li><a href="num.n_vs_nn.html">自然数の対 ↔ 自然数 の変換</a></li>
-<li><a href="num.mex.html">最小自由数 (最小除外数)</a></li>
+  <li><a href="num.gcd.html">GCD</a></li>
+  <li><a href="num.exgcd.html">拡張GCD</a></li>
+  <li><a href="num.binom.pascal.html">二項係数 (パスカルの三角形)</a></li>
+  <li><a href="num.binom.modint.html">二項係数 (ModInt)</a></li>
+  <li><a href="num.dislog.html">離散対数</a></li>
+  <li><a href="num.derangement.html">完全順列</a></li>
+  <li><a href="num.euler_phi.html">オイラーの関数</a></li>
+  <li><a href="num.moebius.html">メビウス関数</a></li>
+  <li><a href="num.n_vs_nn.html">自然数の対 ↔ 自然数 の変換</a></li>
+  <li><a href="num.mex.html">最小自由数 (最小除外数)</a></li>
 </ul>
-<h2 id="素数">素数</h2>
+<h2>素数</h2>
 <ul>
-<li><a href="prime.sieve.html">エラトステネスの篩</a></li>
-<li><a href="prime.MillerRabin.html">ミラー・ラビン素数判定</a></li>
-<li><a href="prime.fermat.little.html">フェルマーの小定理</a></li>
-<li><a href="prime.factorize.html">素因数分解</a></li>
+  <li><a href="prime.sieve.html">エラトステネスの篩</a></li>
+  <li><a href="prime.MillerRabin.html">ミラー・ラビン素数判定</a></li>
+  <li><a href="prime.fermat.little.html">フェルマーの小定理</a></li>
+  <li><a href="prime.factorize.html">素因数分解</a></li>
 </ul>
-<h2 id="その他定理">その他定理</h2>
+<h2>その他定理</h2>
 <ul>
-<li><a href="num.chinese.html">中国人剰余定理</a></li>
+  <li><a href="num.chinese.html">中国人剰余定理</a></li>
 </ul>
-<h2 id="多倍長">多倍長</h2>
+<h2>多倍長</h2>
 <ul>
-<li><a href="bigint.html">ビッグエンディアンベクタ</a></li>
+  <li><a href="bigint.html">ビッグエンディアンベクタ</a></li>
 </ul>
-<h2 id="組み合わせのイテレーター">組み合わせのイテレーター</h2>
+<h2>組み合わせのイテレーター</h2>
 <ul>
-<li><a href="num.iter.perm.html">階乗 - <span class="math inline"><em>n</em>!</span></a></li>
-<li><a href="num.iter.powperm.html">冪乗 - <span class="math inline"><em>n</em><sup><em>m</em></sup></span></a></li>
-<li><a href="num.iter.comb.html">二項係数 - <span class="math inline"><sub><em>n</em></sub><em>C</em><sub><em>m</em></sub></span></a></li>
+  <li><a href="num.iter.perm.html">階乗 - \(n!\)</a></li>
+  <li><a href="num.iter.powperm.html">冪乗 - \(n^m\)</a></li>
+  <li><a href="num.iter.comb.html">二項係数 - \({}_nC{}_m\)</a></li>
 </ul>
-<h2 id="乱数">乱数</h2>
+<h2>乱数</h2>
 <ul>
-<li><a href="rand.lcg.html">線形合同法</a></li>
-<li><a href="rand.xorshift.html">Xor-Shift 法</a></li>
+  <li><a href="rand.lcg.html">線形合同法</a></li>
+  <li><a href="rand.xorshift.html">Xor-Shift 法</a></li>
 </ul>
 </details>
 
 <details class=menu>
 <summary class=menu>文字列 (Vector)</summary>
 <ul>
-<li><a href="string.suffix-array.html">接尾辞配列</a></li>
+  <li><a href="string.suffix-array.html">接尾辞配列</a></li>
 </ul>
-<h2 id="文字列検索">文字列検索</h2>
+<h2>文字列検索</h2>
 <ul>
-<li><a href="string.shift-and.html">Shift-And</a></li>
-<li><a href="string.z.html">Z-alogirhtm</a></li>
-<li><a href="string.sa-search.html">接尾辞配列による文字列検索</a></li>
+  <li><a href="string.shift-and.html">Shift-And</a></li>
+  <li><a href="string.z.html">Z-alogirhtm</a></li>
+  <li><a href="string.sa-search.html">接尾辞配列による文字列検索</a></li>
 </ul>
-<h2 id="回文">回文</h2>
+<h2>回文</h2>
 <ul>
-<li><a href="string.manacher.html">manacher</a></li>
+  <li><a href="string.manacher.html">manacher</a></li>
 </ul>
-<h2 id="圧縮">圧縮</h2>
+<h2>圧縮</h2>
 <ul>
-<li><a href="string.runlength.html">Run-length</a></li>
+  <li><a href="string.runlength.html">Run-length</a></li>
 </ul>
 </details>
 
 <details class=menu>
 <summary class=menu>時間/時刻</summary>
 <ul>
-<li><a href="time.while.html">制限時間付きループ</a></li>
+  <li><a href="time.while.html">制限時間付きループ</a></li>
 </ul>
-<h2 id="暦">暦</h2>
+<h2>暦</h2>
 <ul>
-<li><a href="cal.zeller.html">ツェラーの公式</a></li>
-<li><a href="cal.uruu.html">閏年判定</a></li>
+  <li><a href="cal.zeller.html">ツェラーの公式</a></li>
+  <li><a href="cal.uruu.html">閏年判定</a></li>
 </ul>
 </details>
 
 <details class=menu>
 <summary class=menu>ハッシュ</summary>
 <ul>
-<li><a href="hash.zobrist.html">Zobrist Hash</a></li>
-<li><a href="hash.rolling.html">Rolling Hash</a></li>
+  <li><a href="hash.zobrist.html">Zobrist Hash</a></li>
+  <li><a href="hash.rolling.html">Rolling Hash</a></li>
 </ul>
 </details>
 
 <details class=menu>
 <summary class=menu>collections</summary>
 <ul>
-<li><a href="collections.defaultdict.html">defaultmap</a></li>
-<li><a href="collections.list_comprehension_macro.html">リスト内包表記マクロ</a></li>
+  <li><a href="collections.defaultdict.html">defaultmap</a></li>
+  <li><a href="collections.list_comprehension_macro.html">リスト内包表記マクロ</a></li>
 </ul>
 </details>
 
 <details class=menu open>
 <summary class=menu>misc</summary>
 <ul>
-<li><a href="misc.kmeans.html">k-means</a></li>
-<li><a href="15puzzle.html">一般化15パズル</a></li>
-<li><a href="misc.sort-n.html">numeric sort</a></li>
-<li><a href="misc.3sat.html">乱択3-SAT</a></li>
-<li><a href="misc.stirling.html">スターリングの近似式</a></li>
-<li><a href="dice.html">サイコロ</a></li>
-<li><a href="misc.neighbor.html">近傍</a></li>
-<li><a href="misc.two_sat.html">2-SAT</a></li>
-<li><a href="misc.coodinate_compression.html">座標圧縮</a></li>
+  <li><a href="misc.kmeans.html">k-means</a></li>
+  <li><a href="15puzzle.html">一般化15パズル</a></li>
+  <li><a href="misc.sort-n.html">numeric sort</a></li>
+  <li><a href="misc.3sat.html">乱択3-SAT</a></li>
+  <li><a href="misc.stirling.html">スターリングの近似式</a></li>
+  <li><a href="dice.html">サイコロ</a></li>
+  <li><a href="misc.neighbor.html">近傍</a></li>
+  <li><a href="misc.two_sat.html">2-SAT</a></li>
+  <li><a href="misc.coodinate_compression.html">座標圧縮</a></li>
 </ul>
 </details>
-          </aside>
-
-        </section>
+      </div>
     </div>
-  </section>
+    <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+    <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
   </body>
 </html>

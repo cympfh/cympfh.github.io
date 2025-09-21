@@ -13,29 +13,37 @@
   <body>
     <div class="two-columns">
       <div class="column-left-80">
-        <h1 class="title">自然数/整数 - 関数 - GCD</h1>
-<pre><code class="code language-rust">&#x2F;&#x2F;&#x2F; Number - GCD on Natural Numbers
-pub fn gcd(a: i128, b: i128) -&gt; i128 {
-    let a = a.abs();
-    let b = b.abs();
-    if b == 0 {
-        a
-    } else {
-        gcd(b, a % b)
-    }
+        <h1 class="title">Bitmask による bool 配列のシミュレート実装</h1>
+<p><code>Vec&lt;Bool&gt;</code> を unsigned 128bit int で表現する.</p>
+<pre><code class="code language-rust">&#x2F;&#x2F;&#x2F; Bitmask を用いた Vec&lt;Bool&gt; のシミュレート実装
+struct BitVecBool {
+    data: u128,
 }
-
-#[cfg(test)]
-mod test_gcd {
-    use crate::num::gcd::*;
-
-    #[test]
-    fn it_works() {
-        assert_eq!(gcd(10, 15), 5);
-        assert_eq!(gcd(-10, 15), 5);
-        assert_eq!(gcd(10, -15), 5);
-        assert_eq!(gcd(-10, -15), 5);
-        assert_eq!(gcd(-5, 0), 5);
+impl BitVecBool {
+    fn new() -&gt; Self {
+        Self { data: 0 }
+    }
+    fn from(data: u128) -&gt; Self {
+        Self { data }
+    }
+    &#x2F;&#x2F;&#x2F; self[i]
+    fn get(&amp;self, i: usize) -&gt; bool {
+        (self.data &gt;&gt; i) &amp; 1 == 1
+    }
+    &#x2F;&#x2F;&#x2F; self[i] = value;
+    fn set(&amp;mut self, i: usize, value: bool) {
+        if value {
+            self.data |= 1 &lt;&lt; i;
+        } else {
+            self.data &amp;= !(1 &lt;&lt; i);
+        }
+    }
+    fn count_true(&amp;self) -&gt; usize {
+        self.data.count_ones() as usize
+    }
+    &#x2F;&#x2F;&#x2F; iter on value
+    fn iter(&amp;self, value: bool) -&gt; impl Iterator&lt;Item = usize&gt; + &#x27;_ {
+        (0..128).filter(move |&amp;i| self.get(i) == value)
     }
 }
 </code></pre>
@@ -103,7 +111,7 @@ mod test_gcd {
 </ul>
 </details>
 
-<details class=menu>
+<details class=menu open>
 <summary class=menu>数列</summary>
 <ul>
   <li><a href="seq.lis.html">最長増加部分列</a></li>
@@ -224,7 +232,7 @@ mod test_gcd {
 </ul>
 </details>
 
-<details class=menu open>
+<details class=menu>
 <summary class=menu>自然数/整数</summary>
 <h2>関数</h2>
 <ul>

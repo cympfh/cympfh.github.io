@@ -1,412 +1,413 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>procon/</title>
-
+    <style type="text/css">code{white-space: pre;}</style>
     <link rel="stylesheet" href="./resources/c.css">
-    <link rel="stylesheet" href="./resources/highlight.css">
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-
+    <link rel="stylesheet" href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" />
+    <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-svg-full.js"></script>
   </head>
   <body>
-    <section class="section">
-      <div class="container">
-        <section class="main-content columns is-fullheight">
+    <div class="two-columns">
+      <div class="column-left-80">
+        <h1 class="title">geo.2d.isin_poly</h1>
+<h2><a href="geo.2d.isin_poly.cc">geo.2d.isin_poly.cc</a></h2>
+<pre><code class="code language-cpp">&#x2F;&#x2F; {{{
+enum CCW {
+  FRONT,
+  BACK,
+  RIGHT,
+  LEFT,
+  ON
+};
 
-          <div class="article column is-8 is-10-mobile">
-            <div class="content">
-              <h1 id="geo.2d.isin_poly">geo.2d.isin_poly</h1>
-<h2 id="geo.2d.isin_poly.cc"><a href="geo.2d.isin_poly.cc">geo.2d.isin_poly.cc</a></h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb1-1" title="1"><span class="co">// </span><span class="re">{{{</span></a>
-<a class="sourceLine" id="cb1-2" title="2"><span class="kw">enum</span> CCW {</a>
-<a class="sourceLine" id="cb1-3" title="3">  FRONT,</a>
-<a class="sourceLine" id="cb1-4" title="4">  BACK,</a>
-<a class="sourceLine" id="cb1-5" title="5">  RIGHT,</a>
-<a class="sourceLine" id="cb1-6" title="6">  LEFT,</a>
-<a class="sourceLine" id="cb1-7" title="7">  ON</a>
-<a class="sourceLine" id="cb1-8" title="8">};</a>
-<a class="sourceLine" id="cb1-9" title="9"></a>
-<a class="sourceLine" id="cb1-10" title="10">CCW ccw(<span class="at">const</span> L&amp;l, <span class="at">const</span> P&amp;p) {</a>
-<a class="sourceLine" id="cb1-11" title="11">  P u = l[<span class="dv">0</span>];</a>
-<a class="sourceLine" id="cb1-12" title="12">  P v = l[<span class="dv">1</span>];</a>
-<a class="sourceLine" id="cb1-13" title="13"></a>
-<a class="sourceLine" id="cb1-14" title="14">  P dif = p - u;</a>
-<a class="sourceLine" id="cb1-15" title="15">  P dir = v - u;</a>
-<a class="sourceLine" id="cb1-16" title="16"></a>
-<a class="sourceLine" id="cb1-17" title="17">  <span class="cf">if</span> (eq(<span class="dv">0</span>, dir.first)) {</a>
-<a class="sourceLine" id="cb1-18" title="18">    <span class="cf">if</span> (eq(<span class="dv">0</span>, dif.first)) {</a>
-<a class="sourceLine" id="cb1-19" title="19">      Real k = dif.second / dir.second;</a>
-<a class="sourceLine" id="cb1-20" title="20">      <span class="cf">if</span> (k &gt; <span class="fl">1.0</span>) <span class="cf">return</span> FRONT;</a>
-<a class="sourceLine" id="cb1-21" title="21">      <span class="cf">if</span> (k &lt; <span class="fl">0.0</span>) <span class="cf">return</span> BACK;</a>
-<a class="sourceLine" id="cb1-22" title="22">      <span class="cf">return</span> ON;</a>
-<a class="sourceLine" id="cb1-23" title="23">    } <span class="cf">else</span> {</a>
-<a class="sourceLine" id="cb1-24" title="24">      <span class="cf">if</span> (det(dir, dif) &gt; <span class="fl">0.0</span>) {</a>
-<a class="sourceLine" id="cb1-25" title="25">        <span class="cf">return</span> LEFT;</a>
-<a class="sourceLine" id="cb1-26" title="26">      }</a>
-<a class="sourceLine" id="cb1-27" title="27">      <span class="cf">return</span> RIGHT;</a>
-<a class="sourceLine" id="cb1-28" title="28">    }</a>
-<a class="sourceLine" id="cb1-29" title="29">  }</a>
-<a class="sourceLine" id="cb1-30" title="30"></a>
-<a class="sourceLine" id="cb1-31" title="31">  Real k = dif.first / dir.first;</a>
-<a class="sourceLine" id="cb1-32" title="32">  <span class="cf">if</span> (eq(dir.second * k, dif.second)) {</a>
-<a class="sourceLine" id="cb1-33" title="33">    <span class="cf">if</span> (k &gt; <span class="fl">1.0</span>) <span class="cf">return</span> FRONT;</a>
-<a class="sourceLine" id="cb1-34" title="34">    <span class="cf">if</span> (k &lt; <span class="fl">0.0</span>) <span class="cf">return</span> BACK;</a>
-<a class="sourceLine" id="cb1-35" title="35">    <span class="cf">return</span> ON;</a>
-<a class="sourceLine" id="cb1-36" title="36">  } <span class="cf">else</span> {</a>
-<a class="sourceLine" id="cb1-37" title="37">    <span class="cf">if</span> (det(dir, dif) &gt; <span class="fl">0.0</span>) {</a>
-<a class="sourceLine" id="cb1-38" title="38">      <span class="cf">return</span> LEFT;</a>
-<a class="sourceLine" id="cb1-39" title="39">    }</a>
-<a class="sourceLine" id="cb1-40" title="40">    <span class="cf">return</span> RIGHT;</a>
-<a class="sourceLine" id="cb1-41" title="41">  }</a>
-<a class="sourceLine" id="cb1-42" title="42">}</a>
-<a class="sourceLine" id="cb1-43" title="43"><span class="co">// </span><span class="re">}}}</span></a>
-<a class="sourceLine" id="cb1-44" title="44"></a>
-<a class="sourceLine" id="cb1-45" title="45"><span class="co">/*</span></a>
-<a class="sourceLine" id="cb1-46" title="46"><span class="co"> * 多角形 `poly` の内側に点 `p` があるかの判定</span></a>
-<a class="sourceLine" id="cb1-47" title="47"><span class="co"> * `poly` は整列した点列</span></a>
-<a class="sourceLine" id="cb1-48" title="48"><span class="co"> * 辺の上は false としていることに注意</span></a>
-<a class="sourceLine" id="cb1-49" title="49"><span class="co"> */</span></a>
-<a class="sourceLine" id="cb1-50" title="50"><span class="dt">bool</span> isin_poly(<span class="at">const</span> vector&lt;P&gt;&amp;poly, <span class="at">const</span> P&amp;p) {</a>
-<a class="sourceLine" id="cb1-51" title="51">  vector&lt;L&gt; edges;</a>
-<a class="sourceLine" id="cb1-52" title="52">  CCW c = ccw(L{poly[poly.size()-<span class="dv">1</span>], poly[<span class="dv">0</span>]}, p);</a>
-<a class="sourceLine" id="cb1-53" title="53">  <span class="cf">if</span> (c != RIGHT <span class="kw">and</span> c != LEFT) <span class="cf">return</span> <span class="kw">false</span>;</a>
-<a class="sourceLine" id="cb1-54" title="54">  rep (i, poly.size() - <span class="dv">1</span>) {</a>
-<a class="sourceLine" id="cb1-55" title="55">    CCW d = ccw(L{poly[i], poly[i+<span class="dv">1</span>]}, p);</a>
-<a class="sourceLine" id="cb1-56" title="56">    <span class="cf">if</span> (c != d) <span class="cf">return</span> <span class="kw">false</span>;</a>
-<a class="sourceLine" id="cb1-57" title="57">  }</a>
-<a class="sourceLine" id="cb1-58" title="58">  <span class="cf">return</span> <span class="kw">true</span>;</a>
-<a class="sourceLine" id="cb1-59" title="59">}</a>
-<a class="sourceLine" id="cb1-60" title="60"></a>
-<a class="sourceLine" id="cb1-61" title="61"><span class="dt">int</span> main() {</a>
-<a class="sourceLine" id="cb1-62" title="62">  cin.tie(<span class="dv">0</span>);</a>
-<a class="sourceLine" id="cb1-63" title="63">  ios::sync_with_stdio(<span class="dv">0</span>);</a>
-<a class="sourceLine" id="cb1-64" title="64">  cout.setf(ios::fixed);</a>
-<a class="sourceLine" id="cb1-65" title="65">  cout.precision(<span class="dv">10</span>);</a>
-<a class="sourceLine" id="cb1-66" title="66">  random_device dev;</a>
-<a class="sourceLine" id="cb1-67" title="67">  mt19937 rand(dev());</a>
-<a class="sourceLine" id="cb1-68" title="68"></a>
-<a class="sourceLine" id="cb1-69" title="69">  vector&lt;P&gt; tri = {</a>
-<a class="sourceLine" id="cb1-70" title="70">    {<span class="dv">0</span>, <span class="dv">0</span>}, {<span class="dv">1</span>, <span class="dv">0</span>}, {<span class="dv">1</span>,<span class="dv">1</span>}</a>
-<a class="sourceLine" id="cb1-71" title="71">  };</a>
-<a class="sourceLine" id="cb1-72" title="72">  trace(isin_poly(tri, {<span class="fl">0.5</span>, <span class="fl">0.2</span>})); <span class="co">// #t</span></a>
-<a class="sourceLine" id="cb1-73" title="73">  trace(isin_poly(tri, {<span class="fl">0.5</span>, <span class="fl">0.5</span>})); <span class="co">// #f</span></a>
-<a class="sourceLine" id="cb1-74" title="74">  trace(isin_poly(tri, {<span class="fl">0.5</span>, <span class="fl">0.8</span>})); <span class="co">// #f</span></a>
-<a class="sourceLine" id="cb1-75" title="75"></a>
-<a class="sourceLine" id="cb1-76" title="76">  vector&lt;P&gt; rect = {</a>
-<a class="sourceLine" id="cb1-77" title="77">    {-<span class="dv">1</span>, -<span class="dv">1</span>}, {<span class="dv">1</span>, -<span class="dv">1</span>}, {<span class="dv">1</span>, <span class="dv">1</span>}, {-<span class="dv">1</span>, <span class="dv">1</span>}</a>
-<a class="sourceLine" id="cb1-78" title="78">  };</a>
-<a class="sourceLine" id="cb1-79" title="79">  trace(isin_poly(rect, {<span class="dv">0</span>, -<span class="dv">1</span>})); <span class="co">// #f</span></a>
-<a class="sourceLine" id="cb1-80" title="80">  trace(isin_poly(rect, {<span class="dv">0</span>, <span class="dv">0</span>})); <span class="co">// #t</span></a>
-<a class="sourceLine" id="cb1-81" title="81">  trace(isin_poly(rect, {<span class="dv">0</span>, <span class="dv">1</span>})); <span class="co">// #f</span></a>
-<a class="sourceLine" id="cb1-82" title="82"></a>
-<a class="sourceLine" id="cb1-83" title="83">  {</a>
-<a class="sourceLine" id="cb1-84" title="84">    vector&lt;P&gt; rect = {</a>
-<a class="sourceLine" id="cb1-85" title="85">      {<span class="dv">1</span>, <span class="dv">0</span>}, {<span class="dv">0</span>, <span class="dv">1</span>}, {-<span class="dv">1</span>, <span class="dv">0</span>}, {<span class="dv">0</span>, -<span class="dv">1</span>}</a>
-<a class="sourceLine" id="cb1-86" title="86">    };</a>
-<a class="sourceLine" id="cb1-87" title="87">    rep (_, <span class="dv">1000</span>) {</a>
-<a class="sourceLine" id="cb1-88" title="88">      <span class="dt">double</span> x = (<span class="kw">static_cast</span>&lt;<span class="dt">int</span>&gt;(rand())%<span class="dv">2000</span> - <span class="dv">1000</span>) / <span class="fl">1000.0</span>;</a>
-<a class="sourceLine" id="cb1-89" title="89">      <span class="dt">double</span> y = (<span class="kw">static_cast</span>&lt;<span class="dt">int</span>&gt;(rand())%<span class="dv">2000</span> - <span class="dv">1000</span>) / <span class="fl">1000.0</span>;</a>
-<a class="sourceLine" id="cb1-90" title="90">      <span class="dt">bool</span> ans = abs(x) + abs(y) &lt; <span class="fl">1.0</span>;</a>
-<a class="sourceLine" id="cb1-91" title="91">      <span class="ot">assert</span>(isin_poly(rect, {x,y}) == ans);</a>
-<a class="sourceLine" id="cb1-92" title="92">    }</a>
-<a class="sourceLine" id="cb1-93" title="93">  }</a>
-<a class="sourceLine" id="cb1-94" title="94"></a>
-<a class="sourceLine" id="cb1-95" title="95"></a>
-<a class="sourceLine" id="cb1-96" title="96">  <span class="cf">return</span> <span class="dv">0</span>;</a>
-<a class="sourceLine" id="cb1-97" title="97">}</a>
-<a class="sourceLine" id="cb1-98" title="98"></a></code></pre></div>
-            </div>
-          </div>
+CCW ccw(const L&amp;l, const P&amp;p) {
+  P u = l[0];
+  P v = l[1];
 
-          <aside class="menu column is-3 is-narrow-mobile is-fullheight section">
+  P dif = p - u;
+  P dir = v - u;
+
+  if (eq(0, dir.first)) {
+    if (eq(0, dif.first)) {
+      Real k = dif.second &#x2F; dir.second;
+      if (k &gt; 1.0) return FRONT;
+      if (k &lt; 0.0) return BACK;
+      return ON;
+    } else {
+      if (det(dir, dif) &gt; 0.0) {
+        return LEFT;
+      }
+      return RIGHT;
+    }
+  }
+
+  Real k = dif.first &#x2F; dir.first;
+  if (eq(dir.second * k, dif.second)) {
+    if (k &gt; 1.0) return FRONT;
+    if (k &lt; 0.0) return BACK;
+    return ON;
+  } else {
+    if (det(dir, dif) &gt; 0.0) {
+      return LEFT;
+    }
+    return RIGHT;
+  }
+}
+&#x2F;&#x2F; }}}
+
+&#x2F;*
+ * 多角形 `poly` の内側に点 `p` があるかの判定
+ * `poly` は整列した点列
+ * 辺の上は false としていることに注意
+ *&#x2F;
+bool isin_poly(const vector&lt;P&gt;&amp;poly, const P&amp;p) {
+  vector&lt;L&gt; edges;
+  CCW c = ccw(L{poly[poly.size()-1], poly[0]}, p);
+  if (c != RIGHT and c != LEFT) return false;
+  rep (i, poly.size() - 1) {
+    CCW d = ccw(L{poly[i], poly[i+1]}, p);
+    if (c != d) return false;
+  }
+  return true;
+}
+
+int main() {
+  cin.tie(0);
+  ios::sync_with_stdio(0);
+  cout.setf(ios::fixed);
+  cout.precision(10);
+  random_device dev;
+  mt19937 rand(dev());
+
+  vector&lt;P&gt; tri = {
+    {0, 0}, {1, 0}, {1,1}
+  };
+  trace(isin_poly(tri, {0.5, 0.2})); &#x2F;&#x2F; #t
+  trace(isin_poly(tri, {0.5, 0.5})); &#x2F;&#x2F; #f
+  trace(isin_poly(tri, {0.5, 0.8})); &#x2F;&#x2F; #f
+
+  vector&lt;P&gt; rect = {
+    {-1, -1}, {1, -1}, {1, 1}, {-1, 1}
+  };
+  trace(isin_poly(rect, {0, -1})); &#x2F;&#x2F; #f
+  trace(isin_poly(rect, {0, 0})); &#x2F;&#x2F; #t
+  trace(isin_poly(rect, {0, 1})); &#x2F;&#x2F; #f
+
+  {
+    vector&lt;P&gt; rect = {
+      {1, 0}, {0, 1}, {-1, 0}, {0, -1}
+    };
+    rep (_, 1000) {
+      double x = (static_cast&lt;int&gt;(rand())%2000 - 1000) &#x2F; 1000.0;
+      double y = (static_cast&lt;int&gt;(rand())%2000 - 1000) &#x2F; 1000.0;
+      bool ans = abs(x) + abs(y) &lt; 1.0;
+      assert(isin_poly(rect, {x,y}) == ans);
+    }
+  }
+
+
+  return 0;
+}
+
+</code></pre>
+      </div>
+      <div class="column-right-20 menu">
 <details class=menu>
 <summary class=menu>代数</summary>
 <ul>
-<li><a href="algebra.monoid.html">モノイド</a>
-<ul>
-<li><a href="algebra.monoid.minmax.html">Min/Max モノイド</a></li>
-<li><a href="algebra.monoid.sum.html">Sum モノイド</a></li>
-</ul></li>
-<li><a href="algebra.group.html">(乗法)群と加法群</a></li>
-<li><a href="algebra.ring.html">環</a></li>
-<li><a href="algebra.field.html">体</a></li>
-<li><a href="algebra.module.html">加群</a></li>
-<li><a href="algebra.ratio.html">有理数</a></li>
-<li><a href="algebra.complex.html">虚数</a></li>
-<li><a href="algebra.matrix.html">行列</a></li>
-<li><a href="algebra.hyper.html">超数</a></li>
-<li><a href="algebra.total.html">全順序化</a></li>
-<li><a href="algebra.modint.html">ModInt</a></li>
-<li><a href="algebra.act.html">作用</a>
-<ul>
-<li><a href="algebra.act.assign.html">代入作用</a></li>
-<li><a href="algebra.act.add.html">加算作用</a></li>
-</ul></li>
+  <li>
+    <a href="algebra.monoid.html">モノイド</a>
+    <ul>
+      <li><a href="algebra.monoid.minmax.html">Min/Max モノイド</a></li>
+      <li><a href="algebra.monoid.sum.html">Sum モノイド</a></li>
+    </ul>
+  </li>
+  <li><a href="algebra.group.html">(乗法)群と加法群</a></li>
+  <li><a href="algebra.ring.html">環</a></li>
+  <li><a href="algebra.field.html">体</a></li>
+  <li><a href="algebra.module.html">加群</a></li>
+  <li><a href="algebra.ratio.html">有理数</a></li>
+  <li><a href="algebra.complex.html">虚数</a></li>
+  <li><a href="algebra.matrix.html">行列</a></li>
+  <li><a href="algebra.hyper.html">超数</a></li>
+  <li><a href="algebra.total.html">全順序化</a></li>
+  <li><a href="algebra.modint.html">ModInt</a></li>
+  <li>
+    <a href="algebra.act.html">作用</a>
+    <ul>
+      <li><a href="algebra.act.assign.html">代入作用</a></li>
+      <li><a href="algebra.act.add.html">加算作用</a></li>
+    </ul>
+  </li>
 </ul>
 </details>
 
 <details class=menu>
 <summary class=menu>グラフ</summary>
-<h2 id="最短路">最短路</h2>
+<h2>最短路</h2>
 <ul>
-<li><a href="graph.dij.html">ダイクストラ法</a></li>
-<li><a href="graph.wall.html">ワーシャル-フロイド法</a></li>
-<li><a href="graph.bellmanford.html">ベルマンフォード法</a></li>
+  <li><a href="graph.dij.html">ダイクストラ法</a></li>
+  <li><a href="graph.wall.html">ワーシャル-フロイド法</a></li>
+  <li><a href="graph.bellmanford.html">ベルマンフォード法</a></li>
 </ul>
-<h2 id="無向グラフ">無向グラフ</h2>
+<h2>無向グラフ</h2>
 <ul>
-<li><a href="graph.undirected.bipartite.html">二部グラフ判定</a></li>
-<li><a href="graph.undirected.diameter.html">直径</a></li>
+  <li><a href="graph.undirected.bipartite.html">二部グラフ判定</a></li>
+  <li><a href="graph.undirected.diameter.html">直径</a></li>
 </ul>
-<h2 id="最小全域木">最小全域木</h2>
+<h2>最小全域木</h2>
 <ul>
-<li><a href="graph.prim.html">プリム法</a></li>
-<li><a href="graph.kruskal.html">クラスカル法</a></li>
+  <li><a href="graph.prim.html">プリム法</a></li>
+  <li><a href="graph.kruskal.html">クラスカル法</a></li>
 </ul>
-<h2 id="木">木</h2>
+<h2>木</h2>
 <ul>
-<li><a href="graph.tree.height.html">高さ</a></li>
-<li><a href="graph.tree.diameter.html">直径</a></li>
-<li><a href="graph.tree.lca.html">最小共通祖先</a></li>
+  <li><a href="graph.tree.height.html">高さ</a></li>
+  <li><a href="graph.tree.diameter.html">直径</a></li>
+  <li><a href="graph.tree.lca.html">最小共通祖先</a></li>
 </ul>
-<h2 id="有向グラフ">有向グラフ</h2>
+<h2>有向グラフ</h2>
 <ul>
-<li><a href="graph.maxflow.html">最大流量</a></li>
-<li><a href="graph.topological.html">トポロジカルソート</a></li>
-<li><a href="graph.scc.html">強連結成分分解</a></li>
+  <li><a href="graph.maxflow.html">最大流量</a></li>
+  <li><a href="graph.topological.html">トポロジカルソート</a></li>
+  <li><a href="graph.scc.html">強連結成分分解</a></li>
 </ul>
 </details>
 
 <details class=menu>
 <summary class=menu>数列</summary>
 <ul>
-<li><a href="seq.lis.html">最長増加部分列</a></li>
-<li><a href="seq.median.html">中央値ヒープ</a></li>
-<li><a href="seq.slide_min.html">スライド最小値</a></li>
+  <li><a href="seq.lis.html">最長増加部分列</a></li>
+  <li><a href="seq.median.html">中央値ヒープ</a></li>
+  <li><a href="seq.slide_min.html">スライド最小値</a></li>
+  <li><a href="seq.bitvecbool.html">BitVecBool</a></li>
 </ul>
-<h2 id="累積処理">累積処理</h2>
+<h2>累積処理</h2>
 <ul>
-<li><a href="seq.cumsum1d.html">一次元累積和</a></li>
-<li><a href="seq.cumsum2d.html">二次元累積和</a></li>
+  <li><a href="seq.cumsum1d.html">一次元累積和</a></li>
+  <li><a href="seq.cumsum2d.html">二次元累積和</a></li>
 </ul>
-<h2 id="区間木">区間木</h2>
+<h2>区間木</h2>
 <ul>
-<li><a href="seq.bit.html">BIT</a>
-<ul>
-<li><a href="seq.bit_cumulative.html">累積和に関するBIT</a></li>
-</ul></li>
-<li><a href="seq.segment_tree.html">セグメントツリー</a>
-<ul>
-<li><a href="seq.rmq.html">RMQ</a></li>
-<li><a href="seq.segment_tree_sum.html">加法セグメントツリー</a></li>
-<li><a href="seq.segment_tree_prod.html">乗法セグメントツリー</a></li>
-</ul></li>
-<li><a href="seq.lazy_segment_tree.html">遅延セグメントツリー</a>
-<ul>
-<li><a href="seq.ranged_assign_rmq.html">区間代入 RMQ</a></li>
-<li><a href="seq.ranged_add_rmq.html">区間加算 RMQ</a></li>
-<li><a href="seq.ranged_add_segment_tree_sum.html">区間加算 加法セグメントツリー</a></li>
-</ul></li>
+  <li>
+    <a href="seq.bit.html">BIT</a>
+    <ul>
+      <li><a href="seq.bit_cumulative.html">累積和に関するBIT</a></li>
+    </ul>
+  </li>
+  <li>
+    <a href="seq.segment_tree.html">セグメントツリー</a>
+    <ul>
+      <li><a href="seq.rmq.html">RMQ</a></li>
+      <li><a href="seq.segment_tree_sum.html">加法セグメントツリー</a></li>
+      <li><a href="seq.segment_tree_prod.html">乗法セグメントツリー</a></li>
+    </ul>
+  </li>
+  <li>
+    <a href="seq.lazy_segment_tree.html">遅延セグメントツリー</a>
+    <ul>
+      <li><a href="seq.ranged_assign_rmq.html">区間代入 RMQ</a></li>
+      <li><a href="seq.ranged_add_rmq.html">区間加算 RMQ</a></li>
+      <li><a href="seq.ranged_add_segment_tree_sum.html">区間加算 加法セグメントツリー</a></li>
+    </ul>
+  </li>
 </ul>
 </details>
 
 <details class=menu open>
 <summary class=menu>二次元ユークリッド幾何</summary>
-<h2 id="図形の定義">図形の定義</h2>
+<h2>図形の定義</h2>
 <ul>
-<li><a href="geo.2d.point.html">点</a></li>
-<li><a href="geo.2d.line.html">直線, 線分</a></li>
-<li><a href="geo.2d.polygon.html">多角形</a></li>
-<li><a href="geo.2d.circle.html">円</a></li>
+  <li><a href="geo.2d.point.html">点</a></li>
+  <li><a href="geo.2d.line.html">直線, 線分</a></li>
+  <li><a href="geo.2d.polygon.html">多角形</a></li>
+  <li><a href="geo.2d.circle.html">円</a></li>
 </ul>
-<h2 id="線分">線分</h2>
+<h2>線分</h2>
 <ul>
-<li><a href="geo.2d.ccw.html">線分と点の接触判定</a></li>
-<li><a href="geo.2d.intersection.html">線分と線分の交差判定</a></li>
+  <li><a href="geo.2d.ccw.html">線分と点の接触判定</a></li>
+  <li><a href="geo.2d.intersection.html">線分と線分の交差判定</a></li>
 </ul>
-<h2 id="多角形">多角形</h2>
+<h2>多角形</h2>
 <ul>
-<li><a href="geo.2d.circum.html">三角形の外接円</a></li>
-<li><a href="geo.2d.isin_poly.html">多角形の内外判定</a></li>
-<li><a href="geo.2d.convex_hull.html">凸包</a></li>
+  <li><a href="geo.2d.circum.html">三角形の外接円</a></li>
+  <li><a href="geo.2d.isin_poly.html">多角形の内外判定</a></li>
+  <li><a href="geo.2d.convex_hull.html">凸包</a></li>
 </ul>
-<h2 id="円">円</h2>
+<h2>円</h2>
 <ul>
-<li><a href="geo.2d.circle.intersection.html">円と円との接触関係</a></li>
+  <li><a href="geo.2d.circle.intersection.html">円と円との接触関係</a></li>
 </ul>
-<h2 id="最近点対">最近点対</h2>
+<h2>最近点対</h2>
 <ul>
-<li><a href="geo.closest_pair.html">平面上の分割統治法</a></li>
+  <li><a href="geo.closest_pair.html">平面上の分割統治法</a></li>
 </ul>
-<h2 id="その他">その他</h2>
+<h2>その他</h2>
 <ul>
-<li><a href="geo.polar.html">極座標</a></li>
-<li><a href="geo.cht.html">Convex-Hull Trick (CHT)</a></li>
+  <li><a href="geo.polar.html">極座標</a></li>
+  <li><a href="geo.cht.html">Convex-Hull Trick (CHT)</a></li>
 </ul>
-<h2 id="格子点上の幾何">格子点上の幾何</h2>
+<h2>格子点上の幾何</h2>
 <ul>
-<li><a href="geo.2d.int.point.html">点</a></li>
-<li><a href="geo.2d.int.line.html">直線</a></li>
+  <li><a href="geo.2d.int.point.html">点</a></li>
+  <li><a href="geo.2d.int.line.html">直線</a></li>
 </ul>
 </details>
 
 <details class=menu>
 <summary class=menu>集合</summary>
 <ul>
-<li><a href="set.union_find.html">UnionFind</a></li>
-<li><a href="set.bitset.html">BitSet</a></li>
-<li><a href="set.subbitset.html">部分集合及びその部分集合の列挙</a></li>
-<li><a href="collections.multiset.html">多重集合</a></li>
+  <li><a href="set.union_find.html">UnionFind</a></li>
+  <li><a href="set.bitset.html">BitSet</a></li>
+  <li><a href="set.subbitset.html">部分集合及びその部分集合の列挙</a></li>
+  <li><a href="collections.multiset.html">多重集合</a></li>
 </ul>
 </details>
 
 <details class=menu>
 <summary class=menu>アルゴリズム</summary>
-<h2 id="動的計画法">動的計画法</h2>
+<h2>動的計画法</h2>
 <ul>
-<li><a href="dp.knapsack.01.html">01-ナップザック</a></li>
+  <li><a href="dp.knapsack.01.html">01-ナップザック</a></li>
 </ul>
-<h2 id="二分探索">二分探索</h2>
+<h2>二分探索</h2>
 <ul>
-<li><a href="bin.search.html">二分探索</a></li>
+  <li><a href="bin.search.html">二分探索</a></li>
 </ul>
-<h2 id="フーリエ変換">フーリエ変換</h2>
+<h2>フーリエ変換</h2>
 <ul>
-<li><a href="fft.convolution.html">畳み込み</a></li>
+  <li><a href="fft.convolution.html">畳み込み</a></li>
 </ul>
-<h2 id="循環検出">循環検出</h2>
+<h2>循環検出</h2>
 <ul>
-<li><a href="algorithm.rho.html">フロイドの<span class="math inline"><em>ρ</em></span>アルゴリズム</a></li>
+  <li><a href="algorithm.rho.html">フロイドの \(\rho\) アルゴリズム</a></li>
 </ul>
-<h2 id="連立一次方程式">連立一次方程式</h2>
+<h2>連立一次方程式</h2>
 <ul>
-<li><a href="algorithm.gauss_jordan.html">Gauss-Jordan の消去法</a></li>
+  <li><a href="algorithm.gauss_jordan.html">Gauss-Jordan の消去法</a></li>
 </ul>
 </details>
 
 <details class=menu>
 <summary class=menu>最適化</summary>
 <ul>
-<li><a href="opt.moyasu_umeru.html">燃やす埋める問題</a></li>
+  <li><a href="opt.moyasu_umeru.html">燃やす埋める問題</a></li>
 </ul>
 </details>
 
 <details class=menu>
 <summary class=menu>自然数/整数</summary>
-<h2 id="関数">関数</h2>
+<h2>関数</h2>
 <ul>
-<li><a href="num.gcd.html">GCD</a></li>
-<li><a href="num.exgcd.html">拡張GCD</a></li>
-<li><a href="num.binom.pascal.html">二項係数 (パスカルの三角形)</a></li>
-<li><a href="num.binom.modint.html">二項係数 (ModInt)</a></li>
-<li><a href="num.dislog.html">離散対数</a></li>
-<li><a href="num.derangement.html">完全順列</a></li>
-<li><a href="num.euler_phi.html">オイラーの関数</a></li>
-<li><a href="num.moebius.html">メビウス関数</a></li>
-<li><a href="num.n_vs_nn.html">自然数の対 ↔ 自然数 の変換</a></li>
-<li><a href="num.mex.html">最小自由数 (最小除外数)</a></li>
+  <li><a href="num.gcd.html">GCD</a></li>
+  <li><a href="num.exgcd.html">拡張GCD</a></li>
+  <li><a href="num.binom.pascal.html">二項係数 (パスカルの三角形)</a></li>
+  <li><a href="num.binom.modint.html">二項係数 (ModInt)</a></li>
+  <li><a href="num.dislog.html">離散対数</a></li>
+  <li><a href="num.derangement.html">完全順列</a></li>
+  <li><a href="num.euler_phi.html">オイラーの関数</a></li>
+  <li><a href="num.moebius.html">メビウス関数</a></li>
+  <li><a href="num.n_vs_nn.html">自然数の対 ↔ 自然数 の変換</a></li>
+  <li><a href="num.mex.html">最小自由数 (最小除外数)</a></li>
 </ul>
-<h2 id="素数">素数</h2>
+<h2>素数</h2>
 <ul>
-<li><a href="prime.sieve.html">エラトステネスの篩</a></li>
-<li><a href="prime.MillerRabin.html">ミラー・ラビン素数判定</a></li>
-<li><a href="prime.fermat.little.html">フェルマーの小定理</a></li>
-<li><a href="prime.factorize.html">素因数分解</a></li>
+  <li><a href="prime.sieve.html">エラトステネスの篩</a></li>
+  <li><a href="prime.MillerRabin.html">ミラー・ラビン素数判定</a></li>
+  <li><a href="prime.fermat.little.html">フェルマーの小定理</a></li>
+  <li><a href="prime.factorize.html">素因数分解</a></li>
 </ul>
-<h2 id="その他定理">その他定理</h2>
+<h2>その他定理</h2>
 <ul>
-<li><a href="num.chinese.html">中国人剰余定理</a></li>
+  <li><a href="num.chinese.html">中国人剰余定理</a></li>
 </ul>
-<h2 id="多倍長">多倍長</h2>
+<h2>多倍長</h2>
 <ul>
-<li><a href="bigint.html">ビッグエンディアンベクタ</a></li>
+  <li><a href="bigint.html">ビッグエンディアンベクタ</a></li>
 </ul>
-<h2 id="組み合わせのイテレーター">組み合わせのイテレーター</h2>
+<h2>組み合わせのイテレーター</h2>
 <ul>
-<li><a href="num.iter.perm.html">階乗 - <span class="math inline"><em>n</em>!</span></a></li>
-<li><a href="num.iter.powperm.html">冪乗 - <span class="math inline"><em>n</em><sup><em>m</em></sup></span></a></li>
-<li><a href="num.iter.comb.html">二項係数 - <span class="math inline"><sub><em>n</em></sub><em>C</em><sub><em>m</em></sub></span></a></li>
+  <li><a href="num.iter.perm.html">階乗 - \(n!\)</a></li>
+  <li><a href="num.iter.powperm.html">冪乗 - \(n^m\)</a></li>
+  <li><a href="num.iter.comb.html">二項係数 - \({}_nC{}_m\)</a></li>
 </ul>
-<h2 id="乱数">乱数</h2>
+<h2>乱数</h2>
 <ul>
-<li><a href="rand.lcg.html">線形合同法</a></li>
-<li><a href="rand.xorshift.html">Xor-Shift 法</a></li>
+  <li><a href="rand.lcg.html">線形合同法</a></li>
+  <li><a href="rand.xorshift.html">Xor-Shift 法</a></li>
 </ul>
 </details>
 
 <details class=menu>
 <summary class=menu>文字列 (Vector)</summary>
 <ul>
-<li><a href="string.suffix-array.html">接尾辞配列</a></li>
+  <li><a href="string.suffix-array.html">接尾辞配列</a></li>
 </ul>
-<h2 id="文字列検索">文字列検索</h2>
+<h2>文字列検索</h2>
 <ul>
-<li><a href="string.shift-and.html">Shift-And</a></li>
-<li><a href="string.z.html">Z-alogirhtm</a></li>
-<li><a href="string.sa-search.html">接尾辞配列による文字列検索</a></li>
+  <li><a href="string.shift-and.html">Shift-And</a></li>
+  <li><a href="string.z.html">Z-alogirhtm</a></li>
+  <li><a href="string.sa-search.html">接尾辞配列による文字列検索</a></li>
 </ul>
-<h2 id="回文">回文</h2>
+<h2>回文</h2>
 <ul>
-<li><a href="string.manacher.html">manacher</a></li>
+  <li><a href="string.manacher.html">manacher</a></li>
 </ul>
-<h2 id="圧縮">圧縮</h2>
+<h2>圧縮</h2>
 <ul>
-<li><a href="string.runlength.html">Run-length</a></li>
+  <li><a href="string.runlength.html">Run-length</a></li>
 </ul>
 </details>
 
 <details class=menu>
 <summary class=menu>時間/時刻</summary>
 <ul>
-<li><a href="time.while.html">制限時間付きループ</a></li>
+  <li><a href="time.while.html">制限時間付きループ</a></li>
 </ul>
-<h2 id="暦">暦</h2>
+<h2>暦</h2>
 <ul>
-<li><a href="cal.zeller.html">ツェラーの公式</a></li>
-<li><a href="cal.uruu.html">閏年判定</a></li>
+  <li><a href="cal.zeller.html">ツェラーの公式</a></li>
+  <li><a href="cal.uruu.html">閏年判定</a></li>
 </ul>
 </details>
 
 <details class=menu>
 <summary class=menu>ハッシュ</summary>
 <ul>
-<li><a href="hash.zobrist.html">Zobrist Hash</a></li>
-<li><a href="hash.rolling.html">Rolling Hash</a></li>
+  <li><a href="hash.zobrist.html">Zobrist Hash</a></li>
+  <li><a href="hash.rolling.html">Rolling Hash</a></li>
 </ul>
 </details>
 
 <details class=menu>
 <summary class=menu>collections</summary>
 <ul>
-<li><a href="collections.defaultdict.html">defaultmap</a></li>
-<li><a href="collections.list_comprehension_macro.html">リスト内包表記マクロ</a></li>
+  <li><a href="collections.defaultdict.html">defaultmap</a></li>
+  <li><a href="collections.list_comprehension_macro.html">リスト内包表記マクロ</a></li>
 </ul>
 </details>
 
 <details class=menu>
 <summary class=menu>misc</summary>
 <ul>
-<li><a href="misc.kmeans.html">k-means</a></li>
-<li><a href="15puzzle.html">一般化15パズル</a></li>
-<li><a href="misc.sort-n.html">numeric sort</a></li>
-<li><a href="misc.3sat.html">乱択3-SAT</a></li>
-<li><a href="misc.stirling.html">スターリングの近似式</a></li>
-<li><a href="dice.html">サイコロ</a></li>
-<li><a href="misc.neighbor.html">近傍</a></li>
-<li><a href="misc.two_sat.html">2-SAT</a></li>
-<li><a href="misc.coodinate_compression.html">座標圧縮</a></li>
+  <li><a href="misc.kmeans.html">k-means</a></li>
+  <li><a href="15puzzle.html">一般化15パズル</a></li>
+  <li><a href="misc.sort-n.html">numeric sort</a></li>
+  <li><a href="misc.3sat.html">乱択3-SAT</a></li>
+  <li><a href="misc.stirling.html">スターリングの近似式</a></li>
+  <li><a href="dice.html">サイコロ</a></li>
+  <li><a href="misc.neighbor.html">近傍</a></li>
+  <li><a href="misc.two_sat.html">2-SAT</a></li>
+  <li><a href="misc.coodinate_compression.html">座標圧縮</a></li>
 </ul>
 </details>
-          </aside>
-
-        </section>
+      </div>
     </div>
-  </section>
+    <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+    <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
   </body>
 </html>

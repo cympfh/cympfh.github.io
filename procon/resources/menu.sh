@@ -12,7 +12,7 @@ link_extension() {
 }
 
 link_extension |
-pandoc |
+unidoc |
   awk '
 BEGIN { first = 1 }
 !/<h1/ {

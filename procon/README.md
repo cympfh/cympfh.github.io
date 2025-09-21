@@ -47,6 +47,7 @@
 - [最長増加部分列](seq.lis.md)
 - [中央値ヒープ](seq.median.md)
 - [スライド最小値](seq.slide_min.md)
+- [BitVecBool](seq.bitvecbool.md)
 
 ## 累積処理
 

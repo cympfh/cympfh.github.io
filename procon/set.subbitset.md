@@ -42,6 +42,7 @@ for tset in 0..1 << N {
 ```
 
 実際のところ $S \subseteq T \subseteq U$ なる $S$ がいくつあるのかを数えると,
+
 $$\begin{align*}
 \sum_{T \subseteq U} \sum_{S \subseteq T} 1
 & = \sum_{T \subseteq U} 2^{|T|} \\
@@ -49,7 +50,8 @@ $$\begin{align*}
 & = (2+1)^N \\
 & = 3^N
 \end{align*}$$
-と分かる. 
+
+と分かる.
 
 実は次のようにすると無駄なく $3^N$ が列挙出来る.
 

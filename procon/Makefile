@@ -1,4 +1,4 @@
-.PHONY: all index pages git clean
+.PHONY: all index pages git clean update-rs
 
 all: index pages
 
@@ -12,6 +12,9 @@ menu.html: README.md
 
 pages: menu.html
 	ls -1 *.md | grep -v README.md | sed 's/.*/make &/; s/.md$$/.html/g' | sh
+
+update-rs:
+	git submodule update --remote procon-rs
 
 %.html: %.md menu.html
 	bash resources/template.sh $< > $@

@@ -1,5 +1,7 @@
 # 代数 - モノイド
 
+## 概要
+
 積に関するモノイド $(X, \times, 1)$ を定義する.
 
 - 演算 `std::ops::Mul`,
@@ -7,7 +9,10 @@
 
 Rust の `i64`, `f64` はそのまま乗算に関してモノイドになっている.
 
+## `monoid!` マクロ
+
 また, ユーザーが定義した型をモノイドにするためのマクロ `monoid!` を提供する.
+`monoid!` は `product()`, `mul_assign()` を自動で定義する.
 
 ```rust
 // monoid マクロの使用例
@@ -25,6 +30,6 @@ monoid! {
 }
 ```
 
-`monoid!` は `product()`, `mul_assign()` を自動で定義する.
+## 実装
 
 @[rust](procon-rs/src/algebra/monoid.rs)

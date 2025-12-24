@@ -22,4 +22,6 @@ $d$ は [超数](algebra.hyper) 上の $n \times n$ 行列で, 各成分は次�
 - 到達不可能なら
     - $d_{i,j} = \infty$
 
+## 実装
+
 @[rust](procon-rs/src/graph/shortest/warshall_floyd.rs)

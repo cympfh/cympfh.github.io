@@ -1,8 +1,6 @@
 # dice
 
-## [dice.cc](dice.cc)
-
-@[cpp](dice.cc)
+@[cpp](procon-cc/dice.cc)
 
 ## 例題
 

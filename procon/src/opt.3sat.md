@@ -1,4 +1,4 @@
-# misc.3sat
+# 最適化 - 3-SAT
 
 ## 参考文献
 
@@ -9,6 +9,4 @@
 3-CNF, kyouseibi も[1]より.
 他のテストデータ c1, c2 は[2] より.
 
-## [misc.3sat.cc](misc.3sat.cc)
-
-@[cpp](misc.3sat.cc)
+@[cpp](procon-cc/misc.3sat.cc)

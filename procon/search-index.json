@@ -1,0 +1,84 @@
+{
+  "pages": [
+    {
+      "title": "モノイドの定義",
+      "url": "algebra.monoid.html",
+      "content": "代数 - モノイド 積に関するモノイド $(X, \\times, 1)$ を定義する. 演算 std::ops::Mul, 単位元 Monoid::one() Rust の i64, f64 はそのまま乗算に関してモノイドになっている. また, ユーザーが定義した型をモノイドにするためのマクロ monoid! を提供する. // monoid マクロの使用例 monoid! { MyType ; one = MyType(1) ; mul(self, other) = { compute_multiplication(self, other) } } // 型パラメータを取る場合 monoid! { MyType<X> where [ X:Ord ] ; one = MyType(X::one) ; mul(self, other) = { compute_multiplication(self, other) } } monoid! は product(), mulassign() を自動で定義する. @[rust](procon-rs/src/algebra/monoid.rs)"
+    },
+    {
+      "title": "Min/Max モノイド",
+      "url": "algebra.monoid.minmax.html",
+      "content": "代数 - モノイド - Min/Max モノイド 整数は $\\min$ または $\\max$ を演算にしてモノイドになる. ただし, それぞれ単位元として $\\infty$ (Maximal) または $-\\infty$ (Minimal) を付け足す必要がある. これを [セグメントツリー](seq.segmenttree) に載せることで [RMQ](seq.rmq.html) を得る. @[rust](procon-rs/src/algebra/monoidmin.rs) @[rust](procon-rs/src/algebra/monoidmax.rs)"
+    },
+    {
+      "title": "Sum モノイド",
+      "url": "algebra.monoid.sum.html",
+      "content": "代数 - モノイド - Sum モノイド 整数は和に関してモノイドになっている. 以下の実装では i128 を整数と見なして, 和に関するモノイド $(\\mathrm{i128}, +, 0)$ を与える. @[rust](procon-rs/src/algebra/monoidsum.rs)"
+    },
+    {
+      "title": "(乗法)群と加法群",
+      "url": "algebra.group.html",
+      "content": "代数 - (乗法)群と加法群 積に関する群 $(X,\\times,1)$ を Group の名前で [モノイド](algebra.monoid) の拡張として定義する. 演算: std::ops::Mul 単位元: Monoid::one() 逆元: Group::inv() 和に関する群を AGroup (Additive Group) の名前で定義する. 演算: std::ops::Add 単位元: AGroup::zero() 逆元: std::ops::neg マクロ agroup! はユーザーが定義した型を手早く加法群にする. agroup! { MyStruct<X> where [X: Copy + ...] ; zero = MyStruct(0) ; add(self, other) = { ... } ; neg(self) = { ... } ; } agroup! は addassign, sub, subassign, sum を自動で定義する. @[rust](procon-rs/src/algebra/group.rs) @[rust](procon-rs/src/algebra/groupadditive.rs)"
+    },
+    {
+      "title": "環",
+      "url": "algebra.ring.html",
+      "content": "代数 - 環 群 $(X, 0, \\pm)$ に積と割り算を足して出来る $(X, 0, 1, \\pm, \\times, \\div)$ のこと. @[rust](procon-rs/src/algebra/ring.rs)"
+    },
+    {
+      "title": "体",
+      "url": "algebra.field.html",
+      "content": "代数 - field [環](algebra.ring) (crate::algebra::ring::Ring) に std::ops::Div を加えて要請したもの. @[rust](procon-rs/src/algebra/field.rs)"
+    },
+    {
+      "title": "加群",
+      "url": "algebra.module.html",
+      "content": "代数 - 環上の加群 環 $R$ が加法アーベル群 $(M, +)$ への右作用 $$M \\times R \\to M$$ になっているとき, $M$ を $R$-加群 といい, この作用のことを スカラー倍 という. ただし, $(x+y) a = xa + ya ,~ x,y \\in M ,~ a \\in R$ $x (a+b) = xa + xb ,~ x \\in M ,~ a,b \\in R$ $x (ab) = (xa) b ,~ x \\in M ,~ a,b \\in R$ $x1 = x ,~ x \\in M ,~ 1 \\in R$ を満たすこと. 例えば, 体 $F$ 上のベクトル空間 $V$ は $F$-加群. 以下の実装では都合上, 右加群としてあるのと, 必ずしも必要としないので, 加法アーベル群であることは気にせずに, 作用だけを std::ops::Mul で要請してある. @[rust](procon-rs/src/algebra/module.rs)"
+    },
+    {
+      "title": "有理数",
+      "url": "algebra.ratio.html",
+      "content": "代数 - 有理数 有理数 $\\frac{n}{m} \\in \\mathbb Q$ を i64 の２つ組 Ratio(n, m) で表す. Ratio::new(n, m) は約分を行うがその分コストがあるので注意. @[rust](procon-rs/src/algebra/ratio.rs)"
+    },
+    {
+      "title": "虚数",
+      "url": "algebra.complex.html",
+      "content": "代数 - 複素数 複素数の定義とその演算 @[rust](procon-rs/src/algebra/complex.rs)"
+    },
+    {
+      "title": "行列",
+      "url": "algebra.matrix.html",
+      "content": "代数 - 行列 @[rust](procon-rs/src/algebra/matrix.rs)"
+    },
+    {
+      "title": "超数",
+      "url": "algebra.hyper.html",
+      "content": "代数 - 超数 全順序付き群（整数など）に $\\pm \\infty$ を付加した数. 台数 X がモノイド/加法群/環の場合, Hyper<X> もそのように定義でき, 自動で演算を定義する. @[rust](procon-rs/src/algebra/hyper.rs)"
+    },
+    {
+      "title": "Float",
+      "url": "algebra.float.html",
+      "content": "代数 - Float Rust の f64 は安全性のために半順序と半同値までしか与えられない. Float はこの安全性に目をつぶり, 全順序 Ord と全同値 Eq を与える. エイリアスとして次の2つを提供する. この着想は [[https://qiita.com/hatoo@github/items/fa14ad36a1b568d14f3e]] から得ました. 作者の @hatoo さんに感謝します. @[rust](procon-rs/src/num/float.rs)"
+    },
+    {
+      "title": "ModInt",
+      "url": "algebra.modint.html",
+      "content": "代数 - ModInt ($\\mathbb Z/p\\mathbb Z$, $\\mathbb Zp$) 概要 $\\def\\Z{\\mathbb Z}$ 剰余類環 $\\Zp$ を定義する. $$\\Zp = \\{ x + p \\Z \\mid x \\in \\Z \\}$$ ただし, $x + p \\Z = y + p \\Z \\iff (x-y) \\in p\\Z \\iff x \\equiv y \\pmod p$. ここで実装を与える ModInt は $x + p\\Z \\in \\Zp$ を $(x \\bmod p) \\in \\{ 0,1,\\ldots,p-1 \\}$ と同一視して後者で計算する. 加算と乗算は整数のものをそのまま使えて環になる. 逆数は一般には存在しないが, $\\gcd(x,p)=1$ のとき $x^{-1}$ は存在し, 特に $p$ が素数なら $\\Zp$ は体である. 例題 [ABC130/E - Common Subsequence](https://atcoder.jp/contests/abc130/tasks/abc130e) - [回答例: submissions/6014247](https://atcoder.jp/contests/abc130/submissions/6014247) [M-SOLUTIONS プロコンオープン: C - Best-of-(2n-1)](https://atcoder.jp/contests/m-solutions2019/tasks/msolutions2019c) - [回答例: submissions/6217803](https://atcoder.jp/contests/m-solutions2019/submissions/6217803) 実装について $(x + p \\mathbb Z) \\in \\mathbb Zp$ をペア $((x \\bmod p), p)$ で表現する. ただし, 計算中で $p$ は定数だとしていて, 演算中に異なる $p$ が混ざるようなことはないと仮定している. $p$ が素数であることを前提に逆元 (inv()) や除算の計算をサポートする. 逆数が存在しない場合は実行時エラーを投げる. mint! マクロは（よく登場する値である） $p = 1,000,000,007$ ということにして, $x + p \\Z$ を mint!(x) で宣言できる. この $p$ の値を変える場合は, 現状では mint マクロの定義を直接変更するしかない. ModInt は極力 i64 との四則演算をサポートしている. @[rust](procon-rs/src/algebra/modint.rs)"
+    },
+    {
+      "title": "(モノイド)作用の定義",
+      "url": "algebra.act.html",
+      "content": "代数 - 作用 作用の定義 集合 $M$ が集合 $X$ 上の作用であるとは, 各元 $m \\in M$ が写像 $X \\to X$ として機能すること. $m \\in M, x \\in X$ に対して, 作用を $\\ast$ で表すことにする. $x \\ast m \\in X$ - $(\\ast m) \\colon X \\to X$ という写像を定める - $m$ を右から掛けているので 右作用 という $m \\ast x \\in X$ - $(m \\ast) \\colon X \\to X$ という写像を定める - $m$ を左から掛けているので 左作用 という 作用を定義するときに右から作用させるか左から作用させるかを決める. 以下の実装ではこの写像を act(&Self, X) -> X で定義する. @[rust](procon-rs/src/algebra/act.rs) モノイド作用 $M$ が $X$ 上の作用であり, かつ [モノイド](algebra.monoid.html) であるときこれを モノイド作用 と呼ぶ. すなわち $M$ に関する演算 ($\\times$) と作用 ($\\ast$) が次を満たす. 単位元の作用 - $x \\ast 1 = x$ 分配律 - $x \\ast (m1 \\times m2) = (x \\ast m1) \\ast m2$ この内の分配律は, 演算 ($\\times$) が作用の 合成 であることを言っている. ここで右作用として書いたが, 左作用でも全く同様. 分配率の適用順が変わるのだけ注意."
+    },
+    {
+      "title": "加算作用",
+      "url": "algebra.act.add.html",
+      "content": "代数 - 作用 - 加算作用 加法群 $(X, +, 0)$ に対して, 加算するというモノイド作用がある. $$M = \\{ +x \\mid x \\in X \\}$$ 作用 - $(+a) \\ast x = x + a$ 単位元 - $(+0) \\ast x = x$ 合成 - $(+a) \\times (+b) = +(a+b)$ @[rust](procon-rs/src/algebra/actadd.rs)"
+    },
+    {
+      "title": "代入作用",
+      "url": "algebra.act.assign.html",
+      "content": "代数 - 作用 - 代入作用 代入を表現する 右 モノイド作用を定義する. 集合 $X$ について, $$AX = X \\sqcup \\{ \\bot \\}$$ は, 代入（値の上書き）という作用 $(\\ast)$ を表現する. 作用 - $x \\ast a = a$ if $a \\ne \\bot$ - $x \\ast \\bot = x$ 単位元 - $x \\ast \\bot = x$ 合成 - $a \\times b = b$ if $b \\ne \\bot$ - $a \\times \\bot = a$ [Min/Max モノイド](algebra.monoid.html#2-Min%2FMax%20%E3%83%A2%E3%83%8E%E3%82%A4%E3%83%89) と組み合わせてモノイド作用付きモノイドとしたとき, これを [遅延セグメントツリー](seq.lazysegmenttree) に載せると, 区間更新の出来る RMQ になる. @[rust](procon-rs/src/algebra/actassign.rs)"
+    }
+  ]
+}

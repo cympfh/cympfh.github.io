@@ -5,7 +5,7 @@
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>代数 - 有理数</title>
+  <title>代数 - Float</title>
   <style type="text/css">code{white-space: pre;}</style>
   <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
   <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
@@ -694,7 +694,7 @@ table tbody tr:hover {
       <a href="/procon/algebra.module.html">加群</a>
     </li>
     <li>
-      <a href="/procon/algebra.ratio.html" class="current">有理数</a>
+      <a href="/procon/algebra.ratio.html">有理数</a>
     </li>
     <li>
       <a href="/procon/algebra.complex.html">虚数</a>
@@ -706,7 +706,7 @@ table tbody tr:hover {
       <a href="/procon/algebra.hyper.html">超数</a>
     </li>
     <li>
-      <a href="/procon/algebra.float.html">Float</a>
+      <a href="/procon/algebra.float.html" class="current">Float</a>
     </li>
     <li>
       <a href="/procon/algebra.modint.html">ModInt</a>
@@ -760,210 +760,95 @@ table tbody tr:hover {
   </div>
 </div>
 
-<h1 class="title" id="1-%E4%BB%A3%E6%95%B0%20-%20%E6%9C%89%E7%90%86%E6%95%B0">代数 - 有理数</h1>
-<p>有理数 \(\frac{n}{m} \in \mathbb Q\) を <code>i64</code> の２つ組 <code>Ratio(n, m)</code> で表す. <code>Ratio::new(n, m)</code> は約分を行うがその分コストがあるので注意.</p>
-<pre><code class="code language-rust">&#x2F;&#x2F;&#x2F; Algebra - Ratio Numbers
-use crate::agroup; &#x2F;&#x2F; IGNORE
-use crate::algebra::field::*;
+<h1 class="title" id="1-%E4%BB%A3%E6%95%B0%20-%20Float">代数 - Float</h1>
+<p>Rust の <code>f64</code> は安全性のために半順序と半同値までしか与えられない. <code>Float</code> はこの安全性に目をつぶり, 全順序 <code>Ord</code> と全同値 <code>Eq</code> を与える. エイリアスとして次の2つを提供する.</p>
+<p>この着想は <a href="https://qiita.com/hatoo@github/items/fa14ad36a1b568d14f3e">Rustで競技プログラミング スターターキット #Rust - Qiita</a> から得ました. 作者の <code>@hatoo</code> さんに感謝します.</p>
+<pre><code class="code language-rust">&#x2F;&#x2F;&#x2F; Def of Float Numbers
 use crate::algebra::group_additive::*;
 use crate::algebra::monoid::*;
 use crate::algebra::ring::*;
-use crate::monoid; &#x2F;&#x2F; IGNORE
+use crate::{agroup, monoid, ring}; &#x2F;&#x2F; IGNORE
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct Ratio(i128, i128); &#x2F;&#x2F; Normalized (numerator &#x2F; denominator)
-
-impl Ratio {
-    pub fn new(a: i128, b: i128) -&gt; Self {
-        Ratio(a, b).normalize()
+#[derive(Debug, Clone, Copy)]
+pub struct Float(pub f64);
+impl Float {
+    pub fn abs(&amp;self) -&gt; Self {
+        Float(self.0.abs())
     }
-    fn normalize(&amp;mut self) -&gt; Self {
-        let g = Self::gcd(self.0.abs(), self.1.abs());
-        self.0 &#x2F;= g;
-        self.1 &#x2F;= g;
-        if self.1 &lt; 0 {
-            self.0 *= -1;
-            self.1 *= -1;
-        }
-        *self
+    pub fn sin(&amp;self) -&gt; Self {
+        Float(self.0.sin())
     }
-    pub fn from(x: i128) -&gt; Self {
-        Ratio(x, 1)
+    pub fn cos(&amp;self) -&gt; Self {
+        Float(self.0.cos())
     }
-    pub fn inv(&amp;self) -&gt; Self {
-        if self.0 &gt; 0 {
-            Ratio(self.1, self.0)
-        } else if self.0 &lt; 0 {
-            Ratio(-self.1, -self.0)
-        } else {
-            Ratio(1, 0) &#x2F;&#x2F;Infinity
-        }
-    }
-    fn gcd(a: i128, b: i128) -&gt; i128 {
-        if b == 0 {
-            a
-        } else {
-            Self::gcd(b, a % b)
-        }
-    }
-    fn lcm(a: i128, b: i128) -&gt; i128 {
-        a &#x2F; Self::gcd(a, b) * b
+    pub fn tan(&amp;self) -&gt; Self {
+        Float(self.0.tan())
     }
 }
 agroup! {
-    Ratio;
-    zero = Ratio(0, 1);
-    add(self, other) = {
-        let num = Self::lcm(self.1, other.1);
-        Ratio::new(self.0 * num &#x2F; self.1 + other.0 * num &#x2F; other.1, num)
-    };
-    neg(self) = {
-        Ratio(-self.0, self.1)
-    };
+    Float;
+    zero = Float(0.0);
+    add(self, other) = { Float(self.0 + other.0) };
+    neg(self) = { Float(-self.0) };
 }
 monoid! {
-    Ratio;
-    one = Ratio(1, 1);
-    mul(self, other) = { Self::new(self.0 * other.0, self.1 * other.1) }
+    Float;
+    one = Float(1.0);
+    mul(self, other) = { Float(self.0 * other.0) };
 }
-impl Ring for Ratio {}
-
-impl std::ops::Add&lt;i128&gt; for Ratio {
+ring! {
+    Float;
+    div(self, other) = { Float(self.0 &#x2F; other.0) };
+}
+impl std::ops::Rem for Float {
     type Output = Self;
-    fn add(self, z: i128) -&gt; Self {
-        Ratio::new(self.0 + self.1 * z, self.1)
+    fn rem(self, modulo: Self) -&gt; Float {
+        Float(self.0 % modulo.0)
     }
 }
-impl std::ops::AddAssign&lt;i128&gt; for Ratio {
-    fn add_assign(&amp;mut self, z: i128) {
-        self.0 += self.1 * z;
-        self.normalize();
+impl std::ops::RemAssign for Float {
+    fn rem_assign(&amp;mut self, modulo: Self) {
+        self.0 %= modulo.0;
     }
 }
-impl std::ops::Sub&lt;i128&gt; for Ratio {
-    type Output = Self;
-    fn sub(self, z: i128) -&gt; Self {
-        self + (-z)
+impl std::cmp::PartialEq for Float {
+    fn eq(&amp;self, other: &amp;Self) -&gt; bool {
+        let allow = 1e-6;
+        (self.0 - other.0).abs() &lt; allow
+            || (self.0 - other.0).abs() &#x2F; (self.0 + other.0) * 2.0 &lt; allow
     }
 }
-impl std::ops::SubAssign&lt;i128&gt; for Ratio {
-    fn sub_assign(&amp;mut self, z: i128) {
-        *self += -z;
-    }
-}
-impl std::ops::Mul&lt;i128&gt; for Ratio {
-    type Output = Self;
-    fn mul(self, z: i128) -&gt; Self {
-        Self::new(self.0 * z, self.1)
-    }
-}
-impl std::ops::MulAssign&lt;i128&gt; for Ratio {
-    fn mul_assign(&amp;mut self, z: i128) {
-        self.0 *= z;
-        self.normalize();
-    }
-}
-impl std::ops::Div for Ratio {
-    type Output = Self;
-    fn div(self, other: Self) -&gt; Self {
-        Self::new(self.0 * other.1, self.1 * other.0)
-    }
-}
-impl Field for Ratio {}
-impl std::ops::Div&lt;i128&gt; for Ratio {
-    type Output = Self;
-    fn div(self, other: i128) -&gt; Self {
-        Self::new(self.0, self.1 * other)
-    }
-}
-impl std::ops::DivAssign&lt;i128&gt; for Ratio {
-    fn div_assign(&amp;mut self, z: i128) {
-        self.1 *= z;
-        self.normalize();
-    }
-}
-impl PartialOrd for Ratio {
+impl std::cmp::Eq for Float {}
+impl std::cmp::PartialOrd for Float {
     fn partial_cmp(&amp;self, other: &amp;Self) -&gt; Option&lt;std::cmp::Ordering&gt; {
-        let left = self.0 * other.1;
-        let right = other.0 * self.1;
-        left.partial_cmp(&amp;right)
+        self.0.partial_cmp(&amp;other.0)
     }
 }
-impl Ord for Ratio {
+impl std::cmp::Ord for Float {
     fn cmp(&amp;self, other: &amp;Self) -&gt; std::cmp::Ordering {
-        self.partial_cmp(&amp;other).unwrap()
+        self.0.partial_cmp(&amp;other.0).unwrap()
     }
-}
-
-#[macro_export]
-macro_rules! r {
-    ($x:expr, $y:expr) =&gt; {
-        Ratio::new($x, $y)
-    };
 }
 
 #[cfg(test)]
-mod test_ratio {
-    use crate::algebra::ratio::*;
-
+mod test_float {
+    use crate::algebra::group_additive::AGroup;
+    use crate::num::float::Float;
     #[test]
-    fn it_works() {
-        assert_eq!(r!(1, 2) + r!(1, 2), Ratio(1, 1));
-        assert_eq!(r!(1, 3) + r!(2, 3), Ratio(1, 1));
-        assert_eq!(r!(1, 3) + r!(1, 3) + r!(1, 3), Ratio(1, 1));
-        assert_eq!(r!(1, 3) + 2, r!(7, 3));
-        assert_eq!(r!(1, 3) - r!(1, 3), Ratio(0, 1));
-        assert_eq!(r!(1, 3) - r!(2, 3), Ratio(-1, 3));
-        assert_eq!(r!(1, 2) - r!(1, 3), r!(1, 6));
-        assert_eq!(r!(1, 3) - r!(0, 2), Ratio(1, 3));
-        assert_eq!(r!(1, 1) * r!(1, 1), Ratio(1, 1));
-        assert_eq!(r!(1, 3) * r!(2, 3), Ratio(2, 9));
-        assert_eq!(r!(2, 3) * -1, Ratio(-2, 3));
-        assert_eq!(r!(2, 3) &#x2F; -1, Ratio(-2, 3));
-        assert_eq!(r!(2, 3) &#x2F; r!(2, 1), r!(1, 3));
-        assert_eq!(
-            Ratio::zero() * 2 + Ratio::one() &#x2F; Ratio::from(2),
-            Ratio(1, 2)
-        );
+    fn test_comparable() {
+        let mut x = vec![Float(1.0), Float(0.0), Float(-1.0)];
+        x.sort();
+        assert_eq!(x, vec![Float(-1.0), Float(0.0), Float(1.0),]);
     }
-
     #[test]
-    fn test_inv() {
-        assert_eq!(r!(1, 1).inv(), r!(1, 1));
-        assert_eq!(r!(1, 2).inv(), r!(2, 1));
-        assert_eq!(r!(1, -2).inv(), r!(-2, 1));
-        &#x2F;&#x2F; 1&#x2F;0 = Inf
-        assert_eq!(r!(0, 1).inv(), r!(1, 0));
-        assert_eq!(r!(0, 2).inv(), r!(1, 0));
-        assert_eq!(r!(0, -3).inv(), r!(1, 0));
-        &#x2F;&#x2F; 1&#x2F;Inf = 0
-        assert_eq!(r!(1, 0).inv(), r!(0, 1));
-    }
-
-    #[test]
-    fn test_zero() {
-        assert_eq!(r!(0, 1), Ratio(0, 1));
-        assert_eq!(r!(0, 2), Ratio(0, 1));
-        assert_eq!(r!(0, -3), Ratio(0, 1));
-    }
-
-    #[test]
-    fn test_mut() {
-        let mut r = r!(1, 2);
-        r *= 2;
-        assert_eq!(r, Ratio(1, 1));
-
-        r -= 1;
-        assert_eq!(r, Ratio(0, 1));
-
-        r += r!(1, 3);
-        assert_eq!(r, Ratio(1, 3));
-
-        r -= r!(1, 6);
-        assert_eq!(r, Ratio(1, 6));
-
-        r = r.inv();
-        assert_eq!(r, Ratio(6, 1));
+    fn test_equality() {
+        let x = Float(3.14);
+        let y = Float(3.141);
+        let z = Float(3.140000001);
+        assert_ne!(x, y);
+        assert_eq!(x, z);
+        assert_eq!(Float(0.0), Float::zero());
+        assert_eq!(Float(2e-7), Float::zero());
     }
 }
 </code></pre>

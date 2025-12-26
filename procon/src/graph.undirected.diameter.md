@@ -17,4 +17,8 @@
 
 距離が最大の点をダイクストラ法で求めることにすれば計算量は減る.
 
+### 実装
+
+ワーシャルフロイドによる方法.
+
 @[rust](procon-rs/src/graph/undirected/diameter.rs)

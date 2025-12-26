@@ -11,4 +11,6 @@ $$(x_1, \ldots, x_N \mid x_i \in X)$$
 - 区間への **加算**
     - 添字区間 $I$ について, $x_i \leftarrow x_i + x$ for each $i \in I$
 
+## 実装
+
 @[rust](procon-rs/src/sequence/tree/ranged_add_rmq.rs)

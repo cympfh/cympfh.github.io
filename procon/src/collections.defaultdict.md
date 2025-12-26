@@ -20,4 +20,6 @@ fn main() {
 }
 ```
 
+## 実装
+
 @[rust](procon-rs/src/collections/defaultdict.rs)

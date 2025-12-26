@@ -426,18 +426,28 @@ body {
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
-  color: var(--bg-primary);
-  background: var(--text-primary);
+  color: var(--text-primary);
+  background: transparent;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   border-radius: 4px;
   cursor: pointer;
   user-select: none;
-  transition: opacity 0.2s ease;
+  transition: background 0.2s ease;
 }
 
 .toc-part-header:hover {
-  opacity: 0.9;
+  background: var(--bg-hover);
+}
+
+/* Level 1 specific: inverted colors */
+.toc-part-level-1 .toc-part-header {
+  color: var(--bg-primary);
+  background: var(--text-primary);
+}
+
+.toc-part-level-1 .toc-part-header:hover {
+  background: var(--text-secondary);
 }
 
 .toc-part-header span {
@@ -455,12 +465,12 @@ body {
   justify-content: center;
   width: 20px;
   height: 20px;
-  color: var(--bg-primary);
+  color: currentColor;
   transition: transform 0.2s ease;
 }
 
 .toc-fold-toggle:hover {
-  opacity: 0.8;
+  transform: scale(1.1);
 }
 
 .toc-fold-toggle .fold-icon {
@@ -490,22 +500,26 @@ body {
 /* Part without children (no header wrapper) */
 .toc-part:not(:has(.toc-part-header)) {
   padding: 8px 12px;
-  color: var(--bg-primary);
-  background: var(--text-primary);
+  color: var(--text-primary);
+  background: transparent;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   border-radius: 4px;
 }
 
+/* Level 1: 大見出し (Part) - inverted colors for parts without children */
+.toc-part-level-1:not(:has(.toc-part-header)) {
+  color: var(--bg-primary);
+  background: var(--text-primary);
+}
+
 /* Level 2: 中見出し (Chapter) */
 .toc-part-level-2 {
-  opacity: 0.8;
   margin-left: 12px !important;
 }
 
 /* Level 3: 小見出し (Section) */
 .toc-part-level-3 {
-  opacity: 0.6;
   margin-left: 20px !important;
 }
 
@@ -803,7 +817,7 @@ table tbody tr:hover {
             <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
           </svg>
         </button>
-        <span>有理数・実数・複素数・行列・超数</span>
+        <span>数・行列</span>
       </div>
       <ul class="toc-children collapsed">
         <li>
@@ -816,10 +830,10 @@ table tbody tr:hover {
           <a href="/procon/algebra.complex.html" class="toc-page-child toc-page-indent-2">複素数</a>
         </li>
         <li>
-          <a href="/procon/algebra.matrix.html" class="toc-page-child toc-page-indent-2">行列</a>
+          <a href="/procon/algebra.hyper.html" class="toc-page-child toc-page-indent-2">超数</a>
         </li>
         <li>
-          <a href="/procon/algebra.hyper.html" class="toc-page-child toc-page-indent-2">超数</a>
+          <a href="/procon/algebra.matrix.html" class="toc-page-child toc-page-indent-2">行列</a>
         </li>
       </ul>
     </li>
@@ -838,7 +852,7 @@ table tbody tr:hover {
         </li>
       </ul>
     </li>
-    <li class="toc-part toc-part-level-1 foldable">
+    <li class="toc-part toc-part-level-2 foldable">
       <div class="toc-part-header collapsed">
         <button class="toc-fold-toggle" aria-label="Toggle section">
           <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
@@ -849,13 +863,13 @@ table tbody tr:hover {
       </div>
       <ul class="toc-children collapsed">
         <li>
-          <a href="/procon/algebra.act.html" class="toc-page-child toc-page-indent-1">(モノイド)作用の定義</a>
+          <a href="/procon/algebra.act.html" class="toc-page-child toc-page-indent-2">作用の定義</a>
         </li>
         <li>
-          <a href="/procon/algebra.act.add.html" class="toc-page-child toc-page-indent-1">加算作用</a>
+          <a href="/procon/algebra.act.add.html" class="toc-page-child toc-page-indent-2">加算作用</a>
         </li>
         <li>
-          <a href="/procon/algebra.act.assign.html" class="toc-page-child toc-page-indent-1">代入作用</a>
+          <a href="/procon/algebra.act.assign.html" class="toc-page-child toc-page-indent-2">代入作用</a>
         </li>
       </ul>
     </li>
@@ -1016,7 +1030,7 @@ table tbody tr:hover {
           <a href="/procon/seq.bit.html" class="toc-page-child toc-page-indent-3">BIT</a>
         </li>
         <li>
-          <a href="/procon/seq.bit_cumulative.html" class="toc-page-child toc-page-indent-3">累積和に関するBIT</a>
+          <a href="/procon/seq.bit_cumulative.html" class="toc-page-child toc-page-indent-3">区間加算を処理する BIT</a>
         </li>
       </ul>
     </li>
@@ -1032,6 +1046,11 @@ table tbody tr:hover {
       <ul class="toc-children">
         <li>
           <a href="/procon/seq.segment_tree.html" class="toc-page-child toc-page-indent-3 current">セグメントツリー</a>
+          <ul class="toc-sections toc-sections-indent-3">
+            <li><a href="/procon/seq.segment_tree.html#2-%E6%A6%82%E8%A6%81">概要</a></li>
+            <li><a href="/procon/seq.segment_tree.html#2-%E6%89%8B%E6%B3%95%E3%81%AE%E6%A6%82%E7%95%A5">手法の概略</a></li>
+            <li><a href="/procon/seq.segment_tree.html#2-%E5%AE%9F%E8%A3%85">実装</a></li>
+          </ul>
         </li>
         <li>
           <a href="/procon/seq.rmq.html" class="toc-page-child toc-page-indent-3">RMQ</a>
@@ -1065,6 +1084,21 @@ table tbody tr:hover {
         </li>
         <li>
           <a href="/procon/seq.ranged_add_segment_tree_sum.html" class="toc-page-child toc-page-indent-3">区間加算 加法セグメントツリー</a>
+        </li>
+      </ul>
+    </li>
+    <li class="toc-part toc-part-level-2 foldable">
+      <div class="toc-part-header collapsed">
+        <button class="toc-fold-toggle" aria-label="Toggle section">
+          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <span>フーリエ変換</span>
+      </div>
+      <ul class="toc-children collapsed">
+        <li>
+          <a href="/procon/fft.convolution.html" class="toc-page-child toc-page-indent-2">畳み込み</a>
         </li>
       </ul>
     </li>
@@ -1260,26 +1294,11 @@ table tbody tr:hover {
             <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
           </svg>
         </button>
-        <span>フーリエ変換</span>
-      </div>
-      <ul class="toc-children collapsed">
-        <li>
-          <a href="/procon/fft.convolution.html" class="toc-page-child toc-page-indent-2">畳み込み</a>
-        </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-2 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
         <span>循環検出</span>
       </div>
       <ul class="toc-children collapsed">
         <li>
-          <a href="/procon/algorithm.rho.html" class="toc-page-child toc-page-indent-2">フロイドの$\rho$アルゴリズム</a>
+          <a href="/procon/algorithm.rho.html" class="toc-page-child toc-page-indent-2">フロイドの\(\rho\)アルゴリズム</a>
         </li>
       </ul>
     </li>
@@ -1412,7 +1431,7 @@ table tbody tr:hover {
       </div>
       <ul class="toc-children collapsed">
         <li>
-          <a href="/procon/bigint.html" class="toc-page-child toc-page-indent-2">ビッグエンディアンベクタ</a>
+          <a href="/procon/bigint.html" class="toc-page-child toc-page-indent-2">bigint</a>
         </li>
       </ul>
     </li>
@@ -1427,13 +1446,13 @@ table tbody tr:hover {
       </div>
       <ul class="toc-children collapsed">
         <li>
-          <a href="/procon/num.iter.perm.html" class="toc-page-child toc-page-indent-2">階乗 - $n!$</a>
+          <a href="/procon/num.iter.perm.html" class="toc-page-child toc-page-indent-2">階乗 - \(n!\)</a>
         </li>
         <li>
-          <a href="/procon/num.iter.powperm.html" class="toc-page-child toc-page-indent-2">冪乗 - $n^m$</a>
+          <a href="/procon/num.iter.powperm.html" class="toc-page-child toc-page-indent-2">冪乗 - \(n^m\)</a>
         </li>
         <li>
-          <a href="/procon/num.iter.comb.html" class="toc-page-child toc-page-indent-2">二項係数 - ${}_nC{}_m$</a>
+          <a href="/procon/num.iter.comb.html" class="toc-page-child toc-page-indent-2">二項係数 - \({}_nC{}_m\)</a>
         </li>
       </ul>
     </li>
@@ -1455,21 +1474,7 @@ table tbody tr:hover {
         </li>
       </ul>
     </li>
-    <li class="toc-part toc-part-level-1 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>文字列 (Vector)</span>
-      </div>
-      <ul class="toc-children collapsed">
-        <li>
-          <a href="/procon/string.suffix-array.html" class="toc-page-child toc-page-indent-1">接尾辞配列 (SA)</a>
-        </li>
-      </ul>
-    </li>
+    <li class="toc-part toc-part-level-1">文字列 (Vector)</li>
     <li class="toc-part toc-part-level-2 foldable">
       <div class="toc-part-header collapsed">
         <button class="toc-fold-toggle" aria-label="Toggle section">
@@ -1485,6 +1490,9 @@ table tbody tr:hover {
         </li>
         <li>
           <a href="/procon/string.z.html" class="toc-page-child toc-page-indent-2">Z-alogirhtm</a>
+        </li>
+        <li>
+          <a href="/procon/string.suffix-array.html" class="toc-page-child toc-page-indent-2">接尾辞配列 (SA)</a>
         </li>
         <li>
           <a href="/procon/string.sa-search.html" class="toc-page-child toc-page-indent-2">SA による文字列検索</a>
@@ -1521,18 +1529,19 @@ table tbody tr:hover {
         </li>
       </ul>
     </li>
-    <li class="toc-part toc-part-level-1 foldable">
+    <li class="toc-part toc-part-level-1">時間/時刻</li>
+    <li class="toc-part toc-part-level-2 foldable">
       <div class="toc-part-header collapsed">
         <button class="toc-fold-toggle" aria-label="Toggle section">
           <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
             <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
           </svg>
         </button>
-        <span>時間/時刻</span>
+        <span>制限時間付きループ</span>
       </div>
       <ul class="toc-children collapsed">
         <li>
-          <a href="/procon/time.while.html" class="toc-page-child toc-page-indent-1">制限時間付きループ</a>
+          <a href="/procon/time.while.html" class="toc-page-child toc-page-indent-2">loop_timeout_ms! マクロ</a>
         </li>
       </ul>
     </li>
@@ -1570,6 +1579,9 @@ table tbody tr:hover {
         <li>
           <a href="/procon/hash.rolling.html" class="toc-page-child toc-page-indent-1">Rolling Hash</a>
         </li>
+        <li>
+          <a href="/procon/hash.string.html" class="toc-page-child toc-page-indent-1">文字列ハッシュ</a>
+        </li>
       </ul>
     </li>
     <li class="toc-part toc-part-level-1 foldable">
@@ -1602,9 +1614,6 @@ table tbody tr:hover {
       <ul class="toc-children collapsed">
         <li>
           <a href="/procon/misc.kmeans.html" class="toc-page-child toc-page-indent-1">k-means</a>
-        </li>
-        <li>
-          <a href="/procon/15puzzle.html" class="toc-page-child toc-page-indent-1">一般化15パズル</a>
         </li>
         <li>
           <a href="/procon/misc.sort-n.html" class="toc-page-child toc-page-indent-1">numeric sort</a>
@@ -1685,6 +1694,7 @@ table tbody tr:hover {
 </div>
 
 <h1 class="title" id="1-%E6%95%B0%E5%88%97%20-%20%E3%82%BB%E3%82%B0%E3%83%A1%E3%83%B3%E3%83%88%E3%83%84%E3%83%AA%E3%83%BC">数列 - セグメントツリー</h1>
+<h2 id="2-%E6%A6%82%E8%A6%81">概要</h2>
 <p><a href="algebra.monoid">モノイド</a> \((X, \times, 1)\) と \(X\) 上の数列</p>
 \[(x_1, \ldots, x_N \mid x_i \in X)\]
 <p>について, 次の操作がそれぞれ \(O(\log N)\) で出来る.</p>
@@ -1698,10 +1708,20 @@ table tbody tr:hover {
   <li>
     一点更新
     <ul>
-      <li>\(x_i \leftarrow x\)</li>
+      <li>\(x_i \leftarrow x_{\mathrm{new}}\)</li>
     </ul>
   </li>
 </ul>
+<h2 id="2-%E6%89%8B%E6%B3%95%E3%81%AE%E6%A6%82%E7%95%A5">手法の概略</h2>
+<p>区間とその積をノードに持つ (完全) 二分木を構成する. つまり, 区間 \(I\) に対応するノード \(\mathcal{N}_I\) があって, その積 \(p_I = \prod_{i \in I} x_i\) を <strong>予め</strong> 計算しておく.</p>
+<p>区間 \(I\) が空でないならば, それを左右に分割した区間 \(J_1\) と \(J_2\) に分割できるだろう（二等分が望ましい）. という訳で \(\mathcal{N}_I\) の子ノードとして \(\mathcal{N}_{J_1}\) と \(\mathcal{N}_{J_2}\) を持たせる. もちろん \(p_{J_1}, p_{J_2}\) も予め計算しておく.</p>
+<p>根を全体区間 \([0, N)\) とし, 葉を一つの要素からなる区間 \(\{ x_i \}\) とする二分木が構成できたら, これがセグメントツリーである. セグメントツリーが持つノード数（つまり区間数）は \(2N\) 程度.</p>
+<p>予め計算しておきたい \(p\) は再帰的に</p>
+\[p_I = p_{J_1} \times p_{J_2}\]
+<p>とできるので, 葉から辿ってくことで, 積演算を \(2N\) 回すればよく, 木の構築は \(O(N)\) で出来る.</p>
+<p>任意の区間積の計算は, 求めたい区間をちょうど被覆するノード \(O(\log N)\) 個程度に必ず分解できる. （これは \(N\) 程度の自然数は二進数で \(\log_2 N\) 桁で表せることに対応している.） 含むノードを大きいものから貪欲に選んでいけばよい.</p>
+<p>更新は, 葉ノードを更新した後に, その親ノードを辿っていき \(p\) を更新していけばよい. このとき辿るノード数は木の高さなので \(O(\log N)\) である.</p>
+<h2 id="2-%E5%AE%9F%E8%A3%85">実装</h2>
 <p>コンストラクタとして, 長さだけ指定して単位元で初期化する <code>new</code> と, 数列を <code>vec</code> で与える <code>from</code> とがある.</p>
 <pre><code class="code language-rust">&#x2F;&#x2F;&#x2F; Sequence - Segment Tree
 use crate::algebra::monoid::*;

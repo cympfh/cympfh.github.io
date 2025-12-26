@@ -9,7 +9,9 @@ $$\sum_{i = l}^{r-1} x_i$$
 
 数列中の値の変更は出来ないので注意.
 
-## メモ
+### Note
 値を動的に変更したい場合は [BIT (Fenwick Tree)](seq.bit) を使うと便利.
+
+## 実装
 
 @[rust](procon-rs/src/sequence/cumsum1d.rs)

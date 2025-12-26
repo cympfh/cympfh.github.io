@@ -7,4 +7,6 @@
 - 中央値の取得
 - 中央値の除去（怪しい）
 
+## 実装
+
 @[rust](procon-rs/src/sequence/median_heap.rs)

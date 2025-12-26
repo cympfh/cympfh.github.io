@@ -5,7 +5,7 @@
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>二次元ユークリッド幾何 - 直線, 線分の定義</title>
+  <title>文字列ハッシュ</title>
   <style type="text/css">code{white-space: pre;}</style>
   <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
   <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
@@ -1098,8 +1098,8 @@ table tbody tr:hover {
       </ul>
     </li>
     <li class="toc-part toc-part-level-1">二次元ユークリッド幾何</li>
-    <li class="toc-part toc-part-level-2">
-      <div class="toc-part-header">
+    <li class="toc-part toc-part-level-2 foldable">
+      <div class="toc-part-header collapsed">
         <button class="toc-fold-toggle" aria-label="Toggle section">
           <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
             <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
@@ -1107,16 +1107,12 @@ table tbody tr:hover {
         </button>
         <span>図形の定義</span>
       </div>
-      <ul class="toc-children">
+      <ul class="toc-children collapsed">
         <li>
           <a href="/procon/geo.2d.point.html" class="toc-page-child toc-page-indent-2">点</a>
         </li>
         <li>
-          <a href="/procon/geo.2d.line.html" class="toc-page-child toc-page-indent-2 current">直線, 線分</a>
-          <ul class="toc-sections toc-sections-indent-2">
-            <li><a href="/procon/geo.2d.line.html#2-%E6%A6%82%E8%A6%81">概要</a></li>
-            <li><a href="/procon/geo.2d.line.html#2-%E5%AE%9F%E8%A3%85">実装</a></li>
-          </ul>
+          <a href="/procon/geo.2d.line.html" class="toc-page-child toc-page-indent-2">直線, 線分</a>
         </li>
         <li>
           <a href="/procon/geo.2d.polygon.html" class="toc-page-child toc-page-indent-2">多角形</a>
@@ -1562,8 +1558,8 @@ table tbody tr:hover {
         </li>
       </ul>
     </li>
-    <li class="toc-part toc-part-level-1 foldable">
-      <div class="toc-part-header collapsed">
+    <li class="toc-part toc-part-level-1">
+      <div class="toc-part-header">
         <button class="toc-fold-toggle" aria-label="Toggle section">
           <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
             <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
@@ -1571,7 +1567,7 @@ table tbody tr:hover {
         </button>
         <span>ハッシュ</span>
       </div>
-      <ul class="toc-children collapsed">
+      <ul class="toc-children">
         <li>
           <a href="/procon/hash.zobrist.html" class="toc-page-child toc-page-indent-1">Zobrist Hash</a>
         </li>
@@ -1579,7 +1575,11 @@ table tbody tr:hover {
           <a href="/procon/hash.rolling.html" class="toc-page-child toc-page-indent-1">Rolling Hash</a>
         </li>
         <li>
-          <a href="/procon/hash.string.html" class="toc-page-child toc-page-indent-1">文字列ハッシュ</a>
+          <a href="/procon/hash.string.html" class="toc-page-child toc-page-indent-1 current">文字列ハッシュ</a>
+          <ul class="toc-sections toc-sections-indent-1">
+            <li><a href="/procon/hash.string.html#2-%E6%A6%82%E8%A6%81">概要</a></li>
+            <li><a href="/procon/hash.string.html#2-%E5%AE%9F%E8%A3%85">実装</a></li>
+          </ul>
         </li>
       </ul>
     </li>
@@ -1692,136 +1692,126 @@ table tbody tr:hover {
   </div>
 </div>
 
-<h1 class="title" id="1-%E4%BA%8C%E6%AC%A1%E5%85%83%E3%83%A6%E3%83%BC%E3%82%AF%E3%83%AA%E3%83%83%E3%83%89%E5%B9%BE%E4%BD%95%20-%20%E7%9B%B4%E7%B7%9A%2C%20%E7%B7%9A%E5%88%86%E3%81%AE%E5%AE%9A%E7%BE%A9">二次元ユークリッド幾何 - 直線, 線分の定義</h1>
+<h1 class="title" id="1-%E6%96%87%E5%AD%97%E5%88%97%E3%83%8F%E3%83%83%E3%82%B7%E3%83%A5">文字列ハッシュ</h1>
 <h2 id="2-%E6%A6%82%E8%A6%81">概要</h2>
+<p><a href="hash.zobrist.html">Zobrist Hash</a> と <a href="hash.rolling.html">Rolling Hash</a> との両方を使った文字列ハッシュの実装例.</p>
 <ul>
   <li>
-    直線 <code>Line</code> と線分 <code>LineSegment</code> の定義
+    操作
     <ul>
-      <li>
-        直線は端点を持たず通る二点で定義する
-        <ul>
-          <li><code>line!(x0, y0; x1, y1)</code></li>
-        </ul>
-      </li>
-      <li>
-        線分は2つの端点とその方向から定められる
-        <ul>
-          <li><code>line!(x0, y0 =&gt; x1, y1)</code></li>
-        </ul>
-      </li>
+      <li>初期値は空文字列</li>
+      <li>一文字を先頭・末尾に追加・削除が \(O(1)\) で可能</li>
+      <li>（ハッシュ済み）文字列同士の連結が \(O(1)\) で可能</li>
+      <li><code>==</code> , <code>!=</code> 演算子で文字列同士の等価比較が \(O(1)\) で可能</li>
     </ul>
   </li>
-  <li>点までの距離 <code>::distance_from</code></li>
-  <li>同値 <code>==</code> , <code>!=</code></li>
-  <li>線分についてその向きを変える <code>-</code></li>
+  <li>
+    耐久性
+    <ul>
+      <li>アルファベット表 <code>char -&gt; i128</code> のマッピングをランダムに生成</li>
+    </ul>
+  </li>
 </ul>
 <h2 id="2-%E5%AE%9F%E8%A3%85">実装</h2>
-<pre><code class="code language-rust">&#x2F;&#x2F;&#x2F; Geometry2D - Definition of Line
-use crate::geometry2d::point::*;
+<pre><code class="code language-rust">&#x2F;&#x2F;&#x2F; Hash - String Hash (by ZobristHash &amp; RollingHash)
+use crate::hash::rolling::*;
+use crate::hash::zobrist::*;
+use crate::num::random::xorshift::*;
 
-#[derive(Debug, Clone, Copy)]
-pub struct Line(pub Point, pub Point);
-
-impl Line {
-    pub fn new(x: Point, y: Point) -&gt; Self {
-        assert!(x != y);
-        Self(x, y)
-    }
-    pub fn distance_from(&amp;self, p: Point) -&gt; f64 {
-        let u = p - self.0;
-        let v = self.1 - self.0;
-        (u.det(&amp;v) &#x2F; v.norm()).abs()
-    }
+#[derive(Debug, Clone)]
+pub struct StringHash {
+    length: usize,
+    sethash: ZobristHash,
+    rolhash: RollingHash,
+    table: Vec&lt;i128&gt;, &#x2F;&#x2F; char -&gt; int
 }
-impl std::cmp::PartialEq for Line {
-    fn eq(&amp;self, other: &amp;Line) -&gt; bool {
-        let a = Point::zero();
-        let b = Point(1.0, 0.0);
-        let c = Point(0.0, 1.0);
-        let eps = 1e-6;
-        for p in &amp;[a, b, c] {
-            if (self.distance_from(*p) - other.distance_from(*p)).abs() &gt; eps {
-                return false;
-            }
+impl StringHash {
+    pub fn new() -&gt; Self {
+        let length = 0;
+        let sethash = ZobristHash::new();
+        let rolhash = RollingHash::new();
+        let mut rng = XorShift::new();
+        let table: Vec&lt;i128&gt; = (0..300)
+            .map(|_| {
+                let max = 1_000_000_007;
+                rng.gen::&lt;i128&gt;() % max
+            })
+            .collect();
+        Self {
+            length,
+            sethash,
+            rolhash,
+            table,
         }
-        true
+    }
+    pub fn push_front(&amp;mut self, c: char) {
+        let x = c as usize;
+        self.sethash.add(self.table[x]);
+        self.rolhash.push_front(self.table[x]);
+        self.length += 1;
+    }
+    pub fn push_back(&amp;mut self, c: char) {
+        let x = c as usize;
+        self.sethash.add(self.table[x]);
+        self.rolhash.push_back(self.table[x]);
+        self.length += 1;
+    }
+    pub fn pop_front(&amp;mut self, c: char) {
+        let x = c as usize;
+        self.sethash.remove(self.table[x]);
+        self.rolhash.pop_front(self.table[x]);
+        self.length -= 1;
+    }
+    pub fn pop_back(&amp;mut self, c: char) {
+        let x = c as usize;
+        self.length -= 1;
+        self.sethash.remove(self.table[x]);
+        self.rolhash.pop_back(self.table[x]);
+    }
+    pub fn concat(&amp;self, other: &amp;Self) -&gt; Self {
+        let mut r = self.clone();
+        r.length = self.length + other.length;
+        r.sethash = self.sethash.concat(&amp;other.sethash);
+        r.rolhash = self.rolhash.concat(&amp;other.rolhash);
+        r
     }
 }
-impl std::cmp::Eq for Line {}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct LineSegment(pub Point, pub Point);
-
-impl LineSegment {
-    pub fn new(x: Point, y: Point) -&gt; Self {
-        assert!(x != y);
-        Self(x, y)
-    }
-    pub fn to_line(&amp;self) -&gt; Line {
-        Line(self.0, self.1)
+impl std::cmp::PartialEq for StringHash {
+    fn eq(&amp;self, other: &amp;Self) -&gt; bool {
+        self.length == other.length
+            &amp;&amp; self.sethash == other.sethash
+            &amp;&amp; self.rolhash == other.rolhash
     }
 }
-impl std::ops::Neg for LineSegment {
-    type Output = Self;
-    fn neg(self) -&gt; Self {
-        Self(self.1, self.0)
-    }
-}
-
-#[macro_export]
-macro_rules! line {
-    ($x0:expr, $y0:expr; $x1:expr, $y1:expr) =&gt; {
-        Line::new(Point($x0, $y0), Point($x1, $y1))
-    };
-    ($x0:expr, $y0:expr =&gt; $x1:expr, $y1:expr) =&gt; {
-        LineSegment::new(Point($x0, $y0), Point($x1, $y1))
-    };
-    ($a:expr; $b:expr) =&gt; {
-        Line::new($a, $b)
-    };
-    ($a:expr =&gt; $b:expr) =&gt; {
-        LineSegment::new($a, $b)
-    };
-}
+impl std::cmp::Eq for StringHash {}
 
 #[cfg(test)]
-mod test_line {
-    use crate::geometry2d::line::*;
-
+mod test_hash_string {
+    use crate::hash::string::*;
     #[test]
-    fn use_macro() {
-        assert_eq!(
-            line!(0.0, 0.0; 1.0, 1.0),
-            Line::new(Point(0.0, 0.0), Point(1.0, 1.0))
-        );
-        assert_eq!(
-            line!(0.0, 0.0 =&gt; 1.0, 1.0),
-            LineSegment::new(Point(0.0, 0.0), Point(1.0, 1.0))
-        );
-        let p = Point(1.0, 2.0);
-        let q = Point(2.0, -1.0);
-        assert_eq!(line!(p; q), Line::new(p, q));
-        assert_eq!(line!(p =&gt; q), LineSegment::new(p, q));
-    }
-
-    #[test]
-    fn line_equality() {
-        assert_eq!(line!(0.0, 0.0; 1.0, 1.0), line!(2.0, 2.0; -1.0, -1.0),);
-        assert_eq!(line!(0.0, 0.0; 1.0, 1.0), line!(1.0, 1.0; 2.0, 2.0),);
-        assert_ne!(line!(0.0, 0.0; 1.0, 1.0), line!(1.0, 1.0; 2.0, 2.01),);
-    }
-
-    #[test]
-    fn line_segment_equality() {
-        assert_eq!(line!(0.0, 0.0 =&gt; 1.0, 1.0), line!(0.0, 0.0 =&gt; 1.0, 1.0),);
-        assert_ne!(line!(0.0, 0.0 =&gt; 1.0, 1.0), line!(0.0, 0.0 =&gt; 1.0, 1.01),);
-        assert_ne!(line!(0.0, 1.0 =&gt; 1.0, 0.0), line!(1.0, 0.0 =&gt; 0.0, 1.0),);
-    }
-
-    #[test]
-    fn arithmetic() {
-        assert_eq!(line!(0.0, 1.0 =&gt; 1.0, 0.0), -line!(1.0, 0.0 =&gt; 0.0, 1.0),);
+    fn test_hash_string() {
+        &#x2F;&#x2F; &#x27;&#x27; == &#x27;&#x27;
+        let mut x = StringHash::new();
+        let mut y = StringHash::new();
+        assert_eq!(x, y);
+        &#x2F;&#x2F; &#x27;abc&#x27; != &#x27;bc&#x27;
+        x.push_back(&#x27;a&#x27;);
+        x.push_back(&#x27;b&#x27;);
+        x.push_back(&#x27;c&#x27;);
+        y.push_back(&#x27;c&#x27;);
+        y.push_front(&#x27;b&#x27;);
+        assert_ne!(x, y);
+        &#x2F;&#x2F; &#x27;abc&#x27; == &#x27;abc&#x27;
+        y.push_front(&#x27;a&#x27;);
+        assert_eq!(x, y);
+        &#x2F;&#x2F; &#x27;(abc&#x27; != &#x27;abc)&#x27;
+        x.push_front(&#x27;(&#x27;);
+        y.push_back(&#x27;)&#x27;);
+        assert_ne!(x, y);
+        &#x2F;&#x2F; &#x27;(abc)&#x27; == &#x27;(abc)&#x27;
+        x.push_back(&#x27;)&#x27;);
+        y.push_front(&#x27;(&#x27;);
+        assert_eq!(x, y);
     }
 }
 </code></pre>

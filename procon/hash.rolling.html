@@ -426,18 +426,28 @@ body {
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
-  color: var(--bg-primary);
-  background: var(--text-primary);
+  color: var(--text-primary);
+  background: transparent;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   border-radius: 4px;
   cursor: pointer;
   user-select: none;
-  transition: opacity 0.2s ease;
+  transition: background 0.2s ease;
 }
 
 .toc-part-header:hover {
-  opacity: 0.9;
+  background: var(--bg-hover);
+}
+
+/* Level 1 specific: inverted colors */
+.toc-part-level-1 .toc-part-header {
+  color: var(--bg-primary);
+  background: var(--text-primary);
+}
+
+.toc-part-level-1 .toc-part-header:hover {
+  background: var(--text-secondary);
 }
 
 .toc-part-header span {
@@ -455,12 +465,12 @@ body {
   justify-content: center;
   width: 20px;
   height: 20px;
-  color: var(--bg-primary);
+  color: currentColor;
   transition: transform 0.2s ease;
 }
 
 .toc-fold-toggle:hover {
-  opacity: 0.8;
+  transform: scale(1.1);
 }
 
 .toc-fold-toggle .fold-icon {
@@ -490,22 +500,26 @@ body {
 /* Part without children (no header wrapper) */
 .toc-part:not(:has(.toc-part-header)) {
   padding: 8px 12px;
-  color: var(--bg-primary);
-  background: var(--text-primary);
+  color: var(--text-primary);
+  background: transparent;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   border-radius: 4px;
 }
 
+/* Level 1: 大見出し (Part) - inverted colors for parts without children */
+.toc-part-level-1:not(:has(.toc-part-header)) {
+  color: var(--bg-primary);
+  background: var(--text-primary);
+}
+
 /* Level 2: 中見出し (Chapter) */
 .toc-part-level-2 {
-  opacity: 0.8;
   margin-left: 12px !important;
 }
 
 /* Level 3: 小見出し (Section) */
 .toc-part-level-3 {
-  opacity: 0.6;
   margin-left: 20px !important;
 }
 
@@ -803,7 +817,7 @@ table tbody tr:hover {
             <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
           </svg>
         </button>
-        <span>有理数・実数・複素数・行列・超数</span>
+        <span>数・行列</span>
       </div>
       <ul class="toc-children collapsed">
         <li>
@@ -816,10 +830,10 @@ table tbody tr:hover {
           <a href="/procon/algebra.complex.html" class="toc-page-child toc-page-indent-2">複素数</a>
         </li>
         <li>
-          <a href="/procon/algebra.matrix.html" class="toc-page-child toc-page-indent-2">行列</a>
+          <a href="/procon/algebra.hyper.html" class="toc-page-child toc-page-indent-2">超数</a>
         </li>
         <li>
-          <a href="/procon/algebra.hyper.html" class="toc-page-child toc-page-indent-2">超数</a>
+          <a href="/procon/algebra.matrix.html" class="toc-page-child toc-page-indent-2">行列</a>
         </li>
       </ul>
     </li>
@@ -838,7 +852,7 @@ table tbody tr:hover {
         </li>
       </ul>
     </li>
-    <li class="toc-part toc-part-level-1 foldable">
+    <li class="toc-part toc-part-level-2 foldable">
       <div class="toc-part-header collapsed">
         <button class="toc-fold-toggle" aria-label="Toggle section">
           <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
@@ -849,13 +863,13 @@ table tbody tr:hover {
       </div>
       <ul class="toc-children collapsed">
         <li>
-          <a href="/procon/algebra.act.html" class="toc-page-child toc-page-indent-1">(モノイド)作用の定義</a>
+          <a href="/procon/algebra.act.html" class="toc-page-child toc-page-indent-2">作用の定義</a>
         </li>
         <li>
-          <a href="/procon/algebra.act.add.html" class="toc-page-child toc-page-indent-1">加算作用</a>
+          <a href="/procon/algebra.act.add.html" class="toc-page-child toc-page-indent-2">加算作用</a>
         </li>
         <li>
-          <a href="/procon/algebra.act.assign.html" class="toc-page-child toc-page-indent-1">代入作用</a>
+          <a href="/procon/algebra.act.assign.html" class="toc-page-child toc-page-indent-2">代入作用</a>
         </li>
       </ul>
     </li>
@@ -1016,7 +1030,7 @@ table tbody tr:hover {
           <a href="/procon/seq.bit.html" class="toc-page-child toc-page-indent-3">BIT</a>
         </li>
         <li>
-          <a href="/procon/seq.bit_cumulative.html" class="toc-page-child toc-page-indent-3">累積和に関するBIT</a>
+          <a href="/procon/seq.bit_cumulative.html" class="toc-page-child toc-page-indent-3">区間加算を処理する BIT</a>
         </li>
       </ul>
     </li>
@@ -1065,6 +1079,21 @@ table tbody tr:hover {
         </li>
         <li>
           <a href="/procon/seq.ranged_add_segment_tree_sum.html" class="toc-page-child toc-page-indent-3">区間加算 加法セグメントツリー</a>
+        </li>
+      </ul>
+    </li>
+    <li class="toc-part toc-part-level-2 foldable">
+      <div class="toc-part-header collapsed">
+        <button class="toc-fold-toggle" aria-label="Toggle section">
+          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <span>フーリエ変換</span>
+      </div>
+      <ul class="toc-children collapsed">
+        <li>
+          <a href="/procon/fft.convolution.html" class="toc-page-child toc-page-indent-2">畳み込み</a>
         </li>
       </ul>
     </li>
@@ -1260,26 +1289,11 @@ table tbody tr:hover {
             <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
           </svg>
         </button>
-        <span>フーリエ変換</span>
-      </div>
-      <ul class="toc-children collapsed">
-        <li>
-          <a href="/procon/fft.convolution.html" class="toc-page-child toc-page-indent-2">畳み込み</a>
-        </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-2 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
         <span>循環検出</span>
       </div>
       <ul class="toc-children collapsed">
         <li>
-          <a href="/procon/algorithm.rho.html" class="toc-page-child toc-page-indent-2">フロイドの$\rho$アルゴリズム</a>
+          <a href="/procon/algorithm.rho.html" class="toc-page-child toc-page-indent-2">フロイドの\(\rho\)アルゴリズム</a>
         </li>
       </ul>
     </li>
@@ -1412,7 +1426,7 @@ table tbody tr:hover {
       </div>
       <ul class="toc-children collapsed">
         <li>
-          <a href="/procon/bigint.html" class="toc-page-child toc-page-indent-2">ビッグエンディアンベクタ</a>
+          <a href="/procon/bigint.html" class="toc-page-child toc-page-indent-2">bigint</a>
         </li>
       </ul>
     </li>
@@ -1427,13 +1441,13 @@ table tbody tr:hover {
       </div>
       <ul class="toc-children collapsed">
         <li>
-          <a href="/procon/num.iter.perm.html" class="toc-page-child toc-page-indent-2">階乗 - $n!$</a>
+          <a href="/procon/num.iter.perm.html" class="toc-page-child toc-page-indent-2">階乗 - \(n!\)</a>
         </li>
         <li>
-          <a href="/procon/num.iter.powperm.html" class="toc-page-child toc-page-indent-2">冪乗 - $n^m$</a>
+          <a href="/procon/num.iter.powperm.html" class="toc-page-child toc-page-indent-2">冪乗 - \(n^m\)</a>
         </li>
         <li>
-          <a href="/procon/num.iter.comb.html" class="toc-page-child toc-page-indent-2">二項係数 - ${}_nC{}_m$</a>
+          <a href="/procon/num.iter.comb.html" class="toc-page-child toc-page-indent-2">二項係数 - \({}_nC{}_m\)</a>
         </li>
       </ul>
     </li>
@@ -1455,21 +1469,7 @@ table tbody tr:hover {
         </li>
       </ul>
     </li>
-    <li class="toc-part toc-part-level-1 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>文字列 (Vector)</span>
-      </div>
-      <ul class="toc-children collapsed">
-        <li>
-          <a href="/procon/string.suffix-array.html" class="toc-page-child toc-page-indent-1">接尾辞配列 (SA)</a>
-        </li>
-      </ul>
-    </li>
+    <li class="toc-part toc-part-level-1">文字列 (Vector)</li>
     <li class="toc-part toc-part-level-2 foldable">
       <div class="toc-part-header collapsed">
         <button class="toc-fold-toggle" aria-label="Toggle section">
@@ -1485,6 +1485,9 @@ table tbody tr:hover {
         </li>
         <li>
           <a href="/procon/string.z.html" class="toc-page-child toc-page-indent-2">Z-alogirhtm</a>
+        </li>
+        <li>
+          <a href="/procon/string.suffix-array.html" class="toc-page-child toc-page-indent-2">接尾辞配列 (SA)</a>
         </li>
         <li>
           <a href="/procon/string.sa-search.html" class="toc-page-child toc-page-indent-2">SA による文字列検索</a>
@@ -1521,18 +1524,19 @@ table tbody tr:hover {
         </li>
       </ul>
     </li>
-    <li class="toc-part toc-part-level-1 foldable">
+    <li class="toc-part toc-part-level-1">時間/時刻</li>
+    <li class="toc-part toc-part-level-2 foldable">
       <div class="toc-part-header collapsed">
         <button class="toc-fold-toggle" aria-label="Toggle section">
           <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
             <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
           </svg>
         </button>
-        <span>時間/時刻</span>
+        <span>制限時間付きループ</span>
       </div>
       <ul class="toc-children collapsed">
         <li>
-          <a href="/procon/time.while.html" class="toc-page-child toc-page-indent-1">制限時間付きループ</a>
+          <a href="/procon/time.while.html" class="toc-page-child toc-page-indent-2">loop_timeout_ms! マクロ</a>
         </li>
       </ul>
     </li>
@@ -1572,7 +1576,11 @@ table tbody tr:hover {
           <ul class="toc-sections toc-sections-indent-1">
             <li><a href="/procon/hash.rolling.html#2-%E6%A6%82%E8%A6%81">概要</a></li>
             <li><a href="/procon/hash.rolling.html#2-%E5%8F%82%E8%80%83">参考</a></li>
+            <li><a href="/procon/hash.rolling.html#2-%E5%AE%9F%E8%A3%85">実装</a></li>
           </ul>
+        </li>
+        <li>
+          <a href="/procon/hash.string.html" class="toc-page-child toc-page-indent-1">文字列ハッシュ</a>
         </li>
       </ul>
     </li>
@@ -1606,9 +1614,6 @@ table tbody tr:hover {
       <ul class="toc-children collapsed">
         <li>
           <a href="/procon/misc.kmeans.html" class="toc-page-child toc-page-indent-1">k-means</a>
-        </li>
-        <li>
-          <a href="/procon/15puzzle.html" class="toc-page-child toc-page-indent-1">一般化15パズル</a>
         </li>
         <li>
           <a href="/procon/misc.sort-n.html" class="toc-page-child toc-page-indent-1">numeric sort</a>
@@ -1695,12 +1700,15 @@ table tbody tr:hover {
 <p>ここで適当な数 \(a\) を基数として, 次の値をハッシュとする.</p>
 \[H(c) = \sum_{i=1}^k c_i a^{k-i} = c_1 a^{k-1} + c_2 a^{k-2} + \cdots + c_k a^0\]
 <p>特に空列のハッシュ値は \(0\) とする. 列が等しいことを見るのにこのハッシュ値の値が等しいかをチェックする.</p>
-<p>この値は指数を含むので, すぐに膨大になる. 適当な大きな素数 \(p\) を用意しておいて \(\bmod p\) で計算するのが普通.</p>
+<p>この値は指数を含むので, すぐに膨大になる. そこで適当に十分大きな素数 \(p\) を用意しておいて \(\bmod p\) で計算するのが普通.</p>
+\[H(c) = \sum_{i=1}^k c_i a^{k-i} \bmod p\]
 <h3 id="3-%E5%80%A4%E3%81%AE%E8%BF%BD%E5%8A%A0%E3%81%A8%E5%89%8A%E9%99%A4">値の追加と削除</h3>
 <p>数列の頭または末尾に値を一つ追加または削除することは上の値を注意深く計算すれば, 再計算の必要なく高速に計算出来る. 特に末尾に一つ追加する場合が効率が良い形をしていて, 列 \(c\) のハッシュ値が \(H(c)\) とあるときに, この末尾に \(x\) を追加したもののハッシュ値は次で求まる.</p>
-\[H(c \ast x) = H(c) \times a + x\]
+\[H(c \ast x) = H(c) \times a + x \pmod p\]
+<p>削除はこれの逆を取れば良い.</p>
+\[H(c) = (H(c \ast x) - x) \times a^{-1} \pmod p\]
 <h3 id="3-%E3%83%86%E3%82%AF">テク</h3>
-<p>ではその基数 \(a\) , mod \(p\) に何を使うかには自由度が残っている. \(p\) はハッシュの大きさを決めるものなので大きければ大きいほど良い. \(a\) はもし文字列から文字を削除する場合には \(a^{-1}\) が求まるほうが良いので, \(p\) と互いに素であるのがよい. 適当な素数にしておけばよい. \(p\) も大きな素数にしておけばよい.</p>
+<p>ではその基数 \(a\) , mod \(p\) に何を使うかには自由度が残っている. \(p\) はハッシュの大きさを決めるものなので大きければ大きいほど良い. また値の削除がしたいなら \(a^{-1}\) が求まる必要があり, そのためには \(a\) と \(p\) が互いに素である必要がある. \(p\) を \(a\) より大きな素数にしておけば良い.</p>
 <p>この辺の話は <a href="https://qiita.com/keymoon/items/11fac5627672a6d6a9f6">安全で爆速なRollingHashの話 #競技プログラミング - Qiita</a> を読み込むのが良さそう.</p>
 <ul>
   <li>
@@ -1722,6 +1730,71 @@ table tbody tr:hover {
   <li><a href="https://en.wikipedia.org/wiki/Rolling_hash">Rolling hash - Wikipedia</a></li>
   <li><a href="https://qiita.com/keymoon/items/11fac5627672a6d6a9f6">安全で爆速なRollingHashの話 #競技プログラミング - Qiita</a></li>
 </ul>
+<h2 id="2-%E5%AE%9F%E8%A3%85">実装</h2>
+<pre><code class="code language-rust">&#x2F;&#x2F;&#x2F; Hash - RollingHash
+use crate::algebra::modint::*;
+use crate::mint; &#x2F;&#x2F; IGNORE
+
+#[derive(Debug, Clone)]
+pub struct RollingHash {
+    data: ModInt,
+    base: ModInt,
+    baseinv: ModInt,
+    length: usize,
+    pow: ModInt,
+}
+impl RollingHash {
+    pub fn new() -&gt; Self {
+        let data = mint!(0);
+        let base = mint!(37);
+        let baseinv = base.inv();
+        let pow = mint!(1);
+        Self {
+            data,
+            base,
+            baseinv,
+            length: 0,
+            pow,
+        }
+    }
+    pub fn unwrap(&amp;self) -&gt; i128 {
+        self.data.0
+    }
+    pub fn push_back(&amp;mut self, x: i128) {
+        self.length += 1;
+        self.pow = self.pow * self.base;
+        self.data = self.data * self.base + mint!(x);
+    }
+    pub fn push_front(&amp;mut self, x: i128) {
+        self.data = self.data + self.pow * mint!(x);
+        self.length += 1;
+        self.pow = self.pow * self.base;
+    }
+    pub fn pop_back(&amp;mut self, x: i128) {
+        self.length -= 1;
+        self.pow = self.pow * self.baseinv;
+        self.data = (self.data - mint!(x)) * self.baseinv;
+    }
+    pub fn pop_front(&amp;mut self, x: i128) {
+        self.length -= 1;
+        self.pow = self.pow * self.baseinv;
+        self.data = self.data - self.pow * mint!(x);
+    }
+    pub fn concat(&amp;self, other: &amp;Self) -&gt; Self {
+        let mut r = self.clone();
+        r.length = self.length + other.length;
+        r.data = self.data * other.pow + other.data;
+        r.pow = self.pow * other.pow;
+        r
+    }
+}
+impl std::cmp::PartialEq for RollingHash {
+    fn eq(&amp;self, other: &amp;Self) -&gt; bool {
+        self.length == other.length &amp;&amp; self.data == other.data
+    }
+}
+impl std::cmp::Eq for RollingHash {}
+</code></pre>
 
 <script>(function() {
   'use strict';

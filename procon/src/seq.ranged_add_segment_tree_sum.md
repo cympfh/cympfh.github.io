@@ -18,4 +18,6 @@
 あまり自然な定義になっておらず,
 そのために単位元で初期化する `::new()` コンストラクタをわざと提供しない.
 
+## 実装
+
 @[rust](procon-rs/src/sequence/tree/ranged_add_segment_tree_sum.rs)

@@ -7,4 +7,6 @@ $$ax + by = c$$
 なる整数の組 $(a, b, c)$ を返す.
 ここで $c = gcd(x, y)$.
 
+## 実装
+
 @[rust](procon-rs/src/num/gcd_ex.rs)

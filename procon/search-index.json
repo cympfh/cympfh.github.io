@@ -51,14 +51,14 @@
       "content": "代数 - 複素数 @[rust](procon-rs/src/algebra/complex.rs)"
     },
     {
-      "title": "行列",
-      "url": "algebra.matrix.html",
-      "content": "代数 - 行列 @[rust](procon-rs/src/algebra/matrix.rs)"
-    },
-    {
       "title": "超数",
       "url": "algebra.hyper.html",
       "content": "代数 - 超数 (Hyper Numbers) 概要 全順序集合（整数など） $X$ に最大元及び最小元 $\\pm \\infty$ を付加した数 $$X \\cup \\{ +\\infty, -\\infty\\}$$ を超数 $\\mathrm{Hyper}(X)$ と呼ぶ. もし $X$ がモノイド/加法群/環である場合, $\\pm \\infty$ にも自然に拡張することで $\\mathrm{Hyper}(X)$ も同様の代数系にできる. 順序 - $-\\infty \\lt x \\lt +\\infty$ for all $x \\in X$ $X$ に加法があるとき - $x + y =$ 通常の加法 for all $x, y \\in X$ - $(-\\infty) + x = -\\infty$ - $(+\\infty) + x = +\\infty$ - NOTE - $(+\\infty) + (-\\infty)$ は本来未定だが実装上では $+\\infty$ としてある $X$ に乗法があるとき - $x \\times y =$ 通常の乗法 for all $x, y \\in X$ - $(+\\infty) \\times (+\\infty) = +\\infty$ - $(-\\infty) \\times (-\\infty) = +\\infty$ - NOTE - 上記以外は全て $-\\infty$ になってる - ($2 \\times \\infty = \\infty$ にもならないのはバグっぽいんでそのうち直す) 実装 $-\\infty$ : Hyper::NegInf $+\\infty$ : Hyper::Inf 通常の数 : Hyper::Real(X) @[rust](procon-rs/src/algebra/hyper.rs)"
+    },
+    {
+      "title": "行列",
+      "url": "algebra.matrix.html",
+      "content": "代数 - 行列 @[rust](procon-rs/src/algebra/matrix.rs)"
     },
     {
       "title": "ModInt",
@@ -66,9 +66,9 @@
       "content": "代数 - ModInt ($\\mathbb Z/p\\mathbb Z$, $\\mathbb Zp$) 概要 $\\def\\Z{\\mathbb Z}$ 剰余類環 $\\Zp$ を定義する. $$\\Zp = \\{ x + p \\Z \\mid x \\in \\Z \\}$$ ただし $$x + p \\Z = y + p \\Z \\iff (x-y) \\in p\\Z \\iff x \\equiv y \\pmod p.$$ という訳で $x + p\\Z \\in \\Zp$ と $(x \\bmod p) \\in \\{ 0,1,\\ldots,p-1 \\}$ とは同一視して計算できる. 加算と乗算は整数のものをそのまま使えて環になる. 逆数は一般には存在しないが $\\gcd(x,p)=1$ のとき $x^{-1}$ は存在する. 特に $p$ が素数なら $0$ 以外の逆数が常に存在して $\\Zp$ は体である. 例題 [ABC130/E - Common Subsequence](https://atcoder.jp/contests/abc130/tasks/abc130e) - [回答例: submissions/6014247](https://atcoder.jp/contests/abc130/submissions/6014247) [M-SOLUTIONS プロコンオープン: C - Best-of-(2n-1)](https://atcoder.jp/contests/m-solutions2019/tasks/msolutions2019c) - [回答例: submissions/6217803](https://atcoder.jp/contests/m-solutions2019/submissions/6217803) 実装 $(x + p \\mathbb Z) \\in \\mathbb Zp$ をペア $((x \\bmod p), p)$ で表現する. ここで $(x \\bmod p)$ とは $x$ を $p$ で割った余りを $[0, p-1]$ の範囲で表したもの. また $p$ は計算の中で一貫して同じ値を使うことを想定している. $p$ が素数であることを前提に逆元 (inv()) や除算の計算をサポートする. 逆数が存在しない場合は実行時エラーを投げる. mint! マクロは $p$ を決め打ちして $x + p \\Z$ を mint!(x) で宣言できる. $p$ の値を変えたい場合は, mint マクロの定義を直接書き換える. ModInt は極力 i64 との四則演算をサポートしている. @[rust](procon-rs/src/algebra/modint.rs)"
     },
     {
-      "title": "(モノイド)作用の定義",
+      "title": "作用の定義",
       "url": "algebra.act.html",
-      "content": "代数 - 作用 作用の定義 集合 $M$ が集合 $X$ 上の作用であるとは, 各元 $m \\in M$ が写像 $X \\to X$ として機能すること. $m \\in M, x \\in X$ に対して, 作用を $\\ast$ で表すことにする. $x \\ast m \\in X$ - $(\\ast m) \\colon X \\to X$ という写像を定める - $m$ を右から掛けているので 右作用 という $m \\ast x \\in X$ - $(m \\ast) \\colon X \\to X$ という写像を定める - $m$ を左から掛けているので 左作用 という 作用を定義するときに右から作用させるか左から作用させるかを決める. 以下の実装ではこの写像を act(&Self, X) -> X で定義する. @[rust](procon-rs/src/algebra/act.rs) モノイド作用 $M$ が $X$ 上の作用であり, かつ [モノイド](algebra.monoid.html) であるときこれを モノイド作用 と呼ぶ. すなわち $M$ に関する演算 ($\\times$) と作用 ($\\ast$) が次を満たす. 単位元の作用 - $x \\ast 1 = x$ 分配律 - $x \\ast (m1 \\times m2) = (x \\ast m1) \\ast m2$ この内の分配律は, 演算 ($\\times$) が作用の 合成 であることを言っている. ここで右作用として書いたが, 左作用でも全く同様. 分配率の適用順が変わるのだけ注意."
+      "content": "代数 - 作用 参考 [モノイド作用付きモノイド, 遅延セグメントツリー](https://cympfh.cc/aiura/monoidic-act-and-lazy-segment-tree) 作用 集合 $M$ が集合 $X$ 上の作用であるとは, 各元 $m \\in M$ が写像 $X \\to X$ として機能すること. 作用を $\\ast$ で表すことにする. $m \\in M, x \\in X$ に対して, $x \\ast m \\in X$ - $(\\ast m) \\colon X \\to X$ という写像を定める - $m$ を右から掛けているので 右作用 という $m \\ast x \\in X$ - $(m \\ast) \\colon X \\to X$ という写像を定める - $m$ を左から掛けているので 左作用 という 作用を定義するときに右から作用させるか左から作用させるかを決める. 実装 以下の実装ではこの写像を act(&Self, X) -> X で定義する. @[rust](procon-rs/src/algebra/act.rs) モノイド作用 $M$ が $X$ 上の作用であり, かつ [モノイド](algebra.monoid.html) であるときこれを モノイド作用 と呼ぶ. すなわち $M$ に関する演算 ($\\times$) と作用 ($\\ast$) が次を満たす. $x \\ast 1 = x$ - 単位元の作用は恒等写像 $x \\ast (m1 \\times m2) = (x \\ast m1) \\ast m2$ - 演算 ($\\times$) が作用の 合成 である ここで右作用として書いたが, 左作用でも全く同様. 合成の適用順が変わるのだけ注意. モノイド作用付きのモノイド $M$ が $X$ 上のモノイド作用であり, かつ $X$ 自体もモノイド $(X, \\cdot, e)$ であるとき, $X$ を指して モノイド作用付きのモノイド と呼ぶ. ただし次の準同型を要請する. $(x1 \\cdot x2) \\ast m = (x1 \\ast m) \\cdot (x2 \\ast m)$"
     },
     {
       "title": "加算作用",
@@ -93,67 +93,67 @@
     {
       "title": "ベルマンフォード法",
       "url": "graph.bellmanford.html",
-      "content": "グラフ - 最短距離 - ベルマンフォード法 概要 辺のコストに負数を許すグラフ最短路探索アルゴリズム. 計算量は $O(EV)$ で, コストが全て正ならダイクストラ法の方が高速. 入出力 頂点 $u$ から $v$ へ, 距離（またはコスト）が $c$ の枝があるときこれを neigh[u] = [(v, c)] で表すような隣接リストを受け取る. @[rust](procon-rs/src/graph/shortest/bellmanford.rs)"
+      "content": "グラフ - 最短距離 - ベルマンフォード法 概要 辺のコストに負数を許すグラフ最短路探索アルゴリズム. 計算量は $O(EV)$ で, コストが全て正ならダイクストラ法の方が高速. 入出力 グラフ構造は隣接リスト neigh: Vec<Vec<(usize, X)>> で与える. ここで頂点 $u$ について neigh[u] が (v, c) の持つとは 頂点 $u$ から $v$ へ距離（またはコスト）が $c$ の有向辺が存在することを意味する. 実装 @[rust](procon-rs/src/graph/shortest/bellmanford.rs)"
     },
     {
       "title": "二部グラフ判定",
       "url": "graph.undirected.bipartite.html",
-      "content": "無向グラフ - 二部グラフ判定 概要 与えられた無向グラフが二部グラフであるかどうか判定する. 参考 [二部グラフ判定をUnionFindTreeで行う - noshi91のメモ](http://noshi91.hatenablog.com/entry/2018/04/17/183132) アルゴリズムの詳細 参考に書いてあるとおりにやる. すなわち, 頂点 $u$ がグループ $1,2$ にあることを表す述語 $P^1(u), P^2(u)$ を用意して, エッジ $e = (u, v)$ を $(P^1(u) \\land P^2(v)) \\lor (P^2(u) \\land P^1(v))$ と解釈して論理グラフを組み立てて（頂点が命題で連結なときには同時に成り立つ）, 最後に矛盾 ($P^1(u) \\land P^2(u)$) が無いことを確認する. 実装 論理グラフは同じグラフに所属するかだけが問題なので, これを UnionFind で実装する. @[rust](procon-rs/src/graph/undirected/isbigraph.rs)"
+      "content": "無向グラフ - 二部グラフ判定 概要 与えられた無向グラフが二部グラフであるかどうか判定する. 参考 [二部グラフ判定をUnionFindTreeで行う - noshi91のメモ](http://noshi91.hatenablog.com/entry/2018/04/17/183132) アルゴリズムの詳細 参考に書いてある通りにやる. 頂点 $u$ がグループ $1,2$ にあることを表す述語 $P^1(u), P^2(u)$ を用意して, エッジ $e = (u, v)$ を $$(P^1(u) \\land P^2(v)) \\lor (P^2(u) \\land P^1(v))$$ と解釈して論理グラフを組み立てる. このグラフでは頂点が命題で, 連結なときにはそれらは同時に成り立つ. 最後に矛盾 ($P^1(u) \\land P^2(u)$) が無いことを確認できれば二部グラフである. 実装 論理グラフは同じグラフに所属するかだけが問題なので, これを UnionFind で実装する. @[rust](procon-rs/src/graph/undirected/isbigraph.rs)"
     },
     {
       "title": "直径",
       "url": "graph.undirected.diameter.html",
-      "content": "無向グラフ - 直径 概要 直径とは, 全点対の距離の中で最大の値を言う. ワーシャルフロイドは全点対の距離を求めるのでこれを使う. 計算量は $O(V^3)$. メモ 次の方法でも求まる. 1. 任意の点 $s$ を選ぶ 1. $s$ から距離が最大の点 $t$ を探索する 1. $t$ から距離が最大の点 $u$ を探索する 1. $t, u$ の間の距離が直径 距離が最大の点をダイクストラ法で求めることにすれば計算量は減る. @[rust](procon-rs/src/graph/undirected/diameter.rs)"
+      "content": "無向グラフ - 直径 概要 直径とは, 全点対の距離の中で最大の値を言う. ワーシャルフロイドは全点対の距離を求めるのでこれを使う. 計算量は $O(V^3)$. メモ 次の方法でも求まる. 1. 任意の点 $s$ を選ぶ 1. $s$ から距離が最大の点 $t$ を探索する 1. $t$ から距離が最大の点 $u$ を探索する 1. $t, u$ の間の距離が直径 距離が最大の点をダイクストラ法で求めることにすれば計算量は減る. 実装 ワーシャルフロイドによる方法. @[rust](procon-rs/src/graph/undirected/diameter.rs)"
     },
     {
       "title": "プリム法",
       "url": "graph.prim.html",
-      "content": "グラフ - 最小全域木 - プリム法 概要 点対ベースに最小の辺を足してくアルゴリズム. 計算量は $O(E \\log E)$. @[rust](procon-rs/src/graph/minimalspantree/prim.rs)"
+      "content": "グラフ - 最小全域木 - プリム法 概要 点対ベースに最小の辺を足してくアルゴリズム. 計算量は $O(E \\log E)$. 実装 @[rust](procon-rs/src/graph/minimalspantree/prim.rs)"
     },
     {
       "title": "クラスカル法",
       "url": "graph.kruskal.html",
-      "content": "グラフ - 最小全域木 - クラスカル法 概要 辺ベースに最小の辺を足してくアルゴリズム. 計算量は $O(E \\log E)$. @[rust](procon-rs/src/graph/minimalspantree/kruskal.rs)"
+      "content": "グラフ - 最小全域木 - クラスカル法 概要 辺ベースに最小の辺を足してくアルゴリズム. 計算量は $O(E \\log E)$. 実装 @[rust](procon-rs/src/graph/minimalspantree/kruskal.rs)"
     },
     {
       "title": "高さ",
       "url": "graph.tree.height.html",
-      "content": "graph.tree.height 各点から全ての点への最大距離 @[cpp](procon-cc/graph.tree.height.cc)"
+      "content": "graph.tree.height 各点から全ての点への最大距離 実装 @[cpp](procon-cc/graph.tree.height.cc)"
     },
     {
       "title": "直径",
       "url": "graph.tree.diameter.html",
-      "content": "グラフ - 木 - 直径 概要 直径とは全点対間距離の最大値のこと. 任意の点 $s$ の最遠点を $u$ とし, $u$ の最遠点を $v$ とすれば $d(u,v)$ が最長距離であることを使う. @[rust](procon-rs/src/graph/tree/diameter.rs)"
+      "content": "グラフ - 木 - 直径 概要 直径とは全点対間距離の最大値のこと. 任意の点 $s$ の最遠点を $u$ とし, $u$ の最遠点を $v$ とすれば $d(u,v)$ が最長距離であることを使う. 実装 @[rust](procon-rs/src/graph/tree/diameter.rs)"
     },
     {
       "title": "最小共通祖先",
       "url": "graph.tree.lca.html",
-      "content": "グラフ ー 木 - 最小共通祖先 (LCA) 概要 根付き木についてダブリングによってLCAを求める. 入出力 親ノードから子ノードの方向に辺を生やした有向グラフとして木を表現し, これを隣接リストとして与える. @[rust](procon-rs/src/graph/tree/lca.rs)"
+      "content": "グラフ ー 木 - 最小共通祖先 (LCA) 概要 根付き木についてダブリングによってLCAを求める. 入出力 親ノードから子ノードの方向に辺を生やした有向グラフとして木を表現し, これを隣接リストとして与える. 実装 @[rust](procon-rs/src/graph/tree/lca.rs)"
     },
     {
       "title": "最大流量",
       "url": "graph.maxflow.html",
-      "content": "有向グラフ - 最大流量 概要 Dinic 法を実装する 入出力 重み付きの隣接リストを入力とする. すなわち, 頂点 $u$ から $v$ へ容量 $c$ の辺があるとき, neigh[u] = [(v, w)] とするようなリスト neigh. 関連問題 [ABC091/C - 2D Plane 2N Points](https://beta.atcoder.jp/contests/arc092/tasks/arc092a) @[rust](procon-rs/src/graph/directed/dinic.rs)"
+      "content": "有向グラフ - 最大流量 概要 Dinic 法を実装する 入出力 重み付きの隣接リストを入力とする. すなわち, 頂点 $u$ から $v$ へ容量 $c$ の辺があるとき, neigh[u] = [(v, w)] とするようなリスト neigh. 関連問題 [ABC091/C - 2D Plane 2N Points](https://beta.atcoder.jp/contests/arc092/tasks/arc092a) 実装 @[rust](procon-rs/src/graph/directed/dinic.rs)"
     },
     {
       "title": "トポロジカルソート",
       "url": "graph.topological.html",
-      "content": "有向グラフ - トポロジカルソート 参考 [wikipedia/トポロジカルソート](http://ja.wikipedia.org/wiki/トポロジカルソート) 例題 [#182117 No.497 入れ子の箱 - yukicoder](https://yukicoder.me/submissions/182117) [code-thanks-festival-2014-a-open.contest.atcoder.jp/submissions/294748](http://code-thanks-festival-2014-a-open.contest.atcoder.jp/submissions/294748) @[rust](procon-rs/src/graph/directed/topologicalsort.rs)"
+      "content": "有向グラフ - トポロジカルソート 参考 [wikipedia/トポロジカルソート](http://ja.wikipedia.org/wiki/トポロジカルソート) 例題 [#182117 No.497 入れ子の箱 - yukicoder](https://yukicoder.me/submissions/182117) [code-thanks-festival-2014-a-open.contest.atcoder.jp/submissions/294748](http://code-thanks-festival-2014-a-open.contest.atcoder.jp/submissions/294748) 実装 @[rust](procon-rs/src/graph/directed/topologicalsort.rs)"
     },
     {
       "title": "強連結成分分解",
       "url": "graph.scc.html",
-      "content": "有向グラフ - 強連結成分分解 (SCC) 概要 有向グラフの強連結成分分解を行い, DAG を作る. 入出力 出力は2つ組 (cmp, dag). cmp は元のグラフから新たに作ったDAGへの頂点の対応付けで, 元のグラフの頂点 i を cmp[i] に写す. dag はDAGの隣接リスト表現. @[rust](procon-rs/src/graph/directed/scc.rs)"
+      "content": "有向グラフ - 強連結成分分解 (SCC) 概要 有向グラフの強連結成分分解を行い, DAG を作る. 入出力 出力は2つ組 (cmp, dag). cmp は元のグラフから新たに作ったDAGへの頂点の対応付けで, 元のグラフの頂点 i を cmp[i] に写す. dag はDAGの隣接リスト表現. 実装 @[rust](procon-rs/src/graph/directed/scc.rs)"
     },
     {
       "title": "最長増加部分列",
       "url": "seq.lis.html",
-      "content": "数列 - 最長増加部分列 (Longest Increasing Sequence; LIS) 概要 Young Tableaux アルゴリズムを実装する. 入出力 与えられた数列のうち 狭義 最長増加部分列を返す. メモ 広義 増加列に変更するのは単純じゃないので注意. @[rust](procon-rs/src/sequence/lis.rs)"
+      "content": "数列 - 最長増加部分列 (Longest Increasing Sequence; LIS) 概要 与えられた数列のうち 狭義 最長増加部分列を返す Young Tableaux アルゴリズムを実装する. NOTE これを 広義 増加列に変更するのは単純じゃないので注意. 実装 @[rust](procon-rs/src/sequence/lis.rs)"
     },
     {
       "title": "中央値ヒープ",
       "url": "seq.median.html",
-      "content": "数列 - 中央値ヒープ 概要 空の数列から始めて次のことが高速に出来る. 値の追加 中央値の取得 中央値の除去（怪しい） @[rust](procon-rs/src/sequence/medianheap.rs)"
+      "content": "数列 - 中央値ヒープ 概要 空の数列から始めて次のことが高速に出来る. 値の追加 中央値の取得 中央値の除去（怪しい） 実装 @[rust](procon-rs/src/sequence/medianheap.rs)"
     },
     {
       "title": "スライド最小値",
@@ -163,67 +163,72 @@
     {
       "title": "BitVecBool",
       "url": "seq.bitvecbool.html",
-      "content": "Bitmask による bool 配列のシミュレート実装 Vec<Bool> を unsigned 128bit int で表現する. @[rust](procon-rs/src/sequence/bitvecbool.rs)"
+      "content": "Bitmask による bool 配列のシミュレート実装 概要 Vec<Bool> を unsigned 128bit int で表現する. 実装 @[rust](procon-rs/src/sequence/bitvecbool.rs)"
     },
     {
       "title": "一次元累積和",
       "url": "seq.cumsum1d.html",
-      "content": "数列 - 一次元累積和 (Cumulative sum) 概要 一次元配列 $x$ が与えられたとき, 任意の添字区間 $[l, r)$ に対して $$\\sum{i = l}^{r-1} xi$$ を $O(1)$ で計算する. 数列中の値の変更は出来ないので注意. メモ 値を動的に変更したい場合は [BIT (Fenwick Tree)](seq.bit) を使うと便利. @[rust](procon-rs/src/sequence/cumsum1d.rs)"
+      "content": "数列 - 一次元累積和 (Cumulative sum) 概要 一次元配列 $x$ が与えられたとき, 任意の添字区間 $[l, r)$ に対して $$\\sum{i = l}^{r-1} xi$$ を $O(1)$ で計算する. 数列中の値の変更は出来ないので注意. Note 値を動的に変更したい場合は [BIT (Fenwick Tree)](seq.bit) を使うと便利. 実装 @[rust](procon-rs/src/sequence/cumsum1d.rs)"
     },
     {
       "title": "二次元累積和",
       "url": "seq.cumsum2d.html",
-      "content": "数列 - 二次元累積和 (Cumulative sum) 概要 二次元配列を与えたとき, (0, 0) から (i, j) までの矩形の和を保存することで 任意の矩形 (i0..i1, j0..j1) (i1, j1 は含まない半開区間) の和を $O(1)$ で求める. @[rust](procon-rs/src/sequence/cumsum2d.rs)"
+      "content": "数列 - 二次元累積和 (Cumulative sum) 概要 二次元配列を与えたとき, (0, 0) から (i, j) までの矩形の和を保存することで 任意の矩形 (i0..i1, j0..j1) (i1, j1 は含まない半開区間) の和を $O(1)$ で求める. 実装 @[rust](procon-rs/src/sequence/cumsum2d.rs)"
     },
     {
       "title": "BIT",
       "url": "seq.bit.html",
-      "content": "数列 - Binary Indexed Tree (BIT; Fenwick Tree) 参考 [wikipedia/Fenwick tree](http://en.wikipedia.org/wiki/Fenwicktree) 概要 加法群 $(X, +, 0)$ 上の数列について, 初期状態 - 長さ $n$ の数列: $v = \\{ v0, v1, \\ldots, v{n-1} \\} = \\{0,0,\\ldots,0\\}$ 次の2つの操作が出来る 1. $vi \\leftarrow vi + x$ 1. $v0 + v1 + \\cdots + v{m-1}$ - 特に2つ目から、任意区間の総和が算出できる 計算量 - 時間計算量: 共に $O(log(n))$ - 空間計算量: 数列の長さ $n$ 程度の配列. @[rust](procon-rs/src/sequence/tree/bit.rs)"
+      "content": "数列 - Binary Indexed Tree (BIT; Fenwick Tree) 参考 [wikipedia/Fenwick tree](http://en.wikipedia.org/wiki/Fenwicktree) 概要 BIT は次のことが出来るデータ構造. 加法群 $(X, +, 0)$ 上の数列について, 初期状態 - $v = ( v0, v1, \\ldots, v{n-1} ) = (0, 0, \\ldots, 0 )$ - $0$ からなる長さ $n$ の数列 次の2つの操作が出来る 1. $vi \\leftarrow vi + x$ 1. $v0 + v1 + \\cdots + v{m-1}$ - 差を取ることで、任意区間の総和が算出できる 計算量 - 時間計算量: 共に $O(log(n))$ - 空間計算量: 数列の長さ $n$ 程度の配列. 実装 @[rust](procon-rs/src/sequence/tree/bit.rs)"
     },
     {
-      "title": "累積和に関するBIT",
+      "title": "区間加算を処理する BIT",
       "url": "seq.bit_cumulative.html",
-      "content": "累積和に関する BIT (Fenwick Tree) 概要 初めゼロからなる数列 $v = (v1, v2, \\ldots, vn)$ について, その累積和を [BIT](seq.bit) で表現することで, 次のような双対操作が高速（対数時間）で処理が出来る. 1. 区間への加算 $((\\ell, r), x)$ - $vi \\leftarrow vi + x$ for each $\\ell \\leq i \\lt r$ 2. 要素の取得 - $vi$ @[rust](procon-rs/src/sequence/tree/bitcumulative.rs)"
+      "content": "区間加算を処理する BIT (Fenwick Tree) 概要 初めゼロからなる数列 $v = (v0, v1, \\ldots, v{n-1})$ について, 次の2つの操作を高速（対数時間）に行いたい. 1. 区間への加算 $([\\ell, r), x)$ - $vi \\leftarrow vi + x$ for each $\\ell \\leq i \\lt r$ 2. 要素の取得 - $vi$ 差分列 $u$ を [BIT](seq.bit) で管理することにする. つまりある数列 $u$ があって, これの累積和が元の数列 $v$ になるようにする. $v0 = u0$ $v1 = u0 + u1$ $vk = \\sum{i=0}^{k} ui$ $v$ の代わりに $u$ について次のよう処理すればよい. 初期値は $ui = 0$ でよくて, 1. 区間への加算 $([\\ell, r), x)$ - $u\\ell \\leftarrow u\\ell + x$ - $ur \\leftarrow ur - x$ 2. 要素の取得 - $vi = \\sum{j=0}^{i} uj$ これらは BIT で高速に処理できる. 実装 @[rust](procon-rs/src/sequence/tree/bitcumulative.rs)"
     },
     {
       "title": "セグメントツリー",
       "url": "seq.segment_tree.html",
-      "content": "数列 - セグメントツリー [モノイド](algebra.monoid) $(X, \\times, 1)$ と $X$ 上の数列 $$(x1, \\ldots, xN \\mid xi \\in X)$$ について, 次の操作がそれぞれ $O(\\log N)$ で出来る. 区間積の計算 - 添字区間 $I$ について $\\prod{i \\in I} xi$ 一点更新 - $xi \\leftarrow x$ コンストラクタとして, 長さだけ指定して単位元で初期化する new と, 数列を vec で与える from とがある. @[rust](procon-rs/src/sequence/tree/segmenttree.rs)"
+      "content": "数列 - セグメントツリー 概要 [モノイド](algebra.monoid) $(X, \\times, 1)$ と $X$ 上の数列 $$(x1, \\ldots, xN \\mid xi \\in X)$$ について, 次の操作がそれぞれ $O(\\log N)$ で出来る. 区間積の計算 - 添字区間 $I$ について $\\prod{i \\in I} xi$ 一点更新 - $xi \\leftarrow x{\\mathrm{new}}$ 手法の概略 区間とその積をノードに持つ (完全) 二分木を構成する. つまり, 区間 $I$ に対応するノード $\\mathcal{N}I$ があって, その積 $pI = \\prod{i \\in I} xi$ を 予め 計算しておく. 区間 $I$ が空でないならば, それを左右に分割した区間 $J1$ と $J2$ に分割できるだろう（二等分が望ましい）. という訳で $\\mathcal{N}I$ の子ノードとして $\\mathcal{N}{J1}$ と $\\mathcal{N}{J2}$ を持たせる. もちろん $p{J1}, p{J2}$ も予め計算しておく. 根を全体区間 $[0, N)$ とし, 葉を一つの要素からなる区間 $\\{ xi \\}$ とする二分木が構成できたら, これがセグメントツリーである. セグメントツリーが持つノード数（つまり区間数）は $2N$ 程度. 予め計算しておきたい $p$ は再帰的に $$pI = p{J1} \\times p{J2}$$ とできるので, 葉から辿ってくことで, 積演算を $2N$ 回すればよく, 木の構築は $O(N)$ で出来る. 任意の区間積の計算は, 求めたい区間をちょうど被覆するノード $O(\\log N)$ 個程度に必ず分解できる. （これは $N$ 程度の自然数は二進数で $\\log2 N$ 桁で表せることに対応している.） 含むノードを大きいものから貪欲に選んでいけばよい. 更新は, 葉ノードを更新した後に, その親ノードを辿っていき $p$ を更新していけばよい. このとき辿るノード数は木の高さなので $O(\\log N)$ である. 実装 コンストラクタとして, 長さだけ指定して単位元で初期化する new と, 数列を vec で与える from とがある. @[rust](procon-rs/src/sequence/tree/segmenttree.rs)"
     },
     {
       "title": "RMQ",
       "url": "seq.rmq.html",
-      "content": "数列 - Range Maximum/Minimum Query (RMQ) 概要 Max/Min を二項演算とするモノイドをセグメントツリーに載せることで実装する. @[rust](procon-rs/src/sequence/tree/rmq.rs)"
+      "content": "数列 - Range Maximum/Minimum Query (RMQ) 概要 [Max/Min モノイド](algebra.monoid.minmax) をセグメントツリーに載せることで次の操作をそれぞれ $O(\\log N)$ で出来るセグメントツリーが構成できる. 区間最大値/最小値の計算 - 添字区間 $I$ について $\\max{i \\in I} xi$ / $\\min{i \\in I} xi$ を求める 一点更新 - $xi \\leftarrow x{\\mathrm{new}}$ 実装 @[rust](procon-rs/src/sequence/tree/rmq.rs)"
     },
     {
       "title": "加法セグメントツリー",
       "url": "seq.segment_tree_sum.html",
-      "content": "数列 - 加法セグメントツリー i64 の和に関するセグメントツリーの定義を与える. 以下の SegmentTreeSum は直接 i64 でやり取り出来るAPIを提供しているが, 内部では Sum モノイドに包んである. @[rust](procon-rs/src/sequence/tree/segmenttreesum.rs)"
+      "content": "数列 - 加法セグメントツリー 概要 i64 の和に関するセグメントツリーの定義を与える. 実装は [セグメントツリー](seq.segmenttree) に [Sum モノイド](algebra.monoid.sum) を載せるだけだが, 直接 i128 でやり取り出来るAPIを提供している. @[rust](procon-rs/src/sequence/tree/segmenttreesum.rs)"
     },
     {
       "title": "乗法セグメントツリー",
       "url": "seq.segment_tree_prod.html",
-      "content": "数列 - 乗法セグメントツリー i64 上の乗法に関するセグメントツリーの定義を与える. ここで i64 は既にモノイドとしてあるので, 具体的な実装は必要ない. @[rust](procon-rs/src/sequence/tree/segmenttreeprod.rs)"
+      "content": "数列 - 乗法セグメントツリー 概要 i64 上の乗法に関するセグメントツリーの定義を与える. ここで i64 は既にモノイドとしてあるので, 具体的な実装は必要ない. Note 整数型の区間積なんてすぐオーバーフローするので, これをそのままで使うことはあまり無いと思われる. 実装 @[rust](procon-rs/src/sequence/tree/segmenttreeprod.rs)"
     },
     {
       "title": "遅延セグメントツリー",
       "url": "seq.lazy_segment_tree.html",
-      "content": "数列 - 遅延伝播セグメントツリー (遅延セグ木) 概要 モノイド $(X, \\times)$ とその上のモノイド（右）作用 $M$ があるとする. $$\\ast \\colon X \\times M \\to X$$ ただし次の準同型を要請する. $(x1 \\times x2) \\ast m = (x1 \\ast m) \\times (x2 \\ast m)$ $x \\ast (m1 m2) = (x \\ast m1) \\ast m2$ このとき $X$ 上の数列 $$(x1, \\ldots, xN \\mid xi \\in X)$$ について, 次の操作がそれぞれ $O(\\log N)$ で出来る. 区間積の計算 - 添字区間 $I$ について $\\prod{i \\in I} xi$ 区間更新 - 添字区間 $I$ と作用 $m \\in M$ について - 各 $i \\in I$ に対して $xi \\leftarrow xi \\ast m$ [セグメントツリー](seq.segmenttree) では一点に対する代入だったものを, 区間すべての要素に対するモノイド作用に一般化されてある. 関連リンク モノイド作用と実装の詳細: [/aiura/monoidic-act-and-lazy-segment-tree](https://cympfh.cc/aiura/monoidic-act-and-lazy-segment-tree) 各問題への適用例: [/taglibro/2020/09/09](https://cympfh.cc/taglibro/2020/09/09) 例題 [ABC177/F](https://atcoder.jp/contests/abc177/submissions/16522911) [AtCoder Library Practice Contest/L](https://atcoder.jp/contests/practice2/submissions/16577269) @[rust](procon-rs/src/sequence/tree/lazysegmenttree.rs)"
+      "content": "数列 - 遅延伝播セグメントツリー (遅延セグ木) 概要 モノイド $(X, \\times)$ とその上のモノイド（右）作用 $M$ があるとする. $$\\ast \\colon X \\times M \\to X$$ ただし次の準同型を要請する. $(x1 \\times x2) \\ast m = (x1 \\ast m) \\times (x2 \\ast m)$ $x \\ast (m1 m2) = (x \\ast m1) \\ast m2$ このとき $X$ 上の数列 $$(x1, \\ldots, xN \\mid xi \\in X)$$ について, 次の操作がそれぞれ $O(\\log N)$ で出来る. 区間積の計算 - 添字区間 $I$ について $\\prod{i \\in I} xi$ 区間更新 - 添字区間 $I$ と作用 $m \\in M$ について - 各 $i \\in I$ に対して $xi \\leftarrow xi \\ast m$ [セグメントツリー](seq.segmenttree) では一点に対する代入だったものを, 区間すべての要素に対するモノイド作用に一般化されてある. 関連リンク モノイド作用と実装の詳細: [/aiura/monoidic-act-and-lazy-segment-tree](https://cympfh.cc/aiura/monoidic-act-and-lazy-segment-tree) 各問題への適用例: [/taglibro/2020/09/09](https://cympfh.cc/taglibro/2020/09/09) 例題 [ABC177/F](https://atcoder.jp/contests/abc177/submissions/16522911) [AtCoder Library Practice Contest/L](https://atcoder.jp/contests/practice2/submissions/16577269) 実装 @[rust](procon-rs/src/sequence/tree/lazysegmenttree.rs)"
     },
     {
       "title": "区間代入 RMQ",
       "url": "seq.ranged_assign_rmq.html",
-      "content": "数列 - 区間代入 RMQ 概要 モノイド $X$ 上の数列 $$(x1, \\ldots, xN \\mid xi \\in X)$$ について次の2つが高速に操作できる 区間の最大値/最小値の計算 - 添字区間 $I$ について, $\\max \\{ xi \\mid i \\in I\\}$ または $\\min \\{ xi \\mid i \\in I \\}$ 区間への 代入 - 添字区間 $I$ について, $xi \\leftarrow x$ for each $i \\in I$ @[rust](procon-rs/src/sequence/tree/rangedassignrmq.rs)"
+      "content": "数列 - 区間代入 RMQ 概要 モノイド $X$ 上の数列 $$(x1, \\ldots, xN \\mid xi \\in X)$$ について次の2つが高速に操作できる 区間の最大値/最小値の計算 - 添字区間 $I$ について, $\\max \\{ xi \\mid i \\in I\\}$ または $\\min \\{ xi \\mid i \\in I \\}$ 区間への 代入 - 添字区間 $I$ について, $xi \\leftarrow x$ for each $i \\in I$ 実装 @[rust](procon-rs/src/sequence/tree/rangedassignrmq.rs)"
     },
     {
       "title": "区間加算 RMQ",
       "url": "seq.ranged_add_rmq.html",
-      "content": "数列 - 区間加算 RMQ 概要 モノイド $X$ 上の数列 $$(x1, \\ldots, xN \\mid xi \\in X)$$ について次の2つが高速に操作できる 区間の最大値/最小値の計算 - 添字区間 $I$ について, $\\max \\{ xi \\mid i \\in I\\}$ または $\\min \\{ xi \\mid i \\in I \\}$ 区間への 加算 - 添字区間 $I$ について, $xi \\leftarrow xi + x$ for each $i \\in I$ @[rust](procon-rs/src/sequence/tree/rangedaddrmq.rs)"
+      "content": "数列 - 区間加算 RMQ 概要 モノイド $X$ 上の数列 $$(x1, \\ldots, xN \\mid xi \\in X)$$ について次の2つが高速に操作できる 区間の最大値/最小値の計算 - 添字区間 $I$ について, $\\max \\{ xi \\mid i \\in I\\}$ または $\\min \\{ xi \\mid i \\in I \\}$ 区間への 加算 - 添字区間 $I$ について, $xi \\leftarrow xi + x$ for each $i \\in I$ 実装 @[rust](procon-rs/src/sequence/tree/rangedaddrmq.rs)"
     },
     {
       "title": "区間加算 加法セグメントツリー",
       "url": "seq.ranged_add_segment_tree_sum.html",
-      "content": "数列 - 区間加算 加法セグメントツリー 概要 i64 の数列について次の2つが高速に操作できる 区間の 和 の計算 - 添字区間 $I$ について, $\\sum \\{ xi \\mid i \\in I\\}$ 区間への 加算 - 添字区間 $I$ について, $xi \\leftarrow xi + x$ for each $i \\in I$ 実装について 以下の実装では直接 i64 の受け渡しできるAPIを提供している. 中身は加法モノイドと加法作用を [遅延セグメントツリー](seq.lazysegmenttree) に載せて実装してある. 加法モノイド CountedSum はその和だけではなく個数も同時に持っておくことで作用が準同型になっている. CountedSum には強引に単位元をもたせることでモノイドになってはいるが, あまり自然な定義になっておらず, そのために単位元で初期化する ::new() コンストラクタをわざと提供しない. @[rust](procon-rs/src/sequence/tree/rangedaddsegmenttreesum.rs)"
+      "content": "数列 - 区間加算 加法セグメントツリー 概要 i64 の数列について次の2つが高速に操作できる 区間の 和 の計算 - 添字区間 $I$ について, $\\sum \\{ xi \\mid i \\in I\\}$ 区間への 加算 - 添字区間 $I$ について, $xi \\leftarrow xi + x$ for each $i \\in I$ 実装について 以下の実装では直接 i64 の受け渡しできるAPIを提供している. 中身は加法モノイドと加法作用を [遅延セグメントツリー](seq.lazysegmenttree) に載せて実装してある. 加法モノイド CountedSum はその和だけではなく個数も同時に持っておくことで作用が準同型になっている. CountedSum には強引に単位元をもたせることでモノイドになってはいるが, あまり自然な定義になっておらず, そのために単位元で初期化する ::new() コンストラクタをわざと提供しない. 実装 @[rust](procon-rs/src/sequence/tree/rangedaddsegmenttreesum.rs)"
+    },
+    {
+      "title": "畳み込み",
+      "url": "fft.convolution.html",
+      "content": "アルゴリズム - FFT - 数列の畳み込み 概要 2つの数列 $Ai, Bi$ について, $$Ck = \\sum{i=0}^k Ai B{k-i}$$ なる数列 $Ck$ を計算する. ただし $A0=B0=0$ であるとし, $C0=0$. 参考 [ATC001/C - 高速フーリエ変換](http://atc001.contest.atcoder.jp/tasks/fftc) @[rust](procon-rs/src/algorithm/fft.rs)"
     },
     {
       "title": "点",
@@ -331,11 +336,6 @@
       "content": "アルゴリズム - 整数上の二分探索 概要 整数（のようなデータ）について Yes/No を返す述語 $P$ があるとする: $$P \\colon \\mathbb Z \\to \\mathrm{Bool}.$$ そして今, この $P$ はある整数 $m$ があって, $n < m \\implies P(n) = \\mathrm{No}$ $n \\geq m \\implies P(n) = \\mathrm{Yes}$ を満たすとする. このとき, この整数 $m$ を求めたい. ただし, 次のような2つの値 $l, r (l < r)$ が予め与えられるとする: $P(l) = \\mathrm{No}$, $P(r) = \\mathrm{Yes}$. 解法 区間 $(l,r]$ は $m$ を含んでいる. このことを不変条件に持つように上手く区間のサイズを半分にしてく. そのためには $l, r$ の適当な中間値を持ってきて, それが $P$ を満たすかをチェックするだけでいい. これを繰り返して, 区間のサイズがちょうど $1$ になったとき, その要素が求める答え $m$ である. ところで $l,r,m$ の乗ってるデータは, 中間値を取る操作 middle と, 区間のサイズが $1$ であることをチェックする操作 close を必要とする. 逆に言えばこの二つさえあれば整数そのものに限らなくて良い. 例えば十分小さい値 eps を定めて close(l, r) = (r - l < eps) とすることで浮動小数点数であっても, 精度 eps で m が求まる. 応用 整数として配列のインデックス (usize) を選び, prop を上手く作ることで, 昇順ソート済みの配列 xs 中に x がいくつあるか, x 以上/以下 がいくつあるか, などを対数時間で計算できる. @[rust](procon-rs/src/algorithm/binarysearch.rs)"
     },
     {
-      "title": "畳み込み",
-      "url": "fft.convolution.html",
-      "content": "アルゴリズム - FFT - 数列の畳み込み 概要 2つの数列 $Ai, Bi$ について, $$Ck = \\sum{i=0}^k Ai B{k-i}$$ なる数列 $Ck$ を計算する. ただし $A0=B0=0$ であるとし, $C0=0$. 参考 [ATC001/C - 高速フーリエ変換](http://atc001.contest.atcoder.jp/tasks/fftc) @[rust](procon-rs/src/algorithm/fft.rs)"
-    },
-    {
       "title": "フロイドの$\\rho$アルゴリズム",
       "url": "algorithm.rho.html",
       "content": "アルゴリズム - 循環検出 - フロイドの$\\rho$アルゴリズム 問題概要 適当な有限集合 $X$ について, $x0 \\in X$ と $f \\colon X \\to X$ によって数列 $$\\{ x0, xi \\mid x{i+1} = f(xi), i=1,2,\\ldots \\}$$ を構成する. ここで $X$ を有限集合としたので, $i \\leq |X|$ の範囲で同じ値が重複することが必ずある（鳩の巣原理）. 一度 $xi = xj (i \\ne j)$ であるとき, それ以降 $x{i+m} = x{j+m}$ であるので数列はループする. <center> <img src=\"https://i.imgur.com/FTtBfEd.jpg\" style=\"max-width: 50vw; max-height: 9rem;\" /> </center> このことは次のように言い直せる. ループに入るまでの長さを $\\lambda$, ループの周期長を $\\mu$ として $$\\forall n, k \\in \\mathbb N, x{\\lambda + n} = x{\\lambda + n + k\\mu} ~~\\cdots\\cdots(\\ast)$$ $x0, f$ が与えられるときに, この $\\lambda, \\mu$ を探すのがフロイドの$\\rho$アルゴリズムである. アルゴリズム詳細 適当な $i$ を始点に各ステップで $i$ を $1$ または $2$ ずつ進めるようなイテレータを2つ並行して動かしていくようなことを考える. フェーズ 1 初めに $i=0$ を始点に各ステップで $1$ 及び $2$ 進めるイテレータを2つ用意する. これをちょうど $m1$ ステップ進めたときに初めて同じ数を指しているとする. すなわち $$x{m1} = x{2m1}$$ になったとする. このことからある $n,k$ で $m1 = \\lambda + n$ $2m1 = \\lambda + n + k \\mu$ を満たす. このことからは $$m1 = k \\mu$$ を得る. フェーズ 2 次に, $i=0$ から $1$ ずつ進めるイテレータと, $i=m1$ から $1$ ずつ進めるイテレータの2つを用意する. （後者は先程のものを使いまわせばよい.） そしてやはり $m2$ ステップ進めたときに初めて同じ数を指していると $$x{m2} = x{m1 + m2}$$ が成り立つ. ここで $m1 = k\\mu$ であった: $$x{m2} = x{m2 + k\\mu}$$ 従って, $m2 \\geq \\lambda$ であればこの等式は常に成り立つ. $m2$ が「初めて同じ数を指す」ときのステップ数であるとしたことから $$m2 = \\lambda$$ を得る. フェーズ 3 最後に, $i=\\lambda$ から $1$ ずつ進めるイテレータと $i=\\lambda$ から $2$ ずつ進めるイテレータの2つを並行して進める. そして今度は $m3$ ステップ後に初めて同じ数を指したとする. $$x{\\lambda + m3} = x{\\lambda + 2 m3}$$ さて $m3 = \\mu$ とすればこれが成立するのは明らかである. $m3 < \\mu$ では成り立たないこともすぐに確認できる. そこからやはり $$m3 = \\mu$$ を得る. 計算量 時間は $O(\\lambda + \\mu)$, 空間は $O(1)$. 実装例 @[rust](procon-rs/src/algorithm/rho.rs)"
@@ -343,12 +343,12 @@
     {
       "title": "Gauss-Jordan の消去法",
       "url": "algorithm.gauss_jordan.html",
-      "content": "アルゴリズム - 連立一次方程式 - Gauss-Jordan の消去法 概要 $N \\times N$ 行列 $A$, $N$ ベクトル $b$ について $$Ax=b$$ を解く. [[https://ja.wikipedia.org/wiki/%E3%82%AC%E3%82%A6%E3%82%B9%E3%81%AE%E6%B6%88%E5%8E%BB%E6%B3%95]] 実装 @[rust](procon-rs/src/algorithm/gaussjordan.rs)"
+      "content": "アルゴリズム - 連立一次方程式 - Gauss-Jordan の消去法 概要 行列 $A \\in \\mathbb R^{N \\times N}$ と ベクトル $b \\in \\mathbb R^N$ について $$Ax=b$$ を $O(N^3)$ で解く. 掃き出し法とも呼ばれる. 参考 [[https://ja.wikipedia.org/wiki/%E3%82%AC%E3%82%A6%E3%82%B9%E3%81%AE%E6%B6%88%E5%8E%BB%E6%B3%95]] 実装 @[rust](procon-rs/src/algorithm/gaussjordan.rs)"
     },
     {
       "title": "燃やす埋める問題",
       "url": "opt.moyasu_umeru.html",
-      "content": "最適化 - 燃やす埋める問題 $\\def\\I{\\mathbb I}$ [Project selection problem](https://en.wikipedia.org/wiki/Max-flowmin-cuttheorem#Projectselectionproblem) とも. 問題 $n$ 個の Bool 変数 $x0, x1, \\ldots, x{n-1}$ があるとする. 特に実装上ではこの添字 $0,1,\\ldots,n-1$ で変数を指す. これに対して次の目標関数を考える. $$\\Theta(x ; b0, b1, c) = \\sumi b0^i \\I(xi) + \\sumi b1^i (1 - \\I(xi)) + \\sumi \\sumj c{ij} \\I(xi) (1 - \\I(xj))$$ ここで $b0, b1$ はそれぞれ長さ $n$ の整数列 $c$ は $n \\times n$ の整数行列 $\\I(x)$ は Bool 値 $x$ に対するインディケータで真のとき $1$, 偽のとき $0$ つまり, $b0^i$ は $xi$ が真のときのコスト $b1^i$ は $xi$ が偽のときのコスト $c{ij}$ は $xi$ が真で $xj$ が偽のときのコスト 与えられた $b, c$ に対して $\\Theta$ を最小化する $x$ の割当を求める問題を燃やす埋める問題という. 解法 最小カット問題に帰着する. ライブラリの使い方 cost! または gain! マクロで制約を付け足していく. /// サンプル let n = 4; // 使う変数の個数 let mut solver = MoyasuUmeruSolver::new(n); solver += cost!(1; if 0); // 変数 0 が true のときのコストが1 solver += cost!(2; if not 0); // false のときのコストが2 solver += cost!(inf; if 1); // 無限大のコスト solver += gain!(1; if not 1); // 逆に獲得できる利益. 内部ではマイナスにしてコストとして扱う solver += cost!(100; if 0 and not 1); // 0 が true, 1 が false のときのコスト solver += cost!(inf; if not 0 and 1); // 0 が false, 1 が true のときは無限のコスト solver.min_cost(); // 最小化されたコスト solver.max_gain(); // 逆に最大化した獲得量. 最小コストのマイナスを返す @[rust](procon-rs/src/opt/umerumoyasu.rs)"
+      "content": "最適化 - 燃やす埋める問題 $\\def\\I{\\mathbb I}$ [Project selection problem](https://en.wikipedia.org/wiki/Max-flowmin-cuttheorem#Projectselectionproblem) とも. 問題 $n$ 個の Bool 変数 $x0, x1, \\ldots, x{n-1}$ があるとする. 特に実装上ではこの添字 $0,1,\\ldots,n-1$ で変数を指す. これに対して次の目標関数を考える. $$\\mathcal{L}(x ; bt, bf, c) = \\sumi bt^i \\I(xi) + \\sumi bf^i (1 - \\I(xi)) + \\sumi \\sumj c{ij} \\I(xi) (1 - \\I(xj))$$ ここで $bt, bf$ はそれぞれ長さ $n$ の整数列 $c$ は $n \\times n$ の整数行列 $\\I(x)$ は Bool 値 $x$ に対するインディケータ関数で - $\\I(x) = \\begin{cases} 1 & \\text{ if } x = \\mathrm{true} \\\\ 0 & \\text{ if } x = \\mathrm{false} \\end{cases}$ のこと. 次のように解釈する. $bt^i$ は $xi$ が真のときのコスト $bf^i$ は $xi$ が偽のときのコスト $c{ij}$ は $xi$ が真で $xj$ が偽のときのコスト 与えられた $bt, bf, c$ に対して $\\mathcal{L}$ を最小化する $x$ の割当を求める問題を燃やす埋める問題という. $$\\min{x \\in \\{\\mathrm{true}, \\mathrm{false}\\}^n} \\mathcal{L}(x ; bt, bf, c)$$ 解法 最小カット問題に帰着する. ライブラリの使い方 cost! または gain! マクロで制約を付け足していく. /// サンプル let n = 4; // 使う変数の個数 let mut solver = MoyasuUmeruSolver::new(n); solver += cost!(1; if 0); // 変数 0 が true のときのコストが1 solver += cost!(2; if not 0); // false のときのコストが2 solver += cost!(inf; if 1); // 無限大のコスト solver += gain!(1; if not 1); // 逆に獲得できる利益. 内部ではマイナスにしてコストとして扱う solver += cost!(100; if 0 and not 1); // 0 が true, 1 が false のときのコスト solver += cost!(inf; if not 0 and 1); // 0 が false, 1 が true のときは無限のコスト solver.min_cost(); // 最小化されたコスト solver.max_gain(); // 逆に最大化した獲得量. 最小コストのマイナスを返す 実装 @[rust](procon-rs/src/opt/umerumoyasu.rs)"
     },
     {
       "title": "2-SAT",
@@ -363,22 +363,22 @@
     {
       "title": "GCD",
       "url": "num.gcd.html",
-      "content": "自然数/整数 - 関数 - GCD @[rust](procon-rs/src/num/gcd.rs)"
+      "content": "自然数/整数 - 関数 - GCD 概要 2つの自然数/整数の最大公約数 (Greatest Common Divisor; GCD) を求める. $$\\gcd(a, b) = \\begin{cases} a & \\text{ if } b = 0 \\\\ \\gcd(b, a \\bmod b) & \\text{ otherwise }\\end{cases}$$ 実装 @[rust](procon-rs/src/num/gcd.rs)"
     },
     {
       "title": "拡張GCD",
       "url": "num.exgcd.html",
-      "content": "自然数/整数 - 関数 - 拡張ユークリッド互除法 概要 $0$ でない整数の組 $(x, y)$ について、 $$ax + by = c$$ なる整数の組 $(a, b, c)$ を返す. ここで $c = gcd(x, y)$. @[rust](procon-rs/src/num/gcdex.rs)"
+      "content": "自然数/整数 - 関数 - 拡張ユークリッド互除法 概要 $0$ でない整数の組 $(x, y)$ について、 $$ax + by = c$$ なる整数の組 $(a, b, c)$ を返す. ここで $c = gcd(x, y)$. 実装 @[rust](procon-rs/src/num/gcdex.rs)"
     },
     {
       "title": "二項係数 (パスカルの三角形)",
       "url": "num.binom.pascal.html",
-      "content": "自然数/整数 - 関数 - 二項係数 (パスカルの三角形) 概要 パスカルの三角形を用いて, $1 \\leq n \\leq N, 0 \\leq k \\leq n$ についての $\\left(\\begin{array}{c}n\\\\k\\end{array}\\right)$ を $O(N^2)$ で求める. 二次元配列 binom を返し, $\\left(\\begin{array}{c}n\\\\k\\end{array}\\right)$ が binom[n][k] に入ってる. 範囲外にはゼロが入ってる. @[rust](procon-rs/src/num/binompascal.rs)"
+      "content": "自然数/整数 - 関数 - 二項係数 (パスカルの三角形) $\\def\\binom#1#2{\\left(\\begin{array}{c}#1\\\\#2\\end{array}\\right)}$ 概要 パスカルの三角形を用いて $1 \\leq n \\leq N, 0 \\leq k \\leq n$ の範囲全ての $\\binom{n}{k}$ を $O(N^2)$ で求める. 境界条件 $$\\binom{n}{1} = \\binom{0}{k} = 1 \\text{ for all } n, k$$ 漸化式 $$\\binom{n}{k} = \\binom{n-1}{k} + \\binom{n-1}{k-1} \\quad (1 \\leq k \\lt n)$$ から計算する. 実装 二次元配列 binom を返し, $\\left(\\begin{array}{c}n\\\\k\\end{array}\\right)$ が binom[n][k] に入ってる. 範囲外にはゼロが入ってる. @[rust](procon-rs/src/num/binompascal.rs)"
     },
     {
       "title": "二項係数 (ModInt)",
       "url": "num.binom.modint.html",
-      "content": "自然数/整数 - 関数 - 二項係数 (ModInt) 概要 二項係数の剰余を取った値 $\\left(\\begin{array}{c}n\\\\k\\end{array}\\right) \\bmod M$ を計算量 $O(n \\log n)$ で計算する. @[rust](procon-rs/src/num/binommodint.rs)"
+      "content": "自然数/整数 - 関数 - 二項係数 (ModInt) $\\def\\binom#1#2{\\left(\\begin{array}{c}#1\\\\#2\\end{array}\\right)}$ 概要 二項係数の剰余を取った値 $\\left(\\begin{array}{c}n\\\\k\\end{array}\\right) \\bmod M$ を計算量 $O(n \\log n)$ で計算する. $$\\binom{n}{k} = \\prod{i=0}^{k-1} \\frac{n-i}{k-i} \\bmod M$$ で計算する. $\\mod M$ で除算が出来ることを仮定している. $M$ が素数であればこれは常に成り立つ. また, もし計算済みの $\\binom{n'}{k'}$ があれば, そこから最短距離で $\\binom{n}{k}$ を計算する API も用意している. これは $O(|n-n'| + |k-k'|)$ で行う. 実装 @[rust](procon-rs/src/num/binommodint.rs)"
     },
     {
       "title": "離散対数",
@@ -436,12 +436,12 @@
       "content": "自然数/整数 - その他定理 - 中国人剰余定理 概要 $N$ 個の整数ペア $(r1, m1), \\ldots, (rN, mN)$ （ただし $mi$ は非負）について $$x = ri \\bmod mi ~~ \\forall i=1,2,\\ldots,N$$ を満たすような整数 $x$ は存在するなら一般に $$x = y \\bmod z$$ の形で与えられる. このライブラリは $(ri, mi)$ から $(y,z)$ を計算する. @[rust](procon-rs/src/num/chineseremaindertheorem.rs)"
     },
     {
-      "title": "ビッグエンディアンベクタ",
+      "title": "bigint",
       "url": "bigint.html",
       "content": "bigint @[cpp](procon-cc/bigint.cc)"
     },
     {
-      "title": "階乗 - $n!$",
+      "title": "階乗 - \\(n!\\)",
       "url": "num.iter.perm.html",
       "content": "組み合わせのイテレーター - 階乗 $n!$ For each $\\{ xi : 0 \\leq i \\lt n, 0 \\leq xi \\lt n, xi \\ne xj \\}$ @[rust](procon-rs/src/num/iter/perm.rs)"
     },
@@ -466,11 +466,6 @@
       "content": "自然数/整数 - 乱数 - Xor-Shift 法 概要 [wikipedia/Xorshift](https://ja.wikipedia.org/wiki/Xorshift) の xor64 の実装 @[rust](procon-rs/src/num/random/xorshift.rs)"
     },
     {
-      "title": "接尾辞配列 (SA)",
-      "url": "string.suffix-array.html",
-      "content": "文字列 - 接尾辞配列 (SuffixArray) の構築 概要 文字列 $S$ の $i$ 文字目以降の接尾辞を $S[i..]$ と書く. ここで $N = |S|$ に対して $i=0,1,\\ldots,N-1$. このとき空文字列は 含めていない ことに注意. 接尾辞 $S[i..]$ は添字 $i$ に対応付くが, このことを $\\phi(S[i..]) = i$ と書くことにする. 全ての接尾辞 $$S[0..], S[1..], \\ldots, S[N-1..]$$ を辞書順で整列して $$s0, s1, \\ldots, s{N-1}$$ を得たとき, その対応する添字の列 $$\\phi(s0), \\phi(s1), \\ldots, \\phi(s{N-1})$$ を 接尾辞配列 と呼ぶ. 以下の実装は文字列 $S$ から接尾辞配列を構築する. 実装と計算量 ここにあるのは Manber-Myers の方法で, 時間計算量に $O(N \\log^2(N))$ 掛かる. @[rust](./procon-rs/src/string/suffixarray.rs)"
-    },
-    {
       "title": "Shift-And",
       "url": "string.shift-and.html",
       "content": "文字列 - 検索 - Shift-And アルゴリズム 概要 文字列 text, pattern について, text 中で pattern が（連続）部分文字列として初めて出現する位置を返す. 各ビット演算が $O(1)$ だとするとき, これは text の長さ $n$ に対して $O(n)$ で計算完了する. 入出力 pattern の長さは 128 以下 (u128 を使っている為) であることを制約とする. @[rust](procon-rs/src/string/shiftand.rs)"
@@ -479,6 +474,11 @@
       "title": "Z-alogirhtm",
       "url": "string.z.html",
       "content": "文字列 - 検索 - Z アルゴリズム 概要 与えられた文字列 $S$ について, $$Zi = \\mathrm{len}(\\mathrm{longest\\common\\prefix}(S, S[i:]))$$ なる配列 $Z$ を線形時間で求めるアルゴリズム. ここで $S[i:]$ とは $i$ 文字目以降を切り出した部分文字列で, $Zi$ とは $S$ と $S[i:]$ との最長共通接頭辞の長さのこと. 特に $i=0$ のときは $S[0:]=S$ で $Z0 = \\mathrm{len}(S)$. a b c a a b c Z(abcaabc) = [7, 0, 0, 1, 3, 0, 0] Z アルゴリズムによる文字列検索 文字列 $S$ 中に $T$ が部分文字列として出現するかの検索が Z アルゴリズムによって行える. すなわち, $T$ と $S$ 及び特別な文字 @ （仮にこれは $S$ にも $T$ にも出現しない文字だとする）を結合した $T@S$ という文字列を Z アルゴリズムに渡して配列 $Z$ を構成し, その $S$ に当たる後半に $\\mathrm{len}(T)$ が登場する場所を見ればよい. @[rust](procon-rs/src/string/z.rs)"
+    },
+    {
+      "title": "接尾辞配列 (SA)",
+      "url": "string.suffix-array.html",
+      "content": "文字列 - 接尾辞配列 (SuffixArray) の構築 概要 文字列 $S$ の $i$ 文字目以降の接尾辞を $S[i..]$ と書く. ここで $N = |S|$ に対して $i=0,1,\\ldots,N-1$. このとき空文字列は 含めていない ことに注意. 接尾辞 $S[i..]$ は添字 $i$ に対応付くが, このことを $\\phi(S[i..]) = i$ と書くことにする. 全ての接尾辞 $$S[0..], S[1..], \\ldots, S[N-1..]$$ を辞書順で整列して $$s0, s1, \\ldots, s{N-1}$$ を得たとき, その対応する添字の列 $$\\phi(s0), \\phi(s1), \\ldots, \\phi(s{N-1})$$ を 接尾辞配列 と呼ぶ. 以下の実装は文字列 $S$ から接尾辞配列を構築する. 実装と計算量 ここにあるのは Manber-Myers の方法で, 時間計算量に $O(N \\log^2(N))$ 掛かる. @[rust](./procon-rs/src/string/suffixarray.rs)"
     },
     {
       "title": "SA による文字列検索",
@@ -496,34 +496,39 @@
       "content": "string.runlength 参考 [wikipedia/連長圧縮](https://ja.wikipedia.org/wiki/%E9%80%A3%E9%95%B7%E5%9C%A7%E7%B8%AE) 関連問題 [ABC143/C](https://atcoder.jp/contests/abc143/tasks/abc143c) @[rust](procon-rs/src/string/runlength.rs)"
     },
     {
-      "title": "制限時間付きループ",
+      "title": "loop_timeout_ms! マクロ",
       "url": "time.while.html",
       "content": "制限時間付きループ 概要 loop { ... } の代わりに, let milli_seconds = 1000 loop_timeout_ms!(milli_seconds, { ... } と使う 例 // Example fn slow_yes() { use std::time::Duration; use std::thread::sleep; println!(\"yes\"); sleep(Duration::new(0, 100000000)); } fn main() { loop_timeout_ms!(3000; { slow_yes(); }); } @[rust](procon-rs/src/datetime/timedloop.rs)"
     },
     {
       "title": "ツェラーの公式",
       "url": "cal.zeller.html",
-      "content": "時間/時刻 - 暦 - ツェラーの公式 参考 [wikipedia/ツェラーの公式](https://ja.wikipedia.org/wiki/%E3%83%84%E3%82%A7%E3%83%A9%E3%83%BC%E3%81%AE%E5%85%AC%E5%BC%8F) 例題 [What day is today? | AOJ](http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=0027) @[rust](procon-rs/src/datetime/zeller.rs)"
+      "content": "時間/時刻 - 暦 - ツェラーの公式 参考 [wikipedia/ツェラーの公式](https://ja.wikipedia.org/wiki/%E3%83%84%E3%82%A7%E3%83%A9%E3%83%BC%E3%81%AE%E5%85%AC%E5%BC%8F) 例題 [What day is today? - AOJ](http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=0027) 実装 @[rust](procon-rs/src/datetime/zeller.rs)"
     },
     {
       "title": "閏年判定",
       "url": "cal.uruu.html",
-      "content": "時間/時刻 - 暦 - うるう年判定 @[rust](procon-rs/src/datetime/leap.rs)"
+      "content": "時間/時刻 - 暦 - うるう年判定 参考 [コンピュータシステムと閏年](https://ja.wikipedia.org/wiki/%E9%96%8F%E5%B9%B4#%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E3%82%B7%E3%82%B9%E3%83%86%E3%83%A0%E3%81%A8%E9%96%8F%E5%B9%B4) 概要 グレゴリオ暦で $Y$ 年がうるう年であることは次と同値 $$\\left( (Y \\bmod 4 = 0) \\land (Y \\bmod 100 \\neq 0) \\right) \\lor (Y \\bmod 400 = 0)$$ 実装 @[rust](procon-rs/src/datetime/leap.rs)"
     },
     {
       "title": "Zobrist Hash",
       "url": "hash.zobrist.html",
-      "content": "Zobrist Hash 手法 状態を集合だとして説明する. 有限の母集合 $U$ があって, 状態はこれの部分集合 $X \\subset U$ として与えられるとする. このとき Zobrist Hash は $U$ の各要素にランダムな整数値を割り当てておき $X$ のハッシュを要素の値の XOR で表現する. # init for x in U: h[x] = random() def hash(X): return xor(h[x] for x in X) 適用 チェスのような盤面の状態のハッシュ化によく用いられる. これを今の枠組みに当てはめるためには, $U$ として座標情報とコマの組の集合を用いれば良い. $U = \\{ (pos, piece) \\}$ 局面はこの座標にこのコマがおいてあるという要素を全て集めた集合とすれば $U$ の部分集合になる. 参考 [wikipedia/Zobristhashing](https://en.wikipedia.org/wiki/Zobristhashing)"
+      "content": "Zobrist Hash 手法 状態を集合だとして説明する. 有限の母集合 $U$ があって, 状態はこれの部分集合 $X \\subset U$ として与えられるとする. Zobrist Hash は予め $U$ の各要素にランダムな整数値を割り当てておくので $X$ のハッシュを要素の値の XOR で表現する. # init for x in U: h[x] = random() def hash(X): return xor(h[x] for x in X) 適用 チェスのような盤面の状態のハッシュ化によく用いられる. これを今の枠組みに当てはめるためには, $U$ として座標情報とコマの組の集合を用いれば良い. $U = \\{ (pos, piece) \\}$ 局面はこの座標にこのコマがおいてあるという要素を全て集めた集合とすれば $U$ の部分集合になる. 参考 [wikipedia/Zobristhashing](https://en.wikipedia.org/wiki/Zobristhashing) 実装 @[rust](procon-rs/src/hash/zobrist.rs)"
     },
     {
       "title": "Rolling Hash",
       "url": "hash.rolling.html",
-      "content": "Rolling Hash 概要 何かの列があるときに, これのハッシュを取りたい. 列の要素は何かしらの方法で整数に変換されてるとする. $$\\langle c1, c2, \\ldots, ck \\rangle$$ ここで適当な数 $a$ を基数として, 次の値をハッシュとする. $$H(c) = \\sum{i=1}^k ci a^{k-i} = c1 a^{k-1} + c2 a^{k-2} + \\cdots + ck a^0$$ 特に空列のハッシュ値は $0$ とする. 列が等しいことを見るのにこのハッシュ値の値が等しいかをチェックする. この値は指数を含むので, すぐに膨大になる. 適当な大きな素数 $p$ を用意しておいて $\\bmod p$ で計算するのが普通. 値の追加と削除 数列の頭または末尾に値を一つ追加または削除することは上の値を注意深く計算すれば, 再計算の必要なく高速に計算出来る. 特に末尾に一つ追加する場合が効率が良い形をしていて, 列 $c$ のハッシュ値が $H(c)$ とあるときに, この末尾に $x$ を追加したもののハッシュ値は次で求まる. $$H(c \\ast x) = H(c) \\times a + x$$ テク ではその基数 $a$, mod $p$ に何を使うかには自由度が残っている. $p$ はハッシュの大きさを決めるものなので大きければ大きいほど良い. $a$ はもし文字列から文字を削除する場合には $a^{-1}$ が求まるほうが良いので, $p$ と互いに素であるのがよい. 適当な素数にしておけばよい. $p$ も大きな素数にしておけばよい. この辺の話は [[https://qiita.com/keymoon/items/11fac5627672a6d6a9f6]] を読み込むのが良さそう. 悪意ある人がハッシュ衝突を狙うような場面では基数をランダムに取ることで安全になる - Codeforces の hack 対策 $p$ にメルセンヌ素数を使うと MOD 演算をビット演算で高速化可能 - MOD 演算は遅い といったことが書いてある. 参考 [[https://en.wikipedia.org/wiki/Rollinghash]] [[https://qiita.com/keymoon/items/11fac5627672a6d6a9f6]]"
+      "content": "Rolling Hash 概要 何かの列があるときに, これのハッシュを取りたい. 列の要素は何かしらの方法で整数に変換されてるとする. $$\\langle c1, c2, \\ldots, ck \\rangle$$ ここで適当な数 $a$ を基数として, 次の値をハッシュとする. $$H(c) = \\sum{i=1}^k ci a^{k-i} = c1 a^{k-1} + c2 a^{k-2} + \\cdots + ck a^0$$ 特に空列のハッシュ値は $0$ とする. 列が等しいことを見るのにこのハッシュ値の値が等しいかをチェックする. この値は指数を含むので, すぐに膨大になる. そこで適当に十分大きな素数 $p$ を用意しておいて $\\bmod p$ で計算するのが普通. $$H(c) = \\sum{i=1}^k ci a^{k-i} \\bmod p$$ 値の追加と削除 数列の頭または末尾に値を一つ追加または削除することは上の値を注意深く計算すれば, 再計算の必要なく高速に計算出来る. 特に末尾に一つ追加する場合が効率が良い形をしていて, 列 $c$ のハッシュ値が $H(c)$ とあるときに, この末尾に $x$ を追加したもののハッシュ値は次で求まる. $$H(c \\ast x) = H(c) \\times a + x \\pmod p$$ 削除はこれの逆を取れば良い. $$H(c) = (H(c \\ast x) - x) \\times a^{-1} \\pmod p$$ テク ではその基数 $a$, mod $p$ に何を使うかには自由度が残っている. $p$ はハッシュの大きさを決めるものなので大きければ大きいほど良い. また値の削除がしたいなら $a^{-1}$ が求まる必要があり, そのためには $a$ と $p$ が互いに素である必要がある. $p$ を $a$ より大きな素数にしておけば良い. この辺の話は [[https://qiita.com/keymoon/items/11fac5627672a6d6a9f6]] を読み込むのが良さそう. 悪意ある人がハッシュ衝突を狙うような場面では基数をランダムに取ることで安全になる - Codeforces の hack 対策 $p$ にメルセンヌ素数を使うと MOD 演算をビット演算で高速化可能 - MOD 演算は遅い といったことが書いてある. 参考 [[https://en.wikipedia.org/wiki/Rollinghash]] [[https://qiita.com/keymoon/items/11fac5627672a6d6a9f6]] 実装 @[rust](procon-rs/src/hash/rolling.rs)"
+    },
+    {
+      "title": "文字列ハッシュ",
+      "url": "hash.string.html",
+      "content": "文字列ハッシュ 概要 [Zobrist Hash](hash.zobrist.html) と [Rolling Hash](hash.rolling.html) との両方を使った文字列ハッシュの実装例. 操作 - 初期値は空文字列 - 一文字を先頭・末尾に追加・削除が $O(1)$ で可能 - （ハッシュ済み）文字列同士の連結が $O(1)$ で可能 - ==, != 演算子で文字列同士の等価比較が $O(1)$ で可能 耐久性 - アルファベット表 char -> i128 のマッピングをランダムに生成 実装 @[rust](procon-rs/src/hash/string.rs)"
     },
     {
       "title": "defaultmap",
       "url": "collections.defaultdict.html",
-      "content": "collections - defaultdict 参照しようとしたキーが存在しない場合に, あらかじめ指定したデフォルト値で初期化してくれる辞書型. 参考 [Python3 - collections.defaultdict](https://docs.python.org/ja/3/library/collections.html#collections.defaultdict) 使い方 fn main() { let mut m = DefaultDict::new(0); println!(\"{:?}\", m[0]); // この時点でキー0が存在しないため, 0で初期化される m[1] += 5; // キー1が存在しないため, 0で初期化された後に5が加算される println!(\"{:?}\", m[1]); // 5 } @[rust](procon-rs/src/collections/defaultdict.rs)"
+      "content": "collections - defaultdict 参照しようとしたキーが存在しない場合に, あらかじめ指定したデフォルト値で初期化してくれる辞書型. 参考 [Python3 - collections.defaultdict](https://docs.python.org/ja/3/library/collections.html#collections.defaultdict) 使い方 fn main() { let mut m = DefaultDict::new(0); println!(\"{:?}\", m[0]); // この時点でキー0が存在しないため, 0で初期化される m[1] += 5; // キー1が存在しないため, 0で初期化された後に5が加算される println!(\"{:?}\", m[1]); // 5 } 実装 @[rust](procon-rs/src/collections/defaultdict.rs)"
     },
     {
       "title": "リスト内包表記マクロ",
@@ -534,11 +539,6 @@
       "title": "k-means",
       "url": "misc.kmeans.html",
       "content": "misc.kmeans @[cpp](procon-cc/misc.kmeans.cc)"
-    },
-    {
-      "title": "一般化15パズル",
-      "url": "15puzzle.html",
-      "content": "15puzzle @[cpp](procon-cc/15puzzle.cc)"
     },
     {
       "title": "numeric sort",

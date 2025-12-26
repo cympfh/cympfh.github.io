@@ -32,4 +32,6 @@ $$(x_1, \ldots, x_N \mid x_i \in X)$$
 - [ABC177/F](https://atcoder.jp/contests/abc177/submissions/16522911)
 - [AtCoder Library Practice Contest/L](https://atcoder.jp/contests/practice2/submissions/16577269)
 
+## 実装
+
 @[rust](procon-rs/src/sequence/tree/lazy_segment_tree.rs)

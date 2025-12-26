@@ -6,6 +6,8 @@
 
 ## 例題
 
-- [What day is today? | AOJ](http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=0027)
+- [What day is today? - AOJ](http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=0027)
+
+## 実装
 
 @[rust](procon-rs/src/datetime/zeller.rs)

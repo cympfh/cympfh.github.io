@@ -16,4 +16,6 @@ Dinic 法を実装する
 
 - [ABC091/C - 2D Plane 2N Points](https://beta.atcoder.jp/contests/arc092/tasks/arc092_a)
 
+## 実装
+
 @[rust](procon-rs/src/graph/directed/dinic.rs)

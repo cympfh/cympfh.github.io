@@ -5,7 +5,7 @@
 状態を集合だとして説明する.
 
 有限の母集合 $U$ があって, 状態はこれの部分集合 $X \subset U$ として与えられるとする.
-このとき Zobrist Hash は $U$ の各要素にランダムな整数値を割り当てておき $X$ のハッシュを要素の値の XOR で表現する.
+Zobrist Hash は予め $U$ の各要素にランダムな整数値を割り当てておくので $X$ のハッシュを要素の値の XOR で表現する.
 
 ```python
 # init
@@ -28,3 +28,7 @@ def hash(X):
 ## 参考
 
 - [wikipedia/Zobrist_hashing](https://en.wikipedia.org/wiki/Zobrist_hashing)
+
+## 実装
+
+@[rust](procon-rs/src/hash/zobrist.rs)

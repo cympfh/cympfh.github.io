@@ -9,4 +9,6 @@
 元のグラフの頂点 `i` を `cmp[i]` に写す.
 `dag` はDAGの隣接リスト表現.
 
+## 実装
+
 @[rust](procon-rs/src/graph/directed/scc.rs)

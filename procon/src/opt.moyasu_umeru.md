@@ -8,21 +8,25 @@ $\def\I{\mathbb I}$
 $n$ 個の Bool 変数 $x_0, x_1, \ldots, x_{n-1}$ があるとする.
 特に実装上ではこの添字 $0,1,\ldots,n-1$ で変数を指す.
 これに対して次の目標関数を考える.
-$$\Theta(x ; b_0, b_1, c) = \sum_i b_0^i \I(x_i) + \sum_i b_1^i (1 - \I(x_i)) + \sum_i \sum_j c_{ij} \I(x_i) (1 - \I(x_j))$$
+$$\mathcal{L}(x ; b_t, b_f, c) = \sum_i b_t^i \I(x_i) + \sum_i b_f^i (1 - \I(x_i)) + \sum_i \sum_j c_{ij} \I(x_i) (1 - \I(x_j))$$
 
 ここで
 
-- $b_0, b_1$ はそれぞれ長さ $n$ の整数列
+- $b_t, b_f$ はそれぞれ長さ $n$ の整数列
 - $c$ は $n \times n$ の整数行列
-- $\I(x)$ は Bool 値 $x$ に対するインディケータで真のとき $1$, 偽のとき $0$
+- $\I(x)$ は Bool 値 $x$ に対するインディケータ関数で
+    - $\I(x) = \begin{cases} 1 & \text{ if } x = \mathrm{true} \\ 0 & \text{ if } x = \mathrm{false} \end{cases}$
 
-つまり,
+のこと.
+次のように解釈する.
 
-- $b_0^i$ は $x_i$ が真のときのコスト
-- $b_1^i$ は $x_i$ が偽のときのコスト
+- $b_t^i$ は $x_i$ が真のときのコスト
+- $b_f^i$ は $x_i$ が偽のときのコスト
 - $c_{ij}$ は $x_i$ が真で $x_j$ が偽のときのコスト
 
-与えられた $b, c$ に対して $\Theta$ を最小化する $x$ の割当を求める問題を燃やす埋める問題という.
+与えられた $b_t, b_f, c$ に対して $\mathcal{L}$ を最小化する $x$ の割当を求める問題を燃やす埋める問題という.
+
+$$\min_{x \in \{\mathrm{true}, \mathrm{false}\}^n} \mathcal{L}(x ; b_t, b_f, c)$$
 
 ## 解法
 
@@ -51,5 +55,7 @@ solver.min_cost();  // 最小化されたコスト
 
 solver.max_gain();  // 逆に最大化した獲得量. 最小コストのマイナスを返す
 ```
+
+## 実装
 
 @[rust](procon-rs/src/opt/umeru_moyasu.rs)

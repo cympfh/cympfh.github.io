@@ -25,10 +25,16 @@ trim() {
 
 do_ocr() {
     OCRFILE=/tmp/$$.ocr
-    withcache ocr $1 | grep ocr_text >$OCRFILE
+    withcache ocr $1 >$OCRFILE
+    if [ $? -ne 0 ]; then
+        echo "OCR failed" >&2
+        rm $OCRFILE
+        return 1
+    fi
     jq -c . $OCRFILE | sed 's/^/# /'
-    jq -r .ocr_text $OCRFILE | trim
-    jq -r .short $OCRFILE | trim
+    jq -r .ocr.text $OCRFILE | trim
+    jq -r .description.major $OCRFILE | trim
+    jq -r .description.short $OCRFILE | trim
     jq -r '.tags | join(" ")' $OCRFILE | trim
     rm $OCRFILE
 }

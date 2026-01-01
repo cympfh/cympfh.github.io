@@ -5,7 +5,7 @@
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>代数 - モノイド - Sum モノイド</title>
+  <title>自然数&#x2F;整数 - 乱数 - 順列合同法 (PCG)</title>
   <style type="text/css">code{white-space: pre;}</style>
   <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
   <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
@@ -765,8 +765,8 @@ table tbody tr:hover {
   </button>
   <ul class="toc-list">
     <li class="toc-part toc-part-level-1">代数</li>
-    <li class="toc-part toc-part-level-2">
-      <div class="toc-part-header">
+    <li class="toc-part toc-part-level-2 foldable">
+      <div class="toc-part-header collapsed">
         <button class="toc-fold-toggle" aria-label="Toggle section">
           <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
             <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
@@ -774,7 +774,7 @@ table tbody tr:hover {
         </button>
         <span>モノイド</span>
       </div>
-      <ul class="toc-children">
+      <ul class="toc-children collapsed">
         <li>
           <a href="/procon/algebra.monoid.html" class="toc-page-child toc-page-indent-2">モノイドの定義</a>
         </li>
@@ -782,11 +782,7 @@ table tbody tr:hover {
           <a href="/procon/algebra.monoid.minmax.html" class="toc-page-child toc-page-indent-2">Min/Max モノイド</a>
         </li>
         <li>
-          <a href="/procon/algebra.monoid.sum.html" class="toc-page-child toc-page-indent-2 current">Sum モノイド</a>
-          <ul class="toc-sections toc-sections-indent-2">
-            <li><a href="/procon/algebra.monoid.sum.html#2-%E6%A6%82%E8%A6%81">概要</a></li>
-            <li><a href="/procon/algebra.monoid.sum.html#2-%E5%AE%9F%E8%A3%85">実装</a></li>
-          </ul>
+          <a href="/procon/algebra.monoid.sum.html" class="toc-page-child toc-page-indent-2">Sum モノイド</a>
         </li>
       </ul>
     </li>
@@ -1405,8 +1401,8 @@ table tbody tr:hover {
         </li>
       </ul>
     </li>
-    <li class="toc-part toc-part-level-2 foldable">
-      <div class="toc-part-header collapsed">
+    <li class="toc-part toc-part-level-2">
+      <div class="toc-part-header">
         <button class="toc-fold-toggle" aria-label="Toggle section">
           <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
             <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
@@ -1414,12 +1410,16 @@ table tbody tr:hover {
         </button>
         <span>乱数</span>
       </div>
-      <ul class="toc-children collapsed">
+      <ul class="toc-children">
         <li>
           <a href="/procon/rand.lcg.html" class="toc-page-child toc-page-indent-2">線形合同法 (LCG)</a>
         </li>
         <li>
-          <a href="/procon/rand.pcg.html" class="toc-page-child toc-page-indent-2">順列合同法 (PCG)</a>
+          <a href="/procon/rand.pcg.html" class="toc-page-child toc-page-indent-2 current">順列合同法 (PCG)</a>
+          <ul class="toc-sections toc-sections-indent-2">
+            <li><a href="/procon/rand.pcg.html#2-%E6%A6%82%E8%A6%81">概要</a></li>
+            <li><a href="/procon/rand.pcg.html#2-%E5%AE%9F%E8%A3%85">実装</a></li>
+          </ul>
         </li>
         <li>
           <a href="/procon/rand.xorshift.html" class="toc-page-child toc-page-indent-2">Xor-Shift 法</a>
@@ -1633,35 +1633,131 @@ table tbody tr:hover {
   </div>
 </div>
 
-<h1 class="title" id="1-%E4%BB%A3%E6%95%B0%20-%20%E3%83%A2%E3%83%8E%E3%82%A4%E3%83%89%20-%20Sum%20%E3%83%A2%E3%83%8E%E3%82%A4%E3%83%89">代数 - モノイド - Sum モノイド</h1>
+<h1 class="title" id="1-%E8%87%AA%E7%84%B6%E6%95%B0%2F%E6%95%B4%E6%95%B0%20-%20%E4%B9%B1%E6%95%B0%20-%20%E9%A0%86%E5%88%97%E5%90%88%E5%90%8C%E6%B3%95%20%28PCG%29">自然数/整数 - 乱数 - 順列合同法 (PCG)</h1>
 <h2 id="2-%E6%A6%82%E8%A6%81">概要</h2>
-<p>整数は和に関してモノイドになっている. 以下の実装では <code>i128</code> を整数と見なして, 和に関するモノイド \((\mathrm{i128}, +, 0)\) を与える.</p>
+<p>順列合同法 (Permuted Congruential Generator, PCG) の実装. 内部状態に 128 ビットを持ち, 64 ビットの乱数を生成する.</p>
 <h2 id="2-%E5%AE%9F%E8%A3%85">実装</h2>
-<pre><code class="code language-rust">&#x2F;&#x2F;&#x2F; Algebra - Def of Monoid (i128, +)
-use crate::algebra::monoid::*;
-use crate::monoid; &#x2F;&#x2F; IGNORE
+<pre><code class="code language-rust">&#x2F;&#x2F;&#x2F; Random Number - Permuted Congruential Generators (PCG64)
+&#x2F;&#x2F;&#x2F;
+&#x2F;&#x2F;&#x2F; This is an implementation of PCG64 (Lcg128Xsl64):
+&#x2F;&#x2F;&#x2F; - 128-bit internal state
+&#x2F;&#x2F;&#x2F; - 64-bit output
+&#x2F;&#x2F;&#x2F; - Uses XSL-RR (XorShift Low, Random Rotation) output function
+use crate::num::random::fromu64::*;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-pub struct Sum(pub i128);
-monoid! {
-    Sum;
-    one = Sum(0);
-    mul(self, other) = {
-        Self(self.0 + other.0)
-    };
+pub struct PCG {
+    state: u128,
+    increment: u128,
+}
+
+impl PCG {
+    &#x2F;&#x2F;&#x2F; Default multiplier for 128-bit LCG
+    const MULTIPLIER: u128 = 0x2360_ED05_1FC6_5DA4_4385_DF64_9FCC_F645;
+
+    &#x2F;&#x2F;&#x2F; Create a new PCG with default stream
+    pub fn new(seed: u64) -&gt; Self {
+        Self::with_stream(seed, 0)
+    }
+
+    &#x2F;&#x2F;&#x2F; Create a new PCG with specified seed and stream
+    &#x2F;&#x2F;&#x2F; The stream parameter allows creating independent random number sequences
+    pub fn with_stream(seed: u64, stream: u64) -&gt; Self {
+        &#x2F;&#x2F; Increment must be odd, so we use: (stream &lt;&lt; 1) | 1
+        let increment = ((stream as u128) &lt;&lt; 1) | 1;
+
+        let mut pcg = Self {
+            state: 0,
+            increment,
+        };
+
+        &#x2F;&#x2F; Initialize the state properly
+        pcg.state = pcg.state.wrapping_add(seed as u128);
+        pcg.step();
+        pcg.state = pcg.state.wrapping_add(seed as u128);
+        pcg.step();
+
+        pcg
+    }
+
+    &#x2F;&#x2F;&#x2F; Advance the internal state (LCG step)
+    #[inline]
+    fn step(&amp;mut self) {
+        self.state = self
+            .state
+            .wrapping_mul(Self::MULTIPLIER)
+            .wrapping_add(self.increment);
+    }
+
+    &#x2F;&#x2F;&#x2F; Generate next random u64 using XSL-RR output function
+    fn next(&amp;mut self) -&gt; u64 {
+        self.step();
+
+        &#x2F;&#x2F; XSL-RR output function
+        &#x2F;&#x2F; Extract rotation amount from top bits (bits 122-127)
+        let rot = (self.state &gt;&gt; 122) as u32;
+
+        &#x2F;&#x2F; XOR high and low 64 bits
+        let xored = ((self.state &gt;&gt; 64) as u64) ^ (self.state as u64);
+
+        &#x2F;&#x2F; Rotate right by rot
+        xored.rotate_right(rot)
+    }
+
+    &#x2F;&#x2F;&#x2F; Generate a value of type T from the random u64
+    pub fn gen&lt;T: FromU64&gt;(&amp;mut self) -&gt; T {
+        T::coerce(self.next())
+    }
 }
 
 #[cfg(test)]
-mod test_monoid_sum {
-    use crate::algebra::monoid_sum::*;
+mod test_pcg {
+    use crate::num::random::pcg::*;
 
     #[test]
-    fn sum() {
-        assert_eq!(Sum(0) * Sum(3), Sum(3));
-        assert_eq!(Sum(3) * Sum(0), Sum(3));
-        assert_eq!(Sum(1) * Sum(2) * Sum(4), Sum(7));
-        assert_eq!(Sum(2), Sum(2) * Sum::one());
-        assert_eq!(Sum(2), Sum::one() * Sum(2));
+    fn it_works() {
+        let mut rand = PCG::new(42);
+        let _: bool = rand.gen();
+        let _: usize = rand.gen();
+        let _: i32 = rand.gen();
+        let _: u32 = rand.gen();
+        let _: f64 = rand.gen();
+    }
+
+    #[test]
+    fn generates_different_values() {
+        let mut rand = PCG::new(12345);
+        let a: u64 = rand.gen();
+        let b: u64 = rand.gen();
+        let c: u64 = rand.gen();
+
+        &#x2F;&#x2F; Should generate different values
+        assert_ne!(a, b);
+        assert_ne!(b, c);
+        assert_ne!(a, c);
+    }
+
+    #[test]
+    fn same_seed_same_sequence() {
+        let mut rand1 = PCG::new(999);
+        let mut rand2 = PCG::new(999);
+
+        for _ in 0..10 {
+            let a: u64 = rand1.gen();
+            let b: u64 = rand2.gen();
+            assert_eq!(a, b, &quot;Same seed should produce same sequence&quot;);
+        }
+    }
+
+    #[test]
+    fn different_streams() {
+        let mut rand1 = PCG::with_stream(42, 0);
+        let mut rand2 = PCG::with_stream(42, 1);
+
+        let a: u64 = rand1.gen();
+        let b: u64 = rand2.gen();
+
+        &#x2F;&#x2F; Different streams should produce different values
+        assert_ne!(a, b);
     }
 }
 </code></pre>

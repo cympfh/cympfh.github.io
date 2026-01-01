@@ -8,6 +8,6 @@ $$x = r_i \bmod m_i ~~ \forall i=1,2,\ldots,N$$
 $$x = y \bmod z$$
 の形で与えられる.
 
-このライブラリは $(r_i, m_i)$ から $(y,z)$ を計算する.
+このライブラリは $(r_i, m_i)$ の列から $(y,z)$ を計算する.
 
 @[rust](procon-rs/src/num/chinese_remainder_theorem.rs)

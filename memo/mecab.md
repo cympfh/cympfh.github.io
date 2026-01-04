@@ -5,12 +5,12 @@
 
 ### ダウンロード
 
-必要なファイルは MeCab 本体と、そのための辞書  
-辞書には複数種類があるが、IPA辞書が推奨とされている
+必要なファイルは MeCab 本体と、そのための辞書.
+辞書には複数種類があるが、IPA辞書が推奨とされている.
 
 いつのまにか Google Code から Github にプロジェクトが移ってて、
 
-- https://github.com/taku910/mecab.git
+{{https://github.com/taku910/mecab.git}}
 
 に、mecab本体も辞書も入ってる.
 
@@ -28,7 +28,6 @@ sudo make install
 辞書がない状態でmecabを起動するとこうなる
 
 ```bash
-   mecab
 param.cpp(69) [ifs] no such file or directory: /usr/local/lib/mecab/dic/ipadic/dicrc
 ```
 
@@ -68,12 +67,14 @@ ipadic辞書utf-8版が入っているとき、この辞書を追加で入れて
 
 意外な語が固有名詞として登録されていたりするので注意が必要.
 
+> 追記. neologd は 2020 年を最後に更新が止まっている.
+
 ## オプション
 
 `man` 見ても何かあんまり説明が足りてない  
 次のサイトは大変詳細に書いてある  
 
-- [MeCabのコマンドライン引数一覧とその実行例 | mwSoft](http://www.mwsoft.jp/programming/munou/mecab_command.html)
+- [[http://www.mwsoft.jp/programming/munou/mecab_command.html]]
 
 ### 制約付き解析 (部分解析) `-p`
 
@@ -124,9 +125,11 @@ EOS
 
 ## Python3 バインディング
 
+[[https://qiita.com/sogawa@github/items/fd9bdaf8df27335f9a65]] を参考にした.
+
 ```bash
 pip install mecab-python3
-mecab-config --libs-only-L | sudo tee /etc/ld.so.conf.d/mecab.conf && sudo ldconfig  # https://qiita.com/sogawa@github/items/fd9bdaf8df27335f9a65
+mecab-config --libs-only-L | sudo tee /etc/ld.so.conf.d/mecab.conf && sudo ldconfig
 ```
 
 ### 試用

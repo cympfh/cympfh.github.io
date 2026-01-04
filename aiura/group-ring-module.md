@@ -107,7 +107,7 @@ $$\im{f} := \{ f(g) \mid g \in G \}$$
 
 - $1 \in \ker f$
     - $f$ が準同型なので $f(1) = 1$ であることと $\ker f$ の定義から
-- $x,y \in \ker f \implies xy \ker f$
+- $x,y \in \ker f \implies xy \in \ker f$
     - $f(xy) = f(x) f(y) = 1 \times 1 = 1$
 - $x \in \ker f \implies x^{-1} \in \ker f$
     - $f(x) = 1 \implies f(x^{-1}) = (f(x))^{-1} = (1)^{-1} = 1$
@@ -129,25 +129,35 @@ $$\im{f} := \{ f(g) \mid g \in G \}$$
 
 $$G/H := \{ gH \mid g \in G \}$$
 
-$gH$ は $H$ を単位としたそういう数と思ってもいいし,
-原理通りにいうなら
+$gH$ は $H$ を単位としたそういう新しい数と思っていいのだが,
+集合で定義するなら
 $gH = \{ gh \mid h \in H \}$
-という値.
+とするのが一般的.
 
 $g,g' \in G$ について $gH = g'H$ とは,
 $\{ gh \mid h \in H \} = \{ g'h \mid h \in H \}$
 のことであるが, 次のように易しく言い換えられる.
-（特に逆元のおかげで $\exists$ だけでいい.）
+
+> ２つの集合 $X, Y$ について $X=Y$ であるとは
+> $\forall x \in X, x \in Y$ かつ $\forall y \in Y, y \in X$ である.
+> $\forall gh \in gH, gh \in g'H$
+> $\iff \forall h \in H, \exists h' \in H, gh = g'h'$
+> $\iff \forall h \in H, \exists h' \in H, g = g'h'h^{-1}$.
+> そして $h'h^{-1} \in H$ だから $\exists h'' \in H, g = g'h''$ と書き直せる.
+
 $$gH = g'H \iff \exists h \in H, g = g'h$$
+
 ついでに $g'$ を左に移項すれば単に
 $$g g'^{-1} \in H$$
 といえる.
 
 #### 商群の例
 
-典型定期な例は $\mathbb Z / n \mathbb Z$ だろう.
+典型的な例は $\mathbb Z / n \mathbb Z$ だろう.
 $\mathbb Z$ は整数全体であって, その $+$ に関して群をなす.
 単位元のことは普通 $0$ とかく.
+
+$$(\mathbb Z, +, 0)$$
 
 > 今まで暗黙に群の演算を掛け算のようにみなして演算を $\times$, 単位元を $1$ と書いたが,
 > 足し算 $+$ と単位元 $0$ によって群をなすようなものも多い.
@@ -157,10 +167,14 @@ $\mathbb Z$ は整数全体であって, その $+$ に関して群をなす.
 $n \mathbb Z$ は各要素を $n$ 倍して得られる集合（つまり $n$ の倍数） $\{ nz \mid z \in \mathbb Z \}$ のこと.
 $n$ の倍数どうしの和は $n$ の倍数であることや単位元 $0$ は $n$ の倍数であることから, これもやはり（加法）群である.
 
+$$(n\mathbb Z, +, 0)$$
+
 $a = b \in \mathbb Z / n \mathbb Z$ とは,
 $a + (-b) = a - b \in n \mathbb Z$ のこと,
 つまり差が $n$ の倍数ということ.
 すなわち整数に $\pmod n$ を入れた数を表す.
+
+$$a = a + n = a + 2n = a + 3n = \cdots$$
 
 #### 標準全射, 自然射影
 

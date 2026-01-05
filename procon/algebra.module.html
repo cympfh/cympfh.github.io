@@ -414,22 +414,18 @@ body {
 
 /* Part (separator/heading) styling */
 .toc-part {
-  margin: 20px 0 8px 0;
+  margin: 8px 0;
   padding: 0;
-  font-weight: bold;
-  font-size: 0.9em;
   list-style: none;
 }
 
 .toc-part-header {
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: space-between;
   padding: 8px 12px;
   color: var(--text-primary);
-  background: transparent;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  background: inherit;
   border-radius: 4px;
   cursor: pointer;
   user-select: none;
@@ -440,18 +436,29 @@ body {
   background: var(--bg-hover);
 }
 
-/* Level 1 specific: inverted colors */
-.toc-part-level-1 .toc-part-header {
+/* Top-level parts: inverted colors */
+.toc-part-top .toc-part-header {
   color: var(--bg-primary);
   background: var(--text-primary);
 }
 
-.toc-part-level-1 .toc-part-header:hover {
+.toc-part-top .toc-part-header:hover {
   background: var(--text-secondary);
+}
+
+/* Nested parts: normal colors */
+.toc-part-nested .toc-part-header {
+  color: var(--text-primary);
+  background: inherit;
+}
+
+.toc-part-nested .toc-part-header:hover {
+  background: var(--bg-hover);
 }
 
 .toc-part-header span {
   flex: 1;
+  text-align: left;
 }
 
 .toc-fold-toggle {
@@ -459,6 +466,7 @@ body {
   border: none;
   padding: 0;
   margin: 0;
+  margin-left: 8px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -467,6 +475,7 @@ body {
   height: 20px;
   color: currentColor;
   transition: transform 0.2s ease;
+  flex-shrink: 0;
 }
 
 .toc-fold-toggle:hover {
@@ -502,25 +511,19 @@ body {
   padding: 8px 12px;
   color: var(--text-primary);
   background: transparent;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
   border-radius: 4px;
 }
 
-/* Level 1: 大見出し (Part) - inverted colors for parts without children */
-.toc-part-level-1:not(:has(.toc-part-header)) {
+/* Top-level parts without children - inverted colors */
+.toc-part-top:not(:has(.toc-part-header)) {
   color: var(--bg-primary);
   background: var(--text-primary);
 }
 
-/* Level 2: 中見出し (Chapter) */
-.toc-part-level-2 {
-  margin-left: 12px !important;
-}
-
-/* Level 3: 小見出し (Section) */
-.toc-part-level-3 {
-  margin-left: 20px !important;
+/* Nested parts without children - normal colors */
+.toc-part-nested:not(:has(.toc-part-header)) {
+  color: var(--text-primary);
+  background: transparent;
 }
 
 /* Child page indentation */
@@ -530,20 +533,19 @@ body {
   text-decoration: none;
   color: var(--text-primary);
   border-radius: 4px;
-  font-weight: 500;
   transition: background 0.2s;
 }
 
 .toc-page-indent-1 {
-  padding-left: 16px !important;
-}
-
-.toc-page-indent-2 {
   padding-left: 24px !important;
 }
 
+.toc-page-indent-2 {
+  padding-left: 36px !important;
+}
+
 .toc-page-indent-3 {
-  padding-left: 32px !important;
+  padding-left: 48px !important;
 }
 
 /* Section (H2) styling */
@@ -574,15 +576,15 @@ body {
 
 /* Additional indentation for sections under child pages */
 .toc-sections-indent-1 a {
-  padding-left: 40px;
-}
-
-.toc-sections-indent-2 a {
   padding-left: 48px;
 }
 
+.toc-sections-indent-2 a {
+  padding-left: 60px;
+}
+
 .toc-sections-indent-3 a {
-  padding-left: 56px;
+  padding-left: 72px;
 }
 
 /* Table styling */
@@ -764,459 +766,514 @@ table tbody tr:hover {
     Search
   </button>
   <ul class="toc-list">
-    <li class="toc-part toc-part-level-1">代数</li>
-    <li class="toc-part toc-part-level-2 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>モノイド</span>
-      </div>
-      <ul class="toc-children collapsed">
-        <li>
-          <a href="/procon/algebra.monoid.html" class="toc-page-child toc-page-indent-2">モノイドの定義</a>
-        </li>
-        <li>
-          <a href="/procon/algebra.monoid.minmax.html" class="toc-page-child toc-page-indent-2">Min/Max モノイド</a>
-        </li>
-        <li>
-          <a href="/procon/algebra.monoid.sum.html" class="toc-page-child toc-page-indent-2">Sum モノイド</a>
-        </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-2">
-      <div class="toc-part-header">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>群・環・体</span>
-      </div>
-      <ul class="toc-children">
-        <li>
-          <a href="/procon/algebra.group.html" class="toc-page-child toc-page-indent-2">(乗法)群と加法群</a>
-        </li>
-        <li>
-          <a href="/procon/algebra.ring.html" class="toc-page-child toc-page-indent-2">環</a>
-        </li>
-        <li>
-          <a href="/procon/algebra.field.html" class="toc-page-child toc-page-indent-2">体</a>
-        </li>
-        <li>
-          <a href="/procon/algebra.module.html" class="toc-page-child toc-page-indent-2 current">加群</a>
-          <ul class="toc-sections toc-sections-indent-2">
-            <li><a href="/procon/algebra.module.html#2-%E5%AE%9F%E8%A3%85">実装</a></li>
+      <li class="toc-part toc-part-top">
+        <div class="toc-part-header">
+          <span>代数</span>
+          <button class="toc-fold-toggle" aria-label="Toggle section">
+            <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+              <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <ul class="toc-children">
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>モノイド</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/algebra.monoid.html" class="toc-page-child toc-page-indent-2">モノイドの定義</a>
+          </li>
+          <li>
+            <a href="/procon/algebra.monoid.minmax.html" class="toc-page-child toc-page-indent-2">Min/Max モノイド</a>
+          </li>
+          <li>
+            <a href="/procon/algebra.monoid.sum.html" class="toc-page-child toc-page-indent-2">Sum モノイド</a>
+          </li>
           </ul>
         </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-2 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>数・行列</span>
-      </div>
-      <ul class="toc-children collapsed">
-        <li>
-          <a href="/procon/algebra.ratio.html" class="toc-page-child toc-page-indent-2">有理数</a>
+        <li class="toc-part toc-part-nested">
+          <div class="toc-part-header">
+            <span>群・環・体</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children">
+          <li>
+            <a href="/procon/algebra.group.html" class="toc-page-child toc-page-indent-2">(乗法)群と加法群</a>
+          </li>
+          <li>
+            <a href="/procon/algebra.ring.html" class="toc-page-child toc-page-indent-2">環</a>
+          </li>
+          <li>
+            <a href="/procon/algebra.field.html" class="toc-page-child toc-page-indent-2">体</a>
+          </li>
+          <li>
+            <a href="/procon/algebra.module.html" class="toc-page-child toc-page-indent-2 current">加群</a>
+            <ul class="toc-sections toc-sections-indent-2">
+              <li><a href="/procon/algebra.module.html#2-%E5%AE%9F%E8%A3%85">実装</a></li>
+            </ul>
+          </li>
+          </ul>
         </li>
-        <li>
-          <a href="/procon/algebra.float.html" class="toc-page-child toc-page-indent-2">実数 (Float)</a>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>数・行列</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/algebra.ratio.html" class="toc-page-child toc-page-indent-2">有理数</a>
+          </li>
+          <li>
+            <a href="/procon/algebra.float.html" class="toc-page-child toc-page-indent-2">実数 (Float)</a>
+          </li>
+          <li>
+            <a href="/procon/algebra.complex.html" class="toc-page-child toc-page-indent-2">複素数</a>
+          </li>
+          <li>
+            <a href="/procon/algebra.hyper.html" class="toc-page-child toc-page-indent-2">超数</a>
+          </li>
+          <li>
+            <a href="/procon/algebra.matrix.html" class="toc-page-child toc-page-indent-2">行列</a>
+          </li>
+          </ul>
         </li>
-        <li>
-          <a href="/procon/algebra.complex.html" class="toc-page-child toc-page-indent-2">複素数</a>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>剰余付き整数</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/algebra.modint.html" class="toc-page-child toc-page-indent-2">ModInt</a>
+          </li>
+          </ul>
         </li>
-        <li>
-          <a href="/procon/algebra.hyper.html" class="toc-page-child toc-page-indent-2">超数</a>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>作用</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/algebra.act.html" class="toc-page-child toc-page-indent-2">作用の定義</a>
+          </li>
+          <li>
+            <a href="/procon/algebra.act.add.html" class="toc-page-child toc-page-indent-2">加算作用</a>
+          </li>
+          <li>
+            <a href="/procon/algebra.act.assign.html" class="toc-page-child toc-page-indent-2">代入作用</a>
+          </li>
+          </ul>
         </li>
-        <li>
-          <a href="/procon/algebra.matrix.html" class="toc-page-child toc-page-indent-2">行列</a>
+        </ul>
+      </li>
+      <li class="toc-part toc-part-top foldable">
+        <div class="toc-part-header collapsed">
+          <span>グラフ</span>
+          <button class="toc-fold-toggle" aria-label="Toggle section">
+            <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+              <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <ul class="toc-children collapsed">
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>最短路</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/graph.dij.html" class="toc-page-child toc-page-indent-2">ダイクストラ法</a>
+          </li>
+          <li>
+            <a href="/procon/graph.wall.html" class="toc-page-child toc-page-indent-2">ワーシャル-フロイド法</a>
+          </li>
+          <li>
+            <a href="/procon/graph.bellmanford.html" class="toc-page-child toc-page-indent-2">ベルマンフォード法</a>
+          </li>
+          </ul>
         </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-2 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>剰余付き整数</span>
-      </div>
-      <ul class="toc-children collapsed">
-        <li>
-          <a href="/procon/algebra.modint.html" class="toc-page-child toc-page-indent-2">ModInt</a>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>無向グラフ</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/graph.undirected.bipartite.html" class="toc-page-child toc-page-indent-2">二部グラフ判定</a>
+          </li>
+          <li>
+            <a href="/procon/graph.undirected.diameter.html" class="toc-page-child toc-page-indent-2">直径</a>
+          </li>
+          </ul>
         </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-2 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>作用</span>
-      </div>
-      <ul class="toc-children collapsed">
-        <li>
-          <a href="/procon/algebra.act.html" class="toc-page-child toc-page-indent-2">作用の定義</a>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>最小全域木</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/graph.prim.html" class="toc-page-child toc-page-indent-2">プリム法</a>
+          </li>
+          <li>
+            <a href="/procon/graph.kruskal.html" class="toc-page-child toc-page-indent-2">クラスカル法</a>
+          </li>
+          </ul>
         </li>
-        <li>
-          <a href="/procon/algebra.act.add.html" class="toc-page-child toc-page-indent-2">加算作用</a>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>木</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/graph.tree.height.html" class="toc-page-child toc-page-indent-2">高さ</a>
+          </li>
+          <li>
+            <a href="/procon/graph.tree.diameter.html" class="toc-page-child toc-page-indent-2">直径</a>
+          </li>
+          <li>
+            <a href="/procon/graph.tree.lca.html" class="toc-page-child toc-page-indent-2">最小共通祖先</a>
+          </li>
+          </ul>
         </li>
-        <li>
-          <a href="/procon/algebra.act.assign.html" class="toc-page-child toc-page-indent-2">代入作用</a>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>有向グラフ</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/graph.maxflow.html" class="toc-page-child toc-page-indent-2">最大流量</a>
+          </li>
+          <li>
+            <a href="/procon/graph.topological.html" class="toc-page-child toc-page-indent-2">トポロジカルソート</a>
+          </li>
+          <li>
+            <a href="/procon/graph.scc.html" class="toc-page-child toc-page-indent-2">強連結成分分解</a>
+          </li>
+          </ul>
         </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-1">グラフ</li>
-    <li class="toc-part toc-part-level-2 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>最短路</span>
-      </div>
-      <ul class="toc-children collapsed">
-        <li>
-          <a href="/procon/graph.dij.html" class="toc-page-child toc-page-indent-2">ダイクストラ法</a>
+        </ul>
+      </li>
+      <li class="toc-part toc-part-top foldable">
+        <div class="toc-part-header collapsed">
+          <span>数列</span>
+          <button class="toc-fold-toggle" aria-label="Toggle section">
+            <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+              <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <ul class="toc-children collapsed">
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>累積和</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/seq.cumsum1d.html" class="toc-page-child toc-page-indent-2">一次元累積和</a>
+          </li>
+          <li>
+            <a href="/procon/seq.cumsum2d.html" class="toc-page-child toc-page-indent-2">二次元累積和</a>
+          </li>
+          </ul>
         </li>
-        <li>
-          <a href="/procon/graph.wall.html" class="toc-page-child toc-page-indent-2">ワーシャル-フロイド法</a>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>区間木</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li class="toc-part toc-part-nested foldable">
+            <div class="toc-part-header collapsed">
+              <span>BIT</span>
+              <button class="toc-fold-toggle" aria-label="Toggle section">
+                <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                  <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                </svg>
+              </button>
+            </div>
+            <ul class="toc-children collapsed">
+            <li>
+              <a href="/procon/seq.bit.html" class="toc-page-child toc-page-indent-3">BIT</a>
+            </li>
+            <li>
+              <a href="/procon/seq.bit_cumulative.html" class="toc-page-child toc-page-indent-3">区間加算を処理する BIT</a>
+            </li>
+            </ul>
+          </li>
+          <li class="toc-part toc-part-nested foldable">
+            <div class="toc-part-header collapsed">
+              <span>セグメントツリー</span>
+              <button class="toc-fold-toggle" aria-label="Toggle section">
+                <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                  <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                </svg>
+              </button>
+            </div>
+            <ul class="toc-children collapsed">
+            <li>
+              <a href="/procon/seq.segment_tree.html" class="toc-page-child toc-page-indent-3">セグメントツリー</a>
+            </li>
+            <li>
+              <a href="/procon/seq.rmq.html" class="toc-page-child toc-page-indent-3">RMQ</a>
+            </li>
+            <li>
+              <a href="/procon/seq.segment_tree_sum.html" class="toc-page-child toc-page-indent-3">加法セグメントツリー</a>
+            </li>
+            <li>
+              <a href="/procon/seq.segment_tree_prod.html" class="toc-page-child toc-page-indent-3">乗法セグメントツリー</a>
+            </li>
+            </ul>
+          </li>
+          <li class="toc-part toc-part-nested foldable">
+            <div class="toc-part-header collapsed">
+              <span>遅延セグメントツリー</span>
+              <button class="toc-fold-toggle" aria-label="Toggle section">
+                <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                  <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                </svg>
+              </button>
+            </div>
+            <ul class="toc-children collapsed">
+            <li>
+              <a href="/procon/seq.lazy_segment_tree.html" class="toc-page-child toc-page-indent-3">遅延セグメントツリー</a>
+            </li>
+            <li>
+              <a href="/procon/seq.ranged_assign_rmq.html" class="toc-page-child toc-page-indent-3">区間代入 RMQ</a>
+            </li>
+            <li>
+              <a href="/procon/seq.ranged_add_rmq.html" class="toc-page-child toc-page-indent-3">区間加算 RMQ</a>
+            </li>
+            <li>
+              <a href="/procon/seq.ranged_add_segment_tree_sum.html" class="toc-page-child toc-page-indent-3">区間加算 加法セグメントツリー</a>
+            </li>
+            </ul>
+          </li>
+          </ul>
         </li>
-        <li>
-          <a href="/procon/graph.bellmanford.html" class="toc-page-child toc-page-indent-2">ベルマンフォード法</a>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>その他数列アルゴリズム</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/seq.lis.html" class="toc-page-child toc-page-indent-2">最長増加部分列</a>
+          </li>
+          <li>
+            <a href="/procon/seq.median.html" class="toc-page-child toc-page-indent-2">中央値ヒープ</a>
+          </li>
+          <li>
+            <a href="/procon/seq.slide_min.html" class="toc-page-child toc-page-indent-2">スライド最小値</a>
+          </li>
+          <li>
+            <a href="/procon/seq.bitvecbool.html" class="toc-page-child toc-page-indent-2">BitVecBool</a>
+          </li>
+          <li>
+            <a href="/procon/fft.convolution.html" class="toc-page-child toc-page-indent-2">FFT 畳み込み</a>
+          </li>
+          </ul>
         </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-2 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>無向グラフ</span>
-      </div>
-      <ul class="toc-children collapsed">
-        <li>
-          <a href="/procon/graph.undirected.bipartite.html" class="toc-page-child toc-page-indent-2">二部グラフ判定</a>
+        </ul>
+      </li>
+      <li class="toc-part toc-part-top foldable">
+        <div class="toc-part-header collapsed">
+          <span>二次元ユークリッド幾何</span>
+          <button class="toc-fold-toggle" aria-label="Toggle section">
+            <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+              <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <ul class="toc-children collapsed">
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>図形の定義</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/geo.2d.point.html" class="toc-page-child toc-page-indent-2">点</a>
+          </li>
+          <li>
+            <a href="/procon/geo.2d.line.html" class="toc-page-child toc-page-indent-2">直線, 線分</a>
+          </li>
+          <li>
+            <a href="/procon/geo.2d.polygon.html" class="toc-page-child toc-page-indent-2">多角形</a>
+          </li>
+          <li>
+            <a href="/procon/geo.2d.circle.html" class="toc-page-child toc-page-indent-2">円</a>
+          </li>
+          </ul>
         </li>
-        <li>
-          <a href="/procon/graph.undirected.diameter.html" class="toc-page-child toc-page-indent-2">直径</a>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>線分</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/geo.2d.ccw.html" class="toc-page-child toc-page-indent-2">線分と点の接触判定</a>
+          </li>
+          <li>
+            <a href="/procon/geo.2d.intersection.html" class="toc-page-child toc-page-indent-2">線分と線分の交差判定</a>
+          </li>
+          </ul>
         </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-2 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>最小全域木</span>
-      </div>
-      <ul class="toc-children collapsed">
-        <li>
-          <a href="/procon/graph.prim.html" class="toc-page-child toc-page-indent-2">プリム法</a>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>多角形</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/geo.2d.circum.html" class="toc-page-child toc-page-indent-2">三角形の外接円</a>
+          </li>
+          <li>
+            <a href="/procon/geo.2d.isin_poly.html" class="toc-page-child toc-page-indent-2">多角形の内外判定</a>
+          </li>
+          <li>
+            <a href="/procon/geo.2d.convex_hull.html" class="toc-page-child toc-page-indent-2">凸包</a>
+          </li>
+          </ul>
         </li>
-        <li>
-          <a href="/procon/graph.kruskal.html" class="toc-page-child toc-page-indent-2">クラスカル法</a>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>円</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/geo.2d.circle.intersection.html" class="toc-page-child toc-page-indent-2">円と円との接触関係</a>
+          </li>
+          </ul>
         </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-2 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>木</span>
-      </div>
-      <ul class="toc-children collapsed">
-        <li>
-          <a href="/procon/graph.tree.height.html" class="toc-page-child toc-page-indent-2">高さ</a>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>格子点上の幾何</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/geo.2d.int.point.html" class="toc-page-child toc-page-indent-2">点</a>
+          </li>
+          <li>
+            <a href="/procon/geo.2d.int.line.html" class="toc-page-child toc-page-indent-2">直線</a>
+          </li>
+          </ul>
         </li>
-        <li>
-          <a href="/procon/graph.tree.diameter.html" class="toc-page-child toc-page-indent-2">直径</a>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>その他幾何</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/geo.polar.html" class="toc-page-child toc-page-indent-2">極座標</a>
+          </li>
+          <li>
+            <a href="/procon/geo.cht.html" class="toc-page-child toc-page-indent-2">Convex-Hull Trick</a>
+          </li>
+          <li>
+            <a href="/procon/geo.closest_pair.html" class="toc-page-child toc-page-indent-2">最近点対</a>
+          </li>
+          </ul>
         </li>
-        <li>
-          <a href="/procon/graph.tree.lca.html" class="toc-page-child toc-page-indent-2">最小共通祖先</a>
-        </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-2 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>有向グラフ</span>
-      </div>
-      <ul class="toc-children collapsed">
-        <li>
-          <a href="/procon/graph.maxflow.html" class="toc-page-child toc-page-indent-2">最大流量</a>
-        </li>
-        <li>
-          <a href="/procon/graph.topological.html" class="toc-page-child toc-page-indent-2">トポロジカルソート</a>
-        </li>
-        <li>
-          <a href="/procon/graph.scc.html" class="toc-page-child toc-page-indent-2">強連結成分分解</a>
-        </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-1">数列</li>
-    <li class="toc-part toc-part-level-2 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>累積和</span>
-      </div>
-      <ul class="toc-children collapsed">
-        <li>
-          <a href="/procon/seq.cumsum1d.html" class="toc-page-child toc-page-indent-2">一次元累積和</a>
-        </li>
-        <li>
-          <a href="/procon/seq.cumsum2d.html" class="toc-page-child toc-page-indent-2">二次元累積和</a>
-        </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-2">区間木</li>
-    <li class="toc-part toc-part-level-3 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>BIT</span>
-      </div>
-      <ul class="toc-children collapsed">
-        <li>
-          <a href="/procon/seq.bit.html" class="toc-page-child toc-page-indent-3">BIT</a>
-        </li>
-        <li>
-          <a href="/procon/seq.bit_cumulative.html" class="toc-page-child toc-page-indent-3">区間加算を処理する BIT</a>
-        </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-3 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>セグメントツリー</span>
-      </div>
-      <ul class="toc-children collapsed">
-        <li>
-          <a href="/procon/seq.segment_tree.html" class="toc-page-child toc-page-indent-3">セグメントツリー</a>
-        </li>
-        <li>
-          <a href="/procon/seq.rmq.html" class="toc-page-child toc-page-indent-3">RMQ</a>
-        </li>
-        <li>
-          <a href="/procon/seq.segment_tree_sum.html" class="toc-page-child toc-page-indent-3">加法セグメントツリー</a>
-        </li>
-        <li>
-          <a href="/procon/seq.segment_tree_prod.html" class="toc-page-child toc-page-indent-3">乗法セグメントツリー</a>
-        </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-3 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>遅延セグメントツリー</span>
-      </div>
-      <ul class="toc-children collapsed">
-        <li>
-          <a href="/procon/seq.lazy_segment_tree.html" class="toc-page-child toc-page-indent-3">遅延セグメントツリー</a>
-        </li>
-        <li>
-          <a href="/procon/seq.ranged_assign_rmq.html" class="toc-page-child toc-page-indent-3">区間代入 RMQ</a>
-        </li>
-        <li>
-          <a href="/procon/seq.ranged_add_rmq.html" class="toc-page-child toc-page-indent-3">区間加算 RMQ</a>
-        </li>
-        <li>
-          <a href="/procon/seq.ranged_add_segment_tree_sum.html" class="toc-page-child toc-page-indent-3">区間加算 加法セグメントツリー</a>
-        </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-2 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>その他数列アルゴリズム</span>
-      </div>
-      <ul class="toc-children collapsed">
-        <li>
-          <a href="/procon/seq.lis.html" class="toc-page-child toc-page-indent-2">最長増加部分列</a>
-        </li>
-        <li>
-          <a href="/procon/seq.median.html" class="toc-page-child toc-page-indent-2">中央値ヒープ</a>
-        </li>
-        <li>
-          <a href="/procon/seq.slide_min.html" class="toc-page-child toc-page-indent-2">スライド最小値</a>
-        </li>
-        <li>
-          <a href="/procon/seq.bitvecbool.html" class="toc-page-child toc-page-indent-2">BitVecBool</a>
-        </li>
-        <li>
-          <a href="/procon/fft.convolution.html" class="toc-page-child toc-page-indent-2">FFT 畳み込み</a>
-        </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-1">二次元ユークリッド幾何</li>
-    <li class="toc-part toc-part-level-2 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>図形の定義</span>
-      </div>
-      <ul class="toc-children collapsed">
-        <li>
-          <a href="/procon/geo.2d.point.html" class="toc-page-child toc-page-indent-2">点</a>
-        </li>
-        <li>
-          <a href="/procon/geo.2d.line.html" class="toc-page-child toc-page-indent-2">直線, 線分</a>
-        </li>
-        <li>
-          <a href="/procon/geo.2d.polygon.html" class="toc-page-child toc-page-indent-2">多角形</a>
-        </li>
-        <li>
-          <a href="/procon/geo.2d.circle.html" class="toc-page-child toc-page-indent-2">円</a>
-        </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-2 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>線分</span>
-      </div>
-      <ul class="toc-children collapsed">
-        <li>
-          <a href="/procon/geo.2d.ccw.html" class="toc-page-child toc-page-indent-2">線分と点の接触判定</a>
-        </li>
-        <li>
-          <a href="/procon/geo.2d.intersection.html" class="toc-page-child toc-page-indent-2">線分と線分の交差判定</a>
-        </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-2 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>多角形</span>
-      </div>
-      <ul class="toc-children collapsed">
-        <li>
-          <a href="/procon/geo.2d.circum.html" class="toc-page-child toc-page-indent-2">三角形の外接円</a>
-        </li>
-        <li>
-          <a href="/procon/geo.2d.isin_poly.html" class="toc-page-child toc-page-indent-2">多角形の内外判定</a>
-        </li>
-        <li>
-          <a href="/procon/geo.2d.convex_hull.html" class="toc-page-child toc-page-indent-2">凸包</a>
-        </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-2 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>円</span>
-      </div>
-      <ul class="toc-children collapsed">
-        <li>
-          <a href="/procon/geo.2d.circle.intersection.html" class="toc-page-child toc-page-indent-2">円と円との接触関係</a>
-        </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-2 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>格子点上の幾何</span>
-      </div>
-      <ul class="toc-children collapsed">
-        <li>
-          <a href="/procon/geo.2d.int.point.html" class="toc-page-child toc-page-indent-2">点</a>
-        </li>
-        <li>
-          <a href="/procon/geo.2d.int.line.html" class="toc-page-child toc-page-indent-2">直線</a>
-        </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-2 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>その他幾何アルゴリズム</span>
-      </div>
-      <ul class="toc-children collapsed">
-        <li>
-          <a href="/procon/geo.polar.html" class="toc-page-child toc-page-indent-2">極座標</a>
-        </li>
-        <li>
-          <a href="/procon/geo.cht.html" class="toc-page-child toc-page-indent-2">Convex-Hull Trick (CHT)</a>
-        </li>
-        <li>
-          <a href="/procon/geo.closest_pair.html" class="toc-page-child toc-page-indent-2">最近点対</a>
-        </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-1 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>集合</span>
-      </div>
-      <ul class="toc-children collapsed">
+        </ul>
+      </li>
+      <li class="toc-part toc-part-top foldable">
+        <div class="toc-part-header collapsed">
+          <span>集合</span>
+          <button class="toc-fold-toggle" aria-label="Toggle section">
+            <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+              <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <ul class="toc-children collapsed">
         <li>
           <a href="/procon/set.union_find.html" class="toc-page-child toc-page-indent-1">UnionFind</a>
         </li>
@@ -1229,79 +1286,66 @@ table tbody tr:hover {
         <li>
           <a href="/procon/collections.multiset.html" class="toc-page-child toc-page-indent-1">多重集合</a>
         </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-1">アルゴリズム</li>
-    <li class="toc-part toc-part-level-2 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>動的計画法</span>
-      </div>
-      <ul class="toc-children collapsed">
+        </ul>
+      </li>
+      <li class="toc-part toc-part-top foldable">
+        <div class="toc-part-header collapsed">
+          <span>アルゴリズム</span>
+          <button class="toc-fold-toggle" aria-label="Toggle section">
+            <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+              <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <ul class="toc-children collapsed">
         <li>
-          <a href="/procon/dp.knapsack.01.html" class="toc-page-child toc-page-indent-2">01-ナップザック</a>
+          <a href="/procon/dp.knapsack.01.html" class="toc-page-child toc-page-indent-1">01-ナップザック</a>
         </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-2 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>二分探索</span>
-      </div>
-      <ul class="toc-children collapsed">
         <li>
-          <a href="/procon/bin.search.html" class="toc-page-child toc-page-indent-2">二分探索</a>
+          <a href="/procon/bin.search.html" class="toc-page-child toc-page-indent-1">二分探索</a>
         </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-2 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>循環検出</span>
-      </div>
-      <ul class="toc-children collapsed">
-        <li>
-          <a href="/procon/algorithm.rho.html" class="toc-page-child toc-page-indent-2">フロイドの\(\rho\)アルゴリズム</a>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>循環検出</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/algorithm.rho.html" class="toc-page-child toc-page-indent-2">フロイドの\(\rho\)アルゴリズム</a>
+          </li>
+          </ul>
         </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-2 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>連立一次方程式</span>
-      </div>
-      <ul class="toc-children collapsed">
-        <li>
-          <a href="/procon/algorithm.gauss_jordan.html" class="toc-page-child toc-page-indent-2">Gauss-Jordan の消去法</a>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>連立一次方程式</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/algorithm.gauss_jordan.html" class="toc-page-child toc-page-indent-2">Gauss-Jordan の消去法</a>
+          </li>
+          </ul>
         </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-1 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>最適化</span>
-      </div>
-      <ul class="toc-children collapsed">
+        </ul>
+      </li>
+      <li class="toc-part toc-part-top foldable">
+        <div class="toc-part-header collapsed">
+          <span>最適化</span>
+          <button class="toc-fold-toggle" aria-label="Toggle section">
+            <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+              <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <ul class="toc-children collapsed">
         <li>
           <a href="/procon/opt.moyasu_umeru.html" class="toc-page-child toc-page-indent-1">燃やす埋める問題</a>
         </li>
@@ -1311,219 +1355,241 @@ table tbody tr:hover {
         <li>
           <a href="/procon/opt.3sat.html" class="toc-page-child toc-page-indent-1">乱択3-SAT</a>
         </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-1">自然数・整数</li>
-    <li class="toc-part toc-part-level-2 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>自然数・整数の関数・定理</span>
-      </div>
-      <ul class="toc-children collapsed">
+        </ul>
+      </li>
+      <li class="toc-part toc-part-top foldable">
+        <div class="toc-part-header collapsed">
+          <span>自然数・整数</span>
+          <button class="toc-fold-toggle" aria-label="Toggle section">
+            <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+              <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <ul class="toc-children collapsed">
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>自然数・整数の関数・定理</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/num.gcd.html" class="toc-page-child toc-page-indent-2">GCD</a>
+          </li>
+          <li>
+            <a href="/procon/num.exgcd.html" class="toc-page-child toc-page-indent-2">拡張GCD</a>
+          </li>
+          <li>
+            <a href="/procon/num.binom.pascal.html" class="toc-page-child toc-page-indent-2">二項係数 (パスカルの三角形)</a>
+          </li>
+          <li>
+            <a href="/procon/num.binom.modint.html" class="toc-page-child toc-page-indent-2">二項係数 (ModInt)</a>
+          </li>
+          <li>
+            <a href="/procon/num.dislog.html" class="toc-page-child toc-page-indent-2">離散対数</a>
+          </li>
+          <li>
+            <a href="/procon/num.derangement.html" class="toc-page-child toc-page-indent-2">完全順列</a>
+          </li>
+          <li>
+            <a href="/procon/num.euler_phi.html" class="toc-page-child toc-page-indent-2">オイラーの関数</a>
+          </li>
+          <li>
+            <a href="/procon/num.moebius.html" class="toc-page-child toc-page-indent-2">メビウス関数</a>
+          </li>
+          <li>
+            <a href="/procon/num.n_vs_nn.html" class="toc-page-child toc-page-indent-2">自然数の対 ↔ 自然数 の変換</a>
+          </li>
+          <li>
+            <a href="/procon/num.mex.html" class="toc-page-child toc-page-indent-2">最小自由数 (最小除外数)</a>
+          </li>
+          <li>
+            <a href="/procon/num.chinese.html" class="toc-page-child toc-page-indent-2">中国人剰余定理</a>
+          </li>
+          </ul>
+        </li>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>素数</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/prime.sieve.html" class="toc-page-child toc-page-indent-2">エラトステネスの篩</a>
+          </li>
+          <li>
+            <a href="/procon/prime.MillerRabin.html" class="toc-page-child toc-page-indent-2">ミラー・ラビン素数判定</a>
+          </li>
+          <li>
+            <a href="/procon/prime.fermat.little.html" class="toc-page-child toc-page-indent-2">フェルマーの小定理</a>
+          </li>
+          <li>
+            <a href="/procon/prime.factorize.html" class="toc-page-child toc-page-indent-2">素因数分解</a>
+          </li>
+          </ul>
+        </li>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>組み合わせのイテレーター</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/num.iter.perm.html" class="toc-page-child toc-page-indent-2">階乗 - \(n!\)</a>
+          </li>
+          <li>
+            <a href="/procon/num.iter.powperm.html" class="toc-page-child toc-page-indent-2">冪乗 - \(n^m\)</a>
+          </li>
+          <li>
+            <a href="/procon/num.iter.comb.html" class="toc-page-child toc-page-indent-2">二項係数 - \({}_nC{}_m\)</a>
+          </li>
+          </ul>
+        </li>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>乱数</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/rand.lcg.html" class="toc-page-child toc-page-indent-2">線形合同法 (LCG)</a>
+          </li>
+          <li>
+            <a href="/procon/rand.pcg.html" class="toc-page-child toc-page-indent-2">順列合同法 (PCG)</a>
+          </li>
+          <li>
+            <a href="/procon/rand.xorshift.html" class="toc-page-child toc-page-indent-2">Xor-Shift 法</a>
+          </li>
+          </ul>
+        </li>
+        </ul>
+      </li>
+      <li class="toc-part toc-part-top foldable">
+        <div class="toc-part-header collapsed">
+          <span>文字列 (Vector)</span>
+          <button class="toc-fold-toggle" aria-label="Toggle section">
+            <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+              <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <ul class="toc-children collapsed">
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>文字列検索</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/string.shift-and.html" class="toc-page-child toc-page-indent-2">Shift-And</a>
+          </li>
+          <li>
+            <a href="/procon/string.z.html" class="toc-page-child toc-page-indent-2">Z-alogirhtm</a>
+          </li>
+          <li>
+            <a href="/procon/string.suffix-array.html" class="toc-page-child toc-page-indent-2">接尾辞配列 (SA)</a>
+          </li>
+          <li>
+            <a href="/procon/string.sa-search.html" class="toc-page-child toc-page-indent-2">SA による文字列検索</a>
+          </li>
+          </ul>
+        </li>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>回文</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/string.manacher.html" class="toc-page-child toc-page-indent-2">manacher</a>
+          </li>
+          </ul>
+        </li>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>圧縮</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/string.runlength.html" class="toc-page-child toc-page-indent-2">Run-length</a>
+          </li>
+          </ul>
+        </li>
+        </ul>
+      </li>
+      <li class="toc-part toc-part-top">時間/時刻</li>
+      <li class="toc-part toc-part-top foldable">
+        <div class="toc-part-header collapsed">
+          <span>制限時間付きループ</span>
+          <button class="toc-fold-toggle" aria-label="Toggle section">
+            <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+              <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <ul class="toc-children collapsed">
         <li>
-          <a href="/procon/num.gcd.html" class="toc-page-child toc-page-indent-2">GCD</a>
+          <a href="/procon/time.while.html" class="toc-page-child toc-page-indent-1">loop_timeout_ms! マクロ</a>
+        </li>
+        </ul>
+      </li>
+      <li class="toc-part toc-part-top foldable">
+        <div class="toc-part-header collapsed">
+          <span>暦</span>
+          <button class="toc-fold-toggle" aria-label="Toggle section">
+            <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+              <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <ul class="toc-children collapsed">
+        <li>
+          <a href="/procon/cal.zeller.html" class="toc-page-child toc-page-indent-1">ツェラーの公式</a>
         </li>
         <li>
-          <a href="/procon/num.exgcd.html" class="toc-page-child toc-page-indent-2">拡張GCD</a>
+          <a href="/procon/cal.uruu.html" class="toc-page-child toc-page-indent-1">閏年判定</a>
         </li>
-        <li>
-          <a href="/procon/num.binom.pascal.html" class="toc-page-child toc-page-indent-2">二項係数 (パスカルの三角形)</a>
-        </li>
-        <li>
-          <a href="/procon/num.binom.modint.html" class="toc-page-child toc-page-indent-2">二項係数 (ModInt)</a>
-        </li>
-        <li>
-          <a href="/procon/num.dislog.html" class="toc-page-child toc-page-indent-2">離散対数</a>
-        </li>
-        <li>
-          <a href="/procon/num.derangement.html" class="toc-page-child toc-page-indent-2">完全順列</a>
-        </li>
-        <li>
-          <a href="/procon/num.euler_phi.html" class="toc-page-child toc-page-indent-2">オイラーの関数</a>
-        </li>
-        <li>
-          <a href="/procon/num.moebius.html" class="toc-page-child toc-page-indent-2">メビウス関数</a>
-        </li>
-        <li>
-          <a href="/procon/num.n_vs_nn.html" class="toc-page-child toc-page-indent-2">自然数の対 ↔ 自然数 の変換</a>
-        </li>
-        <li>
-          <a href="/procon/num.mex.html" class="toc-page-child toc-page-indent-2">最小自由数 (最小除外数)</a>
-        </li>
-        <li>
-          <a href="/procon/num.chinese.html" class="toc-page-child toc-page-indent-2">中国人剰余定理</a>
-        </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-2 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>素数</span>
-      </div>
-      <ul class="toc-children collapsed">
-        <li>
-          <a href="/procon/prime.sieve.html" class="toc-page-child toc-page-indent-2">エラトステネスの篩</a>
-        </li>
-        <li>
-          <a href="/procon/prime.MillerRabin.html" class="toc-page-child toc-page-indent-2">ミラー・ラビン素数判定</a>
-        </li>
-        <li>
-          <a href="/procon/prime.fermat.little.html" class="toc-page-child toc-page-indent-2">フェルマーの小定理</a>
-        </li>
-        <li>
-          <a href="/procon/prime.factorize.html" class="toc-page-child toc-page-indent-2">素因数分解</a>
-        </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-2 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>組み合わせのイテレーター</span>
-      </div>
-      <ul class="toc-children collapsed">
-        <li>
-          <a href="/procon/num.iter.perm.html" class="toc-page-child toc-page-indent-2">階乗 - \(n!\)</a>
-        </li>
-        <li>
-          <a href="/procon/num.iter.powperm.html" class="toc-page-child toc-page-indent-2">冪乗 - \(n^m\)</a>
-        </li>
-        <li>
-          <a href="/procon/num.iter.comb.html" class="toc-page-child toc-page-indent-2">二項係数 - \({}_nC{}_m\)</a>
-        </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-2 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>乱数</span>
-      </div>
-      <ul class="toc-children collapsed">
-        <li>
-          <a href="/procon/rand.lcg.html" class="toc-page-child toc-page-indent-2">線形合同法 (LCG)</a>
-        </li>
-        <li>
-          <a href="/procon/rand.pcg.html" class="toc-page-child toc-page-indent-2">順列合同法 (PCG)</a>
-        </li>
-        <li>
-          <a href="/procon/rand.xorshift.html" class="toc-page-child toc-page-indent-2">Xor-Shift 法</a>
-        </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-1">文字列 (Vector)</li>
-    <li class="toc-part toc-part-level-2 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>文字列検索</span>
-      </div>
-      <ul class="toc-children collapsed">
-        <li>
-          <a href="/procon/string.shift-and.html" class="toc-page-child toc-page-indent-2">Shift-And</a>
-        </li>
-        <li>
-          <a href="/procon/string.z.html" class="toc-page-child toc-page-indent-2">Z-alogirhtm</a>
-        </li>
-        <li>
-          <a href="/procon/string.suffix-array.html" class="toc-page-child toc-page-indent-2">接尾辞配列 (SA)</a>
-        </li>
-        <li>
-          <a href="/procon/string.sa-search.html" class="toc-page-child toc-page-indent-2">SA による文字列検索</a>
-        </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-2 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>回文</span>
-      </div>
-      <ul class="toc-children collapsed">
-        <li>
-          <a href="/procon/string.manacher.html" class="toc-page-child toc-page-indent-2">manacher</a>
-        </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-2 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>圧縮</span>
-      </div>
-      <ul class="toc-children collapsed">
-        <li>
-          <a href="/procon/string.runlength.html" class="toc-page-child toc-page-indent-2">Run-length</a>
-        </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-1">時間/時刻</li>
-    <li class="toc-part toc-part-level-2 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>制限時間付きループ</span>
-      </div>
-      <ul class="toc-children collapsed">
-        <li>
-          <a href="/procon/time.while.html" class="toc-page-child toc-page-indent-2">loop_timeout_ms! マクロ</a>
-        </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-2 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>暦</span>
-      </div>
-      <ul class="toc-children collapsed">
-        <li>
-          <a href="/procon/cal.zeller.html" class="toc-page-child toc-page-indent-2">ツェラーの公式</a>
-        </li>
-        <li>
-          <a href="/procon/cal.uruu.html" class="toc-page-child toc-page-indent-2">閏年判定</a>
-        </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-1 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>ハッシュ</span>
-      </div>
-      <ul class="toc-children collapsed">
+        </ul>
+      </li>
+      <li class="toc-part toc-part-top foldable">
+        <div class="toc-part-header collapsed">
+          <span>ハッシュ</span>
+          <button class="toc-fold-toggle" aria-label="Toggle section">
+            <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+              <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <ul class="toc-children collapsed">
         <li>
           <a href="/procon/hash.zobrist.html" class="toc-page-child toc-page-indent-1">Zobrist Hash</a>
         </li>
@@ -1533,44 +1599,44 @@ table tbody tr:hover {
         <li>
           <a href="/procon/hash.string.html" class="toc-page-child toc-page-indent-1">文字列ハッシュ</a>
         </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-1 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>collections</span>
-      </div>
-      <ul class="toc-children collapsed">
+        </ul>
+      </li>
+      <li class="toc-part toc-part-top foldable">
+        <div class="toc-part-header collapsed">
+          <span>collections</span>
+          <button class="toc-fold-toggle" aria-label="Toggle section">
+            <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+              <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <ul class="toc-children collapsed">
         <li>
           <a href="/procon/collections.defaultdict.html" class="toc-page-child toc-page-indent-1">defaultmap</a>
         </li>
         <li>
           <a href="/procon/collections.list_comprehension_macro.html" class="toc-page-child toc-page-indent-1">リスト内包表記マクロ</a>
         </li>
-      </ul>
-    </li>
-    <li class="toc-part toc-part-level-1 foldable">
-      <div class="toc-part-header collapsed">
-        <button class="toc-fold-toggle" aria-label="Toggle section">
-          <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
-            <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <span>misc</span>
-      </div>
-      <ul class="toc-children collapsed">
+        </ul>
+      </li>
+      <li class="toc-part toc-part-top foldable">
+        <div class="toc-part-header collapsed">
+          <span>misc</span>
+          <button class="toc-fold-toggle" aria-label="Toggle section">
+            <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+              <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <ul class="toc-children collapsed">
         <li>
           <a href="/procon/misc.neighbor.html" class="toc-page-child toc-page-indent-1">近傍</a>
         </li>
         <li>
           <a href="/procon/misc.coodinate_compression.html" class="toc-page-child toc-page-indent-1">座標圧縮</a>
         </li>
-      </ul>
-    </li>
+        </ul>
+      </li>
   </ul>
 </nav>
 <div id="content-wrapper">

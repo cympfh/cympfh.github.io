@@ -353,12 +353,12 @@
     {
       "title": "2-SAT",
       "url": "opt.2sat.html",
-      "content": "最適化 - 2-SAT 概要 $n$ 個の真偽値変数 $x0, x1, \\ldots, x{n-1}$ に関する 2-CNF とは次で表される論理式のこと: $$F = (v1 \\lor v2) \\land (v3 \\lor v4) \\land \\cdots \\land (v{m-1} \\lor vm)$$ ただしここで $vi$ は $xj$ または $\\lnot xj$ を表すメタ変数. $xi$ に真偽値を割り当てたときに $F$ を真にできることを充足可能という. 特に 2-CNF $F$ が適切な変数割当によって充足可能かどうか判定する問題を 2-SAT という. 充足判定 $F$ を NOT ($\\lnot$), AND ($\\land$) と IMPLY ($\\implies$) のみを用いた論理式に変換する - $(A \\lor B)$ は $(\\lnot A \\implies B) \\land (\\lnot B \\implies A)$ に等価 IMPLY グラフを構築する - 頂点は $xi$ 及び $\\lnot xi$ の $2n$ 個 - $A \\implies B$ のときに有向エッジ $A \\to B$ を張る - $A \\lor B$ なら $\\lnot A \\to B$ と $\\lnot B \\to A$ のエッジを張る IMPLY グラフを今日連結成分分解 (SCC) したとき各連結成分は同値を表す - 一つの連結成分に属する頂点には同じ真偽値が割り当てればよい - ここで連結成分内に $xi$ と $\\lnot xi$ が同時に属していたら矛盾 - この場合のみ充足不可能 実装 使い方 let mut sat = TwoSAT::new(n); // 2CNF 上の変数 [0, 1, ..., n-1] sat += and!(0 or 1); // AND 条件の追加: ... and (0 or 1) sat += and!(not 1 or 2); // AND 条件の追加: ... and (not 1 or 2) sat += and!(2 => not 1); // AND 条件の追加: ... and (2 => not 1) let res = sat.solve(); // 充足可能かどうか // and! に書けるもの and!([not] x or [not] y) and!([not] x => [not] y) and!([not] x) @[rust](./procon-rs/src/misc/twosat.rs)"
+      "content": "最適化 - 2-SAT 概要 $n$ 個の真偽値変数 $x0, x1, \\ldots, x{n-1}$ に関する 2-CNF とは次で表される論理式のこと: $$F = (v1 \\lor v2) \\land (v3 \\lor v4) \\land \\cdots \\land (v{m-1} \\lor vm)$$ ただしここで $vi$ は $xj$ または $\\lnot xj$ を表すメタ変数. $xi$ に真偽値を割り当てたときに $F$ を真にできることを充足可能という. 特に 2-CNF $F$ が適切な変数割当によって充足可能かどうか判定する問題を 2-SAT という. 充足判定 $F$ を NOT ($\\lnot$), AND ($\\land$) と IMPLY ($\\implies$) のみを用いた論理式に変換する - $(A \\lor B)$ は $(\\lnot A \\implies B) \\land (\\lnot B \\implies A)$ に等価 IMPLY グラフを構築する - 頂点は $xi$ 及び $\\lnot xi$ の $2n$ 個 - $A \\implies B$ のときに有向エッジ $A \\to B$ を張る - $A \\lor B$ なら $\\lnot A \\to B$ と $\\lnot B \\to A$ のエッジを張る IMPLY グラフを今日連結成分分解 (SCC) したとき各連結成分は同値を表す - 一つの連結成分に属する頂点には同じ真偽値が割り当てればよい - ここで連結成分内に $xi$ と $\\lnot xi$ が同時に属していたら矛盾 - この場合のみ充足不可能 実装 使い方 let mut sat = TwoSAT::new(n); // 2CNF 上の変数 [0, 1, ..., n-1] sat += clause2!(0 or 1); // AND 条件の追加: ... and (0 or 1) sat += clause2!(not 1 or 2); // AND 条件の追加: ... and (not 1 or 2) sat += clause2!(2 => not 1); // AND 条件の追加: ... and (2 => not 1) let res = sat.solve(); // 充足可能かどうか // and! に書けるもの clause2!([not] x or [not] y) clause2!([not] x => [not] y) clause2!([not] x <=> [not] y) clause2!([not] x) @[rust](./procon-rs/src/opt/twosat.rs)"
     },
     {
       "title": "乱択3-SAT",
       "url": "opt.3sat.html",
-      "content": "最適化 - 3-SAT 参考文献 1. 結城 浩: [数学ガール／乱択アルゴリズム](http://www.hyuki.com/girl/random.html) [Kindle版] 2. [wikipedia/充足可能性問題](http://ja.wikipedia.org/wiki/充足可能性問題) アルゴリズムは[1]より. 3-CNF, kyouseibi も[1]より. 他のテストデータ c1, c2 は[2] より. @[cpp](procon-cc/misc.3sat.cc)"
+      "content": "最適化 - 乱択 3-SAT 参考文献 [[https://www.hyuki.com/girl/random]] [[https://tech.preferred.jp/ja/blog/schoening-3sat/]] 実装 アルゴリズムは数学ガールでも紹介されている Schoening の乱択アルゴリズム. 以下を maxtries 回繰り返す - 変数に対してランダムに真偽値を割り当てる - 以下を maxflips 回繰り返す - 現在の割当で充足しているか判定する - 充足していれば終了 - 充足していなければ，充足していない節をランダムに一つ選ぶ - その節に含まれる変数のうちランダムに一つ選び，その変数の真偽値を反転させる maxtries, maxflips は変数の個数 $N$ に対して $3N$ としてある. @[rust](./procon-rs/src/opt/threesat.rs)"
     },
     {
       "title": "GCD",
@@ -513,7 +513,7 @@
     {
       "title": "Zobrist Hash",
       "url": "hash.zobrist.html",
-      "content": "Zobrist Hash 手法 状態を集合だとして説明する. 有限の母集合 $U$ があって, 状態はこれの部分集合 $X \\subset U$ として与えられるとする. Zobrist Hash は予め $U$ の各要素にランダムな整数値を割り当てておくので $X$ のハッシュを要素の値の XOR で表現する. # init for x in U: h[x] = random() def hash(X): return xor(h[x] for x in X) 適用 チェスのような盤面の状態のハッシュ化によく用いられる. これを今の枠組みに当てはめるためには, $U$ として座標情報とコマの組の集合を用いれば良い. $U = \\{ (pos, piece) \\}$ 局面はこの座標にこのコマがおいてあるという要素を全て集めた集合とすれば $U$ の部分集合になる. 参考 [wikipedia/Zobristhashing](https://en.wikipedia.org/wiki/Zobristhashing) 実装 @[rust](procon-rs/src/hash/zobrist.rs)"
+      "content": "Zobrist Hash 手法 状態を集合だとして説明する. 有限の母集合 $U$ があって, 状態はこれの部分集合 $X \\subset U$ として与えられるとする. Zobrist Hash は予め $U$ の各要素にランダムな整数値を割り当てておくので $X$ のハッシュを要素の値の XOR で表現する. # init for x in U: h[x] = random() def hash(X): return xor(h[x] for x in X) 適用 チェスのような盤面の状態のハッシュ化によく用いられる. これを今の枠組みに当てはめるためには, $U$ として座標情報とコマの組の集合を用いれば良い. $U = \\{ (x, y, \\mathrm{piece}) | 1 \\leq x, y \\leq N, \\mathrm{piece} \\in \\mathcal{P} \\}$ 局面はこの座標にこのコマがおいてあるという要素を全て集めた集合とすれば $U$ の部分集合になる. 参考 [wikipedia/Zobristhashing](https://en.wikipedia.org/wiki/Zobristhashing) 実装 @[rust](procon-rs/src/hash/zobrist.rs)"
     },
     {
       "title": "Rolling Hash",

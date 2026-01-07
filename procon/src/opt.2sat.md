@@ -28,15 +28,16 @@ $x_i$ に真偽値を割り当てたときに $F$ を真にできることを充
 
 ```rust
 let mut sat = TwoSAT::new(n); // 2CNF 上の変数 [0, 1, ..., n-1]
-sat += and!(0 or 1);          // AND 条件の追加: ... and (0 or 1)
-sat += and!(not 1 or 2);      // AND 条件の追加: ... and (not 1 or 2)
-sat += and!(2 => not 1);      // AND 条件の追加: ... and (2 => not 1)
+sat += clause2!(0 or 1);      // AND 条件の追加: ... and (0 or 1)
+sat += clause2!(not 1 or 2);  // AND 条件の追加: ... and (not 1 or 2)
+sat += clause2!(2 => not 1);  // AND 条件の追加: ... and (2 => not 1)
 let res = sat.solve();        // 充足可能かどうか
 
 // and! に書けるもの
-and!([not] x or [not] y)
-and!([not] x => [not] y)
-and!([not] x)
+clause2!([not] x or [not] y)
+clause2!([not] x => [not] y)
+clause2!([not] x <=> [not] y)
+clause2!([not] x)
 ```
 
-@[rust](./procon-rs/src/misc/two_sat.rs)
+@[rust](./procon-rs/src/opt/two_sat.rs)

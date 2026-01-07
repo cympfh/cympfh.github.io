@@ -5,7 +5,7 @@
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="unidoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>最適化 - 3-SAT</title>
+  <title>最適化 - 乱択 3-SAT</title>
   <style type="text/css">code{white-space: pre;}</style>
   <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
   <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
@@ -1353,6 +1353,7 @@ table tbody tr:hover {
           <a href="/procon/opt.3sat.html" class="toc-page-child toc-page-indent-1 current">乱択3-SAT</a>
           <ul class="toc-sections toc-sections-indent-1">
             <li><a href="/procon/opt.3sat.html#2-%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE">参考文献</a></li>
+            <li><a href="/procon/opt.3sat.html#2-%E5%AE%9F%E8%A3%85">実装</a></li>
           </ul>
         </li>
         </ul>
@@ -1698,142 +1699,204 @@ table tbody tr:hover {
   </div>
 </div>
 
-<h1 class="title" id="1-%E6%9C%80%E9%81%A9%E5%8C%96%20-%203-SAT">最適化 - 3-SAT</h1>
+<h1 class="title" id="1-%E6%9C%80%E9%81%A9%E5%8C%96%20-%20%E4%B9%B1%E6%8A%9E%203-SAT">最適化 - 乱択 3-SAT</h1>
 <h2 id="2-%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE">参考文献</h2>
-<ol>
-  <li>結城 浩: <a href="http://www.hyuki.com/girl/random.html">数学ガール／乱択アルゴリズム</a> [Kindle版]</li>
-  <li><a href="http://ja.wikipedia.org/wiki/充足可能性問題">wikipedia/充足可能性問題</a></li>
-</ol>
-<p>アルゴリズムは [1] より. 3-CNF, kyouseibi も [1] より. 他のテストデータ c1, c2 は [2] より.</p>
-<pre><code class="code language-cpp">struct Var {
-  int var;
-  bool pol;
-  Var(int v) : var(v), pol(true) {}
-  Var(int v, bool b) : var(v), pol(b) {}
-};
-using Clause = vector&lt;Var&gt;;
-using CNF = vector&lt;Clause&gt;;
-using Assign = vector&lt;bool&gt;;
+<ul>
+  <li><img src="https://www.hyuki.com//www.hyuki.com/favicon.ico" style="width:16px;height:16px;margin-right:4px;vertical-align:middle;" /><a href="https://www.hyuki.com/girl/random">書籍『数学ガール／乱択アルゴリズム』（結城浩）</a></li>
+  <li><img src="https://tech.preferred.jp/wp-content/uploads/2019/10/favicon.ico" style="width:16px;height:16px;margin-right:4px;vertical-align:middle;" /><a href="https://tech.preferred.jp/ja/blog/schoening-3sat/">乱択アルゴリズム紹介(3SATのO(1.334^n)時間アルゴリズム) - Preferred Networks Tech Blog</a></li>
+</ul>
+<h2 id="2-%E5%AE%9F%E8%A3%85">実装</h2>
+<p>アルゴリズムは数学ガールでも紹介されている Schoening の乱択アルゴリズム.</p>
+<ul>
+  <li>
+    以下を <code>max_tries</code> 回繰り返す
+    <ul>
+      <li>変数に対してランダムに真偽値を割り当てる</li>
+      <li>
+        以下を <code>max_flips</code> 回繰り返す
+        <ul>
+          <li>
+            現在の割当で充足しているか判定する
+            <ul>
+              <li>充足していれば終了</li>
+            </ul>
+          </li>
+          <li>充足していなければ，充足していない節をランダムに一つ選ぶ</li>
+          <li>その節に含まれる変数のうちランダムに一つ選び，その変数の真偽値を反転させる</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+<p><code>max_tries</code> , <code>max_flips</code> は変数の個数 \(N\) に対して \(3N\) としてある.</p>
+<pre><code class="code language-rust">use crate::num::random::pcg::*;
 
-&#x2F;&#x2F; {{{ debug print
-
-ostream&amp; operator&lt;&lt;(ostream&amp;os, Var v) {
-  if (v.pol) return os &lt;&lt; &#x27;x&#x27; &lt;&lt; v.var;
-  return os &lt;&lt; &quot;(not x&quot; &lt;&lt; v.var &lt;&lt; &#x27;)&#x27;;
-}
- 
-ostream&amp; operator&lt;&lt;(ostream&amp;os, Clause&amp;c) {
-  os &lt;&lt; &quot;(or&quot;;
-  for (auto&amp;x: c) os &lt;&lt; &#x27; &#x27; &lt;&lt; x;
-  return os &lt;&lt; &#x27;)&#x27;;
-}
-
-ostream&amp; operator&lt;&lt;(ostream&amp;os, CNF&amp;c) {
-  os &lt;&lt; &quot;(and &quot; &lt;&lt; c[0] &lt;&lt; endl;;
-  for (int i=1;i&lt;c.size()-1;++i)
-    os &lt;&lt; &quot;     &quot; &lt;&lt; c[i] &lt;&lt; endl;
-  os &lt;&lt; &quot;     &quot; &lt;&lt; c[c.size()-1] &lt;&lt; &#x27;)&#x27;;
-  return os;
-}
-&#x2F;&#x2F; }}}
-
-bool is_satisfied(CNF&amp;cnf, Assign&amp;v) {
-  for (auto&amp;c: cnf) {
-    bool bl = false;
-    for (auto&amp;x: c) if (v[x.var] == x.pol) { bl = true; break; }
-    if (not bl) return false;
-  }
-  return true;
+pub struct ThreeSAT {
+    n: usize, &#x2F;&#x2F; 変数 [0,1,.., n-1]
+    cnf: Vec&lt;ThreeSATTerm&gt;,
 }
 
-&#x2F;* N.B.
- * when `cnf` is not satisfi-able,
- * `solve` returns dummy
- * check with `is_satisfied`
- *&#x2F;
-Assign solve(CNF&amp;cnf, int n, int R = 200) {
-  random_device rd;
-  mt19937 rand(rd());
-  Assign a(n);
-  rep (i, n) a[i] = rand()%2 == 0;
-
-  rep (_, R) {
-    rep (__, 3 * n) {
-      vector&lt;int&gt; clauses;
-      rep (i, cnf.size()) {
-        auto&amp;c = cnf[i];
-        bool bl = false;
-        for (auto&amp;x: c) {
-          if (a[x.var] == x.pol) { bl = true; break; }
-        }
-        if (bl) { continue; }
-        else { clauses.push_back(i); }
-      }
-      int m = clauses.size();
-      if (m == 0) return a;
-      m = rand() % m;
-      auto&amp;c = cnf[clauses[m]];
-      m = rand() % c.size();
-      m = c[m].var;
-      a[m] = not a[m];
+impl ThreeSAT {
+    pub fn new(n: usize) -&gt; Self {
+        Self { n, cnf: vec![] }
     }
-  }
-  return a; &#x2F;&#x2F; this not satisfy
+
+    &#x2F;&#x2F;&#x2F; 充足判定 - Schoening&#x27;s Algorithm
+    &#x2F;&#x2F;&#x2F; 割当が見つかれば Some(割当), 見つからなければ None
+    pub fn solve(&amp;self) -&gt; Option&lt;Vec&lt;bool&gt;&gt; {
+        if self.cnf.is_empty() {
+            return Some(vec![false; self.n]);
+        }
+        let seed = self.n as u64;
+        let mut rand = PCG::new(seed);
+        &#x2F;&#x2F; Schoening&#x27;s Algorithm パラメータ
+        let max_tries = 3 * self.n; &#x2F;&#x2F; 外側のループ回数
+        let max_flips = 3 * self.n; &#x2F;&#x2F; 内側のループ回数
+        for _ in 0..max_tries {
+            let mut assignment: Vec&lt;bool&gt; = (0..self.n).map(|_| rand.gen()).collect();
+            for _ in 0..max_flips {
+                if let Some(unsatisfied_clause) = self.find_unsatisfied_clause(&amp;assignment) {
+                    let vars = self.get_variables(&amp;unsatisfied_clause);
+                    if !vars.is_empty() {
+                        let idx = (rand.gen::&lt;u64&gt;() as usize) % vars.len();
+                        let var_to_flip = vars[idx];
+                        assignment[var_to_flip] = !assignment[var_to_flip];
+                    }
+                } else {
+                    return Some(assignment);
+                }
+            }
+            if self.is_satisfied(&amp;assignment) {
+                return Some(assignment);
+            }
+        }
+        None
+    }
+
+    pub fn is_satisfied(&amp;self, assignment: &amp;Vec&lt;bool&gt;) -&gt; bool {
+        self.cnf
+            .iter()
+            .all(|clause| self.eval_term(clause, assignment))
+    }
+
+    fn eval_term(&amp;self, term: &amp;ThreeSATTerm, assignment: &amp;Vec&lt;bool&gt;) -&gt; bool {
+        match term {
+            ThreeSATTerm::Var(i) =&gt; assignment[*i],
+            ThreeSATTerm::NotVar(i) =&gt; !assignment[*i],
+            ThreeSATTerm::Or(terms) =&gt; terms.iter().any(|t| self.eval_term(t, assignment)),
+        }
+    }
+
+    fn find_unsatisfied_clause(&amp;self, assignment: &amp;Vec&lt;bool&gt;) -&gt; Option&lt;ThreeSATTerm&gt; {
+        self.cnf
+            .iter()
+            .find(|clause| !self.eval_term(clause, assignment))
+            .cloned()
+    }
+
+    fn get_variables(&amp;self, term: &amp;ThreeSATTerm) -&gt; Vec&lt;usize&gt; {
+        let mut vars = vec![];
+        self.collect_variables(term, &amp;mut vars);
+        vars
+    }
+
+    fn collect_variables(&amp;self, term: &amp;ThreeSATTerm, vars: &amp;mut Vec&lt;usize&gt;) {
+        match term {
+            ThreeSATTerm::Var(i) =&gt; vars.push(*i),
+            ThreeSATTerm::NotVar(i) =&gt; vars.push(*i),
+            ThreeSATTerm::Or(terms) =&gt; {
+                for t in terms {
+                    self.collect_variables(t, vars);
+                }
+            }
+        }
+    }
 }
 
-void test(CNF&amp;c, int n) {
-  cout &lt;&lt; &quot;*&quot; &lt;&lt; endl;
-  Assign a = solve(c, n);
-  if (is_satisfied(c, a)) {
-    cout &lt;&lt; c &lt;&lt; &quot; is satisfiable and&quot; &lt;&lt; endl;
-    cout &lt;&lt; &quot;proper assignment = &quot; &lt;&lt; a &lt;&lt; endl;
-  } else {
-    cout &lt;&lt; c &lt;&lt; &quot; is NOT satisfiable and&quot; &lt;&lt; endl;
-  }
-  cout &lt;&lt; &quot;*&quot; &lt;&lt; endl;
+impl std::ops::AddAssign&lt;ThreeSATTerm&gt; for ThreeSAT {
+    fn add_assign(&amp;mut self, term: ThreeSATTerm) {
+        self.cnf.push(term);
+    }
 }
 
-int main() {
+#[derive(Debug, Clone)]
+pub enum ThreeSATTerm {
+    Var(usize),
+    NotVar(usize),
+    Or(Vec&lt;ThreeSATTerm&gt;),
+}
 
-  CNF c1 {
-    Clause { Var(0), Var(1) },
-    Clause { Var(0), Var(1, false) },
-    Clause { Var(0, false), Var(1, false) }
-  };
-  test(c1, 2);
+#[macro_export]
+macro_rules! clause3 {
+    (not $i:tt) =&gt; { ThreeSATTerm::NotVar($i) };
+    ($i:tt) =&gt; { ThreeSATTerm::Var($i) };
+    (not $i:tt or $($rest:tt)+) =&gt; {
+        ThreeSATTerm::Or(vec![
+            ThreeSATTerm::NotVar($i),
+            clause3!($($rest)+)
+        ])
+    };
+    ($i:tt or $($rest:tt)+) =&gt; {
+        ThreeSATTerm::Or(vec![
+            ThreeSATTerm::Var($i),
+            clause3!($($rest)+)
+        ])
+    };
+}
 
-  CNF c2 {
-    Clause { Var(0), Var(1) },
-    Clause { Var(0), Var(1, false) },
-    Clause { Var(0, false), Var(1) },
-    Clause { Var(0, false), Var(1, false) }
-  };
-  test(c2, 2);
+#[cfg(test)]
+mod test_three_sat {
+    use crate::opt::three_sat::*;
 
-  CNF kyouseibi {
-    Clause { Var(0), Var(1), Var(2) },
-    Clause { Var(3), Var(1), Var(2, false) },
-    Clause { Var(0, false), Var(3), Var(2) },
-    Clause { Var(0, false), Var(3, false), Var(1) },
-    Clause { Var(3, false), Var(1, false), Var(2) },
-    Clause { Var(0, false), Var(1, false), Var(2, false) },
-    Clause { Var(0), Var(3, false), Var(2, false) },
-    Clause { Var(0), Var(3), Var(1, false) }
-  };
-  test(kyouseibi, 4);
+    #[test]
+    fn test_three_sat_1() {
+        let mut sat = ThreeSAT::new(2);
+        sat += clause3!(0 or 1);
+        sat += clause3!(0 or not 1);
+        sat += clause3!(not 0 or not 1);
+        let assignment = sat.solve().unwrap();
+        assert!(sat.is_satisfied(&amp;assignment));
+    }
 
-  CNF kyouseibi_1 {
-    Clause { Var(0), Var(1), Var(2) },
-    Clause { Var(3), Var(1), Var(2, false) },
-    Clause { Var(0, false), Var(3), Var(2) },
-    Clause { Var(0, false), Var(3, false), Var(1) },
-    Clause { Var(3, false), Var(1, false), Var(2) },
-    Clause { Var(0, false), Var(1, false), Var(2, false) },
-    Clause { Var(0), Var(3), Var(1, false) }
-  };
-  test(kyouseibi_1, 4);
+    #[test]
+    fn test_three_sat_2() {
+        let mut sat = ThreeSAT::new(2);
+        sat += clause3!(0 or 1);
+        sat += clause3!(0 or not 1);
+        sat += clause3!(not 0 or 1);
+        sat += clause3!(not 0 or not 1);
+        let assignment = sat.solve();
+        assert!(assignment.is_none());
+    }
 
-  return 0;
+    #[test]
+    fn test_three_sat_kyouseibi() {
+        let mut sat = ThreeSAT::new(4);
+        sat += clause3!(0 or 1 or 2);
+        sat += clause3!(3 or 1 or not 2);
+        sat += clause3!(not 0 or 3 or 2);
+        sat += clause3!(not 0 or not 3 or 1);
+        sat += clause3!(not 3 or not 1 or 2);
+        sat += clause3!(not 0 or not 1 or not 2);
+        sat += clause3!(0 or not 3 or not 2);
+        sat += clause3!(0 or 3 or not 1);
+        let assignment = sat.solve();
+        assert!(assignment.is_none());
+    }
+
+    #[test]
+    fn test_three_sat_kyouseibi_2() {
+        let mut sat = ThreeSAT::new(4);
+        sat += clause3!(0 or 1 or 2);
+        sat += clause3!(3 or 1 or not 2);
+        sat += clause3!(not 0 or 3 or 2);
+        sat += clause3!(not 0 or not 3 or 1);
+        sat += clause3!(not 3 or not 1 or 2);
+        sat += clause3!(not 0 or not 1 or not 2);
+        sat += clause3!(0 or 3 or not 1);
+        let assignment = sat.solve().unwrap();
+        assert!(sat.is_satisfied(&amp;assignment));
+    }
 }
 </code></pre>
 

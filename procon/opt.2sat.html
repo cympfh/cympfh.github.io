@@ -1738,15 +1738,16 @@ table tbody tr:hover {
 <h2 id="2-%E5%AE%9F%E8%A3%85">実装</h2>
 <h3 id="3-%E4%BD%BF%E3%81%84%E6%96%B9">使い方</h3>
 <pre><code class="code language-rust">let mut sat = TwoSAT::new(n); &#x2F;&#x2F; 2CNF 上の変数 [0, 1, ..., n-1]
-sat += and!(0 or 1);          &#x2F;&#x2F; AND 条件の追加: ... and (0 or 1)
-sat += and!(not 1 or 2);      &#x2F;&#x2F; AND 条件の追加: ... and (not 1 or 2)
-sat += and!(2 =&gt; not 1);      &#x2F;&#x2F; AND 条件の追加: ... and (2 =&gt; not 1)
+sat += clause2!(0 or 1);      &#x2F;&#x2F; AND 条件の追加: ... and (0 or 1)
+sat += clause2!(not 1 or 2);  &#x2F;&#x2F; AND 条件の追加: ... and (not 1 or 2)
+sat += clause2!(2 =&gt; not 1);  &#x2F;&#x2F; AND 条件の追加: ... and (2 =&gt; not 1)
 let res = sat.solve();        &#x2F;&#x2F; 充足可能かどうか
 
 &#x2F;&#x2F; and! に書けるもの
-and!([not] x or [not] y)
-and!([not] x =&gt; [not] y)
-and!([not] x)
+clause2!([not] x or [not] y)
+clause2!([not] x =&gt; [not] y)
+clause2!([not] x &lt;=&gt; [not] y)
+clause2!([not] x)
 </code></pre>
 <pre><code class="code language-rust">use crate::graph::directed::scc::*;
 
@@ -1808,7 +1809,7 @@ impl std::ops::AddAssign&lt;TwoSATLogic&gt; for TwoSAT {
 }
 
 #[macro_export]
-macro_rules! and {
+macro_rules! clause2 {
     (not $i:tt or not $j:tt) =&gt; {
         TwoSATLogic::Or(TwoSATTerm($i, false), TwoSATTerm($j, false))
     };
@@ -1855,72 +1856,72 @@ macro_rules! and {
 
 #[cfg(test)]
 mod test_two_sat {
-    use crate::misc::two_sat::*;
+    use crate::opt::two_sat::*;
 
     #[test]
     fn test_two_sat_1() {
         let mut sat = TwoSAT::new(3);
-        sat += and!(0 =&gt; 1);
-        sat += and!(1 =&gt; 2);
-        sat += and!(2 =&gt; 0);
+        sat += clause2!(0 =&gt; 1);
+        sat += clause2!(1 =&gt; 2);
+        sat += clause2!(2 =&gt; 0);
         assert!(sat.solve());
     }
     #[test]
     fn test_two_sat_2() {
         let mut sat = TwoSAT::new(2);
-        sat += and!(0 or 1);
-        sat += and!(0 =&gt; not 1);
-        sat += and!(1 =&gt; not 0);
+        sat += clause2!(0 or 1);
+        sat += clause2!(0 =&gt; not 1);
+        sat += clause2!(1 =&gt; not 0);
         assert!(sat.solve());
     }
     #[test]
     fn test_two_sat_3() {
         let mut sat = TwoSAT::new(2);
-        sat += and!(0 or 1);
-        sat += and!(not 0 or 1);
-        sat += and!(0 or not 1);
-        sat += and!(not 1 or not 0);
+        sat += clause2!(0 or 1);
+        sat += clause2!(not 0 or 1);
+        sat += clause2!(0 or not 1);
+        sat += clause2!(not 1 or not 0);
         assert!(!sat.solve());
     }
     #[test]
     fn test_two_sat_4() {
         let mut sat = TwoSAT::new(2);
-        sat += and!(0 =&gt; 1);
-        sat += and!(1 =&gt; 0);
-        sat += and!(0 or 1);
-        sat += and!(not 0 or not 1);
+        sat += clause2!(0 =&gt; 1);
+        sat += clause2!(1 =&gt; 0);
+        sat += clause2!(0 or 1);
+        sat += clause2!(not 0 or not 1);
         assert!(!sat.solve());
     }
     #[test]
     fn test_two_sat_5() {
         let mut sat = TwoSAT::new(2);
-        sat += and!(0);
-        sat += and!(1);
+        sat += clause2!(0);
+        sat += clause2!(1);
         assert!(sat.solve());
     }
     #[test]
     fn test_two_sat_6() {
         let mut sat = TwoSAT::new(2);
-        sat += and!(0);
-        sat += and!(not 0);
+        sat += clause2!(0);
+        sat += clause2!(not 0);
         assert!(!sat.solve());
     }
 
     #[test]
     fn test_iff_1() {
         let mut sat = TwoSAT::new(3);
-        sat += and!(0 &lt;=&gt; 1);
-        sat += and!(not 1 &lt;=&gt; not 2);
-        sat += and!(2 &lt;=&gt; 0);
+        sat += clause2!(0 &lt;=&gt; 1);
+        sat += clause2!(not 1 &lt;=&gt; not 2);
+        sat += clause2!(2 &lt;=&gt; 0);
         assert!(sat.solve());
     }
 
     #[test]
     fn test_iff_2() {
         let mut sat = TwoSAT::new(3);
-        sat += and!(0 &lt;=&gt; 1);
-        sat += and!(not 1 &lt;=&gt; 2);
-        sat += and!(2 &lt;=&gt; 0);
+        sat += clause2!(0 &lt;=&gt; 1);
+        sat += clause2!(not 1 &lt;=&gt; 2);
+        sat += clause2!(2 &lt;=&gt; 0);
         assert!(!sat.solve());
     }
 }

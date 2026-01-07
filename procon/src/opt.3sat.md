@@ -1,12 +1,22 @@
-# 最適化 - 3-SAT
+# 最適化 - 乱択 3-SAT
 
 ## 参考文献
 
-1. 結城 浩: [数学ガール／乱択アルゴリズム](http://www.hyuki.com/girl/random.html) [Kindle版]
-2. [wikipedia/充足可能性問題](http://ja.wikipedia.org/wiki/充足可能性問題)
+- [[https://www.hyuki.com/girl/random]]
+- [[https://tech.preferred.jp/ja/blog/schoening-3sat/]]
 
-アルゴリズムは[1]より.
-3-CNF, kyouseibi も[1]より.
-他のテストデータ c1, c2 は[2] より.
+## 実装
 
-@[cpp](procon-cc/misc.3sat.cc)
+アルゴリズムは数学ガールでも紹介されている Schoening の乱択アルゴリズム.
+
+- 以下を `max_tries` 回繰り返す
+    - 変数に対してランダムに真偽値を割り当てる
+    - 以下を `max_flips` 回繰り返す
+        - 現在の割当で充足しているか判定する
+            - 充足していれば終了
+        - 充足していなければ，充足していない節をランダムに一つ選ぶ
+        - その節に含まれる変数のうちランダムに一つ選び，その変数の真偽値を反転させる
+
+`max_tries`, `max_flips` は変数の個数 $N$ に対して $3N$ としてある.
+
+@[rust](./procon-rs/src/opt/three_sat.rs)

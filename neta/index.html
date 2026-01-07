@@ -49,7 +49,7 @@ function display(indices) {
 }
 
 function run(query) {
-  if (query === 'random' || query === '?') {
+  if (query === 'random' || query === '?' || query === '？') {
     display(
         data.images.map(function (f, i) {
           return [i, Math.random()];
@@ -62,8 +62,38 @@ function run(query) {
   } else {
     display(filter(query));
   }
+  // Update URL query parameter
+  if (query !== '') {
+    history.replaceState(null, '', '?' + encodeURIComponent(query));
+  } else {
+    history.replaceState(null, '', location.pathname);
+  }
 }
-q.onkeyup = function (e) { run(q.value); };
+
+// Debounce function
+var debounceTimer;
+function debounce(func, delay) {
+  return function() {
+    var context = this;
+    var args = arguments;
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(function() {
+      func.apply(context, args);
+    }, delay);
+  };
+}
+
+q.onkeyup = debounce(function (e) { run(q.value); }, 500);
+
+// Ctrl-K to focus search box
+document.addEventListener('keydown', function(e) {
+  if (e.ctrlKey && e.key === 'k') {
+    e.preventDefault();
+    q.focus();
+    q.select();
+  }
+});
+
 (function () {
   if (q.value !== '') {
     run(q.value);

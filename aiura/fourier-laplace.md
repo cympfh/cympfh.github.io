@@ -379,36 +379,48 @@ $$\begin{align*}
 ### 基本的な性質
 
 **線形性**
+
 ラプラス変換は線形変換である.
 $$\L(af + bg) = a \L(f) + b \L(g)$$
 
 **スケーリング則**
+
 $f(t)$ のラプラス変換を $F(s) = \L(f)$ とする.
 すると, 任意の実数 $a \gt 0$ に対して
 $$\L(f(at)) = \frac{1}{a} F\left( \frac{s}{a} \right)$$
 
+**時間シフト則**
+
+$F(s)=\L(f)$ とする. 任意の実数 $a \gt 0$ に対して
+
+$$\L(f(t-a)) = e^{-a s} F(s) \quad (a \geq 0)$$
+
 **周波数シフト則**
-$f(t)$ のラプラス変換を $F(s) = \L(f)$ とする.
-すると, 任意の実数 $a$ に対して
+
+$F(s)=\L(f)$ とする. 任意の実数 $a$ に対して
+
 $$\L\left( e^{a t} f(t) \right) = F(s - a)$$
+
+これは $a$ の正負を問わない.
 
 **積分則**
 
 $$\L\left( \int_0^t f(\tau) d\tau \right) = \frac{1}{s} F(s)$$
+
 
 ### 基本的なラプラス変換表
 
 | $f(t)$               | $F(s) = \L(f)$                | 収束領域               |
 |----------------------|-------------------------------|------------------------|
 | $1$                  | $\frac{1}{s}$                 | $\mathrm{Re}(s) \gt 0$ |
+| $t$                  | $\frac{1}{s^2}$               | $\mathrm{Re}(s) \gt 0$ |
+| $\delta(t)$          | $1$                           | 全複素平面              |
 | $t^n$ ($n$ は非負整数) | $\frac{n!}{s^{n+1}}$          | $\mathrm{Re}(s) \gt 0$ |
 | $e^{a t}$            | $\frac{1}{s - a}$             | $\mathrm{Re}(s) \gt a$ |
 | $\sin (a t)$         | $\frac{a}{s^2 + a^2}$         | $\mathrm{Re}(s) \gt 0$ |
 | $\cos (a t)$         | $\frac{s}{s^2 + a^2}$         | $\mathrm{Re}(s) \gt 0$ |
 | $\sinh (a t)$        | $\frac{a}{s^2 - a^2}$         | $\mathrm{Re}(s) \gt |a|$ |
 | $\cosh (a t)$        | $\frac{s}{s^2 - a^2}$         | $\mathrm{Re}(s) \gt |a|$ |
-| $u(t - a)$           | $\frac{e^{-a s}}{s}$          | $\mathrm{Re}(s) \gt 0$ |
-| $\delta(t - a)$      | $e^{-a s}$                    | 全複素平面              |
 | $t f(t)$             | $- \frac{d}{ds} F(s)$         | 同左                   |
 
 ここで $u(t - a)$ は単位ステップ関数, $\delta(t - a)$ はデルタ関数を表す.
@@ -431,4 +443,91 @@ L^{-1}\left( \frac{5}{s(s^2 + 25)} \right)
 &= 1 \ast \sin(5 t) & \text{ 畳み込み} \\
 &= \int_0^t \sin(5 \tau) d\tau \\
 &= \frac{1}{5} (1 - \cos(5 t)) \\
+\end{align*}$$
+
+### 常微分方程式を解く
+
+ラプラス変換の微分則を用いることで, 常微分方程式を代数方程式に変換して解くことができる.
+
+1. 微分方程式の両辺にラプラス変換を施す.
+2. 微分則を用いて代数方程式に変換する.
+3. 代数方程式を解いて $F(s) = \L(f)$ を求める.
+4. 逆ラプラス変換を用いて $f(t) = \L^{-1}(F)$ を求める.
+
+**例: 二階線形常微分方程式（減衰・増大）**
+
+$$x=f(t)$$
+$$x'' + ax' + bx = 0$$
+
+両辺にラプラス変換を施す.
+
+$$\begin{align*}
+& \L(x'') + a \L(x') + b \L(x) = 0 \\
+\implies & s^2 F(s) - s f(0) - f'(0) + a (s F(s) - f(0)) + b F(s) = 0 \\
+\implies & \left( s^2 + a s + b \right) F(s) - (s + a) f(0) - f'(0) = 0 \\
+\implies & F(s) = \frac{(s + a) f(0) + f'(0)}{s^2 + a s + b} \\
+\end{align*}$$
+
+ここで初期条件として $f(0) = 0, f'(0) = 1$ とする.
+
+$$F(s) = \frac{1}{s^2 + a s + b}$$
+
+さらにここで $s^2 + as + b$ という二次方程式が実数の範囲で解けて
+$(s - \alpha) (s - \beta)$ と因数分解できるとする.
+
+$$F(s) = \frac{1}{s-\alpha} \cdot \frac{1}{s - \beta}$$
+
+逆ラプラス変換を施す.
+
+$$\begin{align*}
+f(t)
+&= \L^{-1}(F(s)) \\
+&= \L^{-1}\left( \frac{1}{s-\alpha} \cdot \frac{1}{s - \beta} \right) \\
+&= \L^{-1}\left( \frac{1}{s-\alpha} \right) \ast \L^{-1}\left( \frac{1}{s - \beta} \right) \\
+&= e^{\alpha t} \ast e^{\beta t} \\
+&= \int_0^t e^{\alpha \tau} e^{\beta (t - \tau)} d\tau \\
+&= \int_0^t e^{\beta t} e^{(\alpha - \beta) \tau} d\tau \\
+\end{align*}$$
+
+ここで場合分けが発生する.
+$\alpha = \beta$ の場合,
+
+$$\begin{align*}
+f(t)
+&= \int_0^t e^{\beta t} d\tau \\
+&= t e^{\beta t} \\
+\end{align*}$$
+
+$\alpha \ne \beta$ の場合,
+
+$$\begin{align*}
+f(t)
+&= e^{\beta t} \left[ \frac{e^{(\alpha - \beta) \tau}}{\alpha - \beta} \right]_0^t \\
+&= \frac{e^{\alpha t} - e^{\beta t}}{\alpha - \beta} \\
+\end{align*}$$
+
+**例: 二階線形常微分方程式（振動）**
+
+やはり
+
+$$x=f(t)$$
+$$x'' + ax' + bx = 0$$
+
+で, 初期条件として $f(0) = 0, f'(0) = 1$ とする.
+
+$s^2 + as + b$ という二次方程式の判別式が負である場合,
+すなわち実数の範囲で解けない場合を考える.
+一旦平方完成して
+
+$$s^2 + as + b = \left(s + \frac{a}{2} \right)^2 + \left(b - \frac{a^2}{4} \right)$$
+
+ここで $\alpha = a/2, \omega = \sqrt{b - a^2/4}$ とおく.
+判別式が負なことから $\alpha, \omega$ はともに実数で $\omega \ne 0$ である.
+
+$$\begin{align*}
+f(t)
+&= \L^{-1}(F(s)) \\
+&= \L^{-1}\left( \frac{1}{(s + \alpha)^2 + \omega^2} \right) \\
+&= \L^{-1}\left( \frac{1}{\omega} \frac{\omega}{(s + \alpha)^2 + \omega^2} \right) \\
+&= \frac{1}{\omega} e^{-\alpha t} \sin(\omega t) \\
 \end{align*}$$

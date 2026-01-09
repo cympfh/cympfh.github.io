@@ -1,23 +1,13 @@
-.PHONY: all index pages git clean update-rs
+.PHONY: build serve update-rs git clean
 
-all: index pages
+build:
+	unibook build
 
-index: index.html
-
-index.html: menu.html
-	bash resources/template.sh index.md > $@
-
-menu.html: README.md
-	bash resources/menu.sh < $^ >$@
-
-pages: menu.html
-	ls -1 *.md | grep -v README.md | sed 's/.*/make &/; s/.md$$/.html/g' | sh
+serve:
+	unibook serve
 
 update-rs:
 	git submodule update --remote procon-rs
-
-%.html: %.md menu.html
-	bash resources/template.sh $< > $@
 
 git: index
 	git add -A .

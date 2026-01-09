@@ -1,19 +1,1698 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta http-equiv="Content-Style-Type" content="text/css" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>procon/</title>
-    <style type="text/css">code{white-space: pre;}</style>
-    <link rel="stylesheet" href="./resources/c.css">
-    <link rel="stylesheet" href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" />
-    <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-svg-full.js"></script>
-  </head>
-  <body>
-    <div class="two-columns">
-      <div class="column-left-80">
-        <h1 class="title">組み合わせのイテレーター - 二項係数 \({}_nC{}_m\)</h1>
+<html lang="ja">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>組み合わせのイテレーター - 二項係数 {}_nC{}_m</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+<meta name="unibook-theme" content="light">
+<style>/* Theme CSS Variables */
+
+:root[data-theme="light"] {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f4f4f4;
+  --bg-hover: #e0e0e0;
+  --bg-active: #d0d0d0;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --text-tertiary: #999999;
+  --border-color: #dddddd;
+  --link-color: #0066cc;
+  --link-hover: #0052a3;
+  --code-bg: #f5f5f5;
+  --search-highlight: #ffd700;
+}
+
+:root[data-theme="dark"] {
+  --bg-primary: #1e1e1e;
+  --bg-secondary: #252525;
+  --bg-hover: #2d2d2d;
+  --bg-active: #383838;
+  --text-primary: #e0e0e0;
+  --text-secondary: #b0b0b0;
+  --text-tertiary: #808080;
+  --border-color: #404040;
+  --link-color: #6ca0f6;
+  --link-hover: #8ab4f8;
+  --code-bg: #2d2d2d;
+  --search-highlight: #ffa500;
+}
+
+:root[data-theme="solarized-light"] {
+  --bg-primary: #fdf6e3;
+  --bg-secondary: #eee8d5;
+  --bg-hover: #e4ddc4;
+  --bg-active: #d9d2ba;
+  --text-primary: #657b83;
+  --text-secondary: #839496;
+  --text-tertiary: #93a1a1;
+  --border-color: #d3cbb7;
+  --link-color: #268bd2;
+  --link-hover: #2aa198;
+  --code-bg: #eee8d5;
+  --search-highlight: #b58900;
+}
+
+:root[data-theme="solarized-dark"] {
+  --bg-primary: #002b36;
+  --bg-secondary: #073642;
+  --bg-hover: #0e4853;
+  --bg-active: #145561;
+  --text-primary: #839496;
+  --text-secondary: #93a1a1;
+  --text-tertiary: #657b83;
+  --border-color: #094451;
+  --link-color: #268bd2;
+  --link-hover: #2aa198;
+  --code-bg: #073642;
+  --search-highlight: #b58900;
+}
+
+:root[data-theme="kanagawa-light"] {
+  --bg-primary: #f2ecbc;
+  --bg-secondary: #e5ddb0;
+  --bg-hover: #d8d0a0;
+  --bg-active: #cbc396;
+  --text-primary: #43434f;
+  --text-secondary: #625e5a;
+  --text-tertiary: #8a8980;
+  --border-color: #d0c9a0;
+  --link-color: #597b9e;
+  --link-hover: #7e9cd8;
+  --code-bg: #e5ddb0;
+  --search-highlight: #ffa066;
+}
+
+:root[data-theme="kanagawa-dark"] {
+  --bg-primary: #1f1f28;
+  --bg-secondary: #2a2a37;
+  --bg-hover: #363646;
+  --bg-active: #43434f;
+  --text-primary: #dcd7ba;
+  --text-secondary: #c8c093;
+  --text-tertiary: #a6a384;
+  --border-color: #3c3c51;
+  --link-color: #7e9cd8;
+  --link-hover: #9cabca;
+  --code-bg: #2a2a37;
+  --search-highlight: #ffa066;
+}
+</style>
+<style>.theme-switcher {
+  position: relative;
+  margin-bottom: 10px;
+  z-index: 2000;
+}
+
+.theme-button {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--bg-primary);
+  border: 0px solid var(--border-color);
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  transition: all 0.2s;
+}
+
+.theme-button:hover {
+  background: var(--bg-hover);
+  border-color: var(--text-secondary);
+  color: var(--text-primary);
+}
+
+.theme-button svg {
+  flex-shrink: 0;
+}
+
+.theme-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 2001;
+  overflow: hidden;
+}
+
+.theme-option {
+  width: 100%;
+  padding: 10px 12px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  color: var(--text-primary);
+  font-size: 14px;
+  transition: background 0.2s;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.theme-option:last-child {
+  border-bottom: none;
+}
+
+.theme-option:hover {
+  background: var(--bg-hover);
+}
+
+.theme-option.active {
+  background: var(--bg-active);
+  font-weight: bold;
+}
+</style>
+<style>.toc-toggle {
+  float: left;
+  width: 40px;
+  height: 40px;
+  padding: 10px;
+  margin-right: 8px;
+  background: var(--bg-primary);
+  border: 0px solid var(--border-color);
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  transition: all 0.2s;
+}
+
+.toc-toggle:hover {
+  background: var(--bg-hover);
+  border-color: var(--text-secondary);
+  color: var(--text-primary);
+}
+
+.toc-toggle svg {
+  flex-shrink: 0;
+}
+
+/* Position theme-switcher next to toc-toggle */
+#theme-switcher {
+  float: left;
+  margin-bottom: 10px;
+}
+
+/* Page controls container */
+.page-controls {
+  margin-bottom: 20px;
+}
+
+.page-controls::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Sidebar hide/show animation */
+body.sidebar-hidden #toc-sidebar {
+  transform: translateX(-250px);
+}
+
+body.sidebar-hidden #content-wrapper {
+  margin-left: 0;
+}
+
+#toc-sidebar {
+  transition: transform 0.3s ease;
+}
+
+#content-wrapper {
+  transition: margin-left 0.3s ease;
+}
+</style>
+<style>/* Code Copy Button Styling */
+
+.code-block-wrapper {
+    position: relative;
+    margin: 1em 0;
+}
+
+.code-block-wrapper pre {
+    margin: 0;
+}
+
+.code-copy-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.code-block-wrapper:hover .code-copy-button {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.code-copy-button:hover {
+    background-color: var(--bg-hover);
+    color: var(--text-primary);
+    border-color: var(--text-tertiary);
+}
+
+.code-copy-button:active {
+    background-color: var(--bg-active);
+    transform: scale(0.95);
+}
+
+.code-copy-button.success {
+    background-color: #10b981;
+    border-color: #059669;
+    color: #ffffff;
+    opacity: 1;
+}
+
+.code-copy-button.error {
+    background-color: #ef4444;
+    border-color: #dc2626;
+    color: #ffffff;
+    opacity: 1;
+}
+
+.code-copy-button svg {
+    flex-shrink: 0;
+}
+
+.copy-text {
+    white-space: nowrap;
+}
+
+/* Mobile: Always show the button */
+@media (max-width: 768px) {
+    .code-copy-button {
+        opacity: 0.7;
+        pointer-events: auto;
+    }
+
+    .code-block-wrapper:hover .code-copy-button {
+        opacity: 1;
+    }
+}
+</style>
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+#toc-sidebar {
+  width: 250px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  background: var(--bg-secondary);
+  padding: 20px;
+  border-right: 1px solid var(--border-color);
+  box-sizing: border-box;
+  transition: transform 0.3s ease;
+}
+
+#content-wrapper {
+  margin-left: 250px;
+  padding: 20px 40px;
+  max-width: 900px;
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--bg-primary);
+  transition: margin-left 0.3s ease;
+}
+
+.toc-header h2 {
+  margin-top: 0;
+  font-size: 1.5em;
+  color: var(--text-primary);
+}
+
+.search-button {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 20px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  transition: all 0.2s;
+}
+
+.search-button:hover {
+  background: var(--bg-hover);
+  border-color: var(--text-secondary);
+  color: var(--text-primary);
+}
+
+.search-button svg {
+  flex-shrink: 0;
+}
+
+.toc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.toc-list li {
+  margin: 5px 0;
+}
+
+.toc-list > li > a {
+  display: block;
+  padding: 8px 12px;
+  text-decoration: none;
+  color: var(--text-primary);
+  border-radius: 4px;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.toc-list a:hover {
+  background: var(--bg-hover);
+}
+
+.toc-list a.current {
+  background: var(--bg-active);
+  font-weight: bold;
+  color: var(--text-primary);
+}
+
+/* Part (separator/heading) styling */
+.toc-part {
+  margin: 8px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.toc-part-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  color: var(--text-primary);
+  background: inherit;
+  border-radius: 4px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s ease;
+}
+
+.toc-part-header:hover {
+  background: var(--bg-hover);
+}
+
+/* Top-level parts: inverted colors */
+.toc-part-top .toc-part-header {
+  color: var(--bg-primary);
+  background: var(--text-primary);
+}
+
+.toc-part-top .toc-part-header:hover {
+  background: var(--text-secondary);
+}
+
+/* Nested parts: normal colors */
+.toc-part-nested .toc-part-header {
+  color: var(--text-primary);
+  background: inherit;
+}
+
+.toc-part-nested .toc-part-header:hover {
+  background: var(--bg-hover);
+}
+
+.toc-part-header span {
+  flex: 1;
+  text-align: left;
+}
+
+.toc-fold-toggle {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  margin-left: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  color: currentColor;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.toc-fold-toggle:hover {
+  transform: scale(1.1);
+}
+
+.toc-fold-toggle .fold-icon {
+  transform: rotate(0deg);
+  transition: transform 0.2s ease;
+}
+
+.toc-part-header.collapsed .fold-icon {
+  transform: rotate(-90deg);
+}
+
+.toc-children {
+  list-style: none;
+  padding: 0;
+  margin: 4px 0 0 0;
+  max-height: 10000px;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  opacity: 1;
+}
+
+.toc-children.collapsed {
+  max-height: 0;
+  opacity: 0;
+}
+
+/* Part without children (no header wrapper) */
+.toc-part:not(:has(.toc-part-header)) {
+  padding: 8px 12px;
+  color: var(--text-primary);
+  background: transparent;
+  border-radius: 4px;
+}
+
+/* Top-level parts without children - inverted colors */
+.toc-part-top:not(:has(.toc-part-header)) {
+  color: var(--bg-primary);
+  background: var(--text-primary);
+}
+
+/* Nested parts without children - normal colors */
+.toc-part-nested:not(:has(.toc-part-header)) {
+  color: var(--text-primary);
+  background: transparent;
+}
+
+/* Child page indentation */
+.toc-page-child {
+  display: block;
+  padding: 8px 12px;
+  text-decoration: none;
+  color: var(--text-primary);
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.toc-page-indent-1 {
+  padding-left: 24px !important;
+}
+
+.toc-page-indent-2 {
+  padding-left: 36px !important;
+}
+
+.toc-page-indent-3 {
+  padding-left: 48px !important;
+}
+
+/* Section (H2) styling */
+.toc-sections {
+  list-style: none;
+  padding: 0;
+  margin: 4px 0 0 0;
+}
+
+.toc-sections li {
+  margin: 2px 0;
+}
+
+.toc-sections a {
+  display: block;
+  padding: 6px 12px 6px 24px;
+  text-decoration: none;
+  color: var(--text-secondary);
+  border-radius: 4px;
+  font-size: 0.9em;
+  transition: background 0.2s;
+}
+
+.toc-sections a:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+/* Additional indentation for sections under child pages */
+.toc-sections-indent-1 a {
+  padding-left: 48px;
+}
+
+.toc-sections-indent-2 a {
+  padding-left: 60px;
+}
+
+.toc-sections-indent-3 a {
+  padding-left: 72px;
+}
+
+/* Table styling */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1em 0;
+  border: 1px solid var(--border-color);
+}
+
+table th,
+table td {
+  padding: 8px 12px;
+  text-align: left;
+  border: 1px solid var(--border-color);
+}
+
+table thead th {
+  background: var(--bg-active);
+  color: var(--text-primary);
+  font-weight: bold;
+}
+
+table tbody tr:nth-child(even) {
+  background: var(--bg-secondary);
+}
+
+table tbody tr:nth-child(odd) {
+  background: var(--bg-primary);
+}
+
+table tbody tr:hover {
+  background: var(--bg-hover);
+}
+
+@media (max-width: 768px) {
+  #toc-sidebar {
+    position: static;
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+  }
+
+  #content-wrapper {
+    margin-left: 0;
+  }
+}
+</style>
+<style>.search-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 10vh;
+}
+
+.search-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.search-container {
+  position: relative;
+  width: 600px;
+  max-width: 90%;
+  background: var(--bg-primary);
+  border-radius: 8px;
+  box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-color);
+}
+
+.search-header {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+#search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  padding: 8px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.search-close {
+  border: none;
+  background: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  padding: 0 8px;
+  line-height: 1;
+}
+
+.search-close:hover {
+  color: var(--text-primary);
+}
+
+.search-results {
+  overflow-y: auto;
+  max-height: calc(70vh - 60px);
+}
+
+.search-hint {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--text-tertiary);
+}
+
+.search-result {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.search-result:hover,
+.search-result.selected {
+  background: var(--bg-hover);
+}
+
+.search-result-title {
+  font-weight: bold;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.search-result-preview {
+  font-size: 14px;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.search-highlight {
+  background: var(--search-highlight);
+  font-weight: bold;
+}
+
+.no-results {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--text-tertiary);
+}
+
+@media (max-width: 768px) {
+  .search-container {
+    width: 95%;
+  }
+}
+</style>
+
+</head>
+<body>
+<nav id="toc-sidebar">
+  <div class="toc-header"><h2>procon/</h2></div>
+  <button id="search-button" class="search-button" title="Search (Ctrl+K)">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+      <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+    </svg>
+    Search
+  </button>
+  <ul class="toc-list">
+      <li class="toc-part toc-part-top foldable">
+        <div class="toc-part-header collapsed">
+          <span>代数</span>
+          <button class="toc-fold-toggle" aria-label="Toggle section">
+            <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+              <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <ul class="toc-children collapsed">
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>モノイド</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/algebra.monoid.html" class="toc-page-child toc-page-indent-2">モノイドの定義</a>
+          </li>
+          <li>
+            <a href="/procon/algebra.monoid.minmax.html" class="toc-page-child toc-page-indent-2">Min/Max モノイド</a>
+          </li>
+          <li>
+            <a href="/procon/algebra.monoid.sum.html" class="toc-page-child toc-page-indent-2">Sum モノイド</a>
+          </li>
+          </ul>
+        </li>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>群・環・体</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/algebra.group.html" class="toc-page-child toc-page-indent-2">(乗法)群と加法群</a>
+          </li>
+          <li>
+            <a href="/procon/algebra.ring.html" class="toc-page-child toc-page-indent-2">環</a>
+          </li>
+          <li>
+            <a href="/procon/algebra.field.html" class="toc-page-child toc-page-indent-2">体</a>
+          </li>
+          <li>
+            <a href="/procon/algebra.module.html" class="toc-page-child toc-page-indent-2">加群</a>
+          </li>
+          </ul>
+        </li>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>数・行列</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/algebra.ratio.html" class="toc-page-child toc-page-indent-2">有理数</a>
+          </li>
+          <li>
+            <a href="/procon/algebra.float.html" class="toc-page-child toc-page-indent-2">実数 (Float)</a>
+          </li>
+          <li>
+            <a href="/procon/algebra.complex.html" class="toc-page-child toc-page-indent-2">複素数</a>
+          </li>
+          <li>
+            <a href="/procon/algebra.hyper.html" class="toc-page-child toc-page-indent-2">超数</a>
+          </li>
+          <li>
+            <a href="/procon/algebra.matrix.html" class="toc-page-child toc-page-indent-2">行列</a>
+          </li>
+          </ul>
+        </li>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>剰余付き整数</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/algebra.modint.html" class="toc-page-child toc-page-indent-2">ModInt</a>
+          </li>
+          </ul>
+        </li>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>作用</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/algebra.act.html" class="toc-page-child toc-page-indent-2">作用の定義</a>
+          </li>
+          <li>
+            <a href="/procon/algebra.act.add.html" class="toc-page-child toc-page-indent-2">加算作用</a>
+          </li>
+          <li>
+            <a href="/procon/algebra.act.assign.html" class="toc-page-child toc-page-indent-2">代入作用</a>
+          </li>
+          </ul>
+        </li>
+        </ul>
+      </li>
+      <li class="toc-part toc-part-top foldable">
+        <div class="toc-part-header collapsed">
+          <span>グラフ</span>
+          <button class="toc-fold-toggle" aria-label="Toggle section">
+            <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+              <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <ul class="toc-children collapsed">
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>最短路</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/graph.dij.html" class="toc-page-child toc-page-indent-2">ダイクストラ法</a>
+          </li>
+          <li>
+            <a href="/procon/graph.wall.html" class="toc-page-child toc-page-indent-2">ワーシャル-フロイド法</a>
+          </li>
+          <li>
+            <a href="/procon/graph.bellmanford.html" class="toc-page-child toc-page-indent-2">ベルマンフォード法</a>
+          </li>
+          </ul>
+        </li>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>無向グラフ</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/graph.undirected.bipartite.html" class="toc-page-child toc-page-indent-2">二部グラフ判定</a>
+          </li>
+          <li>
+            <a href="/procon/graph.undirected.diameter.html" class="toc-page-child toc-page-indent-2">直径</a>
+          </li>
+          </ul>
+        </li>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>最小全域木</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/graph.prim.html" class="toc-page-child toc-page-indent-2">プリム法</a>
+          </li>
+          <li>
+            <a href="/procon/graph.kruskal.html" class="toc-page-child toc-page-indent-2">クラスカル法</a>
+          </li>
+          </ul>
+        </li>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>木</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/graph.tree.height.html" class="toc-page-child toc-page-indent-2">高さ</a>
+          </li>
+          <li>
+            <a href="/procon/graph.tree.diameter.html" class="toc-page-child toc-page-indent-2">直径</a>
+          </li>
+          <li>
+            <a href="/procon/graph.tree.lca.html" class="toc-page-child toc-page-indent-2">最小共通祖先</a>
+          </li>
+          </ul>
+        </li>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>有向グラフ</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/graph.maxflow.html" class="toc-page-child toc-page-indent-2">最大流量</a>
+          </li>
+          <li>
+            <a href="/procon/graph.topological.html" class="toc-page-child toc-page-indent-2">トポロジカルソート</a>
+          </li>
+          <li>
+            <a href="/procon/graph.scc.html" class="toc-page-child toc-page-indent-2">強連結成分分解</a>
+          </li>
+          </ul>
+        </li>
+        </ul>
+      </li>
+      <li class="toc-part toc-part-top foldable">
+        <div class="toc-part-header collapsed">
+          <span>数列</span>
+          <button class="toc-fold-toggle" aria-label="Toggle section">
+            <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+              <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <ul class="toc-children collapsed">
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>累積和</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/seq.cumsum1d.html" class="toc-page-child toc-page-indent-2">一次元累積和</a>
+          </li>
+          <li>
+            <a href="/procon/seq.cumsum2d.html" class="toc-page-child toc-page-indent-2">二次元累積和</a>
+          </li>
+          </ul>
+        </li>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>区間木</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li class="toc-part toc-part-nested foldable">
+            <div class="toc-part-header collapsed">
+              <span>BIT</span>
+              <button class="toc-fold-toggle" aria-label="Toggle section">
+                <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                  <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                </svg>
+              </button>
+            </div>
+            <ul class="toc-children collapsed">
+            <li>
+              <a href="/procon/seq.bit.html" class="toc-page-child toc-page-indent-3">BIT</a>
+            </li>
+            <li>
+              <a href="/procon/seq.bit_cumulative.html" class="toc-page-child toc-page-indent-3">区間加算を処理する BIT</a>
+            </li>
+            </ul>
+          </li>
+          <li class="toc-part toc-part-nested foldable">
+            <div class="toc-part-header collapsed">
+              <span>セグメントツリー</span>
+              <button class="toc-fold-toggle" aria-label="Toggle section">
+                <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                  <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                </svg>
+              </button>
+            </div>
+            <ul class="toc-children collapsed">
+            <li>
+              <a href="/procon/seq.segment_tree.html" class="toc-page-child toc-page-indent-3">セグメントツリー</a>
+            </li>
+            <li>
+              <a href="/procon/seq.rmq.html" class="toc-page-child toc-page-indent-3">RMQ</a>
+            </li>
+            <li>
+              <a href="/procon/seq.segment_tree_sum.html" class="toc-page-child toc-page-indent-3">加法セグメントツリー</a>
+            </li>
+            <li>
+              <a href="/procon/seq.segment_tree_prod.html" class="toc-page-child toc-page-indent-3">乗法セグメントツリー</a>
+            </li>
+            </ul>
+          </li>
+          <li class="toc-part toc-part-nested foldable">
+            <div class="toc-part-header collapsed">
+              <span>遅延セグメントツリー</span>
+              <button class="toc-fold-toggle" aria-label="Toggle section">
+                <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                  <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                </svg>
+              </button>
+            </div>
+            <ul class="toc-children collapsed">
+            <li>
+              <a href="/procon/seq.lazy_segment_tree.html" class="toc-page-child toc-page-indent-3">遅延セグメントツリー</a>
+            </li>
+            <li>
+              <a href="/procon/seq.ranged_assign_rmq.html" class="toc-page-child toc-page-indent-3">区間代入 RMQ</a>
+            </li>
+            <li>
+              <a href="/procon/seq.ranged_add_rmq.html" class="toc-page-child toc-page-indent-3">区間加算 RMQ</a>
+            </li>
+            <li>
+              <a href="/procon/seq.ranged_add_segment_tree_sum.html" class="toc-page-child toc-page-indent-3">区間加算 加法セグメントツリー</a>
+            </li>
+            </ul>
+          </li>
+          </ul>
+        </li>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>その他数列アルゴリズム</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/seq.lis.html" class="toc-page-child toc-page-indent-2">最長増加部分列</a>
+          </li>
+          <li>
+            <a href="/procon/seq.median.html" class="toc-page-child toc-page-indent-2">中央値ヒープ</a>
+          </li>
+          <li>
+            <a href="/procon/seq.slide_min.html" class="toc-page-child toc-page-indent-2">スライド最小値</a>
+          </li>
+          <li>
+            <a href="/procon/seq.bitvecbool.html" class="toc-page-child toc-page-indent-2">BitVecBool</a>
+          </li>
+          <li>
+            <a href="/procon/fft.convolution.html" class="toc-page-child toc-page-indent-2">FFT 畳み込み</a>
+          </li>
+          </ul>
+        </li>
+        </ul>
+      </li>
+      <li class="toc-part toc-part-top foldable">
+        <div class="toc-part-header collapsed">
+          <span>二次元ユークリッド幾何</span>
+          <button class="toc-fold-toggle" aria-label="Toggle section">
+            <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+              <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <ul class="toc-children collapsed">
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>点・ベクトル</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/geo.2d.point.html" class="toc-page-child toc-page-indent-2">点・ベクトルの定義</a>
+          </li>
+          <li>
+            <a href="/procon/geo.polar.html" class="toc-page-child toc-page-indent-2">極座標</a>
+          </li>
+          </ul>
+        </li>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>直線・線分</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/geo.2d.line.html" class="toc-page-child toc-page-indent-2">直線と線分の定義</a>
+          </li>
+          <li>
+            <a href="/procon/geo.2d.ccw_line.html" class="toc-page-child toc-page-indent-2">直線と点の接触判定</a>
+          </li>
+          <li>
+            <a href="/procon/geo.2d.ccw_linesegment.html" class="toc-page-child toc-page-indent-2">線分と点の接触判定</a>
+          </li>
+          </ul>
+        </li>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>多角形</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/geo.2d.polygon.html" class="toc-page-child toc-page-indent-2">多角形の定義</a>
+          </li>
+          <li>
+            <a href="/procon/geo.2d.circum.html" class="toc-page-child toc-page-indent-2">三角形の外接円</a>
+          </li>
+          <li>
+            <a href="/procon/geo.2d.convex_hull.html" class="toc-page-child toc-page-indent-2">凸包</a>
+          </li>
+          </ul>
+        </li>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>円</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/geo.2d.circle.html" class="toc-page-child toc-page-indent-2">円の定義</a>
+          </li>
+          <li>
+            <a href="/procon/geo.2d.circle.intersection.html" class="toc-page-child toc-page-indent-2">円と円との接触関係</a>
+          </li>
+          </ul>
+        </li>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>格子点上の幾何</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/geo.2d.int.point.html" class="toc-page-child toc-page-indent-2">点</a>
+          </li>
+          <li>
+            <a href="/procon/geo.2d.int.line.html" class="toc-page-child toc-page-indent-2">直線</a>
+          </li>
+          </ul>
+        </li>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>その他幾何アルゴリズム</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/geo.cht.html" class="toc-page-child toc-page-indent-2">Convex-Hull Trick</a>
+          </li>
+          <li>
+            <a href="/procon/geo.closest_pair.html" class="toc-page-child toc-page-indent-2">最近点対</a>
+          </li>
+          </ul>
+        </li>
+        </ul>
+      </li>
+      <li class="toc-part toc-part-top foldable">
+        <div class="toc-part-header collapsed">
+          <span>集合</span>
+          <button class="toc-fold-toggle" aria-label="Toggle section">
+            <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+              <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <ul class="toc-children collapsed">
+        <li>
+          <a href="/procon/set.union_find.html" class="toc-page-child toc-page-indent-1">UnionFind</a>
+        </li>
+        <li>
+          <a href="/procon/set.bitset.html" class="toc-page-child toc-page-indent-1">BitSet</a>
+        </li>
+        <li>
+          <a href="/procon/set.subbitset.html" class="toc-page-child toc-page-indent-1">部分集合及びその部分集合の列挙</a>
+        </li>
+        <li>
+          <a href="/procon/collections.multiset.html" class="toc-page-child toc-page-indent-1">多重集合</a>
+        </li>
+        </ul>
+      </li>
+      <li class="toc-part toc-part-top foldable">
+        <div class="toc-part-header collapsed">
+          <span>アルゴリズム</span>
+          <button class="toc-fold-toggle" aria-label="Toggle section">
+            <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+              <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <ul class="toc-children collapsed">
+        <li>
+          <a href="/procon/dp.knapsack.01.html" class="toc-page-child toc-page-indent-1">01-ナップザック</a>
+        </li>
+        <li>
+          <a href="/procon/bin.search.html" class="toc-page-child toc-page-indent-1">二分探索</a>
+        </li>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>循環検出</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/algorithm.rho.html" class="toc-page-child toc-page-indent-2">フロイドの\(\rho\)アルゴリズム</a>
+          </li>
+          </ul>
+        </li>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>連立一次方程式</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/algorithm.gauss_jordan.html" class="toc-page-child toc-page-indent-2">Gauss-Jordan の消去法</a>
+          </li>
+          </ul>
+        </li>
+        </ul>
+      </li>
+      <li class="toc-part toc-part-top foldable">
+        <div class="toc-part-header collapsed">
+          <span>最適化</span>
+          <button class="toc-fold-toggle" aria-label="Toggle section">
+            <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+              <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <ul class="toc-children collapsed">
+        <li>
+          <a href="/procon/opt.moyasu_umeru.html" class="toc-page-child toc-page-indent-1">燃やす埋める問題</a>
+        </li>
+        <li>
+          <a href="/procon/opt.2sat.html" class="toc-page-child toc-page-indent-1">2-SAT</a>
+        </li>
+        <li>
+          <a href="/procon/opt.3sat.html" class="toc-page-child toc-page-indent-1">乱択3-SAT</a>
+        </li>
+        </ul>
+      </li>
+      <li class="toc-part toc-part-top">
+        <div class="toc-part-header">
+          <span>自然数・整数</span>
+          <button class="toc-fold-toggle" aria-label="Toggle section">
+            <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+              <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <ul class="toc-children">
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>自然数・整数の関数・定理</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/num.gcd.html" class="toc-page-child toc-page-indent-2">GCD</a>
+          </li>
+          <li>
+            <a href="/procon/num.exgcd.html" class="toc-page-child toc-page-indent-2">拡張GCD</a>
+          </li>
+          <li>
+            <a href="/procon/num.binom.pascal.html" class="toc-page-child toc-page-indent-2">二項係数 (パスカルの三角形)</a>
+          </li>
+          <li>
+            <a href="/procon/num.binom.modint.html" class="toc-page-child toc-page-indent-2">二項係数 (ModInt)</a>
+          </li>
+          <li>
+            <a href="/procon/num.dislog.html" class="toc-page-child toc-page-indent-2">離散対数</a>
+          </li>
+          <li>
+            <a href="/procon/num.derangement.html" class="toc-page-child toc-page-indent-2">完全順列</a>
+          </li>
+          <li>
+            <a href="/procon/num.euler_phi.html" class="toc-page-child toc-page-indent-2">オイラーの関数</a>
+          </li>
+          <li>
+            <a href="/procon/num.moebius.html" class="toc-page-child toc-page-indent-2">メビウス関数</a>
+          </li>
+          <li>
+            <a href="/procon/num.n_vs_nn.html" class="toc-page-child toc-page-indent-2">自然数の対 ↔ 自然数 の変換</a>
+          </li>
+          <li>
+            <a href="/procon/num.mex.html" class="toc-page-child toc-page-indent-2">最小自由数 (最小除外数)</a>
+          </li>
+          <li>
+            <a href="/procon/num.chinese.html" class="toc-page-child toc-page-indent-2">中国人剰余定理</a>
+          </li>
+          </ul>
+        </li>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>素数</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/prime.sieve.html" class="toc-page-child toc-page-indent-2">エラトステネスの篩</a>
+          </li>
+          <li>
+            <a href="/procon/prime.MillerRabin.html" class="toc-page-child toc-page-indent-2">ミラー・ラビン素数判定</a>
+          </li>
+          <li>
+            <a href="/procon/prime.fermat.little.html" class="toc-page-child toc-page-indent-2">フェルマーの小定理</a>
+          </li>
+          <li>
+            <a href="/procon/prime.factorize.html" class="toc-page-child toc-page-indent-2">素因数分解</a>
+          </li>
+          </ul>
+        </li>
+        <li class="toc-part toc-part-nested">
+          <div class="toc-part-header">
+            <span>組み合わせのイテレーター</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children">
+          <li>
+            <a href="/procon/num.iter.perm.html" class="toc-page-child toc-page-indent-2">階乗 - \(n!\)</a>
+          </li>
+          <li>
+            <a href="/procon/num.iter.powperm.html" class="toc-page-child toc-page-indent-2">冪乗 - \(n^m\)</a>
+          </li>
+          <li>
+            <a href="/procon/num.iter.comb.html" class="toc-page-child toc-page-indent-2 current">二項係数 - \({}_nC{}_m\)</a>
+          </li>
+          </ul>
+        </li>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>乱数</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/rand.lcg.html" class="toc-page-child toc-page-indent-2">線形合同法 (LCG)</a>
+          </li>
+          <li>
+            <a href="/procon/rand.pcg.html" class="toc-page-child toc-page-indent-2">順列合同法 (PCG)</a>
+          </li>
+          <li>
+            <a href="/procon/rand.xorshift.html" class="toc-page-child toc-page-indent-2">Xor-Shift 法</a>
+          </li>
+          </ul>
+        </li>
+        </ul>
+      </li>
+      <li class="toc-part toc-part-top foldable">
+        <div class="toc-part-header collapsed">
+          <span>文字列 (Vector)</span>
+          <button class="toc-fold-toggle" aria-label="Toggle section">
+            <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+              <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <ul class="toc-children collapsed">
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>文字列検索</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/string.shift-and.html" class="toc-page-child toc-page-indent-2">Shift-And</a>
+          </li>
+          <li>
+            <a href="/procon/string.z.html" class="toc-page-child toc-page-indent-2">Z-alogirhtm</a>
+          </li>
+          <li>
+            <a href="/procon/string.suffix-array.html" class="toc-page-child toc-page-indent-2">接尾辞配列 (SA)</a>
+          </li>
+          <li>
+            <a href="/procon/string.sa-search.html" class="toc-page-child toc-page-indent-2">SA による文字列検索</a>
+          </li>
+          </ul>
+        </li>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>回文</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/string.manacher.html" class="toc-page-child toc-page-indent-2">manacher</a>
+          </li>
+          </ul>
+        </li>
+        <li class="toc-part toc-part-nested foldable">
+          <div class="toc-part-header collapsed">
+            <span>圧縮</span>
+            <button class="toc-fold-toggle" aria-label="Toggle section">
+              <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+                <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <ul class="toc-children collapsed">
+          <li>
+            <a href="/procon/string.runlength.html" class="toc-page-child toc-page-indent-2">Run-length</a>
+          </li>
+          </ul>
+        </li>
+        </ul>
+      </li>
+      <li class="toc-part toc-part-top">時間/時刻</li>
+      <li class="toc-part toc-part-top foldable">
+        <div class="toc-part-header collapsed">
+          <span>制限時間付きループ</span>
+          <button class="toc-fold-toggle" aria-label="Toggle section">
+            <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+              <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <ul class="toc-children collapsed">
+        <li>
+          <a href="/procon/time.while.html" class="toc-page-child toc-page-indent-1">loop_timeout_ms! マクロ</a>
+        </li>
+        </ul>
+      </li>
+      <li class="toc-part toc-part-top foldable">
+        <div class="toc-part-header collapsed">
+          <span>暦</span>
+          <button class="toc-fold-toggle" aria-label="Toggle section">
+            <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+              <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <ul class="toc-children collapsed">
+        <li>
+          <a href="/procon/cal.zeller.html" class="toc-page-child toc-page-indent-1">ツェラーの公式</a>
+        </li>
+        <li>
+          <a href="/procon/cal.uruu.html" class="toc-page-child toc-page-indent-1">閏年判定</a>
+        </li>
+        </ul>
+      </li>
+      <li class="toc-part toc-part-top foldable">
+        <div class="toc-part-header collapsed">
+          <span>ハッシュ</span>
+          <button class="toc-fold-toggle" aria-label="Toggle section">
+            <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+              <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <ul class="toc-children collapsed">
+        <li>
+          <a href="/procon/hash.zobrist.html" class="toc-page-child toc-page-indent-1">Zobrist Hash</a>
+        </li>
+        <li>
+          <a href="/procon/hash.rolling.html" class="toc-page-child toc-page-indent-1">Rolling Hash</a>
+        </li>
+        <li>
+          <a href="/procon/hash.string.html" class="toc-page-child toc-page-indent-1">文字列ハッシュ</a>
+        </li>
+        </ul>
+      </li>
+      <li class="toc-part toc-part-top foldable">
+        <div class="toc-part-header collapsed">
+          <span>collections</span>
+          <button class="toc-fold-toggle" aria-label="Toggle section">
+            <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+              <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <ul class="toc-children collapsed">
+        <li>
+          <a href="/procon/collections.defaultdict.html" class="toc-page-child toc-page-indent-1">defaultmap</a>
+        </li>
+        <li>
+          <a href="/procon/collections.list_comprehension_macro.html" class="toc-page-child toc-page-indent-1">リスト内包表記マクロ</a>
+        </li>
+        </ul>
+      </li>
+      <li class="toc-part toc-part-top foldable">
+        <div class="toc-part-header collapsed">
+          <span>misc</span>
+          <button class="toc-fold-toggle" aria-label="Toggle section">
+            <svg class="fold-icon" width="12" height="12" viewBox="0 0 12 12">
+              <path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <ul class="toc-children collapsed">
+        <li>
+          <a href="/procon/misc.neighbor.html" class="toc-page-child toc-page-indent-1">近傍</a>
+        </li>
+        <li>
+          <a href="/procon/misc.coodinate_compression.html" class="toc-page-child toc-page-indent-1">座標圧縮</a>
+        </li>
+        </ul>
+      </li>
+  </ul>
+</nav>
+<div id="content-wrapper">
+<script>
+(function() {
+  document.querySelectorAll('.toc-part-header').forEach(function(header) {
+    header.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var li = header.parentElement;
+      var children = li.querySelector('.toc-children');
+      if (children) {
+        var isCollapsed = header.classList.contains('collapsed');
+        if (isCollapsed) {
+          header.classList.remove('collapsed');
+          children.classList.remove('collapsed');
+        } else {
+          header.classList.add('collapsed');
+          children.classList.add('collapsed');
+        }
+      }
+    });
+  });
+})();
+</script>
+<div class="page-controls">
+<button id="toc-toggle" class="toc-toggle" title="Toggle sidebar">
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+    <path d="M2 3h12a1 1 0 0 1 0 2H2a1 1 0 0 1 0-2zm0 4h12a1 1 0 0 1 0 2H2a1 1 0 0 1 0-2zm0 4h12a1 1 0 0 1 0 2H2a1 1 0 0 1 0-2z"/>
+  </svg>
+</button>
+<div id="theme-switcher" class="theme-switcher">
+  <button id="theme-button" class="theme-button" title="Change theme">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+      <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/>
+    </svg>
+    Theme
+  </button>
+  <div id="theme-menu" class="theme-menu" style="display: none;">
+    <button class="theme-option" data-theme="light">Light</button>
+    <button class="theme-option" data-theme="dark">Dark</button>
+    <button class="theme-option" data-theme="solarized-light">Solarized Light</button>
+    <button class="theme-option" data-theme="solarized-dark">Solarized Dark</button>
+    <button class="theme-option" data-theme="kanagawa-light">Kanagawa Light</button>
+    <button class="theme-option" data-theme="kanagawa-dark">Kanagawa Dark</button>
+  </div>
+</div>
+</div>
+<div id="search-modal" class="search-modal" style="display: none;">
+  <div class="search-backdrop"></div>
+  <div class="search-container">
+    <div class="search-header">
+      <input type="text" id="search-input" placeholder="Search documentation..." autocomplete="off">
+      <button id="search-close" class="search-close">&times;</button>
+    </div>
+    <div id="search-results" class="search-results">
+      <div class="search-hint">Start typing to search...</div>
+    </div>
+  </div>
+</div>
+
+<h1 class="title" id="1-%E7%B5%84%E3%81%BF%E5%90%88%E3%82%8F%E3%81%9B%E3%81%AE%E3%82%A4%E3%83%86%E3%83%AC%E3%83%BC%E3%82%BF%E3%83%BC%20-%20%E4%BA%8C%E9%A0%85%E4%BF%82%E6%95%B0%20%5C%28%7B%7D_nC%7B%7D_m%5C%29">組み合わせのイテレーター - 二項係数 \({}_nC{}_m\)</h1>
 <p>For each \(\{ x_i : 0 \leq i \lt m, 0 \leq x_i \lt n, x_i \gt x_j \}\)</p>
 <pre><code class="code language-rust">&#x2F;&#x2F;&#x2F; Number - Iterator - Combination (Binom[n;m])
 pub struct Combination {
@@ -83,300 +1762,436 @@ mod test_combination_perm {
     }
 }
 </code></pre>
+
+<script>(function() {
+  'use strict';
+
+  const THEME_KEY = 'unibook-theme';
+  let defaultTheme = 'light'; // Will be set from config
+
+  // Get current theme (user preference or default)
+  function getCurrentTheme() {
+    return localStorage.getItem(THEME_KEY) || defaultTheme;
+  }
+
+  // Set theme
+  function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem(THEME_KEY, theme);
+    updateActiveButton(theme);
+  }
+
+  // Update active button styling
+  function updateActiveButton(theme) {
+    document.querySelectorAll('.theme-option').forEach(btn => {
+      if (btn.dataset.theme === theme) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+  }
+
+  // Initialize theme on page load
+  function initTheme() {
+    // Read default theme from meta tag (set by unibook config)
+    const metaTheme = document.querySelector('meta[name="unibook-theme"]');
+    if (metaTheme) {
+      defaultTheme = metaTheme.content;
+    }
+
+    const theme = getCurrentTheme();
+    setTheme(theme);
+  }
+
+  // Toggle theme menu
+  function toggleThemeMenu() {
+    const menu = document.getElementById('theme-menu');
+    if (menu.style.display === 'none' || menu.style.display === '') {
+      menu.style.display = 'block';
+    } else {
+      menu.style.display = 'none';
+    }
+  }
+
+  // Close theme menu when clicking outside
+  function handleOutsideClick(event) {
+    const switcher = document.getElementById('theme-switcher');
+    const menu = document.getElementById('theme-menu');
+
+    if (switcher && !switcher.contains(event.target)) {
+      menu.style.display = 'none';
+    }
+  }
+
+  // Initialize on DOM ready
+  document.addEventListener('DOMContentLoaded', function() {
+    initTheme();
+
+    // Theme button click handler
+    const themeButton = document.getElementById('theme-button');
+    if (themeButton) {
+      themeButton.addEventListener('click', function(e) {
+        e.stopPropagation();
+        toggleThemeMenu();
+      });
+    }
+
+    // Theme option click handlers
+    document.querySelectorAll('.theme-option').forEach(button => {
+      button.addEventListener('click', function() {
+        const theme = this.dataset.theme;
+        setTheme(theme);
+        document.getElementById('theme-menu').style.display = 'none';
+      });
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', handleOutsideClick);
+  });
+})();
+</script>
+<script>(function() {
+  'use strict';
+
+  let searchIndex = null;
+  let selectedIndex = -1;
+
+  // Load search index
+  async function loadSearchIndex() {
+    if (searchIndex) return searchIndex;
+
+    try {
+      const response = await fetch('search-index.json');
+      searchIndex = await response.json();
+      return searchIndex;
+    } catch (error) {
+      console.error('Failed to load search index:', error);
+      return null;
+    }
+  }
+
+  // Open search modal
+  function openSearch() {
+    const modal = document.getElementById('search-modal');
+    const input = document.getElementById('search-input');
+
+    modal.style.display = 'flex';
+    input.focus();
+    input.value = '';
+    selectedIndex = -1;
+    showHint();
+
+    // Load index if not already loaded
+    loadSearchIndex();
+  }
+
+  // Close search modal
+  function closeSearch() {
+    const modal = document.getElementById('search-modal');
+    modal.style.display = 'none';
+  }
+
+  // Show hint message
+  function showHint() {
+    const results = document.getElementById('search-results');
+    results.innerHTML = '<div class="search-hint">Start typing to search...</div>';
+  }
+
+  // Perform search
+  function performSearch(query) {
+    if (!query || query.length < 2) {
+      showHint();
+      return;
+    }
+
+    if (!searchIndex) {
+      const results = document.getElementById('search-results');
+      results.innerHTML = '<div class="search-hint">Loading search index...</div>';
+      return;
+    }
+
+    const lowerQuery = query.toLowerCase();
+    const results = [];
+
+    for (const page of searchIndex.pages) {
+      const titleMatch = page.title.toLowerCase().includes(lowerQuery);
+      const contentMatch = page.content.toLowerCase().includes(lowerQuery);
+
+      if (titleMatch || contentMatch) {
+        // Find context snippet
+        const preview = extractPreview(page.content, lowerQuery);
+        results.push({
+          title: page.title,
+          url: page.url,
+          preview: preview,
+        });
+      }
+    }
+
+    displayResults(results, query);
+  }
+
+  // Extract preview snippet around search term
+  function extractPreview(content, query) {
+    const index = content.toLowerCase().indexOf(query.toLowerCase());
+    if (index === -1) return content.substring(0, 100) + '...';
+
+    const start = Math.max(0, index - 40);
+    const end = Math.min(content.length, index + query.length + 60);
+
+    let preview = content.substring(start, end);
+    if (start > 0) preview = '...' + preview;
+    if (end < content.length) preview = preview + '...';
+
+    return preview;
+  }
+
+  // Highlight search terms in text
+  function highlightText(text, query) {
+    const regex = new RegExp('(' + escapeRegex(query) + ')', 'gi');
+    return text.replace(regex, '<span class="search-highlight">$1</span>');
+  }
+
+  function escapeRegex(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  // Display search results
+  function displayResults(results, query) {
+    const container = document.getElementById('search-results');
+    selectedIndex = -1;
+
+    if (results.length === 0) {
+      container.innerHTML = '<div class="no-results">No results found</div>';
+      return;
+    }
+
+    const html = results.map((result, index) => `
+      <div class="search-result" data-index="${index}" data-url="${result.url}">
+        <div class="search-result-title">${highlightText(result.title, query)}</div>
+        <div class="search-result-preview">${highlightText(result.preview, query)}</div>
       </div>
-      <div class="column-right-20 menu">
-<details class=menu>
-<summary class=menu>代数</summary>
-<ul>
-  <li>
-    <a href="algebra.monoid.html">モノイド</a>
-    <ul>
-      <li><a href="algebra.monoid.minmax.html">Min/Max モノイド</a></li>
-      <li><a href="algebra.monoid.sum.html">Sum モノイド</a></li>
-    </ul>
-  </li>
-  <li><a href="algebra.group.html">(乗法)群と加法群</a></li>
-  <li><a href="algebra.ring.html">環</a></li>
-  <li><a href="algebra.field.html">体</a></li>
-  <li><a href="algebra.module.html">加群</a></li>
-  <li><a href="algebra.ratio.html">有理数</a></li>
-  <li><a href="algebra.complex.html">虚数</a></li>
-  <li><a href="algebra.matrix.html">行列</a></li>
-  <li><a href="algebra.hyper.html">超数</a></li>
-  <li><a href="algebra.total.html">全順序化</a></li>
-  <li><a href="algebra.modint.html">ModInt</a></li>
-  <li>
-    <a href="algebra.act.html">作用</a>
-    <ul>
-      <li><a href="algebra.act.assign.html">代入作用</a></li>
-      <li><a href="algebra.act.add.html">加算作用</a></li>
-    </ul>
-  </li>
-</ul>
-</details>
+    `).join('');
 
-<details class=menu>
-<summary class=menu>グラフ</summary>
-<h2>最短路</h2>
-<ul>
-  <li><a href="graph.dij.html">ダイクストラ法</a></li>
-  <li><a href="graph.wall.html">ワーシャル-フロイド法</a></li>
-  <li><a href="graph.bellmanford.html">ベルマンフォード法</a></li>
-</ul>
-<h2>無向グラフ</h2>
-<ul>
-  <li><a href="graph.undirected.bipartite.html">二部グラフ判定</a></li>
-  <li><a href="graph.undirected.diameter.html">直径</a></li>
-</ul>
-<h2>最小全域木</h2>
-<ul>
-  <li><a href="graph.prim.html">プリム法</a></li>
-  <li><a href="graph.kruskal.html">クラスカル法</a></li>
-</ul>
-<h2>木</h2>
-<ul>
-  <li><a href="graph.tree.height.html">高さ</a></li>
-  <li><a href="graph.tree.diameter.html">直径</a></li>
-  <li><a href="graph.tree.lca.html">最小共通祖先</a></li>
-</ul>
-<h2>有向グラフ</h2>
-<ul>
-  <li><a href="graph.maxflow.html">最大流量</a></li>
-  <li><a href="graph.topological.html">トポロジカルソート</a></li>
-  <li><a href="graph.scc.html">強連結成分分解</a></li>
-</ul>
-</details>
+    container.innerHTML = html;
 
-<details class=menu>
-<summary class=menu>数列</summary>
-<ul>
-  <li><a href="seq.lis.html">最長増加部分列</a></li>
-  <li><a href="seq.median.html">中央値ヒープ</a></li>
-  <li><a href="seq.slide_min.html">スライド最小値</a></li>
-  <li><a href="seq.bitvecbool.html">BitVecBool</a></li>
-</ul>
-<h2>累積処理</h2>
-<ul>
-  <li><a href="seq.cumsum1d.html">一次元累積和</a></li>
-  <li><a href="seq.cumsum2d.html">二次元累積和</a></li>
-</ul>
-<h2>区間木</h2>
-<ul>
-  <li>
-    <a href="seq.bit.html">BIT</a>
-    <ul>
-      <li><a href="seq.bit_cumulative.html">累積和に関するBIT</a></li>
-    </ul>
-  </li>
-  <li>
-    <a href="seq.segment_tree.html">セグメントツリー</a>
-    <ul>
-      <li><a href="seq.rmq.html">RMQ</a></li>
-      <li><a href="seq.segment_tree_sum.html">加法セグメントツリー</a></li>
-      <li><a href="seq.segment_tree_prod.html">乗法セグメントツリー</a></li>
-    </ul>
-  </li>
-  <li>
-    <a href="seq.lazy_segment_tree.html">遅延セグメントツリー</a>
-    <ul>
-      <li><a href="seq.ranged_assign_rmq.html">区間代入 RMQ</a></li>
-      <li><a href="seq.ranged_add_rmq.html">区間加算 RMQ</a></li>
-      <li><a href="seq.ranged_add_segment_tree_sum.html">区間加算 加法セグメントツリー</a></li>
-    </ul>
-  </li>
-</ul>
-</details>
+    // Add click handlers
+    const resultElements = container.querySelectorAll('.search-result');
+    resultElements.forEach((el) => {
+      el.addEventListener('click', () => {
+        window.location.href = el.dataset.url;
+      });
+    });
+  }
 
-<details class=menu>
-<summary class=menu>二次元ユークリッド幾何</summary>
-<h2>図形の定義</h2>
-<ul>
-  <li><a href="geo.2d.point.html">点</a></li>
-  <li><a href="geo.2d.line.html">直線, 線分</a></li>
-  <li><a href="geo.2d.polygon.html">多角形</a></li>
-  <li><a href="geo.2d.circle.html">円</a></li>
-</ul>
-<h2>線分</h2>
-<ul>
-  <li><a href="geo.2d.ccw.html">線分と点の接触判定</a></li>
-  <li><a href="geo.2d.intersection.html">線分と線分の交差判定</a></li>
-</ul>
-<h2>多角形</h2>
-<ul>
-  <li><a href="geo.2d.circum.html">三角形の外接円</a></li>
-  <li><a href="geo.2d.isin_poly.html">多角形の内外判定</a></li>
-  <li><a href="geo.2d.convex_hull.html">凸包</a></li>
-</ul>
-<h2>円</h2>
-<ul>
-  <li><a href="geo.2d.circle.intersection.html">円と円との接触関係</a></li>
-</ul>
-<h2>最近点対</h2>
-<ul>
-  <li><a href="geo.closest_pair.html">平面上の分割統治法</a></li>
-</ul>
-<h2>その他</h2>
-<ul>
-  <li><a href="geo.polar.html">極座標</a></li>
-  <li><a href="geo.cht.html">Convex-Hull Trick (CHT)</a></li>
-</ul>
-<h2>格子点上の幾何</h2>
-<ul>
-  <li><a href="geo.2d.int.point.html">点</a></li>
-  <li><a href="geo.2d.int.line.html">直線</a></li>
-</ul>
-</details>
+  // Handle keyboard navigation
+  function handleKeyDown(event) {
+    const results = document.querySelectorAll('.search-result');
 
-<details class=menu>
-<summary class=menu>集合</summary>
-<ul>
-  <li><a href="set.union_find.html">UnionFind</a></li>
-  <li><a href="set.bitset.html">BitSet</a></li>
-  <li><a href="set.subbitset.html">部分集合及びその部分集合の列挙</a></li>
-  <li><a href="collections.multiset.html">多重集合</a></li>
-</ul>
-</details>
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      selectedIndex = Math.min(selectedIndex + 1, results.length - 1);
+      updateSelection(results);
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      selectedIndex = Math.max(selectedIndex - 1, -1);
+      updateSelection(results);
+    } else if (event.key === 'Enter' && selectedIndex >= 0 && results[selectedIndex]) {
+      event.preventDefault();
+      window.location.href = results[selectedIndex].dataset.url;
+    } else if (event.key === 'Escape') {
+      event.preventDefault();
+      closeSearch();
+    }
+  }
 
-<details class=menu>
-<summary class=menu>アルゴリズム</summary>
-<h2>動的計画法</h2>
-<ul>
-  <li><a href="dp.knapsack.01.html">01-ナップザック</a></li>
-</ul>
-<h2>二分探索</h2>
-<ul>
-  <li><a href="bin.search.html">二分探索</a></li>
-</ul>
-<h2>フーリエ変換</h2>
-<ul>
-  <li><a href="fft.convolution.html">畳み込み</a></li>
-</ul>
-<h2>循環検出</h2>
-<ul>
-  <li><a href="algorithm.rho.html">フロイドの \(\rho\) アルゴリズム</a></li>
-</ul>
-<h2>連立一次方程式</h2>
-<ul>
-  <li><a href="algorithm.gauss_jordan.html">Gauss-Jordan の消去法</a></li>
-</ul>
-</details>
+  // Update visual selection
+  function updateSelection(results) {
+    results.forEach((el, index) => {
+      if (index === selectedIndex) {
+        el.classList.add('selected');
+        el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      } else {
+        el.classList.remove('selected');
+      }
+    });
+  }
 
-<details class=menu>
-<summary class=menu>最適化</summary>
-<ul>
-  <li><a href="opt.moyasu_umeru.html">燃やす埋める問題</a></li>
-</ul>
-</details>
+  // Initialize search functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    // Global keyboard shortcut
+    document.addEventListener('keydown', function(event) {
+      // Ctrl+K or Cmd+K
+      if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
+        event.preventDefault();
+        openSearch();
+      }
+    });
 
-<details class=menu open>
-<summary class=menu>自然数/整数</summary>
-<h2>関数</h2>
-<ul>
-  <li><a href="num.gcd.html">GCD</a></li>
-  <li><a href="num.exgcd.html">拡張GCD</a></li>
-  <li><a href="num.binom.pascal.html">二項係数 (パスカルの三角形)</a></li>
-  <li><a href="num.binom.modint.html">二項係数 (ModInt)</a></li>
-  <li><a href="num.dislog.html">離散対数</a></li>
-  <li><a href="num.derangement.html">完全順列</a></li>
-  <li><a href="num.euler_phi.html">オイラーの関数</a></li>
-  <li><a href="num.moebius.html">メビウス関数</a></li>
-  <li><a href="num.n_vs_nn.html">自然数の対 ↔ 自然数 の変換</a></li>
-  <li><a href="num.mex.html">最小自由数 (最小除外数)</a></li>
-</ul>
-<h2>素数</h2>
-<ul>
-  <li><a href="prime.sieve.html">エラトステネスの篩</a></li>
-  <li><a href="prime.MillerRabin.html">ミラー・ラビン素数判定</a></li>
-  <li><a href="prime.fermat.little.html">フェルマーの小定理</a></li>
-  <li><a href="prime.factorize.html">素因数分解</a></li>
-</ul>
-<h2>その他定理</h2>
-<ul>
-  <li><a href="num.chinese.html">中国人剰余定理</a></li>
-</ul>
-<h2>多倍長</h2>
-<ul>
-  <li><a href="bigint.html">ビッグエンディアンベクタ</a></li>
-</ul>
-<h2>組み合わせのイテレーター</h2>
-<ul>
-  <li><a href="num.iter.perm.html">階乗 - \(n!\)</a></li>
-  <li><a href="num.iter.powperm.html">冪乗 - \(n^m\)</a></li>
-  <li><a href="num.iter.comb.html">二項係数 - \({}_nC{}_m\)</a></li>
-</ul>
-<h2>乱数</h2>
-<ul>
-  <li><a href="rand.lcg.html">線形合同法</a></li>
-  <li><a href="rand.xorshift.html">Xor-Shift 法</a></li>
-</ul>
-</details>
+    // Search button in sidebar
+    const searchButton = document.getElementById('search-button');
+    if (searchButton) {
+      searchButton.addEventListener('click', function() {
+        openSearch();
+      });
+    }
 
-<details class=menu>
-<summary class=menu>文字列 (Vector)</summary>
-<ul>
-  <li><a href="string.suffix-array.html">接尾辞配列</a></li>
-</ul>
-<h2>文字列検索</h2>
-<ul>
-  <li><a href="string.shift-and.html">Shift-And</a></li>
-  <li><a href="string.z.html">Z-alogirhtm</a></li>
-  <li><a href="string.sa-search.html">接尾辞配列による文字列検索</a></li>
-</ul>
-<h2>回文</h2>
-<ul>
-  <li><a href="string.manacher.html">manacher</a></li>
-</ul>
-<h2>圧縮</h2>
-<ul>
-  <li><a href="string.runlength.html">Run-length</a></li>
-</ul>
-</details>
+    // Search input handler
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+      searchInput.addEventListener('input', function(event) {
+        performSearch(event.target.value);
+      });
 
-<details class=menu>
-<summary class=menu>時間/時刻</summary>
-<ul>
-  <li><a href="time.while.html">制限時間付きループ</a></li>
-</ul>
-<h2>暦</h2>
-<ul>
-  <li><a href="cal.zeller.html">ツェラーの公式</a></li>
-  <li><a href="cal.uruu.html">閏年判定</a></li>
-</ul>
-</details>
+      searchInput.addEventListener('keydown', handleKeyDown);
+    }
 
-<details class=menu>
-<summary class=menu>ハッシュ</summary>
-<ul>
-  <li><a href="hash.zobrist.html">Zobrist Hash</a></li>
-  <li><a href="hash.rolling.html">Rolling Hash</a></li>
-</ul>
-</details>
+    // Close button
+    const closeButton = document.getElementById('search-close');
+    if (closeButton) {
+      closeButton.addEventListener('click', closeSearch);
+    }
 
-<details class=menu>
-<summary class=menu>collections</summary>
-<ul>
-  <li><a href="collections.defaultdict.html">defaultmap</a></li>
-  <li><a href="collections.list_comprehension_macro.html">リスト内包表記マクロ</a></li>
-</ul>
-</details>
+    // Close on backdrop click
+    const backdrop = document.querySelector('.search-backdrop');
+    if (backdrop) {
+      backdrop.addEventListener('click', closeSearch);
+    }
+  });
+})();
+</script>
+<script>(function() {
+  'use strict';
 
-<details class=menu>
-<summary class=menu>misc</summary>
-<ul>
-  <li><a href="misc.kmeans.html">k-means</a></li>
-  <li><a href="15puzzle.html">一般化15パズル</a></li>
-  <li><a href="misc.sort-n.html">numeric sort</a></li>
-  <li><a href="misc.3sat.html">乱択3-SAT</a></li>
-  <li><a href="misc.stirling.html">スターリングの近似式</a></li>
-  <li><a href="dice.html">サイコロ</a></li>
-  <li><a href="misc.neighbor.html">近傍</a></li>
-  <li><a href="misc.two_sat.html">2-SAT</a></li>
-  <li><a href="misc.coodinate_compression.html">座標圧縮</a></li>
-</ul>
-</details>
-      </div>
-    </div>
-    <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
-    <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
-  </body>
+  const toggleButton = document.getElementById('toc-toggle');
+  const STORAGE_KEY = 'unibook-sidebar-hidden';
+
+  // Initialize sidebar state from localStorage
+  function initializeSidebar() {
+    const isHidden = localStorage.getItem(STORAGE_KEY) === 'true';
+    if (isHidden) {
+      document.body.classList.add('sidebar-hidden');
+    }
+  }
+
+  // Toggle sidebar visibility
+  function toggleSidebar() {
+    const isHidden = document.body.classList.toggle('sidebar-hidden');
+    localStorage.setItem(STORAGE_KEY, isHidden.toString());
+  }
+
+  // Set up event listener
+  if (toggleButton) {
+    toggleButton.addEventListener('click', toggleSidebar);
+  }
+
+  // Initialize on page load
+  initializeSidebar();
+})();
+</script>
+<script>// Add copy buttons to all code blocks
+document.addEventListener('DOMContentLoaded', () => {
+    // Find all pre > code blocks
+    const codeBlocks = document.querySelectorAll('pre > code');
+
+    codeBlocks.forEach((codeBlock) => {
+        const pre = codeBlock.parentElement;
+
+        // Create wrapper div
+        const wrapper = document.createElement('div');
+        wrapper.className = 'code-block-wrapper';
+
+        // Create copy button
+        const copyButton = document.createElement('button');
+        copyButton.className = 'code-copy-button';
+        copyButton.innerHTML = `
+            <svg class="copy-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M4 2h8a2 2 0 0 1 2 2v8M4 6H2a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-2"
+                      stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <span class="copy-text">Copy</span>
+        `;
+        copyButton.title = 'Copy code to clipboard';
+
+        // Add click handler
+        copyButton.addEventListener('click', async () => {
+            const code = codeBlock.textContent;
+
+            try {
+                await navigator.clipboard.writeText(code);
+
+                // Show success feedback
+                copyButton.classList.add('success');
+                copyButton.innerHTML = `
+                    <svg class="check-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M3 8l3 3 7-7" stroke="currentColor" stroke-width="2"
+                              stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span class="copy-text">Copied!</span>
+                `;
+
+                // Reset after 2 seconds
+                setTimeout(() => {
+                    copyButton.classList.remove('success');
+                    copyButton.innerHTML = `
+                        <svg class="copy-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M4 2h8a2 2 0 0 1 2 2v8M4 6H2a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-2"
+                                  stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                        <span class="copy-text">Copy</span>
+                    `;
+                }, 2000);
+            } catch (err) {
+                // Show error feedback
+                copyButton.classList.add('error');
+                copyButton.innerHTML = `
+                    <svg class="error-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M8 1l7 14H1L8 1z" stroke="currentColor" stroke-width="1.5"
+                              stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M8 6v4M8 12v.5" stroke="currentColor" stroke-width="1.5"
+                              stroke-linecap="round"/>
+                    </svg>
+                    <span class="copy-text">Failed</span>
+                `;
+
+                // Reset after 2 seconds
+                setTimeout(() => {
+                    copyButton.classList.remove('error');
+                    copyButton.innerHTML = `
+                        <svg class="copy-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M4 2h8a2 2 0 0 1 2 2v8M4 6H2a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-2"
+                                  stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                        <span class="copy-text">Copy</span>
+                    `;
+                }, 2000);
+            }
+        });
+
+        // Wrap the pre element
+        pre.parentNode.insertBefore(wrapper, pre);
+        wrapper.appendChild(pre);
+        wrapper.appendChild(copyButton);
+    });
+});
+</script>
+<script>// Prism highlight retry script
+// Fixes timing issues by re-running highlight after all resources are loaded
+// This script is placed before Prism loads, so we use 'load' event instead of 'DOMContentLoaded'
+window.addEventListener('load', () => {
+    // Wait 100ms after page load to ensure Prism has initialized and all elements are ready
+    setTimeout(() => {
+        if (typeof Prism !== 'undefined') {
+            Prism.highlightAll();
+        }
+    }, 100);
+});
+</script>
+</div> <!-- content-wrapper -->
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
 </html>

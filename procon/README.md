@@ -11,7 +11,7 @@
 - [虚数](algebra.complex.md)
 - [行列](algebra.matrix.md)
 - [超数](algebra.hyper.md)
-- [全順序化](algebra.total.md)
+- [Float](algebra.float.md)
 - [ModInt](algebra.modint.md)
 - [作用](algebra.act.md)
     - [代入作用](algebra.act.assign.md)

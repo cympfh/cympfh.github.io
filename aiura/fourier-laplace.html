@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>フーリエ級数展開, フーリエ変換, ラプラス変換</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-stumbleupon"></i></a>
+</header>
+
+<h1 class="title" id="1-%E3%83%95%E3%83%BC%E3%83%AA%E3%82%A8%E7%B4%9A%E6%95%B0%E5%B1%95%E9%96%8B%2C%20%E3%83%95%E3%83%BC%E3%83%AA%E3%82%A8%E5%A4%89%E6%8F%9B%2C%20%E3%83%A9%E3%83%97%E3%83%A9%E3%82%B9%E5%A4%89%E6%8F%9B">フーリエ級数展開, フーリエ変換, ラプラス変換</h1>
+<p><p class=date style='text-align: right'>2026-01-06 (Tue.)</p> <div class='is-pulled-right'> <a class='tag is-red' href=index.html#三角関数>三角関数</a> <a class='tag is-red' href=index.html#積分変換>積分変換</a> <a class='tag is-red' href=index.html#微分方程式>微分方程式</a> </div></p>
+<h2 id="2-index">index</h2>
+<p><div id=toc-level-2></div></p>
+\[
+\require{amscd}
+\def\F{\mathcal F}
+\def\L{\mathcal L}
+\]
+<h2 id="2-%E9%96%A2%E6%95%B0%E7%A9%BA%E9%96%93">関数空間</h2>
+<p>適当に定めた区間 \([a, b]\) の上で定められた実関数の系列</p>
+\[\left( \phi_0(t), \phi_1(t), \phi_2(t), \ldots \right)\]
+<p>を基底とする空間を考える. この空間に属する実関数 \(f(t)\) は次のように表される.</p>
+\[f(t) = \sum_{n=0}^{\infty} a_n \phi_n(t)\]
+<p>ここで \(a_n\) は実係数.</p>
+<p>さらに <strong>直交基底</strong> であるとは, 次の直交性条件を満たすとする.</p>
+\[i \ne j \iff \int_{a}^{b} \phi_i(t) \phi_j(t) dt = 0\]
+<p>この積分のことを \((\phi_i, \phi_j)\) と書いて <strong>内積</strong> と呼ぶ.</p>
+\[(\phi_i, \phi_j) := \int_{a}^{b} \phi_i(t) \phi_j(t) dt\]
+<p>このような場合 \(f(t)\) の係数 \(a_n\) は次で与えられる.</p>
+\[\int_a^b f(t) \phi_n(t) dt = \int_a^b \left( \sum_{m=0}^{\infty} a_m \phi_m(t) \right) \phi_n(t) dt = \sum_{m=0}^{\infty} a_m \int_a^b \phi_m(t) \phi_n(t) dt = a_n \int_a^b \phi_n(t)^2 dt\]
+<p>従って</p>
+\[a_n = \frac{(f, \phi_n)}{(\phi_n, \phi_n)}\]
+<h2 id="2-%E3%83%95%E3%83%BC%E3%83%AA%E3%82%A8%E7%B4%9A%E6%95%B0%E5%B1%95%E9%96%8B">フーリエ級数展開</h2>
+<p>区間 \([-\pi, \pi]\) で</p>
+\[\left( 1, \cos t, \sin t, \cos 2t, \sin 2t, \cos 3t, \sin 3t, \ldots \right)\]
+<p>は直交系である. これを基底とする関数空間を考える.</p>
+<p>周期 \(2\pi\) の実関数 \(f(t)\) は次で表される.</p>
+\[f(t) = \frac{a_0}{2} + \sum_{n=1}^{\infty} \left( a_n \cos (nt) + b_n \sin (nt) \right)\]
+<p>これを <strong>フーリエ級数展開</strong> と呼ぶ.</p>
+<blockquote>計算のしやすさのために定数項だけ \(\frac{a_0}{2}\) としている.</blockquote>
+<p>係数 \(a_n, b_n\) は関数の直交性から次で与えられる.</p>
+<ul>
+  <li>
+    \(a_n = \frac{1}{\pi} \int_{-\pi}^{\pi} f(t) \cos (nt) dt\)
+    <ul>
+      <li>特に \(a_0 = \frac{1}{\pi} \int_{-\pi}^{\pi} f(t) dt\)</li>
+    </ul>
+  </li>
+  <li>\(b_n = \frac{1}{\pi} \int_{-\pi}^{\pi} f(t) \sin (nt) dt\)</li>
+</ul>
+<h3 id="3-%E5%8F%8E%E6%9D%9F%E6%9D%A1%E4%BB%B6">収束条件</h3>
+<p>ただし収束条件がある.</p>
+<p><strong>Dirichlet 条件</strong></p>
+<ul>
+  <li>
+    区間内で絶対可積分である
+    <ul>
+      <li>\(\int_{-\pi}^{\pi} |f(t)| dt \lt \infty\)</li>
+    </ul>
+  </li>
+  <li>区間内で高々有限個の極値・不連続点を持つ</li>
+</ul>
+<h3 id="3-%E4%BE%8B%3A%20%E7%9F%A9%E5%BD%A2%E6%B3%A2%E3%81%AE%E3%83%95%E3%83%BC%E3%83%AA%E3%82%A8%E7%B4%9A%E6%95%B0%E5%B1%95%E9%96%8B">例: 矩形波のフーリエ級数展開</h3>
+\[f(t) = \begin{cases}
+0 &amp; -\pi \leq t \lt 0 \\
+1 &amp; 0 \leq t \lt \pi \\
+\end{cases}\]
+<p>の周期関数のフーリエ級数展開を求める.</p>
+<ul>
+  <li>\(a_0 = \frac{1}{\pi} \int_{-\pi}^{\pi} f(t) dt = \frac{1}{\pi} \int_{0}^{\pi} 1 dt = 1\)</li>
+  <li>\(a_n = \frac{1}{\pi} \int_{-\pi}^{\pi} f(t) \cos (nt) dt = \frac{1}{\pi} \int_{0}^{\pi} \cos (nt) dt = 0\) ( \(n \geq 1\) )</li>
+  <li>\(b_n = \frac{1}{\pi} \int_{-\pi}^{\pi} f(t) \sin (nt) dt = \frac{1}{\pi} \int_{0}^{\pi} \sin (nt) dt = \begin{cases}
+\frac{2}{n \pi} &amp; n: \text{奇数} \\
+0 &amp; n: \text{偶数} \\
+\end{cases}\)</li>
+</ul>
+<p>したがって</p>
+\[\begin{align*}
+f(t)
+&amp; = \sum_{k=0}^{\infty} \frac{2}{(2k+1)\pi} \sin((2k+1)t) \\
+&amp; = \frac{1}{2} + \frac{2}{\pi} \sin(\pi) + \frac{2}{3\pi} \sin(3\pi) + \frac{2}{5\pi} \sin(5\pi) + \cdots \\
+\end{align*}\]
+<p>がフーリエ級数展開として得られる.</p>
+<p>以下は \(k\) を有限に打ち切った場合に \(f\) に近づく様子を示すグラフである.</p>
+<?xml version="1.0" encoding="utf-8"  standalone="no"?>
+<svg 
+ width="600" height="480"
+ viewBox="0 0 600 480"
+ xmlns="http://www.w3.org/2000/svg"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+>
+
+<title>Gnuplot</title>
+<desc>Produced by GNUPLOT 6.0 patchlevel 0 </desc>
+
+<g id="gnuplot_canvas">
+
+<rect x="0" y="0" width="600" height="480" fill="none"/>
+<defs>
+
+	<circle id='gpDot' r='0.5' stroke-width='0.5' stroke='currentColor'/>
+	<path id='gpPt0' stroke-width='0.222' stroke='currentColor' d='M-1,0 h2 M0,-1 v2'/>
+	<path id='gpPt1' stroke-width='0.222' stroke='currentColor' d='M-1,-1 L1,1 M1,-1 L-1,1'/>
+	<path id='gpPt2' stroke-width='0.222' stroke='currentColor' d='M-1,0 L1,0 M0,-1 L0,1 M-1,-1 L1,1 M-1,1 L1,-1'/>
+	<rect id='gpPt3' stroke-width='0.222' stroke='currentColor' x='-1' y='-1' width='2' height='2'/>
+	<rect id='gpPt4' stroke-width='0.222' stroke='currentColor' fill='currentColor' x='-1' y='-1' width='2' height='2'/>
+	<circle id='gpPt5' stroke-width='0.222' stroke='currentColor' cx='0' cy='0' r='1'/>
+	<use xlink:href='#gpPt5' id='gpPt6' fill='currentColor' stroke='none'/>
+	<path id='gpPt7' stroke-width='0.222' stroke='currentColor' d='M0,-1.33 L-1.33,0.67 L1.33,0.67 z'/>
+	<use xlink:href='#gpPt7' id='gpPt8' fill='currentColor' stroke='none'/>
+	<use xlink:href='#gpPt7' id='gpPt9' stroke='currentColor' transform='rotate(180)'/>
+	<use xlink:href='#gpPt9' id='gpPt10' fill='currentColor' stroke='none'/>
+	<use xlink:href='#gpPt3' id='gpPt11' stroke='currentColor' transform='rotate(45)'/>
+	<use xlink:href='#gpPt11' id='gpPt12' fill='currentColor' stroke='none'/>
+	<path id='gpPt13' stroke-width='0.222' stroke='currentColor' d='M0,1.330 L1.265,0.411 L0.782,-1.067 L-0.782,-1.076 L-1.265,0.411 z'/>
+	<use xlink:href='#gpPt13' id='gpPt14' fill='currentColor' stroke='none'/>
+	<filter id='textbox' filterUnits='objectBoundingBox' x='0' y='0' height='1' width='1'>
+	  <feFlood flood-color='white' flood-opacity='1' result='bgnd'/>
+	  <feComposite in='SourceGraphic' in2='bgnd' operator='atop'/>
+	</filter>
+	<filter id='greybox' filterUnits='objectBoundingBox' x='0' y='0' height='1' width='1'>
+	  <feFlood flood-color='lightgrey' flood-opacity='1' result='grey'/>
+	  <feComposite in='SourceGraphic' in2='grey' operator='atop'/>
+	</filter>
+</defs>
+<g fill="none" color="white" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M54.53,444.00 L574.82,444.00  '/></g>
+<g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M54.53,444.00 L63.53,444.00 M574.82,444.00 L565.82,444.00  '/>	<g transform="translate(46.14,447.90)" stroke="none" fill="black" font-family="Arial" font-size="12.00"  text-anchor="end">
+		<text><tspan font-family="Arial" >-0.2</tspan></text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M54.53,383.14 L398.02,383.14 M566.43,383.14 L574.82,383.14  '/></g>
+<g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M54.53,383.14 L63.53,383.14 M574.82,383.14 L565.82,383.14  '/>	<g transform="translate(46.14,387.04)" stroke="none" fill="black" font-family="Arial" font-size="12.00"  text-anchor="end">
+		<text><tspan font-family="Arial" > 0</tspan></text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M54.53,322.29 L574.82,322.29  '/></g>
+<g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M54.53,322.29 L63.53,322.29 M574.82,322.29 L565.82,322.29  '/>	<g transform="translate(46.14,326.19)" stroke="none" fill="black" font-family="Arial" font-size="12.00"  text-anchor="end">
+		<text><tspan font-family="Arial" > 0.2</tspan></text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M54.53,261.43 L574.82,261.43  '/></g>
+<g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M54.53,261.43 L63.53,261.43 M574.82,261.43 L565.82,261.43  '/>	<g transform="translate(46.14,265.33)" stroke="none" fill="black" font-family="Arial" font-size="12.00"  text-anchor="end">
+		<text><tspan font-family="Arial" > 0.4</tspan></text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M54.53,200.58 L574.82,200.58  '/></g>
+<g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M54.53,200.58 L63.53,200.58 M574.82,200.58 L565.82,200.58  '/>	<g transform="translate(46.14,204.48)" stroke="none" fill="black" font-family="Arial" font-size="12.00"  text-anchor="end">
+		<text><tspan font-family="Arial" > 0.6</tspan></text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M54.53,139.72 L574.82,139.72  '/></g>
+<g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M54.53,139.72 L63.53,139.72 M574.82,139.72 L565.82,139.72  '/>	<g transform="translate(46.14,143.62)" stroke="none" fill="black" font-family="Arial" font-size="12.00"  text-anchor="end">
+		<text><tspan font-family="Arial" > 0.8</tspan></text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M54.53,78.87 L574.82,78.87  '/></g>
+<g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M54.53,78.87 L63.53,78.87 M574.82,78.87 L565.82,78.87  '/>	<g transform="translate(46.14,82.77)" stroke="none" fill="black" font-family="Arial" font-size="12.00"  text-anchor="end">
+		<text><tspan font-family="Arial" > 1</tspan></text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M54.53,18.01 L574.82,18.01  '/></g>
+<g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M54.53,18.01 L63.53,18.01 M574.82,18.01 L565.82,18.01  '/>	<g transform="translate(46.14,21.91)" stroke="none" fill="black" font-family="Arial" font-size="12.00"  text-anchor="end">
+		<text><tspan font-family="Arial" > 1.2</tspan></text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M66.25,444.00 L66.25,18.01  '/></g>
+<g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M66.25,444.00 L66.25,435.00 M66.25,18.01 L66.25,27.01  '/>	<g transform="translate(66.25,465.90)" stroke="none" fill="black" font-family="Arial" font-size="12.00"  text-anchor="middle">
+		<text><tspan font-family="Arial" >-3</tspan></text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M149.06,444.00 L149.06,18.01  '/></g>
+<g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M149.06,444.00 L149.06,435.00 M149.06,18.01 L149.06,27.01  '/>	<g transform="translate(149.06,465.90)" stroke="none" fill="black" font-family="Arial" font-size="12.00"  text-anchor="middle">
+		<text><tspan font-family="Arial" >-2</tspan></text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M231.87,444.00 L231.87,18.01  '/></g>
+<g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M231.87,444.00 L231.87,435.00 M231.87,18.01 L231.87,27.01  '/>	<g transform="translate(231.87,465.90)" stroke="none" fill="black" font-family="Arial" font-size="12.00"  text-anchor="middle">
+		<text><tspan font-family="Arial" >-1</tspan></text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M314.68,444.00 L314.68,18.01  '/></g>
+<g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M314.68,444.00 L314.68,435.00 M314.68,18.01 L314.68,27.01  '/>	<g transform="translate(314.68,465.90)" stroke="none" fill="black" font-family="Arial" font-size="12.00"  text-anchor="middle">
+		<text><tspan font-family="Arial" > 0</tspan></text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M397.48,444.00 L397.48,18.01  '/></g>
+<g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M397.48,444.00 L397.48,435.00 M397.48,18.01 L397.48,27.01  '/>	<g transform="translate(397.48,465.90)" stroke="none" fill="black" font-family="Arial" font-size="12.00"  text-anchor="middle">
+		<text><tspan font-family="Arial" > 1</tspan></text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M480.29,444.00 L480.29,435.00 M480.29,381.00 L480.29,18.01  '/></g>
+<g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M480.29,444.00 L480.29,435.00 M480.29,18.01 L480.29,27.01  '/>	<g transform="translate(480.29,465.90)" stroke="none" fill="black" font-family="Arial" font-size="12.00"  text-anchor="middle">
+		<text><tspan font-family="Arial" > 2</tspan></text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="black" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="gray" stroke="currentColor" stroke-width="0.50" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='gray' stroke-dasharray='2,4' class="gridline"  d='M563.10,444.00 L563.10,435.00 M563.10,381.00 L563.10,18.01  '/></g>
+<g fill="none" color="gray" stroke="gray" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M563.10,444.00 L563.10,435.00 M563.10,18.01 L563.10,27.01  '/>	<g transform="translate(563.10,465.90)" stroke="none" fill="black" font-family="Arial" font-size="12.00"  text-anchor="middle">
+		<text><tspan font-family="Arial" > 3</tspan></text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M54.53,18.01 L54.53,444.00 L574.82,444.00 L574.82,18.01 L54.53,18.01 Z  '/></g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+	<g id="gnuplot_plot_1" ><title>k=0,1</title>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<g transform="translate(507.09,393.90)" stroke="none" fill="black" font-family="Arial" font-size="12.00"  text-anchor="end">
+		<text><tspan font-family="Arial" >k=0,1</tspan></text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='rgb(148,   0, 211)'  d='M515.48,390.00 L558.04,390.00 M54.53,231.01 L59.79,255.51 L65.04,279.53 L70.30,302.57 L75.55,324.21 L80.81,344.05
+		L86.06,361.73 L91.32,377.01 L96.57,389.68 L101.83,399.65 L107.08,406.88 L112.34,411.44 L117.60,413.48 L122.85,413.22
+		L128.11,410.94 L133.36,406.99 L138.62,401.74 L143.87,395.61 L149.13,389.02 L154.38,382.37 L159.64,376.06 L164.89,370.46
+		L170.15,365.85 L175.41,362.50 L180.66,360.58 L185.92,360.19 L191.17,361.36 L196.43,364.01 L201.68,368.01 L206.94,373.15
+		L212.19,379.15 L217.45,385.68 L222.70,392.35 L227.96,398.76 L233.22,404.50 L238.47,409.15 L243.73,412.31 L248.98,413.62
+		L254.24,412.76 L259.49,409.48 L264.75,403.60 L270.00,395.01 L275.26,383.68 L280.51,369.69 L285.77,353.18 L291.03,334.38
+		L296.28,313.60 L301.54,291.20 L306.79,267.61 L312.05,243.29 L317.30,218.72 L322.56,194.40 L327.81,170.81 L333.07,148.41
+		L338.32,127.63 L343.58,108.83 L348.84,92.32 L354.09,78.33 L359.35,67.00 L364.60,58.41 L369.86,52.53 L375.11,49.25
+		L380.37,48.39 L385.62,49.70 L390.88,52.86 L396.13,57.51 L401.39,63.25 L406.65,69.66 L411.90,76.33 L417.16,82.86
+		L422.41,88.86 L427.67,94.00 L432.92,98.00 L438.18,100.65 L443.43,101.82 L448.69,101.43 L453.94,99.51 L459.20,96.16
+		L464.46,91.55 L469.71,85.95 L474.97,79.64 L480.22,72.99 L485.48,66.40 L490.73,60.27 L495.99,55.02 L501.24,51.07
+		L506.50,48.79 L511.75,48.53 L517.01,50.57 L522.27,55.13 L527.52,62.36 L532.78,72.33 L538.03,85.00 L543.29,100.28
+		L548.54,117.96 L553.80,137.80 L559.05,159.44 L564.31,182.48 L569.56,206.50 L574.82,231.00  '/></g>
+	</g>
+	<g id="gnuplot_plot_2" ><title>k=0,1,2,3</title>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<g transform="translate(507.09,411.90)" stroke="none" fill="black" font-family="Arial" font-size="12.00"  text-anchor="end">
+		<text><tspan font-family="Arial" >k=0,1,2,3</tspan></text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='rgb(  0, 158, 115)'  d='M515.48,408.00 L558.04,408.00 M54.53,231.01 L59.79,279.49 L65.04,323.97 L70.30,361.02 L75.55,388.29 L80.81,404.80
+		L86.06,411.03 L91.32,408.72 L96.57,400.56 L101.83,389.65 L107.08,378.97 L112.34,370.94 L117.60,366.99 L122.85,367.51
+		L128.11,371.84 L133.36,378.57 L138.62,385.88 L143.87,391.97 L149.13,395.46 L154.38,395.68 L159.64,392.74 L164.89,387.49
+		L170.15,381.29 L175.41,375.70 L180.66,372.08 L185.92,371.31 L191.17,373.58 L196.43,378.33 L201.68,384.41 L206.94,390.32
+		L212.19,394.57 L217.45,395.99 L222.70,394.10 L227.96,389.18 L233.22,382.27 L238.47,375.02 L243.73,369.27 L248.98,366.71
+		L254.24,368.40 L259.49,374.51 L264.75,384.11 L270.00,395.25 L275.26,405.18 L280.51,410.79 L285.77,409.12 L291.03,397.90
+		L296.28,375.98 L301.54,343.60 L306.79,302.47 L312.05,255.51 L317.30,206.50 L322.56,159.54 L327.81,118.41 L333.07,86.03
+		L338.32,64.11 L343.58,52.89 L348.84,51.22 L354.09,56.83 L359.35,66.76 L364.60,77.90 L369.86,87.50 L375.11,93.61
+		L380.37,95.30 L385.62,92.74 L390.88,86.99 L396.13,79.74 L401.39,72.83 L406.65,67.91 L411.90,66.02 L417.16,67.44
+		L422.41,71.69 L427.67,77.60 L432.92,83.68 L438.18,88.43 L443.43,90.70 L448.69,89.93 L453.94,86.31 L459.20,80.72
+		L464.46,74.52 L469.71,69.27 L474.97,66.33 L480.22,66.55 L485.48,70.04 L490.73,76.13 L495.99,83.44 L501.24,90.17
+		L506.50,94.50 L511.75,95.02 L517.01,91.07 L522.27,83.04 L527.52,72.36 L532.78,61.45 L538.03,53.29 L543.29,50.98
+		L548.54,57.21 L553.80,73.72 L559.05,100.99 L564.31,138.04 L569.56,182.52 L574.82,231.00  '/></g>
+	</g>
+	<g id="gnuplot_plot_3" ><title>k=0,1,2,3,4,5</title>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<g transform="translate(507.09,429.90)" stroke="none" fill="black" font-family="Arial" font-size="12.00"  text-anchor="end">
+		<text><tspan font-family="Arial" >k=0,1,2,3,4,5</tspan></text>
+	</g>
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='rgb( 86, 180, 233)'  d='M515.48,426.00 L558.04,426.00 M54.53,231.01 L59.79,302.45 L65.04,360.89 L70.30,397.58 L75.55,410.58 L80.81,404.84
+		L86.06,389.71 L91.32,375.11 L96.57,367.93 L101.83,370.07 L107.08,378.66 L112.34,388.28 L117.60,393.88 L122.85,393.11
+		L128.11,387.12 L133.36,379.59 L138.62,374.60 L143.87,374.59 L149.13,379.20 L154.38,385.70 L159.64,390.50 L164.89,391.10
+		L170.15,387.31 L175.41,381.31 L180.66,376.41 L185.92,375.27 L191.17,378.52 L196.43,384.39 L201.68,389.66 L206.94,391.40
+		L212.19,388.51 L217.45,382.44 L222.70,376.44 L227.96,373.93 L233.22,376.57 L238.47,383.28 L243.73,390.58 L248.98,394.29
+		L254.24,391.81 L259.49,383.70 L264.75,373.87 L270.00,367.92 L275.26,370.35 L280.51,381.81 L285.77,397.80 L291.03,409.53
+		L296.28,406.88 L301.54,382.25 L306.79,333.99 L312.05,267.59 L317.30,194.42 L322.56,128.02 L327.81,79.76 L333.07,55.13
+		L338.32,52.48 L343.58,64.21 L348.84,80.20 L354.09,91.66 L359.35,94.09 L364.60,88.14 L369.86,78.31 L375.11,70.20
+		L380.37,67.72 L385.62,71.43 L390.88,78.73 L396.13,85.44 L401.39,88.08 L406.65,85.57 L411.90,79.57 L417.16,73.50
+		L422.41,70.61 L427.67,72.35 L432.92,77.62 L438.18,83.49 L443.43,86.74 L448.69,85.60 L453.94,80.70 L459.20,74.70
+		L464.46,70.91 L469.71,71.51 L474.97,76.31 L480.22,82.81 L485.48,87.42 L490.73,87.41 L495.99,82.42 L501.24,74.89
+		L506.50,68.90 L511.75,68.13 L517.01,73.73 L522.27,83.35 L527.52,91.94 L532.78,94.08 L538.03,86.90 L543.29,72.30
+		L548.54,57.17 L553.80,51.43 L559.05,64.43 L564.31,101.12 L569.56,159.56 L574.82,231.00  '/></g>
+	</g>
+<g fill="none" color="white" stroke="rgb( 86, 180, 233)" stroke-width="2.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="2.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="black" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+	<path stroke='black'  d='M54.53,18.01 L54.53,444.00 L574.82,444.00 L574.82,18.01 L54.53,18.01 Z  '/></g>
+<g fill="none" color="black" stroke="currentColor" stroke-width="1.00" stroke-linecap="butt" stroke-linejoin="miter">
+</g>
+</g>
+</svg>
+
+
+<h4 id="4-%E3%82%AE%E3%83%96%E3%82%B9%E7%8F%BE%E8%B1%A1">ギブス現象</h4>
+<p>フーリエ級数展開は不連続点の近傍で振動を伴いながら収束する. これを <strong>ギブス現象</strong> と呼ぶ. 有限項で打ち切った場合, 不連続点での関数値から約 \(9\%\) 大きい値を取る ( <img src="https://ja.wikipedia.org/static/favicon/wikipedia.ico" style="width:16px;height:16px;margin-right:4px;vertical-align:middle;" /><a href="https://ja.wikipedia.org/wiki/%E3%82%AE%E3%83%96%E3%82%BA%E7%8F%BE%E8%B1%A1">ギブズ現象 - Wikipedia</a> ).</p>
+<h2 id="2-%E8%A4%87%E7%B4%A0%E3%83%95%E3%83%BC%E3%83%AA%E3%82%A8%E7%B4%9A%E6%95%B0%E5%B1%95%E9%96%8B">複素フーリエ級数展開</h2>
+<p>ここから \(i\) とは虚数単位を表すものとする.</p>
+<p>オイラーの公式</p>
+\[e^{i\theta} = \cos \theta + i \sin \theta\]
+<p>を用いると</p>
+\[\cos (nt) = \frac{e^{int} + e^{-int}}{2}\]
+\[\sin (nt) = \frac{e^{int} - e^{-int}}{2i}\]
+<p>これをフーリエ級数展開に代入すると</p>
+\[f(t) = \frac{a_0}{2} e^{0} + \sum_{n=1}^{\infty} \left( \frac{a_n - ib_n}{2} e^{int} + \frac{a_n + ib_n}{2} e^{-int} \right)\]
+<p>これらの係数を複素係数 \(c_n\) と名前を付け替えることで</p>
+\[f(t) = \sum_{n=-\infty}^{\infty} c_n e^{int}\]
+<p>と簡潔に表せる. \(n\) の範囲が負及び \(0\) まで拡張されたことに注意. これを <strong>複素フーリエ級数展開</strong> と呼ぶ.</p>
+<p>これは \(\left( 1, e^{it}, e^{-it}, e^{2it}, e^{-2it}, e^{3it}, e^{-3it}, \ldots \right)\) を基底とする関数空間と思えるが, 直交性は <strong>満たしていない</strong> . 代わりに次の性質がある.</p>
+\[j = -k \iff (e^{ijt}, e^{ikt}) = \int_{-\pi}^{\pi} e^{ijt} e^{-ikt} dt = 2\pi\]
+\[j \ne -k \iff (e^{ijt}, e^{ikt}) = \int_{-\pi}^{\pi} e^{ijt} e^{-ikt} dt = 0\]
+<p>したがって \(c_n\) を求めたかったら \(e^{-int}\) と内積を取ればよい.</p>
+\[c_n = \frac{1}{2\pi} \int_{-\pi}^{\pi} f(t) e^{-int} dt\]
+<h2 id="2-%E3%83%95%E3%83%BC%E3%83%AA%E3%82%A8%E5%A4%89%E6%8F%9B">フーリエ変換</h2>
+<p>周期の区間 \([\pi, \pi]\) を \([-L, L]\) に拡張するのは容易で \(t\) 軸を \(L &#x2F; \pi\) 倍すればよい.</p>
+\[f(t) = \sum_{n=-\infty}^{\infty} c_n e^{i n \pi t &#x2F; L}\]
+\[c_n = \frac{1}{2L} \int_{-L}^{L} f(t) e^{-i n \pi t &#x2F; L} dt\]
+<p>ここで \(L \to \infty\) という極限を考えることで, 周期関数ではない関数も表したい. 非周期関数とは区間 \((-\infty, \infty)\) で定義された周期関数のことと言えるから.</p>
+<p>まず（大きな） \(L\) に対して \(\omega_n = n \pi &#x2F; L\) とおくと, \(\Delta \omega = \pi &#x2F; L\) であるから</p>
+\[\begin{align*}
+f(t)
+&amp; = \sum_{n=-\infty}^{\infty} c_n e^{i \omega_n t} \\
+&amp; = \sum_{n=-\infty}^{\infty} c_n \Delta \omega \frac{e^{i \omega_n t}}{\Delta \omega} \\
+&amp; = \frac{1}{2\pi} \sum_{n=-\infty}^{\infty} \left( \int_{-L}^{L} f(\tau) e^{-i \omega_n \tau} d\tau \right) e^{i \omega_n t} \Delta \omega
+\end{align*}\]
+<p>極限 \(L \to \infty\) を取ると, 右辺はリーマン和の形になるから積分に変わる.</p>
+\[f(t) = \frac{1}{2\pi} \int_{-\infty}^{\infty} \left( \int_{-\infty}^{\infty} f(\tau) e^{-i \omega \tau} d\tau \right) e^{i \omega t} d\omega\]
+<p>そこで積分の中身を持ってきて</p>
+\[\hat{f}(\omega) = \int_{-\infty}^{\infty} f(\tau) e^{-i \omega \tau} d\tau\]
+<p>と定義する. この \(f\) から \(\hat{f}\) への変換を <strong>フーリエ変換</strong> と呼ぶ. \(\F\) と書いて \(\hat{f} = \F(f)\) と言うことにする. この実数 \(\omega\) は角周波数と呼ばれる.</p>
+<p>そして</p>
+\[f(t) = \frac{1}{2\pi} \int_{-\infty}^{\infty} \hat{f}(\omega) e^{i \omega t} d\omega\]
+<p>を <strong>逆フーリエ変換</strong> と呼ぶ. \(\F^{-1}\) と書いて \(f = \F^{-1}(\hat{f})\) と言うことにする.</p>
+<p>ちなみに係数のつき方には流儀があるようで, 例えばフーリエ変換にも逆フーリエ変換にも \(\frac{1}{\sqrt{2\pi}}\) をつける方法もあり, そうするとフーリエ変換と逆フーリエ変換の形が対称になるので, そちらの方が好まれる場合もある.</p>
+<h3 id="3-Note">Note</h3>
+<p>\(f\) は実関数 \(\mathbb{R} \to \mathbb{R}\) であるが, \(\hat{f}\) は複素関数 \(\mathbb{R} \to \mathbb{C}\) になることに注意.</p>
+\[\begin{CD}
+\mathbb{R}^{\mathbb R} @&gt;\F&gt;&gt; \mathbb{C}^{\mathbb R} \\
+@. @. \\
+\mathbb{R}^{\mathbb R} @&lt;\F^{-1}&lt;&lt; \mathbb{C}^{\mathbb R} \\
+\end{CD}\]
+<h3 id="3-%E5%BE%AE%E5%88%86%E5%89%87">微分則</h3>
+<p>実関数 \(f(t)\) の導関数を \(f&#x27;(t)\) と書く.</p>
+\[\F(f&#x27;) = \int_{-\infty}^{\infty} f&#x27;(t) e^{-i \omega t} dt\]
+<p>を部分積分することで</p>
+\[\begin{align*}
+\F(f&#x27;)
+&amp; = \left[ f(t) e^{-i \omega t} \right]_{-\infty}^{\infty} - (-i \omega) \int_{-\infty}^{\infty} f(t) e^{-i \omega t} dt \\
+\end{align*}\]
+<p>ここで \(\lim_{t \to \pm \infty} f(t) = 0\) と仮定すると, 境界項は \(0\) になるから</p>
+\[\F(f&#x27;) = i \omega \F(f)\]
+<p>を得る.</p>
+\[
+\require{amscd}
+\begin{CD}
+\mathbb{R}^{\mathbb R} @&gt;\F&gt;&gt; \mathbb{C}^{\mathbb C} \\
+@V{d&#x2F;dt}VV               @Vi\omega VV   \\
+\mathbb{R}^{\mathbb R} @&gt;\F&gt;&gt; \mathbb{C}^{\mathbb C} \\
+\end{CD}
+\]
+<p>実関数の微分とはフーリエ変換の世界では \(i \omega\) 倍すること.</p>
+<h3 id="3-%E7%95%B3%E3%81%BF%E8%BE%BC%E3%81%BF">畳み込み</h3>
+<p>2つの実関数 \(f(t), g(t)\) に対して, この2つの関数の <strong>畳み込み</strong> を次で定める.</p>
+\[(f \ast g)(t) = \int_{-\infty}^{\infty} f(\tau) g(t - \tau) d\tau\]
+<p>これのフーリエ変換は次のようになる.</p>
+\[\begin{align*}
+\F(f \ast g)
+&amp; = \int_{-\infty}^{\infty} \left( \int_{-\infty}^{\infty} f(\tau) g(t - \tau) d\tau \right) e^{-i \omega t} dt \\
+&amp; = \int_{-\infty}^{\infty} f(\tau) \left( \int_{-\infty}^{\infty} g(t - \tau) e^{-i \omega t} dt \right) d\tau \\
+&amp; = \int_{-\infty}^{\infty} f(\tau) \left( \int_{-\infty}^{\infty} g(u) e^{-i \omega (u + \tau)} du \right) d\tau \quad (u = t - \tau) \\
+&amp; = \int_{-\infty}^{\infty} f(\tau) e^{-i \omega \tau} d\tau \int_{-\infty}^{\infty} g(u) e^{-i \omega u} du \\
+&amp; = \F(f) \cdot \F(g) \\
+\end{align*}\]
+<p>というわけで</p>
+\[
+\require{amscd}
+\begin{CD}
+\mathbb{R}^{\mathbb R} \times \mathbb{R}^{\mathbb R} @&gt;\F&gt;&gt; \mathbb{C}^{\mathbb C} \times \mathbb{C}^{\mathbb C} \\
+@V{(\ast)}VV               @V(\cdot) VV   \\
+\mathbb{R}^{\mathbb R} @&gt;\F&gt;&gt; \mathbb{C}^{\mathbb C} \\
+\end{CD}
+\]
+<p>を得た.</p>
+<h2 id="2-%E3%83%A9%E3%83%97%E3%83%A9%E3%82%B9%E5%A4%89%E6%8F%9B">ラプラス変換</h2>
+<p>フーリエ変換は \((-\infty, \infty)\) で絶対可積分でないと扱えなかった. 特に無限大に発散する関数は扱えない. そこで \(e^{-st}\) という減衰因子を導入することで, 任意の有限区間で可積分であれば扱えるようにしたのが <strong>ラプラス変換</strong> である.</p>
+<blockquote>Wikipedia 情報なんだけど, 工学的な手法としての発展は 1899 年にオリヴィエ・ヘヴィサイドがフーリエ変換を基にしてヘヴィサイドの演算子法を導入した. ただし後から, （フーリエ変換よりも前に）ラプラスによって類似の変換が導入されていたことが指摘され, ラプラス変換の名前で理論が整理された.</blockquote>
+<p>フーリエ変換は</p>
+\[\F(f) = \hat{f}(\omega) = \int_{-\infty}^{\infty} f(t) e^{-i \omega t} dt\]
+<p>であった. ここで \(\omega\) は実数であったが, ここを一般化して複素数 \(s = \sigma + i \omega\) で置き換えた</p>
+\[F(s) = \int_{-\infty}^{\infty} f(t) e^{-st} dt\]
+<p>これが <strong>（両側）ラプラス変換</strong> である. <strong>（片側）ラプラス変換</strong> では定義域を \((0, \infty)\) に制限する.</p>
+\[F(s) = \int_{0}^{\infty} f(t) e^{-st} dt\]
+<blockquote>むしろフーリエ変換とはラプラス変換の特別な場合だったのだと見なせる.</blockquote>
+<p>ラプラス変換の操作を \(\L\) と書いて \(F = \L(f)\) と言うことにする.</p>
+<p>また, \(F\) から \(f\) を復元する操作を <strong>逆ラプラス変換</strong> と呼び, \(\L^{-1}\) と書いて \(f = \L^{-1}(F)\) と言うことにする.</p>
+<h3 id="3-%E5%8F%8E%E6%9D%9F%E9%A0%98%E5%9F%9F">収束領域</h3>
+<p>有限区間で可積分な \((0, \infty)\) 上の実関数 \(f\) について \(F(s) = \L(f)\) は, ある \(c\) があって</p>
+\[\mathrm{Re}(s) \gt c \implies F(s) \text{は定まる}\]
+<p>という収束領域を持つ. 従ってある適当な \(s_0\) で実際に \(F(s_0)\) が定まったなら,</p>
+\[\mathrm{Re}(s) \geq \mathrm{Re}(s_0) \implies F(s) \text{は定まる}\]
+<p>と言える.</p>
+<h3 id="3-%E4%BE%8B%2E%20%E5%AE%9A%E6%95%B0%E9%96%A2%E6%95%B0%E3%81%AE%E3%83%A9%E3%83%97%E3%83%A9%E3%82%B9%E5%A4%89%E6%8F%9B">例. 定数関数のラプラス変換</h3>
+<p>\(f(t) = a\) ( \(a\) は実定数) の場合を考える.</p>
+\[F(s) = \int_{0}^{\infty} a e^{-st} dt = a \left[ \frac{e^{-st}}{-s} \right]_{0}^{\infty}\]
+<p>もし \(\mathrm{Re}(s) \gt 0\) ならば, \(\lim_{t \to \infty} e^{-st} = 0\) であるから</p>
+\[F(s) = \frac{a}{s} \quad (\mathrm{Re}(s) \gt 0)\]
+<h3 id="3-%E4%BE%8B%2E%20%E6%8C%87%E6%95%B0%E9%96%A2%E6%95%B0%E3%81%AE%E3%83%A9%E3%83%97%E3%83%A9%E3%82%B9%E5%A4%89%E6%8F%9B">例. 指数関数のラプラス変換</h3>
+<p>\(f(t) = e^{a t}\) ( \(a\) は実定数) の場合を考える.</p>
+\[F(s) = \int_{0}^{\infty} e^{a t} e^{-s t} dt = \int_{0}^{\infty} e^{-(s - a) t} dt = \left[ \frac{e^{-(s - a) t}}{-(s - a)} \right]_{0}^{\infty}\]
+<p>もし \(\mathrm{Re}(s) \gt a\) ならば, \(\lim_{t \to \infty} e^{-(s - a) t} = 0\) であるから</p>
+\[F(s) = \frac{1}{s - a} \quad (\mathrm{Re}(s) \gt a)\]
+<h3 id="3-%E5%BE%AE%E5%88%86%E5%89%87">微分則</h3>
+<p>\(f\) が微分可能で \(\lim_{t \to \infty} f(t) e^{-s t} = 0\) と仮定する.</p>
+\[\begin{align*}
+\L(f&#x27;)
+&amp;= \int_{0}^{\infty} f&#x27;(t) e^{-s t} dt \\
+&amp;= \left[ f(t) e^{-s t} \right]_{0}^{\infty} + s \int_{0}^{\infty} f(t) e^{-s t} dt \\
+&amp;= s \L(f) - f(0) \\
+\end{align*}\]
+<p>さらに \(\lim{t \to \infty} f&#x27;(t) e^{-s t} = 0\) と仮定すれば,</p>
+\[\L(f&#x27;&#x27;) = s^2 \L(f) - s f(0) - f&#x27;(0)\]
+<p>一般の \(n\) 次導関数についても同様にして</p>
+\[\L(f^{(n)}) = s^n \L(f) - s^{n-1} f(0) - s^{n-2} f&#x27;(0) - \cdots - f^{(n-1)}(0)\]
+<h3 id="3-%E7%95%B3%E3%81%BF%E8%BE%BC%E3%81%BF">畳み込み</h3>
+<p>2つの実関数 \(f(t), g(t)\) に対して, 次が畳み込みであった.</p>
+\[(f \ast g)(t) = \int_{0}^{t} f(\tau) g(t - \tau) d\tau\]
+<p>これのラプラス変換は次のようになる.</p>
+\[\begin{align*}
+\L(f \ast g)
+&amp;= \int_{0}^{\infty} \left( \int_{0}^{t} f(\tau) g(t - \tau) d\tau \right) e^{-s t} dt \\
+&amp;= \int_{0}^{\infty} f(\tau) \left( \int_{\tau}^{\infty} g(t - \tau) e^{-s t} dt \right) d\tau \\
+&amp;= \int_{0}^{\infty} f(\tau) \left( \int_{0}^{\infty} g(u) e^{-s (u + \tau)} du \right) d\tau \quad (u = t - \tau) \\
+&amp;= \int_{0}^{\infty} f(\tau) e^{-s \tau} d\tau \int_{0}^{\infty} g(u) e^{-s u} du \\
+&amp;= \L(f) \cdot \L(g) \\
+\end{align*}\]
+<p>フーリエ変換と同様の結果を得た.</p>
+<h3 id="3-%E5%9F%BA%E6%9C%AC%E7%9A%84%E3%81%AA%E6%80%A7%E8%B3%AA">基本的な性質</h3>
+<p><strong>線形性</strong> ラプラス変換は線形変換である.</p>
+\[\L(af + bg) = a \L(f) + b \L(g)\]
+<p><strong>スケーリング則</strong> \(f(t)\) のラプラス変換を \(F(s) = \L(f)\) とする. すると, 任意の実数 \(a \gt 0\) に対して</p>
+\[\L(f(at)) = \frac{1}{a} F\left( \frac{s}{a} \right)\]
+<p><strong>周波数シフト則</strong> \(f(t)\) のラプラス変換を \(F(s) = \L(f)\) とする. すると, 任意の実数 \(a\) に対して</p>
+\[\L\left( e^{a t} f(t) \right) = F(s - a)\]
+<p><strong>積分則</strong></p>
+\[\L\left( \int_0^t f(\tau) d\tau \right) = \frac{1}{s} F(s)\]
+<h3 id="3-%E5%9F%BA%E6%9C%AC%E7%9A%84%E3%81%AA%E3%83%A9%E3%83%97%E3%83%A9%E3%82%B9%E5%A4%89%E6%8F%9B%E8%A1%A8">基本的なラプラス変換表</h3>
+<table>
+  <thead>
+    <tr class=header>
+      <th align=left>\(f(t)\)</th>
+      <th align=left>\(F(s) = \L(f)\)</th>
+      <th align=left>収束領域</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class=odd>
+      <td align=left>\(1\)</td>
+      <td align=left>\(\frac{1}{s}\)</td>
+      <td align=left>\(\mathrm{Re}(s) \gt 0\)</td>
+    </tr>
+    <tr class=even>
+      <td align=left>\(t^n\) ( \(n\) は非負整数)</td>
+      <td align=left>\(\frac{n!}{s^{n+1}}\)</td>
+      <td align=left>\(\mathrm{Re}(s) \gt 0\)</td>
+    </tr>
+    <tr class=odd>
+      <td align=left>\(e^{a t}\)</td>
+      <td align=left>\(\frac{1}{s - a}\)</td>
+      <td align=left>\(\mathrm{Re}(s) \gt a\)</td>
+    </tr>
+    <tr class=even>
+      <td align=left>\(\sin (a t)\)</td>
+      <td align=left>\(\frac{a}{s^2 + a^2}\)</td>
+      <td align=left>\(\mathrm{Re}(s) \gt 0\)</td>
+    </tr>
+    <tr class=odd>
+      <td align=left>\(\cos (a t)\)</td>
+      <td align=left>\(\frac{s}{s^2 + a^2}\)</td>
+      <td align=left>\(\mathrm{Re}(s) \gt 0\)</td>
+    </tr>
+    <tr class=even>
+      <td align=left>\(\sinh (a t)\)</td>
+      <td align=left>\(\frac{a}{s^2 - a^2}\)</td>
+      <td align=left>\(\mathrm{Re}(s) \gt |a|\)</td>
+    </tr>
+    <tr class=odd>
+      <td align=left>\(\cosh (a t)\)</td>
+      <td align=left>\(\frac{s}{s^2 - a^2}\)</td>
+      <td align=left>\(\mathrm{Re}(s) \gt |a|\)</td>
+    </tr>
+    <tr class=even>
+      <td align=left>\(u(t - a)\)</td>
+      <td align=left>\(\frac{e^{-a s}}{s}\)</td>
+      <td align=left>\(\mathrm{Re}(s) \gt 0\)</td>
+    </tr>
+    <tr class=odd>
+      <td align=left>\(\delta(t - a)\)</td>
+      <td align=left>\(e^{-a s}\)</td>
+      <td align=left>全複素平面</td>
+    </tr>
+    <tr class=even>
+      <td align=left>\(t f(t)\)</td>
+      <td align=left>\(- \frac{d}{ds} F(s)\)</td>
+      <td align=left>同左</td>
+    </tr>
+  </tbody>
+</table>
+<p>ここで \(u(t - a)\) は単位ステップ関数, \(\delta(t - a)\) はデルタ関数を表す.</p>
+<h3 id="3-%E9%80%86%E3%83%95%E3%83%BC%E3%83%AA%E3%82%A8%E5%A4%89%E6%8F%9B%E3%81%AE%E7%B7%B4%E7%BF%92">逆フーリエ変換の練習</h3>
+<p>逆フーリエ変換は上に列挙した性質にしたがって <strong>因数分解</strong> をし, そして上に書いた基本的なラプラス変換表を <strong>逆にたどる</strong> ことで求められる.</p>
+\[\begin{align*}
+L^{-1}\left( \frac{1}{s^2 + 25} \right)
+&amp;= L^{-1}\left( \frac{1}{5} \frac{5}{s^2 + (5)^2} \right) \\
+&amp;= \frac{1}{5} L^{-1}\left( \frac{5}{s^2 + (5)^2} \right) \\
+&amp;= \frac{1}{5} \sin(5 t) \\
+\end{align*}\]
+\[\begin{align*}
+L^{-1}\left( \frac{5}{s(s^2 + 25)} \right)
+&amp;= L^{-1}\left( \frac{1}{s} \cdot \frac{5}{s^2 + (5)^2} \right) \\
+&amp;= 1 \ast \sin(5 t) &amp; \text{ 畳み込み} \\
+&amp;= \int_0^t \sin(5 \tau) d\tau \\
+&amp;= \frac{1}{5} (1 - \cos(5 t)) \\
+\end{align*}\]
+
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>

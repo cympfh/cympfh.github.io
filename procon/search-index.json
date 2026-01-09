@@ -231,34 +231,34 @@
       "content": "アルゴリズム - FFT - 数列の畳み込み 概要 2つの数列 $Ai, Bi$ について, $$Ck = \\sum{i=0}^k Ai B{k-i}$$ なる数列 $Ck$ を計算する. ただし $A0=B0=0$ であるとし, $C0=0$. 参考 [ATC001/C - 高速フーリエ変換](http://atc001.contest.atcoder.jp/tasks/fftc) @[rust](procon-rs/src/algorithm/fft.rs)"
     },
     {
-      "title": "点",
+      "title": "点・ベクトルの定義",
       "url": "geo.2d.point.html",
-      "content": "二次元ユークリッド幾何 - 点の定義 概要 点またはベクトルの定義 L2ノルム ::norm 外積 ::det 偏角 ::arg 二点間の距離 ::distance 演算 - 同値 ==, != - 和差 +, - - 内積 - スカラ倍 / 実装 @[rust](procon-rs/src/geometry2d/point.rs)"
+      "content": "二次元ユークリッド幾何 - 点・ベクトルの定義 概要 点は f64 のペアで表現される. また点とは原点からのベクトルに他ならないため, ベクトルとしてそのまま使えるように実装されている. 次の演算が定義されている. 点またはベクトルの定義 L2ノルム ::norm 外積 ::det 偏角 ::arg 二点間の距離 ::distance 演算 - 同値 ==, != - 1e-6 程度の誤差を許容 - 和差 +, - - 内積 - スカラ倍 / 実装 @[rust](procon-rs/src/geometry2d/point.rs)"
     },
     {
-      "title": "直線, 線分",
+      "title": "極座標",
+      "url": "geo.polar.html",
+      "content": "幾何 - 極座標系 @[rust](procon-rs/src/geometry2d/polar.rs)"
+    },
+    {
+      "title": "直線と線分の定義",
       "url": "geo.2d.line.html",
-      "content": "二次元ユークリッド幾何 - 直線, 線分の定義 概要 直線 Line と線分 LineSegment の定義 - 直線は端点を持たず通る二点で定義する - line!(x0, y0; x1, y1) - 線分は2つの端点とその方向から定められる - line!(x0, y0 => x1, y1) 点までの距離 ::distancefrom 同値 ==, != 線分についてその向きを変える - 実装 @[rust](procon-rs/src/geometry2d/line.rs)"
+      "content": "二次元ユークリッド幾何 - 直線, 線分の定義 概要 直線 Line と線分 LineSegment の定義 - 直線はそれが通る二点で定義され, 向きは (x0, y0) から (x1, y1) に向かうとする - line!(x0, y0; x1, y1) - 線分はそれが持つ二つの端点で定義され, やはり (x0, y0) から (x1, y1) に向かうとする - line!(x0, y0 => x1, y1) 点までの距離 ::distancefrom 同値 ==, != - 1e-6 程度の誤差を許容 線分についてその向きを変える単項マイナス - 実装 @[rust](procon-rs/src/geometry2d/line.rs)"
     },
     {
-      "title": "多角形",
-      "url": "geo.2d.polygon.html",
-      "content": "二次元ユークリッド幾何 - 多角形の定義 概要 多角形の定義 - 頂点を反時計回りに並べて持つ 面積 ::area 点の包含関係 ::contains - 点を内部に持つかどうかの判定 実装 @[rust](procon-rs/src/geometry2d/polygon.rs)"
-    },
-    {
-      "title": "円",
-      "url": "geo.2d.circle.html",
-      "content": "二次元ユークリッド幾何 - 円の定義 概要 円の定義 - 中心点と半径で定まる 面積 ::area 同値 == 実装 @[rust](procon-rs/src/geometry2d/circle.rs)"
+      "title": "直線と点の接触判定",
+      "url": "geo.2d.ccw_line.html",
+      "content": "二次元ユークリッド幾何 - 直線と点との接触 (CCW) 概要 CCW (Counter Clock Wise; 反時計回判定) とは, $A \\to B$ に向かう直線に対して点 $P$ が右にあるか左にあるか, または直線上にあるかを判定する方法の一つ. 二つのベクトル $(B - A)$ と $(P - A)$ の外積の符号を見ればよい. 次を CCW 関数と定義する. $$\\mathrm{ccw}(A, B, P) = \\begin{cases} 1 & \\text{if } (B - A) \\times (P - A) \\gt 0 \\\\ 0 & \\text{if } (B - A) \\times (P - A) \\lt 0 \\\\ 1 & \\text{if } (B - A) \\times (P - A) = 0 \\\\ \\end{cases}$$ そこで直線 $(A \\to B)$ と点 $P$ との接触判定は次のように行う. $$\\mathrm{ccw}^{\\text{line}}(A \\to B, P) = \\begin{cases} \\text{ Left } & \\text{if } \\mathrm{ccw}(A, B, P) = 1 \\\\ \\text{ Right } & \\text{if } \\mathrm{ccw}(A, B, P) = -1 \\\\ \\text{ Online } & \\text{if } \\mathrm{ccw}(A, B, P) = 0 \\\\ \\end{cases}$$ 実装 @[rust](procon-rs/src/geometry2d/ccwline.rs)"
     },
     {
       "title": "線分と点の接触判定",
-      "url": "geo.2d.ccw.html",
-      "content": "二次元ユークリッド幾何 - 線分と点との接触判定 @[rust](procon-rs/src/geometry2d/ccw.rs)"
+      "url": "geo.2d.ccw_linesegment.html",
+      "content": "二次元ユークリッド幾何 - 線分と点との接触判定 概要 与えられた線分 $A \\to B$ と点 $P$ が接触しているか（点が線分上にあるか）を判定する. [直線と点との接触判定](geo.2d.ccwline) の判定に加えて, $P$ が線分 $A \\to B$ の上にあるか, 延長線上にあるか, その場合は前方にあるか後方にあるかを判定する. 実装 @[rust](procon-rs/src/geometry2d/ccwlinesegment.rs)"
     },
     {
-      "title": "線分と線分の交差判定",
-      "url": "geo.2d.intersection.html",
-      "content": "二次元ユークリッド幾何 - 線分と線分との接触判定 @[cpp](procon-cc/geo.2d.intersection.cc)"
+      "title": "多角形の定義",
+      "url": "geo.2d.polygon.html",
+      "content": "二次元ユークリッド幾何 - 多角形の定義 概要 多角形の定義 - 頂点を反時計回りに並べて持つ 面積 ::area 点の包含関係 ::contains - 点を内部に持つかどうかの判定 実装 @[rust](procon-rs/src/geometry2d/polygon.rs)"
     },
     {
       "title": "三角形の外接円",
@@ -266,19 +266,19 @@
       "content": "geo.2d.circum @[cpp](procon-cc/geo.2d.circum.cc)"
     },
     {
-      "title": "多角形の内外判定",
-      "url": "geo.2d.isin_poly.html",
-      "content": "geo.2d.isinpoly @[cpp](procon-cc/geo.2d.isinpoly.cc)"
-    },
-    {
       "title": "凸包",
       "url": "geo.2d.convex_hull.html",
       "content": "geo.2d.convexhull @[cpp](procon-cc/geo.2d.convexhull.cc) 例題 [輪ゴムで囲んだ釘 | AOJ](http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=0068)"
     },
     {
+      "title": "円の定義",
+      "url": "geo.2d.circle.html",
+      "content": "二次元ユークリッド幾何 - 円の定義 概要 円の定義 - 中心点と半径で定まる 面積 ::area 同値 == 実装 @[rust](procon-rs/src/geometry2d/circle.rs)"
+    },
+    {
       "title": "円と円との接触関係",
       "url": "geo.2d.circle.intersection.html",
-      "content": "二次元ユークリッド幾何 - 円と円との接触判定 例題 [Circles Intersection | AOJ](http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=0023) - [回答例: C++](http://judge.u-aizu.ac.jp/onlinejudge/review.jsp?rid=1177149#1) - [回答例: Rust](http://judge.u-aizu.ac.jp/onlinejudge/review.jsp?rid=3637616#1) @[rust](procon-rs/src/geometry2d/circle.rs)"
+      "content": "二次元ユークリッド幾何 - 円と円との接触判定 例題 [[http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=0023]] - [回答例: C++](http://judge.u-aizu.ac.jp/onlinejudge/review.jsp?rid=1177149#1) - [回答例: Rust](http://judge.u-aizu.ac.jp/onlinejudge/review.jsp?rid=3637616#1) 実装 @[rust](procon-rs/src/geometry2d/circleintersection.rs)"
     },
     {
       "title": "点",
@@ -291,19 +291,14 @@
       "content": "格子点上の幾何 - 直線の定義 @[rust](procon-rs/src/geometry2d/int/line.rs)"
     },
     {
-      "title": "極座標",
-      "url": "geo.polar.html",
-      "content": "幾何 - 極座標系 @[rust](procon-rs/src/geometry2d/polar.rs)"
-    },
-    {
       "title": "Convex-Hull Trick",
       "url": "geo.cht.html",
-      "content": "Convex-Hull Trick; CHT 問題概要 状態として集合 $S$ を持って, 初めこれは空集合. 次の2種類のクエリを高速に処理する. 1. 追加クエリ: - 二次元平面上の直線 $f(x) = Ax + B$ を $S$ に追加する 2. 最小値クエリ - 点 $x$ に対して $\\min{f \\in S} f(x)$ を計算する 手法 状態 $S$ のときの図形 $$Z = \\{ (x, y) \\mid x \\in \\mathbb R, y \\in \\minf f(x) \\}$$ を管理できればいい. この図形は凸なので色々いい感じの性質がある. $Z$ を管理するために, $S$ の中の直線を傾きに関して昇順に並べて列 $\\bar{S}$ で持っておく. ただし $\\forall x,~ Z(x) < f(x)$ となるような直線はあっても最小値クエリに影響を与えないので, こういったものは省いておく. $x$ に対して $\\min f(x)$ を取る $f \\in S$ の傾き $A$ を対応付けると, $A$ は $x$ に関して広義単調減少である. 従って, 直線を $\\bar{S}$ に追加する可能性の場所は二分探索で決めることが出来る. 簡易バージョン 追加クエリの単調性の仮定 追加する直線の傾きが, 単調減少（増加）であることを仮定すると, 上で言った追加する場所の特定が不要になって常に末尾（または先頭）に付け足しておけば良いことになる. 最小値クエリの単調性の仮定 最小値クエリで飛んでくる $x$ が単調減少（増加）であることを仮定すると, 最小値を取る直線は, $\\bar{S}$ の中で左から（あるいは右から）順に使われるだけなので, 尺取りの要領で見ていけば, 全体でも線形時間しか掛からない. 不要な直線の見つけ方 傾きに関して昇順の列 $\\bar{S}$ の中で, $f1(x) = a1 x + b1$ $f2(x) = a2 x + b2$ $f3(x) = a3 x + b3$ の3つが並んでるときに, $f2$ が不要であるかどうかが次で決まる: $$\\mathrm{Waste} \\colon \\frac{a2 - a1}{b2 - b1} \\geq \\frac{a3-a2}{b3-b2}$$ この式が成立するときは $f2$ を $\\bar{S}$ から取り除いて良い. これは追加クエリによって直線 $f1$ または $f3$ が追加されたような場合にチェックすればよい. 参考文献 [EDPC解説 U～Z](https://kyopro-friends.hatenablog.com/entry/2019/01/12/231106) - EDPC/Z問題が CHT する問題で, その解説で CHT の解説もある [Convex-Hull Trick - sataniC++](http://satanic0258.hatenablog.com/entry/2016/08/16/181331) - CHT の詳細な解説 [Convex Hull Trick (Deque) - yaketake08's 実装メモ](https://tjkendev.github.io/procon-library/python/convexhulltrick/deque.html) - 追加/最小値クエリに単調性を仮定した場合の実装 [傾きの単調性が要らない Convex Hull Trick - kazuma8128’s blog](https://kazuma8128.hatenablog.com/entry/2018/02/28/102130) - 単調性を仮定しない一般バージョンの実装 - 強そう"
+      "content": "Convex-Hull Trick; CHT 問題概要 状態として集合 $S$ を持って, 初めこれは空集合. 次の2種類のクエリを高速に処理する. 1. 追加クエリ: - 二次元平面上の直線 $f(x) = Ax + B$ を $S$ に追加する 2. 最小値クエリ - 点 $x$ に対して $\\min{f \\in S} f(x)$ を計算する 手法 状態 $S$ のときの図形 $$Z = \\{ (x, y) \\mid x \\in \\mathbb R, y = \\min{f \\in S} f(x) \\}$$ を管理できればいい. この図形は凸なので色々いい感じの性質がある. $Z$ を管理するために, $S$ の中の直線を傾きに関して昇順に並べて列 $\\bar{S}$ で持っておく. ただし $\\forall x,~ Z(x) \\lt f(x)$ となるような直線はあっても最小値クエリに影響を与えないので, こういったものは省いておく. $x$ に対して $\\min f(x)$ を取る $f \\in S$ の傾き $A$ を対応付けると, $A$ は $x$ に関して広義単調減少である. 従って, 直線を $\\bar{S}$ に追加する可能性の場所は二分探索で決めることが出来る. 簡易バージョン 追加クエリの単調性の仮定 追加する直線の傾きが, 単調減少（増加）であることを仮定すると, 上で言った追加する場所の特定が不要になって常に末尾（または先頭）に付け足しておけば良いことになる. 最小値クエリの単調性の仮定 最小値クエリで飛んでくる $x$ が単調減少（増加）であることを仮定すると, 最小値を取る直線は, $\\bar{S}$ の中で左から（あるいは右から）順に使われるだけなので, 尺取りの要領で見ていけば, 全体でも線形時間しか掛からない. 不要な直線の見つけ方 傾きに関して昇順の列 $\\bar{S}$ の中で, $f1(x) = a1 x + b1$ $f2(x) = a2 x + b2$ $f3(x) = a3 x + b3$ の3つが並んでるときに, $f2$ が不要であるかどうかが次で決まる: $$\\mathrm{Waste} \\colon \\frac{a2 - a1}{b2 - b1} \\geq \\frac{a3-a2}{b3-b2}$$ この式が成立するときは $f2$ を $\\bar{S}$ から取り除いて良い. これは追加クエリによって直線 $f1$ または $f3$ が追加されたような場合にチェックすればよい. 参考文献 [EDPC解説 U～Z](https://kyopro-friends.hatenablog.com/entry/2019/01/12/231106) - EDPC/Z問題が CHT する問題で, その解説で CHT の解説もある [Convex-Hull Trick - sataniC++](http://satanic0258.hatenablog.com/entry/2016/08/16/181331) - CHT の詳細な解説 [Convex Hull Trick (Deque) - yaketake08's 実装メモ](https://tjkendev.github.io/procon-library/python/convexhulltrick/deque.html) - 追加/最小値クエリに単調性を仮定した場合の実装 [傾きの単調性が要らない Convex Hull Trick - kazuma8128’s blog](https://kazuma8128.hatenablog.com/entry/2018/02/28/102130) - 単調性を仮定しない一般バージョンの実装 - 強そう"
     },
     {
       "title": "最近点対",
       "url": "geo.closest_pair.html",
-      "content": "geo.closestpair @[cpp](procon-cc/geo.closestpair.cc)"
+      "content": "2次元最近点対問題 概要 $N$ 個の平面上の点 $S = \\{p1, p2, \\ldots, pN\\}$ が与えられたとき, 最近接点対 (closest pair) とは, 互いに最も近い2点の組のことである. $$\\mathrm{closest\\pair}(S) = \\mathop{\\mathrm{argmin}}{i \\neq j} ~ \\|pi, pj\\|2$$ 実装 空間に関して分割統治法を用いることで $O(N \\log N)$ 時間で解くことができる. @[rust](procon-rs/src/geometry2d/closestpair.rs)"
     },
     {
       "title": "UnionFind",

@@ -30,6 +30,7 @@ posts:
 	cat $^ | awk -f script/post.awk | \
 		unidoc -s \
 		-V "description=$(DESCRIPTION)" \
+		-T templates/page.html \
 		-B templates/post.header.html \
 		-A ../resources/js/toc.html \
 		--css ../resources/css/c.css \

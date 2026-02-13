@@ -6,6 +6,12 @@ index:
 		--css resources/css/index.css \
 		-o index.html
 
+me.html: me.md
+	unidoc -s \
+		$< \
+		-o $@ \
+		--css resources/css/me.css
+
 git:
 	git add --all
 	git commit -a -m "`date`"

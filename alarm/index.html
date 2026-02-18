@@ -341,8 +341,8 @@
 
   <div class="settings">
     <div class="field">
-      <label for="inp-time">Time (HH:MM)</label>
-      <input type="text" id="inp-time" value="07:00" placeholder="07:30" maxlength="5" pattern="\d{2}:\d{2}">
+      <label for="inp-time">Time (HH:MM[:SS])</label>
+      <input type="text" id="inp-time" value="07:00" placeholder="07:30" maxlength="8" pattern="\d{2}:\d{2}(:\d{2})?">
     </div>
 
     <div class="field">
@@ -387,7 +387,7 @@
   </div>
 
   <div class="url-hint">
-    URL params: ?time=07:30&amp;sound=bell&amp;autoStop=30
+    URL params: ?time=07:30 or ?time=07:30:00&amp;sound=bell&amp;autoStop=30
   </div>
 
   <script>
@@ -517,7 +517,7 @@
     }
 
     // ---- State ----
-    let alarm = null; // { h, m } or null
+    let alarm = null; // { h, m, s } or null
     let soundName = 'beep';
     let autoStop = 5; // seconds; 0以下なら自動停止しない
     let isRinging = false;
@@ -551,20 +551,23 @@
     // ---- Apply settings ----
     function applySettings() {
       const val = inpTime.value.trim();
-      const match = val.match(/^(\d{1,2}):(\d{2})$/);
+      const match = val.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/);
       if (!val || !match) {
         alarm = null;
         inpTime.classList.toggle('invalid', val.length > 0);
       } else {
         const h = Number(match[1]);
         const m = Number(match[2]);
-        if (h > 23 || m > 59) {
+        const s = match[3] !== undefined ? Number(match[3]) : 0;
+        if (h > 23 || m > 59 || s > 59) {
           alarm = null;
           inpTime.classList.add('invalid');
         } else {
-          alarm = { h, m };
+          alarm = { h, m, s };
           inpTime.classList.remove('invalid');
-          inpTime.value = `${pad2(h)}:${pad2(m)}`;
+          inpTime.value = match[3] !== undefined
+            ? `${pad2(h)}:${pad2(m)}:${pad2(s)}`
+            : `${pad2(h)}:${pad2(m)}`;
         }
       }
       soundName = inpSound.value;
@@ -581,7 +584,12 @@
 
     function updateURL() {
       const params = new URLSearchParams();
-      if (alarm) params.set('time', `${pad2(alarm.h)}:${pad2(alarm.m)}`);
+      if (alarm) {
+        const t = alarm.s
+          ? `${pad2(alarm.h)}:${pad2(alarm.m)}:${pad2(alarm.s)}`
+          : `${pad2(alarm.h)}:${pad2(alarm.m)}`;
+        params.set('time', t);
+      }
       params.set('sound', soundName);
       params.set('autoStop', String(autoStop));
       history.replaceState(null, '', '?' + params.toString());
@@ -592,10 +600,15 @@
       const params = new URLSearchParams(location.search);
       if (params.has('time')) {
         const t = params.get('time');
-        const m = t.match(/^(\d{1,2}):(\d{2})$/);
+        const m = t.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/);
         if (m) {
-          alarm = { h: Number(m[1]), m: Number(m[2]) };
-          inpTime.value = `${pad2(alarm.h)}:${pad2(alarm.m)}`;
+          const h = Number(m[1]);
+          const min = Number(m[2]);
+          const s = m[3] !== undefined ? Number(m[3]) : 0;
+          alarm = { h, m: min, s };
+          inpTime.value = m[3] !== undefined
+            ? `${pad2(h)}:${pad2(min)}:${pad2(s)}`
+            : `${pad2(h)}:${pad2(min)}`;
         }
       }
       if (params.has('sound')) {
@@ -667,7 +680,7 @@
       }
 
       const nowSec = hh * 3600 + mm * 60 + ss;
-      const alarmSec = alarm.h * 3600 + alarm.m * 60;
+      const alarmSec = alarm.h * 3600 + alarm.m * 60 + (alarm.s || 0);
       let diff = alarmSec - nowSec;
       if (diff < 0) diff += 86400;
 
@@ -692,11 +705,14 @@
     // ---- Time input: auto-colon & validation ----
     inpTime.addEventListener('input', (e) => {
       let v = e.target.value.replace(/[^\d:]/g, '');
-      // 数字2文字打ったらコロンを自動挿入
+      // 数字2文字打ったらコロンを自動挿入（HH: と HH:MM:）
       if (/^\d{2}$/.test(v)) v = v + ':';
+      if (/^\d{2}:\d{2}$/.test(v)) v = v + ':';
       e.target.value = v;
-      const valid = /^\d{2}:\d{2}$/.test(v);
-      inpTime.classList.toggle('invalid', v.length === 5 && !valid);
+      const validShort = /^\d{2}:\d{2}$/.test(v);
+      const validLong  = /^\d{2}:\d{2}:\d{2}$/.test(v);
+      const tooLong = v.length > 5;
+      inpTime.classList.toggle('invalid', tooLong && !validShort && !validLong);
     });
 
     // ---- Events ----

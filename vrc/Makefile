@@ -1,4 +1,4 @@
-.PHONY: new edit index
+.PHONY: new edit index world
 
 new:
 	bash script/new.sh
@@ -6,9 +6,17 @@ new:
 edit:
 	bash script/edit.sh
 
+# copied from me/
 index: index.html
-index.html: script/index.sh src/postlist src/*.md
-	bash script/index.sh
+index.html: index.md
+	unidoc -s \
+		$< \
+		-o $@ \
+		--css resources/css/me.css
+
+world: world.html
+world.html: script/world.sh src/postlist src/*.md
+	bash script/world.sh
 
 cache/description/%.html: src/%.md
 	mkdir -p cache/description/

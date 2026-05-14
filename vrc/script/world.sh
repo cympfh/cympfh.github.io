@@ -102,7 +102,7 @@ main() {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=0.9">
-  <title>vrc/</title>
+  <title>vrc/world</title>
   <link rel="stylesheet" href="../resources/css/bulma/bulma.css" />
   <link rel="stylesheet" href="./resources/css/base.css" />
   <link rel="stylesheet" href="../resources/css/youtube.css" />
@@ -111,7 +111,7 @@ main() {
 <body>
   <section class="section">
     <div class="container">
-        <h1 class="title"><i class="fa fa-map"></i> <a href="#">vrc/</a></h1>
+        <h1 class="title"><i class="fa fa-map"></i> <a href="#">vrc/world</a></h1>
     </div>
   </section>
 
@@ -138,4 +138,4 @@ TEMPLATE
 TEMPLATE
 }
 
-main > index.html
+main > world.html

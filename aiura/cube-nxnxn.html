@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="unidoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>一般ルービックキューブ NxNxN 解法 - aiura</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
+  <link href="https://unpkg.com/prismjs@1.x.0/themes/prism.css" rel="stylesheet" />
+  <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
+  <link href="../resources/css/c.css" rel="stylesheet" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
+</head>
+<body>
+<header class="page-header">
+    <a href='index.html'><i class="fa fa-stumbleupon"></i></a>
+</header>
+
+<h1 class="title" id="1-%E4%B8%80%E8%88%AC%E3%83%AB%E3%83%BC%E3%83%93%E3%83%83%E3%82%AF%E3%82%AD%E3%83%A5%E3%83%BC%E3%83%96%20NxNxN%20%E8%A7%A3%E6%B3%95">一般ルービックキューブ NxNxN 解法</h1>
+<p><p class=date style='text-align: right'>2026-06-09 (Tue.)</p> <div class='is-pulled-right'> <a class='tag is-red' href=index.html#パズル>パズル</a> </div></p>
+<h2 id="2-index">index</h2>
+<p><div id=toc-level-2></div></p>
+<h2 id="2-%E6%A6%82%E8%A6%81">概要</h2>
+<p>普通ルービックキューブは 3x3x3 からなる立方体であるが, これを拡張した 4x4x4, 5x5x5 などが存在する. ここではこれらを一般化した NxNxN について考える.</p>
+<p>とは言え実は 4x4x4 と 5x5x5 までが必要な知識の上限であり（偶数奇数の違いはある）, それ以上はただ再帰的に解法を適用していくだけである.</p>
+<p>また 3x3x3 の解法は知っているものとする.</p>
+<h2 id="2-%E5%81%89%E5%A4%A7%E3%81%AA%E3%82%8B%E5%8F%82%E8%80%83%E3%83%AA%E3%83%B3%E3%82%AF">偉大なる参考リンク</h2>
+<ul>
+  <li><a href="https://cube.uubio.com">cubeの部屋 – ルービックキューブの解き方を覚えよう！</a></li>
+  <li><img src="https://cubevoyage.net/wp-content/uploads/2017/04/Cube-Voyage-logo-2D-512.png" style="width:16px;height:16px;margin-right:4px;vertical-align:middle;" /><a href="https://cubevoyage.net/speedcubing/">speedcubingの道 | Cube Voyage</a></li>
+</ul>
+<h2 id="2-%E8%A8%98%E6%B3%95%E3%83%BB%E5%90%8D%E7%A7%B0">記法・名称</h2>
+<h3 id="3-%E5%9B%B3">図</h3>
+<p>U 面と F 面と R 面を見せてルービックキューブの状態を示す. 色の配置は <a href="https://store.tribox.com/user_data/puzzle_color.php">世界基準色</a> に従う.</p>
+<p><div style='text-align: center'> <figure style='width: 35%; display: inline-block; margin: 0'> <img src="cube-nxnxn/cube_front.svg" alt="ルービックキューブの図" width="200"> <figcaption>F面が真正面にあって上にU面, 右にR面</figcaption> </figure> <figure style='width: 35%; display: inline-block; margin: 0'> <img src="cube-nxnxn/cube_balanced.svg" alt="ルービックキューブの図" width="200"> <figcaption>等角図. 上にU面があって左下がF面, 右下がR面</figcaption> </figure> </div></p>
+<p>また「状態が不明（問わない）」なパーツは灰色で描く.</p>
+<h3 id="3-%E3%83%91%E3%83%BC%E3%83%84%E3%81%AE%E5%90%8D%E7%A7%B0">パーツの名称</h3>
+<p>ルービックキューブの内外側から見えていて回す対象であるパーツは次の3つに分類される.</p>
+<ul>
+  <li>
+    センターキューブ
+    <ul>
+      <li>一色の面を持つパーツ</li>
+      <li>各面の中心に位置する</li>
+    </ul>
+  </li>
+  <li>
+    エッジキューブ
+    <ul>
+      <li>二色の面を持つパーツ</li>
+      <li>各面の辺に位置する</li>
+    </ul>
+  </li>
+  <li>
+    コーナーキューブ
+    <ul>
+      <li>三色の面を持つパーツ</li>
+      <li>各面の角に位置する</li>
+    </ul>
+  </li>
+</ul>
+<p><div style='text-align: center'> <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/center.svg" alt="センターキューブ" width="200"> <figcaption>センターキューブ</figcaption> </figure> <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/edge.svg" alt="エッジキューブ" width="200"> <figcaption>エッジキューブ</figcaption> </figure> <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/corner.svg" alt="コーナーキューブ" width="200"> <figcaption>コーナーキューブ</figcaption> </figure> </div></p>
+<h3 id="3-%E5%9B%9E%E8%BB%A2%E3%81%AE%E8%A8%98%E6%B3%95">回転の記法</h3>
+<p><a href="https://tribox.com/3x3x3/solution/notation/">シングマスター記法</a> に倣う. ただし NxNxN なので拡張する.</p>
+<h4 id="4-%E5%A4%96%E5%81%B4%E4%B8%80%E5%B1%A4%E3%81%AE%E5%9B%9E%E8%BB%A2">外側一層の回転</h4>
+<p>最も外側一層だけの回転は 3x3x3 のときと全く同様</p>
+<ul>
+  <li>\(U\) : U 面を正面から見たとき一層だけを時計回りに 90 度回す</li>
+  <li>\(U&#x27;\) : 反時計周りに 90 度回す</li>
+  <li>\(R\) : R 面を正面から見たとき一層だけを時計回りに 90 度回す</li>
+  <li>\(R&#x27;\) : 反時計周りに 90 度回す</li>
+  <li>\(F&#x2F;F&#x27;\) : 同様</li>
+  <li>\(D&#x2F;D&#x27;\) : 同様</li>
+  <li>\(L&#x2F;L&#x27;\) : 同様</li>
+  <li>\(B&#x2F;B&#x27;\) : 同様</li>
+</ul>
+<h4 id="4-%E8%A4%87%E6%95%B0%E5%B1%A4%E3%81%AE%E5%9B%9E%E8%BB%A2">複数層の回転</h4>
+<p>一般の NxNxN の場合, 一度に複数の層を回すこともできる. このとき層の数 \(m\) とどの面であるかを組み合わせて次のように表記する.</p>
+<ul>
+  <li>
+    \(mU\) : U 面を正面から見たとき最も外側にあるものから連続した \(m\) 層を時計回りに 90 度回す
+    <ul>
+      <li>ここで \(m\) は具体的な数であって, 実際には \(2U\) , \(3U\) などと表記する</li>
+      <li>もちろん \(U\) 以外でも \(2U&#x27;\) とか \(3B\) などと書く.</li>
+    </ul>
+  </li>
+</ul>
+<p><div style='text-align: center'> <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/2U.svg" alt="2U" width="200"> <figcaption>灰色の層が 2U</figcaption> </figure> <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/2R.svg" alt="2R" width="200"> <figcaption>灰色の層が 2R</figcaption> </figure> </div></p>
+<h4 id="4-%E4%B8%AD%E9%96%93%E5%B1%A4%E3%81%AE%E5%9B%9E%E8%BB%A2">中間層の回転</h4>
+<p>また, 外側数えて \(m\) 番目だけの一層の回転を考えることもある. このときは \(m\) と小文字でどの面かを組み合わせて次のように表記する.</p>
+<ul>
+  <li>
+    \(mu\) : U 面を正面から見たとき外側から数えて \(m\) 番目の層を時計回りに 90 度回す
+    <ul>
+      <li>ここで \(m\) は具体的な数であって, 実際には \(2u\) , \(3u\) などと表記する</li>
+    </ul>
+  </li>
+</ul>
+<p>とくに \(m\) が \(1\) の場合の \(1U\) とか \(1u\) はただの \(U\) と等しいので単に \(U\) と書く.</p>
+<p><div style='text-align: center'> <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/2u.svg" alt="2u" width="200"> <figcaption>灰色の層が 2u</figcaption> </figure> <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/2r.svg" alt="2r" width="200"> <figcaption>灰色の層が 2r</figcaption> </figure> </div></p>
+<h4 id="4-%E7%B9%B0%E3%82%8A%E8%BF%94%E3%81%97%E3%81%AF%E4%B8%8B%E6%B7%BB%E5%AD%97%E3%81%A7%E6%9B%B8%E3%81%8F">繰り返しは下添字で書く</h4>
+<ul>
+  <li>
+    \(X_m\) : 操作 \(X\) を \(m\) 回繰り返す
+    <ul>
+      <li>例えば \(U_2\) は \(U\) を 2 回繰り返すこと（すなわち 180 度回すこと）を意味する</li>
+      <li>\(X\) は何でもよく, 括弧を使って \((RUR&#x27;U&#x27;)_4\) のように複数の操作をまとめて繰り返すこともできる</li>
+    </ul>
+  </li>
+</ul>
+<blockquote>3x3x3 では \(U_2\) のことを <code>U2</code> と書くのが一般的であるが, 数字は層数にも使うので, 混乱を避けるために下添字で表記することにする.</blockquote>
+<h4 id="4-%E9%80%86%E6%93%8D%E4%BD%9C%E3%81%AF%E3%83%97%E3%83%A9%E3%82%A4%E3%83%A0%20%28%27%29%20%E3%81%A7%E6%9B%B8%E3%81%8F">逆操作はプライム (') で書く</h4>
+<p>既に \(U&#x27;\) や \(F&#x27;\) などと書いていたが, もっと自由に複数の操作の逆操作を考えることが出来る</p>
+<ul>
+  <li>
+    \(X&#x27;\) : 操作 \(X\) の逆操作
+    <ul>
+      <li>例えば \(U&#x27;\) は \(U\) の逆操作である</li>
+      <li>一般に \((AB)&#x27; = B&#x27;A&#x27;\)</li>
+      <li>例えば \((RUR&#x27;U&#x27;)&#x27; = URU&#x27;R&#x27;\)</li>
+    </ul>
+  </li>
+</ul>
+<h4 id="4-%E8%A3%9C%E5%8A%A9%E8%A8%98%E5%8F%B7">補助記号</h4>
+<p>既に使ったが意味ある単位でグルーピングするのに括弧を使う. また単に区切る為に \(-\) を使うこともある. これらは読みやすさのためであって, 操作の意味には影響しない.</p>
+<ul>
+  <li>\(2R - (U R&#x27; U&#x27;)_2 - 2R&#x27;\)</li>
+  <li>これは \(2R U R&#x27; U&#x27; U R&#x27; U&#x27; 2R&#x27;\) と同じ意味</li>
+</ul>
+<p>また特に互いに影響無く順序を入れ替えられる操作を並べるときは \(+\) で区切る.</p>
+<ul>
+  <li>\(U+D&#x27;\)</li>
+</ul>
+<p>これは \(U-D&#x27;\) と読んでも \(D&#x27;-U\) と読んでも同じ意味. 特に「同時に回すことが可能」というニュアンスで使ってる.</p>
+<h3 id="3-%E3%82%B3%E3%83%9F%E3%83%A5%E3%83%86%E3%83%BC%E3%82%BF">コミュテータ</h3>
+<p><a href="https://scrapbox.io/speedcube/%E4%BA%A4%E6%8F%9B%E5%AD%90_%28commutator%29">コミュテータ</a> または交換子とは, 二つの操作 \(A\) と \(B\) があるときに \(ABA&#x27;B&#x27;\) と操作することで, ある特定のパーツだけを狙って動かす手順をいう. これを \([A, B]\) と書く.</p>
+\[[A, B] = ABA&#x27;B&#x27;\]
+<p>例えば \([R, U]\) は \(R U R&#x27; U&#x27;\) , \([R, UF]\) は \(RUF - R&#x27;F&#x27;U&#x27;\) という手順を表す.</p>
+<p>理論的な詳細はリンク先参照.</p>
+<h2 id="2-%E8%A7%A3%E6%B3%95">解法</h2>
+<h3 id="3-%E5%85%A8%E4%BD%93%E3%81%AE%E6%B5%81%E3%82%8C">全体の流れ</h3>
+<ol>
+  <li>センターキューブを揃える</li>
+  <li>エッジキューブを揃える</li>
+  <li>3x3x3 と見做して解く</li>
+  <li>パリティを修正する</li>
+</ol>
+<p><div> <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/overline-4x4x4-1.svg" width="200"> <figcaption>Step 0</figcaption> </figure> <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/overline-4x4x4-2.svg" width="200"> <figcaption>Step 1. 各面のセンターキューブを揃える</figcaption> </figure> <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/overline-4x4x4-3.svg" width="200"> <figcaption>Step 2. 各辺のエッジキューブを揃える</figcaption> </figure> </div></p>
+<p><div> <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/overline-4x4x4-4.svg" width="200"> <figcaption>Step 2'. ぐっと睨むと 3x3x3 に見えてくる</figcaption> </figure> <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/overline-4x4x4-5.svg" width="200"> <figcaption>Step 3. 3x3x3 として解く</figcaption> </figure> </div></p>
+<p><figure> <img src="cube-nxnxn/overline-4x4x4-5-parity.svg" width="200"> <figcaption>Step 4. パリティを修正する</figcaption> </figure></p>
+<p>4x4x4 以降のルービックキューブにはパリティエラーが存在する. つまりエッジが反転した状態が発生しうる. この場合は修正手順が追加で必要.</p>
+<h3 id="3-%E3%82%BB%E3%83%B3%E3%82%BF%E3%83%BC%E3%82%AD%E3%83%A5%E3%83%BC%E3%83%96%E3%82%92%E6%8F%83%E3%81%88%E3%82%8B">センターキューブを揃える</h3>
+<p>\(N\) が奇数の場合各面の中心のセンターキューブが正しい色として固定されていると見なせるので, これを基準にして各面のセンターキューブを揃える. 偶数の場合はどの色を集めてきてしまえるのだが, 最後に 3x3x3 として解くときに不能な配置にもできるので注意. 例えば本来は白色の向かい面が黄色だが, ここに赤色を集めてしまうことも可能だが最終的には解けなくなってしまう. 3x3x3 のときの色の配置を覚えておいて, それに従ってセンターキューブを揃えること.</p>
+<p>各面にセンターキューブは \((N-2) \times (N-2)\) あるがいきなり揃えるのではなく, （奇数なら） \(1 \times 1 \to 3 \times 3 \to \cdots \to (N-2) \times (N-2)\) と少しずつ育てていく. 奇数の場合は最初から \(1 \times 1\) が, 偶数の場合は（見えないけど） \(0 \times 0\) が揃っている状態からスタートする.</p>
+<h4 id="4-%5C%28k%20%5Ctimes%20k%5C%29%20%E3%81%8C%E6%8F%83%E3%81%A3%E3%81%A6%E3%82%8B%E7%8A%B6%E6%85%8B%E3%81%8B%E3%82%89%20%5C%28%28k%2B2%29%20%5Ctimes%20%28k%2B2%29%5C%29%20%E3%82%92%E6%8F%83%E3%81%88%E3%82%8B">\(k \times k\) が揃ってる状態から \((k+2) \times (k+2)\) を揃える</h4>
+<p>さらに 2 ステップからなる</p>
+<p><div> <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/center-align-0.svg" width="200"> <figcaption>k x k が既に揃ってる</figcaption> </figure> &rarr; <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/center-align-1.svg" width="200"> <figcaption>(k+2)x(k+2) のコーナーを全部持ってくる</figcaption> </figure> &rarr; <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/center-align-2.svg" width="200"> <figcaption>(k+2)x(k+2) のエッジを全部埋める</figcaption> </figure> </div></p>
+<h5 id="5-%5C%28%28k%2B2%29%20%5Ctimes%20%28k%2B2%29%5C%29%20%E3%81%AE%E3%82%B3%E3%83%BC%E3%83%8A%E3%83%BC%E3%82%92%E5%85%A8%E9%83%A8%E6%8C%81%E3%81%A3%E3%81%A6%E3%81%8F%E3%82%8B">\((k+2) \times (k+2)\) のコーナーを全部持ってくる</h5>
+<p>最終的に全面のコーナーを持ってくることが目的. それまではどの面のどのコーナーを持ってきてもいい.</p>
+<p>コミュテータ</p>
+\[[mr, U&#x27;]\]
+<p>すなわち \(mrU&#x27; - mr&#x27;U\) を使うことで自由に集める.</p>
+<p>実際には \(mr\) は \(mR\) としても影響はない. また, 手順の最後の \(U\) は特に意味が無いので, 以下の例では省略している.</p>
+<p><div> <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/center-align-corner-a1.svg" width="200"> <figcaption>黒色の層を mr とする</figcaption> </figure> &rarr; <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/center-align-corner-a2.svg" width="200"> <figcaption>mrU' - mr'</figcaption> </figure> </div></p>
+<p><div> <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/center-align-corner-b1.svg" width="200"> <figcaption>黒色の層を mr とする</figcaption> </figure> &rarr; <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/center-align-corner-b2.svg" width="200"> <figcaption>mrU' - mr'</figcaption> </figure> </div></p>
+<p><div> <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/center-align-corner-c1.svg" width="200"> <figcaption>黒色の層を mr とする</figcaption> </figure> &rarr; <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/center-align-corner-c2.svg" width="200"> <figcaption>mrU' - mr'</figcaption> </figure> </div></p>
+<p>D面から持ってきたかったら \(mr_2 U&#x27; - mr_2\) とすればいい.</p>
+<h5 id="5-%5C%28%28k%2B2%29%20%5Ctimes%20%28k%2B2%29%5C%29%20%E3%81%AE%E3%82%A8%E3%83%83%E3%82%B8%E3%82%92%E5%85%A8%E9%83%A8%E5%9F%8B%E3%82%81%E3%82%8B">\((k+2) \times (k+2)\) のエッジを全部埋める</h5>
+<p>コミュテータ</p>
+\[[mr, (U&#x27;kl&#x27;U)]\]
+<p>を使う (実際には最後の \(U\) は省く).</p>
+<p><div> <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/edge-align-7d.svg" width="200"> <figcaption>F面の 2r 3u 層にある赤を上に持っていきたい</figcaption> </figure> &rarr; <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/edge-align-7f.svg" width="200"> <figcaption>2rU'3l'U</figcaption> </figure> &rarr; <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/edge-align-7g.svg" width="200"> <figcaption>2r'U'3lU</figcaption> </figure> </div></p>
+<p><div> <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/edge-align-7a.svg" width="200"> <figcaption>F面の 2r 5u 層にある緑を上に持っていきたい</figcaption> </figure> &rarr; <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/edge-align-7b.svg" width="200"> <figcaption>2rU'5l'U</figcaption> </figure> &rarr; <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/edge-align-7c.svg" width="200"> <figcaption>2r'U'5lU</figcaption> </figure> </div></p>
+<p><div> <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/edge-align-double-a.svg" width="200"> <figcaption>複数あってもOK</figcaption> </figure> &rarr; <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/edge-align-double-b.svg" width="200"> <figcaption>2rU'(3l'+5l')U</figcaption> </figure> &rarr; <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/edge-align-double-c.svg" width="200"> <figcaption>2r'U'(3l+5l)U</figcaption> </figure> </div></p>
+<h3 id="3-%E3%82%A8%E3%83%83%E3%82%B8%E3%82%AD%E3%83%A5%E3%83%BC%E3%83%96%E3%82%92%E6%8F%83%E3%81%88%E3%82%8B">エッジキューブを揃える</h3>
+<h4 id="4-%E3%82%A8%E3%83%83%E3%82%B8%E3%83%9A%E3%82%A2%E3%83%AA%E3%83%B3%E3%82%B0">エッジペアリング</h4>
+<p>F面の左にあるエッジキューブを右に持ってくるという <strong>エッジペアリング</strong> を繰り返すことでエッジキューブを揃える.</p>
+<p><div> <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/edge-pairing-4-start.svg" width="200"> <figcaption>このエッジのペアを</figcaption> </figure> &rarr; <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/edge-pairing-4-end.svg" width="200"> <figcaption>くっつけたい</figcaption> </figure> </div></p>
+<p><div> <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/edge-pairing-7-start.svg" width="200"> <figcaption>このエッジのペアは</figcaption> </figure> &rarr; <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/edge-pairing-7-end.svg" width="200"> <figcaption>同じエッジにいるべき</figcaption> </figure> </div></p>
+<p>左の動かしたいエッジが U 面から見て \(ku\) 層にあるとき, コミュテータ</p>
+\[[ku&#x27;R, U&#x27;]\]
+<p>を使うことでペアリングできる.</p>
+<p><div> <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/edge-pairing-4-a.svg" width="200"> <figcaption>黒色のペアは壊れるで注意</figcaption> </figure> &rarr; <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/edge-pairing-4-b.svg" width="200"> <figcaption>2u'RU'</figcaption> </figure> &rarr; <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/edge-pairing-4-c.svg" width="200"> <figcaption>R'2uU</figcaption> </figure> </div></p>
+<p><div> <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/edge-pairing-7-a.svg" width="200"> <figcaption>黒色は壊れる</figcaption> </figure> &rarr; <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/edge-pairing-7-b.svg" width="200"> <figcaption>(3u+5u)RU'</figcaption> </figure> &rarr; <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/edge-pairing-7-c.svg" width="200"> <figcaption>R'(3u'+5u')U</figcaption> </figure> </div></p>
+<p>ただしこれらは必ず黒色を壊してるので, 最後は以下が必要.</p>
+<h4 id="4-%E4%B8%89%E7%82%B9%E4%BA%A4%E6%8F%9B">三点交換</h4>
+<p>左から \(k\) 層目と右から \(k\) 層目のエッジの三点を交換する手順</p>
+<p><figure> <img src="cube-nxnxn/edge-rotate-3p.svg" width="200"> <figcaption>この三点が時計回りに一個ずつ移動する</figcaption> </figure></p>
+\[\begin{align*}
+[kl&#x27;, U_2 krU_2 kr&#x27; U_2]
+&amp;= kl&#x27; U_2 krU_2 kr&#x27;U_2 - klU_2 kr U_2 kr&#x27;U_2 \\
+\end{align*}\]
+<h4 id="4-%E5%9B%9B%E7%82%B9%E4%BA%A4%E6%8F%9Ba">四点交換a</h4>
+<p>左から \(k\) 層目と右から \(k\) 層目のエッジの四点を交換する手順</p>
+<p><figure> <img src="cube-nxnxn/edge-rotate-4p.svg" width="200"> <figcaption>この四点が反時計周りに一個ずつ移動する</figcaption> </figure></p>
+\[kr_2 E&#x27; - (kr&#x27; U_2)_4 kr&#x27; - E kr_2\]
+<p>ただしここで \(E\) とは \(E = (2f + 3f + \cdots + (N-1) f)\) のこと.</p>
+<h4 id="4-%E5%9B%9B%E7%82%B9%E4%BA%A4%E6%8F%9Bb">四点交換b</h4>
+<p>こちらも 左から \(k\) 層目と右から \(k\) 層目のエッジの四点を交換する手順. ただしF面の二つとD面の二つが交換される.</p>
+<p><figure> <img src="cube-nxnxn/edge-rotate-4p.svg" width="200"> <figcaption>手前の二つと奥の二つの交換</figcaption> </figure></p>
+\[[kr_2, F_2U_2] - kr_2\]
+<h3 id="3-3x3x3%20%E3%81%A8%E8%A6%8B%E5%81%9A%E3%81%97%E3%81%A6%E8%A7%A3%E3%81%8F">3x3x3 と見做して解く</h3>
+<p>一旦 F2L なりで自由に解く. ただし 50% の確率でエッジが反転している状態になるえる.</p>
+<p><figure> <img src="cube-nxnxn/miss-parity-4.svg" width="200"> <figcaption>ダメなエッジパリティ</figcaption> </figure></p>
+<p>これはもう 3x3x3 としては解けないので次のパリティ修正のステップに進む.</p>
+<h3 id="3-%E3%83%91%E3%83%AA%E3%83%86%E3%82%A3%E3%82%92%E4%BF%AE%E6%AD%A3%E3%81%99%E3%82%8B">パリティを修正する</h3>
+<p>四点交換a</p>
+\[kr_2 E&#x27; - (kr&#x27; U_2)_4 kr&#x27; - E kr_2\]
+<p>を適用してから三点交換</p>
+\[kl&#x27; U_2 krU_2 kr&#x27;U_2 - klU_2 kr U_2 kr&#x27;U_2\]
+<p>を適用するとパリティが修正される. <div> <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/miss-parity-4.svg" width="200"> <figcaption>FUエッジが反転してる</figcaption> </figure> &rarr; <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/miss-parity-4b.svg" width="200"> <figcaption>四点交換a を適用</figcaption> </figure> &rarr; <figure style='width: 25%; display: inline-block; margin: 0'> <img src="cube-nxnxn/miss-parity-4c.svg" width="200"> <figcaption>三点交換を適用</figcaption> </figure> </div></p>
+
+<!--
+
+  以下を埋め込むと H2 タグを列挙してそれぞれへのリンクにする.
+  ただし "INDEX" は除外する.
+
+    <div id=toc></div>
+
+
+  H2, H3 タグまでを列挙するには以下を埋め込む.
+
+    <div id=toc-level-2></div>
+
+-->
+<script>
+(function() {
+
+  function naming(obj, name) {
+      var PREF = document.createElement('a');
+      PREF.name = name;
+      obj.appendChild(PREF);
+  }
+
+  function level1() {
+
+    var sections = document.getElementsByTagName('h2');
+    var OL = document.createElement('ol');
+    for (var i=0; i < sections.length; ++i) {
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = sections[i].innerHTML;
+      if (A.innerHTML.toUpperCase() == 'INDEX') continue;
+      A.href = '#' + i;
+      LI.appendChild(A);
+      OL.appendChild(LI);
+      naming(sections[i], i);
+      // var PREF = document.createElement('a');
+      // PREF.name = i;
+      // sections[i].appendChild(PREF);
+    }
+
+    return OL;
+  }
+
+  function level2() {
+
+    var sections = document.querySelectorAll('h2,h3');
+    var tree = [];
+    for (var i = 0; i < sections.length; ++i) {
+      if (sections[i].tagName == 'H2') {
+        if (sections[i].innerHTML.toUpperCase() === 'INDEX') continue;
+        tree.push([sections[i]]);
+      } else {
+        if (tree.length > 0) {
+          tree[tree.length-1].push(sections[i]);
+        } else {
+          tree.push([sections[i]]);
+        }
+      }
+    }
+
+    var OL = document.createElement('ol');
+    for (var i = 0; i < tree.length; ++i) {
+
+      // h2-level
+      var LI = document.createElement('li');
+      var A = document.createElement('a');
+      A.innerHTML = tree[i][0].innerHTML;
+      A.href = '#' + i;
+      naming(tree[i][0], i);
+      LI.appendChild(A);
+
+      // h3-level
+      if (tree[i].length > 1) {
+        var OL_sub = document.createElement('ol');
+        for (var j = 1; j < tree[i].length; ++j) {
+          var LI_sub = document.createElement('li');
+          var A = document.createElement('a');
+          A.innerHTML = tree[i][j].innerHTML;
+          A.href = `#${i}-${j}`;
+          naming(tree[i][j], `${i}-${j}`);
+          LI_sub.appendChild(A);
+          OL_sub.appendChild(LI_sub);
+        }
+        LI.appendChild(OL_sub);
+      }
+
+      OL.appendChild(LI);
+    }
+
+    return OL;
+  }
+
+  function append_toc() {
+    if (document.getElementById('toc')) {
+      document.getElementById('toc').appendChild(level1());
+    }
+    if (document.getElementById('toc-level-2')) {
+      document.getElementById('toc-level-2').appendChild(level2());
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', append_toc, false);
+}());
+</script>
+
+  <script src="https://cympfh.cc/resources/js/youtube.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+  <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>

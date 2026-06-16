@@ -462,19 +462,6 @@ $$kr_2 E' - (kr' U_2)_4 kr' - E kr_2$$
 $E = (2f + 3f + \cdots + (N-1) f)$
 のこと.
 
-#### 四点交換b
-
-こちらも
-左から $k$ 層目と右から $k$ 層目のエッジの四点を交換する手順.
-ただしF面の二つとD面の二つが交換される.
-
-<figure>
-    <img src="cube-nxnxn/edge-rotate-4p.svg" width="200">
-    <figcaption>手前の二つと奥の二つの交換</figcaption>
-</figure>
-
-$$[kr_2, F_2U_2] - kr_2$$
-
 ### 3x3x3 と見做して解く
 
 一旦 F2L なりで自由に解く.
@@ -488,6 +475,8 @@ $$[kr_2, F_2U_2] - kr_2$$
 これはもう 3x3x3 としては解けないので次のパリティ修正のステップに進む.
 
 ### パリティを修正する
+
+#### エッジ反転
 
 四点交換a
 $$kr_2 E' - (kr' U_2)_4 kr' - E kr_2$$
@@ -510,4 +499,98 @@ $$kl' U_2 krU_2 kr'U_2 - klU_2 kr U_2 kr'U_2$$
         <figcaption>三点交換を適用</figcaption>
     </figure>
 </div>
+
+#### 四点交換b
+
+左から $k$ 層目と右から $k$ 層目のエッジの四点を交換する手順を紹介する.
+ただしF面の二つとD面の二つが交換される ($FU \leftrightarrow BU$).
+
+<figure>
+    <img src="cube-nxnxn/edge-rotate-4p.svg" width="200">
+    <figcaption>手前の二つと奥の二つの交換</figcaption>
+</figure>
+
+$$[kr_2, F_2U_2] - kr_2$$
+
+特に偶数のときに有用.
+4x4x4 ならそのまま以下のように使う.
+
+<div>
+    <figure style='width: 25%; display: inline-block; margin: 0'>
+        <img src="cube-nxnxn/edge-rotate-4p-4a.svg" width="200">
+        <figcaption>手前エッジ (FU) と奥エッジ (UB) の交換</figcaption>
+    </figure>
+    &rarr;
+    <figure style='width: 25%; display: inline-block; margin: 0'>
+        <img src="cube-nxnxn/edge-rotate-4p-4b.svg" width="200">
+        <figcaption>$2r_2 F_2 U_2 - 2r_2 U_2 F_2 - 2r_2$</figcaption>
+    </figure>
+</div>
+
+6 以上の偶数でも使う.
+このとき $kr$ は $\sum_{i=2}^{N-1} ir = 2r+3r+\cdots+(N-1)r$ と読み替える.
+
+<div>
+    <figure style='width: 25%; display: inline-block; margin: 0'>
+        <img src="cube-nxnxn/edge-rotate-4p-6a.svg" width="200">
+        <figcaption>手前エッジ (FU) と奥エッジ (UB) の交換</figcaption>
+    </figure>
+    &rarr;
+    <figure style='width: 25%; display: inline-block; margin: 0'>
+        <img src="cube-nxnxn/edge-rotate-4p-6b.svg" width="200">
+        <figcaption>$(\sum_i ir_2) F_2 U_2 - (\sum_i ir_2) U_2 F_2 - \sum_i ir_2$</figcaption>
+    </figure>
+</div>
+
+#### 四点交換c - FU と RU の交換
+
+ここで $N$ は偶数とする.
+
+<figure>
+    <img src="cube-nxnxn/edge-rotate-furu-k.svg" width="200">
+    <figcaption>FU の二つと RU の二つの交換</figcaption>
+</figure>
+
+$$(R'URU') - kr_2U_2 - \left( kr_2 (N/2)U_2 \right)_2 - (U' R'U'R)$$
+
+$(N/2) U_2$ とはつまり（$N$ は偶数だとしたので）ちょうど真ん中より上の層全部を 180 度回すこと.
+
+<div>
+    <figure style='width: 25%; display: inline-block; margin: 0'>
+        <img src="cube-nxnxn/edge-rotate-furu-6a.svg" width="200">
+        <figcaption>$k=2$ で上記を回す</figcaption>
+    </figure>
+    &rarr;
+    <figure style='width: 25%; display: inline-block; margin: 0'>
+        <img src="cube-nxnxn/edge-rotate-furu-6b.svg" width="200">
+        <figcaption>黄色の向きを保って交換</figcaption>
+    </figure>
+</div>
+
+<div>
+    <figure style='width: 25%; display: inline-block; margin: 0'>
+        <img src="cube-nxnxn/edge-rotate-furu-4a.svg" width="200">
+        <figcaption>$k=2$ で</figcaption>
+    </figure>
+    &rarr;
+    <figure style='width: 25%; display: inline-block; margin: 0'>
+        <img src="cube-nxnxn/edge-rotate-furu-4b.svg" width="200">
+        <figcaption>エッジパリティを修正</figcaption>
+    </figure>
+</div>
+
+
+
+<div>
+    <figure style='width: 25%; display: inline-block; margin: 0'>
+        <img src="cube-nxnxn/edge-rotate-furu-6c.svg" width="200">
+        <figcaption>$k=2+3$ とすれば</figcaption>
+    </figure>
+    &rarr;
+    <figure style='width: 25%; display: inline-block; margin: 0'>
+        <img src="cube-nxnxn/edge-rotate-furu-6d.svg" width="200">
+        <figcaption>完成</figcaption>
+    </figure>
+</div>
+
 

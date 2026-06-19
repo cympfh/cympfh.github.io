@@ -7,6 +7,8 @@ db = File.open('db.jsonl').readlines.map { |line| JSON.parse line }
 images = []
 ngrams = {}
 
+db.reject! { |item| item['disabled'] == true }
+
 db.each_with_index do |item, idx|
   url = item['url']
   description = item['description']
@@ -35,5 +37,5 @@ ngrams = ngrams.map { |k, a| [k, a.to_a] }.to_h
 
 data = { images: images, ngrams: ngrams }
 puts 'var data='
-puts JSON.pretty_generate data
+puts JSON.generate data
 puts ';'

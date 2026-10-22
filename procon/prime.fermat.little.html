@@ -8,11 +8,12 @@
   <title>フェルマーの小定理</title>
   <style type="text/css">code{white-space: pre;}</style>
   <link rel="stylesheet" href="https://cympfh.cc/resources/css/youtube.css" />
-  <link href="https://unpkg.com/prismjs@1/themes/prism.css" rel="stylesheet" />
+  <link href="https://unpkg.com/prismjs@1.30.0/themes/prism.css" rel="stylesheet" integrity="sha384-fOxUs50supO02q0/iotANfwsR12+8Cf4xzduhJwMRT7de7W6RoTkt6OQa9iv0OaA" crossorigin="anonymous" />
   <script id="MathJax-script" async src="https://unpkg.com/mathjax@3/es5/tex-chtml-full.js"></script>
 <meta name="unibook-theme" content="light">
 <style>/* Theme CSS Variables */
 
+:root,
 :root[data-theme="light"] {
   --bg-primary: #ffffff;
   --bg-secondary: #f4f4f4;
@@ -26,6 +27,14 @@
   --link-hover: #0052a3;
   --code-bg: #f5f5f5;
   --search-highlight: #ffd700;
+  --tok-comment: #6a737d;
+  --tok-keyword: #d73a49;
+  --tok-string: #032f62;
+  --tok-number: #005cc5;
+  --tok-function: #6f42c1;
+  --tok-type: #e36209;
+  --tok-macro: #22863a;
+  --tok-punct: #586069;
 }
 
 :root[data-theme="dark"] {
@@ -41,6 +50,14 @@
   --link-hover: #8ab4f8;
   --code-bg: #2d2d2d;
   --search-highlight: #ffa500;
+  --tok-comment: #8b949e;
+  --tok-keyword: #ff7b72;
+  --tok-string: #a5d6ff;
+  --tok-number: #79c0ff;
+  --tok-function: #d2a8ff;
+  --tok-type: #ffa657;
+  --tok-macro: #7ee787;
+  --tok-punct: #8b949e;
 }
 
 :root[data-theme="solarized-light"] {
@@ -56,6 +73,14 @@
   --link-hover: #2aa198;
   --code-bg: #eee8d5;
   --search-highlight: #b58900;
+  --tok-comment: #5c6a6a;
+  --tok-keyword: #5f6e00;
+  --tok-string: #1e726c;
+  --tok-number: #bc2970;
+  --tok-function: #1d6ca2;
+  --tok-type: #826200;
+  --tok-macro: #b24213;
+  --tok-punct: #5b6a6c;
 }
 
 :root[data-theme="solarized-dark"] {
@@ -71,6 +96,14 @@
   --link-hover: #2aa198;
   --code-bg: #073642;
   --search-highlight: #b58900;
+  --tok-comment: #586e75;
+  --tok-keyword: #859900;
+  --tok-string: #2aa198;
+  --tok-number: #d33682;
+  --tok-function: #268bd2;
+  --tok-type: #b58900;
+  --tok-macro: #cb4b16;
+  --tok-punct: #839496;
 }
 
 :root[data-theme="kanagawa-light"] {
@@ -86,6 +119,14 @@
   --link-hover: #7e9cd8;
   --code-bg: #e5ddb0;
   --search-highlight: #ffa066;
+  --tok-comment: #605f58;
+  --tok-keyword: #624c83;
+  --tok-string: #52653a;
+  --tok-number: #964561;
+  --tok-function: #46608d;
+  --tok-type: #656035;
+  --tok-macro: #914e00;
+  --tok-punct: #386575;
 }
 
 :root[data-theme="kanagawa-dark"] {
@@ -101,6 +142,14 @@
   --link-hover: #9cabca;
   --code-bg: #2a2a37;
   --search-highlight: #ffa066;
+  --tok-comment: #727169;
+  --tok-keyword: #957fb8;
+  --tok-string: #98bb6c;
+  --tok-number: #d27e99;
+  --tok-function: #7e9cd8;
+  --tok-type: #7aa89f;
+  --tok-macro: #ffa066;
+  --tok-punct: #9cabca;
 }
 
 a {
@@ -111,45 +160,37 @@ a:hover {
   color: var(--link-hover);
 }
 
-/* Code blocks follow the selected theme */
-:root, :root[data-theme="light"] {
-  --tok-comment: #6a737d; --tok-keyword: #d73a49; --tok-string: #032f62; --tok-number: #005cc5;
-  --tok-function: #6f42c1; --tok-type: #e36209; --tok-macro: #22863a; --tok-punct: #586069;
-}
-:root[data-theme="dark"] {
-  --tok-comment: #8b949e; --tok-keyword: #ff7b72; --tok-string: #a5d6ff; --tok-number: #79c0ff;
-  --tok-function: #d2a8ff; --tok-type: #ffa657; --tok-macro: #7ee787; --tok-punct: #8b949e;
-}
-:root[data-theme="solarized-light"], :root[data-theme="solarized-dark"] {
-  --tok-comment: #93a1a1; --tok-keyword: #859900; --tok-string: #2aa198; --tok-number: #d33682;
-  --tok-function: #268bd2; --tok-type: #b58900; --tok-macro: #cb4b16; --tok-punct: #839496;
-}
-:root[data-theme="solarized-dark"] { --tok-comment: #586e75; }
-:root[data-theme="kanagawa-light"] {
-  --tok-comment: #8a8980; --tok-keyword: #624c83; --tok-string: #6f894e; --tok-number: #b35b79;
-  --tok-function: #4d699b; --tok-type: #77713f; --tok-macro: #cc6d00; --tok-punct: #4e8ca2;
-}
-:root[data-theme="kanagawa-dark"] {
-  --tok-comment: #727169; --tok-keyword: #957fb8; --tok-string: #98bb6c; --tok-number: #d27e99;
-  --tok-function: #7e9cd8; --tok-type: #7aa89f; --tok-macro: #ffa066; --tok-punct: #9cabca;
-}
-
+/* Code blocks follow the selected theme (--tok-* are defined per theme above) */
 pre, pre[class*="language-"], code[class*="language-"] {
   background: var(--code-bg);
   color: var(--text-primary);
   text-shadow: none;
 }
 pre[class*="language-"] { border: 1px solid var(--border-color); }
+
+/* Inline code: beat prism.css's `:not(pre) > code[class*="language-"]` */
+:root :not(pre) > code,
+:root :not(pre) > code[class*="language-"] {
+  background: var(--code-bg);
+  color: var(--text-primary);
+}
+
 .token.comment, .token.prolog, .token.doctype, .token.cdata { color: var(--tok-comment); font-style: italic; }
 .token.punctuation, .token.operator { color: var(--tok-punct); background: none; }
-.token.keyword, .token.boolean, .token.selector, .token.atrule { color: var(--tok-keyword); }
-.token.string, .token.char, .token.attr-value, .token.regex { color: var(--tok-string); }
-.token.number, .token.constant, .token.symbol { color: var(--tok-number); }
+.token.keyword, .token.boolean, .token.selector, .token.atrule,
+.token.tag, .token.deleted, .token.important { color: var(--tok-keyword); }
+.token.string, .token.char, .token.attr-value, .token.regex,
+.token.inserted, .token.url, .token.entity { color: var(--tok-string); }
+.token.number, .token.constant, .token.symbol, .token.variable { color: var(--tok-number); }
 .token.function, .token.function-definition { color: var(--tok-function); }
 .token.class-name, .token.builtin, .token.lifetime-annotation { color: var(--tok-type); }
-.token.macro, .token.property, .token.attribute { color: var(--tok-macro); }
+.token.macro, .token.property, .token.attribute, .token.attr-name { color: var(--tok-macro); }
 .token.namespace { opacity: 0.8; }
+.token.important { font-weight: bold; }
 
+/* Drop prism.css's semi-transparent white backgrounds */
+.token.url, .token.entity, .token.operator,
+.language-css .token.string, .style .token.string { background: none; }
 </style>
 <style>.theme-switcher {
   position: relative;
@@ -2182,7 +2223,7 @@ window.addEventListener('load', () => {
 </div> <!-- content-wrapper -->
 
   <script src="https://cympfh.cc/resources/js/youtube.js"></script>
-  <script src="https://unpkg.com/prismjs@1/components/prism-core.min.js"></script>
-  <script src="https://unpkg.com/prismjs@1/plugins/autoloader/prism-autoloader.min.js"></script>
+  <script src="https://unpkg.com/prismjs@1.30.0/components/prism-core.min.js" integrity="sha384-zLRFO4dwowZvh8kzutOb5AWhH7f39HeJp+N7PtHF1SQtTBnifRx0AtmvTYs3F4YV" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/prismjs@1.30.0/plugins/autoloader/prism-autoloader.min.js" integrity="sha384-Uq05+JLko69eOiPr39ta9bh7kld5PKZoU+fF7g0EXTAriEollhZ+DrN8Q/Oi8J2Q" crossorigin="anonymous"></script>
 </body>
 </html>

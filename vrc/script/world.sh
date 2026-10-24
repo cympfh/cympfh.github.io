@@ -8,6 +8,7 @@ postlist() {
   cat src/postlist |
     grep -v '^#' |
     awk '{print $1}' |
+    grep -v '^$' |
     uniq |
     tac
 }
@@ -47,7 +48,7 @@ card() {
   INNERHTML=$(cat cache/innerhtml/$WID.html)
   cat <<EOM
 
-<div class="column is-half world_column" data-tags="${TAGS}" >
+<div class="column is-half world_column" data-tags="${TAGS}" data-rate="${RATE}" >
   <div class="card" id="${WID}">
     <header class="card-header">
       <p class="card-header-title"><a href="#${WID}">${TITLE}</a></p>
@@ -112,6 +113,17 @@ main() {
   <section class="section">
     <div class="container">
         <h1 class="title"><i class="fa fa-map"></i> <a href="#">vrc/world</a></h1>
+        <div class="sort-box">
+          <label for="sort-select"><i class="fa fa-sort"></i> 並び替え</label>
+          <div class="select is-small">
+            <select id="sort-select">
+              <option value="new">新しい順</option>
+              <option value="old">古い順</option>
+              <option value="rate">評価が高い順</option>
+              <option value="name">名前順</option>
+            </select>
+          </div>
+        </div>
     </div>
   </section>
 
@@ -122,6 +134,10 @@ TEMPLATE
 
   postlist |
     while read wid; do
+      if [ ! -f "./src/$wid.md" ]; then
+        echo "skip $wid (no src/$wid.md)" >&2
+        continue
+      fi
       echo "card $wid" >&2
       card "$wid"
     done
@@ -133,6 +149,7 @@ TEMPLATE
 
   <script src="./resources/js/base.js"></script>
   <script src="./resources/js/tag.js"></script>
+  <script src="./resources/js/sort.js"></script>
   <script src="../resources/js/youtube.js"></script>
 </body></html>
 TEMPLATE

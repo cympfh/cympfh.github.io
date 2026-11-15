@@ -23,7 +23,13 @@ git: index
 ## posts
 
 posts:
-	for f in *.md; do make $${f%md}html; done
+	for f in *.md; do \
+		[ "$$f" = AGENTS.md ] && continue; \
+		make $${f%md}html; \
+	done
+
+# AGENTS.md は記事ではない。パターン規則より先に空規則を置く。
+AGENTS.html: ;
 
 %.html: %.md
 	$(eval DESCRIPTION := $(shell cat $^ | grep '^## ' | sed 's/^#* //g' | tr '\n' '/' | sed 's/ *$$//g'))

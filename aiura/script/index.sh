@@ -35,7 +35,7 @@ EOM
 #
 # update id-list
 #
-diff <(sort "$POSTLIST") <(find . -name '*.md' | sed 's,\./,,g; s,\.md,,g' | sort) |
+diff <(sort "$POSTLIST") <(find . -name '*.md' ! -name 'AGENTS.md' | sed 's,\./,,g; s,\.md,,g' | sort) |
 grep '^>' | sed 's/> //g' >/tmp/append
 cat /tmp/append >>$POSTLIST
 rm /tmp/append
